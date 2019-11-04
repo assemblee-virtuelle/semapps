@@ -28,4 +28,5 @@ We welcome contributors from everywhere. Please contact us to join the team
 - Niko
 - Guillaume
 - Pierre
+- Gabriel
 - toi ?
