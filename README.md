@@ -1,4 +1,4 @@
-# Semapps
+# SemApps
 
 SemApps is an open source projet which aim to **ease data storage and filtering**.
 SemApps means Semantinc App thus storage and filtering are ontology driven
