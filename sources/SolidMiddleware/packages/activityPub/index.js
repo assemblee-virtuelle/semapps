@@ -1,37 +1,35 @@
-"use strict";
+'use strict';
 
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 const fetch = require('node-fetch');
 
 module.exports = {
-  name: "outbox",
+  name: 'outbox',
   settings: {
     homeUrl: process.env.HOME_URL || 'http://localhost:3000/',
     sparqlEndpoint: process.env.SPARQL_ENDPOINT
   },
   routes: {
     aliases: {
-      "POST outbox": "outbox.post",
-      "GET outbox": "outbox.list"
+      'POST outbox': 'outbox.post',
+      'GET outbox': 'outbox.list'
     }
   },
   actions: {
-    async post({
-      params
-    }) {
+    async post({ params }) {
       let activity = params;
 
       if (activity.type !== 'Create') {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          'id': this.generateId('activity/'),
+          id: this.generateId('activity/'),
           type: 'Create',
           object: {
-            'id': this.generateId('object/'),
+            id: this.generateId('object/'),
             ...activity
           }
-        }
+        };
       } else {
         activity['id'] = this.generateId('activity/');
       }
@@ -81,7 +79,7 @@ module.exports = {
         body: insertQuery,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'Authorization': 'Basic ' + Buffer.from('admin:admin').toString('base64')
+          Authorization: 'Basic ' + Buffer.from('admin:admin').toString('base64')
         }
       });
     },
@@ -91,7 +89,7 @@ module.exports = {
         body: 'query=' + query,
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'Authorization': 'Basic ' + Buffer.from('admin:admin').toString('base64')
+          Authorization: 'Basic ' + Buffer.from('admin:admin').toString('base64')
         }
       }).then(result => result.json());
     }
