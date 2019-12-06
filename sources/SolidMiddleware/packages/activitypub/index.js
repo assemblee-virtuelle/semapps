@@ -1,4 +1,4 @@
 module.exports = {
-  OutboxService: require('./outbox'),
+  OutboxService: require('./services/outbox'),
   Routes: require('./routes')
 };

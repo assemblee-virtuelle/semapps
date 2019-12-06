@@ -3,7 +3,7 @@
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
-const { ACTIVITY_TYPES } = require('./constants');
+const { ACTIVITY_TYPES } = require('../constants');
 
 module.exports = {
   name: 'activitypub.outbox',
