@@ -1,6 +1,8 @@
 "use strict";
 
-const { ServiceBroker } = require("moleculer");
+const {
+  ServiceBroker
+} = require("moleculer");
 const ApiGatewayService = require("moleculer-web");
 const dummyServiceMath = require("@semapps/dummyservicemath");
 const activityPub = require("@semapps/activitypub");
@@ -27,7 +29,12 @@ const broker = new ServiceBroker({
 });
 
 broker.createService(dummyServiceMath);
-broker.createService(activityPub);
+broker.createService(activityPub, {
+  settings: {
+    homeUrl: process.env.HOME_URL || 'http://localhost:3000/',
+    sparqlEndpoint: process.env.SPARQL_ENDPOINT
+  }
+});
 broker.createService({
   mixins: ApiGatewayService,
   settings: {

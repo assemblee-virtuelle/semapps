@@ -1,6 +1,6 @@
 {
   "packages": [
-    "packages/*"
+    "packages/*","boilerplate/*"
   ],
   "version": "0.0.0"
 }
