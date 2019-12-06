@@ -28,6 +28,7 @@ const broker = new ServiceBroker({
 });
 
 broker.createService(dummyServiceMath);
+broker.createService(activityPub);
 broker.createService({
   mixins: ApiGatewayService,
   settings: {
