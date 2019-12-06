@@ -25,7 +25,7 @@ broker.createService(OutboxService, {
 });
 broker.createService(TripleStoreService, {
   settings: {
-    sparqlEndpoint: 'http://localhost:3030/activities/',
+    sparqlEndpoint: 'http://51.68.81.68:3030/activities/',
     sparqlHeaders: {
       Authorization: 'Basic ' + Buffer.from('admin:admin').toString('base64')
     }
