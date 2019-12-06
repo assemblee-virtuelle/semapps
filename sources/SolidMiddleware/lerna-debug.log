@@ -1,0 +1,8 @@
+0 silly argv { _: [ 'bootstrap' ],
+0 silly argv   lernaVersion: '3.19.0',
+0 silly argv   '$0': '/home/simon/.npm/_npx/31132/bin/lerna' }
+1 notice cli v3.19.0
+2 verbose rootPath /home/simon/GIT/SemappsV2.1/sources/SolidMiddleware
+3 error JSONError: Unexpected token } in JSON at position 368 while parsing near '...itypub":"^1.0.0",  }}' in packages/runner/package.json
+3 error     at module.exports (/home/simon/.npm/_npx/31132/lib/node_modules/lerna/node_modules/parse-json/index.js:26:19)
+3 error     at parse (/home/simon/.npm/_npx/31132/lib/node_modules/lerna/node_modules/load-json-file/index.js:15:9)
