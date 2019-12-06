@@ -4,7 +4,6 @@ const { ServiceBroker } = require("moleculer");
 const ApiGatewayService = require("moleculer-web");
 const dummyServiceMath = require("@semapps/dummyservicemath");
 const activityPub = require("@semapps/activitypub");
-const OutboxRoutes = require("@semapps/activitypub").routes;
 const os = require("os");
 const hostname = os.hostname();
 
@@ -33,7 +32,7 @@ broker.createService({
   mixins: ApiGatewayService,
   settings: {
     middleware: true,
-    routes: [OutboxRoutes]
+    routes: [activityPub.routes]
   }
 });
 broker.start();
