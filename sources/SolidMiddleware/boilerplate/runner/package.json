@@ -4,6 +4,7 @@
   "description": "EntryPoints of SemApps servers",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon --watch ../..",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,7 +12,10 @@
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
     "@semapps/dummyservicemath": "^1.0.0",
+    "@semapps/triplestore": "^1.0.0",
+    "jsonld": "^1.8.1",
     "moleculer": "^0.13.11",
-    "moleculer-web": "^0.8.5"
+    "moleculer-web": "^0.8.5",
+    "nodemon": "^2.0.1"
   }
 }
