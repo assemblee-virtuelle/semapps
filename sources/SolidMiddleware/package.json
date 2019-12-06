@@ -2,7 +2,13 @@
   "name": "root",
   "private": true,
   "license": "Apache-2.0",
+  "scripts": {
+    "start": "node ./packages/runner",
+    "bootstrap": "lerna bootstrap",
+    "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'"
+  },
   "devDependencies": {
-    "lerna": "^3.19.0"
+    "lerna": "^3.19.0",
+    "prettier": "^1.19.1"
   }
 }
