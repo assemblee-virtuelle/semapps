@@ -15,7 +15,9 @@
     "@semapps/triplestore": "^1.0.0",
     "jsonld": "^1.8.1",
     "moleculer": "^0.13.11",
-    "moleculer-web": "^0.8.5",
+    "moleculer-web": "^0.8.5"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.1"
   }
 }
