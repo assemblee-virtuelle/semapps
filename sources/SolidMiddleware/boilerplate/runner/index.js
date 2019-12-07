@@ -1,14 +1,13 @@
 'use strict';
 
-const {
-  ServiceBroker
-} = require('moleculer');
+const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const dummyServiceMath = require('@semapps/dummyservicemath');
 const activityPub = require('@semapps/activitypub');
 const os = require('os');
 const hostname = os.hostname();
 const fetch = require('node-fetch');
+const express = require('express');
 
 // let transporter = process.env.TRANSPORTER || "TCP";
 const transporter = null;
@@ -22,8 +21,8 @@ const transporter = null;
 // 	logLevel: "warn"
 // 	//metrics: true
 // });
-const start =  async function() {
-  let response = await fetch("https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json");
+const start = async function() {
+  let response = await fetch('https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json');
   let config = await response.json();
   console.log(config);
 
@@ -40,7 +39,8 @@ const start =  async function() {
       sparqlEndpoint: config.sparql_endpoint
     }
   });
-  broker.createService({
+
+  const routerService = broker.createService({
     mixins: ApiGatewayService,
     settings: {
       middleware: true,
@@ -51,19 +51,27 @@ const start =  async function() {
 
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
 
-  setInterval(() => {
-    let payload = {
-      a: Math.random(0, 100),
-      b: Math.random(0, 100)
-    };
-    broker
-      .call('math.add', payload)
-      .then(res => {
-        console.log('brocker call result : ', res);
-      })
-      .catch(err => {
-        throw err;
-      });
-  }, 1000);
+  const app = express();
+  app.use(routerService.express());
+
+  app.listen(3000, err => {
+    if (err) return console.error(err);
+    console.log('Listening on http://localhost:3000');
+  });
+
+  // setInterval(() => {
+  //   let payload = {
+  //     a: Math.random(0, 100),
+  //     b: Math.random(0, 100)
+  //   };
+  //   broker
+  //     .call('math.add', payload)
+  //     .then(res => {
+  //       console.log('brocker call result : ', res);
+  //     })
+  //     .catch(err => {
+  //       throw err;
+  //     });
+  // }, 10000);
 };
 start();
