@@ -13,6 +13,6 @@
     "@semapps/dummyservicemath": "^1.0.0",
     "moleculer": "^0.13.11",
     "moleculer-web": "^0.8.5",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.0"
   }
 }

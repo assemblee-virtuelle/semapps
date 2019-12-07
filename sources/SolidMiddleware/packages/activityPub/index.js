@@ -47,6 +47,7 @@ module.exports = {
       }
     },
     async list() {
+      // console.log(this.settings.sparqlEndpoint);
       return await this.getTriples(`
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 PREFIX as: <https://www.w3.org/ns/activitystreams#>
