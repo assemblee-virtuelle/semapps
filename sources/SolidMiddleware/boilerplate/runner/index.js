@@ -10,22 +10,13 @@ const hostname = os.hostname();
 const fetch = require('node-fetch');
 const express = require('express');
 
-// let transporter = process.env.TRANSPORTER || "TCP";
-const transporter = null;
-
-// Create broker
-// let broker = new ServiceBroker({
-// 	namespace: "loadtest",
-// 	nodeID: process.argv[2] || hostname + "-server",
-// 	transporter,
-// 	logger: console,
-// 	logLevel: "warn"
-// 	//metrics: true
-// });
 const start = async function() {
-  let response = await fetch('https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json');
-  let config = await response.json();
+  const response = await fetch('https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json');
+  const config = await response.json();
   console.log(config);
+
+  // let transporter = process.env.TRANSPORTER || "TCP";
+  const transporter = null;
 
   const broker = new ServiceBroker({
     nodeID: process.argv[2] || hostname + '-server',
@@ -35,19 +26,18 @@ const start = async function() {
 
   broker.createService(dummyServiceMath);
   broker.createService(OutboxService, {
-        settings: {
-            homeUrl: config.home_url || 'http://localhost:3000/'
-        }
+    settings: {
+      homeUrl: config.homeUrl || 'http://localhost:3000/'
+    }
   });
   broker.createService(TripleStoreService, {
-        settings: {
-            sparqlEndpoint: config.sparql_endpoint,
-            sparqlHeaders: {
-                Authorization: 'Basic ' + Buffer.from('admin:admin').toString('base64')
-            }
-        }
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      sparqlHeaders: {
+        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
+      }
+    }
   });
-
   const routerService = broker.createService({
     mixins: ApiGatewayService,
     settings: {
@@ -55,6 +45,7 @@ const start = async function() {
       routes: [ActivityPubRoutes]
     }
   });
+
   broker.start();
 
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
