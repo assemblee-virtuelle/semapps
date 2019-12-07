@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "node ./boilerplate/runner",
+    "dev" : "nodemon ./boilerplate/runner/index.js",
     "bootstrap": "lerna bootstrap",
     "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'"
   },

@@ -2,7 +2,7 @@
 
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const dummyServiceMath = require('@semapps/dummyservicemath');
+const ldp = require('@semapps/ldp');
 const activityPub = require('@semapps/activitypub');
 const os = require('os');
 const hostname = os.hostname();
@@ -22,56 +22,51 @@ const transporter = null;
 // 	//metrics: true
 // });
 const start = async function() {
-  let response = await fetch('https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json');
+  let response = await fetch(process.env.CONFIG_URL);
   let config = await response.json();
   console.log(config);
 
+  // Broke init
   const broker = new ServiceBroker({
     nodeID: process.argv[2] || hostname + '-server',
     logger: console,
     transporter: transporter
   });
 
-  broker.createService(dummyServiceMath);
-  broker.createService(activityPub, {
+  // LDP Service
+  broker.createService(ldp,{
     settings: {
-      homeUrl: config.home_url || 'http://localhost:3000/',
+      homeUrl: config.home_url,
       sparqlEndpoint: config.sparql_endpoint
     }
   });
-
-  const routerService = broker.createService({
+  broker.createService({
     mixins: ApiGatewayService,
     settings: {
-      middleware: true,
+      port:8080,
+      routes: [ldp.routes]
+    }
+  });
+
+  // ActivityPub service
+  broker.createService(activityPub, {
+    settings: {
+      homeUrl: config.home_url,
+      sparqlEndpoint: config.sparql_endpoint
+    }
+  });
+  broker.createService({
+    mixins: ApiGatewayService,
+    settings: {
+      port:3000,
       routes: [activityPub.routes]
     }
   });
+
+  // start
   broker.start();
 
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
 
-  const app = express();
-  app.use(routerService.express());
-
-  app.listen(3000, err => {
-    if (err) return console.error(err);
-    console.log('Listening on http://localhost:3000');
-  });
-
-  // setInterval(() => {
-  //   let payload = {
-  //     a: Math.random(0, 100),
-  //     b: Math.random(0, 100)
-  //   };
-  //   broker
-  //     .call('math.add', payload)
-  //     .then(res => {
-  //       console.log('brocker call result : ', res);
-  //     })
-  //     .catch(err => {
-  //       throw err;
-  //     });
-  // }, 10000);
 };
 start();

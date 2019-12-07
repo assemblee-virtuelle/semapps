@@ -1,7 +1,6 @@
 'use strict';
 
-const jsonld = require('jsonld');
-const uuid = require('uuid/v1');
+
 const fetch = require('node-fetch');
 
 module.exports = {
@@ -12,7 +11,8 @@ module.exports = {
     }
   },
   actions: {
-    async list() {
+    async list(ctx) {
+      ctx.meta.$responseType = "text/turtle";
       return await this.getTriples(`
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -37,15 +37,18 @@ module.exports = {
   },
   methods: {
     getTriples(query) {
-      return new Promise((resolve, reject) => async {
+      console.log(query);
+      return new Promise(async (resolve, reject) =>  {
         try {
-          let result= await fetch(this.settings.sparqlEndpoint + 'query', {
+          let response= await fetch(this.settings.sparqlEndpoint + 'query', {
             method: 'POST',
             body: query,
             headers: {
               'Content-Type': 'application/sparql-query'
             }
           })
+          let result=response.text()
+          console.log(result);
           resolve(result);
         } catch (e) {
           reject(e);
