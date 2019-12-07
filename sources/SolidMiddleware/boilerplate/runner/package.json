@@ -10,8 +10,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
-    "@semapps/ldp": "^1.0.0",
+    "@semapps/dummyservicemath": "^1.0.0",
+    "express": "^4.17.1",
     "moleculer": "^0.13.11",
-    "moleculer-web": "^0.8.5"
+    "moleculer-web": "^0.8.5",
+    "node-fetch": "^2.6.0"
   }
 }
