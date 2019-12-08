@@ -27,9 +27,9 @@ module.exports = {
     async query({ params }) {
       const result = await fetch(this.settings.sparqlEndpoint + 'query', {
         method: 'POST',
-        body: 'query=' + params.query,
+        body: params.query,
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'Content-Type': 'application/sparql-query',
           ...this.settings.sparqlHeaders
         }
       });
