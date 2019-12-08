@@ -22,6 +22,8 @@ services:
       dockerfile: Dockerfile
     container_name: solid
     restart: always
+    depends_on:
+      - "fuseki"
     environment:
         - CONFIG_URL=https://assemblee-virtuelle.gitlab.io/semappsconfig/compose.json
     volumes:

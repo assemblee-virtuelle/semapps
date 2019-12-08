@@ -1,7 +1,29 @@
-# install
+# SemApps Middleware
 
-npx lerna bootstrap
+### Install
 
-# run
+```
+npm run bootstrap
+```
 
-node ./packages/runner/index.js
+### Run
+
+```
+cd boilerplate/runner
+npm start
+```
+
+### Add package
+
+```
+cd packages/activitypub
+lerna add jsonld
+```
+
+### Cleanup code
+
+Please do this before every PR submission.
+
+```
+npm run prettier
+```

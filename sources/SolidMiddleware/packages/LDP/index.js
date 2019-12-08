@@ -10,6 +10,7 @@ module.exports = {
       'GET activities': 'ldp.list'
     }
   },
+  dependencies: ['triplestore'],
   actions: {
     async list(ctx) {
       ctx.meta.$responseType = "text/turtle";

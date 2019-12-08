@@ -1,0 +1,11 @@
+{
+  "name": "@semapps/triplestore",
+  "version": "1.0.0",
+  "description": "Triple store module for SemApps",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "jsonld": "^1.8.1",
+    "node-fetch": "^2.6.0",
+    "sparqljson-parse": "^1.5.1"
+  }
+}

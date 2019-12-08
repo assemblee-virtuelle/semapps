@@ -1,35 +1,24 @@
 'use strict';
 
-const {
-  ServiceBroker
-} = require('moleculer');
+const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const ldp = require('@semapps/ldp');
-const activityPub = require('@semapps/activitypub');
 const adminFuseki = require('@semapps/adminfuseki');
+const { OutboxService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
+const TripleStoreService = require('@semapps/triplestore');
 const os = require('os');
 const hostname = os.hostname();
 const fetch = require('node-fetch');
 const express = require('express');
 
-// let transporter = process.env.TRANSPORTER || "TCP";
-const transporter = null;
-
-// Create broker
-// let broker = new ServiceBroker({
-// 	namespace: "loadtest",
-// 	nodeID: process.argv[2] || hostname + "-server",
-// 	transporter,
-// 	logger: console,
-// 	logLevel: "warn"
-// 	//metrics: true
-// });
 const start = async function() {
-  let response = await fetch(process.env.CONFIG_URL);
-  let config = await response.json();
+  let urlConfig = process.env.CONFIG_URL ||  'https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json'
+  const response = await fetch(urlConfig);
+  const config = await response.json();
   console.log(config);
 
   // Broker init
+  const transporter = null;
   const broker = new ServiceBroker({
     nodeID: process.argv[2] || hostname + '-server',
     logger: console,
@@ -53,15 +42,25 @@ const start = async function() {
     }
   });
 
-  // ActivityPub service
-  await broker.createService(activityPub, {
-    settings: config
+  await broker.createService(OutboxService, {
+    settings: {
+      homeUrl: config.homeUrl || 'http://localhost:3000/'
+    }
+  });
+  await broker.createService(TripleStoreService, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset : config.mainDataset,
+      sparqlHeaders: {
+        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
+      }
+    }
   });
   await broker.createService({
     mixins: ApiGatewayService,
     settings: {
       port: 3000,
-      routes: [activityPub.routes]
+      routes: [ActivityPubRoutes]
     }
   });
 
