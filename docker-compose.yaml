@@ -10,6 +10,8 @@ services:
       - staging:/staging
     ports:
       - "3030:3030"
+    expose:
+      - "3030"
     networks:
       - semapps
     environment:

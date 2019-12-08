@@ -7,13 +7,13 @@ module.exports = {
   name: 'ldp',
   routes: {
     aliases: {
-      'GET ldp': 'ldp.list'
+      'GET activities': 'ldp.list'
     }
   },
   actions: {
     async list(ctx) {
       ctx.meta.$responseType = "text/turtle";
-      return await this.getTriples(`
+      let result =  await this.getTriples(`
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
         CONSTRUCT {
@@ -33,27 +33,26 @@ module.exports = {
         	as:published ?published.
         }
             `);
+      console.log(result);
+      return result;
     }
   },
   methods: {
     getTriples(query) {
       console.log(query);
-      return new Promise(async (resolve, reject) =>  {
+      return new Promise(async (resolve, reject) => {
         try {
-          let response= await fetch(this.settings.sparqlEndpoint + 'query', {
+          let response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset+'/query', {
             method: 'POST',
             body: query,
             headers: {
               'Content-Type': 'application/sparql-query'
             }
           })
-          let result=response.text()
-          console.log(result);
+          let result = response.text();
           resolve(result);
         } catch (e) {
           reject(e);
-        } finally {
-
         }
       })
     }

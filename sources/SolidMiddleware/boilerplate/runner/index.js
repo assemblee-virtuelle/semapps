@@ -1,9 +1,12 @@
 'use strict';
 
-const { ServiceBroker } = require('moleculer');
+const {
+  ServiceBroker
+} = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const ldp = require('@semapps/ldp');
 const activityPub = require('@semapps/activitypub');
+const adminFuseki = require('@semapps/adminfuseki');
 const os = require('os');
 const hostname = os.hostname();
 const fetch = require('node-fetch');
@@ -26,46 +29,46 @@ const start = async function() {
   let config = await response.json();
   console.log(config);
 
-  // Broke init
+  // Broker init
   const broker = new ServiceBroker({
     nodeID: process.argv[2] || hostname + '-server',
     logger: console,
     transporter: transporter
   });
 
-  // LDP Service
-  broker.createService(ldp,{
-    settings: {
-      homeUrl: config.home_url,
-      sparqlEndpoint: config.sparql_endpoint
-    }
+  //utils
+  await broker.createService(adminFuseki, {
+    settings: config
   });
-  broker.createService({
+
+  // LDP Service
+  await broker.createService(ldp, {
+    settings: config
+  });
+  await broker.createService({
     mixins: ApiGatewayService,
     settings: {
-      port:8080,
+      port: 8080,
       routes: [ldp.routes]
     }
   });
 
   // ActivityPub service
-  broker.createService(activityPub, {
-    settings: {
-      homeUrl: config.home_url,
-      sparqlEndpoint: config.sparql_endpoint
-    }
+  await broker.createService(activityPub, {
+    settings: config
   });
-  broker.createService({
+  await broker.createService({
     mixins: ApiGatewayService,
     settings: {
-      port:3000,
+      port: 3000,
       routes: [activityPub.routes]
     }
   });
 
   // start
-  broker.start();
+  await broker.start();
 
+  await broker.call('adminFuseki.initDataset',{dataset:config.mainDataset});
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
 
 };
