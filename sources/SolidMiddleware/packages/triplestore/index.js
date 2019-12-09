@@ -15,7 +15,7 @@ module.exports = {
       // Transforms JSONLD to RDF
       const rdf = await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
 
-      return await fetch(this.settings.sparqlEndpoint +this.settings.mainDataset+ '/update', {
+      return await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `INSERT DATA { ${rdf} }`,
         headers: {
@@ -25,7 +25,7 @@ module.exports = {
       });
     },
     async query({ params }) {
-      const result = await fetch(this.settings.sparqlEndpoint +this.settings.mainDataset+ '/query', {
+      const result = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
         method: 'POST',
         body: params.query,
         headers: {

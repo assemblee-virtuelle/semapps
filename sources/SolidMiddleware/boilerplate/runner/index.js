@@ -12,7 +12,7 @@ const fetch = require('node-fetch');
 const express = require('express');
 
 const start = async function() {
-  let urlConfig = process.env.CONFIG_URL ||  'https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json'
+  let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json';
   const response = await fetch(urlConfig);
   const config = await response.json();
   console.log(config);
@@ -42,18 +42,10 @@ const start = async function() {
     }
   });
 
+  // ActivityPub
   await broker.createService(OutboxService, {
     settings: {
       homeUrl: config.homeUrl || 'http://localhost:3000/'
-    }
-  });
-  await broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset : config.mainDataset,
-      sparqlHeaders: {
-        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
-      }
     }
   });
   await broker.createService({
@@ -64,11 +56,21 @@ const start = async function() {
     }
   });
 
+  //TripleStore
+  await broker.createService(TripleStoreService, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset: config.mainDataset,
+      sparqlHeaders: {
+        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
+      }
+    }
+  });
+
   // start
   await broker.start();
 
-  await broker.call('adminFuseki.initDataset',{dataset:config.mainDataset});
+  await broker.call('adminFuseki.initDataset', { dataset: config.mainDataset });
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
-
 };
 start();
