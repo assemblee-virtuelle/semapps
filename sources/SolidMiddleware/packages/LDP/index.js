@@ -85,19 +85,7 @@ module.exports = {
       });
 
       return result;
-    }
-  },
 
-  methods: {
-    async getTriples(query) {
-      let response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
-        method: 'POST',
-        body: query,
-        headers: {
-          'Content-Type': 'application/sparql-query'
-        }
-      });
-      return response.text();
-    }
+    },
   }
 };
