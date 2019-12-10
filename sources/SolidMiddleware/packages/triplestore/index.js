@@ -14,8 +14,9 @@ module.exports = {
   actions: {
     async insert({ params }) {
       // Transforms JSONLD to RDF
-      const rdf = await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
-
+      const rdf = await jsonld.toRDF(params.resource, {
+        format: 'application/n-quads'
+      });
       return await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `INSERT DATA { ${rdf} }`,
@@ -34,11 +35,27 @@ module.exports = {
           Authorization: this.Authorization
         }
       });
-
-      const jsonResult = await result.json();
-
+      let out;
+      if (params.query.includes('SELECT')) {
+        console.log('ALLO');
+        const jsonResult = await result.json();
+        if (params.accept.includes('json')) {
+          out = await this.sparqlJsonParser.parseJsonResults(jsonResult);
+        } else {
+          out = jsonResult;
+        }
+      } else if (params.query.includes('CONSTRUCT')) {
+        const rdfResult = await result.text();
+        if (params.accept.includes('turtle')) {
+          out = rdfResult;
+        } else if (params.accept.includes('json')) {
+          out = await jsonld.fromRDF(rdfResult);
+        } else {
+          out = rdfResult;
+        }
+      }
       // Return more readable JSON results
-      return await this.sparqlJsonParser.parseJsonResults(jsonResult);
+      return out;
     }
   },
   started() {
