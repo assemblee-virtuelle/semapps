@@ -35,3 +35,9 @@ stop: docker-stop
 restart: docker-restart
 
 build: docker-build
+
+prettier:
+	npm run prettier --prefix ./sources/SolidMiddleware
+
+bootstrap:
+	npm run bootstrap --prefix ./sources/SolidMiddleware

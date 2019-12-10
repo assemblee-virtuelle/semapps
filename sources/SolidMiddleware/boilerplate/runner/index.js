@@ -27,20 +27,27 @@ const start = async function() {
 
   //utils
   await broker.createService(adminFuseki, {
-    settings: config
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      jenaUser: config.jenaUser,
+      jenaPassword: config.jenaPassword
+    }
   });
 
   // LDP Service
   await broker.createService(ldp, {
-    settings: config
-  });
-  await broker.createService({
-    mixins: ApiGatewayService,
     settings: {
-      port: 8080,
-      routes: [ldp.routes]
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset: config.mainDataset
     }
   });
+  // await broker.createService({
+  //   mixins: ApiGatewayService,
+  //   settings: {
+  //     port: 8080,
+  //     routes: [ldp.routes]
+  //   }
+  // });
 
   // ActivityPub
   await broker.createService(OutboxService, {
@@ -48,11 +55,13 @@ const start = async function() {
       homeUrl: config.homeUrl || 'http://localhost:3000/'
     }
   });
+
+  //HTTP interface
   await broker.createService({
     mixins: ApiGatewayService,
     settings: {
       port: 3000,
-      routes: [ActivityPubRoutes]
+      routes: [ActivityPubRoutes, ldp.routes]
     }
   });
 
@@ -61,16 +70,18 @@ const start = async function() {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
-      sparqlHeaders: {
-        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
-      }
+      jenaUser: config.jenaUser,
+      jenaPassword: config.jenaPassword
     }
   });
 
   // start
   await broker.start();
 
-  await broker.call('adminFuseki.initDataset', { dataset: config.mainDataset });
+  await broker.call('adminFuseki.initDataset', {
+    dataset: config.mainDataset
+  });
+
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
 };
 start();

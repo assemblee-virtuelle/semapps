@@ -36,7 +36,7 @@ services:
     expose:
       - "8080"
       - "3000"
-    command: npm run dev --prefix ./boilerplate/runner
+    command: npm run start --prefix ./boilerplate/runner
 
 volumes:
   rdf_data:

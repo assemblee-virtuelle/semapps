@@ -8,7 +8,8 @@ module.exports = {
   name: 'triplestore',
   settings: {
     sparqlEndpoint: null,
-    sparqlHeaders: {}
+    jenaUser: null,
+    jenaPassword: null
   },
   actions: {
     async insert({ params }) {
@@ -20,7 +21,7 @@ module.exports = {
         body: `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          ...this.settings.sparqlHeaders
+          Authorization: this.Authorization
         }
       });
     },
@@ -30,7 +31,7 @@ module.exports = {
         body: params.query,
         headers: {
           'Content-Type': 'application/sparql-query',
-          ...this.settings.sparqlHeaders
+          Authorization: this.Authorization
         }
       });
 
@@ -42,5 +43,7 @@ module.exports = {
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
+    this.Authorization =
+      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };

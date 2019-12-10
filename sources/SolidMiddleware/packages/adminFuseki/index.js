@@ -4,13 +4,17 @@ const fetch = require('node-fetch');
 
 module.exports = {
   name: 'adminFuseki',
+  settings: {
+    sparqlEndpoint: null,
+    jenaUser: null,
+    jenaPassword: null
+  },
   actions: {
     async initDataset(ctx) {
       let response = await fetch(this.settings.sparqlEndpoint + '$/datasets/' + ctx.params.dataset, {
         method: 'GET',
         headers: {
-          Authorization:
-            'Basic ' + Buffer.from(`${this.settings.jenaUser}:${this.settings.jenaPassword}`).toString('base64')
+          Authorization: this.Authorization
         }
       });
       if (response.status === 404) {
@@ -20,8 +24,7 @@ module.exports = {
           {
             method: 'POST',
             headers: {
-              Authorization:
-                'Basic ' + Buffer.from(`${this.settings.jenaUser}:${this.settings.jenaPassword}`).toString('base64')
+              Authorization: this.Authorization
             }
           }
         );
@@ -38,5 +41,9 @@ module.exports = {
       }
       return;
     }
+  },
+  started() {
+    this.Authorization =
+      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };

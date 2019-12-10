@@ -4,7 +4,12 @@ const fetch = require('node-fetch');
 
 module.exports = {
   name: 'ldp',
+  settings: {
+    sparqlEndpoint: null,
+    mainDataset: null
+  },
   routes: {
+    path: '/',
     aliases: {
       'GET activities': 'ldp.list'
     }
