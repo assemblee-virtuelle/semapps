@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { List } from "@solid/react";
 import './App.css';
 
 const App = () => {
@@ -39,6 +40,12 @@ const App = () => {
                 <input value={title} onChange={e => setTitle(e.target.value)}/>
                 <textarea rows="7" value={content} onChange={e => setContent(e.target.value)}/>
                 <button onClick={sendNote}>Envoyer le message</button>
+            </div>
+            <p className="App-section">Ruben's friends</p>
+            <div className="App-form">
+              <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
+                {item => <span>{`${item}`} </span>}
+              </List>
             </div>
         </div>
     );
