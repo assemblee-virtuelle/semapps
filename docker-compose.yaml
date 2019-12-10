@@ -1,0 +1,46 @@
+version: '3.5'
+services:
+  fuseki:
+    # user: fuseki
+    image: stain/jena-fuseki
+    container_name: fuseki
+    restart: always
+    volumes:
+      - rdf_data:/fuseki
+      - staging:/staging
+    ports:
+      - "3030:3030"
+    expose:
+      - "3030"
+    networks:
+      - semapps
+    environment:
+      ADMIN_PASSWORD: "admin"
+  solid:
+    build:
+      context: ./sources/SolidMiddleware
+      dockerfile: Dockerfile
+    container_name: solid
+    restart: always
+    depends_on:
+      - "fuseki"
+    environment:
+        - CONFIG_URL=https://assemblee-virtuelle.gitlab.io/semappsconfig/compose.json
+    volumes:
+      - ./sources/SolidMiddleware:/main/
+    networks:
+      - semapps
+    ports:
+      - "8080:8080"
+      - "3000:3000"
+    expose:
+      - "8080"
+      - "3000"
+    command: npm run start --prefix ./boilerplate/runner
+
+volumes:
+  rdf_data:
+  staging:
+networks:
+  semapps:
+    name: semapps_network

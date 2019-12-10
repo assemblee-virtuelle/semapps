@@ -8,29 +8,30 @@ module.exports = {
   name: 'triplestore',
   settings: {
     sparqlEndpoint: null,
-    sparqlHeaders: {}
+    jenaUser: null,
+    jenaPassword: null
   },
   actions: {
     async insert({ params }) {
       // Transforms JSONLD to RDF
       const rdf = await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
 
-      return await fetch(this.settings.sparqlEndpoint + 'update', {
+      return await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          ...this.settings.sparqlHeaders
+          Authorization: this.Authorization
         }
       });
     },
     async query({ params }) {
-      const result = await fetch(this.settings.sparqlEndpoint + 'query', {
+      const result = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
         method: 'POST',
         body: params.query,
         headers: {
           'Content-Type': 'application/sparql-query',
-          ...this.settings.sparqlHeaders
+          Authorization: this.Authorization
         }
       });
 
@@ -42,5 +43,7 @@ module.exports = {
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
+    this.Authorization =
+      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };

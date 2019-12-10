@@ -8,7 +8,7 @@ const { ACTIVITY_TYPES } = require('../constants');
 module.exports = {
   name: 'activitypub.outbox',
   settings: {
-    homeUrl: 'http://localhost:3000/'
+    homeUrl: null
   },
   dependencies: ['triplestore'],
   actions: {

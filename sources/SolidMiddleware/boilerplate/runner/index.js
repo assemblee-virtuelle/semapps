@@ -2,7 +2,8 @@
 
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const dummyServiceMath = require('@semapps/dummyservicemath');
+const ldp = require('@semapps/ldp');
+const adminFuseki = require('@semapps/adminfuseki');
 const { OutboxService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const os = require('os');
@@ -11,52 +12,76 @@ const fetch = require('node-fetch');
 const express = require('express');
 
 const start = async function() {
-  const response = await fetch('https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json');
+  let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json';
+  const response = await fetch(urlConfig);
   const config = await response.json();
   console.log(config);
 
-  // let transporter = process.env.TRANSPORTER || "TCP";
+  // Broker init
   const transporter = null;
-
   const broker = new ServiceBroker({
     nodeID: process.argv[2] || hostname + '-server',
     logger: console,
     transporter: transporter
   });
 
-  broker.createService(dummyServiceMath);
-  broker.createService(OutboxService, {
+  //utils
+  await broker.createService(adminFuseki, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      jenaUser: config.jenaUser,
+      jenaPassword: config.jenaPassword
+    }
+  });
+
+  // LDP Service
+  await broker.createService(ldp, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset: config.mainDataset
+    }
+  });
+  // await broker.createService({
+  //   mixins: ApiGatewayService,
+  //   settings: {
+  //     port: 8080,
+  //     routes: [ldp.routes]
+  //   }
+  // });
+
+  // ActivityPub
+  await broker.createService(OutboxService, {
     settings: {
       homeUrl: config.homeUrl || 'http://localhost:3000/'
     }
   });
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      sparqlHeaders: {
-        Authorization: 'Basic ' + Buffer.from(config.jenaUser + ':' + config.jenaPassword).toString('base64')
-      }
-    }
-  });
-  const routerService = broker.createService({
+
+  //HTTP interface
+  await broker.createService({
     mixins: ApiGatewayService,
     settings: {
-      middleware: true,
-      routes: [ActivityPubRoutes]
+      port: 3000,
+      routes: [ActivityPubRoutes, ldp.routes]
     }
   });
 
-  broker.start();
+  //TripleStore
+  await broker.createService(TripleStoreService, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset: config.mainDataset,
+      jenaUser: config.jenaUser,
+      jenaPassword: config.jenaPassword
+    }
+  });
+
+  // start
+  await broker.start();
+
+  await broker.call('adminFuseki.initDataset', {
+    dataset: config.mainDataset
+  });
 
   console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
-
-  const app = express();
-  app.use(routerService.express());
-
-  app.listen(3000, err => {
-    if (err) return console.error(err);
-    console.log('Listening on http://localhost:3000');
-  });
 };
-
 start();
