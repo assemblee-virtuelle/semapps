@@ -9,7 +9,6 @@ const TripleStoreService = require('@semapps/triplestore');
 const os = require('os');
 const hostname = os.hostname();
 const fetch = require('node-fetch');
-const express = require('express');
 
 const start = async function() {
   let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/local.json';
@@ -25,10 +24,20 @@ const start = async function() {
     transporter: transporter
   });
 
-  //utils
+  // Utils
   await broker.createService(adminFuseki, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
+      jenaUser: config.jenaUser,
+      jenaPassword: config.jenaPassword
+    }
+  });
+
+  // TripleStore
+  await broker.createService(TripleStoreService, {
+    settings: {
+      sparqlEndpoint: config.sparqlEndpoint,
+      mainDataset: config.mainDataset,
       jenaUser: config.jenaUser,
       jenaPassword: config.jenaPassword
     }
@@ -42,13 +51,6 @@ const start = async function() {
       homeUrl: config.homeUrl
     }
   });
-  // await broker.createService({
-  //   mixins: ApiGatewayService,
-  //   settings: {
-  //     port: 8080,
-  //     routes: [ldp.routes]
-  //   }
-  // });
 
   // ActivityPub
   await broker.createService(OutboxService, {
@@ -57,26 +59,19 @@ const start = async function() {
     }
   });
 
-  //HTTP interface
+  // HTTP interface
   await broker.createService({
     mixins: ApiGatewayService,
     settings: {
       port: 3000,
+      cors: {
+        origin: '*'
+      },
       routes: [ActivityPubRoutes, ldp.routes]
     }
   });
 
-  //TripleStore
-  await broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset,
-      jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
-    }
-  });
-
-  // start
+  // Start
   await broker.start();
 
   await broker.call('adminFuseki.initDataset', {
