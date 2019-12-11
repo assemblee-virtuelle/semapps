@@ -22,7 +22,7 @@ module.exports = {
   actions: {
     async activities(ctx) {
       ctx.meta.$responseType = 'text/turtle';
-      let result = await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -51,7 +51,7 @@ module.exports = {
     async type(ctx) {
       ctx.meta.$responseType = 'text/turtle';
 
-      let result = await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -71,7 +71,7 @@ module.exports = {
     async subject(ctx) {
       ctx.meta.$responseType = 'text/turtle';
 
-      let result = await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
