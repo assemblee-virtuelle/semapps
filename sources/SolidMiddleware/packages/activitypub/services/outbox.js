@@ -3,9 +3,7 @@
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
-const {
-  ACTIVITY_TYPES
-} = require('../constants');
+const { ACTIVITY_TYPES } = require('../constants');
 
 module.exports = {
   name: 'activitypub.outbox',
@@ -14,10 +12,7 @@ module.exports = {
   },
   dependencies: ['triplestore'],
   actions: {
-    async post({
-      params,
-      broker
-    }) {
+    async post({ params, broker }) {
       let activity;
 
       if (!ACTIVITY_TYPES.includes(params.type)) {
@@ -48,9 +43,7 @@ module.exports = {
         throw result;
       }
     },
-    async list({
-      broker
-    }) {
+    async list({ broker }) {
       const results = await broker.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
