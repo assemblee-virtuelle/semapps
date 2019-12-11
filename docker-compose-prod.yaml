@@ -27,8 +27,6 @@ services:
       - "fuseki"
     environment:
         - CONFIG_URL=$CONFIG_URL
-    volumes:
-      - ./sources/SolidMiddleware:/main/
     networks:
       - semapps
     ports:
@@ -49,8 +47,6 @@ services:
       - "solid"
     environment:
       - PORT=5000
-    volumes:
-      - ./sources/frontend:/app
     networks:
       - semapps
     ports:
