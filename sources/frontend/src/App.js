@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { List } from '@solid/react';
 import './App.css';
+import NoteService from './NoteService.js';
 
 const App = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+
+  let noteService = new NoteService();
+  noteService.getNote('http://localhost:3000/subject/61884181');
 
   const sendNote = async () => {
     const note = {
