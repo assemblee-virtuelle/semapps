@@ -37,7 +37,6 @@ module.exports = {
       });
       let out;
       if (params.query.includes('SELECT')) {
-        console.log('ALLO');
         const jsonResult = await result.json();
         if (params.accept.includes('json')) {
           out = await this.sparqlJsonParser.parseJsonResults(jsonResult);
