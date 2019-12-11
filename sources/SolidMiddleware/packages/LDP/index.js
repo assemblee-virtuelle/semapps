@@ -75,10 +75,10 @@ module.exports = {
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${this.settings.homeUrl}subject/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}subject/${ctx.params.identifier}/> ?predicate ?object.
           }
           WHERE {
-            <${this.settings.homeUrl}subject/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}subject/${ctx.params.identifier}/> ?predicate ?object.
           }
               `,
         accept: 'turtle'

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { List } from '@solid/react';
+import { List, Value } from '@solid/react';
 import './App.css';
 import NoteService from './NoteService.js';
 
@@ -8,7 +8,7 @@ const App = () => {
   const [content, setContent] = useState('');
 
   let noteService = new NoteService();
-  noteService.getNote('http://localhost:3000/subject/61884181');
+  noteService.getNote('http://localhost:3000/subject/48087761/');
 
   const sendNote = async () => {
     const note = {
@@ -43,11 +43,14 @@ const App = () => {
         <textarea rows="7" value={content} onChange={e => setContent(e.target.value)} />
         <button onClick={sendNote}>Envoyer le message</button>
       </div>
+      <Value src="[http://localhost:3000/subject/48087761/].name"/>
+      <Value src="[https://ruben.verborgh.org/profile/].label"/>
       <p className="App-section">Ruben's friends</p>
       <div className="App-form">
         <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
           {item => <span>{`${item}`} </span>}
         </List>
+
       </div>
     </div>
   );
