@@ -3,9 +3,7 @@
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
-const {
-  ACTIVITY_TYPES
-} = require('../constants');
+const { ACTIVITY_TYPES } = require('../constants');
 
 module.exports = {
   name: 'activitypub.outbox',
@@ -14,10 +12,7 @@ module.exports = {
   },
   dependencies: ['triplestore'],
   actions: {
-    async post({
-      params,
-      broker
-    }) {
+    async post({ params, broker }) {
       let activity;
 
       if (!ACTIVITY_TYPES.includes(params.type)) {
@@ -42,15 +37,21 @@ module.exports = {
         accept: 'json'
       });
 
+      if (activity.type === 'Create') {
+        // Attach the newly created object to a LDP container
+        await broker.call('ldp.attachToContainer', {
+          container: 'as:' + activity.object.type,
+          objectUri: activity.object.id
+        });
+      }
+
       if (result.status >= 200 && result.status < 300) {
         return await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
       } else {
         throw result;
       }
     },
-    async list({
-      broker
-    }) {
+    async list({ broker }) {
       const results = await broker.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
