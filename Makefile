@@ -37,6 +37,9 @@ docker-restart:
 log:
 	$(DOCKER_COMPOSE) logs -f solid fuseki
 
+log:
+	$(DOCKER_COMPOSE_PROD) logs -f solid fuseki
+
 start: docker-start
 
 start-prod: docker-start-prod
