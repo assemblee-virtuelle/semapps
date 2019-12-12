@@ -74,7 +74,7 @@ module.exports = {
   },
   methods: {
     generateId(path = '') {
-      return this.settings.homeUrl + path + uuid().substring(0, 8)+'/';
+      return this.settings.homeUrl + path + uuid().substring(0, 8);
     }
   }
 };

@@ -12,7 +12,7 @@ class NoteService {
   constructor() {
 
   }
-  async getNote(id){
+  async getNote(id,container){
     const context = {
       "@context": {
         "as": "https://www.w3.org/ns/activitystreams#",
@@ -20,7 +20,9 @@ class NoteService {
       }
     };
 
-    const queryEngine = new ComunicaEngine('http://localhost:3000/type/as:Note');
+
+
+    const queryEngine = new ComunicaEngine( container);
 
     const path = new PathFactory({
       context,
