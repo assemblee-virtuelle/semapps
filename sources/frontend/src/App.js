@@ -4,19 +4,18 @@ import './App.css';
 import NoteService from './NoteService.js';
 
 const App = () => {
-  let ldpServer = `http://${window.location.hostname}:3000`
+  let ldpServer = `http://${window.location.hostname}:3000`;
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [ldpUrl, setLdpUrl] = useState(`${ldpServer}/subject/id/`);
   const [ldflexUrl, setLdflexUrl] = useState('');
-  const [ldpContainerUrl, setLdpContainerUrl] = useState(`${ldpServer}/type/as:Note`);
+  const [ldpContainerUrl, setLdpContainerUrl] = useState(`${ldpServer}/container/as:Note`);
 
-
-  const getData = async ()=>{
+  const getData = async () => {
     // let noteService = new NoteService();
     // noteService.getNote(ldpUrl, ldpContainerUrl);
-    setLdflexUrl(`[${ldpUrl}].as_content`)
-  }
+    setLdflexUrl(`[${ldpUrl}].as_content`);
+  };
 
   const sendNote = async () => {
     const note = {
@@ -53,22 +52,25 @@ const App = () => {
       </div>
 
       <div className="App-form">
-        <label>uri</label><input value={ldpUrl} onChange={e => setLdpUrl(e.target.value)} />
-        <label>container</label><input value={ldpContainerUrl} onChange={e => setLdpContainerUrl(e.target.value)} />
-        <button onClick={getData}>get data</button>
+        <label>uri</label>
+        <input value={ldpUrl} onChange={e => setLdpUrl(e.target.value)} />
+        <Value src={`[${ldpUrl}].as_content`} />
       </div>
-
+      <hr />
       <div className="App-form">
-        <Value src={ldflexUrl}/>
+        <label>container</label>
+        <input value={ldpContainerUrl} onChange={e => setLdpContainerUrl(e.target.value)} />
+        <List src={`[${ldpContainerUrl}].ldp_contains.as_content`} container={items => <div>{items}</div>}>
+          {(item, index) => <p key={index}>{`${item}`} </p>}
+        </List>
       </div>
-      <hr/>
-      <Value src="[https://ruben.verborgh.org/profile/].label"/>
+      <hr />
+      <Value src="[https://ruben.verborgh.org/profile/].label" />
       <p className="App-section">Ruben's friends</p>
       <div className="App-form">
         <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
           {item => <span>{`${item}`} </span>}
         </List>
-
       </div>
     </div>
   );
