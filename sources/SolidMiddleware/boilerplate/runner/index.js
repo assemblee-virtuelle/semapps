@@ -47,7 +47,8 @@ const start = async function() {
   await broker.createService(ldp, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset
+      mainDataset: config.mainDataset,
+      homeUrl: config.homeUrl
     }
   });
 

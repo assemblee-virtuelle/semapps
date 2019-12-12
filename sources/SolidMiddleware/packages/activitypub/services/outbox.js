@@ -18,21 +18,24 @@ module.exports = {
       if (!ACTIVITY_TYPES.includes(params.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           type: 'Create',
           object: {
-            id: this.generateId('object/'),
+            id: this.generateId('subject/'),
             ...params
           }
         };
       } else {
         activity = {
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           ...params
         };
       }
 
-      const result = await broker.call('triplestore.insert', { resource: activity });
+      const result = await broker.call('triplestore.insert', {
+        resource: activity,
+        accept: 'json'
+      });
 
       if (result.status >= 200 && result.status < 300) {
         return await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
@@ -51,7 +54,8 @@ module.exports = {
                       rdf:type ?type ;
                       as:object ?object .
           }
-        `
+        `,
+        accept: 'json'
       });
 
       const orderedCollection = {
