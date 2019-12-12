@@ -8,14 +8,7 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [ldpUrl, setLdpUrl] = useState(`${ldpServer}/subject/id/`);
-  const [ldflexUrl, setLdflexUrl] = useState('');
   const [ldpContainerUrl, setLdpContainerUrl] = useState(`${ldpServer}/container/as:Note`);
-
-  const getData = async () => {
-    // let noteService = new NoteService();
-    // noteService.getNote(ldpUrl, ldpContainerUrl);
-    setLdflexUrl(`[${ldpUrl}].as_content`);
-  };
 
   const sendNote = async () => {
     const note = {
@@ -26,7 +19,7 @@ const App = () => {
       published: '2019-05-28T12:12:12Z'
     };
 
-    const response = await fetch('http://localhost:3000/activitypub/outbox', {
+    const response = await fetch(`${ldpServer}/activitypub/outbox`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
