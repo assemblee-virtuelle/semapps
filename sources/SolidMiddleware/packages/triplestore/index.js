@@ -32,32 +32,30 @@ module.exports = {
         Authorization: this.Authorization
       };
       if (!params.accept.includes('turtle')) {
-        headers.ACCEPT = 'application/n-triples';
+        headers.Accept = 'application/n-triples';
       }
-      const result = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
         method: 'POST',
         body: params.query,
         headers: headers
       });
-      let out;
+
+      // Return results as JSON or RDF
       if (params.query.includes('SELECT')) {
-        const jsonResult = await result.json();
+        const jsonResult = await response.json();
         if (params.accept.includes('json')) {
-          out = await this.sparqlJsonParser.parseJsonResults(jsonResult);
+          return await this.sparqlJsonParser.parseJsonResults(jsonResult);
         } else {
-          out = jsonResult;
+          return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        let rdfResult = await result.text();
-        console.log(rdfResult);
+        let rdfResult = await response.text();
         if (!params.accept.includes('json')) {
-          out = rdfResult;
+          return rdfResult;
         } else {
-          out = await jsonld.fromRDF(rdfResult, { format: 'application/n-quads' });
+          return await jsonld.fromRDF(rdfResult, { format: 'application/n-quads' });
         }
       }
-      // Return more readable JSON results
-      return out;
     }
   },
   started() {
