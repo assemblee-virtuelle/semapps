@@ -7,4 +7,6 @@ RUN apk add --no-cache git
 
 RUN apk add yarn
 
+COPY . /app/
+
 CMD "./entrypoint.sh"
