@@ -1,6 +1,7 @@
 'use strict';
 
 const fetch = require('node-fetch');
+const jsonld = require('jsonld');
 
 module.exports = {
   name: 'ldp',
@@ -14,13 +15,14 @@ module.exports = {
     aliases: {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
+      'GET container/:container': 'ldp.container',
       'GET subject/:identifier': 'ldp.subject'
     }
   },
   dependencies: ['triplestore'],
   actions: {
     async activities(ctx) {
-      ctx.meta.$responseType = 'text/turtle';
+      ctx.meta.$responseType = 'application/n-triples';
       const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -48,7 +50,7 @@ module.exports = {
       return result;
     },
     async type(ctx) {
-      ctx.meta.$responseType = 'text/turtle';
+      ctx.meta.$responseType = 'application/n-triples';
 
       const result = await ctx.call('triplestore.query', {
         query: `
@@ -67,8 +69,38 @@ module.exports = {
 
       return result;
     },
+
+    async container(ctx) {
+      ctx.meta.$responseType = 'application/ld+json';
+
+      let result = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          CONSTRUCT {
+            ?suject ?predicate ?object.
+          }
+          WHERE {
+            ?suject rdf:type ${ctx.params.container} ;
+              ?predicate ?object.
+          }
+              `,
+        accept: 'json'
+      });
+      let out = {
+        '@context': {
+          as: 'https://www.w3.org/ns/activitystreams#',
+          ldp: 'http://www.w3.org/ns/ldp#'
+        },
+        '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
+        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        'ldp:contains': result
+      };
+
+      return out;
+    },
     async subject(ctx) {
-      ctx.meta.$responseType = 'text/turtle';
+      ctx.meta.$responseType = 'application/n-triples';
       const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
