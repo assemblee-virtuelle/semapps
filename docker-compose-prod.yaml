@@ -1,0 +1,62 @@
+version: '3.5'
+services:
+  fuseki:
+    # user: fuseki
+    image: stain/jena-fuseki
+    container_name: fuseki
+    restart: always
+    volumes:
+      - rdf_data:/fuseki
+      - staging:/staging
+    ports:
+      - "3030:3030"
+    expose:
+      - "3030"
+    networks:
+      - semapps
+    environment:
+      ADMIN_PASSWORD: "admin"
+
+  solid:
+    build:
+      context: ./sources/SolidMiddleware
+      dockerfile: Dockerfile
+    container_name: solid
+    restart: always
+    depends_on:
+      - "fuseki"
+    environment:
+        - CONFIG_URL=$CONFIG_URL
+    networks:
+      - semapps
+    ports:
+      - "8080:8080"
+      - "3000:3000"
+    expose:
+      - "8080"
+      - "3000"
+    command: npm run start --prefix ./boilerplate/runner
+
+  frontend:
+    build:
+      context: ./sources/frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
+    depends_on:
+      - "solid"
+    environment:
+      - PORT=5000
+    networks:
+      - semapps
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+
+volumes:
+  rdf_data:
+  staging:
+networks:
+  semapps:
+    name: semapps_network

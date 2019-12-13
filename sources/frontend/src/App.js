@@ -1,10 +1,22 @@
 import React, { useState } from 'react';
-import { List } from '@solid/react';
+import { List, Value } from '@solid/react';
 import './App.css';
+import NoteService from './NoteService.js';
 
 const App = () => {
+  let ldpServer = `http://${window.location.hostname}:3000`
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [ldpUrl, setLdpUrl] = useState(`${ldpServer}/subject/id/`);
+  const [ldflexUrl, setLdflexUrl] = useState('');
+  const [ldpContainerUrl, setLdpContainerUrl] = useState(`${ldpServer}/type/as:Note`);
+
+
+  const getData = async ()=>{
+    // let noteService = new NoteService();
+    // noteService.getNote(ldpUrl, ldpContainerUrl);
+    setLdflexUrl(`[${ldpUrl}].as_content`)
+  }
 
   const sendNote = async () => {
     const note = {
@@ -39,11 +51,24 @@ const App = () => {
         <textarea rows="7" value={content} onChange={e => setContent(e.target.value)} />
         <button onClick={sendNote}>Envoyer le message</button>
       </div>
+
+      <div className="App-form">
+        <label>uri</label><input value={ldpUrl} onChange={e => setLdpUrl(e.target.value)} />
+        <label>container</label><input value={ldpContainerUrl} onChange={e => setLdpContainerUrl(e.target.value)} />
+        <button onClick={getData}>get data</button>
+      </div>
+
+      <div className="App-form">
+        <Value src={ldflexUrl}/>
+      </div>
+      <hr/>
+      <Value src="[https://ruben.verborgh.org/profile/].label"/>
       <p className="App-section">Ruben's friends</p>
       <div className="App-form">
         <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
           {item => <span>{`${item}`} </span>}
         </List>
+
       </div>
     </div>
   );
