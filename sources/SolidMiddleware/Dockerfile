@@ -27,7 +27,6 @@ RUN cd /main/ && npm run bootstrap
 
 
 # Expose ports (for orchestrators and dynamic reverse proxies)
-EXPOSE 8080
 EXPOSE 3000
 
 # CMD [ "ls", "./boilerplate/runner/"]

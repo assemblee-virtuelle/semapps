@@ -32,10 +32,8 @@ services:
     networks:
       - semapps
     ports:
-      - "8080:8080"
       - "3000:3000"
     expose:
-      - "8080"
       - "3000"
     command: npm run start --prefix ./boilerplate/runner
 
