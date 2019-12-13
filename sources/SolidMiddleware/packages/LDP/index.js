@@ -23,7 +23,8 @@ module.exports = {
   actions: {
     async activities(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
-      const result = await ctx.call('triplestore.query', {
+
+      return await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -46,13 +47,11 @@ module.exports = {
               `,
         accept: 'turtle'
       });
-
-      return result;
     },
     async type(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
 
-      const result = await ctx.call('triplestore.query', {
+      return await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -66,42 +65,11 @@ module.exports = {
               `,
         accept: 'turtle'
       });
-
-      return result;
-    },
-
-    async container(ctx) {
-      ctx.meta.$responseType = 'application/ld+json';
-
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          CONSTRUCT {
-            ?suject ?predicate ?object.
-          }
-          WHERE {
-            ?suject rdf:type ${ctx.params.container} ;
-              ?predicate ?object.
-          }
-              `,
-        accept: 'json'
-      });
-      let out = {
-        '@context': {
-          as: 'https://www.w3.org/ns/activitystreams#',
-          ldp: 'http://www.w3.org/ns/ldp#'
-        },
-        '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': result
-      };
-
-      return out;
     },
     async subject(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
-      const result = await ctx.call('triplestore.query', {
+
+      return await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -114,8 +82,34 @@ module.exports = {
               `,
         accept: 'turtle'
       });
+    },
+    async container(ctx) {
+      ctx.meta.$responseType = 'application/ld+json';
 
-      return result;
+      const result = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          CONSTRUCT {
+            ?subject ?predicate ?object.
+          }
+          WHERE {
+            ?subject rdf:type ${ctx.params.container} ;
+              ?predicate ?object.
+          }
+              `,
+        accept: 'json'
+      });
+
+      return {
+        '@context': {
+          as: 'https://www.w3.org/ns/activitystreams#',
+          ldp: 'http://www.w3.org/ns/ldp#'
+        },
+        '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
+        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        'ldp:contains': result
+      };
     }
   }
 };
