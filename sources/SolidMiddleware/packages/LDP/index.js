@@ -86,7 +86,7 @@ module.exports = {
     async container(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const result = await ctx.call('triplestore.query', {
+      const resources = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -101,15 +101,17 @@ module.exports = {
         accept: 'json'
       });
 
-      return {
-        '@context': {
-          as: 'https://www.w3.org/ns/activitystreams#',
-          ldp: 'http://www.w3.org/ns/ldp#'
-        },
+      const container = {
+        '@context': 'http://www.w3.org/ns/ldp#',
         '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': result
+        '@type': ['Container', 'BasicContainer'],
+        'contains': resources
       };
+
+      return jsonld.compact(container, {
+        as: 'https://www.w3.org/ns/activitystreams#',
+        ldp: 'http://www.w3.org/ns/ldp#'
+      });
     }
   }
 };
