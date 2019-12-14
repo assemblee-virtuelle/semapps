@@ -5,13 +5,16 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven
 
 More information about the project http://semapps.org
 
-We welcome contributors from everywhere. Please contact us to join the team
-- we use Riot/Matrix to communicate : https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org
-
 # Usage
-## Build
+### Build
 make build
-## Start
+### Start
 make start
-## Logs
+### Logs
 make log
+
+# Contributing
+We welcome contributors from everywhere. Please contact us to join the team.
+
+- [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org)
+- [Conventions](docs/conventions.md)
