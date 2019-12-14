@@ -23,11 +23,11 @@ RUN cd /main/ && npm cache clean --force && npm install --loglevel verbose
 # add src & build configuraiton
 COPY . /main/
 RUN cd /main/ && npm run bootstrap
-# RUN cd /main/boilerplate/runner && ls
+# RUN cd /main/boilerplates/runner && ls
 
 
 # Expose ports (for orchestrators and dynamic reverse proxies)
 EXPOSE 3000
 
-# CMD [ "ls", "./boilerplate/runner/"]
-CMD [ "pm2-runtime", "./boilerplate/runner/index.js", "--name" ,"SemappSolid"]
+# CMD [ "ls", "./boilerplates/runner/"]
+CMD [ "pm2-runtime", "./boilerplates/runner/index.js", "--name" ,"SemappSolid"]

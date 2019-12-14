@@ -35,10 +35,10 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f solid fuseki
+	$(DOCKER_COMPOSE) logs -f middleware fuseki
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f solid fuseki
+	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki
 
 start: docker-start
 
@@ -55,8 +55,8 @@ build: docker-build
 build-prod: docker-build-prod
 
 prettier:
-	npm run prettier --prefix ./sources/SolidMiddleware
-	npm run prettier --prefix ./sources/frontend
+	npm run prettier --prefix ./src/middleware
+	npm run prettier --prefix ./src/frontend
 
 bootstrap:
-	npm run bootstrap --prefix ./sources/SolidMiddleware
+	npm run bootstrap --prefix ./src/middleware
