@@ -50,12 +50,13 @@ stop-prod: docker-stop-prod
 
 restart: docker-restart
 
-build:
-	npm install --prefix ./src/middleware
-	make bootstrap
-	make docker-build
+build: docker-build
 
 build-prod: docker-build-prod
+
+init :
+	npm install --prefix ./src/middleware
+	make bootstrap
 
 prettier:
 	npm run prettier --prefix ./src/middleware
