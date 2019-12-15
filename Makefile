@@ -35,10 +35,10 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f solid fuseki
+	$(DOCKER_COMPOSE) logs -f middleware fuseki frontend
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f solid fuseki
+	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend
 
 start: docker-start
 
