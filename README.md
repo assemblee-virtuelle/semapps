@@ -6,12 +6,33 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven
 More information about the project http://semapps.org
 
 # Usage
-### Build
+## First time
+```
 make build
-### Start
 make start
+```
+## All commands
+### Build
+```
+make build
+```
+### Start
+```
+make start
+```
 ### Logs
+```
 make log
+```
+### Stop
+```
+make stop
+```
+## Cleanup code
+Please do this before every PR submission.
+```
+make prettier
+```
 
 # Contributing
 We welcome contributors from everywhere. Please contact us to join the team.
