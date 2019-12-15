@@ -2,8 +2,8 @@
 
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const ldp = require('@semapps/ldp');
-const adminFuseki = require('@semapps/adminfuseki');
+const LdpService = require('@semapps/ldp');
+const FusekiAdminService = require('@semapps/fuseki-admin');
 const { OutboxService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const os = require('os');
@@ -25,7 +25,7 @@ const start = async function() {
   });
 
   // Utils
-  await broker.createService(adminFuseki, {
+  await broker.createService(FusekiAdminService, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       jenaUser: config.jenaUser,
@@ -44,7 +44,7 @@ const start = async function() {
   });
 
   // LDP Service
-  await broker.createService(ldp, {
+  await broker.createService(LdpService, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
@@ -67,14 +67,14 @@ const start = async function() {
       cors: {
         origin: '*'
       },
-      routes: [ActivityPubRoutes, ldp.routes]
+      routes: [ActivityPubRoutes, LdpService.routes]
     }
   });
 
   // Start
   await broker.start();
 
-  await broker.call('adminFuseki.initDataset', {
+  await broker.call('fuseki-admin.initDataset', {
     dataset: config.mainDataset
   });
 

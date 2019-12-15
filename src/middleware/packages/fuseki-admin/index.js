@@ -3,7 +3,7 @@
 const fetch = require('node-fetch');
 
 module.exports = {
-  name: 'adminFuseki',
+  name: 'fuseki-admin',
   settings: {
     sparqlEndpoint: null,
     jenaUser: null,

@@ -1,6 +1,5 @@
 'use strict';
 
-const fetch = require('node-fetch');
 const jsonld = require('jsonld');
 
 module.exports = {

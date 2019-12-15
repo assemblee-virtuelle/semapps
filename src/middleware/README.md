@@ -9,7 +9,7 @@ npm run bootstrap
 ### Run
 
 ```
-cd boilerplate/runner
+cd boilerplates/runner
 npm start
 ```
 
