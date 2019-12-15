@@ -6,13 +6,12 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven
 More information about the project http://semapps.org
 
 # Usage
-## First time
+## First time (mandatory to dev, not to deploy)
 ```
-make build
-make start
+make init
 ```
-## All commands
-### Build
+## All dev commands
+### Build (not mandatory to start)
 ```
 make build
 ```
