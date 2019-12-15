@@ -31,7 +31,7 @@ make stop
 ## Cleanup code
 Please do this before every PR submission.
 ```
-npm run prettier
+make prettier
 ```
 
 # Contributing
