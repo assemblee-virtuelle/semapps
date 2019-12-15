@@ -14,7 +14,7 @@ module.exports = {
     aliases: {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
-      'GET container/:container': 'ldp.container',
+      'GET container/:container': 'ldp.automaticContainer',
       'GET subject/:identifier': 'ldp.subject'
     }
   },
@@ -82,10 +82,13 @@ module.exports = {
         accept: 'turtle'
       });
     },
-    async container(ctx) {
+    /*
+     * Returns a container constructed by the middleware, making a SparQL query on the fly
+     */
+    async automaticContainer(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const resources = await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -100,16 +103,60 @@ module.exports = {
         accept: 'json'
       });
 
-      const container = {
-        '@context': 'http://www.w3.org/ns/ldp#',
+      return {
+        '@context': {
+          as: 'https://www.w3.org/ns/activitystreams#',
+          ldp: 'http://www.w3.org/ns/ldp#'
+        },
         '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
-        '@type': ['Container', 'BasicContainer'],
-        'contains': resources
+        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        'ldp:contains': result
+      };
+    },
+    /*
+     * Returns a LDP container persisted in the triple store
+     * @param containerUri The full URI of the container
+     */
+    async standardContainer(ctx) {
+      ctx.meta.$responseType = 'application/n-triples';
+
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          CONSTRUCT {
+            ?container ldp:contains ?subject .
+          	?subject ?predicate ?object .
+          }
+          WHERE {
+            <${ctx.params.containerUri}> 
+                a ldp:BasicContainer ;
+          	    ldp:contains ?subject .
+          	?container ldp:contains ?subject .
+            ?subject ?predicate ?object .
+          }
+              `,
+        accept: 'turtle'
+      });
+    },
+    /*
+     * Attach an object to a standard container
+     * @param objectUri The full URI of the object to store
+     * @param containerUri The full URI of the container where to store the object
+     */
+    async attachToContainer(ctx) {
+      // Use a JSON-LD because this is currently the only type supported for INSERT operations
+      const container = {
+        '@context': 'http://www.w3.org/ns/ldp',
+        id: ctx.params.containerUri,
+        type: ['Container', 'BasicContainer'],
+        contains: ctx.params.objectUri
       };
 
-      return jsonld.compact(container, {
-        as: 'https://www.w3.org/ns/activitystreams#',
-        ldp: 'http://www.w3.org/ns/ldp#'
+      return await ctx.call('triplestore.insert', {
+        resource: container,
+        accept: 'json'
       });
     }
   }

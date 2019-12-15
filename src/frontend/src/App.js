@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { List, Value } from '@solid/react';
 import './App.css';
-import NoteService from './NoteService.js';
 
 const App = () => {
   let ldpServer = `http://${window.location.hostname}:3000`;
@@ -31,6 +30,8 @@ const App = () => {
     const activity = await response.json();
 
     alert('Activity created with ID : ' + activity.id);
+
+    window.location.reload();
   };
 
   return (
@@ -58,11 +59,12 @@ const App = () => {
         </List>
       </div>
       <hr />
-      <Value src="[https://ruben.verborgh.org/profile/].label" />
-      <p className="App-section">Ruben's friends</p>
+      <p className="App-section">
+        <Value src="[https://ruben.verborgh.org/profile/].label" />
+      </p>
       <div className="App-form">
         <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
-          {item => <span>{`${item}`} </span>}
+          {(item, index) => <span key={index}>{`${item}`} </span>}
         </List>
       </div>
     </div>
