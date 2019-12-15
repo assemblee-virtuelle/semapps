@@ -35,10 +35,10 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware fuseki
+	$(DOCKER_COMPOSE) logs -f solid fuseki
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki
+	$(DOCKER_COMPOSE_PROD) logs -f solid fuseki
 
 start: docker-start
 
@@ -50,7 +50,10 @@ stop-prod: docker-stop-prod
 
 restart: docker-restart
 
-build: docker-build
+build:
+	npm install --prefix ./src/middleware
+	make bootstrap
+	make docker-build
 
 build-prod: docker-build-prod
 
