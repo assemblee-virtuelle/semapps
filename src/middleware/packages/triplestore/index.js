@@ -14,9 +14,10 @@ module.exports = {
   },
   actions: {
     async insert({ params }) {
-      const rdf = params.accept === ACCEPT_TYPES.JSON
-      ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
-          :  params.resource;
+      const rdf =
+        params.accept === ACCEPT_TYPES.JSON
+          ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
+          : params.resource;
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
@@ -27,7 +28,7 @@ module.exports = {
         }
       });
 
-      if( !response.ok ) throw new Error(response.statusText);
+      if (!response.ok) throw new Error(response.statusText);
 
       return response;
     },
@@ -44,7 +45,7 @@ module.exports = {
         headers
       });
 
-      if( !response.ok ) throw new Error(response.statusText);
+      if (!response.ok) throw new Error(response.statusText);
 
       // Return results as JSON or RDF
       if (params.query.includes('SELECT')) {
@@ -70,13 +71,13 @@ module.exports = {
   },
   methods: {
     getAcceptHeader: accept => {
-      switch(accept) {
+      switch (accept) {
         case ACCEPT_TYPES.TURTLE:
-          return  'application/n-triples';
+          return 'application/n-triples';
         case ACCEPT_TYPES.JSON:
           return 'application/ld+json';
         default:
-          throw new Error('Unknown accept parameter: ' + accept )
+          throw new Error('Unknown accept parameter: ' + accept);
       }
     }
   }
