@@ -27,33 +27,33 @@ module.exports = {
       });
     },
     async query({ params }) {
-      let headers = {
+      const headers = {
         'Content-Type': 'application/sparql-query',
-        Authorization: this.Authorization
+        Authorization: this.Authorization,
+        Accept: this.getAcceptHeader(params.accept)
       };
-      if (!params.accept.includes('turtle')) {
-        headers.Accept = 'application/n-triples';
-      }
+
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
         method: 'POST',
         body: params.query,
-        headers: headers
+        headers
       });
+
+      if( !response.ok ) throw new Error(response.statusText);
 
       // Return results as JSON or RDF
       if (params.query.includes('SELECT')) {
         const jsonResult = await response.json();
-        if (params.accept.includes('json')) {
+        if (params.accept === 'json') {
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);
         } else {
           return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        let rdfResult = await response.text();
-        if (!params.accept.includes('json')) {
-          return rdfResult;
+        if (params.accept === 'turtle') {
+          return await response.text();
         } else {
-          return await jsonld.fromRDF(rdfResult, { format: 'application/n-quads' });
+          return await response.json();
         }
       }
     }
@@ -62,5 +62,17 @@ module.exports = {
     this.sparqlJsonParser = new SparqlJsonParser();
     this.Authorization =
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
+  },
+  methods: {
+    getAcceptHeader: accept => {
+      switch(accept) {
+        case 'turtle':
+          return  'application/n-triples';
+        case 'json':
+          return 'application/ld+json';
+        default:
+          throw new Error('Unknown accept parameter: ' + accept )
+      }
+    }
   }
 };
