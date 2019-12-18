@@ -146,7 +146,6 @@ module.exports = {
      * @param containerUri The full URI of the container where to store the object
      */
     async attachToContainer(ctx) {
-      // Use a JSON-LD because this is currently the only type supported for INSERT operations
       const container = {
         '@context': 'http://www.w3.org/ns/ldp',
         id: ctx.params.containerUri,
