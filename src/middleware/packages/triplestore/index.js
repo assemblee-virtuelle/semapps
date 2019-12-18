@@ -14,11 +14,11 @@ module.exports = {
   },
   actions: {
     async insert({ params }) {
-      // Transforms JSONLD to RDF
-      const rdf = await jsonld.toRDF(params.resource, {
-        format: 'application/n-quads'
-      });
-      return await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+      const rdf = params.accept === ACCEPT_TYPES.JSON
+      ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
+          :  params.resource;
+
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `INSERT DATA { ${rdf} }`,
         headers: {
@@ -26,6 +26,10 @@ module.exports = {
           Authorization: this.Authorization
         }
       });
+
+      if( !response.ok ) throw new Error(response.statusText);
+
+      return response;
     },
     async query({ params }) {
       const headers = {
