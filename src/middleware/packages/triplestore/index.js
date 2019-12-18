@@ -3,6 +3,7 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
+const { ACCEPT_TYPES } = require('./constants');
 
 module.exports = {
   name: 'triplestore',
@@ -44,13 +45,13 @@ module.exports = {
       // Return results as JSON or RDF
       if (params.query.includes('SELECT')) {
         const jsonResult = await response.json();
-        if (params.accept === 'json') {
+        if (params.accept === ACCEPT_TYPES.JSON) {
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);
         } else {
           return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        if (params.accept === 'turtle') {
+        if (params.accept === ACCEPT_TYPES.TURTLE) {
           return await response.text();
         } else {
           return await response.json();
@@ -66,9 +67,9 @@ module.exports = {
   methods: {
     getAcceptHeader: accept => {
       switch(accept) {
-        case 'turtle':
+        case ACCEPT_TYPES.TURTLE:
           return  'application/n-triples';
-        case 'json':
+        case ACCEPT_TYPES.JSON:
           return 'application/ld+json';
         default:
           throw new Error('Unknown accept parameter: ' + accept )
