@@ -15,7 +15,7 @@ module.exports = {
     async post({ params, broker }) {
       let activity;
 
-      if (!ACTIVITY_TYPES.includes(params.type)) {
+      if (!Object.values(ACTIVITY_TYPES).includes(params.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id: this.generateId('activity/'),
@@ -44,15 +44,20 @@ module.exports = {
       // Attach the newly-created activity to the outbox
       await broker.call('activitypub.collection.attach', {
         collectionUri: this.settings.homeUrl + 'outbox',
-        activityUri: activity.id
+        objectUri: activity.id
       });
+
+      // Nicely format the JSON-LD
+      activity = await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
+
+      await broker.emit('activitypub.outbox.posted', { activity });
 
       return await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
     },
     async list(ctx) {
       ctx.meta.$responseType = 'application/json';
 
-      return await ctx.call('activitypub.collection.query', {
+      return await ctx.call('activitypub.collection.queryOrderedCollection', {
         collectionUri: this.settings.homeUrl + 'outbox'
       });
     }

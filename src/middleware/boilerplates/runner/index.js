@@ -4,7 +4,7 @@ const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const LdpService = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
-const { OutboxService, CollectionService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
+const { CollectionService, FollowService, OutboxService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const os = require('os');
 const hostname = os.hostname();
@@ -54,6 +54,11 @@ const start = async function() {
 
   // ActivityPub
   await broker.createService(CollectionService);
+  await broker.createService(FollowService, {
+    settings: {
+      homeUrl: config.homeUrl || 'http://localhost:3000/'
+    }
+  });
   await broker.createService(OutboxService, {
     settings: {
       homeUrl: config.homeUrl || 'http://localhost:3000/'
