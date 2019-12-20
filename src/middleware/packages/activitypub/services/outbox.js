@@ -58,7 +58,11 @@ module.exports = {
       ctx.meta.$responseType = 'application/json';
 
       return await ctx.call('activitypub.collection.queryOrderedCollection', {
-        collectionUri: this.settings.homeUrl + 'outbox'
+        collectionUri: this.settings.homeUrl + 'outbox',
+        optionalTriplesToFetch: `
+          ?item as:object ?object .
+          ?object ?objectP ?objectO .
+        `
       });
     }
   },

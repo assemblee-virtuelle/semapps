@@ -6,6 +6,12 @@ module.exports = {
   name: 'activitypub.collection',
   dependencies: ['triplestore'],
   actions: {
+    /*
+     * Attach an object to a collection
+     * @param collectionUri The full URI of the collection
+     * @param objectUri The full URI of the object to add to the collection
+     * @param summary An optional description of the collection
+     */
     async attach(ctx) {
       const collection = {
         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -20,29 +26,31 @@ module.exports = {
         accept: 'json'
       });
     },
+    /*
+     * Returns a JSON-LD formatted OrderedCollection stored in the triple store
+     * @param collectionUri The full URI of the collection
+     * @param optionalTriplesToFetch RDF-formatted triples to fetch (use ?item for the base item)
+     */
     async queryOrderedCollection(ctx) {
-      // TODO make this data agnostic, by passing the object-related query as an optional parameter
       const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
+            # We need to define the CONSTRUCT clause because it doesn't work 
+            # when there is an OPTIONAL parameter in the WHERE clause 
             <${ctx.params.collectionUri}> 
               a as:OrderedCollection ;
               as:items ?item .
-            ?item a ?type .
-            ?item as:published ?published .
-            ?item as:object ?object .
-            ?object ?predicate ?objectProp .
+            ?item ?itemP ?itemO .
+            ${ctx.params.optionalTriplesToFetch || ''}
           }
           WHERE {
             <${ctx.params.collectionUri}> 
               a as:OrderedCollection ;
               as:items ?item .
-            ?item a ?type .
-            ?item as:published ?published .
-            ?item as:object ?object .
-            OPTIONAL {
-              ?object ?predicate ?objectProp .
+            ?item ?itemP ?itemO .
+            OPTIONAL { 
+              ${ctx.params.optionalTriplesToFetch || ''}
             }
           }
           ORDER BY ?published  # Order by activities publication
@@ -70,6 +78,10 @@ module.exports = {
         orderedItems: framed.items
       };
     },
+    /*
+     * Returns a JSON-LD formatted Collection stored in the triple store
+     * @param collectionUri The full URI of the collection
+     */
     async queryCollection(ctx) {
       const result = await ctx.call('triplestore.query', {
         query: `

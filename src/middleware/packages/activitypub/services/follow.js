@@ -10,10 +10,10 @@ module.exports = {
   dependencies: ['activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
-      ctx.meta.$responseType = 'application/json';
+      ctx.meta.$responseType = 'application/ld+json';
 
       return await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: this.settings.homeUrl + 'activitypub/followers'
+        collectionUri: `${this.settings.homeUrl}activitypub/actor/${ctx.params.username}/followers`
       });
     }
   },
@@ -21,7 +21,7 @@ module.exports = {
     'activitypub.outbox.posted'({ activity }) {
       if (activity.type === ACTIVITY_TYPES.FOLLOW) {
         this.broker.call('activitypub.collection.attach', {
-          collectionUri: this.settings.homeUrl + 'activitypub/followers',
+          collectionUri: activity.actor + '/followers',
           objectUri: activity.object
         });
       }

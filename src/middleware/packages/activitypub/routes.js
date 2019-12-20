@@ -3,6 +3,6 @@ module.exports = {
   aliases: {
     'POST outbox': 'activitypub.outbox.post',
     'GET outbox': 'activitypub.outbox.list',
-    'GET followers': 'activitypub.follow.listFollowers'
+    'GET actor/:username/followers': 'activitypub.follow.listFollowers'
   }
 };
