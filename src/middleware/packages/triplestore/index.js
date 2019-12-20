@@ -3,6 +3,7 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
+const { ACCEPT_TYPES } = require('./constants');
 
 module.exports = {
   name: 'triplestore',
@@ -13,11 +14,12 @@ module.exports = {
   },
   actions: {
     async insert({ params }) {
-      // Transforms JSONLD to RDF
-      const rdf = await jsonld.toRDF(params.resource, {
-        format: 'application/n-quads'
-      });
-      return await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+      const rdf =
+        params.accept === ACCEPT_TYPES.JSON
+          ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
+          : params.resource;
+
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `INSERT DATA { ${rdf} }`,
         headers: {
@@ -25,35 +27,39 @@ module.exports = {
           Authorization: this.Authorization
         }
       });
+
+      if (!response.ok) throw new Error(response.statusText);
+
+      return response;
     },
     async query({ params }) {
-      let headers = {
+      const headers = {
         'Content-Type': 'application/sparql-query',
-        Authorization: this.Authorization
+        Authorization: this.Authorization,
+        Accept: this.getAcceptHeader(params.accept)
       };
-      if (!params.accept.includes('turtle')) {
-        headers.Accept = 'application/n-triples';
-      }
+
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
         method: 'POST',
         body: params.query,
-        headers: headers
+        headers
       });
+
+      if (!response.ok) throw new Error(response.statusText);
 
       // Return results as JSON or RDF
       if (params.query.includes('SELECT')) {
         const jsonResult = await response.json();
-        if (params.accept.includes('json')) {
+        if (params.accept === ACCEPT_TYPES.JSON) {
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);
         } else {
           return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        let rdfResult = await response.text();
-        if (!params.accept.includes('json')) {
-          return rdfResult;
+        if (params.accept === ACCEPT_TYPES.TURTLE) {
+          return await response.text();
         } else {
-          return await jsonld.fromRDF(rdfResult, { format: 'application/n-quads' });
+          return await response.json();
         }
       }
     }
@@ -62,5 +68,17 @@ module.exports = {
     this.sparqlJsonParser = new SparqlJsonParser();
     this.Authorization =
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
+  },
+  methods: {
+    getAcceptHeader: accept => {
+      switch (accept) {
+        case ACCEPT_TYPES.TURTLE:
+          return 'application/n-triples';
+        case ACCEPT_TYPES.JSON:
+          return 'application/ld+json';
+        default:
+          throw new Error('Unknown accept parameter: ' + accept);
+      }
+    }
   }
 };
