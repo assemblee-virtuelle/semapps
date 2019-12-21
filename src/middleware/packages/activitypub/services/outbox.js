@@ -18,7 +18,7 @@ module.exports = {
       if (!ACTIVITY_TYPES.includes(params.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           type: 'Create',
           object: {
             id: this.generateId('subject/'),
@@ -27,7 +27,7 @@ module.exports = {
         };
       } else {
         activity = {
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           ...params
         };
       }
