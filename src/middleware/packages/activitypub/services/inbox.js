@@ -25,7 +25,7 @@ module.exports = {
     'activitypub.outbox.posted'({ activity }) {
       if (activity.to && activity.type === ACTIVITY_TYPES.CREATE) {
         // TODO handle followers list
-        const recipients = Array.isArray(activity.to) ? activity.to : [activity.to]
+        const recipients = Array.isArray(activity.to) ? activity.to : [activity.to];
         recipients
           .filter(recipient => recipient.startsWith(this.settings.homeUrl))
           .forEach(recipient => {
