@@ -88,7 +88,7 @@ module.exports = {
     async automaticContainer(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const result = await ctx.call('triplestore.query', {
+      let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -103,14 +103,16 @@ module.exports = {
         accept: 'json'
       });
 
+      result = await jsonld.compact(result, {
+        as: 'https://www.w3.org/ns/activitystreams#',
+        ldp: 'http://www.w3.org/ns/ldp#',
+      });
+
       return {
-        '@context': {
-          as: 'https://www.w3.org/ns/activitystreams#',
-          ldp: 'http://www.w3.org/ns/ldp#'
-        },
+        '@context': result['@context'],
         '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': result
+        'ldp:contains': result['@graph']
       };
     },
     /*
@@ -130,7 +132,7 @@ module.exports = {
           	?subject ?predicate ?object .
           }
           WHERE {
-            <${ctx.params.containerUri}> 
+            <${ctx.params.containerUri}>
                 a ldp:BasicContainer ;
           	    ldp:contains ?subject .
           	?container ldp:contains ?subject .

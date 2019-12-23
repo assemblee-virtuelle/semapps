@@ -18,7 +18,7 @@ module.exports = {
       if (Object.values(OBJECT_TYPES).includes(object.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           type: 'Create',
           to: object.to,
           actor: object.attributedTo,
@@ -29,7 +29,7 @@ module.exports = {
         };
       } else if (Object.values(ACTIVITY_TYPES).includes(object.type)) {
         activity = {
-          id: this.generateId('activity/'),
+          id: this.generateId('subject/'),
           ...object
         };
       } else {
