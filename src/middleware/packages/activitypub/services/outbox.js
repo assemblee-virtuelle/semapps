@@ -10,7 +10,7 @@ module.exports = {
   settings: {
     homeUrl: null
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'activitypub.collection'],
   actions: {
     async post({ params, broker }) {
       let activity;
@@ -32,44 +32,29 @@ module.exports = {
         };
       }
 
-      const result = await broker.call('triplestore.insert', {
+      // Use the current time for the activity's publish date
+      // This will be used to order the ordered collections
+      activity.published = new Date().toISOString();
+
+      await broker.call('triplestore.insert', {
         resource: activity,
         accept: 'json'
       });
 
-      if (result.status >= 200 && result.status < 300) {
-        return await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
-      } else {
-        throw result;
-      }
-    },
-    async list({ broker }) {
-      const results = await broker.call('triplestore.query', {
-        query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          SELECT  ?activity ?object ?type
-          WHERE {
-            ?activity rdf:type as:Create ;
-                      rdf:type ?type ;
-                      as:object ?object .
-          }
-        `,
-        accept: 'json'
+      // Attach the newly-created activity to the outbox
+      await broker.call('activitypub.collection.attach', {
+        collectionUri: this.settings.homeUrl + 'outbox',
+        activityUri: activity.id
       });
 
-      const orderedCollection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'OrderedCollection',
-        totalItems: results.length,
-        orderedItems: results.map(result => ({
-          id: result.activity.value,
-          type: result.type.value,
-          object: result.object.value
-        }))
-      };
+      return await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
+    },
+    async list(ctx) {
+      ctx.meta.$responseType = 'application/json';
 
-      return await jsonld.compact(orderedCollection, 'https://www.w3.org/ns/activitystreams');
+      return await ctx.call('activitypub.collection.query', {
+        collectionUri: this.settings.homeUrl + 'outbox'
+      });
     }
   },
   methods: {
