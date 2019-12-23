@@ -115,6 +115,26 @@ module.exports = {
         totalItems: framed.items.length,
         items: framed.items
       };
+    },
+    /*
+     * Returns a simple array of the resources URIs contained in the collection
+     * @param collectionUri The full URI of the collection
+     */
+    async queryItems(ctx) {
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          SELECT ?item
+          WHERE {
+            <${ctx.params.collectionUri}> 
+              a as:Collection ;
+              as:items ?item
+          }
+        `,
+        accept: 'json'
+      });
+
+      return results ? results.map(item => item.item.value) : [];
     }
   }
 };
