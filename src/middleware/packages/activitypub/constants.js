@@ -29,6 +29,22 @@ const ACTIVITY_TYPES = {
   VIEW: 'View'
 };
 
+const OBJECT_TYPES = {
+  ARTICLE: 'Article',
+  AUDIO: 'Audio',
+  DOCUMENT: 'Document',
+  EVENT: 'Event',
+  IMAGE: 'Image',
+  NOTE: 'Note',
+  PAGE: 'Page',
+  PLACE: 'Place',
+  PROFILE: 'Profile',
+  RELATIONSHIP: 'Relationship',
+  TOMBSTONE: 'Tombstone',
+  VIDEO: 'Video'
+};
+
 module.exports = {
-  ACTIVITY_TYPES
+  ACTIVITY_TYPES,
+  OBJECT_TYPES
 };
