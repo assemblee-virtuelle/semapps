@@ -75,7 +75,7 @@ module.exports = {
         case ACCEPT_TYPES.TURTLE:
           return 'application/n-triples';
         case ACCEPT_TYPES.JSON:
-          return 'application/ld+json';
+          return 'application/ld+json, application/sparql-results+json';
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
