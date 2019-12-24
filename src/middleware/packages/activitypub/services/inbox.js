@@ -25,16 +25,18 @@ module.exports = {
     async 'activitypub.outbox.posted'({ activity }) {
       if (activity.to) {
         const recipients = await this.getAllRecipients(activity);
-        recipients.filter(this.isLocalUri).forEach(recipient => {
+        for (const recipient of recipients) {
           // Attach the activity to the inbox of the recipient
-          this.broker.call('activitypub.collection.attach', {
+          await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipient + '/inbox',
             objectUri: activity.id
           });
-
-          this.broker.emit('activitypub.inbox.received', { recipient, activity });
-        });
+        }
+        this.broker.emit('activitypub.inbox.received', { activity, recipients });
       }
+    },
+    'activitypub.inbox.received'() {
+      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }
   },
   methods: {
@@ -63,7 +65,7 @@ module.exports = {
           output.push(recipient);
         }
       }
-      return output;
+      return output.filter(this.isLocalUri);
     }
   }
 };
