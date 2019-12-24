@@ -44,7 +44,10 @@ const OBJECT_TYPES = {
   VIDEO: 'Video'
 };
 
+const PUBLIC_URI = 'https://www.w3.org/ns/activitystreams#Public';
+
 module.exports = {
   ACTIVITY_TYPES,
-  OBJECT_TYPES
+  OBJECT_TYPES,
+  PUBLIC_URI
 };

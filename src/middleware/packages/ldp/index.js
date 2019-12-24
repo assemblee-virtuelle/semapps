@@ -105,7 +105,7 @@ module.exports = {
 
       result = await jsonld.compact(result, {
         as: 'https://www.w3.org/ns/activitystreams#',
-        ldp: 'http://www.w3.org/ns/ldp#',
+        ldp: 'http://www.w3.org/ns/ldp#'
       });
 
       return {

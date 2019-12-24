@@ -47,7 +47,7 @@ module.exports = {
 
       // Attach the newly-created activity to the outbox
       broker.call('activitypub.collection.attach', {
-        collectionUri: this.getUri(username),
+        collectionUri: this.getOutboxUri(username),
         objectUri: activity.id
       });
 
@@ -62,7 +62,7 @@ module.exports = {
       ctx.meta.$responseType = 'application/ld+json';
 
       return await ctx.call('activitypub.collection.queryOrderedCollection', {
-        collectionUri: this.getUri(ctx.params.username),
+        collectionUri: this.getOutboxUri(ctx.params.username),
         optionalTriplesToFetch: `
           ?item as:object ?object .
           ?object ?objectP ?objectO .
@@ -74,7 +74,7 @@ module.exports = {
     generateId(path = '') {
       return this.settings.homeUrl + path + uuid().substring(0, 8);
     },
-    getUri(username) {
+    getOutboxUri(username) {
       return this.settings.homeUrl + 'activitypub/actor/' + username + '/outbox';
     }
   }
