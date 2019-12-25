@@ -12,8 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install
+      - name: Install prettier
         run: yarn install
+        working-directory: ./src/frontend
+        env:
+          CI: true
+
+      - name: Install prettier
+        run: yarn install
+        working-directory: ./src/middleware
         env:
           CI: true
 
