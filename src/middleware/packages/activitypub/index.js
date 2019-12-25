@@ -3,5 +3,5 @@ module.exports = {
   FollowService: require('./services/follow'),
   InboxService: require('./services/inbox'),
   OutboxService: require('./services/outbox'),
-   Routes: require('./routes')
+  Routes: require('./routes')
 };
