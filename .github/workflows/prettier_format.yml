@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install
-        run: make init
+      - name: Install NPM packages
+        run: make install
 
       - name: Run prettier
         run: make prettier
