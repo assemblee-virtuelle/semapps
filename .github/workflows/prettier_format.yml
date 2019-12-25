@@ -12,29 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install prettier
-        run: yarn install
-        working-directory: ./src/frontend
-        env:
-          CI: true
+      - name: Install
+        run: make init
 
-      - name: Install prettier
-        run: yarn install
-        working-directory: ./src/middleware
-        env:
-          CI: true
-
-      - name: Run prettier on frontend
-        working-directory: ./src/frontend
-        run: yarn run prettier
-
-      - name: Run prettier on middleware
-        working-directory: ./src/middleware
-        run: yarn run prettier
+      - name: Run prettier
+        run: make prettier
 
       - uses: stefanzweifel/git-auto-commit-action@v2.1.0
         with:
-          commit_message: Apply prettier changes
+          commit_message: Automatic prettier
           branch: ${{ github.head_ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

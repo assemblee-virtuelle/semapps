@@ -52,6 +52,7 @@ restart: docker-restart
 
 init :
 	npm install --prefix ./src/middleware
+	npm install --prefix ./src/frontend
 	make bootstrap
 
 build:docker-build
