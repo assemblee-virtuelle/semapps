@@ -10,12 +10,13 @@ module.exports = {
     homeUrl: null
   },
   routes: {
-    path: '/',
+    path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
-      'GET container/:container': 'ldp.automaticContainer',
-      'GET subject/:identifier': 'ldp.subject'
+      'GET :class': 'ldp.automaticContainer',
+      'GET :class/:identifier': 'ldp.getSubject'
+      'POST :class': 'ldp.postSubject'
     }
   },
   dependencies: ['triplestore'],
@@ -65,7 +66,7 @@ module.exports = {
         accept: 'turtle'
       });
     },
-    async subject(ctx) {
+    async getSubject(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
 
       return await ctx.call('triplestore.query', {
@@ -73,10 +74,27 @@ module.exports = {
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${this.settings.homeUrl}subject/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
           }
           WHERE {
-            <${this.settings.homeUrl}subject/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+          }
+              `,
+        accept: 'turtle'
+      });
+    },
+    async postSubject(ctx) {
+      ctx.meta.$responseType = 'application/n-triples';
+
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          CONSTRUCT {
+            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+          }
+          WHERE {
+            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
           }
               `,
         accept: 'turtle'
@@ -96,7 +114,7 @@ module.exports = {
             ?subject ?predicate ?object.
           }
           WHERE {
-            ?subject rdf:type ${ctx.params.container} ;
+            ?subject rdf:type ${ctx.params.class} ;
               ?predicate ?object.
           }
               `,
