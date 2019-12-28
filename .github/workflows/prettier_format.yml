@@ -1,0 +1,26 @@
+name: Format (prettier)
+
+on:
+  pull_request:
+    paths:
+      - '**.css'
+      - '**.js'
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install NPM packages
+        run: make install
+
+      - name: Run prettier
+        run: make prettier
+
+      - uses: stefanzweifel/git-auto-commit-action@v2.1.0
+        with:
+          commit_message: Automatic prettier
+          branch: ${{ github.head_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -27,7 +27,8 @@
   padding: 20px;
 }
 
-.App-form textarea, .App-form input {
+.App-form textarea,
+.App-form input {
   min-width: 100%;
   margin-bottom: 10px;
   box-sizing: border-box;
