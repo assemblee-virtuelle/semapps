@@ -15,7 +15,7 @@ module.exports = {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
       'GET :class': 'ldp.automaticContainer',
-      'GET :class/:identifier': 'ldp.getSubject'
+      'GET :class/:identifier': 'ldp.getSubject',
       'POST :class': 'ldp.postSubject'
     }
   },
