@@ -20,13 +20,11 @@ const EventsWatcher = {
     broker.watchForEvent = eventName => {
       return new Promise(resolve => {
         setInterval(() => {
-          // console.log('broker.latestEvent', broker.latestEvent, eventName);
           if (broker.latestEvent === eventName) {
-            // console.log('RESOLVE !', eventName);
             broker.latestEvent = null;
             resolve();
           }
-        }, 500);
+        }, 100);
       });
     };
   }
