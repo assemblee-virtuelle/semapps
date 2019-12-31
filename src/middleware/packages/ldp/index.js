@@ -17,7 +17,9 @@ module.exports = {
       'GET :class': 'ldp.automaticContainer',
       'GET :class/:identifier': 'ldp.getSubject',
       'POST :class': 'ldp.postSubject'
-    }
+    },
+    // When using multiple routes we must set the body parser for each route.
+    bodyParsers: { json: true }
   },
   dependencies: ['triplestore'],
   actions: {
@@ -85,20 +87,21 @@ module.exports = {
     },
     async postSubject(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
+      console.log('PARAMS >>', ctx.params);
 
-      return await ctx.call('triplestore.query', {
-        query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          CONSTRUCT {
-            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
-          }
-          WHERE {
-            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
-          }
-              `,
-        accept: 'turtle'
-      });
+      // return await ctx.call('triplestore.query', {
+      //   query: `
+      //     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      //     PREFIX as: <https://www.w3.org/ns/activitystreams#>
+      //     CONSTRUCT {
+      //       <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+      //     }
+      //     WHERE {
+      //       <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+      //     }
+      //         `,
+      //   accept: 'turtle'
+      // });
     },
     /*
      * Returns a container constructed by the middleware, making a SparQL query on the fly
