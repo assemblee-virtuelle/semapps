@@ -87,9 +87,9 @@ module.exports = {
       });
     },
     async post(ctx) {
-      const {typeURL,...body}=ctx.params;
+      const { typeURL, ...body } = ctx.params;
       // body.type=typeURL;
-      body.id=this.generateId(typeURL);
+      body.id = this.generateId(typeURL);
       ctx.meta.$responseType = 'application/n-triples';
       return await ctx.call('triplestore.insert', {
         resource: body,
@@ -176,9 +176,9 @@ module.exports = {
     }
   },
   methods: {
-    generateId(type,slug = undefined) {
-      const id = slug || uuid().substring(0, 8)
-      return `${this.settings.homeUrl}${type}/${id}` ;
+    generateId(type, slug = undefined) {
+      const id = slug || uuid().substring(0, 8);
+      return `${this.settings.homeUrl}${type}/${id}`;
     }
   }
 };

@@ -20,7 +20,7 @@ module.exports = {
           ? params.resource
           : await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
 
-      console.log('rdf:',rdf);
+      console.log('rdf:', rdf);
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
