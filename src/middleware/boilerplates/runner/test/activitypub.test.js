@@ -9,7 +9,7 @@ const broker = new ServiceBroker({
 });
 
 beforeAll(async () => {
-  let urlConfig = 'https://assemblee-virtuelle.gitlab.io/semappsconfig/test.json';
+  let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/test.json';
   const response = await fetch(urlConfig);
   const config = await response.json();
 

@@ -1,0 +1,20 @@
+name: Integration tests
+
+on:
+  pull_request:
+    paths:
+      - '**.js'
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install NPM packages
+        run: make install
+
+      - name: Run integration tests
+        run: make test
+        env:
+          CONFIG_URL: https://assemblee-virtuelle.gitlab.io/semappsconfig/test-github.json
