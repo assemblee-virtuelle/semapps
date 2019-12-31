@@ -51,8 +51,12 @@ stop-prod: docker-stop-prod
 restart: docker-restart
 
 init :
-	npm install --prefix ./src/middleware
+	make install
 	make bootstrap
+
+install :
+	npm install --prefix ./src/middleware
+	npm install --prefix ./src/frontend
 
 build:docker-build
 
