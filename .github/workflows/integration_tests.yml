@@ -6,7 +6,7 @@ on:
       - '**.js'
 
 jobs:
-  prettier:
+  integration_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -16,5 +16,3 @@ jobs:
 
       - name: Run integration tests
         run: make test
-        env:
-          CONFIG_URL: https://assemblee-virtuelle.gitlab.io/semappsconfig/test-github.json
