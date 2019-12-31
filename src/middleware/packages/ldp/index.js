@@ -1,6 +1,7 @@
 'use strict';
 
 const jsonld = require('jsonld');
+const uuid = require('uuid/v1');
 
 module.exports = {
   name: 'ldp',
@@ -14,9 +15,9 @@ module.exports = {
     aliases: {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
-      'GET :class': 'ldp.automaticContainer',
-      'GET :class/:identifier': 'ldp.getSubject',
-      'POST :class': 'ldp.postSubject'
+      'GET :type': 'ldp.automaticContainer',
+      'GET :type/:identifier': 'ldp.getSubject',
+      'POST :typeURL': 'ldp.post'
     },
     // When using multiple routes we must set the body parser for each route.
     bodyParsers: { json: true }
@@ -85,23 +86,15 @@ module.exports = {
         accept: 'turtle'
       });
     },
-    async postSubject(ctx) {
+    async post(ctx) {
+      const {typeURL,...body}=ctx.params;
+      // body.type=typeURL;
+      body.id=this.generateId(typeURL);
       ctx.meta.$responseType = 'application/n-triples';
-      console.log('PARAMS >>', ctx.params);
-
-      // return await ctx.call('triplestore.query', {
-      //   query: `
-      //     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-      //     PREFIX as: <https://www.w3.org/ns/activitystreams#>
-      //     CONSTRUCT {
-      //       <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
-      //     }
-      //     WHERE {
-      //       <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
-      //     }
-      //         `,
-      //   accept: 'turtle'
-      // });
+      return await ctx.call('triplestore.insert', {
+        resource: body,
+        accept: 'turtle'
+      });
     },
     /*
      * Returns a container constructed by the middleware, making a SparQL query on the fly
@@ -180,6 +173,12 @@ module.exports = {
         resource: container,
         accept: 'json'
       });
+    }
+  },
+  methods: {
+    generateId(type,slug = undefined) {
+      const id = slug || uuid().substring(0, 8)
+      return `${this.settings.homeUrl}${type}/${id}` ;
     }
   }
 };

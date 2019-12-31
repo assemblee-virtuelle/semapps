@@ -14,10 +14,13 @@ module.exports = {
   },
   actions: {
     async insert({ params }) {
+      console.log(params);
       const rdf =
-        params.accept === ACCEPT_TYPES.JSON
-          ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
-          : params.resource;
+        typeof params.resource === 'string' || params.resource instanceof String
+          ? params.resource
+          : await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
+
+      console.log('rdf:',rdf);
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
