@@ -23,7 +23,7 @@ module.exports = {
     bodyParsers: {
       json: true
     },
-    onBeforeCall(ctx, route, req, res) {
+    onBeforeCall(ctx, route, req, res){
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
     }
@@ -77,7 +77,6 @@ module.exports = {
     },
     async getSubject(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
-
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -96,7 +95,12 @@ module.exports = {
       const { typeURL, ...body } = ctx.params;
       // body.type=typeURL;
       body.id = this.generateId(typeURL);
+<<<<<<< HEAD
       const out = await ctx.call('triplestore.insert', {
+=======
+      ctx.meta.$responseType = 'application/n-triples';
+      return await ctx.call('triplestore.insert', {
+>>>>>>> c7889463d927255e16c9f8cac9c09c8dfb0a4487
         resource: body,
         accept: 'turtle'
       });
@@ -191,6 +195,7 @@ module.exports = {
   methods: {
     generateId(type, slug = undefined) {
       const id = slug || uuid().substring(0, 8);
+<<<<<<< HEAD
       return `${this.settings.homeUrl}ldp/${type}/${id}`;
     },
     getAcceptHeader(accept) {
@@ -204,6 +209,10 @@ module.exports = {
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
+=======
+      return `${this.settings.homeUrl}${type}/${id}`;
+>>>>>>> c7889463d927255e16c9f8cac9c09c8dfb0a4487
     }
   }
+
 };
