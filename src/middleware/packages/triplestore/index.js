@@ -2,8 +2,12 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const { SparqlJsonParser } = require('sparqljson-parse');
-const { ACCEPT_TYPES } = require('./constants');
+const {
+  SparqlJsonParser
+} = require('sparqljson-parse');
+const {
+  ACCEPT_TYPES
+} = require('./constants');
 
 module.exports = {
   name: 'triplestore',
@@ -13,14 +17,17 @@ module.exports = {
     jenaPassword: null
   },
   actions: {
-    async insert({ params }) {
-      console.log(params);
-      const rdf =
-        typeof params.resource === 'string' || params.resource instanceof String
-          ? params.resource
-          : await jsonld.toRDF(params.resource, { format: 'application/n-quads' });
+    async insert({
+      params
+    }) {
 
-      console.log('rdf:',rdf);
+      const rdf =
+        typeof params.resource === 'string' || params.resource instanceof String ?
+        params.resource :
+        await jsonld.toRDF(params.resource, {
+          format: 'application/n-quads'
+        });
+
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
@@ -35,7 +42,10 @@ module.exports = {
 
       return response;
     },
-    async query({ params }) {
+    async query({
+      params
+    }) {
+
       const headers = {
         'Content-Type': 'application/sparql-query',
         Authorization: this.Authorization,
@@ -59,7 +69,7 @@ module.exports = {
           return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        if (params.accept === ACCEPT_TYPES.TURTLE) {
+        if (params.accept === ACCEPT_TYPES.TURTLE || params.accept === ACCEPT_TYPES.TRIPLE) {
           return await response.text();
         } else {
           return await response.json();
@@ -76,6 +86,8 @@ module.exports = {
     getAcceptHeader: accept => {
       switch (accept) {
         case ACCEPT_TYPES.TURTLE:
+          return 'application/n-quad';
+        case ACCEPT_TYPES.TRIPLE:
           return 'application/n-triples';
         case ACCEPT_TYPES.JSON:
           return 'application/ld+json, application/sparql-results+json';

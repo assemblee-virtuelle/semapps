@@ -16,11 +16,17 @@ module.exports = {
       'GET view/activities': 'ldp.activities',
       'GET type/:container': 'ldp.type',
       'GET :type': 'ldp.automaticContainer',
-      'GET :type/:identifier': 'ldp.getSubject',
+      'GET :typeURL/:identifier': 'ldp.getSubject',
       'POST :typeURL': 'ldp.post'
     },
     // When using multiple routes we must set the body parser for each route.
-    bodyParsers: { json: true }
+    bodyParsers: {
+      json: true
+    },
+    onBeforeCall(ctx, route, req, res){
+      // Set request headers to context meta
+      ctx.meta.headers = req.headers;
+    }
   },
   dependencies: ['triplestore'],
   actions: {
@@ -71,30 +77,36 @@ module.exports = {
     },
     async getSubject(ctx) {
       ctx.meta.$responseType = 'application/n-triples';
-
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
           }
           WHERE {
-            <${this.settings.homeUrl}${ctx.params.class}/${ctx.params.identifier}> ?predicate ?object.
+            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
           }
               `,
-        accept: 'turtle'
+        accept: this.getAcceptHeader(ctx.meta.headers.accept)
       });
     },
     async post(ctx) {
-      const {typeURL,...body}=ctx.params;
+      const { typeURL, ...body } = ctx.params;
       // body.type=typeURL;
-      body.id=this.generateId(typeURL);
-      ctx.meta.$responseType = 'application/n-triples';
-      return await ctx.call('triplestore.insert', {
+      body.id = this.generateId(typeURL);
+      const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'turtle'
       });
+      ctx.meta.$responseType = 'application/n-triples';
+      ctx.meta.$responseStatus = 201;
+      ctx.meta.$responseHeaders = {
+        Location: body.id,
+        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+        'Content-Length': 0
+      };
+      return out;
     },
     /*
      * Returns a container constructed by the middleware, making a SparQL query on the fly
@@ -176,9 +188,22 @@ module.exports = {
     }
   },
   methods: {
-    generateId(type,slug = undefined) {
-      const id = slug || uuid().substring(0, 8)
-      return `${this.settings.homeUrl}${type}/${id}` ;
+    generateId(type, slug = undefined) {
+      const id = slug || uuid().substring(0, 8);
+      return `${this.settings.homeUrl}ldp/${type}/${id}`;
+    },
+    getAcceptHeader(accept) {
+      switch (accept) {
+        case 'application/n-quad':
+          return 'turtle';
+        case 'application/n-triples':
+          return 'triple';
+        case 'application/ld+json':
+          return 'json';
+        default:
+          throw new Error('Unknown accept parameter: ' + accept);
+      }
     }
   }
+
 };

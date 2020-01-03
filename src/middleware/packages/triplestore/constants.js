@@ -1,6 +1,7 @@
 const ACCEPT_TYPES = {
   JSON: 'json',
-  TURTLE: 'turtle'
+  TURTLE: 'turtle',
+  TRIPLE: 'triple'
 };
 
 module.exports = {
