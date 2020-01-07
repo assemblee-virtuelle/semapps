@@ -38,7 +38,6 @@ module.exports = {
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `DELETE
-            { <${params.uri}> ?p ?v }
             WHERE
             { <${params.uri}> ?p ?v }
             `,

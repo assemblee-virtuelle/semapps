@@ -80,7 +80,11 @@ module.exports = {
         accept: 'json'
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
-      const { '@graph': graph, '@context': context, ...other } = result;
+      const {
+        '@graph': graph,
+        '@context': context,
+        ...other
+      } = result;
 
       const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
 
@@ -92,7 +96,7 @@ module.exports = {
       };
 
       if (!ctx.meta.headers.accept.includes('json')) {
-        result = await this.serializeFromJsonldObject(result, ctx.meta.headers.accept);
+        result = await this.jsonldToTriples(result, ctx.meta.headers.accept);
       }
       ctx.meta.$responseType = ctx.meta.headers.accept;
       return result;
@@ -113,8 +117,10 @@ module.exports = {
       });
     },
     async post(ctx) {
-      const { typeURL, ...body } = ctx.params;
-      // body.type=typeURL;
+      const {
+        typeURL,
+        ...body
+      } = ctx.params;
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
@@ -204,18 +210,13 @@ module.exports = {
       }
     },
     getPrefixRdf() {
-      let prefix = '';
-      for (let ontology of this.settings.ontologies) {
-        prefix = prefix.concat(`PREFIX ${ontology.prefix}: <${ontology.url}>
-          `);
-      }
-      return prefix;
+      return this.settings.ontologies
+        .map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`)
+        .join('\n');
     },
     getPrefixJSON() {
       let pattern = {};
-      for (let ontology of this.settings.ontologies) {
-        pattern[ontology.prefix] = ontology.url;
-      }
+      this.settings.ontologies.forEach(ontology => pattern[ontology.prefix] = ontology.url)
       return pattern;
     },
     getN3Type(accept) {
@@ -228,9 +229,9 @@ module.exports = {
           throw new Error('Unknown N3 content-type: ' + accept);
       }
     },
-    async serializeFromJsonldObject(jsonLdObject, outputContentType) {
+    jsonldToTriples(jsonLdObject, outputContentType) {
       return new Promise((resolve, reject) => {
-        const textStream = require('streamify-string')(JSON.stringify(jsonLdObject));
+        const textStream = streamifyString(JSON.stringify(jsonLdObject));
         const writer = new N3.Writer({
           prefixes: this.getPrefixJSON(),
           format: this.getN3Type(outputContentType)
