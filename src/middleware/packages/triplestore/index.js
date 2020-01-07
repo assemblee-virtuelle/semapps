@@ -2,8 +2,14 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const { SparqlJsonParser } = require('sparqljson-parse');
-const { ACCEPT_TYPES } = require('./constants');
+const {
+  SparqlJsonParser
+} = require('sparqljson-parse');
+const {
+  ACCEPT_TYPES
+} = require('./constants');
+const rdfParser = require('rdf-parse').default;
+const streamifyString = require('streamify-string');
 
 module.exports = {
   name: 'triplestore',
@@ -13,13 +19,15 @@ module.exports = {
     jenaPassword: null
   },
   actions: {
-    async insert({ params }) {
+    async insert({
+      params
+    }) {
       const rdf =
-        typeof params.resource === 'string' || params.resource instanceof String
-          ? params.resource
-          : await jsonld.toRDF(params.resource, {
-              format: 'application/n-quads'
-            });
+        typeof params.resource === 'string' || params.resource instanceof String ?
+        params.resource :
+        await jsonld.toRDF(params.resource, {
+          format: 'application/n-quads'
+        });
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
@@ -34,7 +42,23 @@ module.exports = {
 
       return response;
     },
-    async delete({ params }) {
+    async patch(ctx) {
+      const query = await this.buildPatchQuery(ctx.params);
+
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+        method: 'POST',
+        body: query,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          Authorization: this.Authorization
+        }
+      });
+      let result = await response.text();
+      return response;
+    },
+    async delete({
+      params
+    }) {
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: `DELETE
@@ -64,7 +88,9 @@ module.exports = {
       });
       return results.length;
     },
-    async query({ params }) {
+    async query({
+      params
+    }) {
       const headers = {
         'Content-Type': 'application/sparql-query',
         Authorization: this.Authorization,
@@ -112,6 +138,52 @@ module.exports = {
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
+    },
+    buildPatchQuery: params => {
+      return new Promise((resolve, reject) => {
+        let deleteSPARQL = '';
+        let insertSPARQL = '';
+        let counter = 0;
+        let query;
+        const text = typeof params.resource === 'string' || params.resource instanceof String ?
+          params.resource :
+          JSON.stringify(params.resource);
+        const textStream = streamifyString(text);
+        rdfParser
+          .parse(textStream, {
+            contentType: 'application/ld+json'
+          })
+          .on('data', quad => {
+            if (deleteSPARQL.length == 0) {
+              deleteSPARQL = deleteSPARQL.concat(`<${quad.subject.value}>`)
+            } else {
+              deleteSPARQL = deleteSPARQL.concat(';')
+            }
+            deleteSPARQL = deleteSPARQL.concat(` <${quad.predicate.value}> ?${counter}`)
+
+            if (insertSPARQL.length == 0) {
+              insertSPARQL = insertSPARQL.concat(`<${quad.subject.value}>`)
+            } else {
+              insertSPARQL = insertSPARQL.concat(';')
+            }
+            insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> "${quad.object.value}"`)
+            if (quad.object.datatype !== undefined) {
+              insertSPARQL = insertSPARQL.concat(`^^<${quad.object.datatype.value}>`)
+            }
+
+            counter++
+          })
+          .on('error', error => console.error(error))
+          .on('end', () => {
+            deleteSPARQL = deleteSPARQL.concat('.');
+            insertSPARQL = insertSPARQL.concat('.');
+            query = `DELETE {${deleteSPARQL}}
+            INSERT {${insertSPARQL}}
+            WHERE  {${deleteSPARQL}}`
+            resolve(query);
+          });
+      })
+
     }
   }
 };
