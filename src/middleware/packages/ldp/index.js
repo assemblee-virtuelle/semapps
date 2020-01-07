@@ -18,8 +18,8 @@ module.exports = {
     path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',
-      'GET :typeURL': 'ldp.type',
-      'GET :typeURL/:identifier': 'ldp.getSubject',
+      'GET :typeURL': 'ldp.getByType',
+      'GET :typeURL/:identifier': 'ldp.getResource',
       'POST :typeURL': 'ldp.post',
       'DELETE :typeURL/:identifier': 'ldp.delete'
     },
@@ -65,7 +65,7 @@ module.exports = {
     /*
      * Returns a container constructed by the middleware, making a SparQL query on the fly
      */
-    async type(ctx) {
+    async getByType(ctx) {
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
@@ -101,20 +101,29 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.headers.accept;
       return result;
     },
-    async getSubject(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-      return await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
-          }
-          WHERE {
-            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
-          }
-              `,
-        accept: this.getAcceptHeader(ctx.meta.headers.accept)
+    async getResource(ctx) {
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: uri,
       });
+
+      if (triplesNb > 0) {
+        ctx.meta.$responseType = ctx.meta.headers.accept;
+        return await ctx.call('triplestore.query', {
+          query: `
+            ${this.getPrefixRdf()}
+            CONSTRUCT {
+              <${uri}> ?predicate ?object.
+            }
+            WHERE {
+              <${uri}> ?predicate ?object.
+            }
+                `,
+          accept: this.getAcceptHeader(ctx.meta.headers.accept)
+        });
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
     async post(ctx) {
       const {
@@ -126,7 +135,7 @@ module.exports = {
         resource: body,
         accept: 'json'
       });
-      ctx.meta.$responseStatus = 201;
+      ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
         Location: body.id,
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
@@ -135,15 +144,23 @@ module.exports = {
       return out;
     },
     async delete(ctx) {
-      const out = await ctx.call('triplestore.delete', {
-        uri: `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: uri,
       });
-      ctx.meta.$responseStatus = 204;
-      ctx.meta.$responseHeaders = {
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-      return out;
+      if (triplesNb > 0) {
+        const out = await ctx.call('triplestore.delete', {
+          uri: uri
+        });
+        ctx.meta.$statusCode = 204;
+        ctx.meta.$responseHeaders = {
+          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+          'Content-Length': 0
+        };
+        return out;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
 
     /*

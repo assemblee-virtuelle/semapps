@@ -51,6 +51,19 @@ module.exports = {
 
       return response;
     },
+
+    async countTripleOfSubject(ctx){
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          SELECT ?p ?v
+          WHERE {
+            <${ctx.params.uri}> ?p ?v
+          }
+        `,
+        accept: 'json'
+      });
+      return results.length;
+    },
     async query({ params }) {
       const headers = {
         'Content-Type': 'application/sparql-query',
@@ -63,7 +76,6 @@ module.exports = {
         body: params.query,
         headers
       });
-
       if (!response.ok) throw new Error(response.statusText);
 
       // Return results as JSON or RDF

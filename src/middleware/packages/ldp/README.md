@@ -21,10 +21,10 @@ Content-Type : application/ld+json
 
 uri dans le header de retour Location
 
-## GET Subject
+## GET Resource
 http://localhost:3000/ldp/as:Note/[identifier]
 
 Accept : application/ld+json, application/n-triples, text/turtle
 
-## DELETE Subject
+## DELETE Resource
 http://localhost:3000/ldp/as:Note/[identifier]
