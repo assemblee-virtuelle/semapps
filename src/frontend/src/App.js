@@ -1,26 +1,47 @@
 import React from 'react';
 import { Router, Link } from '@reach/router';
+import { Provider } from 'react-redux';
+import initStore from './api/initStore';
 import CreateUser from './CreateUser';
-import Profile from './Profile';
+import UserProfile from './UserProfile';
 import Users from './Users';
-import './App.css';
+
+const store = initStore();
 
 const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p className="App-logo">SemApps Playground</p>
-      </header>
-      <nav>
-        <Link to="/">Création utilisateur</Link> |&nbsp;
-        <Link to="users">Liste utilisateurs</Link>
+    <>
+      <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+        <div className="container">
+          <span className="navbar-brand">SemApps Playground</span>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  Créer un utilisateur
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="users" className="nav-link">
+                  Liste des utilisateurs
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
       </nav>
-      <Router>
-        <CreateUser path="/" />
-        <Users path="users" />
-        <Profile path="users/:userId" />
-      </Router>
-    </div>
+      <br />
+      <Provider store={store}>
+        <Router primary={false}>
+          <CreateUser path="/" />
+          <Users path="users" />
+          <UserProfile path="users/:userId" />
+        </Router>
+      </Provider>
+    </>
   );
 };
 

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
-import './App.css';
-
 import { MIDDLEWARE_URL } from './constants';
+import { getUserId } from './utils';
 
 const CreateUser = ({ navigate }) => {
   const createUser = async values => {
@@ -21,22 +20,32 @@ const CreateUser = ({ navigate }) => {
     });
 
     const userUri = response.headers.get('Location');
-    const matches = userUri.match(/schema:Person\/(.*)/);
-    const userId = matches[1];
 
-    navigate(`users/${userId}`);
+    navigate(`users/${getUserId(userUri)}`);
   };
 
   return (
-    <div className="App-form">
+    <div className="container">
+      <h2>Créer un utilisateur</h2>
       <Form
         onSubmit={createUser}
         render={({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
-            <Field name="givenName" component="input" placeholder="Prénom" />
-            <Field name="familyName" component="input" placeholder="Nom de famille" />
-            <Field name="email" component="input" placeholder="Adresse email" />
-            <button type="submit">Créer utilisateur</button>
+            <div className="form-group">
+              <label htmlFor="givenName">Prénom</label>
+              <Field name="givenName" component="input" class="form-control" id="givenName" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="familyName">Nom de famille</label>
+              <Field name="familyName" component="input" class="form-control" id="familyName" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Adresse e-mail</label>
+              <Field name="email" component="input" class="form-control" id="email" />
+            </div>
+            <button type="submit" class="btn btn-warning w-100">
+              Créer utilisateur
+            </button>
           </form>
         )}
       />
