@@ -71,16 +71,15 @@ module.exports = {
         query: `
           ${this.getPrefixRdf()}
           CONSTRUCT {
-          	?suject ?predicate ?object.
+          	?subject ?predicate ?object.
           }
           WHERE {
-          	?suject rdf:type ${ctx.params.typeURL} ;
+          	?subject rdf:type ${ctx.params.typeURL} ;
             	?predicate ?object.
           }
               `,
         accept: 'json'
       });
-      console.log(result);
       result = await jsonld.compact(result, this.getPrefixJSON());
       const {
         '@graph': graph,
