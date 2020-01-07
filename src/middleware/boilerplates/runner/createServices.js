@@ -26,7 +26,8 @@ async function createServices(broker, config) {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
       jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
+      jenaPassword: config.jenaPassword,
+      ontologies: config.ontologies
     }
   });
 
@@ -63,9 +64,11 @@ async function createServices(broker, config) {
     settings: {
       port: 3000,
       cors: {
-        origin: '*'
+        origin: '*',
+        exposedHeaders: '*'
       },
-      routes: [ActivityPubRoutes, LdpService.routes]
+      routes: [ActivityPubRoutes, LdpService.routes],
+      defaultLdpAccept: config.defaultLdpAccept
     }
   });
 }
