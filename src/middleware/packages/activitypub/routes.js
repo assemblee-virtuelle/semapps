@@ -6,5 +6,7 @@ module.exports = {
     'GET actor/:username/inbox': 'activitypub.inbox.list',
     'GET actor/:username/followers': 'activitypub.follow.listFollowers',
     'GET actor/:username/following': 'activitypub.follow.listFollowing'
-  }
+  },
+  // When using multiple routes we must set the body parser for each route.
+  bodyParsers: { json: true }
 };
