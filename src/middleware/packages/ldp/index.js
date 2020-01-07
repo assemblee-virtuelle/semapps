@@ -2,7 +2,7 @@
 
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
-const rdfParser = require("rdf-parse").default;
+const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 
@@ -66,7 +66,6 @@ module.exports = {
      * Returns a container constructed by the middleware, making a SparQL query on the fly
      */
     async type(ctx) {
-
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
@@ -81,15 +80,9 @@ module.exports = {
         accept: 'json'
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
-      const {
-        '@graph': graph,
-        '@context': context,
-        ...other
-      } = result;
+      const { '@graph': graph, '@context': context, ...other } = result;
 
-      const contains = graph == undefined
-      ? (Object.keys(other).length===0?[]:[other] )
-      : graph
+      const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
 
       result = {
         '@context': result['@context'],
@@ -120,10 +113,7 @@ module.exports = {
       });
     },
     async post(ctx) {
-      const {
-        typeURL,
-        ...body
-      } = ctx.params;
+      const { typeURL, ...body } = ctx.params;
       // body.type=typeURL;
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
@@ -139,7 +129,6 @@ module.exports = {
       return out;
     },
     async delete(ctx) {
-
       const out = await ctx.call('triplestore.delete', {
         uri: `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`
       });
@@ -150,7 +139,6 @@ module.exports = {
       };
       return out;
     },
-
 
     /*
      * Returns a LDP container persisted in the triple store
@@ -219,7 +207,7 @@ module.exports = {
       let prefix = '';
       for (let ontology of this.settings.ontologies) {
         prefix = prefix.concat(`PREFIX ${ontology.prefix}: <${ontology.url}>
-          `)
+          `);
       }
       return prefix;
     },
@@ -247,19 +235,20 @@ module.exports = {
           prefixes: this.getPrefixJSON(),
           format: this.getN3Type(outputContentType)
         });
-        rdfParser.parse(textStream, {
-            contentType: 'application/ld+json',
+        rdfParser
+          .parse(textStream, {
+            contentType: 'application/ld+json'
           })
-          .on('data', (quad) => {
+          .on('data', quad => {
             writer.addQuad(quad);
           })
-          .on('error', (error) => console.error(error))
+          .on('error', error => console.error(error))
           .on('end', () => {
             writer.end((error, result) => {
               resolve(result);
             });
           });
-      })
-    },
+      });
+    }
   }
 };
