@@ -84,11 +84,7 @@ module.exports = {
         accept: 'json'
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
-      const {
-        '@graph': graph,
-        '@context': context,
-        ...other
-      } = result;
+      const { '@graph': graph, '@context': context, ...other } = result;
 
       const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
 
@@ -130,10 +126,7 @@ module.exports = {
       }
     },
     async post(ctx) {
-      const {
-        typeURL,
-        ...body
-      } = ctx.params;
+      const { typeURL, ...body } = ctx.params;
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
@@ -231,13 +224,11 @@ module.exports = {
       }
     },
     getPrefixRdf() {
-      return this.settings.ontologies
-        .map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`)
-        .join('\n');
+      return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
     },
     getPrefixJSON() {
       let pattern = {};
-      this.settings.ontologies.forEach(ontology => pattern[ontology.prefix] = ontology.url)
+      this.settings.ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
       return pattern;
     },
     getN3Type(accept) {
