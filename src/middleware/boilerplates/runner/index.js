@@ -55,7 +55,7 @@ const start = async function() {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
       homeUrl: config.homeUrl,
-      ontologies: config.ontologies,
+      ontologies: config.ontologies
     }
   });
 

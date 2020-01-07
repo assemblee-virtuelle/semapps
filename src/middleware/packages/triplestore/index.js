@@ -52,7 +52,7 @@ module.exports = {
       return response;
     },
 
-    async countTripleOfSubject(ctx){
+    async countTripleOfSubject(ctx) {
       const results = await ctx.call('triplestore.query', {
         query: `
           SELECT ?p ?v

@@ -13,7 +13,7 @@ module.exports = {
     mainDataset: null,
     homeUrl: null,
     ontologies: [],
-    defaultLdpContenType : null
+    defaultLdpContenType: null
   },
   routes: {
     path: '/ldp/',
@@ -31,7 +31,7 @@ module.exports = {
     onBeforeCall(ctx, route, req, res) {
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
-      if(req.headers.accept===undefined || req.headers.accept==='*/*'){
+      if (req.headers.accept === undefined || req.headers.accept === '*/*') {
         ctx.meta.headers.accept = this.settings.defaultLdpAccept;
       }
     }
@@ -104,7 +104,7 @@ module.exports = {
     async getResource(ctx) {
       const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: uri,
+        uri: uri
       });
 
       if (triplesNb > 0) {
@@ -143,7 +143,7 @@ module.exports = {
     async delete(ctx) {
       const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: uri,
+        uri: uri
       });
       if (triplesNb > 0) {
         const out = await ctx.call('triplestore.delete', {
