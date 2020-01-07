@@ -12,7 +12,8 @@ module.exports = {
     sparqlEndpoint: null,
     mainDataset: null,
     homeUrl: null,
-    ontologies: []
+    ontologies: [],
+    defaultLdpContenType : null
   },
   routes: {
     path: '/ldp/',
@@ -30,6 +31,9 @@ module.exports = {
     onBeforeCall(ctx, route, req, res) {
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
+      if(req.headers.accept===undefined || req.headers.accept==='*/*'){
+        ctx.meta.headers.accept = this.settings.defaultLdpAccept;
+      }
     }
   },
   dependencies: ['triplestore'],

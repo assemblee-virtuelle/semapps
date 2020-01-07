@@ -55,7 +55,7 @@ const start = async function() {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
       homeUrl: config.homeUrl,
-      ontologies: config.ontologies
+      ontologies: config.ontologies,
     }
   });
 
@@ -85,7 +85,8 @@ const start = async function() {
       cors: {
         origin: '*'
       },
-      routes: [ActivityPubRoutes, LdpService.routes]
+      routes: [ActivityPubRoutes, LdpService.routes],
+      defaultLdpAccept: config.defaultLdpAccept
     }
   });
 
