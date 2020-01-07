@@ -83,7 +83,7 @@ module.exports = {
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
 
-      const contains = graph == undefined ? (Object.keys(other).length === 0 ? [] : [other]) : graph;
+      const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
 
       result = {
         '@context': result['@context'],
