@@ -31,7 +31,7 @@ module.exports = {
     onBeforeCall(ctx, route, req, res) {
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
-      if (req.headers.accept === undefined || req.headers.accept === '*/*') {
+      if (req.headers.accept === undefined || req.headers.accept.includes('*/*')) {
         ctx.meta.headers.accept = this.settings.defaultLdpAccept;
       }
     }
