@@ -1,0 +1,18 @@
+name: Integration tests
+
+on:
+  pull_request:
+    paths:
+      - '**.js'
+
+jobs:
+  integration_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install NPM packages
+        run: make init
+
+      - name: Run integration tests
+        run: make test

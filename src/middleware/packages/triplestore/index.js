@@ -93,6 +93,20 @@ module.exports = {
           return await response.json();
         }
       }
+    },
+    async dropAll({ params }) {
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+        method: 'POST',
+        body: 'update=DROP+ALL',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: this.Authorization
+        }
+      });
+
+      if (!response.ok) throw new Error(response.statusText);
+
+      return response;
     }
   },
   started() {

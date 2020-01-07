@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch ../..",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
-    "@semapps/ldp": "^1.0.0",
     "@semapps/fuseki-admin": "^1.0.0",
+    "@semapps/ldp": "^1.0.0",
     "@semapps/triplestore": "^1.0.0",
     "express": "^4.17.1",
     "moleculer": "^0.13.11",
@@ -20,6 +20,7 @@
     "node-fetch": "^2.6.0"
   },
   "devDependencies": {
+    "jest": "^24.9.0",
     "nodemon": "^2.0.1"
   }
 }
