@@ -54,7 +54,8 @@ const start = async function() {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
-      homeUrl: config.homeUrl
+      homeUrl: config.homeUrl,
+      ontologies: config.ontologies
     }
   });
 
@@ -82,9 +83,11 @@ const start = async function() {
     settings: {
       port: 3000,
       cors: {
-        origin: '*'
+        origin: '*',
+        exposedHeaders: '*'
       },
-      routes: [ActivityPubRoutes, LdpService.routes]
+      routes: [ActivityPubRoutes, LdpService.routes],
+      defaultLdpAccept: config.defaultLdpAccept
     }
   });
 

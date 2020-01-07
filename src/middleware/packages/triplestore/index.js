@@ -15,9 +15,11 @@ module.exports = {
   actions: {
     async insert({ params }) {
       const rdf =
-        params.accept === ACCEPT_TYPES.JSON
-          ? await jsonld.toRDF(params.resource, { format: 'application/n-quads' })
-          : params.resource;
+        typeof params.resource === 'string' || params.resource instanceof String
+          ? params.resource
+          : await jsonld.toRDF(params.resource, {
+              format: 'application/n-quads'
+            });
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
@@ -32,6 +34,36 @@ module.exports = {
 
       return response;
     },
+    async delete({ params }) {
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+        method: 'POST',
+        body: `DELETE
+            WHERE
+            { <${params.uri}> ?p ?v }
+            `,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          Authorization: this.Authorization
+        }
+      });
+
+      if (!response.ok) throw new Error(response.statusText);
+
+      return response;
+    },
+
+    async countTripleOfSubject(ctx) {
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          SELECT ?p ?v
+          WHERE {
+            <${ctx.params.uri}> ?p ?v
+          }
+        `,
+        accept: 'json'
+      });
+      return results.length;
+    },
     async query({ params }) {
       const headers = {
         'Content-Type': 'application/sparql-query',
@@ -44,7 +76,6 @@ module.exports = {
         body: params.query,
         headers
       });
-
       if (!response.ok) throw new Error(response.statusText);
 
       // Return results as JSON or RDF
@@ -56,7 +87,7 @@ module.exports = {
           return jsonResult;
         }
       } else if (params.query.includes('CONSTRUCT')) {
-        if (params.accept === ACCEPT_TYPES.TURTLE) {
+        if (params.accept === ACCEPT_TYPES.TURTLE || params.accept === ACCEPT_TYPES.TRIPLE) {
           return await response.text();
         } else {
           return await response.json();
@@ -73,6 +104,8 @@ module.exports = {
     getAcceptHeader: accept => {
       switch (accept) {
         case ACCEPT_TYPES.TURTLE:
+          return 'application/n-quad';
+        case ACCEPT_TYPES.TRIPLE:
           return 'application/n-triples';
         case ACCEPT_TYPES.JSON:
           return 'application/ld+json, application/sparql-results+json';
