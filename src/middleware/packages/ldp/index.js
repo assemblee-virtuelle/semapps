@@ -12,14 +12,15 @@ module.exports = {
     sparqlEndpoint: null,
     mainDataset: null,
     homeUrl: null,
-    ontologies: []
+    ontologies: [],
+    defaultLdpContenType: null
   },
   routes: {
     path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',
-      'GET :typeURL': 'ldp.type',
-      'GET :typeURL/:identifier': 'ldp.getSubject',
+      'GET :typeURL': 'ldp.getByType',
+      'GET :typeURL/:identifier': 'ldp.getResource',
       'POST :typeURL': 'ldp.post',
       'DELETE :typeURL/:identifier': 'ldp.delete'
     },
@@ -30,6 +31,9 @@ module.exports = {
     onBeforeCall(ctx, route, req, res) {
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
+      if (req.headers.accept === undefined || req.headers.accept.includes('*/*')) {
+        ctx.meta.headers.accept = this.settings.defaultLdpAccept;
+      }
     }
   },
   dependencies: ['triplestore'],
@@ -65,25 +69,24 @@ module.exports = {
     /*
      * Returns a container constructed by the middleware, making a SparQL query on the fly
      */
-    async type(ctx) {
+    async getByType(ctx) {
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
           CONSTRUCT {
-          	?suject ?predicate ?object.
+          	?subject ?predicate ?object.
           }
           WHERE {
-          	?suject rdf:type ${ctx.params.typeURL} ;
+          	?subject rdf:type ${ctx.params.typeURL} ;
             	?predicate ?object.
           }
               `,
         accept: 'json'
       });
-      console.log(result);
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
 
-      const contains = graph == undefined ? (Object.keys(other).length === 0 ? [] : [other]) : graph;
+      const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
 
       result = {
         '@context': result['@context'],
@@ -93,35 +96,43 @@ module.exports = {
       };
 
       if (!ctx.meta.headers.accept.includes('json')) {
-        result = await this.serializeFromJsonldObject(result, ctx.meta.headers.accept);
+        result = await this.jsonldToTriples(result, ctx.meta.headers.accept);
       }
       ctx.meta.$responseType = ctx.meta.headers.accept;
       return result;
     },
-    async getSubject(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-      return await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
-          }
-          WHERE {
-            <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
-          }
-              `,
-        accept: this.getAcceptHeader(ctx.meta.headers.accept)
+    async getResource(ctx) {
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: uri
       });
+
+      if (triplesNb > 0) {
+        ctx.meta.$responseType = ctx.meta.headers.accept;
+        return await ctx.call('triplestore.query', {
+          query: `
+            ${this.getPrefixRdf()}
+            CONSTRUCT {
+              <${uri}> ?predicate ?object.
+            }
+            WHERE {
+              <${uri}> ?predicate ?object.
+            }
+                `,
+          accept: this.getAcceptHeader(ctx.meta.headers.accept)
+        });
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
     async post(ctx) {
       const { typeURL, ...body } = ctx.params;
-      // body.type=typeURL;
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
       });
-      ctx.meta.$responseStatus = 201;
+      ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
         Location: body.id,
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
@@ -130,15 +141,23 @@ module.exports = {
       return out;
     },
     async delete(ctx) {
-      const out = await ctx.call('triplestore.delete', {
-        uri: `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: uri
       });
-      ctx.meta.$responseStatus = 204;
-      ctx.meta.$responseHeaders = {
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-      return out;
+      if (triplesNb > 0) {
+        const out = await ctx.call('triplestore.delete', {
+          uri: uri
+        });
+        ctx.meta.$statusCode = 204;
+        ctx.meta.$responseHeaders = {
+          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+          'Content-Length': 0
+        };
+        return out;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
 
     /*
@@ -205,18 +224,11 @@ module.exports = {
       }
     },
     getPrefixRdf() {
-      let prefix = '';
-      for (let ontology of this.settings.ontologies) {
-        prefix = prefix.concat(`PREFIX ${ontology.prefix}: <${ontology.url}>
-          `);
-      }
-      return prefix;
+      return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
     },
     getPrefixJSON() {
       let pattern = {};
-      for (let ontology of this.settings.ontologies) {
-        pattern[ontology.prefix] = ontology.url;
-      }
+      this.settings.ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
       return pattern;
     },
     getN3Type(accept) {
@@ -229,9 +241,9 @@ module.exports = {
           throw new Error('Unknown N3 content-type: ' + accept);
       }
     },
-    async serializeFromJsonldObject(jsonLdObject, outputContentType) {
+    jsonldToTriples(jsonLdObject, outputContentType) {
       return new Promise((resolve, reject) => {
-        const textStream = require('streamify-string')(JSON.stringify(jsonLdObject));
+        const textStream = streamifyString(JSON.stringify(jsonLdObject));
         const writer = new N3.Writer({
           prefixes: this.getPrefixJSON(),
           format: this.getN3Type(outputContentType)

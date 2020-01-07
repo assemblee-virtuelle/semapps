@@ -86,7 +86,8 @@ const start = async function() {
         origin: '*',
         exposedHeaders: '*',
       },
-      routes: [ActivityPubRoutes, LdpService.routes]
+      routes: [ActivityPubRoutes, LdpService.routes],
+      defaultLdpAccept: config.defaultLdpAccept
     }
   });
 
