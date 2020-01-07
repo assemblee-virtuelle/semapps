@@ -142,7 +142,7 @@ module.exports = {
       return out;
     },
     async patch(ctx) {
-      const { typeURL,identifierURL, ...body } = ctx.params;
+      const { typeURL, identifierURL, ...body } = ctx.params;
       const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: uri
@@ -150,7 +150,7 @@ module.exports = {
       if (triplesNb > 0) {
         body['@id'] = uri;
         const out = await ctx.call('triplestore.patch', {
-          resource: body,
+          resource: body
         });
         ctx.meta.$responseType = ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
@@ -159,7 +159,7 @@ module.exports = {
           'Content-Length': 0
         };
         return out;
-      }else{
+      } else {
         ctx.meta.$statusCode = 404;
       }
     },
