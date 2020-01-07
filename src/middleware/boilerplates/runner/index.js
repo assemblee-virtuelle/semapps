@@ -83,9 +83,11 @@ const start = async function() {
     settings: {
       port: 3000,
       cors: {
-        origin: '*'
+        origin: '*',
+        exposedHeaders: '*',
       },
-      routes: [ActivityPubRoutes, LdpService.routes]
+      routes: [ActivityPubRoutes, LdpService.routes],
+      defaultLdpAccept: config.defaultLdpAccept
     }
   });
 
