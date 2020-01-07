@@ -54,7 +54,8 @@ const start = async function() {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
-      homeUrl: config.homeUrl
+      homeUrl: config.homeUrl,
+      ontologies : config.ontologies
     }
   });
 

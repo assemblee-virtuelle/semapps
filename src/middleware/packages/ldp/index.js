@@ -2,22 +2,26 @@
 
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
+const rdfParser = require("rdf-parse").default;
+const streamifyString = require('streamify-string');
+const N3 = require('n3');
 
 module.exports = {
   name: 'ldp',
   settings: {
     sparqlEndpoint: null,
     mainDataset: null,
-    homeUrl: null
+    homeUrl: null,
+    ontologies: []
   },
   routes: {
     path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',
-      'GET type/:container': 'ldp.type',
-      'GET :type': 'ldp.automaticContainer',
+      'GET :typeURL': 'ldp.type',
       'GET :typeURL/:identifier': 'ldp.getSubject',
-      'POST :typeURL': 'ldp.post'
+      'POST :typeURL': 'ldp.post',
+      'DELETE :typeURL/:identifier': 'ldp.delete'
     },
     // When using multiple routes we must set the body parser for each route.
     bodyParsers: {
@@ -30,8 +34,9 @@ module.exports = {
   },
   dependencies: ['triplestore'],
   actions: {
+    /* view for experimentation */
     async activities(ctx) {
-      ctx.meta.$responseType = 'application/n-triples';
+      ctx.meta.$responseType = 'text/turtle';
 
       return await ctx.call('triplestore.query', {
         query: `
@@ -57,31 +62,54 @@ module.exports = {
         accept: 'turtle'
       });
     },
+    /*
+     * Returns a container constructed by the middleware, making a SparQL query on the fly
+     */
     async type(ctx) {
-      ctx.meta.$responseType = 'application/n-triples';
 
-      return await ctx.call('triplestore.query', {
+      let result = await ctx.call('triplestore.query', {
         query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          ${this.getPrefixRdf()}
           CONSTRUCT {
           	?suject ?predicate ?object.
           }
           WHERE {
-          	?suject rdf:type ${ctx.params.container} ;
+          	?suject rdf:type ${ctx.params.typeURL} ;
             	?predicate ?object.
           }
               `,
-        accept: 'turtle'
+        accept: 'json'
       });
+      console.log(result);
+      result = await jsonld.compact(result, this.getPrefixJSON());
+      const {
+        '@graph': graph,
+        '@context': context,
+        ...other
+      } = result;
+
+      const contains = graph == undefined
+      ? (Object.keys(other).length===0?[]:[other] )
+      : graph
+
+      result = {
+        '@context': result['@context'],
+        '@id': `${this.settings.homeUrl}ldp/${ctx.params.typeURL}`,
+        '@type': ['ldp:Container', 'ldp:BasicContainer'],
+        'ldp:contains': contains
+      };
+
+      if (!ctx.meta.headers.accept.includes('json')) {
+        result = await this.serializeFromJsonldObject(result, ctx.meta.headers.accept);
+      }
+      ctx.meta.$responseType = ctx.meta.headers.accept;
+      return result;
     },
     async getSubject(ctx) {
-      ctx.meta.$responseType = 'application/n-triples';
-
+      ctx.meta.$responseType = ctx.meta.headers.accept;
       return await ctx.call('triplestore.query', {
         query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          ${this.getPrefixRdf()}
           CONSTRUCT {
             <${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}> ?predicate ?object.
           }
@@ -93,14 +121,16 @@ module.exports = {
       });
     },
     async post(ctx) {
-      const { typeURL, ...body } = ctx.params;
+      const {
+        typeURL,
+        ...body
+      } = ctx.params;
       // body.type=typeURL;
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
-        accept: 'turtle'
+        accept: 'json'
       });
-      ctx.meta.$responseType = 'application/n-triples';
       ctx.meta.$responseStatus = 201;
       ctx.meta.$responseHeaders = {
         Location: body.id,
@@ -109,39 +139,20 @@ module.exports = {
       };
       return out;
     },
-    /*
-     * Returns a container constructed by the middleware, making a SparQL query on the fly
-     */
-    async automaticContainer(ctx) {
-      ctx.meta.$responseType = 'application/ld+json';
+    async delete(ctx) {
 
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          CONSTRUCT {
-            ?subject ?predicate ?object.
-          }
-          WHERE {
-            ?subject rdf:type ${ctx.params.class} ;
-              ?predicate ?object.
-          }
-              `,
-        accept: 'json'
+      const out = await ctx.call('triplestore.delete', {
+        uri: `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`
       });
-
-      result = await jsonld.compact(result, {
-        as: 'https://www.w3.org/ns/activitystreams#',
-        ldp: 'http://www.w3.org/ns/ldp#'
-      });
-
-      return {
-        '@context': result['@context'],
-        '@id': `${this.settings.homeUrl}container/${ctx.params.container}`,
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': result['@graph']
+      ctx.meta.$responseStatus = 204;
+      ctx.meta.$responseHeaders = {
+        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+        'Content-Length': 0
       };
+      return out;
     },
+
+
     /*
      * Returns a LDP container persisted in the triple store
      * @param containerUri The full URI of the container
@@ -195,7 +206,7 @@ module.exports = {
     },
     getAcceptHeader(accept) {
       switch (accept) {
-        case 'application/n-quad':
+        case 'text/turtle':
           return 'turtle';
         case 'application/n-triples':
           return 'triple';
@@ -204,6 +215,52 @@ module.exports = {
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
-    }
+    },
+    getPrefixRdf() {
+      let prefix = '';
+      for (let ontology of this.settings.ontologies) {
+        prefix = prefix.concat(`PREFIX ${ontology.prefix}: <${ontology.url}>
+          `)
+      }
+      return prefix;
+    },
+    getPrefixJSON() {
+      let pattern = {};
+      for (let ontology of this.settings.ontologies) {
+        pattern[ontology.prefix] = ontology.url;
+      }
+      return pattern;
+    },
+    getN3Type(accept) {
+      switch (accept) {
+        case 'application/n-triples':
+          return 'N-Triples';
+        case 'text/turtle':
+          return 'Turtle';
+        default:
+          throw new Error('Unknown N3 content-type: ' + accept);
+      }
+    },
+    async serializeFromJsonldObject(jsonLdObject, outputContentType) {
+      return new Promise((resolve, reject) => {
+        const textStream = require('streamify-string')(JSON.stringify(jsonLdObject));
+        const writer = new N3.Writer({
+          prefixes: this.getPrefixJSON(),
+          format: this.getN3Type(outputContentType)
+        });
+        rdfParser.parse(textStream, {
+            contentType: 'application/ld+json',
+          })
+          .on('data', (quad) => {
+            writer.addQuad(quad);
+          })
+          .on('error', (error) => console.error(error))
+          .on('end', () => {
+            writer.end((error, result) => {
+              resolve(result);
+            });
+          });
+      })
+    },
   }
 };

@@ -2,8 +2,12 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const { SparqlJsonParser } = require('sparqljson-parse');
-const { ACCEPT_TYPES } = require('./constants');
+const {
+  SparqlJsonParser
+} = require('sparqljson-parse');
+const {
+  ACCEPT_TYPES
+} = require('./constants');
 
 module.exports = {
   name: 'triplestore',
@@ -13,13 +17,15 @@ module.exports = {
     jenaPassword: null
   },
   actions: {
-    async insert({ params }) {
+    async insert({
+      params
+    }) {
       const rdf =
-        typeof params.resource === 'string' || params.resource instanceof String
-          ? params.resource
-          : await jsonld.toRDF(params.resource, {
-              format: 'application/n-quads'
-            });
+        typeof params.resource === 'string' || params.resource instanceof String ?
+        params.resource :
+        await jsonld.toRDF(params.resource, {
+          format: 'application/n-quads'
+        });
 
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
@@ -34,7 +40,30 @@ module.exports = {
 
       return response;
     },
-    async query({ params }) {
+    async delete({
+      params
+    }) {
+      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+        method: 'POST',
+        body: `DELETE
+            { <${params.uri}> ?p ?v }
+            WHERE
+            { <${params.uri}> ?p ?v }
+            `,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          Authorization: this.Authorization
+        }
+      });
+
+      if (!response.ok) throw new Error(response.statusText);
+
+      return response;
+
+    },
+    async query({
+      params
+    }) {
       const headers = {
         'Content-Type': 'application/sparql-query',
         Authorization: this.Authorization,
