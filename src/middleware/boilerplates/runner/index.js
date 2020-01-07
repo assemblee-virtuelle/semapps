@@ -84,7 +84,7 @@ const start = async function() {
       port: 3000,
       cors: {
         origin: '*',
-        exposedHeaders: '*',
+        exposedHeaders: '*'
       },
       routes: [ActivityPubRoutes, LdpService.routes],
       defaultLdpAccept: config.defaultLdpAccept
