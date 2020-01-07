@@ -28,3 +28,14 @@ Accept : application/ld+json, application/n-triples, text/turtle
 
 ## DELETE Resource
 http://localhost:3000/ldp/as:Note/[identifier]
+
+## PATCH Resource
+http://localhost:3000/ldp/as:Note/[identifier]
+```javascript
+{
+ "@context": "https://www.w3.org/ns/activitystreams",
+ "name": "Hello New World",
+ "content": "Voilà mon premier message corrigé, très content de faire partie du fedivers !",
+ "published": "2019-05-30T12:12:12Z"
+}
+```
