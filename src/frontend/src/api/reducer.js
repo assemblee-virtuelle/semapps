@@ -5,7 +5,7 @@ const rootReducer = (state = { queries: [] }, action) => {
         ...state,
         queries: {
           ...state.queries,
-          [action.endpoint]: {
+          [action.uri]: {
             data: null,
             loading: true,
             error: null
@@ -31,7 +31,7 @@ const rootReducer = (state = { queries: [] }, action) => {
           queries: {
             ...state.queries,
             ...entities,
-            [action.endpoint]: {
+            [action.uri]: {
               data: itemsIds,
               loading: false,
               error: null
@@ -43,7 +43,7 @@ const rootReducer = (state = { queries: [] }, action) => {
           ...state,
           queries: {
             ...state.queries,
-            [action.endpoint]: {
+            [action.uri]: {
               data: action.data,
               loading: false,
               error: null
@@ -58,7 +58,7 @@ const rootReducer = (state = { queries: [] }, action) => {
         ...state,
         queries: {
           ...state.queries,
-          [action.endpoint]: {
+          [action.uri]: {
             data: null,
             loading: false,
             error: action.error
@@ -67,28 +67,77 @@ const rootReducer = (state = { queries: [] }, action) => {
       };
     }
 
-    case 'ADD_TO_DATA_LIST': {
-      let query = state.queries[action.endpoint];
-      if (query && query.data) query.data.push(action.value);
-
+    case 'ADD_RESOURCE': {
       return {
         ...state,
         queries: {
           ...state.queries,
-          [action.endpoint]: query
+          [action.resourceUri]: {
+            loading: false,
+            error: null,
+            data: {
+              ...action.data
+            }
+          }
         }
       };
     }
 
-    case 'REMOVE_FROM_DATA_LIST': {
-      let query = state.queries[action.endpoint];
-      if (query && query.data) query.data = query.data.filter(value => value !== action.value);
+    case 'EDIT_RESOURCE': {
+      const query = state.queries[action.resourceUri];
 
       return {
         ...state,
         queries: {
           ...state.queries,
-          [action.endpoint]: query
+          [action.resourceUri]: {
+            ...query,
+            data: {
+              ...query.data,
+              ...action.data
+            }
+          }
+        }
+      };
+    }
+
+    case 'DELETE_RESOURCE': {
+      const { [action.resourceUri]: resourceQuery, ...otherQueries } = state.queries;
+      return {
+        ...state,
+        queries: otherQueries
+      };
+    }
+
+    case 'ADD_TO_CONTAINER': {
+      const query = state.queries[action.containerUri];
+      const queryData = (query && query.data) || [];
+
+      return {
+        ...state,
+        queries: {
+          ...state.queries,
+          [action.containerUri]: {
+            ...query,
+            data: [...queryData, action.resourceUri]
+          }
+        }
+      };
+    }
+
+    case 'REMOVE_FROM_CONTAINER': {
+      let query = state.queries[action.containerUri],
+        queryData = [];
+      if (query && query.data) queryData = query.data.filter(value => value !== action.resourceUri);
+
+      return {
+        ...state,
+        queries: {
+          ...state.queries,
+          [action.containerUri]: {
+            ...query,
+            data: queryData
+          }
         }
       };
     }

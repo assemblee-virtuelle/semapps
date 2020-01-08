@@ -1,9 +1,13 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
-import { MIDDLEWARE_URL } from './constants';
-import { getUserId } from './utils';
+import { CONTAINER_URI } from '../constants';
+import { getUserId } from '../utils';
+import { addResource, addToContainer } from '../api/actions';
 
-const CreateUser = ({ navigate }) => {
+const CreateUserForm = ({ navigate }) => {
+  const dispatch = useDispatch();
+
   const createUser = async values => {
     const user = {
       '@context': 'http://schema.org/',
@@ -11,7 +15,7 @@ const CreateUser = ({ navigate }) => {
       ...values
     };
 
-    const response = await fetch(`${MIDDLEWARE_URL}/ldp/schema:Person`, {
+    const response = await fetch(CONTAINER_URI, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -21,11 +25,14 @@ const CreateUser = ({ navigate }) => {
 
     const userUri = response.headers.get('Location');
 
+    await dispatch(addResource(userUri, user));
+    await dispatch(addToContainer(CONTAINER_URI, userUri));
+
     navigate(`users/${getUserId(userUri)}`);
   };
 
   return (
-    <div className="container">
+    <>
       <h2>Créer un utilisateur</h2>
       <Form
         onSubmit={createUser}
@@ -33,24 +40,24 @@ const CreateUser = ({ navigate }) => {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="givenName">Prénom</label>
-              <Field name="givenName" component="input" class="form-control" id="givenName" />
+              <Field name="givenName" component="input" className="form-control" id="givenName" />
             </div>
             <div className="form-group">
               <label htmlFor="familyName">Nom de famille</label>
-              <Field name="familyName" component="input" class="form-control" id="familyName" />
+              <Field name="familyName" component="input" className="form-control" id="familyName" />
             </div>
             <div className="form-group">
               <label htmlFor="email">Adresse e-mail</label>
-              <Field name="email" component="input" class="form-control" id="email" />
+              <Field name="email" component="input" className="form-control" id="email" />
             </div>
-            <button type="submit" class="btn btn-warning w-100">
+            <button type="submit" className="btn btn-warning w-100">
               Créer utilisateur
             </button>
           </form>
         )}
       />
-    </div>
+    </>
   );
 };
 
-export default CreateUser;
+export default CreateUserForm;

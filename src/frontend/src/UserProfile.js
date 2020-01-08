@@ -1,15 +1,23 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from '@reach/router';
-import { MIDDLEWARE_URL } from './constants';
+import { CONTAINER_URI } from './constants';
 import useQuery from './api/useQuery';
+import { deleteResource, removeFromContainer } from './api/actions';
 
 const UserProfile = ({ userId, navigate }) => {
-  const { data: user } = useQuery(`${MIDDLEWARE_URL}/ldp/schema:Person/${userId}`);
+  const userUri = `${CONTAINER_URI}/${userId}`;
+  const { data: user } = useQuery(userUri);
+  const dispatch = useDispatch();
 
   const deleteUser = async () => {
-    await fetch(`${MIDDLEWARE_URL}/ldp/schema:Person/${userId}`, {
+    await fetch(userUri, {
       method: 'DELETE'
     });
+
+    await dispatch(deleteResource(userUri));
+    await dispatch(removeFromContainer(CONTAINER_URI, userUri));
+
     navigate('/users');
   };
 
@@ -38,9 +46,9 @@ const UserProfile = ({ userId, navigate }) => {
           </div>
         </ul>
         <br />
-        <Link to="/users">
+        <Link to={`/users/${userId}/edit`}>
           <button type="submit" className="btn btn-warning">
-            Retour à la liste
+            Modifier le profil
           </button>
         </Link>
         &nbsp; &nbsp;

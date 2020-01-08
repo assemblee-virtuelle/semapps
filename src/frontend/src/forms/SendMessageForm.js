@@ -1,10 +1,10 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
-import { MIDDLEWARE_URL } from './constants';
-import useQuery from './api/useQuery';
+import { MIDDLEWARE_URL } from '../constants';
+import useQuery from '../api/useQuery';
 
-const SendMessage = ({ userId }) => {
-  const { data: usersUris } = useQuery(`${MIDDLEWARE_URL}/ldp/schema:Person`);
+const SendMessageForm = ({ userId }) => {
+  const { data: usersUris } = useQuery(CONTAINER_URI);
 
   const submit = async values => {
     const note = {
@@ -26,8 +26,8 @@ const SendMessage = ({ userId }) => {
   };
 
   return (
-    <div className="App-form">
-      <p>Envoyer un message</p>
+    <>
+      <h2>Envoyer un message</h2>
       <Form
         onSubmit={submit}
         render={({ handleSubmit }) => (
@@ -47,8 +47,8 @@ const SendMessage = ({ userId }) => {
           </form>
         )}
       />
-    </div>
+    </>
   );
 };
 
-export default SendMessage;
+export default SendMessageForm;
