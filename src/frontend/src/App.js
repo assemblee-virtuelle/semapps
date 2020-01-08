@@ -1,73 +1,47 @@
-import React, { useState } from 'react';
-import { List, Value } from '@solid/react';
-import './App.css';
+import React from 'react';
+import { Router, Link } from '@reach/router';
+import { Provider } from 'react-redux';
+import initStore from './api/initStore';
+import CreateUser from './CreateUser';
+import UserProfile from './UserProfile';
+import Users from './Users';
+
+const store = initStore();
 
 const App = () => {
-  let ldpServer = `http://${window.location.hostname}:3000`;
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [ldpUrl, setLdpUrl] = useState(`${ldpServer}/subject/id/`);
-  const [ldpContainerUrl, setLdpContainerUrl] = useState(`${ldpServer}/container/as:Note`);
-
-  const sendNote = async () => {
-    const note = {
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Note',
-      name: title,
-      content: content,
-      published: '2019-05-28T12:12:12Z'
-    };
-
-    const response = await fetch(`${ldpServer}/activitypub/outbox`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(note)
-    });
-
-    const activity = await response.json();
-
-    alert('Activity created with ID : ' + activity.id);
-
-    window.location.reload();
-  };
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <p className="App-logo">SemApps Playground</p>
-      </header>
-      <div className="App-form">
-        <input value={title} onChange={e => setTitle(e.target.value)} />
-        <textarea rows="7" value={content} onChange={e => setContent(e.target.value)} />
-        <button onClick={sendNote}>Envoyer le message</button>
-      </div>
-
-      <div className="App-form">
-        <label>uri</label>
-        <input value={ldpUrl} onChange={e => setLdpUrl(e.target.value)} />
-        <Value src={`[${ldpUrl}].as_content`} />
-      </div>
-      <hr />
-      <div className="App-form">
-        <label>container</label>
-        <input value={ldpContainerUrl} onChange={e => setLdpContainerUrl(e.target.value)} />
-        <List src={`[${ldpContainerUrl}].ldp_contains.as_content`} container={items => <div>{items}</div>}>
-          {(item, index) => <p key={index}>{`${item}`} </p>}
-        </List>
-      </div>
-      <hr />
-      <p className="App-section">
-        <Value src="[https://ruben.verborgh.org/profile/].label" />
-      </p>
-      <div className="App-form">
-        <List src="[https://ruben.verborgh.org/profile/#me].friends.firstName" container={items => <p>{items}</p>}>
-          {(item, index) => <span key={index}>{`${item}`} </span>}
-        </List>
-      </div>
-    </div>
+    <>
+      <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+        <div className="container">
+          <span className="navbar-brand">SemApps Playground</span>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+            <span className="navbar-toggler-icon" />
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  Créer un utilisateur
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="users" className="nav-link">
+                  Liste des utilisateurs
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <br />
+      <Provider store={store}>
+        <Router primary={false}>
+          <CreateUser path="/" />
+          <Users path="users" />
+          <UserProfile path="users/:userId" />
+        </Router>
+      </Provider>
+    </>
   );
 };
 
