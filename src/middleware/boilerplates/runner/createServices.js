@@ -26,8 +26,7 @@ async function createServices(broker, config) {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
       jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword,
-      ontologies: config.ontologies
+      jenaPassword: config.jenaPassword
     }
   });
 
@@ -36,7 +35,8 @@ async function createServices(broker, config) {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
-      homeUrl: config.homeUrl
+      homeUrl: config.homeUrl,
+      ontologies: config.ontologies
     }
   });
 

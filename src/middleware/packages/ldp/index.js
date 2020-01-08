@@ -12,8 +12,7 @@ module.exports = {
     sparqlEndpoint: null,
     mainDataset: null,
     homeUrl: null,
-    ontologies: [],
-    defaultLdpContenType: null
+    ontologies: []
   },
   routes: {
     path: '/ldp/',
