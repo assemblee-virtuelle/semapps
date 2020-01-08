@@ -47,7 +47,9 @@ module.exports = {
           Authorization: this.Authorization
         }
       });
-      let result = await response.text();
+
+      if (!response.ok) throw new Error(response.statusText);
+
       return response;
     },
     async delete({ params }) {
@@ -67,7 +69,6 @@ module.exports = {
 
       return response;
     },
-
     async countTripleOfSubject(ctx) {
       const results = await ctx.call('triplestore.query', {
         query: `
@@ -159,19 +160,25 @@ module.exports = {
             contentType: 'application/ld+json'
           })
           .on('data', quad => {
-            if (deleteSPARQL.length == 0) {
+            if (deleteSPARQL.length === 0) {
               deleteSPARQL = deleteSPARQL.concat(`<${quad.subject.value}>`);
             } else {
               deleteSPARQL = deleteSPARQL.concat(';');
             }
             deleteSPARQL = deleteSPARQL.concat(` <${quad.predicate.value}> ?${counter}`);
 
-            if (insertSPARQL.length == 0) {
+            if (insertSPARQL.length === 0) {
               insertSPARQL = insertSPARQL.concat(`<${quad.subject.value}>`);
             } else {
               insertSPARQL = insertSPARQL.concat(';');
             }
-            insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> "${quad.object.value}"`);
+
+            if (quad.object.value.startsWith('http')) {
+              insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> <${quad.object.value}>`);
+            } else {
+              insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> "${quad.object.value}"`);
+            }
+
             if (quad.object.datatype !== undefined) {
               insertSPARQL = insertSPARQL.concat(`^^<${quad.object.datatype.value}>`);
             }
