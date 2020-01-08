@@ -19,9 +19,10 @@ module.exports = {
     aliases: {
       'GET view/activities': 'ldp.activities',
       'GET :typeURL': 'ldp.getByType',
-      'GET :typeURL/:identifier': 'ldp.getResource',
+      'GET :typeURL/:identifierURL': 'ldp.getResource',
       'POST :typeURL': 'ldp.post',
-      'DELETE :typeURL/:identifier': 'ldp.delete'
+      'DELETE :typeURL/:identifierURL': 'ldp.delete',
+      'PATCH :typeURL/:identifierURL': 'ldp.patch'
     },
     // When using multiple routes we must set the body parser for each route.
     bodyParsers: {
@@ -101,7 +102,7 @@ module.exports = {
       return result;
     },
     async getResource(ctx) {
-      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: uri
       });
@@ -139,8 +140,30 @@ module.exports = {
       };
       return out;
     },
+    async patch(ctx) {
+      const { typeURL, identifierURL, ...body } = ctx.params;
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: uri
+      });
+      if (triplesNb > 0) {
+        body['@id'] = uri;
+        const out = await ctx.call('triplestore.patch', {
+          resource: body
+        });
+        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$statusCode = 204;
+        ctx.meta.$responseHeaders = {
+          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+          'Content-Length': 0
+        };
+        return out;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
+    },
     async delete(ctx) {
-      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifier}`;
+      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: uri
       });
@@ -148,6 +171,7 @@ module.exports = {
         const out = await ctx.call('triplestore.delete', {
           uri: uri
         });
+        ctx.meta.$responseType = ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
         ctx.meta.$responseHeaders = {
           Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',

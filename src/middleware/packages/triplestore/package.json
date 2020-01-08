@@ -6,6 +6,8 @@
   "dependencies": {
     "jsonld": "^1.8.1",
     "node-fetch": "^2.6.0",
-    "sparqljson-parse": "^1.5.1"
+    "rdf-parse": "^1.2.1",
+    "sparqljson-parse": "^1.5.1",
+    "streamify-string": "^1.0.1"
   }
 }
