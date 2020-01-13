@@ -8,8 +8,6 @@ import { addResource, addToContainer } from '../api/actions';
 const CreateUserForm = ({ navigate }) => {
   const dispatch = useDispatch();
 
-  console.log('CONTAINER_URI', CONTAINER_URI);
-
   const createUser = async values => {
     const user = {
       '@context': 'http://schema.org/',
