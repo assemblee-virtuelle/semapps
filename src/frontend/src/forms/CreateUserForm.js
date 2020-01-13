@@ -1,12 +1,14 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Form, Field } from 'react-final-form';
-import { CONTAINER_URI } from '../constants';
+import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
 
 const CreateUserForm = ({ navigate }) => {
   const dispatch = useDispatch();
+
+  console.log('CONTAINER_URI', CONTAINER_URI);
 
   const createUser = async values => {
     const user = {

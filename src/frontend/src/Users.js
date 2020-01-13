@@ -1,10 +1,10 @@
 import React from 'react';
 import useQuery from './api/useQuery';
 import UserPreview from './UserPreview';
-import { MIDDLEWARE_URL } from './constants';
+import { CONTAINER_URI } from './config';
 
 const Users = () => {
-  const { data: usersUris } = useQuery(`${MIDDLEWARE_URL}/ldp/schema:Person`);
+  const { data: usersUris } = useQuery(CONTAINER_URI);
   return (
     <div className="container">
       <h2>Liste des utilisateurs</h2>
