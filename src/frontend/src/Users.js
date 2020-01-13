@@ -10,10 +10,10 @@ const Users = () => {
       <h2>Liste des utilisateurs</h2>
       {usersUris &&
         usersUris.map(userUri => (
-          <>
-            <UserPreview key={userUri} userUri={userUri} />
+          <div key={userUri}>
+            <UserPreview userUri={userUri} />
             <br />
-          </>
+          </div>
         ))}
     </div>
   );
