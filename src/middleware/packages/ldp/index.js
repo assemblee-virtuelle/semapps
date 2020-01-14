@@ -9,8 +9,6 @@ const N3 = require('n3');
 module.exports = {
   name: 'ldp',
   settings: {
-    sparqlEndpoint: null,
-    mainDataset: null,
     homeUrl: null,
     ontologies: []
   },
