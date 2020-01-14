@@ -11,8 +11,10 @@ const {
 const TripleStoreService = require('@semapps/triplestore');
 
 async function createServices(broker, config) {
+
+  let services={};
   // Utils
-  await broker.createService(FusekiAdminService, {
+  services.fusekiAdminService = await broker.createService(FusekiAdminService, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       jenaUser: config.jenaUser,
@@ -21,7 +23,7 @@ async function createServices(broker, config) {
   });
 
   // TripleStore
-  await broker.createService(TripleStoreService, {
+  services.tripleStoreService = await broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
@@ -31,7 +33,7 @@ async function createServices(broker, config) {
   });
 
   // LDP Service
-  await broker.createService(LdpService, {
+  services.ldpService = await broker.createService(LdpService, {
     settings: {
       sparqlEndpoint: config.sparqlEndpoint,
       mainDataset: config.mainDataset,
@@ -41,28 +43,27 @@ async function createServices(broker, config) {
   });
 
   // ActivityPub
-  await broker.createService(CollectionService);
-  await broker.createService(FollowService, {
+  services.collectionService = await broker.createService(CollectionService);
+  services.followService = await broker.createService(FollowService, {
     settings: {
       homeUrl: config.homeUrl
     }
   });
-  await broker.createService(InboxService, {
+  services.inboxService = await broker.createService(InboxService, {
     settings: {
       homeUrl: config.homeUrl
     }
   });
-  await broker.createService(OutboxService, {
+  services.outboxService = await broker.createService(OutboxService, {
     settings: {
       homeUrl: config.homeUrl
     }
   });
 
-  // HTTP interface
-  await broker.createService({
-    mixins: ApiGatewayService,
+  services.apiGatewayService=broker.createService({
+    mixins: [ApiGatewayService],
     settings: {
-      port: 3000,
+      middleware: true,
       cors: {
         origin: '*',
         exposedHeaders: '*'
@@ -71,6 +72,22 @@ async function createServices(broker, config) {
       defaultLdpAccept: config.defaultLdpAccept
     }
   });
+
+  // HTTP interface
+  // await broker.createService({
+  //   mixins: ApiGatewayService,
+  //   settings: {
+  //     port: 3000,
+  //     cors: {
+  //       origin: '*',
+  //       exposedHeaders: '*'
+  //     },
+  //     routes: [ActivityPubRoutes, LdpService.routes],
+  //     defaultLdpAccept: config.defaultLdpAccept
+  //   }
+  // });
+
+  return services
 }
 
 module.exports = createServices;
