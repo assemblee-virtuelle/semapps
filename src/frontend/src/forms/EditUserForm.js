@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
-import { CONTAINER_URI } from '../constants';
+import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
 
