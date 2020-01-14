@@ -1,5 +1,5 @@
-import React, { useState,useEffect }  from 'react';
-import { Router, Link, redirectTo,Redirect } from '@reach/router';
+import React, { useState, useEffect } from 'react';
+import { Router, Link, redirectTo, Redirect } from '@reach/router';
 import { Provider } from 'react-redux';
 import initStore from './api/initStore';
 import CreateUserForm from './forms/CreateUserForm';
@@ -8,47 +8,43 @@ import UserProfile from './UserProfile';
 import Users from './Users';
 // import  { Redirect } from 'react-router-dom'
 
-
 const store = initStore();
 
 const App = () => {
   const [authentification, setAuthentification] = useState(true);
-  const activAuth = async ()=> {
-
+  const activAuth = async () => {
     let search = window.location.search.split('?')[1];
     let urlToken = undefined;
     if (search !== undefined) {
       let params = search.split('&').map(param => {
-        let terms = param.split('=')
+        let terms = param.split('=');
         return {
           key: terms[0],
           value: terms[1]
-        }
+        };
       });
       let urlToken = params.filter(r => r.key == 'token')[0];
 
       if (urlToken !== undefined) {
         // console.log('urlToken', urlToken.value);
         localStorage.setItem('token', urlToken.value);
-        let cleanurl=window.location.origin+window.location.pathname+window.location.hash;
-        window.location=cleanurl;
+        let cleanurl = window.location.origin + window.location.pathname + window.location.hash;
+        window.location = cleanurl;
       } else {
-
       }
     }
     if (urlToken === undefined) {
       let token = localStorage.getItem('token');
-      console.log('token',token);
+      console.log('token', token);
       if (token !== undefined && token !== null) {
         console.log('existing token');
       } else {
         console.log('no existing token');
-        window.location='http://localhost:3000/auth'
+        window.location = 'http://localhost:3000/auth';
       }
 
       var myHeaders = new Headers();
-      myHeaders.append("Authorization", `JWT ${token}`);
-
+      myHeaders.append('Authorization', `JWT ${token}`);
 
       var myInit = {
         method: 'GET',
@@ -57,23 +53,20 @@ const App = () => {
       };
 
       try {
-
         let response = await fetch('http://localhost:3000/auth/me', myInit);
         if (response.status === 200) {
           let jsonResponse = await response.json();
         }
       } catch (e) {
-        console.log('Request failed', e)
+        console.log('Request failed', e);
       } finally {
-
       }
     }
-  }
+  };
 
   useEffect(() => {
-     activAuth();
+    activAuth();
   }, []);
-
 
   return (
     <>

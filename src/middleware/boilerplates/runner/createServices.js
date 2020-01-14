@@ -11,8 +11,7 @@ const {
 const TripleStoreService = require('@semapps/triplestore');
 
 async function createServices(broker, config) {
-
-  let services={};
+  let services = {};
   // Utils
   services.fusekiAdminService = await broker.createService(FusekiAdminService, {
     settings: {
@@ -60,7 +59,7 @@ async function createServices(broker, config) {
     }
   });
 
-  services.apiGatewayService=broker.createService({
+  services.apiGatewayService = broker.createService({
     mixins: [ApiGatewayService],
     settings: {
       middleware: true,
@@ -87,7 +86,7 @@ async function createServices(broker, config) {
   //   }
   // });
 
-  return services
+  return services;
 }
 
 module.exports = createServices;
