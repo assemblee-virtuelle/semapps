@@ -1,5 +1,8 @@
 const base64url = require('base64url');
 const jose = require('node-jose');
+// const config=require("../../../configuration.js")
+// const EntrepriseService=require("../service/entreprise.js")
+// const UserService=require("../service/user.js")
 
 function getMiddlwareExpressOidc(options){
   return async function(req,res,next){

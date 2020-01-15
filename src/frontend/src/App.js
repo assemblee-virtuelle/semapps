@@ -6,6 +6,7 @@ import CreateUserForm from './forms/CreateUserForm';
 import EditUserForm from './forms/EditUserForm';
 import UserProfile from './UserProfile';
 import Users from './Users';
+// import  { Redirect } from 'react-router-dom'
 
 
 const store = initStore();
@@ -26,9 +27,12 @@ const App = () => {
       });
       urlToken = params.filter(r => r.key === 'token')[0];
       if (urlToken !== undefined) {
+        // console.log('urlToken', urlToken.value);
         localStorage.setItem('token', urlToken.value);
         let cleanurl=window.location.origin+window.location.pathname+window.location.hash;
         window.location=cleanurl;
+      } else {
+
       }
     }
     // Read Token in localStorage and call API to obtain user info (identification and authentification)
@@ -61,6 +65,10 @@ const App = () => {
         } catch (e) {
           console.error('User Info Request failed', e)
         }
+      } catch (e) {
+        console.log('Request failed', e)
+      } finally {
+
       }
     }
   }

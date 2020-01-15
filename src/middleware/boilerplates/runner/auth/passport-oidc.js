@@ -8,6 +8,9 @@ const middlware_express_oidc = require('./middlware-express-oidc.js');
 const request = require('request');
 
 let addOidcLesCommunsPassportToApp = async function(app,options) {
+  // let config = require("../../../configuration.js")
+  console.log(options);
+
   let lesCommunsIssuer = await Issuer.discover(options.OIDC.issuer);
   // console.log('Les Communs Discovered issuer %s', JSON.stringify(lesCommunsIssuer));
   const client = new lesCommunsIssuer.Client({
