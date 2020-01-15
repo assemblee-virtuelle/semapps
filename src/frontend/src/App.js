@@ -6,7 +6,7 @@ import CreateUserForm from './forms/CreateUserForm';
 import EditUserForm from './forms/EditUserForm';
 import UserProfile from './UserProfile';
 import Users from './Users';
-import config from './config.js'
+import config from './config.js';
 
 const store = initStore();
 
