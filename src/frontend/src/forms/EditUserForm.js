@@ -7,7 +7,7 @@ import { editResource } from '../api/actions';
 
 const EditUserForm = ({ userId, navigate }) => {
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri,{
+  const { data: user } = useQuery(userUri, {
     headers: {
       Authorization: `JWT ${localStorage.getItem('token')}`
     }

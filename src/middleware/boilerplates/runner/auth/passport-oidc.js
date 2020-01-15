@@ -8,7 +8,6 @@ const MiddlwareOidc = require('./middlware-oidc.js');
 const request = require('request');
 
 let addOidcToApp = async function(app, options) {
-
   let issuer = await Issuer.discover(options.OIDC.issuer);
   const client = new issuer.Client({
     client_id: options.OIDC.client_id,
@@ -67,11 +66,15 @@ let addOidcToApp = async function(app, options) {
   );
 
   //API to obtain authentification and identification informations. Use middlware_express_oidc as all protected API which fill oidcPayload (authentification) and user (identification)
-  app.get('/auth/me', new MiddlwareOidc({ public_key: options.OIDC.public_key }).getMiddlwareExpressOidc(), async function(req, res, next) {
-    res.json({
-      oidcPayload: req.oidcPayload,
-      user: req.user
-    });
-  });
+  app.get(
+    '/auth/me',
+    new MiddlwareOidc({ public_key: options.OIDC.public_key }).getMiddlwareExpressOidc(),
+    async function(req, res, next) {
+      res.json({
+        oidcPayload: req.oidcPayload,
+        user: req.user
+      });
+    }
+  );
 };
 module.exports = addOidcToApp;

@@ -7,7 +7,7 @@ import { deleteResource, removeFromContainer } from './api/actions';
 
 const UserProfile = ({ userId, navigate }) => {
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri,{
+  const { data: user } = useQuery(userUri, {
     headers: {
       Authorization: `JWT ${localStorage.getItem('token')}`
     }
@@ -20,7 +20,7 @@ const UserProfile = ({ userId, navigate }) => {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `JWT ${localStorage.getItem('token')}`
-      },
+      }
     });
 
     await dispatch(deleteResource(userUri));
