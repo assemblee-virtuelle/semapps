@@ -15,6 +15,7 @@ module.exports = {
     ontologies: []
   },
   routes: {
+    authorization: true,
     path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',

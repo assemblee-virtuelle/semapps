@@ -1,6 +1,8 @@
 const ApiGatewayService = require('moleculer-web');
 const LdpService = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
+const MiddlwareOidc = require('./auth/middlware-oidc.js');
+const E = require("moleculer-web").Errors;
 const {
   CollectionService,
   FollowService,
@@ -69,22 +71,13 @@ async function createServices(broker, config) {
       },
       routes: [ActivityPubRoutes, LdpService.routes],
       defaultLdpAccept: config.defaultLdpAccept
+    },
+    methods: {
+      authorize(ctx, route, req, res) {
+        return new MiddlwareOidc({ public_key: config.OIDC.public_key }).getMiddlwareMoleculerOidc()(ctx, route, req, res);
+      }
     }
   });
-
-  // HTTP interface
-  // await broker.createService({
-  //   mixins: ApiGatewayService,
-  //   settings: {
-  //     port: 3000,
-  //     cors: {
-  //       origin: '*',
-  //       exposedHeaders: '*'
-  //     },
-  //     routes: [ActivityPubRoutes, LdpService.routes],
-  //     defaultLdpAccept: config.defaultLdpAccept
-  //   }
-  // });
 
   return services;
 }

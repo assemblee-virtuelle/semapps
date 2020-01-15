@@ -7,7 +7,11 @@ import { editResource } from '../api/actions';
 
 const EditUserForm = ({ userId, navigate }) => {
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri);
+  const { data: user } = useQuery(userUri,{
+    headers: {
+      Authorization: `JWT ${localStorage.getItem('token')}`
+    }
+  });
   const dispatch = useDispatch();
 
   const editUser = async values => {
@@ -20,7 +24,8 @@ const EditUserForm = ({ userId, navigate }) => {
     await fetch(userUri, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(user)
     });

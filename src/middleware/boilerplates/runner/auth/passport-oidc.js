@@ -4,17 +4,14 @@ const passport = require('passport');
 const base64url = require('base64url');
 const fs = require('fs');
 const jose = require('node-jose');
-const middlware_express_oidc = require('./middlware-express-oidc.js');
+const MiddlwareOidc = require('./middlware-oidc.js');
 const request = require('request');
 
-let addOidcLesCommunsPassportToApp = async function(app, options) {
-  // let config = require("../../../configuration.js")
-  console.log(options);
+let addOidcToApp = async function(app, options) {
 
-  let lesCommunsIssuer = await Issuer.discover(options.OIDC.issuer);
-  // console.log('Les Communs Discovered issuer %s', JSON.stringify(lesCommunsIssuer));
-  const client = new lesCommunsIssuer.Client({
-    client_id: options.OIDC.client_id, // Data Food Consoritum in Hex
+  let issuer = await Issuer.discover(options.OIDC.issuer);
+  const client = new issuer.Client({
+    client_id: options.OIDC.client_id,
     client_secret: options.OIDC.client_secret,
     redirect_uri: options.OIDC.redirect_uri
   });
@@ -63,19 +60,18 @@ let addOidcLesCommunsPassportToApp = async function(app, options) {
       session: false
     }),
     (req, res) => {
-      let referer = req.session.referer || 'http://localhost:5000/';
+      let referer = req.session.referer;
       let redirect_url = referer + '?token=' + res.req.user.accesstoken;
       res.redirect(redirect_url);
     }
   );
 
   //API to obtain authentification and identification informations. Use middlware_express_oidc as all protected API which fill oidcPayload (authentification) and user (identification)
-  console.log('options.OIDC.public_key', options.OIDC.public_key);
-  app.get('/auth/me', middlware_express_oidc({ public_key: options.OIDC.public_key }), async function(req, res, next) {
+  app.get('/auth/me', new MiddlwareOidc({ public_key: options.OIDC.public_key }).getMiddlwareExpressOidc(), async function(req, res, next) {
     res.json({
       oidcPayload: req.oidcPayload,
       user: req.user
     });
   });
 };
-module.exports = addOidcLesCommunsPassportToApp;
+module.exports = addOidcToApp;

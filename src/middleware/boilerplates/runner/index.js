@@ -8,6 +8,7 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
+const addOidcToApp = require('./auth/passport-oidc.js');
 
 const start = async function() {
   let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/compose.json';
@@ -33,19 +34,12 @@ const start = async function() {
       maxAge: null
     })
   );
-  let addOidcLesCommunsPassportToApp = require('./auth/passport-oidc.js');
+
   app.use(cors());
   app.use(passport.initialize());
   app.use(passport.session());
-  addOidcLesCommunsPassportToApp(app, {
-    OIDC: {
-      issuer: 'https://login.lescommuns.org/auth/realms/master/',
-      client_id: 'semapps',
-      client_secret: '8b90b5f1-bb15-4438-9f04-d61262705430',
-      redirect_uri: 'http://localhost:3000/auth/cb',
-      public_key:
-        'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnL0KaRkAKtWcc0TnwtlNVQ58PsB8guPirh1OCnNUqr71q3zyAqh5t6oWIRCTS5eqr2zhb/Je3QOeX2l0tGZ2YVQIBhvIGHcYfpMvrT+Loqsh3rHYiRLXs+YvUIM0tyWeQlpDMeqQ/t1G61FcF+HsiOBRvhaho7e+cV1hO1QvzcoxeMleexPdK+dnL4qHGKELf1oZmvFKcUAHG8IOcoxJn3KYdJsEbRj3jTAliTCXxGXmY++0c48pSV2iaOhxxlgR4AZTH+fSveAosGSPSYDYL9xVCyrRHFRgkHlIcw61hF6YyEE5G5b4MEumafBiLKZ9HJfjAhZv3kcD72nTGgJrMQIDAQAB'
-    }
+  addOidcToApp(app, {
+    OIDC: config.OIDC
   });
 
   // Use ApiGateway as middleware
