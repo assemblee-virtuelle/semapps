@@ -45,5 +45,4 @@ function getMiddlwareExpressOidc(options) {
   };
 }
 
-async function middlware_express_oidc(req, res, next) {}
 module.exports = getMiddlwareExpressOidc;
