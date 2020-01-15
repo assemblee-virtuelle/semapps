@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from '@reach/router';
-import { CONTAINER_URI } from './constants';
+import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
 

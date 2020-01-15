@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
-import { MIDDLEWARE_URL } from '../constants';
+import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 
 const SendMessageForm = ({ userId }) => {
@@ -14,7 +14,7 @@ const SendMessageForm = ({ userId }) => {
       content: values.content
     };
 
-    const response = await fetch(`${MIDDLEWARE_URL}/ldp/schema:Person`, {
+    const response = await fetch(CONTAINER_URI, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
