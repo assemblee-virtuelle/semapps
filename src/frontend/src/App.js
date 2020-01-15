@@ -6,7 +6,7 @@ import CreateUserForm from './forms/CreateUserForm';
 import EditUserForm from './forms/EditUserForm';
 import UserProfile from './UserProfile';
 import Users from './Users';
-// import  { Redirect } from 'react-router-dom'
+import config from './config.js'
 
 const store = initStore();
 
@@ -39,7 +39,7 @@ const App = () => {
       //If token isn't in localStorage nor in the url browser is redirected to auth url
       if (token === undefined || token === null) {
         console.log('redirect');
-        window.location = 'http://localhost:3000/auth';
+        window.location = `${config.MIDDLEWARE_URL}auth`;
       }
       //Else user info (authntification and identificaiton) is fetch with token in header
       else {
@@ -52,7 +52,7 @@ const App = () => {
           mode: 'cors'
         };
         try {
-          let response = await fetch('http://localhost:3000/auth/me', myInit);
+          let response = await fetch(`${config.MIDDLEWARE_URL}auth/me`, myInit);
           if (response.status === 200) {
             let jsonResponse = await response.json();
             console.log(jsonResponse);
