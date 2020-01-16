@@ -1,7 +1,7 @@
 const { Issuer, Strategy } = require('openid-client');
 const CONFIG = require('../config');
 
-async function usePassportStrategy(passport) {
+async function configurePassport(passport) {
   const issuer = await Issuer.discover(CONFIG.OIDC_ISSUER);
   const client = new issuer.Client({
     client_id: CONFIG.OIDC_CLIENT_ID,
@@ -31,4 +31,4 @@ async function usePassportStrategy(passport) {
   );
 }
 
-module.exports = usePassportStrategy;
+module.exports = configurePassport;

@@ -11,10 +11,10 @@ const cors = require('cors');
 const LdpService = require('@semapps/ldp');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 
-const getLoginMiddlewares = require('./oidc/getLoginMiddlewares');
+const getLoginMiddlewares = require('./cas/getLoginMiddlewares');
 const decodeToken = require('./oidc/decodeToken');
 const verifyToken = require('./oidc/verifyToken');
-const usePassportStrategy = require('./oidc/usePassportStrategy');
+const configurePassport = require('./cas/configurePassport');
 
 const createServices = require('./createServices');
 const CONFIG = require('./config');
@@ -41,8 +41,9 @@ app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
 
-usePassportStrategy(passport);
-app.use('/auth', ...getLoginMiddlewares());
+configurePassport(passport).then(() => {
+  app.use('/auth', ...getLoginMiddlewares());
+});
 
 const apiGateway = broker.createService({
   mixins: [ApiGatewayService],
