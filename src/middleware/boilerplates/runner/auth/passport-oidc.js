@@ -3,16 +3,15 @@ const Strategy = require('openid-client').Strategy;
 const passport = require('passport');
 const base64url = require('base64url');
 const fs = require('fs');
-const jose = require('node-jose');
 const MiddlwareOidc = require('./middlware-oidc.js');
-const request = require('request');
+const CONFIG = require('../config');
 
-let addOidcToApp = async function(app, options) {
-  let issuer = await Issuer.discover(options.OIDC.issuer);
+let addOidcToApp = async function(app) {
+  let issuer = await Issuer.discover(CONFIG.OIDC_ISSUER);
   const client = new issuer.Client({
-    client_id: options.OIDC.client_id,
-    client_secret: options.OIDC.client_secret,
-    redirect_uri: options.OIDC.redirect_uri
+    client_id: CONFIG.OIDC_CLIENT_ID,
+    client_secret: CONFIG.OIDC_CLIENT_SECRET,
+    redirect_uri: CONFIG.HOME_URL + 'auth/cb'
   });
   const params = {
     // ... any authorization params overide client properties
@@ -68,7 +67,7 @@ let addOidcToApp = async function(app, options) {
   //API to obtain authentification and identification informations. Use middlware_express_oidc as all protected API which fill oidcPayload (authentification) and user (identification)
   app.get(
     '/auth/me',
-    new MiddlwareOidc({ public_key: options.OIDC.public_key }).getMiddlwareExpressOidc(),
+    new MiddlwareOidc({ public_key: CONFIG.OIDC_PUBLIC_KEY }).getMiddlwareExpressOidc(),
     async function(req, res, next) {
       res.json({
         oidcPayload: req.oidcPayload,

@@ -74,7 +74,7 @@ function createServices(broker) {
     },
     methods: {
       authorize(ctx, route, req, res) {
-        return new MiddlwareOidc({ public_key: config.OIDC.public_key }).getMiddlwareMoleculerOidc()(
+        return new MiddlwareOidc({ public_key: CONFIG.OIDC_PUBLIC_KEY }).getMiddlwareMoleculerOidc()(
           ctx,
           route,
           req,

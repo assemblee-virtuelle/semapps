@@ -32,9 +32,7 @@ app.use(
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
-addOidcToApp(app, {
-  OIDC: config.OIDC
-});
+addOidcToApp(app);
 
 // Use ApiGateway as middleware
 app.use(services.apiGatewayService.express());
