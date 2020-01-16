@@ -2,7 +2,6 @@ const ApiGatewayService = require('moleculer-web');
 const LdpService = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const MiddlwareOidc = require('./auth/middlware-oidc.js');
-const E = require('moleculer-web').Errors;
 const {
   CollectionService,
   FollowService,
@@ -11,56 +10,57 @@ const {
   Routes: ActivityPubRoutes
 } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
+const CONFIG = require('./config');
+const ontologies = require('./ontologies');
 
-async function createServices(broker, config) {
+function createServices(broker) {
   let services = {};
   // Utils
-  services.fusekiAdminService = await broker.createService(FusekiAdminService, {
+  services.fusekiAdminService = broker.createService(FusekiAdminService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
+      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
+      jenaUser: CONFIG.JENA_USER,
+      jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
 
   // TripleStore
-  services.tripleStoreService = await broker.createService(TripleStoreService, {
+  services.tripleStoreService = broker.createService(TripleStoreService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset,
-      jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
+      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
+      mainDataset: CONFIG.MAIN_DATASET,
+      jenaUser: CONFIG.JENA_USER,
+      jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
 
   // LDP Service
-  services.ldpService = await broker.createService(LdpService, {
+  services.ldpService = broker.createService(LdpService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset,
-      homeUrl: config.homeUrl,
-      ontologies: config.ontologies
+      homeUrl: CONFIG.HOME_URL,
+      ontologies
     }
   });
 
   // ActivityPub
-  services.collectionService = await broker.createService(CollectionService);
-  services.followService = await broker.createService(FollowService, {
+  services.collectionService = broker.createService(CollectionService);
+  services.followService = broker.createService(FollowService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
-  services.inboxService = await broker.createService(InboxService, {
+  services.inboxService = broker.createService(InboxService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
-  services.outboxService = await broker.createService(OutboxService, {
+  services.outboxService = broker.createService(OutboxService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
 
+  // HTTP interface
   services.apiGatewayService = broker.createService({
     mixins: [ApiGatewayService],
     settings: {
@@ -70,7 +70,7 @@ async function createServices(broker, config) {
         exposedHeaders: '*'
       },
       routes: [ActivityPubRoutes, LdpService.routes],
-      defaultLdpAccept: config.defaultLdpAccept
+      defaultLdpAccept: 'text/turtle'
     },
     methods: {
       authorize(ctx, route, req, res) {

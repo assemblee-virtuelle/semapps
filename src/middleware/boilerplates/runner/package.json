@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch ../..",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -15,6 +15,7 @@
     "@semapps/ldp": "^1.0.0",
     "@semapps/triplestore": "^1.0.0",
     "cors": "^2.8.5",
+    "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "moleculer": "^0.13.11",
