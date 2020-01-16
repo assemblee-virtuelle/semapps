@@ -18,7 +18,8 @@ const CreateUserForm = ({ navigate }) => {
     const response = await fetch(CONTAINER_URI, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `JWT ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(user)
     });

@@ -4,7 +4,11 @@ import useQuery from './api/useQuery';
 import { getUserId } from './utils';
 
 const UserPreview = ({ userUri }) => {
-  const { data: user } = useQuery(userUri);
+  const { data: user } = useQuery(userUri, {
+    headers: {
+      Authorization: `JWT ${localStorage.getItem('token')}`
+    }
+  });
   return (
     user && (
       <div className="card w25">

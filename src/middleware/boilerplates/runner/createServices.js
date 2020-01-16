@@ -1,6 +1,7 @@
 const ApiGatewayService = require('moleculer-web');
 const LdpService = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
+const MiddlwareOidc = require('./auth/middlware-oidc.js');
 const {
   CollectionService,
   FollowService,
@@ -13,8 +14,9 @@ const CONFIG = require('./config');
 const ontologies = require('./ontologies');
 
 function createServices(broker) {
+  let services = {};
   // Utils
-  broker.createService(FusekiAdminService, {
+  services.fusekiAdminService = broker.createService(FusekiAdminService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
       jenaUser: CONFIG.JENA_USER,
@@ -23,7 +25,7 @@ function createServices(broker) {
   });
 
   // TripleStore
-  broker.createService(TripleStoreService, {
+  services.tripleStoreService = broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
       mainDataset: CONFIG.MAIN_DATASET,
@@ -33,7 +35,7 @@ function createServices(broker) {
   });
 
   // LDP Service
-  broker.createService(LdpService, {
+  services.ldpService = broker.createService(LdpService, {
     settings: {
       homeUrl: CONFIG.HOME_URL,
       ontologies
@@ -41,36 +43,48 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  broker.createService(CollectionService);
-  broker.createService(FollowService, {
+  services.collectionService = broker.createService(CollectionService);
+  services.followService = broker.createService(FollowService, {
     settings: {
       homeUrl: CONFIG.HOME_URL
     }
   });
-  broker.createService(InboxService, {
+  services.inboxService = broker.createService(InboxService, {
     settings: {
       homeUrl: CONFIG.HOME_URL
     }
   });
-  broker.createService(OutboxService, {
+  services.outboxService = broker.createService(OutboxService, {
     settings: {
       homeUrl: CONFIG.HOME_URL
     }
   });
 
   // HTTP interface
-  broker.createService({
-    mixins: ApiGatewayService,
+  services.apiGatewayService = broker.createService({
+    mixins: [ApiGatewayService],
     settings: {
-      port: 3000,
+      middleware: true,
       cors: {
         origin: '*',
         exposedHeaders: '*'
       },
       routes: [ActivityPubRoutes, LdpService.routes],
       defaultLdpAccept: 'text/turtle'
+    },
+    methods: {
+      authorize(ctx, route, req, res) {
+        return new MiddlwareOidc({ public_key: config.OIDC.public_key }).getMiddlwareMoleculerOidc()(
+          ctx,
+          route,
+          req,
+          res
+        );
+      }
     }
   });
+
+  return services;
 }
 
 module.exports = createServices;
