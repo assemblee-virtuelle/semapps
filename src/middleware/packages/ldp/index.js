@@ -13,7 +13,7 @@ module.exports = {
     ontologies: []
   },
   routes: {
-    authorization: true,
+    authentication: true,
     path: '/ldp/',
     aliases: {
       'GET view/activities': 'ldp.activities',
