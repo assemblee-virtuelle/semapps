@@ -1,7 +1,7 @@
-const fetch = require('node-fetch');
 const { ServiceBroker } = require('moleculer');
 const EventsWatcher = require('./middleware/EventsWatcher');
 const createServices = require('../createServices');
+const CONFIG = require('../config');
 
 const broker = new ServiceBroker({
   logger: false,
@@ -9,16 +9,12 @@ const broker = new ServiceBroker({
 });
 
 beforeAll(async () => {
-  let urlConfig = process.env.CONFIG_URL || 'https://assemblee-virtuelle.gitlab.io/semappsconfig/test.json';
-  const response = await fetch(urlConfig);
-  const config = await response.json();
-
-  await createServices(broker, config);
+  createServices(broker);
 
   await broker.start();
 
   await broker.call('fuseki-admin.initDataset', {
-    dataset: config.mainDataset
+    dataset: CONFIG.MAIN_DATASET
   });
 
   await broker.call('triplestore.dropAll');

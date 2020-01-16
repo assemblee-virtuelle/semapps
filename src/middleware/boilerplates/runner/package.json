@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --watch ../..",
-    "test": "jest"
+    "test": "NODE_ENV=test jest"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -14,6 +14,7 @@
     "@semapps/fuseki-admin": "^1.0.0",
     "@semapps/ldp": "^1.0.0",
     "@semapps/triplestore": "^1.0.0",
+    "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "moleculer": "^0.13.11",
     "moleculer-web": "^0.8.5",

@@ -9,57 +9,57 @@ const {
   Routes: ActivityPubRoutes
 } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
+const CONFIG = require('./config');
+const ontologies = require('./ontologies');
 
-async function createServices(broker, config) {
+function createServices(broker) {
   // Utils
-  await broker.createService(FusekiAdminService, {
+  broker.createService(FusekiAdminService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
+      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
+      jenaUser: CONFIG.JENA_USER,
+      jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
 
   // TripleStore
-  await broker.createService(TripleStoreService, {
+  broker.createService(TripleStoreService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset,
-      jenaUser: config.jenaUser,
-      jenaPassword: config.jenaPassword
+      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
+      mainDataset: CONFIG.MAIN_DATASET,
+      jenaUser: CONFIG.JENA_USER,
+      jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
 
   // LDP Service
-  await broker.createService(LdpService, {
+  broker.createService(LdpService, {
     settings: {
-      sparqlEndpoint: config.sparqlEndpoint,
-      mainDataset: config.mainDataset,
-      homeUrl: config.homeUrl,
-      ontologies: config.ontologies
+      homeUrl: CONFIG.HOME_URL,
+      ontologies
     }
   });
 
   // ActivityPub
-  await broker.createService(CollectionService);
-  await broker.createService(FollowService, {
+  broker.createService(CollectionService);
+  broker.createService(FollowService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
-  await broker.createService(InboxService, {
+  broker.createService(InboxService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
-  await broker.createService(OutboxService, {
+  broker.createService(OutboxService, {
     settings: {
-      homeUrl: config.homeUrl
+      homeUrl: CONFIG.HOME_URL
     }
   });
 
   // HTTP interface
-  await broker.createService({
+  broker.createService({
     mixins: ApiGatewayService,
     settings: {
       port: 3000,
@@ -68,7 +68,7 @@ async function createServices(broker, config) {
         exposedHeaders: '*'
       },
       routes: [ActivityPubRoutes, LdpService.routes],
-      defaultLdpAccept: config.defaultLdpAccept
+      defaultLdpAccept: 'text/turtle'
     }
   });
 }
