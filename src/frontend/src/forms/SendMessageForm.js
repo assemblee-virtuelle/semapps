@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
-import Page from "../Page";
+import Page from '../Page';
 
 const SendMessageForm = ({ userId }) => {
   const { data: usersUris } = useQuery(CONTAINER_URI);

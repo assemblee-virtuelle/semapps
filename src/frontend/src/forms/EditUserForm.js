@@ -5,7 +5,7 @@ import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
-import Page from "../Page";
+import Page from '../Page';
 
 const EditUserForm = ({ userId, navigate }) => {
   useAuth({ force: true });
@@ -37,37 +37,37 @@ const EditUserForm = ({ userId, navigate }) => {
   return (
     <Page>
       {user && (
-      <>
-        <h2>Modifier le profil de {user.givenName || user['schema:givenName']}</h2>
-        <Form
-          onSubmit={editUser}
-          initialValues={{
-            givenName: user.givenName || user['schema:givenName'],
-            familyName: user.familyName || user['schema:familyName'],
-            email: user.email || user['schema:email']
-          }}
-          render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="givenName">Prénom</label>
-                <Field name="givenName" component="input" className="form-control" id="givenName" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="familyName">Nom de famille</label>
-                <Field name="familyName" component="input" className="form-control" id="familyName" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="email">Adresse e-mail</label>
-                <Field name="email" component="input" className="form-control" id="email" />
-              </div>
-              <button type="submit" className="btn btn-warning w-100">
-                Modifier le profil
-              </button>
-            </form>
-          )}
-        />
-      </>
-    )}
+        <>
+          <h2>Modifier le profil de {user.givenName || user['schema:givenName']}</h2>
+          <Form
+            onSubmit={editUser}
+            initialValues={{
+              givenName: user.givenName || user['schema:givenName'],
+              familyName: user.familyName || user['schema:familyName'],
+              email: user.email || user['schema:email']
+            }}
+            render={({ handleSubmit }) => (
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="givenName">Prénom</label>
+                  <Field name="givenName" component="input" className="form-control" id="givenName" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="familyName">Nom de famille</label>
+                  <Field name="familyName" component="input" className="form-control" id="familyName" />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="email">Adresse e-mail</label>
+                  <Field name="email" component="input" className="form-control" id="email" />
+                </div>
+                <button type="submit" className="btn btn-warning w-100">
+                  Modifier le profil
+                </button>
+              </form>
+            )}
+          />
+        </>
+      )}
     </Page>
   );
 };
