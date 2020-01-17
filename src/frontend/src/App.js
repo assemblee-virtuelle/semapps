@@ -22,12 +22,12 @@ const App = () => {
             <ul className="navbar-nav">
               <li className="nav-item">
                 <Link to="/" className="nav-link">
-                  Créer un utilisateur
+                  Liste des utilisateurs
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="users" className="nav-link">
-                  Liste des utilisateurs
+                <Link to="users/create" className="nav-link">
+                  Créer un utilisateur
                 </Link>
               </li>
             </ul>
@@ -38,8 +38,8 @@ const App = () => {
       <div className="container">
         <Provider store={store}>
           <Router primary={false}>
-            <CreateUserForm path="/" />
-            <Users path="users" />
+            <Users path="/" />
+            <CreateUserForm path="users/create" />
             <UserProfile path="users/:userId" />
             <EditUserForm path="users/:userId/edit" />
           </Router>

@@ -4,14 +4,12 @@ import { useDispatch } from 'react-redux';
 import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
+import useAuth from "../auth/useAuth";
 
 const EditUserForm = ({ userId, navigate }) => {
+  useAuth({ force: true });
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri, {
-    headers: {
-      Authorization: `JWT ${localStorage.getItem('token')}`
-    }
-  });
+  const { data: user } = useQuery(userUri);
   const dispatch = useDispatch();
 
   const editUser = async values => {
@@ -25,7 +23,7 @@ const EditUserForm = ({ userId, navigate }) => {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(user)
     });

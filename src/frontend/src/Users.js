@@ -4,11 +4,7 @@ import UserPreview from './UserPreview';
 import { CONTAINER_URI } from './config';
 
 const Users = () => {
-  const { data: usersUris } = useQuery(CONTAINER_URI, {
-    headers: {
-      Authorization: `JWT ${localStorage.getItem('token')}`
-    }
-  });
+  const { data: usersUris } = useQuery(CONTAINER_URI);
   return (
     <div className="container">
       <h2> Liste des utilisateurs </h2>{' '}

@@ -4,8 +4,10 @@ import { Form, Field } from 'react-final-form';
 import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
+import useAuth from "../auth/useAuth";
 
 const CreateUserForm = ({ navigate }) => {
+  useAuth({ force: true });
   const dispatch = useDispatch();
 
   const createUser = async values => {
@@ -19,7 +21,7 @@ const CreateUserForm = ({ navigate }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(user)
     });

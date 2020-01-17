@@ -4,22 +4,23 @@ import { Link } from '@reach/router';
 import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
+import useAuth from "./auth/useAuth";
 
 const UserProfile = ({ userId, navigate }) => {
+  const { token, redirect } = useAuth();
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri, {
-    headers: {
-      Authorization: `JWT ${localStorage.getItem('token')}`
-    }
-  });
+  const { data: user } = useQuery(userUri);
   const dispatch = useDispatch();
 
   const deleteUser = async () => {
+    // If user is not logged, redirect him to login page
+    if( !token ) redirect();
+
     await fetch(userUri, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
 

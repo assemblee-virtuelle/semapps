@@ -4,6 +4,10 @@ import CONFIG from "../config";
 const useAuth = ({ force } = { force: false }) => {
   const [ token, setToken ] = useState(null);
 
+  const redirect = () => {
+    window.location = `${CONFIG.MIDDLEWARE_URL}auth?redirectUrl=` + encodeURI(CONFIG.FRONTEND_URL + "users");
+  };
+
   useEffect(() => {
     const url = new URL(window.location);
     if( url.searchParams.has('token') ) {
@@ -15,12 +19,12 @@ const useAuth = ({ force } = { force: false }) => {
       if( localStorage.getItem('token') ) {
         setToken(localStorage.getItem('token'));
       } else if ( force ) {
-        window.location = `${CONFIG.MIDDLEWARE_URL}auth?redirectUrl=` + encodeURI(CONFIG.FRONTEND_URL + "users");
+        redirect();
       }
     }
-  }, []);
+  }, [force]);
 
-  return !!token;
+  return { token, redirect };
 };
 
 export default useAuth;
