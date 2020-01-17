@@ -13,7 +13,7 @@ RUN npm install pm2 -g
 RUN npm install nodemon -g
 
 # install tool for npm lib compile in C
-RUN apk add --update --no-cache autoconf libtool automake python alpine-sdk
+RUN apk add --update --no-cache autoconf libtool automake python alpine-sdk openssh-keygen
 
 # Install app dependencies
 # COPY ./main/package.json /data/
@@ -25,6 +25,9 @@ COPY . /main/
 RUN cd /main/ && npm run bootstrap
 # RUN cd /main/boilerplates/runner && ls
 
+# Generate JWT token
+RUN cd /main/boilerplates/runner/jwt
+RUN if [ ! -e "jwtRS256.key" ]; then ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key -P "" && openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 
 # Expose ports (for orchestrators and dynamic reverse proxies)
 EXPOSE 3000

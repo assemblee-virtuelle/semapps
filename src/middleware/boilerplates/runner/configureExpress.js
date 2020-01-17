@@ -2,15 +2,14 @@ const express = require('express');
 const passport = require('passport');
 const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
 const LdpService = require('@semapps/ldp');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
+const { CasConnector, OidcConnector } = require('@semapps/connector');
 
-const getLoginMiddlewares = require('./cas/getLoginMiddlewares');
-const decodeToken = require('./oidc/decodeToken');
-const verifyToken = require('./oidc/verifyToken');
-const configurePassport = require('./cas/configurePassport');
+const CONFIG = require('./config');
 
 function configureExpress(broker) {
   const app = express();
@@ -25,8 +24,22 @@ function configureExpress(broker) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  configurePassport(passport).then(() => {
-    app.use('/auth', ...getLoginMiddlewares());
+  const connector = new OidcConnector({
+    issuer: CONFIG.OIDC_ISSUER,
+    clientId: CONFIG.OIDC_CLIENT_ID,
+    clientSecret: CONFIG.OIDC_CLIENT_SECRET,
+    publicKey: CONFIG.OIDC_PUBLIC_KEY,
+    redirectUri: CONFIG.HOME_URL + "auth",
+  });
+
+  // const connector = new CasConnector({
+  //   casUrl: CONFIG.CAS_URL,
+  //   privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
+  //   publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub')
+  // });
+
+  connector.configurePassport(passport).then(() => {
+    app.use('/auth', ...connector.getLoginMiddlewares());
   });
 
   const apiGateway = broker.createService({
@@ -43,21 +56,7 @@ function configureExpress(broker) {
     methods: {
       // https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
       async authenticate(ctx, route, req, res) {
-        try {
-          const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-          if (token) {
-            await verifyToken(token);
-            const payload = decodeToken(token);
-            console.log('Token payload', payload);
-            ctx.meta.tokenPayload = payload;
-            return Promise.resolve(payload);
-          } else {
-            return Promise.resolve(null);
-          }
-        } catch (err) {
-          console.log('Invalid token');
-          return Promise.reject();
-        }
+        return connector.moleculerAuthenticate(ctx, route, req, res);
       }
     }
   });
