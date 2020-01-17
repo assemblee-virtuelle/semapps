@@ -5,6 +5,7 @@ import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
+import Page from "../Page";
 
 const EditUserForm = ({ userId, navigate }) => {
   useAuth({ force: true });
@@ -34,7 +35,8 @@ const EditUserForm = ({ userId, navigate }) => {
   };
 
   return (
-    user && (
+    <Page>
+      {user && (
       <>
         <h2>Modifier le profil de {user.givenName || user['schema:givenName']}</h2>
         <Form
@@ -65,7 +67,8 @@ const EditUserForm = ({ userId, navigate }) => {
           )}
         />
       </>
-    )
+    )}
+    </Page>
   );
 };
 

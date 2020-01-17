@@ -5,16 +5,17 @@ import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
 import useAuth from './auth/useAuth';
+import Page from "./Page";
 
 const UserProfile = ({ userId, navigate }) => {
-  const { token, redirect } = useAuth();
+  const { isLogged, login } = useAuth();
   const userUri = `${CONTAINER_URI}/${userId}`;
   const { data: user } = useQuery(userUri);
   const dispatch = useDispatch();
 
   const deleteUser = async () => {
     // If user is not logged, redirect him to login page
-    if (!token) redirect();
+    if (!isLogged) login();
 
     await fetch(userUri, {
       method: 'DELETE',
@@ -32,7 +33,7 @@ const UserProfile = ({ userId, navigate }) => {
 
   return (
     user && (
-      <div className="container">
+      <Page>
         <h2>Profil de {user.givenName || user['schema:givenName']}</h2>
         <ul className="list-group">
           <div className="list-group-item">
@@ -64,7 +65,7 @@ const UserProfile = ({ userId, navigate }) => {
         <button type="submit" className="btn btn-danger" onClick={deleteUser}>
           Effacer le profil
         </button>
-      </div>
+      </Page>
     )
   );
 };

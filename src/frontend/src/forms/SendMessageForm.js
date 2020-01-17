@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
+import Page from "../Page";
 
 const SendMessageForm = ({ userId }) => {
   const { data: usersUris } = useQuery(CONTAINER_URI);
@@ -26,7 +27,7 @@ const SendMessageForm = ({ userId }) => {
   };
 
   return (
-    <>
+    <Page>
       <h2>Envoyer un message</h2>
       <Form
         onSubmit={submit}
@@ -47,7 +48,7 @@ const SendMessageForm = ({ userId }) => {
           </form>
         )}
       />
-    </>
+    </Page>
   );
 };
 

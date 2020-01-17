@@ -5,6 +5,7 @@ import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
+import Page from "../Page";
 
 const CreateUserForm = ({ navigate }) => {
   useAuth({ force: true });
@@ -35,7 +36,7 @@ const CreateUserForm = ({ navigate }) => {
   };
 
   return (
-    <>
+    <Page>
       <h2>Créer un utilisateur</h2>
       <Form
         onSubmit={createUser}
@@ -59,7 +60,7 @@ const CreateUserForm = ({ navigate }) => {
           </form>
         )}
       />
-    </>
+    </Page>
   );
 };
 
