@@ -22,7 +22,6 @@ class OidcConnector extends Connector {
     return JSON.parse(base64url.decode(components[1]));
   }
   async configurePassport(passport) {
-
     this.passport = passport;
 
     const issuer = await Issuer.discover(this.settings.issuer);

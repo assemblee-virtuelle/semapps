@@ -13,7 +13,6 @@ class CasConnector extends Connector {
     });
   }
   async configurePassport(passport) {
-
     this.passport = passport;
 
     passport.serializeUser(function(user, done) {
@@ -29,7 +28,7 @@ class CasConnector extends Connector {
         {
           casURL: this.settings.casUrl
         },
-        function(username, profile, done) {
+        (username, profile, done) => {
           const token = this.generateToken({
             id: parseInt(profile.uid[0], 10),
             name: username,
@@ -51,7 +50,7 @@ class CasConnector extends Connector {
       (req, res) => {
         // Successful authentication, redirect back to client
         let referer = req.session.referer;
-        let redirect_url = referer + '?token=' + req.user.token;
+        let redirect_url = referer + '?token=' + res.req.user.token;
         res.redirect(redirect_url);
       }
     ];

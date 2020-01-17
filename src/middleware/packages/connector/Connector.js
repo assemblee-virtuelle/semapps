@@ -4,7 +4,6 @@ class Connector {
   constructor(passportId, settings) {
     this.passportId = passportId;
     this.settings = settings;
-    console.log('this.settings', this.settings);
   }
   generateToken(payload) {
     return jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
@@ -12,7 +11,7 @@ class Connector {
   async verifyToken(token) {
     try {
       return jwt.verify(token, this.settings.publicKey, { algorithms: ['RS256'] });
-    } catch(err) {
+    } catch (err) {
       return false;
     }
   }

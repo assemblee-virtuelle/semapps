@@ -29,7 +29,7 @@ function configureExpress(broker) {
     clientId: CONFIG.OIDC_CLIENT_ID,
     clientSecret: CONFIG.OIDC_CLIENT_SECRET,
     publicKey: CONFIG.OIDC_PUBLIC_KEY,
-    redirectUri: CONFIG.HOME_URL + "auth",
+    redirectUri: CONFIG.HOME_URL + 'auth'
   });
 
   // const connector = new CasConnector({
