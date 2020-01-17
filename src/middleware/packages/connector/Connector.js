@@ -15,6 +15,24 @@ class Connector {
       return false;
     }
   }
+  getLoginMiddlewares() {
+    return [
+      (req, res, next) => {
+        // Persist referer on the session to get it back after redirection
+        req.session.redirectUrl = req.query.redirectUrl || req.headers.referer;
+        next();
+      },
+      this.passport.authenticate(this.passportId, {
+        session: false
+      }),
+      (req, res) => {
+        // Redirect browser to the redirectUrl pushed in session
+        // Add the token to the URL so that the client may use it
+        const redirectUrl = req.session.redirectUrl;
+        res.redirect(redirectUrl + '?token=' + res.req.user.token);
+      }
+    ];
+  }
   async moleculerAuthenticate(ctx, route, req, res) {
     try {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];

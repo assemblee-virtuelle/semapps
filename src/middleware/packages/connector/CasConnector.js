@@ -39,22 +39,6 @@ class CasConnector extends Connector {
       )
     );
   }
-  getLoginMiddlewares() {
-    return [
-      (req, res, next) => {
-        // Push referer on the session to remind it after redirection
-        req.session.referer = req.headers.referer;
-        next();
-      },
-      this.passport.authenticate(this.passportId),
-      (req, res) => {
-        // Successful authentication, redirect back to client
-        let referer = req.session.referer;
-        let redirect_url = referer + '?token=' + res.req.user.token;
-        res.redirect(redirect_url);
-      }
-    ];
-  }
 }
 
 module.exports = CasConnector;

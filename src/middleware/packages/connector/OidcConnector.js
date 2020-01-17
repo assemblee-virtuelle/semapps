@@ -14,6 +14,7 @@ class OidcConnector extends Connector {
     });
   }
   async verifyToken(token) {
+    // TODO verify the token with the ĵsonwebtoken package
     const key = await jose.JWK.asKey(this.settings.publicKey, 'pem');
     const verifier = jose.JWS.createVerify(key);
     await verifier.verify(token);
@@ -46,30 +47,10 @@ class OidcConnector extends Connector {
           params
         },
         (tokenset, userinfo, done) => {
-          userinfo.token = tokenset.access_token;
-          done(null, userinfo);
+          done(null, { token: tokenset.access_token });
         }
       )
     );
-  }
-  getLoginMiddlewares() {
-    return [
-      (req, res, next) => {
-        // Push referer on the session to remind it after redirection
-        req.session.referer = req.headers.referer;
-        next();
-      },
-      this.passport.authenticate(this.passportId, {
-        session: false
-      }),
-      (req, res) => {
-        // Redirect browser to the referer pushed in session
-        // Add the token to the URL so that the client may use it
-        let referer = req.session.referer;
-        let redirect_url = referer + '?token=' + res.req.user.token;
-        res.redirect(redirect_url);
-      }
-    ];
   }
 }
 
