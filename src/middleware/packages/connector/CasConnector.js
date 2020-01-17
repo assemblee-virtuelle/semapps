@@ -13,7 +13,6 @@ class CasConnector extends Connector {
     });
   }
   async configurePassport(passport) {
-
     this.passport = passport;
 
     passport.serializeUser(function(user, done) {

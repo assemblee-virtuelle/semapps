@@ -12,7 +12,7 @@ class Connector {
   async verifyToken(token) {
     try {
       return jwt.verify(token, this.settings.publicKey, { algorithms: ['RS256'] });
-    } catch(err) {
+    } catch (err) {
       return false;
     }
   }
