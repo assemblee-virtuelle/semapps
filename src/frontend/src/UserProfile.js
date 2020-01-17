@@ -4,7 +4,7 @@ import { Link } from '@reach/router';
 import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
-import useAuth from "./auth/useAuth";
+import useAuth from './auth/useAuth';
 
 const UserProfile = ({ userId, navigate }) => {
   const { token, redirect } = useAuth();
@@ -14,7 +14,7 @@ const UserProfile = ({ userId, navigate }) => {
 
   const deleteUser = async () => {
     // If user is not logged, redirect him to login page
-    if( !token ) redirect();
+    if (!token) redirect();
 
     await fetch(userUri, {
       method: 'DELETE',
