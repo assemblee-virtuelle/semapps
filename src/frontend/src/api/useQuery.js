@@ -16,7 +16,7 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
         ...headers
       };
       const token = localStorage.getItem('token');
-      if( token ) headers.Authorization = `Bearer ${token}`;
+      if (token) headers.Authorization = `Bearer ${token}`;
       fetch(uri, {
         method: 'GET',
         headers,

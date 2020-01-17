@@ -4,7 +4,7 @@ import { Form, Field } from 'react-final-form';
 import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
-import useAuth from "../auth/useAuth";
+import useAuth from '../auth/useAuth';
 
 const CreateUserForm = ({ navigate }) => {
   useAuth({ force: true });

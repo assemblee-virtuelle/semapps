@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
-import useAuth from "../auth/useAuth";
+import useAuth from '../auth/useAuth';
 
 const EditUserForm = ({ userId, navigate }) => {
   useAuth({ force: true });
