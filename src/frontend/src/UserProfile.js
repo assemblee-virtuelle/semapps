@@ -28,7 +28,7 @@ const UserProfile = ({ userId, navigate }) => {
     await dispatch(deleteResource(userUri));
     await dispatch(removeFromContainer(CONTAINER_URI, userUri));
 
-    navigate('/users');
+    navigate('/');
   };
 
   return (
