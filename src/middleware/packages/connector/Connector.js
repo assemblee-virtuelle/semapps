@@ -19,7 +19,8 @@ class Connector {
     return [
       (req, res, next) => {
         // Persist referer on the session to get it back after redirection
-        req.session.redirectUrl = req.query.redirectUrl || req.headers.referer;
+        // If the redirectUrl is already in the session, keep it as is
+        req.session.redirectUrl = req.session.redirectUrl || req.query.redirectUrl || req.headers.referer;
         next();
       },
       this.passport.authenticate(this.passportId, {
