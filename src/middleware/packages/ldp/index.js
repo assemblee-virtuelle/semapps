@@ -127,14 +127,14 @@ module.exports = {
     },
     async post(ctx) {
       const { typeURL, ...body } = ctx.params;
-      body.id = this.generateId(typeURL);
+      body['@id'] = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
-        Location: body.id,
+        Location: body['@id'],
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
