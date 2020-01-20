@@ -2,7 +2,7 @@ import React from 'react';
 import useQuery from './api/useQuery';
 import UserPreview from './UserPreview';
 import { CONTAINER_URI } from './config';
-import Page from "./Page";
+import Page from './Page';
 
 const Users = () => {
   const { data: usersUris } = useQuery(CONTAINER_URI);

@@ -5,7 +5,7 @@ import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
-import Page from "../Page";
+import Page from '../Page';
 
 const CreateUserForm = ({ navigate }) => {
   useAuth({ force: true });

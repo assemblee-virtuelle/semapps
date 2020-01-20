@@ -4,11 +4,9 @@ import NavBar from './NavBar';
 const Page = ({ children }) => {
   return (
     <>
-      <NavBar/>
+      <NavBar />
       <br />
-      <div className="container">
-        {children}
-      </div>
+      <div className="container">{children}</div>
     </>
   );
 };

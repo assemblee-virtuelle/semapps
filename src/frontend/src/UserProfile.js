@@ -5,7 +5,7 @@ import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
 import useAuth from './auth/useAuth';
-import Page from "./Page";
+import Page from './Page';
 
 const UserProfile = ({ userId, navigate }) => {
   const { isLogged, login } = useAuth();
