@@ -32,7 +32,7 @@ const CreateUserForm = ({ navigate }) => {
     await dispatch(addResource(userUri, user));
     await dispatch(addToContainer(CONTAINER_URI, userUri));
 
-    navigate(`users/${getUserId(userUri)}`);
+    navigate(`/users/${getUserId(userUri)}`);
   };
 
   return (
