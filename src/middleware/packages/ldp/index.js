@@ -128,7 +128,7 @@ module.exports = {
     async post(ctx) {
       const { typeURL, ...body } = ctx.params;
       const slug = ctx.meta.headers.slug;
-      body['@id'] = this.generateId(typeURL,slug);
+      body['@id'] = this.generateId(typeURL, slug);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
