@@ -1,9 +1,0 @@
-{
-  "version": 2,
-  "name": "semapps",
-  "build": {
-    "env": {
-      "REACT_APP_MIDDLEWARE_URL": "@secret-name"
-    }
-  }
-}
