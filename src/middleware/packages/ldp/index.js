@@ -126,6 +126,7 @@ module.exports = {
     },
     async post(ctx) {
       const { typeURL, ...body } = ctx.params;
+      console.log('typeURL', ctx.params);
       body.id = this.generateId(typeURL);
       const out = await ctx.call('triplestore.insert', {
         resource: body,

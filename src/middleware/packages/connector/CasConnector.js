@@ -9,7 +9,8 @@ class CasConnector extends Connector {
     super('cas', {
       casUrl: settings.casUrl,
       privateKey,
-      publicKey
+      publicKey,
+      webIdGenerator: settings.webIdGenerator
     });
   }
   async configurePassport(passport) {
@@ -29,12 +30,14 @@ class CasConnector extends Connector {
           casURL: this.settings.casUrl
         },
         (username, profile, done) => {
-          const token = this.generateToken({
+          // Select the information we want to keep
+          done(null, {
             id: parseInt(profile.uid[0], 10),
-            name: username,
-            email: profile.mail[0]
+            nick: profile.displayName,
+            email: profile.mail[0],
+            name: profile.field_first_name[0],
+            familyName: profile.field_last_name[0]
           });
-          done(null, { token });
         }
       )
     );

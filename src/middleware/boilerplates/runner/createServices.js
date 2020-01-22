@@ -2,6 +2,7 @@ const LdpService = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const { CollectionService, FollowService, InboxService, OutboxService } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
+const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
 
@@ -32,6 +33,7 @@ function createServices(broker) {
       ontologies
     }
   });
+  broker.createService(WebIdService);
 
   // ActivityPub
   broker.createService(CollectionService);
