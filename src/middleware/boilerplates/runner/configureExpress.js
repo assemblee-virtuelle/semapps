@@ -24,19 +24,20 @@ function configureExpress(broker) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  const connector = new OidcConnector({
-    issuer: CONFIG.OIDC_ISSUER,
-    clientId: CONFIG.OIDC_CLIENT_ID,
-    clientSecret: CONFIG.OIDC_CLIENT_SECRET,
-    publicKey: CONFIG.OIDC_PUBLIC_KEY,
-    redirectUri: CONFIG.HOME_URL + 'auth'
-  });
-
-  // const connector = new CasConnector({
-  //   casUrl: CONFIG.CAS_URL,
-  //   privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
-  //   publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub')
-  // });
+  const connector =
+    CONFIG.CONNECT_TYPE === 'OIDC'
+      ? new OidcConnector({
+          issuer: CONFIG.OIDC_ISSUER,
+          clientId: CONFIG.OIDC_CLIENT_ID,
+          clientSecret: CONFIG.OIDC_CLIENT_SECRET,
+          publicKey: CONFIG.OIDC_PUBLIC_KEY,
+          redirectUri: CONFIG.HOME_URL + 'auth'
+        })
+      : new CasConnector({
+          casUrl: CONFIG.CAS_URL,
+          privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
+          publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub')
+        });
 
   connector.configurePassport(passport).then(() => {
     app.use('/auth', ...connector.getLoginMiddlewares());
