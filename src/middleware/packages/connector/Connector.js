@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const E = require('moleculer-web').Errors;
 
 class Connector {
   constructor(passportId, settings) {
@@ -55,20 +56,33 @@ class Connector {
       this.redirectToFront.bind(this)
     ];
   }
-  async moleculerAuthenticate(ctx, route, req, res) {
+  // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+  async authenticate(ctx, route, req, res) {
     try {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
         const payload = await this.verifyToken(token);
-        console.log('Token payload', payload);
         ctx.meta.tokenPayload = payload;
         return Promise.resolve(payload);
       } else {
         return Promise.resolve(null);
       }
     } catch (err) {
-      console.log('Invalid token');
       return Promise.reject();
+    }
+  }
+  // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+  async authorize(ctx, route, req, res) {
+    try {
+      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+      if (token) {
+        ctx.meta.tokenPayload = await this.verifyToken(token);
+        return Promise.resolve(ctx);
+      } else {
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+      }
+    } catch (err) {
+      return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
     }
   }
 }

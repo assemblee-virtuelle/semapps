@@ -1,4 +1,4 @@
-const LdpService = require('@semapps/ldp');
+const { LdpService } = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const { CollectionService, FollowService, InboxService, OutboxService } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');

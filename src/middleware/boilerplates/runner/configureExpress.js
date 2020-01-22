@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
-const LdpService = require('@semapps/ldp');
+const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
@@ -24,22 +24,23 @@ function configureExpress(broker) {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // const connector = new OidcConnector({
-  //   issuer: CONFIG.OIDC_ISSUER,
-  //   clientId: CONFIG.OIDC_CLIENT_ID,
-  //   clientSecret: CONFIG.OIDC_CLIENT_SECRET,
-  //   publicKey: CONFIG.OIDC_PUBLIC_KEY,
-  //   redirectUri: CONFIG.HOME_URL + 'auth'
-  // });
-
-  const connector = new CasConnector({
-    casUrl: CONFIG.CAS_URL,
-    privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
-    publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
-    webIdGenerator: async userData => {
-      return await broker.call('webid.create', userData);
-    }
-  });
+  const connector =
+    CONFIG.CONNECT_TYPE === 'OIDC'
+      ? new OidcConnector({
+          issuer: CONFIG.OIDC_ISSUER,
+          clientId: CONFIG.OIDC_CLIENT_ID,
+          clientSecret: CONFIG.OIDC_CLIENT_SECRET,
+          publicKey: CONFIG.OIDC_PUBLIC_KEY,
+          redirectUri: CONFIG.HOME_URL + 'auth'
+        })
+      : new CasConnector({
+          casUrl: CONFIG.CAS_URL,
+          privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
+          publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
+          webIdGenerator: async userData => {
+            return await broker.call('webid.create', userData);
+          }
+        });
 
   connector.configurePassport(passport).then(() => {
     app.use('/auth', ...connector.getLoginMiddlewares());
@@ -53,14 +54,12 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [ActivityPubRoutes, LdpService.routes],
+      routes: [LdpRoutes.unsecuredRoutes, ActivityPubRoutes],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {
-      // https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
-      async authenticate(ctx, route, req, res) {
-        return connector.moleculerAuthenticate(ctx, route, req, res);
-      }
+      authenticate: connector.authenticate,
+      authorize: connector.authorize
     }
   });
 
