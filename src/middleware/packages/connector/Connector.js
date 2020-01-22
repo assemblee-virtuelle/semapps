@@ -28,12 +28,11 @@ class Connector {
 
       // Append the webId if we have a generator
       if (this.settings.webIdGenerator) {
-        this.settings.webIdGenerator(userData)
-          .then(webId => {
-            // Call generate token with all the selected user information
-            res.req.user.token = this.generateToken({ webId, ...userData });
-            next();
-          });
+        this.settings.webIdGenerator(userData).then(webId => {
+          // Call generate token with all the selected user information
+          res.req.user.token = this.generateToken({ webId, ...userData });
+          next();
+        });
       } else {
         res.req.user.token = this.generateToken(userData);
         next();
