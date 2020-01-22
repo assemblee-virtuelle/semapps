@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
-const LdpService = require('@semapps/ldp');
+const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
@@ -50,14 +50,12 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [ActivityPubRoutes, LdpService.routes],
+      routes: [LdpRoutes.unsecuredRoutes, ActivityPubRoutes],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {
-      // https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
-      async authenticate(ctx, route, req, res) {
-        return connector.moleculerAuthenticate(ctx, route, req, res);
-      }
+      authenticate: connector.authenticate,
+      authorize: connector.authorize
     }
   });
 
