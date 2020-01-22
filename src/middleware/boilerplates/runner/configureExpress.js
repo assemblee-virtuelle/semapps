@@ -37,6 +37,13 @@ function configureExpress(broker) {
           casUrl: CONFIG.CAS_URL,
           privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
           publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
+          userDataSelector: userData => ({
+            id: parseInt(userData.uid[0], 10),
+            nick: userData.displayName,
+            email: userData.mail[0],
+            name: userData.field_first_name[0],
+            familyName: userData.field_last_name[0]
+          }),
           webIdGenerator: async userData => {
             return await broker.call('webid.create', userData);
           }

@@ -10,6 +10,7 @@ class CasConnector extends Connector {
       casUrl: settings.casUrl,
       privateKey,
       publicKey,
+      userDataSelector: settings.userDataSelector,
       webIdGenerator: settings.webIdGenerator
     });
   }
@@ -31,13 +32,8 @@ class CasConnector extends Connector {
         },
         (username, profile, done) => {
           // Select the information we want to keep
-          done(null, {
-            id: parseInt(profile.uid[0], 10),
-            nick: profile.displayName,
-            email: profile.mail[0],
-            name: profile.field_first_name[0],
-            familyName: profile.field_last_name[0]
-          });
+          // These information will be stored in the JWT
+          done(null, this.settings.userDataSelector(profile));
         }
       )
     );
