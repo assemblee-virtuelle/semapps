@@ -13,7 +13,7 @@ const routeConfig = {
 };
 
 module.exports = {
-  unsecuredRoutes : {
+  unsecuredRoutes: {
     path: '/ldp',
     authorization: false,
     authentication: true,
