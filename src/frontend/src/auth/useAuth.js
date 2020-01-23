@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import CONFIG from '../config';
-import useQuery from "../api/useQuery";
+import useQuery from '../api/useQuery';
 
 /**
  * useAuth React hook
