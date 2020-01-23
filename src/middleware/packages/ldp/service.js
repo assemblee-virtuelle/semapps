@@ -93,7 +93,6 @@ module.exports = {
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
       if (triplesNb > 0) {
         body['@id'] = resourceUri;
-        console.log('body', body);
         const out = await ctx.call('triplestore.patch', {
           resource: body
         });
