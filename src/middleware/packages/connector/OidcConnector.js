@@ -10,7 +10,9 @@ class OidcConnector extends Connector {
       clientId: settings.clientId,
       clientSecret: settings.clientSecret,
       publicKey: settings.publicKey,
-      redirectUri: settings.redirectUri
+      redirectUri: settings.redirectUri,
+      selectProfileData: settings.selectProfileData,
+      findOrCreateProfile: settings.findOrCreateProfile
     });
   }
   async verifyToken(token) {
@@ -47,7 +49,7 @@ class OidcConnector extends Connector {
           params
         },
         (tokenset, userinfo, done) => {
-          done(null, { token: tokenset.access_token });
+          done(null, { token: tokenset.access_token, ...userinfo });
         }
       )
     );

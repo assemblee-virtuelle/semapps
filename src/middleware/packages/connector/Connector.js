@@ -6,9 +6,6 @@ class Connector {
     this.passportId = passportId;
     this.settings = settings;
   }
-  generateToken(payload) {
-    return jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
-  }
   async verifyToken(token) {
     try {
       return jwt.verify(token, this.settings.publicKey, { algorithms: ['RS256'] });
@@ -22,22 +19,24 @@ class Connector {
     req.session.redirectUrl = req.session.redirectUrl || req.query.redirectUrl || req.headers.referer;
     next();
   }
-  getToken(req, res, next) {
-    // If token is not already provided by the connector, generate one
-    if (!res.req.user.token) {
-      const userData = res.req.user;
+  findOrCreateProfile(req, res, next) {
+    // Select profile data amongst all the data returned by the connector
+    const profileData = this.settings.selectProfileData(res.req.user);
 
-      // Append the webId if we have a generator
-      if (this.settings.webIdGenerator) {
-        this.settings.webIdGenerator(userData).then(webId => {
-          // Call generate token with all the selected user information
-          res.req.user.token = this.generateToken({ webId, ...userData });
-          next();
-        });
-      } else {
-        res.req.user.token = this.generateToken(userData);
-        next();
-      }
+    this.settings.findOrCreateProfile(profileData).then(webId => {
+      // Keep the webId as we may need it for the token generation
+      res.req.user.webId = webId;
+      next();
+    });
+  }
+  generateToken(req, res, next) {
+    // If token is already provided by the connector, skip this step
+    if (res.req.user.token) {
+      next();
+    } else {
+      const profileData = this.settings.selectProfileData(res.req.user);
+      res.req.user.token = jwt.sign({ webId: res.req.user.webId, ...profileData });
+      next();
     }
   }
   redirectToFront(req, res) {
@@ -52,7 +51,8 @@ class Connector {
       this.passport.authenticate(this.passportId, {
         session: false
       }),
-      this.getToken.bind(this),
+      this.findOrCreateProfile.bind(this),
+      this.generateToken.bind(this),
       this.redirectToFront.bind(this)
     ];
   }

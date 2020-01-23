@@ -10,8 +10,8 @@ class CasConnector extends Connector {
       casUrl: settings.casUrl,
       privateKey,
       publicKey,
-      userDataSelector: settings.userDataSelector,
-      webIdGenerator: settings.webIdGenerator
+      selectProfileData: settings.selectProfileData,
+      findOrCreateProfile: settings.findOrCreateProfile
     });
   }
   async configurePassport(passport) {
@@ -31,9 +31,7 @@ class CasConnector extends Connector {
           casURL: this.settings.casUrl
         },
         (username, profile, done) => {
-          // Select the information we want to keep
-          // These information will be stored in the JWT
-          done(null, this.settings.userDataSelector(profile));
+          done(null, profile);
         }
       )
     );

@@ -25,6 +25,10 @@ function configureExpress(broker) {
   app.use(passport.initialize());
   app.use(passport.session());
 
+  const findOrCreateProfile = async profileData => {
+    return await broker.call('webid.create', profileData);
+  };
+
   const connector =
     CONFIG.CONNECT_TYPE === 'OIDC'
       ? new OidcConnector({
@@ -32,22 +36,28 @@ function configureExpress(broker) {
           clientId: CONFIG.OIDC_CLIENT_ID,
           clientSecret: CONFIG.OIDC_CLIENT_SECRET,
           publicKey: CONFIG.OIDC_PUBLIC_KEY,
-          redirectUri: CONFIG.HOME_URL + 'auth'
+          redirectUri: CONFIG.HOME_URL + 'auth',
+          selectProfileData: authData => {
+            console.log('authData', authData);
+            return ({
+              email: authData.email,
+              name: authData.given_name,
+              familyName: authData.family_name
+            })
+          },
+          findOrCreateProfile
         })
       : new CasConnector({
           casUrl: CONFIG.CAS_URL,
           privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
           publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
-          userDataSelector: userData => ({
-            id: parseInt(userData.uid[0], 10),
-            nick: userData.displayName,
-            email: userData.mail[0],
-            name: userData.field_first_name[0],
-            familyName: userData.field_last_name[0]
+          selectProfileData: authData => ({
+            nick: authData.displayName,
+            email: authData.mail[0],
+            name: authData.field_first_name[0],
+            familyName: authData.field_last_name[0]
           }),
-          webIdGenerator: async userData => {
-            return await broker.call('webid.create', userData);
-          }
+          findOrCreateProfile
         });
 
   connector.configurePassport(passport).then(() => {
