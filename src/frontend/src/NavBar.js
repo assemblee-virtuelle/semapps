@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import useAuth from "./auth/useAuth";
+import useAuth from './auth/useAuth';
 
 const NavBar = () => {
   const { isLogged } = useAuth();
@@ -24,17 +24,16 @@ const NavBar = () => {
               </Link>
             </li>
           </ul>
-
         </div>
         <Link to="/profile" className="float-right ">
           <button className="btn btn-outline-dark" type="submit">
             <i className="fa fa-user-o"></i>&nbsp;
-            { isLogged ? 'Mon profil' : 'Se connecter'}
+            {isLogged ? 'Mon profil' : 'Se connecter'}
           </button>
         </Link>
       </div>
     </nav>
   );
-}
+};
 
 export default NavBar;
