@@ -39,11 +39,11 @@ function configureExpress(broker) {
           redirectUri: CONFIG.HOME_URL + 'auth',
           selectProfileData: authData => {
             console.log('authData', authData);
-            return ({
+            return {
               email: authData.email,
               name: authData.given_name,
               familyName: authData.family_name
-            })
+            };
           },
           findOrCreateProfile
         })
