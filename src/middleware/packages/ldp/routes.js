@@ -20,7 +20,7 @@ module.exports = [
     authentication: true,
     aliases: {
       'GET :typeURL': 'ldp.getByType',
-      'GET :typeURL/:identifierURL': 'ldp.getResource'
+      'GET :typeURL/:resourceId': 'ldp.get'
     },
     ...routeConfig
   },
@@ -30,8 +30,8 @@ module.exports = [
     authentication: false,
     aliases: {
       'POST :typeURL': 'ldp.post',
-      'DELETE :typeURL/:identifierURL': 'ldp.delete',
-      'PATCH :typeURL/:identifierURL': 'ldp.patch'
+      'DELETE :typeURL/:resourceId': 'ldp.delete',
+      'PATCH :typeURL/:resourceId': 'ldp.patch'
     },
     ...routeConfig
   }

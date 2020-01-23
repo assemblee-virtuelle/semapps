@@ -1,6 +1,7 @@
 import React from 'react';
 import { Router } from '@reach/router';
-import { Provider } from 'react-redux';
+import { Provider as ReduxProvider } from 'react-redux';
+import UserProvider from './auth/UserProvider';
 import initStore from './api/initStore';
 import ResourceEditPage from './pages/ResourceEditPage';
 import ResourceViewPage from './pages/ResourceViewPage';
@@ -13,16 +14,18 @@ const store = initStore();
 
 const App = () => {
   return (
-    <Provider store={store}>
-      <Router primary={false}>
-        <ResourcesListPage path="/" />
-        <ResourceCreatePage path="/resources/create" />
-        <ResourceEditPage path="/resources/:resourceId/edit" />
-        <ResourceDeletePage path="/resources/:resourceId/delete" />
-        <ResourceViewPage path="/resources/:resourceId" />
-        <MyProfilePage path="/profile" />
-      </Router>
-    </Provider>
+    <ReduxProvider store={store}>
+      <UserProvider>
+        <Router primary={false}>
+          <ResourcesListPage path="/" />
+          <ResourceCreatePage path="/resources/create" />
+          <ResourceEditPage path="/resources/:resourceId/edit" />
+          <ResourceDeletePage path="/resources/:resourceId/delete" />
+          <ResourceViewPage path="/resources/:resourceId" />
+          <MyProfilePage path="/profile" />
+        </Router>
+      </UserProvider>
+    </ReduxProvider>
   );
 };
 

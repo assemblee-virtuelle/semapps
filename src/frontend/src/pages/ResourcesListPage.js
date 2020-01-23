@@ -6,6 +6,7 @@ import Page from '../Page';
 
 const ResourcesListPage = () => {
   const { data: resourcesUris } = useQuery(CONTAINER_URI);
+  console.log('resourcesUris', resourcesUris);
   return (
     <Page>
       <h2> Liste des projets </h2>{' '}

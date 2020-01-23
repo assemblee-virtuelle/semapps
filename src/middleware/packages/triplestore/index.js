@@ -39,6 +39,8 @@ module.exports = {
     async patch(ctx) {
       const query = await this.buildPatchQuery(ctx.params);
 
+      console.log('query', query);
+
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: query,

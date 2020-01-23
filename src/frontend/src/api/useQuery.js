@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const initialValues = { data: null, loading: true, error: null };
+const initialValues = { data: [], loading: true, error: null };
 
 const useQuery = (uri, options = { cacheOnly: false }) => {
   const dispatch = useDispatch();
