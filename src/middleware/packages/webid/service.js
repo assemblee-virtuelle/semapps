@@ -18,7 +18,7 @@ module.exports = {
     },
     async view(ctx) {
       let webId = ctx.meta.tokenPayload.webId;
-      if( !webId ) {
+      if (!webId) {
         // Do a SPARQL request
       }
       return await ctx.call('triplestore.query', {

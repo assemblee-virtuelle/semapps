@@ -6,7 +6,7 @@ import CreateUserForm from './forms/CreateUserForm';
 import EditUserForm from './forms/EditUserForm';
 import UserProfile from './UserProfile';
 import Users from './Users';
-import MyProfileForm from "./forms/MyProfileForm";
+import MyProfileForm from './forms/MyProfileForm';
 
 const store = initStore();
 
