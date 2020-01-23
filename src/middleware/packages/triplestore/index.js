@@ -176,7 +176,9 @@ module.exports = {
             if (quad.object.value.startsWith('http')) {
               insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> <${quad.object.value}>`);
             } else {
-              insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> "${quad.object.value.replace(/(\r\n|\r|\n)/g, "\\n")}"`);
+              insertSPARQL = insertSPARQL.concat(
+                ` <${quad.predicate.value}> "${quad.object.value.replace(/(\r\n|\r|\n)/g, '\\n')}"`
+              );
             }
 
             if (quad.object.datatype !== undefined && !quad.object.value.startsWith('http')) {
