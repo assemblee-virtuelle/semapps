@@ -1,2 +1,4 @@
 .env.local
 .env.*.local
+/jwt/*.key
+/jwt/*.key.pub

@@ -2,15 +2,12 @@ import React from 'react';
 import useQuery from './api/useQuery';
 import UserPreview from './UserPreview';
 import { CONTAINER_URI } from './config';
+import Page from './Page';
 
 const Users = () => {
-  const { data: usersUris } = useQuery(CONTAINER_URI, {
-    headers: {
-      Authorization: `JWT ${localStorage.getItem('token')}`
-    }
-  });
+  const { data: usersUris } = useQuery(CONTAINER_URI);
   return (
-    <div className="container">
+    <Page>
       <h2> Liste des utilisateurs </h2>{' '}
       {usersUris &&
         usersUris.map(userUri => (
@@ -18,7 +15,7 @@ const Users = () => {
             <UserPreview userUri={userUri} /> <br />
           </div>
         ))}{' '}
-    </div>
+    </Page>
   );
 };
 

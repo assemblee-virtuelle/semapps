@@ -4,34 +4,36 @@ import { Link } from '@reach/router';
 import { CONTAINER_URI } from './config';
 import useQuery from './api/useQuery';
 import { deleteResource, removeFromContainer } from './api/actions';
+import useAuth from './auth/useAuth';
+import Page from './Page';
 
 const UserProfile = ({ userId, navigate }) => {
+  const { isLogged, login } = useAuth();
   const userUri = `${CONTAINER_URI}/${userId}`;
-  const { data: user } = useQuery(userUri, {
-    headers: {
-      Authorization: `JWT ${localStorage.getItem('token')}`
-    }
-  });
+  const { data: user } = useQuery(userUri);
   const dispatch = useDispatch();
 
   const deleteUser = async () => {
+    // If user is not logged, redirect him to login page
+    if (!isLogged) login();
+
     await fetch(userUri, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });
 
     await dispatch(deleteResource(userUri));
     await dispatch(removeFromContainer(CONTAINER_URI, userUri));
 
-    navigate('/users');
+    navigate('/');
   };
 
   return (
     user && (
-      <div className="container">
+      <Page>
         <h2>Profil de {user.givenName || user['schema:givenName']}</h2>
         <ul className="list-group">
           <div className="list-group-item">
@@ -63,7 +65,7 @@ const UserProfile = ({ userId, navigate }) => {
         <button type="submit" className="btn btn-danger" onClick={deleteUser}>
           Effacer le profil
         </button>
-      </div>
+      </Page>
     )
   );
 };

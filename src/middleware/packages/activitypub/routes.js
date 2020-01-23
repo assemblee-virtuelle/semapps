@@ -1,5 +1,6 @@
 module.exports = {
   path: '/activitypub',
+  authentication: true,
   aliases: {
     'POST actor/:username/outbox': 'activitypub.outbox.post',
     'GET actor/:username/outbox': 'activitypub.outbox.list',

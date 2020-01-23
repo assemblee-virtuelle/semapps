@@ -1,21 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const initialValues = { data: null, loading: true, error: null };
 
-const useQuery = (uri, { cacheOnly, headers, ...fetchOptions } = { cacheOnly: false }) => {
+const useQuery = (uri, options = { cacheOnly: false }) => {
   const dispatch = useDispatch();
   const cachedQuery = useSelector(state => state.queries[uri]);
 
-  const callFetch = () => {
+  const callFetch = useCallback(() => {
+    let { cacheOnly, headers, ...fetchOptions } = options;
     if (!cachedQuery) {
       dispatch({ type: 'QUERY_TRIGGER', uri });
+      headers = {
+        Accept: 'application/ld+json',
+        ...headers
+      };
+      const token = localStorage.getItem('token');
+      if (token) headers.Authorization = `Bearer ${token}`;
       fetch(uri, {
         method: 'GET',
-        headers: {
-          Accept: 'application/ld+json',
-          ...headers
-        },
+        headers,
         ...fetchOptions
       })
         .then(response => response.json())
@@ -26,11 +30,11 @@ const useQuery = (uri, { cacheOnly, headers, ...fetchOptions } = { cacheOnly: fa
           dispatch({ type: 'QUERY_FAILURE', uri, error: error.message });
         });
     }
-  };
+  }, [uri, options, dispatch, cachedQuery]);
 
   useEffect(() => {
-    if (cacheOnly !== true) callFetch();
-  }, [uri, cacheOnly, callFetch]);
+    if (options.cacheOnly !== true) callFetch();
+  }, [options, callFetch]);
 
   return { ...initialValues, ...cachedQuery, retry: callFetch };
 };

@@ -4,8 +4,11 @@ import { Form, Field } from 'react-final-form';
 import { CONTAINER_URI } from '../config';
 import { getUserId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
+import useAuth from '../auth/useAuth';
+import Page from '../Page';
 
 const CreateUserForm = ({ navigate }) => {
+  useAuth({ force: true });
   const dispatch = useDispatch();
 
   const createUser = async values => {
@@ -19,7 +22,7 @@ const CreateUserForm = ({ navigate }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `JWT ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(user)
     });
@@ -29,11 +32,11 @@ const CreateUserForm = ({ navigate }) => {
     await dispatch(addResource(userUri, user));
     await dispatch(addToContainer(CONTAINER_URI, userUri));
 
-    navigate(`users/${getUserId(userUri)}`);
+    navigate(`/users/${getUserId(userUri)}`);
   };
 
   return (
-    <>
+    <Page>
       <h2>Créer un utilisateur</h2>
       <Form
         onSubmit={createUser}
@@ -57,7 +60,7 @@ const CreateUserForm = ({ navigate }) => {
           </form>
         )}
       />
-    </>
+    </Page>
   );
 };
 
