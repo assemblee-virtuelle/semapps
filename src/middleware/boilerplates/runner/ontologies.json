@@ -18,5 +18,11 @@
     "prefix": "foaf",
     "owl": "",
     "url": "http://xmlns.com/foaf/0.1/"
+  },
+  {
+    "prefix": "pair",
+    "owl": "",
+    "url": "http://virtual-assembly.org/ontologies/pair#"
+
   }
 ]

@@ -1,36 +1,19 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
-import {CONTAINER_URI, MIDDLEWARE_URL} from '../config';
+import { MIDDLEWARE_URL} from '../config';
 import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
 
-const MyProfileForm = ({ navigate }) => {
+const MyProfilePage = ({ navigate }) => {
   useAuth({ force: true });
   const { data: user } = useQuery(`${MIDDLEWARE_URL}me`);
   const dispatch = useDispatch();
 
   const editUser = async values => {
-    // const user = {
-    //   '@context': 'http://schema.org/',
-    //   type: 'Person',
-    //   ...values
-    // };
-    //
-    // await fetch(userUri, {
-    //   method: 'PATCH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     Authorization: `Bearer ${localStorage.getItem('token')}`
-    //   },
-    //   body: JSON.stringify(user)
-    // });
-    //
-    // await dispatch(editResource(userUri, user));
-    //
-    // navigate(`/users/${userId}`);
+    console.log('values', values);
   };
 
   return (
@@ -71,4 +54,4 @@ const MyProfileForm = ({ navigate }) => {
   );
 };
 
-export default MyProfileForm;
+export default MyProfilePage;

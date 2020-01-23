@@ -9,6 +9,7 @@ module.exports = {
       await ctx.call('ldp.post', {
         typeURL: 'foaf:Person',
         '@context': { foaf: 'http://xmlns.com/foaf/0.1/' },
+        '@type': 'foaf:Person',
         'foaf:nick': nick,
         'foaf:email': email,
         'foaf:name': name,
