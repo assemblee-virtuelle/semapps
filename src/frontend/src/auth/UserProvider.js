@@ -1,5 +1,5 @@
-import useQuery from "../api/useQuery";
-import CONFIG from "../config";
+import useQuery from '../api/useQuery';
+import CONFIG from '../config';
 
 const UserProvider = ({ children }) => {
   useQuery(`${CONFIG.MIDDLEWARE_URL}me`);
