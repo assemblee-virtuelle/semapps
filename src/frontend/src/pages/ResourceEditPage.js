@@ -13,10 +13,16 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
   const { data: resource } = useQuery(resourceUri);
   const dispatch = useDispatch();
 
+  // TODO improve this code, that we must do since sometimes the LDP server
+  // returns the webpage as an object with the value in the @id property
+  let webPage;
+  if( resource ) webPage = resource.webPage || resource['pair:webPage'];
+  if( typeof webPage === 'object' ) webPage = webPage['@id'];
+
   const edit = async values => {
     const resource = {
-      '@context': 'http://virtual-assembly.org/ontologies/pair',
-      type: 'Project',
+      '@context': { '@vocab': 'http://virtual-assembly.org/ontologies/pair#' },
+      '@type': 'Project',
       ...values
     };
 
@@ -36,7 +42,7 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
 
   return (
     <Page>
-      {resource && (
+      {resource ? (
         <>
           <h2>Modifier le projet</h2>
           <Form
@@ -44,7 +50,7 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
             initialValues={{
               label: resource.label || resource['pair:label'],
               description: resource.description || resource['pair:description'],
-              webPage: resource.webPage || resource['pair:webPage']
+              webPage
             }}
             render={({ handleSubmit }) => (
               <form onSubmit={handleSubmit}>
@@ -67,7 +73,7 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
             )}
           />
         </>
-      )}
+      ) : null}
     </Page>
   );
 };
