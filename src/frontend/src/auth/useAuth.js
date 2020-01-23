@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import CONFIG from '../config';
+import useQuery from "../api/useQuery";
 
 /**
  * useAuth React hook
@@ -11,6 +12,7 @@ import CONFIG from '../config';
  */
 const useAuth = ({ force } = { force: false }) => {
   const [token, setToken] = useState(null);
+  const { data: user } = useQuery(`${CONFIG.MIDDLEWARE_URL}me`);
 
   const login = () => {
     window.location = `${CONFIG.MIDDLEWARE_URL}auth?redirectUrl=` + encodeURI(window.location.href);
@@ -32,7 +34,7 @@ const useAuth = ({ force } = { force: false }) => {
     }
   }, [force]);
 
-  return { isLogged: !!token, token, login };
+  return { isLogged: !!token, user, login };
 };
 
 export default useAuth;
