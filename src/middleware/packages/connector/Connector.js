@@ -47,7 +47,7 @@ class Connector {
         return Promise.resolve(null);
       }
     } catch (err) {
-      return Promise.reject();
+      return Promise.reject(err);
     }
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
