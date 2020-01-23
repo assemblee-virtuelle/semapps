@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import CONFIG from '../config';
 import useQuery from '../api/useQuery';
+import { addFlash } from '../app/actions';
 
 /**
  * useAuth React hook
@@ -13,6 +15,7 @@ import useQuery from '../api/useQuery';
  */
 const useAuth = ({ force } = { force: false }) => {
   const [token, setToken] = useState(null);
+  const dispatch = useDispatch();
 
   // We use the cacheOnly option to avoid the query to be made several times
   // The initial query is made once on the UserProvider component
@@ -28,7 +31,10 @@ const useAuth = ({ force } = { force: false }) => {
       setToken(url.searchParams.get('token'));
       localStorage.setItem('token', url.searchParams.get('token'));
       url.searchParams.delete('token');
+      url.searchParams.append('action', 'created');
       window.location = url.toString();
+    } else if (url.searchParams.get('action') === 'created') {
+      dispatch(addFlash("Votre profil a bien été créé. Vous pouvez l'éditer ci-dessous."));
     } else {
       if (localStorage.getItem('token')) {
         setToken(localStorage.getItem('token'));
@@ -36,7 +42,7 @@ const useAuth = ({ force } = { force: false }) => {
         login();
       }
     }
-  }, [force]);
+  }, [force, dispatch]);
 
   return { isLogged: !!token, user, webId: user ? user['@id'] : null, login };
 };

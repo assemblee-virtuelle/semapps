@@ -2,7 +2,7 @@ import React from 'react';
 import { Router } from '@reach/router';
 import { Provider as ReduxProvider } from 'react-redux';
 import UserProvider from './auth/UserProvider';
-import initStore from './api/initStore';
+import initStore from './redux/initStore';
 import ResourceEditPage from './pages/ResourceEditPage';
 import ResourceViewPage from './pages/ResourceViewPage';
 import ResourcesListPage from './pages/ResourcesListPage';

@@ -1,4 +1,4 @@
-const rootReducer = (state = { queries: [] }, action) => {
+const apiReducer = (state = { queries: [] }, action) => {
   switch (action.type) {
     case 'QUERY_TRIGGER': {
       return {
@@ -147,4 +147,4 @@ const rootReducer = (state = { queries: [] }, action) => {
   }
 };
 
-export default rootReducer;
+export default apiReducer;

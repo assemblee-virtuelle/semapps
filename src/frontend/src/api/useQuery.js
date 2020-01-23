@@ -5,7 +5,7 @@ const initialValues = { data: [], loading: true, error: null };
 
 const useQuery = (uri, options = { cacheOnly: false }) => {
   const dispatch = useDispatch();
-  const cachedQuery = useSelector(state => state.queries[uri]);
+  const cachedQuery = useSelector(state => state.api.queries[uri]);
 
   const callFetch = useCallback(() => {
     let { cacheOnly, headers, ...fetchOptions } = options;

@@ -37,14 +37,11 @@ function configureExpress(broker) {
           clientSecret: CONFIG.OIDC_CLIENT_SECRET,
           publicKey: CONFIG.OIDC_PUBLIC_KEY,
           redirectUri: CONFIG.HOME_URL + 'auth',
-          selectProfileData: authData => {
-            console.log('authData', authData);
-            return ({
-              email: authData.email,
-              name: authData.given_name,
-              familyName: authData.family_name
-            })
-          },
+          selectProfileData: authData => ({
+            email: authData.email,
+            name: authData.given_name,
+            familyName: authData.family_name
+          }),
           findOrCreateProfile
         })
       : new CasConnector({

@@ -6,6 +6,7 @@ import useQuery from '../api/useQuery';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
+import { addFlash } from '../app/actions';
 
 const ResourceEditPage = ({ resourceId, navigate }) => {
   useAuth({ force: true });
@@ -36,6 +37,7 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
     });
 
     await dispatch(editResource(resourceUri, resource));
+    await dispatch(addFlash('La ressource a bien été éditée'));
 
     navigate(`/resources/${resourceId}`);
   };

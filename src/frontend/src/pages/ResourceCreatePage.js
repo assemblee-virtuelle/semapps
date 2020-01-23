@@ -6,6 +6,7 @@ import { getResourceId } from '../utils';
 import { addResource, addToContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
+import { addFlash } from '../app/actions';
 
 const ResourceCreatePage = ({ navigate }) => {
   useAuth({ force: true });
@@ -31,6 +32,8 @@ const ResourceCreatePage = ({ navigate }) => {
 
     await dispatch(addResource(resourceUri, resource));
     await dispatch(addToContainer(CONTAINER_URI, resourceUri));
+
+    await dispatch(addFlash('La ressource a bien été ajoutée'));
 
     navigate(`/resources/${getResourceId(resourceUri)}`);
   };

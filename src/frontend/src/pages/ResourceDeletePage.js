@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { CONTAINER_URI } from '../config';
 import { deleteResource, removeFromContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
+import { addFlash } from '../app/actions';
 
 const ResourceDeletePage = ({ resourceId, navigate }) => {
   useAuth({ force: true });
@@ -20,6 +21,8 @@ const ResourceDeletePage = ({ resourceId, navigate }) => {
 
     await dispatch(deleteResource(resourceUri));
     await dispatch(removeFromContainer(CONTAINER_URI, resourceUri));
+
+    await dispatch(addFlash('La ressource a bien été effacée'));
 
     navigate('/');
   };

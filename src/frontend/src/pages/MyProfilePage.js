@@ -5,6 +5,7 @@ import { MIDDLEWARE_URL } from '../config';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
+import { addFlash } from '../app/actions';
 
 const MyProfilePage = () => {
   const { user } = useAuth({ force: true });
@@ -25,6 +26,8 @@ const MyProfilePage = () => {
     });
 
     await dispatch(editResource(`${MIDDLEWARE_URL}me`, values));
+
+    await dispatch(addFlash('Votre profil a été édité avec succès'));
   };
 
   let homepage;
