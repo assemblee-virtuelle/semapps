@@ -15,6 +15,22 @@ module.exports = {
         'foaf:familyName': familyName
       });
       return ctx.meta.$responseHeaders.Location;
+    },
+    async view(ctx) {
+      let webId = ctx.meta.tokenPayload.webId;
+      if( !webId ) {
+        // Do a SPARQL request
+      }
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          CONSTRUCT
+          WHERE {
+            <${webId}> ?predicate ?object.
+          }
+        `,
+        accept: 'json'
+      });
     }
   }
 };

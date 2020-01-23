@@ -7,6 +7,7 @@ const ApiGatewayService = require('moleculer-web');
 
 const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
+const { Routes: WebIdRoutes } = require('@semapps/webid');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
 const CONFIG = require('./config');
@@ -56,12 +57,12 @@ function configureExpress(broker) {
   const apiGateway = broker.createService({
     mixins: [ApiGatewayService],
     settings: {
-      middleware: true,
+      server: false,
       cors: {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [LdpRoutes.unsecuredRoutes, ActivityPubRoutes],
+      routes: [WebIdRoutes, ...LdpRoutes, ActivityPubRoutes],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {

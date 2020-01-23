@@ -1,7 +1,8 @@
 module.exports = {
-  authentication: true,
+  authorization: true,
+  authentication: false,
   aliases: {
-    'POST me': 'webid.create'
+    'GET me': 'webid.view'
   },
   // When using multiple routes we must set the body parser for each route.
   bodyParsers: {

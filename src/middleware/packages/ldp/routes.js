@@ -1,4 +1,5 @@
 const routeConfig = {
+  path: '/ldp',
   // When using multiple routes we must set the body parser for each route.
   bodyParsers: {
     json: true
@@ -12,18 +13,26 @@ const routeConfig = {
   }
 };
 
-module.exports = {
-  unsecuredRoutes: {
-    path: '/ldp',
+module.exports = [
+  // Unsecured routes
+  {
     authorization: false,
     authentication: true,
     aliases: {
       'GET :typeURL': 'ldp.getByType',
-      'GET :typeURL/:identifierURL': 'ldp.getResource',
+      'GET :typeURL/:identifierURL': 'ldp.getResource'
+    },
+    ...routeConfig
+  },
+  // Secured routes
+  {
+    authorization: true,
+    authentication: false,
+    aliases: {
       'POST :typeURL': 'ldp.post',
       'DELETE :typeURL/:identifierURL': 'ldp.delete',
       'PATCH :typeURL/:identifierURL': 'ldp.patch'
     },
     ...routeConfig
   }
-};
+];
