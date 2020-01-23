@@ -10,7 +10,7 @@ const UserPreview = ({ userUri }) => {
       <div className="card w25">
         <div className="card-body">
           <h5 className="card-title">{user.givenName || user['schema:givenName']}</h5>
-          <Link to={getUserId(userUri)} className="btn btn-warning">
+          <Link to={'/users/' + getUserId(userUri)} className="btn btn-warning">
             Voir
           </Link>
         </div>
