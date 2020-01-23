@@ -3,7 +3,7 @@ import { Link } from '@reach/router';
 import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import Page from '../Page';
-import { nl2br } from "../utils";
+import { nl2br } from '../utils';
 
 const ResourceViewPage = ({ resourceId }) => {
   const resourceUri = `${CONTAINER_URI}/${resourceId}`;

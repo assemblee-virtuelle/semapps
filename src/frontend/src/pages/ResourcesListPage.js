@@ -10,7 +10,7 @@ const ResourcesListPage = () => {
     <Page>
       <h2> Liste des projets </h2>{' '}
       {resourcesUris &&
-      resourcesUris.map(resourceUri => (
+        resourcesUris.map(resourceUri => (
           <div key={resourceUri}>
             <ResourcePreview resourceUri={resourceUri} /> <br />
           </div>

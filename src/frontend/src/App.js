@@ -5,9 +5,9 @@ import initStore from './api/initStore';
 import ResourceEditPage from './pages/ResourceEditPage';
 import ResourceViewPage from './pages/ResourceViewPage';
 import ResourcesListPage from './pages/ResourcesListPage';
-import ResourceCreatePage from "./pages/ResourceCreatePage";
-import ResourceDeletePage from "./pages/ResourceDeletePage";
-import MyProfilePage from "./pages/MyProfilePage";
+import ResourceCreatePage from './pages/ResourceCreatePage';
+import ResourceDeletePage from './pages/ResourceDeletePage';
+import MyProfilePage from './pages/MyProfilePage';
 
 const store = initStore();
 
