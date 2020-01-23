@@ -16,8 +16,8 @@ const ResourceEditPage = ({ resourceId, navigate }) => {
   // TODO improve this code, that we must do since sometimes the LDP server
   // returns the webpage as an object with the value in the @id property
   let webPage;
-  if( resource ) webPage = resource.webPage || resource['pair:webPage'];
-  if( typeof webPage === 'object' ) webPage = webPage['@id'];
+  if (resource) webPage = resource.webPage || resource['pair:webPage'];
+  if (typeof webPage === 'object') webPage = webPage['@id'];
 
   const edit = async values => {
     const resource = {
