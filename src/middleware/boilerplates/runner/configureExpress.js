@@ -55,8 +55,12 @@ function configureExpress(broker) {
       defaultLdpAccept: 'text/turtle'
     },
     methods: {
-      authenticate: connector.authenticate,
-      authorize: connector.authorize
+      authenticate(ctx, route, req, res) {
+        return connector.authenticate(ctx, route, req, res);
+      },
+      authorize(ctx, route, req, res) {
+        return connector.authorize(ctx, route, req, res);
+      }
     }
   });
 
