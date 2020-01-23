@@ -1,11 +1,4 @@
-module.exports = {
-  authorization: true,
-  authentication: false,
-  aliases: {
-    'GET me': 'webid.view',
-    'PATCH me': 'webid.edit',
-    'GET users/:userId': 'webid.view'
-  },
+const routeConfig = {
   // When using multiple routes we must set the body parser for each route.
   bodyParsers: {
     json: true
@@ -18,3 +11,25 @@ module.exports = {
     }
   }
 };
+
+module.exports = [
+  // Unsecured routes
+  {
+    authorization: false,
+    authentication: true,
+    aliases: {
+      'GET users/:userId': 'webid.view'
+    },
+    ...routeConfig
+  },
+  // Secured routes
+  {
+    authorization: true,
+    authentication: false,
+    aliases: {
+      'GET me': 'webid.view',
+      'PATCH me': 'webid.edit'
+    },
+    ...routeConfig
+  }
+];

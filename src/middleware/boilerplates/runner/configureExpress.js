@@ -62,7 +62,7 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [WebIdRoutes, ...LdpRoutes, ActivityPubRoutes],
+      routes: [...LdpRoutes, ...WebIdRoutes, ...ActivityPubRoutes],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {
