@@ -45,16 +45,26 @@ class Connector {
     const redirectUrl = req.session.redirectUrl;
     res.redirect(redirectUrl + '?token=' + res.req.user.token);
   }
-  getLoginMiddlewares() {
-    return [
-      this.saveRedirectUrl.bind(this),
-      this.passport.authenticate(this.passportId, {
-        session: false
-      }),
-      this.findOrCreateProfile.bind(this),
-      this.generateToken.bind(this),
-      this.redirectToFront.bind(this)
-    ];
+  login() {
+    return( req, res ) => {
+      const middlewares = [
+        this.saveRedirectUrl.bind(this),
+        this.passport.authenticate(this.passportId, {
+          session: false
+        }),
+        this.findOrCreateProfile.bind(this),
+        this.generateToken.bind(this),
+      ];
+
+      this.runMiddlewares(middlewares, req, res).then(() => {
+        this.redirectToFront(req, res);
+      });
+    }
+  }
+  async runMiddlewares(middlewares, req, res) {
+    for( const middleware of middlewares ) {
+      await new Promise(resolve => middleware(req, res, resolve));
+    }
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
