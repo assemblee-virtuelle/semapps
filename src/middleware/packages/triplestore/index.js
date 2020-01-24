@@ -189,9 +189,11 @@ module.exports = {
           .on('end', () => {
             deleteSPARQL = deleteSPARQL.concat('.');
             insertSPARQL = insertSPARQL.concat('.');
-            query = `DELETE {${deleteSPARQL}}
-            INSERT {${insertSPARQL}}
-            WHERE  {${deleteSPARQL}}`;
+            query = `
+            DELETE {${deleteSPARQL}}
+            WHERE  {${deleteSPARQL}};
+            INSERT DATA {${insertSPARQL}};
+            `;
             resolve(query);
           });
       });
