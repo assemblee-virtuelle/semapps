@@ -75,7 +75,28 @@ module.exports = {
     },
     async post(ctx) {
       const { typeURL, ...body } = ctx.params;
-      body['@id'] = this.generateId(typeURL);
+      const slug = ctx.meta.headers.slug;
+      const requiereId = this.generateId(typeURL, slug);
+      let existingBegining = await ctx.call('triplestore.query', {
+        query: `
+          ${this.getPrefixRdf()}
+          SELECT distinct ?uri
+          WHERE {
+            ?uri ?predicate ?object.
+            FILTER regex(str(?uri), "^${requiereId}")
+          }
+              `,
+        accept: 'json'
+      });
+      let counter = 0;
+      if (existingBegining.length > 0) {
+        counter = 1;
+        existingBegining = existingBegining.map(r => r.uri.value);
+        while (existingBegining.includes(requiereId.concat(counter))) {
+          counter++;
+        }
+      }
+      body['@id'] = requiereId.concat(counter > 0 ? counter.toString() : '');
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
