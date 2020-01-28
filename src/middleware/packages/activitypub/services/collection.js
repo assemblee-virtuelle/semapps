@@ -7,17 +7,32 @@ module.exports = {
   dependencies: ['triplestore'],
   actions: {
     /*
+     * Create a persisted collection
+     * @param collectionUri The full URI of the collection
+     * @param summary An optional description of the collection
+     */
+    async create(ctx) {
+      const collection = {
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        id: ctx.params.collectionUri,
+        type: ['Collection', 'OrderedCollection'],
+        summary: ctx.params.summary
+      };
+
+      return await ctx.call('triplestore.insert', {
+        resource: collection,
+        accept: 'json'
+      });
+    },
+    /*
      * Attach an object to a collection
      * @param collectionUri The full URI of the collection
      * @param objectUri The full URI of the object to add to the collection
-     * @param summary An optional description of the collection
      */
     async attach(ctx) {
       const collection = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: ctx.params.collectionUri,
-        type: ['Collection', 'OrderedCollection'],
-        summary: ctx.params.summary,
         items: ctx.params.objectUri
       };
 

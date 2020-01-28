@@ -5,7 +5,7 @@ const { PUBLIC_URI } = require('../constants');
 module.exports = {
   name: 'activitypub.inbox',
   settings: {
-    homeUrl: null
+    usersContainer: null
   },
   dependencies: ['activitypub.collection'],
   actions: {
@@ -41,13 +41,13 @@ module.exports = {
   },
   methods: {
     getInboxUri(username) {
-      return this.settings.homeUrl + 'activitypub/actor/' + username + '/inbox';
+      return this.settings.usersContainer + username + '/inbox';
     },
     getFollowersUri(actorUri) {
       return actorUri + '/followers';
     },
     isLocalUri(uri) {
-      return uri.startsWith(this.settings.homeUrl);
+      return uri.startsWith(this.settings.usersContainer);
     },
     async getAllRecipients(activity) {
       let output = [],

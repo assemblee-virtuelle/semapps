@@ -5,7 +5,7 @@ const { ACTIVITY_TYPES } = require('../constants');
 module.exports = {
   name: 'activitypub.follow',
   settings: {
-    homeUrl: null
+    usersContainer: null
   },
   dependencies: ['activitypub.collection'],
   actions: {
@@ -13,14 +13,14 @@ module.exports = {
       ctx.meta.$responseType = 'application/ld+json';
 
       return await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.homeUrl}activitypub/actor/${ctx.params.username}/followers`
+        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/followers`
       });
     },
     async listFollowing(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
       return await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.homeUrl}activitypub/actor/${ctx.params.username}/following`
+        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/following`
       });
     }
   },

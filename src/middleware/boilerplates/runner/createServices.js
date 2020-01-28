@@ -1,6 +1,6 @@
 const { LdpService } = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
-const { CollectionService, FollowService, InboxService, OutboxService } = require('@semapps/activitypub');
+const ActivityPub = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('./config');
@@ -38,21 +38,9 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  broker.createService(CollectionService);
-  broker.createService(FollowService, {
-    settings: {
-      homeUrl: CONFIG.HOME_URL
-    }
-  });
-  broker.createService(InboxService, {
-    settings: {
-      homeUrl: CONFIG.HOME_URL
-    }
-  });
-  broker.createService(OutboxService, {
-    settings: {
-      homeUrl: CONFIG.HOME_URL
-    }
+  ActivityPub.createServices(broker, {
+    ldpHome: CONFIG.HOME_URL + 'ldp/',
+    usersContainer: CONFIG.HOME_URL + 'users/'
   });
 }
 

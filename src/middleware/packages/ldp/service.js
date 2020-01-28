@@ -96,7 +96,7 @@ module.exports = {
         const out = await ctx.call('triplestore.patch', {
           resource: body
         });
-        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$responseType = ctx.meta.headers ? ctx.meta.headers.accept : 'json';
         ctx.meta.$statusCode = 204;
         ctx.meta.$responseHeaders = {
           Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',

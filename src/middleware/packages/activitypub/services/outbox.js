@@ -8,7 +8,8 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
 module.exports = {
   name: 'activitypub.outbox',
   settings: {
-    homeUrl: null
+    ldpHome: null,
+    usersContainer: null
   },
   dependencies: ['triplestore', 'activitypub.collection'],
   actions: {
@@ -18,18 +19,18 @@ module.exports = {
       if (Object.values(OBJECT_TYPES).includes(object.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: this.generateId('subject/'),
+          id: this.generateId('Create'),
           type: 'Create',
           to: object.to,
           actor: object.attributedTo,
           object: {
-            id: this.generateId('subject/'),
+            id: this.generateId(object.type),
             ...object
           }
         };
       } else if (Object.values(ACTIVITY_TYPES).includes(object.type)) {
         activity = {
-          id: this.generateId('subject/'),
+          id: this.generateId(object.type),
           ...object
         };
       } else {
@@ -71,11 +72,11 @@ module.exports = {
     }
   },
   methods: {
-    generateId(path = '') {
-      return this.settings.homeUrl + path + uuid().substring(0, 8);
+    generateId(objectType) {
+      return this.settings.ldpHome + `as:${objectType}/` + uuid().substring(0, 8);
     },
     getOutboxUri(username) {
-      return this.settings.homeUrl + 'activitypub/actor/' + username + '/outbox';
+      return this.settings.usersContainer + username + '/outbox';
     }
   }
 };
