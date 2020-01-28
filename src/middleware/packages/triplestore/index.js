@@ -160,13 +160,10 @@ module.exports = {
             contentType: 'application/ld+json'
           })
           .on('data', quad => {
-            if (deleteSPARQL.length === 0) {
-              deleteSPARQL = deleteSPARQL.concat(`<${quad.subject.value}>`);
-            } else {
-              deleteSPARQL = deleteSPARQL.concat(';');
-            }
-            deleteSPARQL = deleteSPARQL.concat(` <${quad.predicate.value}> ?${counter}`);
-
+            deleteSPARQL = deleteSPARQL.concat(
+              `DELETE WHERE  {<${quad.subject.value}> <${quad.predicate.value}> ?o};
+              `
+            );
             if (insertSPARQL.length === 0) {
               insertSPARQL = insertSPARQL.concat(`<${quad.subject.value}>`);
             } else {
@@ -189,11 +186,11 @@ module.exports = {
           })
           .on('error', error => console.error(error))
           .on('end', () => {
-            deleteSPARQL = deleteSPARQL.concat('.');
             insertSPARQL = insertSPARQL.concat('.');
-            query = `DELETE {${deleteSPARQL}}
-            INSERT {${insertSPARQL}}
-            WHERE  {${deleteSPARQL}}`;
+            query = `
+            ${deleteSPARQL}
+            INSERT DATA {${insertSPARQL}};
+            `;
             resolve(query);
           });
       });
