@@ -31,13 +31,15 @@ class Connector {
   }
   generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step
-    if (res.req.user.token) {
-      next();
-    } else {
+    if (!res.req.user.token) {
       const profileData = this.settings.selectProfileData(res.req.user);
-      res.req.user.token = jwt.sign({ webId: res.req.user.webId, ...profileData });
-      next();
+      const payload = { webId: res.req.user.webId, ...profileData };
+      res.req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
+    next();
+  }
+  globalLogout(req, res, next) {
+    next();
   }
   redirectToFront(req, res) {
     // Redirect browser to the redirectUrl pushed in session
@@ -46,7 +48,7 @@ class Connector {
     res.redirect(redirectUrl + '?token=' + res.req.user.token);
   }
   login() {
-    return( req, res ) => {
+    return (req, res) => {
       const middlewares = [
         this.saveRedirectUrl.bind(this),
         this.passport.authenticate(this.passportId, {
@@ -54,15 +56,21 @@ class Connector {
         }),
         this.findOrCreateProfile.bind(this),
         this.generateToken.bind(this),
+        this.redirectToFront.bind(this)
       ];
 
-      this.runMiddlewares(middlewares, req, res).then(() => {
-        this.redirectToFront(req, res);
-      });
-    }
+      this.runMiddlewares(middlewares, req, res);
+    };
+  }
+  logout() {
+    return (req, res) => {
+      const middlewares = [this.saveRedirectUrl.bind(this), this.globalLogout.bind(this)];
+
+      this.runMiddlewares(middlewares, req, res);
+    };
   }
   async runMiddlewares(middlewares, req, res) {
-    for( const middleware of middlewares ) {
+    for (const middleware of middlewares) {
       await new Promise(resolve => middleware(req, res, resolve));
     }
   }

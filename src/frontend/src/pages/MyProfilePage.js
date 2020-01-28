@@ -1,11 +1,12 @@
 import React from 'react';
 import { Form, Field } from 'react-final-form';
 import { useDispatch } from 'react-redux';
-import { MIDDLEWARE_URL } from '../config';
+import { MIDDLEWARE_URL, FRONTEND_URL } from '../config';
 import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
 import { addFlash } from '../app/actions';
+import { Link } from '@reach/router';
 
 const MyProfilePage = () => {
   const { user } = useAuth({ force: true });
@@ -30,6 +31,11 @@ const MyProfilePage = () => {
     await dispatch(addFlash('Votre profil a été édité avec succès'));
   };
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    window.location.href = `${MIDDLEWARE_URL}auth/logout?redirectUrl=${encodeURI(FRONTEND_URL)}`;
+  };
+
   let homepage;
   if (user) homepage = user.homepage || user['foaf:homepage'];
   if (typeof homepage === 'object') homepage = homepage['@id'];
@@ -38,7 +44,13 @@ const MyProfilePage = () => {
     <Page>
       {user && (
         <>
-          <h2>Modifier mon profil</h2>
+          <h2>
+            Modifier mon profil
+            <button className="btn btn-danger pull-right" onClick={logout}>
+              <i className="fa fa-sign-out" />
+              &nbsp; Se déconnecter
+            </button>
+          </h2>
           <Form
             onSubmit={edit}
             initialValues={{

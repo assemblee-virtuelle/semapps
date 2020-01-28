@@ -58,7 +58,8 @@ function configureExpress(broker) {
         });
 
   connector.configurePassport(passport).then(() => {
-    app.use('/auth', connector.login());
+    app.get('/auth/logout', connector.logout());
+    app.get('/auth', connector.login());
   });
 
   const apiGateway = broker.createService({
