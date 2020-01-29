@@ -4,6 +4,7 @@ import useQuery from '../api/useQuery';
 import Page from '../Page';
 import resourcesTypes from '../resourcesTypes';
 import ResourceValue from '../ResourceValue';
+import Inbox from '../Inbox';
 
 const ResourceViewPage = ({ type, resourceId }) => {
   const resourceConfig = resourcesTypes[type];
@@ -51,6 +52,12 @@ const ResourceViewPage = ({ type, resourceId }) => {
               </Link>
             </>
           )}
+        </>
+      )}
+      {data && type === 'users' && (
+        <>
+          <br />
+          <Inbox userUri={resourceUri} inboxUri={data.inbox || data['http://www.w3.org/ns/ldp#inbox']['@id']} />
         </>
       )}
     </Page>

@@ -28,6 +28,8 @@ const Page = ({ children }) => {
         )}
         {children}
       </div>
+      <br />
+      <br />
     </>
   );
 };

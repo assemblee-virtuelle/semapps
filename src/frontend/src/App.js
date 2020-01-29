@@ -9,7 +9,7 @@ import ResourcesListPage from './pages/ResourcesListPage';
 import ResourceCreatePage from './pages/ResourceCreatePage';
 import ResourceDeletePage from './pages/ResourceDeletePage';
 import MyProfilePage from './pages/MyProfilePage';
-import SendMessagePage from "./pages/SendMessagePage";
+import MessagesPage from './pages/MessagesPage';
 
 const store = initStore();
 
@@ -25,7 +25,7 @@ const App = () => {
           <ResourceDeletePage path="/resources/:type/:resourceId/delete" />
           <ResourceViewPage path="/resources/:type/:resourceId" />
           <MyProfilePage path="/profile" />
-          <SendMessagePage path="/messages" />
+          <MessagesPage path="/messages" />
         </Router>
       </UserProvider>
     </ReduxProvider>
