@@ -23,7 +23,7 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
         ...fetchOptions
       })
         .then(response => {
-          if( response.ok ) {
+          if (response.ok) {
             return response.json();
           } else {
             throw new Error(response.status, response.statusText);
