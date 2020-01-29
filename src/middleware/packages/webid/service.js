@@ -11,9 +11,7 @@ module.exports = {
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      // Make sure we have a default value in order to bypass this bug :
-      // https://github.com/assemblee-virtuelle/semapps/issues/115
-      const { email, nick = '', name = '', familyName = '', homepage = '' } = ctx.params;
+      const { email, nick, name, familyName, homepage } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
 
@@ -23,7 +21,7 @@ module.exports = {
       // If no user exist, create one
       if (!webId) {
         const userData = {
-          nick,
+          nick: nick || email.split('@')[0],
           email,
           name,
           familyName,
