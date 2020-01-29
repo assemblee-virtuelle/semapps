@@ -11,9 +11,10 @@ module.exports = {
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      const { email, nick, name, familyName, homepage } = ctx.params;
+      let { email, nick, name, familyName, homepage } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
+      if (!nick) nick = email.split('@')[0];
 
       // Check if an user already exist with this email address
       let webId = await this.findUserByEmail(ctx, email);
@@ -21,7 +22,7 @@ module.exports = {
       // If no user exist, create one
       if (!webId) {
         const userData = {
-          nick: nick || email.split('@')[0],
+          nick,
           email,
           name,
           familyName,
