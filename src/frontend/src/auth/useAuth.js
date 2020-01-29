@@ -19,7 +19,13 @@ const useAuth = ({ force } = { force: false }) => {
 
   // We use the cacheOnly option to avoid the query to be made several times
   // The initial query is made once on the UserProvider component
-  const { data: user } = useQuery(`${CONFIG.MIDDLEWARE_URL}me`, { cacheOnly: true });
+  const { data: user, error } = useQuery(`${CONFIG.MIDDLEWARE_URL}me`, { cacheOnly: true });
+
+  if( error && ( error === '403' || error === '404' ) ) {
+    // Invalid token: remove it and redirect to homepage
+    localStorage.removeItem('token');
+    window.location = CONFIG.FRONTEND_URL;
+  }
 
   const login = () => {
     window.location = `${CONFIG.MIDDLEWARE_URL}auth?redirectUrl=` + encodeURI(window.location.href);

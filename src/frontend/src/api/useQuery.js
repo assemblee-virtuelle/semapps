@@ -22,7 +22,13 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
         headers,
         ...fetchOptions
       })
-        .then(response => response.json())
+        .then(response => {
+          if( response.ok ) {
+            return response.json();
+          } else {
+            throw new Error(response.status, response.statusText);
+          }
+        })
         .then(data => {
           dispatch({ type: 'QUERY_SUCCESS', uri, data });
         })
