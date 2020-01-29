@@ -25,13 +25,51 @@ afterAll(async () => {
 });
 
 describe('Posting to followers', () => {
+  let simon, sebastien;
+
+  test('Create actors', async () => {
+    const simonId = await broker.call('webid.create', {
+      email: 'simon.louvet.zen@gmail.com',
+      nick: 'simonLouvet',
+      name: 'Simon',
+      familyName: 'Louvet'
+    });
+
+    await broker.watchForEvent('actor.created');
+
+    const sebastienId = await broker.call('webid.create', {
+      email: 'srosset81@gmail.com',
+      nick: 'srosset81',
+      name: 'Sébastien',
+      familyName: 'Rosset'
+    });
+
+    await broker.watchForEvent('actor.created');
+
+    simon = await broker.call('ldp.get', {
+      resourceUri: simonId,
+      accept: 'application/ld+json'
+    });
+
+    sebastien = await broker.call('ldp.get', {
+      resourceUri: sebastienId,
+      accept: 'application/ld+json'
+    });
+
+    expect(simon.inbox).toBe(simonId + '/inbox');
+    expect(simon.outbox).toBe(simonId + '/outbox');
+    expect(simon.followers).toBe(simonId + '/followers');
+    expect(simon.following).toBe(simonId + '/following');
+  }, 20000);
+
+
   test('Post follow request', async () => {
     const result = await broker.call('activitypub.outbox.post', {
-      username: 'srosset81',
+      username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: 'http://localhost:3000/activitypub/actor/srosset81',
+      actor: sebastien['@id'],
       type: 'Follow',
-      object: 'http://localhost:3000/activitypub/actor/simonLouvet'
+      object: simon['@id']
     });
 
     // Wait for actor to be added to the followers collection
@@ -42,20 +80,20 @@ describe('Posting to followers', () => {
 
   test('Get followers list', async () => {
     const result = await broker.call('activitypub.follow.listFollowers', {
-      username: 'simonLouvet'
+      username: simon.preferredUsername
     });
 
-    expect(result.items).toContain('http://localhost:3000/activitypub/actor/srosset81');
+    expect(result.items).toContain(sebastien['@id']);
   });
 
   test('Send message to followers', async () => {
     const result = await broker.call('activitypub.outbox.post', {
-      username: 'simonLouvet',
+      username: simon.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Note',
       name: 'Hello World',
-      attributedTo: 'http://localhost:3000/activitypub/actor/simonLouvet',
-      to: ['http://localhost:3000/activitypub/actor/simonLouvet/followers'],
+      attributedTo: simon['@id'],
+      to: [simon.followers],
       content: 'Voilà mon premier message, très content de faire partie du fedivers !'
     });
 
@@ -68,11 +106,11 @@ describe('Posting to followers', () => {
 
   test('Find message in inbox', async () => {
     const result = await broker.call('activitypub.inbox.list', {
-      username: 'srosset81'
+      username: sebastien.preferredUsername
     });
 
     expect(result.orderedItems).toHaveLength(1);
     expect(result.orderedItems[0]).toHaveProperty('type', 'Create');
-    expect(result.orderedItems[0]).toHaveProperty('actor', 'http://localhost:3000/activitypub/actor/simonLouvet');
+    expect(result.orderedItems[0]).toHaveProperty('actor', simon['@id']);
   });
 });

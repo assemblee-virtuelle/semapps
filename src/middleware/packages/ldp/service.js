@@ -57,7 +57,7 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
         return await ctx.call('triplestore.query', {
           query: `
             ${this.getPrefixRdf()}
@@ -66,7 +66,7 @@ module.exports = {
               <${resourceUri}> ?predicate ?object.
             }
                 `,
-          accept: this.getAcceptHeader(ctx.meta.headers.accept)
+          accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
         });
       } else {
         ctx.meta.$statusCode = 404;

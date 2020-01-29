@@ -34,7 +34,7 @@ module.exports = {
           console.warn(`problem creating dataset ${ctx.params.dataset}`);
         }
       } else if (response.status === 200) {
-        console.log(`dataset ${ctx.params.dataset} exist`);
+        // Dataset exist, do nothing...
       } else {
         let message = `problem initilising dataset ${ctx.params.dataset}`;
         throw new Error(`message`);

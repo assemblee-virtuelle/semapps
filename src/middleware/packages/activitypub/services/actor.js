@@ -20,6 +20,11 @@ module.exports = {
         inbox: webId + '/inbox',
         outbox: webId + '/outbox'
       });
+
+      this.broker.emit('actor.created', { uri: webId });
+    },
+    'actor.created'() {
+      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }
   }
 };
