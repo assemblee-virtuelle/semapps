@@ -3,14 +3,16 @@ import { Link } from '@reach/router';
 import useQuery from './api/useQuery';
 import { getResourceId } from './utils';
 
-const ResourcePreview = ({ resourceUri }) => {
+const ResourcePreview = ({ resourceUri, type }) => {
   const { data: resource } = useQuery(resourceUri);
   return (
     resource && (
       <div className="card w25">
         <div className="card-body">
-          <h5 className="card-title">{resource.label || resource['pair:label']}</h5>
-          <Link to={'/resources/' + getResourceId(resourceUri)} className="btn btn-warning">
+          <h5 className="card-title">
+            {resource.label || resource['pair:label'] || resource.name || resource['foaf:name']}
+          </h5>
+          <Link to={'/resources/' + type + '/' + getResourceId(resourceUri, type)} className="btn btn-warning">
             Voir
           </Link>
         </div>

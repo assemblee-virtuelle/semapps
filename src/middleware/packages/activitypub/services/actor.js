@@ -11,7 +11,7 @@ const ActorService = {
       await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox' });
 
       // Attach the newly-created collections to the user's profile
-      await this.broker.call('ldp.patch', {
+      await this.broker.call('ldp.post', {
         resourceUri: actorUri,
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Person',

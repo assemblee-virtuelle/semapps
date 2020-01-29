@@ -1,61 +1,56 @@
 import React from 'react';
 import { Link } from '@reach/router';
-import { CONTAINER_URI } from '../config';
 import useQuery from '../api/useQuery';
 import Page from '../Page';
-import { nl2br } from '../utils';
+import resourcesTypes from '../resourcesTypes';
+import ResourceValue from '../ResourceValue';
 
-const ResourceViewPage = ({ resourceId }) => {
-  const resourceUri = `${CONTAINER_URI}/${resourceId}`;
-  const { data: resource } = useQuery(resourceUri);
-
-  // TODO improve this code, that we must do since sometimes the LDP server
-  // returns the webpage as an object with the value in the @id property
-  let webPage;
-  if (resource) webPage = resource.webPage || resource['pair:webPage'];
-  if (typeof webPage === 'object') webPage = webPage['@id'];
+const ResourceViewPage = ({ type, resourceId }) => {
+  const resourceConfig = resourcesTypes[type];
+  const resourceUri = `${resourceConfig.container}/${resourceId}`;
+  const { data } = useQuery(resourceUri);
 
   return (
     <Page>
-      {resource && (
+      {data && (
         <>
-          <h2>{resource.label || resource['pair:label']}</h2>
+          <h2>{resourceConfig.name} > Voir</h2>
           <ul className="list-group">
-            <div className="list-group-item">
-              <div>
-                <strong>Titre</strong>
-              </div>
-              <div>{resource.label || resource['pair:label']}</div>
-            </div>
-            <div className="list-group-item">
-              <div>
-                <strong>Description</strong>
-              </div>
-              <div>{nl2br(resource.description || resource['pair:description'])}</div>
-            </div>
-            <div className="list-group-item">
-              <div>
-                <strong>Site web</strong>
-              </div>
-              <div>
-                <a href={webPage} target="_blank" rel="noopener noreferrer">
-                  {webPage}
-                </a>
-              </div>
-            </div>
+            {resourceConfig.fields.map((field, i) => {
+              let value = data[field.type] || data[field.type.split(':')[1]];
+              if (typeof value === 'object') value = value['@id'];
+              if (value) {
+                return (
+                  <div className="list-group-item" key={i}>
+                    <div>
+                      <strong>{field.label}</strong>
+                    </div>
+                    <div>
+                      <ResourceValue field={field}>{value}</ResourceValue>
+                    </div>
+                  </div>
+                );
+              } else {
+                return null;
+              }
+            })}
           </ul>
-          <br />
-          <Link to={`/resources/${resourceId}/edit`}>
-            <button type="submit" className="btn btn-warning">
-              Modifier
-            </button>
-          </Link>
-          &nbsp; &nbsp;
-          <Link to={`/resources/${resourceId}/delete`}>
-            <button type="submit" className="btn btn-danger">
-              Effacer
-            </button>
-          </Link>
+          {!resourceConfig.readOnly && (
+            <>
+              <br />
+              <Link to={`/resources/${type}/${resourceId}/edit`}>
+                <button type="submit" className="btn btn-warning">
+                  Modifier
+                </button>
+              </Link>
+              &nbsp; &nbsp;
+              <Link to={`/resources/${type}/${resourceId}/delete`}>
+                <button type="submit" className="btn btn-danger">
+                  Effacer
+                </button>
+              </Link>
+            </>
+          )}
         </>
       )}
     </Page>

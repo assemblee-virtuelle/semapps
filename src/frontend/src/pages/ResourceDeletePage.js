@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { CONTAINER_URI } from '../config';
 import { deleteResource, removeFromContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import { addFlash } from '../app/actions';
+import resourcesTypes from '../resourcesTypes';
 
-const ResourceDeletePage = ({ resourceId, navigate }) => {
+const ResourceDeletePage = ({ type, resourceId, navigate }) => {
   useAuth({ force: true });
-  const resourceUri = `${CONTAINER_URI}/${resourceId}`;
+  const resourceConfig = resourcesTypes[type];
+  const resourceUri = `${resourceConfig.container}/${resourceId}`;
   const dispatch = useDispatch();
 
   const remove = async () => {
@@ -20,11 +21,11 @@ const ResourceDeletePage = ({ resourceId, navigate }) => {
     });
 
     await dispatch(deleteResource(resourceUri));
-    await dispatch(removeFromContainer(CONTAINER_URI, resourceUri));
+    await dispatch(removeFromContainer(resourceConfig.container, resourceUri));
 
     await dispatch(addFlash('La ressource a bien été effacée'));
 
-    navigate('/');
+    navigate(`/resources/${type}`);
   };
 
   useEffect(() => {

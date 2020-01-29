@@ -64,6 +64,11 @@ const WebIdService = {
         ...body
       });
     },
+    async list(ctx) {
+      return await ctx.call('ldp.getByType', {
+        typeURL: 'foaf:Person'
+      });
+    },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
     }

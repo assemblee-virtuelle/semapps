@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from '@reach/router';
 import useAuth from './auth/useAuth';
+import resourcesTypes from './resourcesTypes';
 
 const NavBar = () => {
   const { user } = useAuth();
@@ -13,16 +14,13 @@ const NavBar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link to="/" className="nav-link">
-                Liste des projets
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/resources/create" className="nav-link">
-                Ajouter un projet
-              </Link>
-            </li>
+            {Object.keys(resourcesTypes).map(type => (
+              <li className="nav-item" key={type}>
+                <Link to={`/resources/${type}`} className="nav-link">
+                  {resourcesTypes[type]['name']}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
         <Link to="/profile" className="float-right ">
