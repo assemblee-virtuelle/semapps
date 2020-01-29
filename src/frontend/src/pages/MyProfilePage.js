@@ -6,7 +6,6 @@ import { editResource } from '../api/actions';
 import useAuth from '../auth/useAuth';
 import Page from '../Page';
 import { addFlash } from '../app/actions';
-import { Link } from '@reach/router';
 
 const MyProfilePage = () => {
   const { user } = useAuth({ force: true });

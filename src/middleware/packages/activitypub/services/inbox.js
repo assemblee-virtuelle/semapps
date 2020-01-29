@@ -12,13 +12,19 @@ module.exports = {
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryOrderedCollection', {
+      const collection = await ctx.call('activitypub.collection.queryOrderedCollection', {
         collectionUri: this.getInboxUri(ctx.params.username),
         optionalTriplesToFetch: `
           ?item as:object ?object .
           ?object ?objectP ?objectO .
         `
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     }
   },
   events: {

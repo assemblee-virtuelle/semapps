@@ -96,7 +96,14 @@ module.exports = {
       if (!response.ok) throw new Error(response.statusText);
 
       // Return results as JSON or RDF
-      if (params.query.includes('SELECT')) {
+      if (params.query.includes('ASK')) {
+        if (params.accept === ACCEPT_TYPES.JSON) {
+          const jsonResult = await response.json();
+          return jsonResult.boolean;
+        } else {
+          throw new Error('Only JSON accept type is currently allowed for ASK queries');
+        }
+      } else if (params.query.includes('SELECT')) {
         const jsonResult = await response.json();
         if (params.accept === ACCEPT_TYPES.JSON) {
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);

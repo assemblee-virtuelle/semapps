@@ -13,8 +13,18 @@ module.exports = {
     this.settings.ldpBaseUrl = await this.broker.call('ldp.getBaseUrl');
   },
   actions: {
-    async post({ params: { username, ...object }, broker }) {
+    async post(ctx) {
+      const { username, ...object } = ctx.params;
       let activity;
+
+      const collectionExists = await ctx.call('activitypub.collection.exist', {
+        collectionUri: this.getOutboxUri(username)
+      });
+
+      if (!collectionExists) {
+        ctx.meta.$statusCode = 404;
+        return;
+      }
 
       if (Object.values(OBJECT_TYPES).includes(object.type)) {
         activity = {
@@ -41,13 +51,13 @@ module.exports = {
       // This will be used to order the ordered collections
       activity.published = new Date().toISOString();
 
-      broker.call('triplestore.insert', {
+      ctx.call('triplestore.insert', {
         resource: activity,
         accept: 'json'
       });
 
       // Attach the newly-created activity to the outbox
-      broker.call('activitypub.collection.attach', {
+      ctx.call('activitypub.collection.attach', {
         collectionUri: this.getOutboxUri(username),
         objectUri: activity.id
       });
@@ -55,20 +65,26 @@ module.exports = {
       // Nicely format the JSON-LD
       activity = await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
 
-      broker.emit('activitypub.outbox.posted', { activity });
+      ctx.emit('activitypub.outbox.posted', { activity });
 
       return activity;
     },
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryOrderedCollection', {
+      const collection = await ctx.call('activitypub.collection.queryOrderedCollection', {
         collectionUri: this.getOutboxUri(ctx.params.username),
         optionalTriplesToFetch: `
           ?item as:object ?object .
           ?object ?objectP ?objectO .
         `
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     }
   },
   methods: {

@@ -12,16 +12,28 @@ module.exports = {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryCollection', {
+      const collection = await ctx.call('activitypub.collection.queryCollection', {
         collectionUri: `${this.settings.usersContainer}${ctx.params.username}/followers`
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
     async listFollowing(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryCollection', {
+      const collection = await ctx.call('activitypub.collection.queryCollection', {
         collectionUri: `${this.settings.usersContainer}${ctx.params.username}/following`
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     }
   },
   events: {
