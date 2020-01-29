@@ -133,7 +133,7 @@ module.exports = {
           }
           WHERE {
             <${ctx.params.collectionUri}> a as:Collection .
-            OPTIONAL { <http://localhost:3000/users/srosset81/followers> as:items ?item . }
+            OPTIONAL { <${ctx.params.collectionUri}> as:items ?item . }
           }
         `,
         accept: 'json'
