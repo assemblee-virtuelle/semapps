@@ -11,10 +11,11 @@ const ActorService = {
       await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox' });
 
       // Attach the newly-created collections to the user's profile
-      await this.broker.call('ldp.post', {
+      await this.broker.call('ldp.patch', {
         resourceUri: actorUri,
         '@context': 'https://www.w3.org/ns/activitystreams',
-        '@type': 'Person',
+        // TODO find a way to add two types with the patch method
+        '@type': ['Person', 'http://xmlns.com/foaf/0.1/Person'],
         preferredUsername: ctx.params.userData.nick,
         name: ctx.params.userData.name + ' ' + ctx.params.userData.familyName,
         following: actorUri + '/following',

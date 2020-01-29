@@ -23,6 +23,12 @@ const NavBar = () => {
             ))}
           </ul>
         </div>
+        <Link to="/messages" className="float-right ">
+          <button className="btn btn-outline-dark" type="submit">
+            <i className="fa fa-envelope"></i>
+          </button>
+        </Link>
+        &nbsp;
         <Link to="/profile" className="float-right ">
           <button className="btn btn-outline-dark" type="submit">
             <i className="fa fa-user-o"></i>&nbsp;

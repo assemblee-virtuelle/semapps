@@ -9,6 +9,7 @@ import ResourcesListPage from './pages/ResourcesListPage';
 import ResourceCreatePage from './pages/ResourceCreatePage';
 import ResourceDeletePage from './pages/ResourceDeletePage';
 import MyProfilePage from './pages/MyProfilePage';
+import SendMessagePage from "./pages/SendMessagePage";
 
 const store = initStore();
 
@@ -17,13 +18,14 @@ const App = () => {
     <ReduxProvider store={store}>
       <UserProvider>
         <Router primary={false}>
-          <Redirect from="/" to="/resources/projects" />
+          <Redirect noThrow from="/" to="/resources/projects" />
           <ResourcesListPage path="/resources/:type" />
           <ResourceCreatePage path="/resources/:type/create" />
           <ResourceEditPage path="/resources/:type/:resourceId/edit" />
           <ResourceDeletePage path="/resources/:type/:resourceId/delete" />
           <ResourceViewPage path="/resources/:type/:resourceId" />
           <MyProfilePage path="/profile" />
+          <SendMessagePage path="/messages" />
         </Router>
       </UserProvider>
     </ReduxProvider>
