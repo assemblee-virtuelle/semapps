@@ -7,11 +7,11 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
 
 module.exports = {
   name: 'activitypub.outbox',
-  settings: {
-    ldpHome: null,
-    usersContainer: null
+  dependencies: ['webid', 'ldp', 'triplestore', 'activitypub.collection'],
+  async started() {
+    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
+    this.settings.ldpBaseUrl = await this.broker.call('ldp.getBaseUrl');
   },
-  dependencies: ['triplestore', 'activitypub.collection'],
   actions: {
     async post({ params: { username, ...object }, broker }) {
       let activity;
@@ -73,7 +73,7 @@ module.exports = {
   },
   methods: {
     generateId(objectType) {
-      return this.settings.ldpHome + `as:${objectType}/` + uuid().substring(0, 8);
+      return this.settings.ldpBaseUrl + `as:${objectType}/` + uuid().substring(0, 8);
     },
     getOutboxUri(username) {
       return this.settings.usersContainer + username + '/outbox';

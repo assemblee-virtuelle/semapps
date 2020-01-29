@@ -4,29 +4,12 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const OutboxService = require('./services/outbox');
 
-function createServices(broker, { usersContainer, ldpHome }) {
+function createServices(broker) {
   broker.createService(CollectionService);
-
   broker.createService(ActorService);
-
-  broker.createService(FollowService, {
-    settings: {
-      usersContainer
-    }
-  });
-
-  broker.createService(InboxService, {
-    settings: {
-      usersContainer
-    }
-  });
-
-  broker.createService(OutboxService, {
-    settings: {
-      ldpHome,
-      usersContainer
-    }
-  });
+  broker.createService(FollowService);
+  broker.createService(InboxService);
+  broker.createService(OutboxService);
 }
 
 module.exports = createServices;

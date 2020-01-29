@@ -4,10 +4,10 @@ const { ACTIVITY_TYPES } = require('../constants');
 
 module.exports = {
   name: 'activitypub.follow',
-  settings: {
-    usersContainer: null
+  dependencies: ['webid', 'activitypub.collection'],
+  async started() {
+    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
   },
-  dependencies: ['activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';

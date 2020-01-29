@@ -38,10 +38,7 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  ActivityPub.createServices(broker, {
-    ldpHome: CONFIG.HOME_URL + 'ldp/',
-    usersContainer: CONFIG.HOME_URL + 'users/'
-  });
+  ActivityPub.createServices(broker);
 }
 
 module.exports = createServices;

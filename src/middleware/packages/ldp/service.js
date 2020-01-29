@@ -171,6 +171,9 @@ module.exports = {
         resource: container,
         accept: 'json'
       });
+    },
+    getBaseUrl(ctx) {
+      return this.settings.baseUrl;
     }
   },
   methods: {

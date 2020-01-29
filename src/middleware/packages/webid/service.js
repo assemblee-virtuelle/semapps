@@ -63,6 +63,9 @@ module.exports = {
         resourceUri: webId,
         ...body
       });
+    },
+    getUsersContainer(ctx) {
+      return this.settings.usersContainer;
     }
   },
   methods: {
