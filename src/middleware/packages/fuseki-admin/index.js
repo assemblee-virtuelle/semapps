@@ -2,7 +2,7 @@
 
 const fetch = require('node-fetch');
 
-module.exports = {
+const FusekiAdminService = {
   name: 'fuseki-admin',
   settings: {
     sparqlEndpoint: null,
@@ -47,3 +47,5 @@ module.exports = {
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };
+
+module.exports = FusekiAdminService;

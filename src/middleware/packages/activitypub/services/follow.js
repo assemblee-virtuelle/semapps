@@ -2,7 +2,7 @@
 
 const { ACTIVITY_TYPES } = require('../constants');
 
-module.exports = {
+const FollowService = {
   name: 'activitypub.follow',
   dependencies: ['webid', 'activitypub.collection'],
   async started() {
@@ -55,3 +55,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = FollowService;

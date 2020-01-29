@@ -2,7 +2,7 @@
 
 const jsonld = require('jsonld');
 
-module.exports = {
+const CollectionService = {
   name: 'activitypub.collection',
   dependencies: ['triplestore'],
   actions: {
@@ -185,3 +185,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = CollectionService;

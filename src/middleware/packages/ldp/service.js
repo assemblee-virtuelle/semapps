@@ -6,7 +6,7 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 
-module.exports = {
+const LdpService = {
   name: 'ldp',
   settings: {
     baseUrl: null,
@@ -235,3 +235,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = LdpService;

@@ -5,7 +5,7 @@ const uuid = require('uuid/v1');
 
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
 
-module.exports = {
+const OutboxService = {
   name: 'activitypub.outbox',
   dependencies: ['webid', 'ldp', 'triplestore', 'activitypub.collection'],
   async started() {
@@ -96,3 +96,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = OutboxService;

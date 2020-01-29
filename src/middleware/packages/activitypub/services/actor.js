@@ -1,4 +1,4 @@
-module.exports = {
+const ActorService = {
   name: 'activitypub.actor',
   dependencies: ['activitypub.collection', 'ldp'],
   actions: {
@@ -35,3 +35,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = ActorService;

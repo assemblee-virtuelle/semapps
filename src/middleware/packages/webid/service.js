@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+const WebIdService = {
   name: 'webid',
   dependencies: ['ldp', 'triplestore'],
   settings: {
@@ -101,3 +101,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = WebIdService;

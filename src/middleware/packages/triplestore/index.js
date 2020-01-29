@@ -7,7 +7,7 @@ const { ACCEPT_TYPES } = require('./constants');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 
-module.exports = {
+const TripleStoreService = {
   name: 'triplestore',
   settings: {
     sparqlEndpoint: null,
@@ -204,3 +204,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = TripleStoreService;

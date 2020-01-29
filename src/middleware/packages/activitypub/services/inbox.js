@@ -2,7 +2,7 @@
 
 const { PUBLIC_URI } = require('../constants');
 
-module.exports = {
+const InboxService = {
   name: 'activitypub.inbox',
   dependencies: ['webid', 'activitypub.collection'],
   async started() {
@@ -75,3 +75,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = InboxService;
