@@ -62,7 +62,6 @@ describe('Posting to followers', () => {
     expect(simon.following).toBe(simonId + '/following');
   }, 20000);
 
-
   test('Post follow request', async () => {
     const result = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
