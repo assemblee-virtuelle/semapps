@@ -1,5 +1,4 @@
 const routeConfig = {
-  path: '/ldp',
   // When using multiple routes we must set the body parser for each route.
   bodyParsers: {
     json: true
@@ -19,8 +18,7 @@ module.exports = [
     authorization: false,
     authentication: true,
     aliases: {
-      'GET :typeURL': 'ldp.getByType',
-      'GET :typeURL/:resourceId': 'ldp.get'
+      'GET users/:userId': 'webid.view'
     },
     ...routeConfig
   },
@@ -29,9 +27,8 @@ module.exports = [
     authorization: true,
     authentication: false,
     aliases: {
-      'POST :typeURL': 'ldp.post',
-      'DELETE :typeURL/:resourceId': 'ldp.delete',
-      'PATCH :typeURL/:resourceId': 'ldp.patch'
+      'GET me': 'webid.view',
+      'PATCH me': 'webid.edit'
     },
     ...routeConfig
   }

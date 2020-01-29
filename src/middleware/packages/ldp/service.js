@@ -9,7 +9,7 @@ const N3 = require('n3');
 module.exports = {
   name: 'ldp',
   settings: {
-    homeUrl: null,
+    baseUrl: null,
     ontologies: []
   },
   dependencies: ['triplestore'],
@@ -38,7 +38,7 @@ module.exports = {
 
       result = {
         '@context': result['@context'],
-        '@id': `${this.settings.homeUrl}ldp/${ctx.params.typeURL}`,
+        '@id': `${this.settings.baseUrl}${ctx.params.typeURL}`,
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': contains
       };
@@ -49,10 +49,11 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.headers.accept;
       return result;
     },
-    async getResource(ctx) {
-      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
+    async get(ctx) {
+      const resourceUri =
+        ctx.params.resourceUri || `${this.settings.baseUrl}${ctx.params.typeURL}/${ctx.params.resourceId}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: uri
+        uri: resourceUri
       });
 
       if (triplesNb > 0) {
@@ -60,11 +61,9 @@ module.exports = {
         return await ctx.call('triplestore.query', {
           query: `
             ${this.getPrefixRdf()}
-            CONSTRUCT {
-              <${uri}> ?predicate ?object.
-            }
+            CONSTRUCT
             WHERE {
-              <${uri}> ?predicate ?object.
+              <${resourceUri}> ?predicate ?object.
             }
                 `,
           accept: this.getAcceptHeader(ctx.meta.headers.accept)
@@ -74,8 +73,8 @@ module.exports = {
       }
     },
     async post(ctx) {
-      const { typeURL, ...body } = ctx.params;
-      body['@id'] = this.generateId(typeURL);
+      const { typeURL, containerUri, slug, ...body } = ctx.params;
+      body['@id'] = this.generateId(typeURL, containerUri, slug);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
@@ -89,13 +88,11 @@ module.exports = {
       return out;
     },
     async patch(ctx) {
-      const { typeURL, identifierURL, ...body } = ctx.params;
-      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: uri
-      });
+      let { typeURL, resourceId, resourceUri, ...body } = ctx.params;
+      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
       if (triplesNb > 0) {
-        body['@id'] = uri;
+        body['@id'] = resourceUri;
         const out = await ctx.call('triplestore.patch', {
           resource: body
         });
@@ -111,13 +108,14 @@ module.exports = {
       }
     },
     async delete(ctx) {
-      const uri = `${this.settings.homeUrl}ldp/${ctx.params.typeURL}/${ctx.params.identifierURL}`;
+      let { typeURL, resourceId, resourceUri } = ctx.params;
+      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: uri
+        uri: resourceUri
       });
       if (triplesNb > 0) {
         const out = await ctx.call('triplestore.delete', {
-          uri: uri
+          uri: resourceUri
         });
         ctx.meta.$responseType = ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
@@ -136,13 +134,11 @@ module.exports = {
      * @param containerUri The full URI of the container
      */
     async standardContainer(ctx) {
-      ctx.meta.$responseType = 'application/n-triples';
+      ctx.meta.$responseType = ctx.meta.headers.accept;
 
       return await ctx.call('triplestore.query', {
         query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          ${this.getPrefixRdf()}
           CONSTRUCT {
             ?container ldp:contains ?subject .
           	?subject ?predicate ?object .
@@ -155,7 +151,7 @@ module.exports = {
             ?subject ?predicate ?object .
           }
               `,
-        accept: 'turtle'
+        accept: this.getAcceptHeader(ctx.meta.headers.accept)
       });
     },
     /*
@@ -178,9 +174,9 @@ module.exports = {
     }
   },
   methods: {
-    generateId(type, slug = undefined) {
+    generateId(type, containerUri, slug) {
       const id = slug || uuid().substring(0, 8);
-      return `${this.settings.homeUrl}ldp/${type}/${id}`;
+      return containerUri ? `${containerUri}${id}` : `${this.settings.baseUrl}${type}/${id}`;
     },
     getAcceptHeader(accept) {
       switch (accept) {
