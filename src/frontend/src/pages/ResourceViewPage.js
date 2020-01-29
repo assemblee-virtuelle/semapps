@@ -1,15 +1,40 @@
 import React from 'react';
 import { Link } from '@reach/router';
+import { useDispatch } from 'react-redux';
 import useQuery from '../api/useQuery';
 import Page from '../Page';
 import resourcesTypes from '../resourcesTypes';
 import ResourceValue from '../ResourceValue';
 import Inbox from '../Inbox';
+import { addFlash } from '../app/actions';
+import useAuth from '../auth/useAuth';
 
 const ResourceViewPage = ({ type, resourceId }) => {
+  const { user, webId, isLogged } = useAuth();
+  const dispatch = useDispatch();
   const resourceConfig = resourcesTypes[type];
   const resourceUri = `${resourceConfig.container}/${resourceId}`;
   const { data } = useQuery(resourceUri);
+
+  const follow = async () => {
+    const followActivity = {
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: 'Follow',
+      actor: webId,
+      object: resourceUri
+    };
+
+    await fetch(user.outbox, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(followActivity)
+    });
+
+    await dispatch(addFlash('Vous suivez maintenant cet utilisateur'));
+  };
 
   return (
     <Page>
@@ -40,14 +65,26 @@ const ResourceViewPage = ({ type, resourceId }) => {
             <>
               <br />
               <Link to={`/resources/${type}/${resourceId}/edit`}>
-                <button type="submit" className="btn btn-warning">
-                  Modifier
-                </button>
+                <button className="btn btn-warning">Modifier</button>
               </Link>
               &nbsp; &nbsp;
               <Link to={`/resources/${type}/${resourceId}/delete`}>
-                <button type="submit" className="btn btn-danger">
-                  Effacer
+                <button className="btn btn-danger">Effacer</button>
+              </Link>
+            </>
+          )}
+          {type === 'users' && isLogged && webId !== resourceUri && (
+            <>
+              <br />
+              <button className="btn btn-warning" onClick={follow}>
+                <i className="fa fa-forward" />
+                &nbsp;Suivre cet utilisateur
+              </button>
+              &nbsp; &nbsp;
+              <Link to={`/messages/?recipientUri=${encodeURI(resourceUri)}`}>
+                <button className="btn btn-warning">
+                  <i className="fa fa-envelope" />
+                  &nbsp; Envoyer un message
                 </button>
               </Link>
             </>
@@ -56,6 +93,7 @@ const ResourceViewPage = ({ type, resourceId }) => {
       )}
       {data && type === 'users' && (
         <>
+          <br />
           <br />
           <Inbox userUri={resourceUri} inboxUri={data.inbox || data['http://www.w3.org/ns/ldp#inbox']['@id']} />
         </>

@@ -8,6 +8,7 @@ import { getResourceId } from '../utils';
 import { addFlash } from '../app/actions';
 import { useDispatch } from 'react-redux';
 import Inbox from '../Inbox';
+import { addResource } from '../api/actions';
 
 const MessagesPage = ({ location }) => {
   const { webId, user } = useAuth({ force: true });
@@ -18,7 +19,7 @@ const MessagesPage = ({ location }) => {
 
   const queryParams = new URLSearchParams(location.search);
 
-  const sendNote = async values => {
+  const sendNote = async (values, form) => {
     const note = {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Note',
@@ -37,6 +38,9 @@ const MessagesPage = ({ location }) => {
       body: JSON.stringify(note)
     });
 
+    setTimeout(form.reset);
+
+    await dispatch(addResource(user.outbox, note));
     await dispatch(addFlash('Votre message a bien été envoyé'));
   };
 
@@ -51,9 +55,10 @@ const MessagesPage = ({ location }) => {
         render={({ handleSubmit }) => (
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="recipient">Utilisateur</label>
+              <label htmlFor="recipient">Destinataire(s)</label>
               <Field id="recipient" name="recipient" component="select" className="form-control">
                 <option />
+                {user && <option value={user.followers}>Tous mes followers</option>}
                 {usersUris &&
                   user &&
                   usersUris

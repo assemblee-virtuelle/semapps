@@ -3,21 +3,11 @@ import { Link } from '@reach/router';
 import useQuery from './api/useQuery';
 import { getResourceId, nl2br } from './utils';
 
-const Inbox = ({ userUri, inboxUri }) => {
+const Inbox = ({ inboxUri }) => {
   const { data } = useQuery(inboxUri);
   return (
     <>
-      <h2 className="mt-3">
-        Messages reçus
-        {userUri && (
-          <Link to={`/messages/?recipientUri=${encodeURI(userUri)}`}>
-            <button className="btn btn-secondary pull-right">
-              <i className="fa fa-envelope" />
-              &nbsp; Envoyer un message
-            </button>
-          </Link>
-        )}
-      </h2>
+      <h2 className="mt-3">Messages reçus</h2>
       <ul className="list-group">
         {data &&
           data.orderedItems.map((item, i) => {

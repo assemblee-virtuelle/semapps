@@ -10,7 +10,9 @@ const Page = ({ children }) => {
   // TODO use a correct location change listener
   useEffect(() => {
     window.onclick = function(event) {
-      dispatch(clearFlash());
+      if (flash) {
+        dispatch(clearFlash());
+      }
     };
   }, [flash, dispatch]);
 
