@@ -39,7 +39,7 @@ module.exports = {
 
         webId = ctx.meta.$responseHeaders.Location;
 
-        ctx.emit('webid.created', { webId, userData });
+        ctx.emit('webid.created', { '@id': webId, ...userData });
       }
 
       return webId;
