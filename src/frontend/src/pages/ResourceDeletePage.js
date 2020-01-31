@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { deleteResource, removeFromContainer } from '../api/actions';
 import useAuth from '../auth/useAuth';
@@ -11,7 +11,7 @@ const ResourceDeletePage = ({ type, resourceId, navigate }) => {
   const resourceUri = `${resourceConfig.container}/${resourceId}`;
   const dispatch = useDispatch();
 
-  const remove = async () => {
+  const remove = useCallback(async () => {
     await fetch(resourceUri, {
       method: 'DELETE',
       headers: {
@@ -26,11 +26,11 @@ const ResourceDeletePage = ({ type, resourceId, navigate }) => {
     await dispatch(addFlash('La ressource a bien été effacée'));
 
     navigate(`/resources/${type}`);
-  };
+  }, [dispatch, navigate, resourceConfig, resourceUri, type]);
 
   useEffect(() => {
     remove();
-  });
+  }, [remove]);
 
   return null;
 };
