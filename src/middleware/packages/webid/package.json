@@ -1,0 +1,11 @@
+{
+  "name": "@semapps/webid",
+  "version": "1.0.0",
+  "description": "WebID service for SemApps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Virtual Assembly",
+  "license": "Apache-2.0"
+}

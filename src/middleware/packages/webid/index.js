@@ -1,5 +1,4 @@
-'use strict';
 module.exports = {
-  LdpService: require('./service'),
+  WebIdService: require('./service'),
   Routes: require('./routes')
 };

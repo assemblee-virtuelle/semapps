@@ -6,9 +6,6 @@ class Connector {
     this.passportId = passportId;
     this.settings = settings;
   }
-  generateToken(payload) {
-    return jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
-  }
   async verifyToken(token) {
     try {
       return jwt.verify(token, this.settings.publicKey, { algorithms: ['RS256'] });
@@ -16,23 +13,47 @@ class Connector {
       return false;
     }
   }
+  saveRedirectUrl(req, res, next) {
+    // Persist referer on the session to get it back after redirection
+    // If the redirectUrl is already in the session, keep it as is
+    req.session.redirectUrl = req.session.redirectUrl || req.query.redirectUrl || req.headers.referer;
+    next();
+  }
+  findOrCreateProfile(req, res, next) {
+    // Select profile data amongst all the data returned by the connector
+    const profileData = this.settings.selectProfileData(res.req.user);
+
+    this.settings.findOrCreateProfile(profileData).then(webId => {
+      // Keep the webId as we may need it for the token generation
+      res.req.user.webId = webId;
+      next();
+    });
+  }
+  generateToken(req, res, next) {
+    // If token is already provided by the connector, skip this step
+    if (res.req.user.token) {
+      next();
+    } else {
+      const profileData = this.settings.selectProfileData(res.req.user);
+      res.req.user.token = jwt.sign({ webId: res.req.user.webId, ...profileData });
+      next();
+    }
+  }
+  redirectToFront(req, res) {
+    // Redirect browser to the redirectUrl pushed in session
+    // Add the token to the URL so that the client may use it
+    const redirectUrl = req.session.redirectUrl;
+    res.redirect(redirectUrl + '?token=' + res.req.user.token);
+  }
   getLoginMiddlewares() {
     return [
-      (req, res, next) => {
-        // Persist referer on the session to get it back after redirection
-        // If the redirectUrl is already in the session, keep it as is
-        req.session.redirectUrl = req.session.redirectUrl || req.query.redirectUrl || req.headers.referer;
-        next();
-      },
+      this.saveRedirectUrl.bind(this),
       this.passport.authenticate(this.passportId, {
         session: false
       }),
-      (req, res) => {
-        // Redirect browser to the redirectUrl pushed in session
-        // Add the token to the URL so that the client may use it
-        const redirectUrl = req.session.redirectUrl;
-        res.redirect(redirectUrl + '?token=' + res.req.user.token);
-      }
+      this.findOrCreateProfile.bind(this),
+      this.generateToken.bind(this),
+      this.redirectToFront.bind(this)
     ];
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication

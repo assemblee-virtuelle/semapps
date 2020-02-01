@@ -9,7 +9,9 @@ class CasConnector extends Connector {
     super('cas', {
       casUrl: settings.casUrl,
       privateKey,
-      publicKey
+      publicKey,
+      selectProfileData: settings.selectProfileData,
+      findOrCreateProfile: settings.findOrCreateProfile
     });
   }
   async configurePassport(passport) {
@@ -29,12 +31,7 @@ class CasConnector extends Connector {
           casURL: this.settings.casUrl
         },
         (username, profile, done) => {
-          const token = this.generateToken({
-            id: parseInt(profile.uid[0], 10),
-            name: username,
-            email: profile.mail[0]
-          });
-          done(null, { token });
+          done(null, profile);
         }
       )
     );
