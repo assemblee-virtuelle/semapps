@@ -88,7 +88,7 @@ const LdpService = {
       return out;
     },
     async patch(ctx) {
-      let { typeURL, resourceId, resourceUri, ...body } = ctx.params;
+      let { typeURL, resourceId, resourceUri, accept, ...body } = ctx.params;
       if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
       if (triplesNb > 0) {
@@ -96,7 +96,7 @@ const LdpService = {
         const out = await ctx.call('triplestore.patch', {
           resource: body
         });
-        ctx.meta.$responseType = ctx.meta.headers ? ctx.meta.headers.accept : 'json';
+        ctx.meta.$responseType = accept || ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
         ctx.meta.$responseHeaders = {
           Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',

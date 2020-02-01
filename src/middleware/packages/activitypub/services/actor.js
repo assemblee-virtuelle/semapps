@@ -13,6 +13,7 @@ const ActorService = {
       // Attach the newly-created collections to the user's profile
       await this.broker.call('ldp.patch', {
         resourceUri: actorUri,
+        accept: 'json',
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Person',
         preferredUsername: ctx.params.userData.nick,
