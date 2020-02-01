@@ -73,8 +73,10 @@ module.exports = {
       }
     },
     async post(ctx) {
-      const { typeURL, containerUri, slug, ...body } = ctx.params;
-      body['@id'] = this.generateId(typeURL, containerUri, slug);
+      const { typeURL, containerUri, slugParam, ...body } = ctx.params;
+      const slug = slugParam || ctx.meta.headers.slug;
+      const generatedId = this.generateId(typeURL, containerUri, slug);
+      body['@id'] = await this.findUnusedUri(ctx, generatedId);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
@@ -177,6 +179,28 @@ module.exports = {
     generateId(type, containerUri, slug) {
       const id = slug || uuid().substring(0, 8);
       return containerUri ? `${containerUri}${id}` : `${this.settings.baseUrl}${type}/${id}`;
+    },
+    async findUnusedUri(ctx, generatedId) {
+      let existingBegining = await ctx.call('triplestore.query', {
+        query: `
+          ${this.getPrefixRdf()}
+          SELECT distinct ?uri
+          WHERE {
+            ?uri ?predicate ?object.
+            FILTER regex(str(?uri), "^${generatedId}")
+          }
+              `,
+        accept: 'json'
+      });
+      let counter = 0;
+      if (existingBegining.length > 0) {
+        counter = 1;
+        existingBegining = existingBegining.map(r => r.uri.value);
+        while (existingBegining.includes(generatedId.concat(counter))) {
+          counter++;
+        }
+      }
+      return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
     getAcceptHeader(accept) {
       switch (accept) {
