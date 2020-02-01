@@ -14,7 +14,7 @@ const WebIdService = {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
-      if (!nick) nick = email.split('@')[0];
+      if (!nick) nick = email.split('@')[0].toLowerCase();
 
       // Check if an user already exist with this email address
       let webId = await this.findUserByEmail(ctx, email);
@@ -62,6 +62,11 @@ const WebIdService = {
       return await ctx.call('ldp.patch', {
         resourceUri: webId,
         ...body
+      });
+    },
+    async list(ctx) {
+      return await ctx.call('ldp.getByType', {
+        typeURL: 'foaf:Person'
       });
     },
     getUsersContainer(ctx) {

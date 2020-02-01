@@ -15,7 +15,8 @@ const ActorService = {
         resourceUri: actorUri,
         accept: 'json',
         '@context': 'https://www.w3.org/ns/activitystreams',
-        '@type': 'Person',
+        // TODO find a way to add two types with the patch method
+        '@type': ['Person', 'http://xmlns.com/foaf/0.1/Person'],
         preferredUsername: ctx.params.userData.nick,
         name: ctx.params.userData.name + ' ' + ctx.params.userData.familyName,
         following: actorUri + '/following',

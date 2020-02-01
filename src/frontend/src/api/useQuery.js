@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const initialValues = { data: [], loading: true, error: null };
+const initialValues = { data: null, loading: true, error: null };
 
 const useQuery = (uri, options = { cacheOnly: false }) => {
   const dispatch = useDispatch();
@@ -22,7 +22,13 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
         headers,
         ...fetchOptions
       })
-        .then(response => response.json())
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(response.status, response.statusText);
+          }
+        })
         .then(data => {
           dispatch({ type: 'QUERY_SUCCESS', uri, data });
         })

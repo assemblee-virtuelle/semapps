@@ -1,150 +1,123 @@
-const apiReducer = (state = { queries: [] }, action) => {
-  switch (action.type) {
-    case 'QUERY_TRIGGER': {
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.uri]: {
-            data: null,
-            loading: true,
-            error: null
-          }
-        }
-      };
-    }
+import produce from 'immer';
 
-    case 'QUERY_SUCCESS': {
-      if (
-        action.data['@type'] === 'ldp:Container' ||
-        (Array.isArray(action.data['@type']) && action.data['@type'].includes('ldp:Container'))
-      ) {
-        let entities;
-        const itemsIds = action.data['ldp:contains']
-          ? action.data['ldp:contains'].map(item => {
-              entities = { ...entities, [item['@id']]: { data: item, loading: false, error: null } };
-              return item['@id'];
-            })
-          : null;
-        return {
-          ...state,
-          queries: {
-            ...state.queries,
-            ...entities,
-            [action.uri]: {
-              data: itemsIds,
-              loading: false,
-              error: null
-            }
-          }
-        };
-      } else {
-        return {
-          ...state,
-          queries: {
-            ...state.queries,
-            [action.uri]: {
-              data: action.data,
-              loading: false,
-              error: null
-            }
-          }
-        };
-      }
-    }
+const isResourcesList = (data, type) => {
+  return (
+    data['@type'] === type ||
+    data['type'] === type ||
+    (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
+    (Array.isArray(data['type']) && data['type'].includes(type))
+  );
+};
 
-    case 'QUERY_FAILURE': {
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.uri]: {
-            data: null,
-            loading: false,
-            error: action.error
-          }
-        }
-      };
-    }
-
-    case 'ADD_RESOURCE': {
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.resourceUri]: {
-            loading: false,
-            error: null,
-            data: {
-              ...action.data
-            }
-          }
-        }
-      };
-    }
-
-    case 'EDIT_RESOURCE': {
-      const query = state.queries[action.resourceUri];
-
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.resourceUri]: {
-            ...query,
-            data: {
-              ...query.data,
-              ...action.data
-            }
-          }
-        }
-      };
-    }
-
-    case 'DELETE_RESOURCE': {
-      const { [action.resourceUri]: resourceQuery, ...otherQueries } = state.queries;
-      return {
-        ...state,
-        queries: otherQueries
-      };
-    }
-
-    case 'ADD_TO_CONTAINER': {
-      const query = state.queries[action.containerUri];
-      const queryData = (query && query.data) || [];
-
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.containerUri]: {
-            ...query,
-            data: [...queryData, action.resourceUri]
-          }
-        }
-      };
-    }
-
-    case 'REMOVE_FROM_CONTAINER': {
-      let query = state.queries[action.containerUri],
-        queryData = [];
-      if (query && query.data) queryData = query.data.filter(value => value !== action.resourceUri);
-
-      return {
-        ...state,
-        queries: {
-          ...state.queries,
-          [action.containerUri]: {
-            ...query,
-            data: queryData
-          }
-        }
-      };
-    }
-
-    default:
-      return state;
+const extractItems = (data, predicate) => {
+  if (!data[predicate]) {
+    return null;
+  } else {
+    let items = {};
+    data[predicate].forEach(item => {
+      items[item['@id'] || item['id']] = { data: item, loading: false, error: null };
+    });
+    return items;
   }
 };
+
+const apiReducer = (state = { queries: {} }, action) =>
+  produce(state, newState => {
+    switch (action.type) {
+      case 'QUERY_TRIGGER':
+        newState.queries[action.uri] = {
+          data: null,
+          loading: true,
+          error: null
+        };
+        break;
+
+      case 'QUERY_SUCCESS': {
+        if (isResourcesList(action.data, 'ldp:Container')) {
+          const items = extractItems(action.data, 'ldp:contains');
+          newState.queries = {
+            ...newState.queries,
+            ...items,
+            [action.uri]: {
+              data: Object.keys(items),
+              loading: false,
+              error: null
+            }
+          };
+        } else if (isResourcesList(action.data, 'Collection')) {
+          const items = extractItems(action.data, 'items');
+          newState.queries = {
+            ...newState.queries,
+            ...items,
+            [action.uri]: {
+              data: Object.keys(items),
+              loading: false,
+              error: null
+            }
+          };
+        } else if (isResourcesList(action.data, 'OrderedCollection')) {
+          const items = extractItems(action.data, 'orderedItems');
+          newState.queries = {
+            ...newState.queries,
+            ...items,
+            [action.uri]: {
+              data: Object.keys(items),
+              loading: false,
+              error: null
+            }
+          };
+        } else {
+          newState.queries[action.uri] = {
+            data: action.data,
+            loading: false,
+            error: null
+          };
+        }
+        break;
+      }
+
+      case 'QUERY_FAILURE':
+        newState.queries[action.uri] = {
+          data: null,
+          loading: false,
+          error: action.error
+        };
+        break;
+
+      case 'ADD_RESOURCE':
+        newState.queries[action.resourceUri] = {
+          loading: false,
+          error: null,
+          data: action.data
+        };
+        break;
+
+      case 'EDIT_RESOURCE':
+        newState.queries[action.resourceUri] = {
+          data: action.data
+        };
+        break;
+
+      case 'DELETE_RESOURCE':
+        delete newState.queries[action.resourceUri];
+        break;
+
+      case 'ADD_TO_CONTAINER':
+        // If container hasn't been cached yet, ignore
+        if (newState.queries[action.containerUri]) {
+          newState.queries[action.containerUri].data.push(action.resourceUri);
+        }
+        break;
+
+      case 'REMOVE_FROM_CONTAINER':
+        // If container hasn't been cached yet, ignore
+        if (newState.queries[action.containerUri]) {
+          newState.queries[action.containerUri].data = newState.queries[action.containerUri].data.filter(
+            uri => uri !== action.resourceUri
+          );
+        }
+        break;
+    }
+  });
 
 export default apiReducer;

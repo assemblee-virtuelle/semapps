@@ -18,7 +18,8 @@ module.exports = [
     authorization: false,
     authentication: true,
     aliases: {
-      'GET users/:userId': 'webid.view'
+      'GET users/:userId': 'webid.view',
+      'GET users': 'webid.list'
     },
     ...routeConfig
   },

@@ -1,11 +1,13 @@
 import React from 'react';
+import resourcesTypes from './resourcesTypes';
 
-export const getResourceId = uri => {
-  const matches = uri.match(/pair:Project\/(.*)/);
+export const getResourceId = (uri, type) => {
+  const pattern = `${resourcesTypes[type].container.replace(/\//g, '\\/')}\\/(.*)`;
+  const matches = uri.match(new RegExp(pattern));
   return matches[1];
 };
 
-export function nl2br(str) {
+export const nl2br = str => {
   const newlineRegex = /(\r\n|\r|\n)/g;
 
   if (typeof str === 'number') {
@@ -20,4 +22,14 @@ export function nl2br(str) {
     }
     return line;
   });
-}
+};
+
+export const getInitialValues = (fields, data) => {
+  let initialValues = {};
+  fields.forEach(field => {
+    let value = data[field.type] || data[field.type.split(':')[1]];
+    if (typeof value === 'object') value = value['@id'];
+    initialValues[field.type.split(':')[1]] = value;
+  });
+  return initialValues;
+};
