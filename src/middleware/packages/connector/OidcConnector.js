@@ -54,6 +54,10 @@ class OidcConnector extends Connector {
       )
     );
   }
+  globalLogout(req, res, next) {
+    // TODO implement global logout for OIDC
+    next();
+  }
 }
 
 module.exports = OidcConnector;
