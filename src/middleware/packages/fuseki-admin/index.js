@@ -2,7 +2,7 @@
 
 const fetch = require('node-fetch');
 
-module.exports = {
+const FusekiAdminService = {
   name: 'fuseki-admin',
   settings: {
     sparqlEndpoint: null,
@@ -34,7 +34,7 @@ module.exports = {
           console.warn(`problem creating dataset ${ctx.params.dataset}`);
         }
       } else if (response.status === 200) {
-        console.log(`dataset ${ctx.params.dataset} exist`);
+        // Dataset exist, do nothing...
       } else {
         let message = `problem initilising dataset ${ctx.params.dataset}`;
         throw new Error(`message`);
@@ -47,3 +47,5 @@ module.exports = {
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };
+
+module.exports = FusekiAdminService;

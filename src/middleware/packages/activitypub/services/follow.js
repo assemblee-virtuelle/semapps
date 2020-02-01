@@ -2,26 +2,38 @@
 
 const { ACTIVITY_TYPES } = require('../constants');
 
-module.exports = {
+const FollowService = {
   name: 'activitypub.follow',
-  settings: {
-    homeUrl: null
+  dependencies: ['webid', 'activitypub.collection'],
+  async started() {
+    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
   },
-  dependencies: ['activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.homeUrl}activitypub/actor/${ctx.params.username}/followers`
+      const collection = await ctx.call('activitypub.collection.queryCollection', {
+        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/followers`
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     },
     async listFollowing(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.homeUrl}activitypub/actor/${ctx.params.username}/following`
+      const collection = await ctx.call('activitypub.collection.queryCollection', {
+        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/following`
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     }
   },
   events: {
@@ -43,3 +55,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = FollowService;

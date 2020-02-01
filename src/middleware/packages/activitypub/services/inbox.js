@@ -2,23 +2,29 @@
 
 const { PUBLIC_URI } = require('../constants');
 
-module.exports = {
+const InboxService = {
   name: 'activitypub.inbox',
-  settings: {
-    homeUrl: null
+  dependencies: ['webid', 'activitypub.collection'],
+  async started() {
+    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
   },
-  dependencies: ['activitypub.collection'],
   actions: {
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      return await ctx.call('activitypub.collection.queryOrderedCollection', {
+      const collection = await ctx.call('activitypub.collection.queryOrderedCollection', {
         collectionUri: this.getInboxUri(ctx.params.username),
         optionalTriplesToFetch: `
           ?item as:object ?object .
           ?object ?objectP ?objectO .
         `
       });
+
+      if (collection) {
+        return collection;
+      } else {
+        ctx.meta.$statusCode = 404;
+      }
     }
   },
   events: {
@@ -41,13 +47,13 @@ module.exports = {
   },
   methods: {
     getInboxUri(username) {
-      return this.settings.homeUrl + 'activitypub/actor/' + username + '/inbox';
+      return this.settings.usersContainer + username + '/inbox';
     },
     getFollowersUri(actorUri) {
       return actorUri + '/followers';
     },
     isLocalUri(uri) {
-      return uri.startsWith(this.settings.homeUrl);
+      return uri.startsWith(this.settings.usersContainer);
     },
     async getAllRecipients(activity) {
       let output = [],
@@ -69,3 +75,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = InboxService;

@@ -6,7 +6,7 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 
-module.exports = {
+const LdpService = {
   name: 'ldp',
   settings: {
     baseUrl: null,
@@ -57,7 +57,7 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
         return await ctx.call('triplestore.query', {
           query: `
             ${this.getPrefixRdf()}
@@ -66,7 +66,7 @@ module.exports = {
               <${resourceUri}> ?predicate ?object.
             }
                 `,
-          accept: this.getAcceptHeader(ctx.meta.headers.accept)
+          accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
         });
       } else {
         ctx.meta.$statusCode = 404;
@@ -90,7 +90,7 @@ module.exports = {
       return out;
     },
     async patch(ctx) {
-      let { typeURL, resourceId, resourceUri, ...body } = ctx.params;
+      let { typeURL, resourceId, resourceUri, accept, ...body } = ctx.params;
       if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
       if (triplesNb > 0) {
@@ -98,7 +98,7 @@ module.exports = {
         const out = await ctx.call('triplestore.patch', {
           resource: body
         });
-        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$responseType = accept || ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
         ctx.meta.$responseHeaders = {
           Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
@@ -173,6 +173,9 @@ module.exports = {
         resource: container,
         accept: 'json'
       });
+    },
+    getBaseUrl(ctx) {
+      return this.settings.baseUrl;
     }
   },
   methods: {
@@ -256,3 +259,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = LdpService;

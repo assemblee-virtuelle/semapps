@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = {
+const WebIdService = {
   name: 'webid',
   dependencies: ['ldp', 'triplestore'],
   settings: {
@@ -11,32 +11,38 @@ module.exports = {
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      // Make sure we have a default value in order to bypass this bug :
-      // https://github.com/assemblee-virtuelle/semapps/issues/115
-      const { email, nick = '', name = '', familyName = '', homepage = '' } = ctx.params;
+      let { email, nick, name, familyName, homepage } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
+      if (!nick) nick = email.split('@')[0];
 
       // Check if an user already exist with this email address
-      const webId = await this.findUserByEmail(ctx, email);
+      let webId = await this.findUserByEmail(ctx, email);
 
-      if (webId) {
-        return webId;
-      } else {
-        await ctx.call('ldp.post', {
-          containerUri: this.settings.usersContainer,
-          slug: nick,
-          '@context': { '@vocab': 'http://xmlns.com/foaf/0.1/' },
-          '@type': 'Person',
+      // If no user exist, create one
+      if (!webId) {
+        const userData = {
           nick,
           email,
           name,
           familyName,
           homepage
+        };
+
+        await ctx.call('ldp.post', {
+          containerUri: this.settings.usersContainer,
+          slug: nick,
+          '@context': { '@vocab': 'http://xmlns.com/foaf/0.1/' },
+          '@type': 'Person',
+          ...userData
         });
 
-        return ctx.meta.$responseHeaders.Location;
+        webId = ctx.meta.$responseHeaders.Location;
+
+        ctx.emit('webid.created', { '@id': webId, ...userData });
       }
+
+      return webId;
     },
     async view(ctx) {
       const webId = await this.getWebId(ctx);
@@ -57,6 +63,9 @@ module.exports = {
         resourceUri: webId,
         ...body
       });
+    },
+    getUsersContainer(ctx) {
+      return this.settings.usersContainer;
     }
   },
   methods: {
@@ -92,3 +101,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = WebIdService;
