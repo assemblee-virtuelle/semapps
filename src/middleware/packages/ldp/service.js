@@ -73,8 +73,8 @@ const LdpService = {
       }
     },
     async post(ctx) {
-      const { typeURL, containerUri, slugParam, ...body } = ctx.params;
-      const slug = slugParam || ctx.meta.headers.slug;
+      let { typeURL, containerUri, slug, ...body } = ctx.params;
+      slug = slug || ctx.meta.headers.slug;
       const generatedId = this.generateId(typeURL, containerUri, slug);
       body['@id'] = await this.findUnusedUri(ctx, generatedId);
       const out = await ctx.call('triplestore.insert', {
