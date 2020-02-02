@@ -15,7 +15,7 @@ const appReducer = (state = { flash: null }, action) =>
         break;
 
       default:
-        return newState;
+        break;
     }
   });
 

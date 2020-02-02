@@ -65,7 +65,7 @@ const ResourceViewPage = ({ type, resourceId }) => {
             <>
               <br />
               <Link to={`/resources/${type}/${resourceId}/edit`}>
-                <button className="btn btn-warning">Modifier</button>
+                <button className="btn btn-primary">Modifier</button>
               </Link>
               &nbsp; &nbsp;
               <Link to={`/resources/${type}/${resourceId}/delete`}>
@@ -76,13 +76,13 @@ const ResourceViewPage = ({ type, resourceId }) => {
           {type === 'users' && isLogged && webId !== resourceUri && (
             <>
               <br />
-              <button className="btn btn-warning" onClick={follow}>
+              <button className="btn btn-primary" onClick={follow}>
                 <i className="fa fa-forward" />
                 &nbsp;Suivre cet utilisateur
               </button>
               &nbsp; &nbsp;
               <Link to={`/messages/?recipientUri=${encodeURI(resourceUri)}`}>
-                <button className="btn btn-warning">
+                <button className="btn btn-primary">
                   <i className="fa fa-envelope" />
                   &nbsp; Envoyer un message
                 </button>

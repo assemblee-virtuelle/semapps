@@ -10,6 +10,7 @@ import ResourceCreatePage from './pages/ResourceCreatePage';
 import ResourceDeletePage from './pages/ResourceDeletePage';
 import MyProfilePage from './pages/MyProfilePage';
 import MessagesPage from './pages/MessagesPage';
+import './App.scss';
 
 const store = initStore();
 

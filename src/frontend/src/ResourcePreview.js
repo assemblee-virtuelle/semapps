@@ -12,7 +12,7 @@ const ResourcePreview = ({ resourceUri, type }) => {
           <h5 className="card-title">
             {resource.label || resource['pair:label'] || resource.name || resource['foaf:name']}
           </h5>
-          <Link to={'/resources/' + type + '/' + getResourceId(resourceUri, type)} className="btn btn-warning">
+          <Link to={'/resources/' + type + '/' + getResourceId(resourceUri, type)} className="btn btn-primary">
             Voir
           </Link>
         </div>

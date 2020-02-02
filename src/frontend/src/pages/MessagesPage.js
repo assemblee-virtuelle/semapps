@@ -81,7 +81,7 @@ const MessagesPage = ({ location }) => {
               <label htmlFor="content">Message</label>
               <Field name="content" component="textarea" className="form-control" rows={5} id="content" />
             </div>
-            <button type="submit" className="btn btn-warning w-100">
+            <button type="submit" className="btn btn-primary w-100">
               Envoyer
             </button>
           </form>

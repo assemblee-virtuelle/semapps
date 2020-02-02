@@ -117,6 +117,9 @@ const apiReducer = (state = { queries: {} }, action) =>
           );
         }
         break;
+
+      default:
+        break;
     }
   });
 

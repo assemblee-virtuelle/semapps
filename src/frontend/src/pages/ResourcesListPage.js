@@ -14,7 +14,7 @@ const ResourcesListPage = ({ type }) => {
         {resourceConfig.name}
         {!resourceConfig.readOnly && (
           <Link to={`/resources/${type}/create`}>
-            <button className="btn btn-danger pull-right">
+            <button className="btn btn-primary pull-right">
               <i className="fa fa-plus-circle" />
               &nbsp; Ajouter
             </button>

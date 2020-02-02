@@ -76,7 +76,7 @@ const MyProfilePage = () => {
                   <label htmlFor="homepage">Site web</label>
                   <Field name="homepage" component="input" className="form-control" id="homepage" />
                 </div>
-                <button type="submit" className="btn btn-warning w-100">
+                <button type="submit" className="btn btn-primary w-100">
                   Modifier mon profil
                 </button>
               </form>

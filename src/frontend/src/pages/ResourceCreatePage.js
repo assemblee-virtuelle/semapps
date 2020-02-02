@@ -50,7 +50,7 @@ const ResourceCreatePage = ({ type, navigate }) => {
             {resourceConfig.fields.map((field, i) => {
               return <ResourceField field={field} key={i} />;
             })}
-            <button type="submit" className="btn btn-warning w-100">
+            <button type="submit" className="btn btn-primary w-100">
               Ajouter
             </button>
           </form>

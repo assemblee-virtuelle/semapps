@@ -6,7 +6,7 @@ import resourcesTypes from './resourcesTypes';
 const NavBar = () => {
   const { user } = useAuth();
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+    <nav className="navbar navbar-expand-lg navbar-light bg-info">
       <div className="container">
         <span className="navbar-brand">SemApps Playground</span>
         <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
