@@ -3,14 +3,11 @@
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
-    baseUrl: null,
     ontologies: []
   },
   dependencies: ['triplestore'],
   actions: {
     async query(ctx) {
-      console.log('body', ctx.meta.body);
-      console.log('query', ctx.params.query);
       let query = ctx.params.query || ctx.meta.body;
       ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
       let result = await ctx.call('triplestore.query', {
@@ -39,7 +36,7 @@ const SparqlEndpointService = {
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
-    }
+    },
   }
 };
 
