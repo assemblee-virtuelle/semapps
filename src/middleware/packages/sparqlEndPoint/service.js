@@ -36,7 +36,7 @@ const SparqlEndpointService = {
         default:
           throw new Error('Unknown accept parameter: ' + accept);
       }
-    },
+    }
   }
 };
 
