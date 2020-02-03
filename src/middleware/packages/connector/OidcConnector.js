@@ -27,8 +27,8 @@ class OidcConnector extends Connector {
   async configurePassport(passport) {
     this.passport = passport;
 
-    const issuer = await Issuer.discover(this.settings.issuer);
-    const client = new issuer.Client({
+    this.issuer = await Issuer.discover(this.settings.issuer);
+    const client = new this.issuer.Client({
       client_id: this.settings.clientId,
       client_secret: this.settings.clientSecret,
       redirect_uri: this.settings.redirectUri
@@ -54,8 +54,11 @@ class OidcConnector extends Connector {
       )
     );
   }
-  globalLogout(req, res, next) {
-    // TODO implement global logout for OIDC
+  async globalLogout(req, res, next) {
+    await req.logout();
+    res.redirect(
+      `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(req.session.redirectUrl)}`
+    );
     next();
   }
 }

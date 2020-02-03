@@ -15,8 +15,8 @@ class Connector {
   }
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
-    // If the redirectUrl is already in the session, keep it as is
-    req.session.redirectUrl = req.session.redirectUrl || req.query.redirectUrl || req.headers.referer;
+    // If the redirectUrl is already in the session, use it as default value
+    req.session.redirectUrl = req.query.redirectUrl || req.headers.referer || req.session.redirectUrl;
     next();
   }
   findOrCreateProfile(req, res, next) {
@@ -25,6 +25,7 @@ class Connector {
 
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we may need it for the token generation
+      console.log('webId', webId);
       res.req.user.webId = webId;
       next();
     });
