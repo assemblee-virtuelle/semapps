@@ -1,4 +1,5 @@
 const { LdpService } = require('@semapps/ldp');
+const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const ActivityPub = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
@@ -26,6 +27,13 @@ function createServices(broker) {
 
   // SOLiD
   broker.createService(LdpService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL + 'ldp/',
+      ontologies
+    }
+  });
+  console.log('SparqlEndpointService', SparqlEndpointService);
+  broker.createService(SparqlEndpointService, {
     settings: {
       baseUrl: CONFIG.HOME_URL + 'ldp/',
       ontologies
