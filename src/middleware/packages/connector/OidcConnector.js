@@ -54,8 +54,8 @@ class OidcConnector extends Connector {
       )
     );
   }
-  async globalLogout(req, res, next) {
-    await req.logout();
+  globalLogout(req, res, next) {
+    req.logout();
     res.redirect(
       `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(req.session.redirectUrl)}`
     );
