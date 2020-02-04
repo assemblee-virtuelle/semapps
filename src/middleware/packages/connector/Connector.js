@@ -25,7 +25,6 @@ class Connector {
 
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we may need it for the token generation
-      console.log('webId', webId);
       res.req.user.webId = webId;
       next();
     });
