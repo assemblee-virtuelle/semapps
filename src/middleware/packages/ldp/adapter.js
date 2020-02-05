@@ -1,9 +1,7 @@
 const { ServiceSchemaError } = require('moleculer').Errors;
 
 class TripleStoreAdapter {
-  constructor() {
-
-  }
+  constructor() {}
 
   init(broker, service) {
     this.broker = broker;
