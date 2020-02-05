@@ -33,8 +33,7 @@ function createServices(broker) {
     }
   });
   broker.createService(SparqlEndpointService, {
-    settings: {
-    }
+    settings: {}
   });
   broker.createService(WebIdService, {
     settings: {

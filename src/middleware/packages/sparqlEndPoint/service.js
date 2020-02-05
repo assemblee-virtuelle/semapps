@@ -2,8 +2,7 @@
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
-  settings: {
-  },
+  settings: {},
   dependencies: ['triplestore'],
   actions: {
     async query(ctx) {
