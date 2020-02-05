@@ -15,7 +15,7 @@ The Jena storage backend is now TDB2 and the Jena version is 3.14 (latest as of 
 The whole `localData` dataset is protected by the Jena permission mechanism that uses the class `ShiroEvaluator` to check ACLs.
 See the configuration file in `configuration/localData.ttl` for more details.
 
-To compile this class, please refer to [this README](../src/jena/permissions/README.ms)
+To compile this class, please refer to [this README](../src/jena/permissions/README.md)
 
 
 ## Web ACL
