@@ -54,7 +54,6 @@ function createServices(broker) {
   broker.createService(ActorService);
   broker.createService(ActivityService, {
     adapter: new MongoDbAdapter('mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'), // new TripleStoreAdapter(CONFIG.HOME_URL)
-    collection: 'activities',
     settings: {
       containerUri: CONFIG.HOME_URL + 'activities/'
     }
