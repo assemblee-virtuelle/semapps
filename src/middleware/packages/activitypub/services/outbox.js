@@ -1,5 +1,3 @@
-'use strict';
-
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
@@ -29,7 +27,6 @@ const OutboxService = {
       if (Object.values(OBJECT_TYPES).includes(object.type)) {
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: this.generateId('Create'),
           type: 'Create',
           to: object.to,
           actor: object.attributedTo,
@@ -39,10 +36,7 @@ const OutboxService = {
           }
         };
       } else if (Object.values(ACTIVITY_TYPES).includes(object.type)) {
-        activity = {
-          id: this.generateId(object.type),
-          ...object
-        };
+        activity = object;
       } else {
         throw new Error('Unknown activity type: ' + object.type);
       }
@@ -51,16 +45,13 @@ const OutboxService = {
       // This will be used to order the ordered collections
       activity.published = new Date().toISOString();
 
-      ctx.call('triplestore.insert', {
-        resource: activity,
-        accept: 'json'
-      });
+      activity = await ctx.call('activitypub.activity.create', activity);
 
-      // Attach the newly-created activity to the outbox
-      ctx.call('activitypub.collection.attach', {
-        collectionUri: this.getOutboxUri(username),
-        objectUri: activity.id
-      });
+      // // Attach the newly-created activity to the outbox
+      // ctx.call('activitypub.collection.attach', {
+      //   collectionUri: this.getOutboxUri(username),
+      //   objectUri: activity.id
+      // });
 
       // Nicely format the JSON-LD
       activity = await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');

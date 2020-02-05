@@ -1,8 +1,9 @@
-const { LdpService } = require('@semapps/ldp');
+const { LdpService, TripleStoreAdapter } = require('@semapps/ldp');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const ActivityPub = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
+const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
 
@@ -38,7 +39,14 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  ActivityPub.createServices(broker);
+  ActivityPub.createServices(broker, {
+    adapters: {
+      mongodb: new MongoDbAdapter(
+        'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
+      ),
+      triplestore: new TripleStoreAdapter(CONFIG.HOME_URL)
+    }
+  });
 }
 
 module.exports = createServices;

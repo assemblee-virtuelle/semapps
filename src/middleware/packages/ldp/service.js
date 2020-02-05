@@ -74,7 +74,7 @@ const LdpService = {
     },
     async post(ctx) {
       let { typeURL, containerUri, slug, ...body } = ctx.params;
-      slug = slug || ctx.meta.headers.slug;
+      // slug = slug || ctx.meta.headers.slug;
       const generatedId = this.generateId(typeURL, containerUri, slug);
       body['@id'] = await this.findUnusedUri(ctx, generatedId);
       const out = await ctx.call('triplestore.insert', {
@@ -87,7 +87,13 @@ const LdpService = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
-      return out;
+
+      ctx.call('ldp.attachToContainer', {
+        containerUri,
+        objectUri: body['@id']
+      });
+
+      return body;
     },
     async patch(ctx) {
       let { typeURL, resourceId, resourceUri, accept, ...body } = ctx.params;
@@ -136,24 +142,26 @@ const LdpService = {
      * @param containerUri The full URI of the container
      */
     async standardContainer(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
+      let { accept, containerUri } = ctx.params;
+      ctx.meta.$responseType = accept || ctx.meta.headers.accept;
 
-      return await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
-          CONSTRUCT {
-            ?container ldp:contains ?subject .
-          	?subject ?predicate ?object .
-          }
+          CONSTRUCT
           WHERE {
-            <${ctx.params.containerUri}>
+            <${containerUri}>
                 a ldp:BasicContainer ;
           	    ldp:contains ?subject .
-          	?container ldp:contains ?subject .
             ?subject ?predicate ?object .
           }
               `,
-        accept: this.getAcceptHeader(ctx.meta.headers.accept)
+        accept: this.getAcceptHeader(accept || ctx.meta.headers.accept)
+      });
+
+      return await jsonld.compact(result, {
+        '@context': this.getPrefixJSON(),
+        type: 'ldp:BasicContainer'
       });
     },
     /*

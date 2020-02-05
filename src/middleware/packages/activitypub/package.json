@@ -5,6 +5,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "jsonld": "^1.8.1",
+    "moleculer": "^0.13.12",
+    "moleculer-db": "^0.8.4",
     "uuid": "^3.3.3"
   }
 }
