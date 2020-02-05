@@ -30,9 +30,11 @@ const MyProfilePage = () => {
     await dispatch(addFlash('Votre profil a été édité avec succès'));
   };
 
-  const logout = () => {
+  const logout = global => {
     localStorage.removeItem('token');
-    window.location.href = `${MIDDLEWARE_URL}auth/logout?redirectUrl=${encodeURI(FRONTEND_URL)}`;
+    let redirectUrl = `${MIDDLEWARE_URL}auth/logout?redirectUrl=${encodeURI(FRONTEND_URL)}`;
+    if (global) redirectUrl += '&global=true';
+    window.location.href = redirectUrl;
   };
 
   let homepage;
@@ -45,10 +47,19 @@ const MyProfilePage = () => {
         <>
           <h2>
             Modifier mon profil
-            <button className="btn btn-danger pull-right" onClick={logout}>
-              <i className="fa fa-sign-out" />
-              &nbsp; Se déconnecter
-            </button>
+            <span className="dropdown pull-right">
+              <button className="btn btn-danger dropdown-toggle" type="button" data-toggle="dropdown">
+                Se déconnecter
+              </button>
+              <div className="dropdown-menu">
+                <a className="dropdown-item" href="#" onClick={() => logout(false)}>
+                  Localement
+                </a>
+                <a className="dropdown-item" href="#" onClick={() => logout(true)}>
+                  Globalement
+                </a>
+              </div>
+            </span>
           </h2>
           <Form
             onSubmit={edit}
