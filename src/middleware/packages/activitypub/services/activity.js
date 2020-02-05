@@ -7,7 +7,7 @@ const ActivityService = {
   adapter: null, // To be set by the user
   settings: {
     idField: '@id', // Use @id as the main ID field (used by MongoDB)
-    containerUri: null, // To be set by the user
+    containerUri: null // To be set by the user
   },
   hooks: {
     before: {
