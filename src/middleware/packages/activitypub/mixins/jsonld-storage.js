@@ -4,7 +4,7 @@ const uuid = require('uuid/v1');
 const JsonLdStorageService = {
   mixins: [DbService],
   settings: {
-    idField: '@id', // Use @id as the main ID field (used by MongoDB)
+    idField: '@id' // Use @id as the main ID field (used by MongoDB)
   },
   hooks: {
     before: {
