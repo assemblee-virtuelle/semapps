@@ -7,7 +7,8 @@ const {
   InboxService,
   FollowService,
   CollectionService,
-  ActorService
+  ActorService,
+  ObjectService
 } = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
@@ -55,9 +56,15 @@ function createServices(broker) {
   broker.createService(ActivityService, {
     adapter: new MongoDbAdapter(
       'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-    ), // new TripleStoreAdapter(CONFIG.HOME_URL)
+    ),
     settings: {
       containerUri: CONFIG.HOME_URL + 'activities/'
+    }
+  });
+  broker.createService(ObjectService, {
+    adapter: new TripleStoreAdapter(CONFIG.HOME_URL),
+    settings: {
+      containerUri: CONFIG.HOME_URL + 'objects/'
     }
   });
   broker.createService(FollowService);

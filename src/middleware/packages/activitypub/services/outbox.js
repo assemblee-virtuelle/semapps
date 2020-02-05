@@ -1,7 +1,7 @@
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
+const { OBJECT_TYPES } = require('../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -12,8 +12,7 @@ const OutboxService = {
   },
   actions: {
     async post(ctx) {
-      const { username, ...object } = ctx.params;
-      let activity;
+      let { username, ...activity } = ctx.params;
 
       const collectionExists = await ctx.call('activitypub.collection.exist', {
         collectionUri: this.getOutboxUri(username)
@@ -24,21 +23,16 @@ const OutboxService = {
         return;
       }
 
-      if (Object.values(OBJECT_TYPES).includes(object.type)) {
+      if (Object.values(OBJECT_TYPES).includes(activity.type)) {
+        const object = await ctx.call('activitypub.object.create', activity);
+
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
           type: 'Create',
           to: object.to,
           actor: object.attributedTo,
-          object: {
-            id: this.generateId(object.type),
-            ...object
-          }
+          object: object
         };
-      } else if (Object.values(ACTIVITY_TYPES).includes(object.type)) {
-        activity = object;
-      } else {
-        throw new Error('Unknown activity type: ' + object.type);
       }
 
       // Use the current time for the activity's publish date

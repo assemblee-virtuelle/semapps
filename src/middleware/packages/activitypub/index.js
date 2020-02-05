@@ -4,6 +4,7 @@ module.exports = {
   CollectionService: require('./services/collection'),
   FollowService: require('./services/follow'),
   InboxService: require('./services/inbox'),
+  ObjectService: require('./services/object'),
   OutboxService: require('./services/outbox'),
   Routes: require('./routes')
 };

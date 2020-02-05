@@ -11,6 +11,8 @@ module.exports = [
     aliases: {
       'GET activities': 'activitypub.activity.find',
       'GET activities/:id': 'activitypub.activity.get',
+      'GET objects': 'activitypub.object.find',
+      'GET objects/:id': 'activitypub.object.get',
       'GET users/:username/outbox': 'activitypub.outbox.list',
       'GET users/:username/inbox': 'activitypub.inbox.list',
       'GET users/:username/followers': 'activitypub.follow.listFollowers',
