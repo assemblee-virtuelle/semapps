@@ -85,6 +85,7 @@ const TripleStoreService = {
       return results.length;
     },
     async query({ params }) {
+      // TODO : set X-SemappsUser to 'system' or to the URI of the logged in user
       const headers = {
         'Content-Type': 'application/sparql-query',
         'X-SemappsUser': 'URIofUser',
