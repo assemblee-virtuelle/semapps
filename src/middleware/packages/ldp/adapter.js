@@ -1,19 +1,17 @@
 const { ServiceSchemaError } = require('moleculer').Errors;
 
 class TripleStoreAdapter {
-  constructor(baseUri) {
-    this.baseUri = baseUri;
+  constructor() {
+
   }
 
   init(broker, service) {
     this.broker = broker;
     this.service = service;
 
-    if (!this.service.schema.collection) {
-      throw new ServiceSchemaError('Missing `collection` definition in schema of service!');
+    if (!this.service.schema.settings.containerUri) {
+      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
     }
-
-    this.containerUri = this.baseUri + '/' + this.service.schema.collection + '/';
   }
 
   connect() {
@@ -52,7 +50,7 @@ class TripleStoreAdapter {
    */
   find(filters) {
     return this.broker.call('ldp.standardContainer', {
-      containerUri: this.containerUri + '/',
+      containerUri: this.service.schema.settings.containerUri + '/',
       accept: 'application/ld+json'
     });
   }
@@ -102,7 +100,7 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     return this.broker.call('ldp.post', {
-      containerUri: this.containerUri,
+      containerUri: this.service.schema.settings.containerUri,
       ...entity
     });
   }

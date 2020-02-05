@@ -1,7 +1,14 @@
 const { LdpService, TripleStoreAdapter } = require('@semapps/ldp');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
-const ActivityPub = require('@semapps/activitypub');
+const {
+  ActivityService,
+  OutboxService,
+  InboxService,
+  FollowService,
+  CollectionService,
+  ActorService
+} = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
@@ -43,14 +50,18 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  ActivityPub.createServices(broker, {
-    adapters: {
-      mongodb: new MongoDbAdapter(
-        'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-      ),
-      triplestore: new TripleStoreAdapter(CONFIG.HOME_URL)
+  broker.createService(CollectionService);
+  broker.createService(ActorService);
+  broker.createService(ActivityService, {
+    adapter: new MongoDbAdapter('mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'), // new TripleStoreAdapter(CONFIG.HOME_URL)
+    collection: 'activities',
+    settings: {
+      containerUri: CONFIG.HOME_URL + 'activities/'
     }
   });
+  broker.createService(FollowService);
+  broker.createService(InboxService);
+  broker.createService(OutboxService);
 }
 
 module.exports = createServices;
