@@ -28,6 +28,7 @@ const TripleStoreService = {
         body: `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': 'URIofUser',
           Authorization: this.Authorization
         }
       });
@@ -44,6 +45,7 @@ const TripleStoreService = {
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': 'URIofUser',
           Authorization: this.Authorization
         }
       });
@@ -61,6 +63,7 @@ const TripleStoreService = {
             `,
         headers: {
           'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': 'URIofUser',
           Authorization: this.Authorization
         }
       });
@@ -84,6 +87,7 @@ const TripleStoreService = {
     async query({ params }) {
       const headers = {
         'Content-Type': 'application/sparql-query',
+        'X-SemappsUser': 'URIofUser',
         Authorization: this.Authorization,
         Accept: this.getAcceptHeader(params.accept)
       };
@@ -124,6 +128,7 @@ const TripleStoreService = {
         body: 'update=DROP+ALL',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'X-SemappsUser': 'URIofUser',
           Authorization: this.Authorization
         }
       });
