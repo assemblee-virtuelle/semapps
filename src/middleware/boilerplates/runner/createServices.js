@@ -1,4 +1,5 @@
 const { LdpService, TripleStoreAdapter } = require('@semapps/ldp');
+const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const ActivityPub = require('@semapps/activitypub');
 const TripleStoreService = require('@semapps/triplestore');
@@ -31,6 +32,9 @@ function createServices(broker) {
       baseUrl: CONFIG.HOME_URL + 'ldp/',
       ontologies
     }
+  });
+  broker.createService(SparqlEndpointService, {
+    settings: {}
   });
   broker.createService(WebIdService, {
     settings: {

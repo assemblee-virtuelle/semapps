@@ -52,12 +52,12 @@ const MyProfilePage = () => {
                 Se déconnecter
               </button>
               <div className="dropdown-menu">
-                <a className="dropdown-item" href="#" onClick={() => logout(false)}>
+                <button className="dropdown-item" href="#" onClick={() => logout(false)}>
                   Localement
-                </a>
-                <a className="dropdown-item" href="#" onClick={() => logout(true)}>
+                </button>
+                <button className="dropdown-item" href="#" onClick={() => logout(true)}>
                   Globalement
-                </a>
+                </button>
               </div>
             </span>
           </h2>
