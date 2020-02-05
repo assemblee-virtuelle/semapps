@@ -6,7 +6,7 @@ const routeConfig = {
     urlencoded: false
   },
   async onBeforeCall(ctx, route, req, res) {
-    const getData = new Promise((resolve, reject) => {
+    const bodyPromise = new Promise((resolve, reject) => {
       let data = '';
       req.on('data', function(chunk) {
         data += chunk;
@@ -16,7 +16,7 @@ const routeConfig = {
       });
     });
 
-    const data = await getData;
+    const data = await bodyPromise;
     ctx.meta.body = data;
     ctx.meta.headers = req.headers;
     if (req.headers.accept === undefined || req.headers.accept.includes('*/*')) {

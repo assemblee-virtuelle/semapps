@@ -3,7 +3,6 @@
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
-    ontologies: []
   },
   dependencies: ['triplestore'],
   actions: {
@@ -12,7 +11,6 @@ const SparqlEndpointService = {
       ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${this.getPrefixRdf()}
           ${query}
               `,
         accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
@@ -22,9 +20,6 @@ const SparqlEndpointService = {
     }
   },
   methods: {
-    getPrefixRdf() {
-      return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-    },
     getAcceptHeader(accept) {
       switch (accept) {
         case 'text/turtle':

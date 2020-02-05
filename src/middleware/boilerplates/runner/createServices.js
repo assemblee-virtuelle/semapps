@@ -32,10 +32,8 @@ function createServices(broker) {
       ontologies
     }
   });
-  console.log('SparqlEndpointService', SparqlEndpointService);
   broker.createService(SparqlEndpointService, {
     settings: {
-      ontologies
     }
   });
   broker.createService(WebIdService, {
