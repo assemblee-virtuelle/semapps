@@ -38,14 +38,19 @@ class Connector {
     }
     next();
   }
+  localLogout(req, res, next) {
+    req.logout(); // Passport logout
+    next();
+  }
   globalLogout(req, res, next) {
     next();
   }
   redirectToFront(req, res) {
-    // Redirect browser to the redirectUrl pushed in session
-    // Add the token to the URL so that the client may use it
-    const redirectUrl = req.session.redirectUrl;
-    res.redirect(redirectUrl + '?token=' + res.req.user.token);
+    // Redirect browser to the redirect URL pushed in session
+    let redirectUrl = req.session.redirectUrl;
+    // If a token was stored, add it to the URL so that the client may use it
+    if (res.req.user && res.req.user.token) redirectUrl += '?token=' + res.req.user.token;
+    res.redirect(redirectUrl);
   }
   login() {
     return (req, res) => {
@@ -64,7 +69,11 @@ class Connector {
   }
   logout() {
     return (req, res) => {
-      const middlewares = [this.saveRedirectUrl.bind(this), this.globalLogout.bind(this)];
+      let middlewares = [
+        this.saveRedirectUrl.bind(this),
+        this.localLogout.bind(this),
+        req.query.global === 'true' ? this.globalLogout.bind(this) : this.redirectToFront.bind(this)
+      ];
 
       this.runMiddlewares(middlewares, req, res);
     };
