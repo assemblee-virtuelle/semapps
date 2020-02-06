@@ -32,7 +32,7 @@ afterAll(async () => {
 describe('Posting to followers', () => {
   let simon, sebastien;
 
-  test('Create actors directly', async () => {
+  test('Create actor directly', async () => {
     sebastien = await broker.call('activitypub.actor.create', {
       slug: 'srosset81',
       preferredUsername: 'srosset81',
@@ -42,7 +42,7 @@ describe('Posting to followers', () => {
     expect(sebastien.preferredUsername).toBe('srosset81');
   }, 20000);
 
-  test('Create actors with WebID', async () => {
+  test('Create actor through WebID', async () => {
     const simonId = await broker.call('webid.create', {
       email: 'simon.louvet.zen@gmail.com',
       nick: 'simonLouvet',
@@ -55,11 +55,6 @@ describe('Posting to followers', () => {
     simon = await broker.call('activitypub.actor.get', {
       id: simonId
     });
-
-    // sebastien = await broker.call('ldp.get', {
-    //   resourceUri: sebastienId,
-    //   accept: 'application/ld+json'
-    // });
 
     expect(simon.inbox).toBe(simonId + '/inbox');
     expect(simon.outbox).toBe(simonId + '/outbox');

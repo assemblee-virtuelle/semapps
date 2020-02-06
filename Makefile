@@ -3,6 +3,8 @@
 
 DOCKER_COMPOSE=docker-compose -f docker-compose.yaml
 DOCKER_COMPOSE_PROD=docker-compose -f docker-compose-prod.yaml
+DOCKER_COMPOSE_TEST=docker-compose -f docker-compose-test.yaml
+
 # Docker
 docker-build:
 	$(DOCKER_COMPOSE) build
@@ -69,11 +71,10 @@ prettier:
 bootstrap:
 	npm run bootstrap --prefix ./src/middleware
 
+# For tests we currently only need fuseki and mongodb
 test:
-	$(DOCKER_COMPOSE) up -d fuseki
-	$(DOCKER_COMPOSE) up -d mongo
+	$(DOCKER_COMPOSE_TEST) build
+	$(DOCKER_COMPOSE_TEST) up -d
 	npm run test --prefix ./src/middleware/boilerplates/runner
-	$(DOCKER_COMPOSE) kill fuseki
-	$(DOCKER_COMPOSE) kill mongo
-	$(DOCKER_COMPOSE) rm -fv fuseki
-	$(DOCKER_COMPOSE) rm -fv mongo
+	$(DOCKER_COMPOSE_TEST) kill
+	$(DOCKER_COMPOSE_TEST) rm -fv
