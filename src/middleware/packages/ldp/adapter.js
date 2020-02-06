@@ -49,6 +49,7 @@ class TripleStoreAdapter {
   find(filters) {
     return this.broker.call('ldp.standardContainer', {
       containerUri: this.service.schema.settings.containerUri,
+      context: this.service.schema.settings.context,
       accept: 'application/ld+json'
     });
   }

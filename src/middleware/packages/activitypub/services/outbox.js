@@ -24,7 +24,10 @@ const OutboxService = {
       }
 
       if (Object.values(OBJECT_TYPES).includes(activity.type)) {
-        const object = await ctx.call('activitypub.object.create', activity);
+        let object = await ctx.call('activitypub.object.create', activity);
+
+        // We don't want the context to be set at the object level
+        delete object['@context'];
 
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',

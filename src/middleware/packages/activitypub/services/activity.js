@@ -6,7 +6,8 @@ const ActivityService = {
   adapter: null, // To be set by the user
   collection: 'activities',
   settings: {
-    containerUri: null // To be set by the user
+    containerUri: null, // To be set by the user
+    context: 'https://www.w3.org/ns/activitystreams'
   }
 };
 

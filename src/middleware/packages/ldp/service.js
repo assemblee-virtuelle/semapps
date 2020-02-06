@@ -142,13 +142,15 @@ const LdpService = {
      * @param containerUri The full URI of the container
      */
     async standardContainer(ctx) {
-      let { accept, containerUri } = ctx.params;
+      const { accept, containerUri, context } = ctx.params;
       ctx.meta.$responseType = accept || ctx.meta.headers.accept;
 
-      const result = await ctx.call('triplestore.query', {
+      let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
-          CONSTRUCT
+          CONSTRUCT {
+            ?subject ?predicate ?object
+          }
           WHERE {
             <${containerUri}>
                 a ldp:BasicContainer ;
@@ -159,10 +161,14 @@ const LdpService = {
         accept: this.getAcceptHeader(accept || ctx.meta.headers.accept)
       });
 
-      return await jsonld.compact(result, {
-        '@context': this.getPrefixJSON(),
-        type: 'ldp:BasicContainer'
+      result = await jsonld.compact(result, {
+        '@context': context || this.getPrefixJSON()
       });
+
+      return result['@graph'].map(resource => ({
+        '@context': result['@context'],
+        ...resource
+      }));
     },
     /*
      * Attach an object to a standard container

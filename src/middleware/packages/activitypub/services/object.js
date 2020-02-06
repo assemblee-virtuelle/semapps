@@ -6,7 +6,8 @@ const ObjectService = {
   adapter: null, // To be set by the user
   collection: 'objects',
   settings: {
-    containerUri: null // To be set by the user
+    containerUri: null, // To be set by the user
+    context: 'https://www.w3.org/ns/activitystreams'
   }
 };
 
