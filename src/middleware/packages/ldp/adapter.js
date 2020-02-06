@@ -118,7 +118,13 @@ class TripleStoreAdapter {
    * Update an entity by ID
    */
   updateById(_id, update) {
-    // return this.db.update({ _id }, update, { returnUpdatedDocs: true }).then(res => res[1]);
+    const resource = update['$set'];
+    return this.broker.call(this.ldpServiceName + '.patch', {
+      accept: 'application/ld+json',
+      '@context': this.service.schema.settings.context,
+      resourceUri: _id,
+      ...resource
+    });
   }
 
   /**

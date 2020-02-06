@@ -1,4 +1,4 @@
-const { OBJECT_TYPES } = require('../constants');
+const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -29,6 +29,8 @@ const OutboxService = {
           actor: object.attributedTo,
           object: object
         };
+      } else if (activity.type === ACTIVITY_TYPES.UPDATE) {
+        await ctx.call('activitypub.object.update', activity.object);
       }
 
       // Use the current time for the activity's publish date
