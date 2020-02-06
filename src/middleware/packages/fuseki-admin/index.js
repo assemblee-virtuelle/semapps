@@ -20,7 +20,7 @@ const FusekiAdminService = {
       if (response.status === 404) {
         console.warn(`dataset ${ctx.params.dataset} not exist. creating...`);
         let response2 = await fetch(
-          this.settings.sparqlEndpoint + '$/datasets' + '?state=active&dbType=tdb&dbName=' + ctx.params.dataset,
+          this.settings.sparqlEndpoint + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + ctx.params.dataset,
           {
             method: 'POST',
             headers: {
