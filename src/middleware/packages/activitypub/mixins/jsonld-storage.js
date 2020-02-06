@@ -1,5 +1,6 @@
 const DbService = require('moleculer-db');
 const uuid = require('uuid/v1');
+const jsonld = require('jsonld');
 
 const JsonLdStorageService = {
   mixins: [DbService],
@@ -19,7 +20,18 @@ const JsonLdStorageService = {
       ],
       get: [
         function useUriAsId(ctx) {
-          ctx.params['id'] = this.settings.containerUri + ctx.params['id'];
+          if( !ctx.params['id'].startsWith('http') ) {
+            ctx.params['id'] = this.settings.containerUri + ctx.params['id'];
+          }
+        }
+      ]
+    },
+    after: {
+      get: [
+        function compactJson(ctx, res) {
+          return jsonld.compact(res, {
+            '@context': this.settings.context
+          })
         }
       ]
     }

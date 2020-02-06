@@ -5,25 +5,26 @@ const ActorService = {
     async create(ctx) {
       const actorUri = ctx.params.userData['@id'];
 
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following' });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers' });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/inbox' });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox' });
+      // Create the collections associated with the user
+      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following', ordered: false });
+      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers', ordered: false });
+      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/inbox', ordered: true });
+      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox', ordered: true });
 
       // Attach the newly-created collections to the user's profile
-      await this.broker.call('ldp.patch', {
-        resourceUri: actorUri,
-        accept: 'json',
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        // TODO find a way to add two types with the patch method
-        '@type': ['Person', 'http://xmlns.com/foaf/0.1/Person'],
-        preferredUsername: ctx.params.userData.nick,
-        name: ctx.params.userData.name + ' ' + ctx.params.userData.familyName,
-        following: actorUri + '/following',
-        followers: actorUri + '/followers',
-        inbox: actorUri + '/inbox',
-        outbox: actorUri + '/outbox'
-      });
+      // await this.broker.call('ldp.patch', {
+      //   resourceUri: actorUri,
+      //   accept: 'json',
+      //   '@context': 'https://www.w3.org/ns/activitystreams',
+      //   // TODO find a way to add two types with the patch method
+      //   '@type': ['Person', 'http://xmlns.com/foaf/0.1/Person'],
+      //   preferredUsername: ctx.params.userData.nick,
+      //   name: ctx.params.userData.name + ' ' + ctx.params.userData.familyName,
+      //   following: actorUri + '/following',
+      //   followers: actorUri + '/followers',
+      //   inbox: actorUri + '/inbox',
+      //   outbox: actorUri + '/outbox'
+      // });
 
       this.broker.emit('actor.created', ctx.params.userData);
     }

@@ -18,6 +18,8 @@ const OutboxService = {
         collectionUri: this.getOutboxUri(username)
       });
 
+      console.log('collectionExists', collectionExists);
+
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;
@@ -45,27 +47,23 @@ const OutboxService = {
       activity = await ctx.call('activitypub.activity.create', activity);
 
       // // Attach the newly-created activity to the outbox
-      // ctx.call('activitypub.collection.attach', {
-      //   collectionUri: this.getOutboxUri(username),
-      //   objectUri: activity.id
-      // });
+      ctx.call('activitypub.collection.attach', {
+        collectionUri: this.getOutboxUri(username),
+        resource: activity
+      });
 
       // Nicely format the JSON-LD
       activity = await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
 
-      ctx.emit('activitypub.outbox.posted', { activity });
+      // ctx.emit('activitypub.outbox.posted', { activity });
 
       return activity;
     },
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryOrderedCollection', {
-        collectionUri: this.getOutboxUri(ctx.params.username),
-        optionalTriplesToFetch: `
-          ?item as:object ?object .
-          ?object ?objectP ?objectO .
-        `
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: this.getOutboxUri(ctx.params.username)
       });
 
       if (collection) {
