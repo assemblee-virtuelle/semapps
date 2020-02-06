@@ -35,10 +35,10 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware fuseki frontend
+	$(DOCKER_COMPOSE) logs -f middleware fuseki frontend mongo
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend
+	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend mongo
 
 start: docker-start
 
@@ -71,6 +71,9 @@ bootstrap:
 
 test:
 	$(DOCKER_COMPOSE) up -d fuseki
+	$(DOCKER_COMPOSE) up -d mongo
 	npm run test --prefix ./src/middleware/boilerplates/runner
 	$(DOCKER_COMPOSE) kill fuseki
+	$(DOCKER_COMPOSE) kill mongo
 	$(DOCKER_COMPOSE) rm -fv fuseki
+	$(DOCKER_COMPOSE) rm -fv mongo
