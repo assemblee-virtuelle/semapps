@@ -27,6 +27,7 @@ if [ ! -d "$FUSEKI_BASE/extra" ] ; then
   rm -rf "$FUSEKI_BASE/system"
   rm -rf "$FUSEKI_BASE/system_files"
   cp -r "$FUSEKI_HOME/extra" "$FUSEKI_BASE/"
+  mkdir -p "$FUSEKI_BASE/configuration"
   cp "$FUSEKI_HOME/configuration/localData.ttl" "$FUSEKI_BASE/configuration/localData.ttl"
   echo ""
   echo "###################################"
