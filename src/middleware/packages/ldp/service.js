@@ -5,6 +5,7 @@ const uuid = require('uuid/v1');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
+const getAction = require('./actions/get');
 
 const LdpService = {
   name: 'ldp',
@@ -49,29 +50,8 @@ const LdpService = {
       ctx.meta.$responseType = ctx.meta.headers.accept;
       return result;
     },
-    async get(ctx) {
-      const resourceUri =
-        ctx.params.resourceUri || `${this.settings.baseUrl}${ctx.params.typeURL}/${ctx.params.resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri
-      });
-
-      if (triplesNb > 0) {
-        ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
-        return await ctx.call('triplestore.query', {
-          query: `
-            ${this.getPrefixRdf()}
-            CONSTRUCT
-            WHERE {
-              <${resourceUri}> ?predicate ?object.
-            }
-                `,
-          accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
-        });
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
+    api_get: getAction.api,
+    get: getAction.action,
     async post(ctx) {
       let { typeURL, containerUri, slug, ...body } = ctx.params;
       slug = slug || ctx.meta.headers.slug;

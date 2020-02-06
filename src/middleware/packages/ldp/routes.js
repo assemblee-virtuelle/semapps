@@ -20,7 +20,7 @@ module.exports = [
     authentication: true,
     aliases: {
       'GET :typeURL': 'ldp.getByType',
-      'GET :typeURL/:resourceId': 'ldp.get'
+      'GET :typeURL/:resourceId': 'ldp.api_get'
     },
     ...routeConfig
   },
