@@ -54,7 +54,7 @@ function createServices(broker) {
   broker.createService(CollectionService, {
     adapter: new MongoDbAdapter(
       'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-    ),
+    )
   });
   broker.createService(ActorService);
   broker.createService(ActivityService, {

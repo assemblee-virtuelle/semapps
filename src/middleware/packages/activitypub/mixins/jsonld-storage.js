@@ -20,26 +20,22 @@ const JsonLdStorageService = {
       ],
       get: [
         function useUriAsId(ctx) {
-          if( !ctx.params['id'].startsWith('http') ) {
+          if (!ctx.params['id'].startsWith('http')) {
             ctx.params['id'] = this.settings.containerUri + ctx.params['id'];
           }
         }
       ]
     },
     after: {
-      create: [
-        (ctx, res) => ctx.service.compactJson(res)
-      ],
-      get: [
-        (ctx, res) => ctx.service.compactJson(res)
-      ]
+      create: [(ctx, res) => ctx.service.compactJson(res)],
+      get: [(ctx, res) => ctx.service.compactJson(res)]
     }
   },
   methods: {
     compactJson(res) {
       return jsonld.compact(res, {
         '@context': this.settings.context
-      })
+      });
     }
   }
 };
