@@ -6,6 +6,7 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 const getAction = require('./actions/get');
+const getByTypeAction = require('./actions/getByType');
 
 const LdpService = {
   name: 'ldp',
@@ -15,41 +16,8 @@ const LdpService = {
   },
   dependencies: ['triplestore'],
   actions: {
-    /*
-     * Returns a container constructed by the middleware, making a SparQL query on the fly
-     */
-    async getByType(ctx) {
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-          	?subject ?predicate ?object.
-          }
-          WHERE {
-          	?subject rdf:type ${ctx.params.typeURL} ;
-            	?predicate ?object.
-          }
-              `,
-        accept: 'json'
-      });
-      result = await jsonld.compact(result, this.getPrefixJSON());
-      const { '@graph': graph, '@context': context, ...other } = result;
-
-      const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
-
-      result = {
-        '@context': result['@context'],
-        '@id': `${this.settings.baseUrl}${ctx.params.typeURL}`,
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': contains
-      };
-
-      if (!ctx.meta.headers.accept.includes('json')) {
-        result = await this.jsonldToTriples(result, ctx.meta.headers.accept);
-      }
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-      return result;
-    },
+    api_getByType: getByTypeAction.api,
+    getByType: getByTypeAction.action,
     api_get: getAction.api,
     get: getAction.action,
     async post(ctx) {

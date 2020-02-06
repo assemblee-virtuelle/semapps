@@ -10,28 +10,9 @@ module.exports = {
       ctx.meta.$responseType = accept;
       return body;
     } catch (e) {
+      //TODO manage code from typed Error
       ctx.meta.$statusCode = 404;
     }
-
-    // const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-    //   uri: resourceUri
-    // });
-    //
-    // if (triplesNb > 0) {
-    //   ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
-    //   return await ctx.call('triplestore.query', {
-    //     query: `
-    //         ${this.getPrefixRdf()}
-    //         CONSTRUCT
-    //         WHERE {
-    //           <${resourceUri}> ?predicate ?object.
-    //         }
-    //             `,
-    //     accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
-    //   });
-    // } else {
-    //   ctx.meta.$statusCode = 404;
-    // }
   },
   action: {
     visibility: 'public',
