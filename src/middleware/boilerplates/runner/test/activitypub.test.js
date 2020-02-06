@@ -3,8 +3,10 @@ const EventsWatcher = require('./middleware/EventsWatcher');
 const createServices = require('../createServices');
 const CONFIG = require('../config');
 
+jest.setTimeout(22000);
+
 const broker = new ServiceBroker({
-  logger: false,
+  // logger: false,
   middlewares: [EventsWatcher]
 });
 
@@ -18,6 +20,9 @@ beforeAll(async () => {
   });
 
   await broker.call('triplestore.dropAll');
+  await broker.call('activitypub.actor.clear');
+  await broker.call('activitypub.activity.clear');
+  await broker.call('activitypub.collection.clear');
 });
 
 afterAll(async () => {
@@ -27,7 +32,17 @@ afterAll(async () => {
 describe('Posting to followers', () => {
   let simon, sebastien;
 
-  test('Create actors', async () => {
+  test('Create actors directly', async () => {
+    sebastien = await broker.call('activitypub.actor.create', {
+      slug: 'srosset81',
+      preferredUsername: 'srosset81',
+      name: 'Sébastien Rosset'
+    });
+
+    expect(sebastien.preferredUsername).toBe('srosset81');
+  }, 20000);
+
+  test('Create actors with WebID', async () => {
     const simonId = await broker.call('webid.create', {
       email: 'simon.louvet.zen@gmail.com',
       nick: 'simonLouvet',
@@ -37,24 +52,14 @@ describe('Posting to followers', () => {
 
     await broker.watchForEvent('actor.created');
 
-    const sebastienId = await broker.call('webid.create', {
-      email: 'srosset81@gmail.com',
-      nick: 'srosset81',
-      name: 'Sébastien',
-      familyName: 'Rosset'
+    simon = await broker.call('activitypub.actor.get', {
+      id: simonId
     });
 
-    await broker.watchForEvent('actor.created');
-
-    simon = await broker.call('ldp.get', {
-      resourceUri: simonId,
-      accept: 'application/ld+json'
-    });
-
-    sebastien = await broker.call('ldp.get', {
-      resourceUri: sebastienId,
-      accept: 'application/ld+json'
-    });
+    // sebastien = await broker.call('ldp.get', {
+    //   resourceUri: sebastienId,
+    //   accept: 'application/ld+json'
+    // });
 
     expect(simon.inbox).toBe(simonId + '/inbox');
     expect(simon.outbox).toBe(simonId + '/outbox');
@@ -66,10 +71,11 @@ describe('Posting to followers', () => {
     const result = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: sebastien['@id'],
+      actor: sebastien.id,
       type: 'Follow',
-      object: simon['@id']
+      object: simon.id
     });
+
 
     // Wait for actor to be added to the followers collection
     await broker.watchForEvent('activitypub.follow.added');
@@ -82,7 +88,7 @@ describe('Posting to followers', () => {
       username: simon.preferredUsername
     });
 
-    expect(result.items).toContain(sebastien['@id']);
+    expect(result.items).toContain(sebastien.id);
   });
 
   test('Send message to followers', async () => {
@@ -91,7 +97,7 @@ describe('Posting to followers', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Note',
       name: 'Hello World',
-      attributedTo: simon['@id'],
+      attributedTo: simon.id,
       to: [simon.followers],
       content: 'Voilà mon premier message, très content de faire partie du fedivers !'
     });
@@ -110,6 +116,6 @@ describe('Posting to followers', () => {
 
     expect(result.orderedItems).toHaveLength(1);
     expect(result.orderedItems[0]).toHaveProperty('type', 'Create');
-    expect(result.orderedItems[0]).toHaveProperty('actor', simon['@id']);
+    expect(result.orderedItems[0]).toHaveProperty('actor', simon.id);
   });
 });

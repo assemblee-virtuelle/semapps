@@ -9,6 +9,7 @@ module.exports = [
     authorization: false,
     authentication: true,
     aliases: {
+      'POST actors': 'activitypub.actor.create',
       'GET activities': 'activitypub.activity.find',
       'GET activities/:id': 'activitypub.activity.get',
       'GET objects': 'activitypub.object.find',

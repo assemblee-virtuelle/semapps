@@ -2,10 +2,15 @@ const DbService = require('moleculer-db');
 const uuid = require('uuid/v1');
 const jsonld = require('jsonld');
 
-const JsonLdStorageService = {
+const JsonLdStorageMixin = {
   mixins: [DbService],
   settings: {
     idField: '@id' // Use @id as the main ID field (used by MongoDB)
+  },
+  actions: {
+    clear(ctx) {
+      this.adapter.clear(ctx);
+    }
   },
   hooks: {
     before: {
@@ -13,7 +18,11 @@ const JsonLdStorageService = {
         function addId(ctx) {
           if (!ctx.params['@id']) {
             // If no ID has been set, generate one based on the container URI
-            ctx.params['@id'] = this.settings.containerUri + uuid().substring(0, 8);
+            if( ctx.params['slug'] ) {
+              ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['slug'];
+            } else {
+              ctx.params['@id'] = ctx.service.schema.settings.containerUri + uuid().substring(0, 8);
+            }
           }
           return ctx;
         }
@@ -21,7 +30,7 @@ const JsonLdStorageService = {
       get: [
         function useUriAsId(ctx) {
           if (!ctx.params['id'].startsWith('http')) {
-            ctx.params['id'] = this.settings.containerUri + ctx.params['id'];
+            ctx.params['id'] = ctx.service.schema.settings.containerUri + ctx.params['id'];
           }
         }
       ]
@@ -40,4 +49,4 @@ const JsonLdStorageService = {
   }
 };
 
-module.exports = JsonLdStorageService;
+module.exports = JsonLdStorageMixin;

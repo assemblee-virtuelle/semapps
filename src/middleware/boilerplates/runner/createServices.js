@@ -46,21 +46,24 @@ function createServices(broker) {
   });
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users/'
+      usersContainer: CONFIG.HOME_URL + 'actors/'
     }
   });
 
   // ActivityPub
   broker.createService(CollectionService, {
-    adapter: new MongoDbAdapter(
-      'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-    )
+    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
   });
-  broker.createService(ActorService);
+  broker.createService(ActorService,
+    {
+      adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      settings: {
+        containerUri: CONFIG.HOME_URL + 'actors/'
+      }
+    }
+  );
   broker.createService(ActivityService, {
-    adapter: new MongoDbAdapter(
-      'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-    ),
+    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
     settings: {
       containerUri: CONFIG.HOME_URL + 'activities/'
     }
@@ -69,7 +72,8 @@ function createServices(broker) {
     adapter: new TripleStoreAdapter('ldp'),
     settings: {
       containerUri: CONFIG.HOME_URL + 'objects/'
-    }
+    },
+    dependencies: ['ldp'] // TODO set this in TripleStoreAdapter
   });
   broker.createService(FollowService);
   broker.createService(InboxService);

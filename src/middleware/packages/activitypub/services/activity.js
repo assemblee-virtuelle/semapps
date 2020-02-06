@@ -1,8 +1,8 @@
-const JsonLdStorageService = require('../mixins/jsonld-storage');
+const JsonLdStorageMixin = require('../mixins/jsonld-storage');
 
 const ActivityService = {
   name: 'activitypub.activity',
-  mixins: [JsonLdStorageService],
+  mixins: [JsonLdStorageMixin],
   adapter: null, // To be set by the user
   collection: 'activities',
   settings: {
