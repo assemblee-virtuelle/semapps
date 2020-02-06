@@ -1,5 +1,5 @@
 const JsonLdStorageMixin = require('../mixins/jsonld-storage');
-const { ACTOR_TYPES } = require( '../constants');
+const { ACTOR_TYPES } = require('../constants');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -13,7 +13,7 @@ const ActorService = {
   },
   actions: {
     async create(ctx) {
-      if( ctx.params.type && !ACTOR_TYPES.includes(ctx.params.type) ) {
+      if (ctx.params.type && !ACTOR_TYPES.includes(ctx.params.type)) {
         throw new Error('Unknown actor type: ' + ctx.params.type);
       }
 
