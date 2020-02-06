@@ -37,7 +37,7 @@ const CollectionService = {
      * @return true if the collection exists
      */
     async exist(ctx) {
-      const result = await this.getById(ctx.params.collectionUri);
+      const result = await this._get(ctx, { id: ctx.params.collectionUri });
       return !!result;
     },
     /*
@@ -46,12 +46,15 @@ const CollectionService = {
      * @param objectUri The full URI of the object to add to the collection
      */
     async attach(ctx) {
-      const collection = await this.getById(ctx.params.collectionUri);
+      const collection = await this._get(ctx, { id: ctx.params.collectionUri });
 
-      if (this.isOrderedCollection(collection)) {
-        collection.orderedItems = [ctx.params.resource, ...collection.orderedItems];
-      } else {
-        collection.items = [ctx.params.resource, ...collection.items];
+      const itemsKey = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
+
+      collection[itemsKey] = [ctx.params.resource, ...collection[itemsKey]];
+
+      // Remove duplicates
+      if (typeof ctx.params.resource !== 'object') {
+        collection[itemsKey] = [...new Set(collection[itemsKey])];
       }
 
       return await this._update(ctx, collection);

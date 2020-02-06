@@ -1,10 +1,8 @@
-const uuid = require('uuid/v1');
-
 const { OBJECT_TYPES } = require('../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  dependencies: ['webid', 'ldp', 'triplestore', 'activitypub.collection'],
+  dependencies: ['webid', 'activitypub.collection'],
   async started() {
     this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
   },
@@ -45,7 +43,7 @@ const OutboxService = {
         resource: activity
       });
 
-      // ctx.emit('activitypub.outbox.posted', { activity });
+      ctx.emit('activitypub.outbox.posted', { activity });
 
       return activity;
     },

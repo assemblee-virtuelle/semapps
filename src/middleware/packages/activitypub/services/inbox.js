@@ -12,12 +12,8 @@ const InboxService = {
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryOrderedCollection', {
-        collectionUri: this.getInboxUri(ctx.params.username),
-        optionalTriplesToFetch: `
-          ?item as:object ?object .
-          ?object ?objectP ?objectO .
-        `
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: this.getInboxUri(ctx.params.username)
       });
 
       if (collection) {
@@ -35,7 +31,7 @@ const InboxService = {
           // Attach the activity to the inbox of the recipient
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipient + '/inbox',
-            objectUri: activity.id
+            resource: activity
           });
         }
         this.broker.emit('activitypub.inbox.received', { activity, recipients });
@@ -55,17 +51,21 @@ const InboxService = {
     isLocalUri(uri) {
       return uri.startsWith(this.settings.usersContainer);
     },
+    defaultToArray(value) {
+      // Items or recipients may be string or array, so default to array for easier handling
+      return Array.isArray(value) ? value : [value];
+    },
     async getAllRecipients(activity) {
       let output = [],
-        recipients = Array.isArray(activity.to) ? activity.to : [activity.to];
+        recipients = this.defaultToArray(activity.to);
       for (const recipient of recipients) {
         if (recipient === PUBLIC_URI) {
-          // Public URI. No need to add to inbox
+          // Public URI. No need to add to inbox.
           continue;
         } else if (recipient === this.getFollowersUri(activity.actor)) {
-          // Followers list. Add the list of followers
-          const followers = await this.broker.call('activitypub.collection.queryItems', { collectionUri: recipient });
-          if (followers) output.push(...followers);
+          // Followers list. Add the list of followers.
+          const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
+          if (collection) output.push(...this.defaultToArray(collection.items));
         } else {
           // Simple actor URI
           output.push(recipient);
