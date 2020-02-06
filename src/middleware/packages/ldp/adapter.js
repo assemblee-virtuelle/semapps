@@ -13,25 +13,10 @@ class TripleStoreAdapter {
   }
 
   connect() {
-    // this.client = new MongoClient(this.uri, this.opts);
-    // return this.client.connect().then(() => {
-    //   this.db = this.client.db(this.dbName);
-    //   this.collection = this.db.collection(this.service.schema.collection);
-    //
-    //   this.service.logger.info("MongoDB adapter has connected successfully.");
-    //
-    //   /* istanbul ignore next */
-    //   this.db.on("close", () => this.service.logger.warn("MongoDB adapter has disconnected."));
-    //   this.db.on("error", err => this.service.logger.error("MongoDB error.", err));
-    //   this.db.on("reconnect", () => this.service.logger.info("MongoDB adapter has reconnected."));
-    // });
     return Promise.resolve();
   }
 
   disconnect() {
-    // if (this.client) {
-    //   this.client.close();
-    // }
     return Promise.resolve();
   }
 
@@ -69,7 +54,7 @@ class TripleStoreAdapter {
   }
 
   /**
-   * Find all entites by IDs
+   * Find all entities by IDs
    */
   findByIds(ids) {
     // return new Promise((resolve, reject) => {
@@ -98,10 +83,18 @@ class TripleStoreAdapter {
    * Insert an entity
    */
   insert(entity) {
-    return this.broker.call('ldp.post', {
-      containerUri: this.service.schema.settings.containerUri,
-      ...entity
-    });
+    return this.broker
+      .call('ldp.post', {
+        containerUri: this.service.schema.settings.containerUri,
+        ...entity
+      })
+      .then(body => {
+        this.broker.call('ldp.attachToContainer', {
+          containerUri: this.service.schema.settings.containerUri,
+          objectUri: body['@id']
+        });
+        return body;
+      });
   }
 
   /**

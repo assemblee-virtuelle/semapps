@@ -87,12 +87,6 @@ const LdpService = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
-
-      ctx.call('ldp.attachToContainer', {
-        containerUri,
-        objectUri: body['@id']
-      });
-
       return body;
     },
     async patch(ctx) {
