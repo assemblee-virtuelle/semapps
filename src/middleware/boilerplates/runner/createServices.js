@@ -66,7 +66,7 @@ function createServices(broker) {
     }
   });
   broker.createService(ObjectService, {
-    adapter: new TripleStoreAdapter(CONFIG.HOME_URL),
+    adapter: new TripleStoreAdapter('ldp'),
     settings: {
       containerUri: CONFIG.HOME_URL + 'objects/'
     }

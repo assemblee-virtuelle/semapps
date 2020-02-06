@@ -1,7 +1,9 @@
 const { ServiceSchemaError } = require('moleculer').Errors;
 
 class TripleStoreAdapter {
-  constructor() {}
+  constructor(ldpServiceName) {
+    this.ldpServiceName = ldpServiceName;
+  }
 
   init(broker, service) {
     this.broker = broker;
@@ -13,6 +15,7 @@ class TripleStoreAdapter {
   }
 
   connect() {
+    // TODO create standard container
     return Promise.resolve();
   }
 
@@ -32,7 +35,7 @@ class TripleStoreAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call('ldp.standardContainer', {
+    return this.broker.call(this.ldpServiceName + '.standardContainer', {
       containerUri: this.service.schema.settings.containerUri,
       context: this.service.schema.settings.context,
       accept: 'application/ld+json'
@@ -50,7 +53,7 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    return this.broker.call('ldp.get', { resourceUri: _id, accept: 'application/ld+json' });
+    return this.broker.call(this.ldpServiceName + '.get', { resourceUri: _id, accept: 'application/ld+json' });
   }
 
   /**
@@ -84,12 +87,12 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     return this.broker
-      .call('ldp.post', {
+      .call(this.ldpServiceName + '.post', {
         containerUri: this.service.schema.settings.containerUri,
         ...entity
       })
       .then(body => {
-        this.broker.call('ldp.attachToContainer', {
+        this.broker.call(this.ldpServiceName + '.attachToContainer', {
           containerUri: this.service.schema.settings.containerUri,
           objectUri: body['@id']
         });
