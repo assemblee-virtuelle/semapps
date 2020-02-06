@@ -27,13 +27,19 @@ const JsonLdStorageService = {
       ]
     },
     after: {
+      create: [
+        (ctx, res) => ctx.service.compactJson(res)
+      ],
       get: [
-        function compactJson(ctx, res) {
-          return jsonld.compact(res, {
-            '@context': this.settings.context
-          })
-        }
+        (ctx, res) => ctx.service.compactJson(res)
       ]
+    }
+  },
+  methods: {
+    compactJson(res) {
+      return jsonld.compact(res, {
+        '@context': this.settings.context
+      })
     }
   }
 };

@@ -1,12 +1,9 @@
 const JsonLdStorageService = require('../mixins/jsonld-storage');
-const MongoDBAdapter = require('moleculer-db-adapter-mongo');
 
 const CollectionService = {
   name: 'activitypub.collection',
   mixins: [JsonLdStorageService],
-  adapter: new MongoDBAdapter(
-    'mongodb+srv://semapps:semapps@cluster0-4oc9v.mongodb.net/test?retryWrites=true&w=majority'
-  ),
+  adapter: null, // To be set by the user
   collection: 'collections',
   settings: {
     context: 'https://www.w3.org/ns/activitystreams'
@@ -15,6 +12,7 @@ const CollectionService = {
     /*
      * Create a persisted collection
      * @param collectionUri The full URI of the collection
+     * @param ordered True if you want to create an OrderedCollection
      * @param summary An optional description of the collection
      */
     async create(ctx) {

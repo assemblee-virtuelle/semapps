@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 
 const { OBJECT_TYPES } = require('../constants');
@@ -8,7 +7,6 @@ const OutboxService = {
   dependencies: ['webid', 'ldp', 'triplestore', 'activitypub.collection'],
   async started() {
     this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
-    this.settings.ldpBaseUrl = await this.broker.call('ldp.getBaseUrl');
   },
   actions: {
     async post(ctx) {
@@ -18,18 +16,13 @@ const OutboxService = {
         collectionUri: this.getOutboxUri(username)
       });
 
-      console.log('collectionExists', collectionExists);
-
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;
       }
 
       if (Object.values(OBJECT_TYPES).includes(activity.type)) {
-        let object = await ctx.call('activitypub.object.create', activity);
-
-        // We don't want the context to be set at the object level
-        delete object['@context'];
+        const object = await ctx.call('activitypub.object.create', activity);
 
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
@@ -46,14 +39,11 @@ const OutboxService = {
 
       activity = await ctx.call('activitypub.activity.create', activity);
 
-      // // Attach the newly-created activity to the outbox
+      // Attach the newly-created activity to the outbox
       ctx.call('activitypub.collection.attach', {
         collectionUri: this.getOutboxUri(username),
         resource: activity
       });
-
-      // Nicely format the JSON-LD
-      activity = await jsonld.compact(activity, 'https://www.w3.org/ns/activitystreams');
 
       // ctx.emit('activitypub.outbox.posted', { activity });
 
@@ -74,9 +64,6 @@ const OutboxService = {
     }
   },
   methods: {
-    generateId(objectType) {
-      return this.settings.ldpBaseUrl + `as:${objectType}/` + uuid().substring(0, 8);
-    },
     getOutboxUri(username) {
       return this.settings.usersContainer + username + '/outbox';
     }
