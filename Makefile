@@ -72,9 +72,7 @@ bootstrap:
 test:
 	$(DOCKER_COMPOSE) build fuseki
 	$(DOCKER_COMPOSE) up -d fuseki
-	docker logs fuseki
-	sleep 10
-	docker logs fuseki
 	npm run test --prefix ./src/middleware/boilerplates/runner
+	docker logs fuseki
 	$(DOCKER_COMPOSE) kill fuseki
 	$(DOCKER_COMPOSE) rm -fv fuseki
