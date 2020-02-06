@@ -54,14 +54,12 @@ function createServices(broker) {
   broker.createService(CollectionService, {
     adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
   });
-  broker.createService(ActorService,
-    {
-      adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      settings: {
-        containerUri: CONFIG.HOME_URL + 'actors/'
-      }
+  broker.createService(ActorService, {
+    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    settings: {
+      containerUri: CONFIG.HOME_URL + 'actors/'
     }
-  );
+  });
   broker.createService(ActivityService, {
     adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
     settings: {

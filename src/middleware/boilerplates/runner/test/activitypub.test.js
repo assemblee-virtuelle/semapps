@@ -76,7 +76,6 @@ describe('Posting to followers', () => {
       object: simon.id
     });
 
-
     // Wait for actor to be added to the followers collection
     await broker.watchForEvent('activitypub.follow.added');
 
