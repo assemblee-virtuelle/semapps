@@ -19,6 +19,22 @@ make build
 ```
 make start
 ```
+### Production setup
+edit local env variables
+```
+nano src/middleware/boilerplates/runner/.env.local
+```
+first time : run the nginx certbot script
+```
+init-letsencrypt.sh
+```
+
+build and start
+```
+make build-prod
+make start-prod
+
+```
 ### Logs
 ```
 make log
