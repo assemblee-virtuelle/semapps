@@ -3,6 +3,6 @@ yarn-error.log
 lerna-debug.log
 .DS_Store
 /.idea
-
+*.swp
 # conflict
 *.orig

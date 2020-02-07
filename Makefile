@@ -70,7 +70,9 @@ bootstrap:
 	npm run bootstrap --prefix ./src/middleware
 
 test:
+	$(DOCKER_COMPOSE) build fuseki
 	$(DOCKER_COMPOSE) up -d fuseki
 	npm run test --prefix ./src/middleware/boilerplates/runner
+	docker logs fuseki
 	$(DOCKER_COMPOSE) kill fuseki
 	$(DOCKER_COMPOSE) rm -fv fuseki

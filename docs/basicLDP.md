@@ -28,20 +28,20 @@ Exemple de paramètre à passer au service LDP:
 Seuls les containers définis dans l'objet de mapping seront alors pris en compte.
 
 ### READ one
-``GET /{ontology}:{class}/{resourceId}``
+``GET /ldp/{ontology}:{class}/{resourceId}``
 
 ### READ many
-``GET /{ontology}:{class}``
-``GET /container/{containerId}`` (pour les containers persistés)
+``GET /ldp/{ontology}:{class}``
+``GET /ldp/container/{containerId}`` (pour les containers persistés)
 ### CREATE one
-``POST /{ontology}:{class}`` (ex : ``POST /pair:Organization``)
-``POST /container/{containerId}`` (pour les containers persistés)
+``POST /ldp/{ontology}:{class}`` (ex : ``POST /pair:Organization``)
+``POST /ldp/container/{containerId}`` (pour les containers persistés)
 ### UPDATE one
-``PUT /{ontology}:{class}/{resourceId}``
-``PATCH /{ontology}:{class}/{resourceId}``
+``PUT /ldp/{ontology}:{class}/{resourceId}``
+``PATCH /ldp/{ontology}:{class}/{resourceId}``
 
 ### DELETE one
-``DELETE /{ontology}:{class}/{resourceId}``
+``DELETE /ldp/{ontology}:{class}/{resourceId}``
 
 ### SEARCH many
 ``GET /sparql + body avec la requete`` (comme jena mais en get et pas en post)
