@@ -67,7 +67,9 @@ RUN chmod 755  /jena-fuseki/fuseki-server
 # (which we'll generate on start-up)
 
 COPY shiro.ini /jena-fuseki/
-COPY extra /jena-fuseki/extra
+COPY extra/commons-collections4-4.4.jar /jena-fuseki/extra/commons-collections4-4.4.jar
+COPY extra/jena-permissions-3.14.0.jar /jena-fuseki/extra/jena-permissions-3.14.0.jar
+COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-permissions-1.0.0.jar
 COPY configuration/localData.ttl /jena-fuseki/configuration/localData.ttl
 COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
 COPY docker-entrypoint.sh /

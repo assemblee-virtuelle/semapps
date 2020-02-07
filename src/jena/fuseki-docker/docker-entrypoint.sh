@@ -33,6 +33,8 @@ if [ ! -d "$FUSEKI_BASE/extra" ] ; then
   echo "###################################"
 fi
 
+cp "$FUSEKI_HOME/extra/semapps-jena-permissions-1.0.0.jar" "$FUSEKI_BASE/extra/semapps-jena-permissions-1.0.0.jar"
+
 cp "$FUSEKI_HOME/configuration/testData.ttl" "$FUSEKI_BASE/configuration/testData.ttl"
 
 # always copying semapps-jena-permissions-1.0.0.jar
