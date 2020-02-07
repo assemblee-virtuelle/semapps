@@ -68,8 +68,8 @@ RUN chmod 755  /jena-fuseki/fuseki-server
 
 COPY shiro.ini /jena-fuseki/
 COPY extra /jena-fuseki/extra
-COPY configuration /jena-fuseki/configuration
-#COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
+COPY configuration/localData.ttl /jena-fuseki/configuration/localData.ttl
+COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
 COPY docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh
 
