@@ -24,7 +24,7 @@ module.exports = {
     visibility: 'public',
     params: {
       body: 'object',
-      webId:'string'
+      webId: 'string'
     },
     async handler(ctx) {
       let body = ctx.params.body;

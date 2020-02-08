@@ -1,10 +1,6 @@
 module.exports = {
   api: async function api(ctx) {
-    let {
-      typeURL,
-      resourceId,
-      ...body
-    } = ctx.params;
+    let { typeURL, resourceId, ...body } = ctx.params;
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     body['@id'] = resourceUri;
     // const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
@@ -37,7 +33,7 @@ module.exports = {
       let body = ctx.params.body;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: body['@id'],
-        webId:ctx.params.webId
+        webId: ctx.params.webId
       });
       if (triplesNb > 0) {
         const out = await ctx.call('triplestore.patch', {

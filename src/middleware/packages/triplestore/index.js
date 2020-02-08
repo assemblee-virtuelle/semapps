@@ -80,7 +80,7 @@ const TripleStoreService = {
           }
         `,
         accept: 'json',
-        webId: ctx.params.webId,
+        webId: ctx.params.webId
       });
       return results.length;
     },
