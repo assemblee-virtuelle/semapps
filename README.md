@@ -19,7 +19,16 @@ make build
 ```
 make start
 ```
-### Production setup
+### Logs
+```
+make log
+```
+### Stop
+```
+make stop
+```
+## production commands
+
 edit local env variables
 ```
 nano src/middleware/boilerplates/runner/.env.local
@@ -35,14 +44,7 @@ make build-prod
 make start-prod
 
 ```
-### Logs
-```
-make log
-```
-### Stop
-```
-make stop
-```
+
 ## Cleanup code
 Please do this before every PR submission.
 ```
