@@ -11,7 +11,13 @@ const WebIdService = {
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      let { email, nick, name, familyName, homepage } = ctx.params;
+      let {
+        email,
+        nick,
+        name,
+        familyName,
+        homepage
+      } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
       if (!nick) nick = email.split('@')[0].toLowerCase();
@@ -29,17 +35,25 @@ const WebIdService = {
           homepage
         };
 
-        await ctx.call('ldp.post', {
-          containerUri: this.settings.usersContainer,
-          slug: nick,
-          '@context': { '@vocab': 'http://xmlns.com/foaf/0.1/' },
-          '@type': 'Person',
-          ...userData
+        let newUri = await ctx.call('ldp.post', {
+          body: {
+            // containerUri: this.settings.usersContainer,
+            // slug: nick,
+            '@context': {
+              '@vocab': 'http://xmlns.com/foaf/0.1/'
+            },
+            '@type': 'Person',
+            '@id': `${this.settings.usersContainer}${nick}`,
+            ...userData
+          }
         });
 
-        webId = ctx.meta.$responseHeaders.Location;
+        webId = newUri;
 
-        ctx.emit('webid.created', { '@id': webId, ...userData });
+        ctx.emit('webid.created', {
+          '@id': webId,
+          ...userData
+        });
       }
 
       return webId;
@@ -49,14 +63,18 @@ const WebIdService = {
 
       if (webId) {
         return await ctx.call('ldp.get', {
-          resourceUri: webId
+          resourceUri: webId,
+          accept:'application/ld+json'
         });
       } else {
         ctx.meta.$statusCode = 404;
       }
     },
     async edit(ctx) {
-      const { userId, ...body } = ctx.params;
+      const {
+        userId,
+        ...body
+      } = ctx.params;
       const webId = await this.getWebId(ctx);
 
       return await ctx.call('ldp.patch', {
@@ -66,7 +84,7 @@ const WebIdService = {
     },
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
-        typeURL: 'foaf:Person'
+        type: 'foaf:Person'
       });
     },
     getUsersContainer(ctx) {

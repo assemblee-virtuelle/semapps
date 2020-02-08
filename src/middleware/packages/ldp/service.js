@@ -7,6 +7,9 @@ const streamifyString = require('streamify-string');
 const N3 = require('n3');
 const getAction = require('./actions/get');
 const getByTypeAction = require('./actions/getByType');
+const postAction = require('./actions/post');
+const patchAction = require('./actions/patch');
+const deleteAction = require('./actions/delete');
 
 const LdpService = {
   name: 'ldp',
@@ -20,108 +23,55 @@ const LdpService = {
     getByType: getByTypeAction.action,
     api_get: getAction.api,
     get: getAction.action,
-    async post(ctx) {
-      let { typeURL, containerUri, slug, ...body } = ctx.params;
-      slug = slug || ctx.meta.headers.slug;
-      const generatedId = this.generateId(typeURL, containerUri, slug);
-      body['@id'] = await this.findUnusedUri(ctx, generatedId);
-      const out = await ctx.call('triplestore.insert', {
-        resource: body,
-        accept: 'json'
-      });
-      ctx.meta.$statusCode = 201;
-      ctx.meta.$responseHeaders = {
-        Location: body['@id'],
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-      return out;
-    },
-    async patch(ctx) {
-      let { typeURL, resourceId, resourceUri, accept, ...body } = ctx.params;
-      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
-      if (triplesNb > 0) {
-        body['@id'] = resourceUri;
-        const out = await ctx.call('triplestore.patch', {
-          resource: body
-        });
-        ctx.meta.$responseType = accept || ctx.meta.headers.accept;
-        ctx.meta.$statusCode = 204;
-        ctx.meta.$responseHeaders = {
-          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-          'Content-Length': 0
-        };
-        return out;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async delete(ctx) {
-      let { typeURL, resourceId, resourceUri } = ctx.params;
-      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri
-      });
-      if (triplesNb > 0) {
-        const out = await ctx.call('triplestore.delete', {
-          uri: resourceUri
-        });
-        ctx.meta.$responseType = ctx.meta.headers.accept;
-        ctx.meta.$statusCode = 204;
-        ctx.meta.$responseHeaders = {
-          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-          'Content-Length': 0
-        };
-        return out;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-
-    /*
-     * Returns a LDP container persisted in the triple store
-     * @param containerUri The full URI of the container
-     */
-    async standardContainer(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-
-      return await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-            ?container ldp:contains ?subject .
-          	?subject ?predicate ?object .
-          }
-          WHERE {
-            <${ctx.params.containerUri}>
-                a ldp:BasicContainer ;
-          	    ldp:contains ?subject .
-          	?container ldp:contains ?subject .
-            ?subject ?predicate ?object .
-          }
-              `,
-        accept: this.getAcceptHeader(ctx.meta.headers.accept)
-      });
-    },
-    /*
-     * Attach an object to a standard container
-     * @param objectUri The full URI of the object to store
-     * @param containerUri The full URI of the container where to store the object
-     */
-    async attachToContainer(ctx) {
-      const container = {
-        '@context': 'http://www.w3.org/ns/ldp',
-        id: ctx.params.containerUri,
-        type: ['Container', 'BasicContainer'],
-        contains: ctx.params.objectUri
-      };
-
-      return await ctx.call('triplestore.insert', {
-        resource: container,
-        accept: 'json'
-      });
-    },
+    api_post : postAction.api,
+    post : postAction.action,
+    api_patch : patchAction.api,
+    patch : patchAction.action,
+    api_delete : deleteAction.api,
+    delete : deleteAction.action,
+    // /*
+    //  * Returns a LDP container persisted in the triple store
+    //  * @param containerUri The full URI of the container
+    //  */
+    // async standardContainer(ctx) {
+    //   ctx.meta.$responseType = ctx.meta.headers.accept;
+    //
+    //   return await ctx.call('triplestore.query', {
+    //     query: `
+    //       ${this.getPrefixRdf()}
+    //       CONSTRUCT {
+    //         ?container ldp:contains ?subject .
+    //       	?subject ?predicate ?object .
+    //       }
+    //       WHERE {
+    //         <${ctx.params.containerUri}>
+    //             a ldp:BasicContainer ;
+    //       	    ldp:contains ?subject .
+    //       	?container ldp:contains ?subject .
+    //         ?subject ?predicate ?object .
+    //       }
+    //           `,
+    //     accept: this.getAcceptHeader(ctx.meta.headers.accept)
+    //   });
+    // },
+    // /*
+    //  * Attach an object to a standard container
+    //  * @param objectUri The full URI of the object to store
+    //  * @param containerUri The full URI of the container where to store the object
+    //  */
+    // async attachToContainer(ctx) {
+    //   const container = {
+    //     '@context': 'http://www.w3.org/ns/ldp',
+    //     id: ctx.params.containerUri,
+    //     type: ['Container', 'BasicContainer'],
+    //     contains: ctx.params.objectUri
+    //   };
+    //
+    //   return await ctx.call('triplestore.insert', {
+    //     resource: container,
+    //     accept: 'json'
+    //   });
+    // },
     getBaseUrl(ctx) {
       return this.settings.baseUrl;
     }

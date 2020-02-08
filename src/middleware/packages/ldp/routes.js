@@ -29,9 +29,9 @@ module.exports = [
     authorization: true,
     authentication: false,
     aliases: {
-      'POST :typeURL': 'ldp.post',
-      'DELETE :typeURL/:resourceId': 'ldp.delete',
-      'PATCH :typeURL/:resourceId': 'ldp.patch'
+      'POST :typeURL': 'ldp.api_post',
+      'DELETE :typeURL/:resourceId': 'ldp.api_delete',
+      'PATCH :typeURL/:resourceId': 'ldp.api_patch'
     },
     ...routeConfig
   }
