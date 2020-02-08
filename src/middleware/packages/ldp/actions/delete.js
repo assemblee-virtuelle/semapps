@@ -4,7 +4,8 @@ module.exports = {
     resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     try {
       let out = await ctx.call('ldp.delete', {
-        resourceUri: resourceUri
+        resourceUri: resourceUri,
+        webId: ctx.meta.webId
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -19,7 +20,8 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: 'string'
+      resourceUri: 'string',
+      webId: 'string'
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
@@ -28,7 +30,8 @@ module.exports = {
       });
       if (triplesNb > 0) {
         await ctx.call('triplestore.delete', {
-          uri: resourceUri
+          uri: resourceUri,
+          webId: ctx.meta.webId
         });
       } else {
         throw new Error('resssource not found');

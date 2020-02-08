@@ -6,7 +6,8 @@ module.exports = {
     body['@id'] = generatedId;
     try {
       let out = await ctx.call('ldp.post', {
-        body: body
+        body: body,
+        webId: ctx.meta.webId
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
@@ -22,14 +23,16 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      body: 'object'
+      body: 'object',
+      webId:'string'
     },
     async handler(ctx) {
       let body = ctx.params.body;
       body['@id'] = await this.findUnusedUri(ctx, body['@id']);
       const out = await ctx.call('triplestore.insert', {
         resource: body,
-        accept: 'json'
+        accept: 'json',
+        webId: ctx.meta.webId
       });
       return body['@id'];
     }

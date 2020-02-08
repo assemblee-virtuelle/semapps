@@ -54,6 +54,25 @@ class OidcConnector extends Connector {
       )
     );
   }
+  async getWebId(ctx) {
+    return this.findUserByEmail(ctx, ctx.meta.tokenPayload.email);
+  }
+  async findUserByEmail(ctx, email) {
+    const results = await ctx.call('triplestore.query', {
+      query: `
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        SELECT ?webId
+        WHERE {
+          ?webId rdf:type foaf:Person ;
+                 foaf:email "${email}" .
+        }
+      `,
+      accept: 'json'
+    });
+
+    return results.length > 0 ? results[0].webId.value : null;
+  }
   globalLogout(req, res, next) {
     res.redirect(
       `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(req.session.redirectUrl)}`

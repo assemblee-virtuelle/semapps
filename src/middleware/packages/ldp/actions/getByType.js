@@ -6,7 +6,8 @@ module.exports = {
     const accept = ctx.meta.headers.accept;
     try {
       let body = await ctx.call('ldp.getByType', {
-        type: type
+        type: type,
+        webId: ctx.meta.webId||'admin'
       });
       ctx.meta.$responseType = accept;
       if (!accept.includes('json')) {
@@ -14,6 +15,7 @@ module.exports = {
       }
       return body;
     } catch (e) {
+      console.log(e);
       //TODO manage code from typed Error
       ctx.meta.$statusCode = 500;
     }
@@ -21,7 +23,8 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      type: 'string'
+      type: 'string',
+      webId: 'string'
     },
     async handler(ctx) {
       let result = await ctx.call('triplestore.query', {
@@ -35,7 +38,8 @@ module.exports = {
               ?predicate ?object.
           }
               `,
-        accept: 'json'
+        accept: 'json',
+        webId:ctx.params.webId
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;

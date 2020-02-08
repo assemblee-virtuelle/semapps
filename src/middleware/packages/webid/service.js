@@ -58,7 +58,8 @@ const WebIdService = {
       if (webId) {
         return await ctx.call('ldp.get', {
           resourceUri: webId,
-          accept: 'application/ld+json'
+          accept: 'application/ld+json',
+          webId : webId
         });
       } else {
         ctx.meta.$statusCode = 404;
@@ -75,7 +76,8 @@ const WebIdService = {
     },
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
-        type: 'foaf:Person'
+        type: 'foaf:Person',
+        webId : ctx.meta.webId||'admin'
       });
     },
     getUsersContainer(ctx) {

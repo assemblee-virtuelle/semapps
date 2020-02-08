@@ -5,7 +5,8 @@ module.exports = {
     try {
       const body = await ctx.call('ldp.get', {
         resourceUri: resourceUri,
-        accept: accept
+        accept: accept,
+        webId: ctx.meta.webId||'admin'
       });
       ctx.meta.$responseType = accept;
       return body;
@@ -18,12 +19,14 @@ module.exports = {
     visibility: 'public',
     params: {
       resourceUri: 'string',
-      accept: 'string'
+      accept: 'string',
+      webId: 'string'
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri
+        uri: resourceUri,
+        webId: ctx.meta.webId
       });
       if (triplesNb > 0) {
         return await ctx.call('triplestore.query', {
