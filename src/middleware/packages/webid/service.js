@@ -11,13 +11,7 @@ const WebIdService = {
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
-      let {
-        email,
-        nick,
-        name,
-        familyName,
-        homepage
-      } = ctx.params;
+      let { email, nick, name, familyName, homepage } = ctx.params;
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
       if (!nick) nick = email.split('@')[0].toLowerCase();
@@ -64,17 +58,14 @@ const WebIdService = {
       if (webId) {
         return await ctx.call('ldp.get', {
           resourceUri: webId,
-          accept:'application/ld+json'
+          accept: 'application/ld+json'
         });
       } else {
         ctx.meta.$statusCode = 404;
       }
     },
     async edit(ctx) {
-      const {
-        userId,
-        ...body
-      } = ctx.params;
+      const { userId, ...body } = ctx.params;
       const webId = await this.getWebId(ctx);
 
       return await ctx.call('ldp.patch', {

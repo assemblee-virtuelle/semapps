@@ -1,10 +1,10 @@
 module.exports = {
   api: async function api(ctx) {
-    let { typeURL, resourceId} = ctx.params;
+    let { typeURL, resourceId } = ctx.params;
     resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     try {
       let out = await ctx.call('ldp.delete', {
-        resourceUri: resourceUri,
+        resourceUri: resourceUri
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -19,10 +19,10 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: 'string',
+      resourceUri: 'string'
     },
     async handler(ctx) {
-      const resourceUri= ctx.params.resourceUri;
+      const resourceUri = ctx.params.resourceUri;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });

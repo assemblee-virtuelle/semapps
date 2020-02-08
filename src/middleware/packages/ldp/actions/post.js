@@ -1,16 +1,12 @@
 module.exports = {
   api: async function api(ctx) {
-    let {
-      typeURL,
-      containerUri,
-      ...body
-    } = ctx.params;
+    let { typeURL, containerUri, ...body } = ctx.params;
     slug = ctx.meta.headers.slug;
     const generatedId = this.generateId(typeURL, containerUri, slug);
-    body['@id']=generatedId;
+    body['@id'] = generatedId;
     try {
       let out = await ctx.call('ldp.post', {
-        body: body,
+        body: body
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {

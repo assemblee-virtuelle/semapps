@@ -23,12 +23,12 @@ const LdpService = {
     getByType: getByTypeAction.action,
     api_get: getAction.api,
     get: getAction.action,
-    api_post : postAction.api,
-    post : postAction.action,
-    api_patch : patchAction.api,
-    patch : patchAction.action,
-    api_delete : deleteAction.api,
-    delete : deleteAction.action,
+    api_post: postAction.api,
+    post: postAction.action,
+    api_patch: patchAction.api,
+    patch: patchAction.action,
+    api_delete: deleteAction.api,
+    delete: deleteAction.action,
     // /*
     //  * Returns a LDP container persisted in the triple store
     //  * @param containerUri The full URI of the container

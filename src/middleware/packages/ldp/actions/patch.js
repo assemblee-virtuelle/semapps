@@ -6,7 +6,7 @@ module.exports = {
     // const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
     try {
       let out = await ctx.call('ldp.patch', {
-        body: body,
+        body: body
       });
       // ctx.meta.$responseType = ctx.meta.headers.accept;
       ctx.meta.$statusCode = 204;
@@ -24,7 +24,7 @@ module.exports = {
     params: {
       // accept:'string',
       // resourceUri: 'string',
-      body: 'object',
+      body: 'object'
     },
     async handler(ctx) {
       let body = ctx.params.body;
@@ -38,7 +38,6 @@ module.exports = {
       } else {
         throw new Error('resssource not found');
       }
-
 
       // const out = await ctx.call('triplestore.insert', {
       //   resource: body,
