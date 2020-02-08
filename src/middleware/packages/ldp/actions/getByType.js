@@ -7,7 +7,7 @@ module.exports = {
     try {
       let body = await ctx.call('ldp.getByType', {
         type: type,
-        webId: ctx.meta.webId||'admin'
+        webId: ctx.meta.webId || 'admin'
       });
       ctx.meta.$responseType = accept;
       if (!accept.includes('json')) {
@@ -39,7 +39,7 @@ module.exports = {
           }
               `,
         accept: 'json',
-        webId:ctx.params.webId
+        webId: ctx.params.webId
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
