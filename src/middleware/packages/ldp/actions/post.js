@@ -15,7 +15,7 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
-      //TODO manage code from typed Error
+      //TODO manage code from typed Errors
       ctx.meta.$statusCode = 500;
     }
   },
