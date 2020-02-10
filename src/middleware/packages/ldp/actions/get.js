@@ -6,7 +6,7 @@ module.exports = {
       const body = await ctx.call('ldp.get', {
         resourceUri: resourceUri,
         accept: accept,
-        webId: ctx.meta.webId || 'admin'
+        webId: ctx.meta.webId || 'system'
       });
       ctx.meta.$responseType = accept;
       return body;
