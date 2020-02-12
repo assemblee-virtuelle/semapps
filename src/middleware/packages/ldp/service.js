@@ -74,9 +74,11 @@ const LdpService = {
     },
     async post(ctx) {
       let { typeURL, containerUri, slug, ...body } = ctx.params;
-      // slug = slug || ctx.meta.headers.slug;
-      const generatedId = this.generateId(typeURL, containerUri, slug);
-      body['@id'] = await this.findUnusedUri(ctx, generatedId);
+      if( !body['@id'] ) {
+        // slug = slug || ctx.meta.headers.slug;
+        const generatedId = this.generateId(typeURL, containerUri, slug);
+        body['@id'] = await this.findUnusedUri(ctx, generatedId);
+      }
       const out = await ctx.call('triplestore.insert', {
         resource: body,
         accept: 'json'
@@ -110,7 +112,7 @@ const LdpService = {
       }
     },
     async delete(ctx) {
-      let { typeURL, resourceId, resourceUri } = ctx.params;
+      let { typeURL, resourceId, resourceUri, accept } = ctx.params;
       if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
@@ -119,7 +121,7 @@ const LdpService = {
         const out = await ctx.call('triplestore.delete', {
           uri: resourceUri
         });
-        ctx.meta.$responseType = ctx.meta.headers.accept;
+        ctx.meta.$responseType = accept || ctx.meta.headers.accept;
         ctx.meta.$statusCode = 204;
         ctx.meta.$responseHeaders = {
           Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',

@@ -46,7 +46,7 @@ class TripleStoreAdapter {
    * Find an entity by query
    */
   findOne(query) {
-    // return this.collection.findOne(query);
+    throw new Error('Method not implemented');
   }
 
   /**
@@ -60,16 +60,7 @@ class TripleStoreAdapter {
    * Find all entities by IDs
    */
   findByIds(ids) {
-    // return new Promise((resolve, reject) => {
-    //   this.db.find({ _id: { $in: ids } }).exec((err, docs) => {
-    //     /* istanbul ignore next */
-    //     if (err)
-    //       return reject(err);
-    //
-    //     resolve(docs);
-    //   });
-    //
-    // });
+    throw new Error('Method not implemented');
   }
 
   /**
@@ -80,7 +71,9 @@ class TripleStoreAdapter {
    *  - searchFields
    *  - query
    */
-  count(filters = {}) {}
+  count(filters = {}) {
+    throw new Error('Method not implemented');
+  }
 
   /**
    * Insert an entity
@@ -104,14 +97,14 @@ class TripleStoreAdapter {
    * Insert multiple entities
    */
   insertMany(entities) {
-    // return this.db.insert(entities);
+    throw new Error('Method not implemented');
   }
 
   /**
    * Update many entities by `query` and `update`
    */
   updateMany(query, update) {
-    // return this.db.update(query, update, { multi: true }).then(res => res[0]);
+    throw new Error('Method not implemented');
   }
 
   /**
@@ -131,21 +124,26 @@ class TripleStoreAdapter {
    * Remove many entities which are matched by `query`
    */
   removeMany(query) {
-    // return this.db.remove(query, { multi: true });
+    throw new Error('Method not implemented');
   }
 
   /**
    * Remove an entity by ID
    */
   removeById(_id) {
-    // return this.db.remove({ _id });
+    console.log('_id', _id);
+    return this.broker.call(this.ldpServiceName + '.delete', {
+      accept: 'application/ld+json',
+      '@context': this.service.schema.settings.context,
+      resourceUri: _id
+    });
   }
 
   /**
    * Clear all entities from DB
    */
   clear() {
-    // return this.db.remove({}, { multi: true });
+    throw new Error('Method not implemented');
   }
 
   /**

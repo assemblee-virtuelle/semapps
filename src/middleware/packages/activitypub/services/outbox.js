@@ -31,6 +31,8 @@ const OutboxService = {
         };
       } else if (activity.type === ACTIVITY_TYPES.UPDATE) {
         await ctx.call('activitypub.object.update', activity.object);
+      } else if( activity.type === ACTIVITY_TYPES.DELETE ) {
+        await ctx.call('activitypub.object.remove', { id: activity.object });
       }
 
       // Use the current time for the activity's publish date
