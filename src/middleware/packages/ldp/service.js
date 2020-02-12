@@ -74,7 +74,7 @@ const LdpService = {
     },
     async post(ctx) {
       let { typeURL, containerUri, slug, ...body } = ctx.params;
-      if( !body['@id'] ) {
+      if (!body['@id']) {
         // slug = slug || ctx.meta.headers.slug;
         const generatedId = this.generateId(typeURL, containerUri, slug);
         body['@id'] = await this.findUnusedUri(ctx, generatedId);
