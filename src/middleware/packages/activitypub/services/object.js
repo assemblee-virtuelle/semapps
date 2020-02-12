@@ -17,8 +17,8 @@ const ObjectService = {
       const tombstone = {
         '@context': this.settings.context,
         '@id': ctx.params.id,
-        'type': 'Tombstone',
-        'deleted': new Date().toISOString()
+        type: 'Tombstone',
+        deleted: new Date().toISOString()
       };
 
       return await this._create(ctx, tombstone);
