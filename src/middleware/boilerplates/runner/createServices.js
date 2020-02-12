@@ -46,7 +46,7 @@ function createServices(broker) {
   });
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'actors/'
+      usersContainer: CONFIG.HOME_URL + 'users/'
     }
   });
 
@@ -55,10 +55,11 @@ function createServices(broker) {
     adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
   });
   broker.createService(ActorService, {
-    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    adapter: new TripleStoreAdapter('ldp'),
     settings: {
-      containerUri: CONFIG.HOME_URL + 'actors/'
-    }
+      containerUri: CONFIG.HOME_URL + 'users/'
+    },
+    dependencies: ['ldp'] // TODO set this in TripleStoreAdapter
   });
   broker.createService(ActivityService, {
     adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),

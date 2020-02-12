@@ -20,7 +20,6 @@ beforeAll(async () => {
   });
 
   await broker.call('triplestore.dropAll');
-  await broker.call('activitypub.actor.clear');
   await broker.call('activitypub.activity.clear');
   await broker.call('activitypub.collection.clear');
 });

@@ -37,7 +37,11 @@ const ActorService = {
         outbox: actorUri + '/outbox'
       };
 
-      actor = await this._create(ctx, actor);
+      if( ctx.params.attachToProfile ) {
+        actor = await this._update(ctx, actor);
+      } else {
+        actor = await this._create(ctx, actor);
+      }
 
       this.broker.emit('actor.created', actor);
 
@@ -47,8 +51,8 @@ const ActorService = {
   events: {
     async 'webid.created'(userData) {
       await this.broker.call('activitypub.actor.create', {
+        attachToProfile: true,
         '@id': userData['@id'],
-        slug: userData.nick,
         preferredUsername: userData.nick,
         name: userData.name + ' ' + userData.familyName
       });
