@@ -37,7 +37,7 @@ const ActorService = {
         outbox: actorUri + '/outbox'
       };
 
-      if( ctx.params.attachToProfile ) {
+      if (ctx.params.attachToProfile) {
         actor = await this._update(ctx, actor);
       } else {
         actor = await this._create(ctx, actor);
