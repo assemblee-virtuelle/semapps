@@ -76,5 +76,6 @@ test:
 	$(DOCKER_COMPOSE_TEST) build
 	$(DOCKER_COMPOSE_TEST) up -d
 	npm run test --prefix ./src/middleware/boilerplates/runner
+	docker logs fuseki
 	$(DOCKER_COMPOSE_TEST) kill
 	$(DOCKER_COMPOSE_TEST) rm -fv
