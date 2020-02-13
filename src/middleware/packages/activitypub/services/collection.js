@@ -92,9 +92,9 @@ const TripleStoreCollectionService = {
       // If there is only one item, we receive it as an object so put it in an array
       else if (!Array.isArray(collection.items)) collection.items = [collection.items];
 
-      collection.totalItems = collection.items.length ;
+      collection.totalItems = collection.items.length;
 
-      if( this.isOrderedCollection(collection) ) {
+      if (this.isOrderedCollection(collection)) {
         collection.orderedItems = collection.items;
         delete collection.items;
       }
