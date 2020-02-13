@@ -53,7 +53,7 @@ const TripleStoreCollectionService = {
       const collection = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: ctx.params.collectionUri,
-        items: typeof ctx.params.item === 'object' ? ctx.params.item['@id'] : ctx.params.item
+        items: typeof ctx.params.item === 'object' ? ctx.params.item.id || ctx.params.item['@id'] : ctx.params.item
       };
 
       return await ctx.call('triplestore.insert', {
@@ -100,6 +100,9 @@ const TripleStoreCollectionService = {
       }
 
       return collection;
+    },
+    clear(ctx) {
+      // Do nothing. This is just to ensure tests don't break.
     }
   },
   methods: {

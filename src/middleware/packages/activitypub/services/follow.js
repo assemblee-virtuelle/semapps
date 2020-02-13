@@ -41,11 +41,11 @@ const FollowService = {
       if (activity.type === ACTIVITY_TYPES.FOLLOW) {
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.object + '/followers',
-          resource: activity.actor
+          item: activity.actor
         });
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.actor + '/following',
-          resource: activity.object
+          item: activity.object
         });
         this.broker.emit('activitypub.follow.added', { follower: activity.actor });
       }

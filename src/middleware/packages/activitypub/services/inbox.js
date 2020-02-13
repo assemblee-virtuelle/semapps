@@ -31,7 +31,7 @@ const InboxService = {
           // Attach the activity to the inbox of the recipient
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipient + '/inbox',
-            resource: activity
+            item: activity
           });
         }
         this.broker.emit('activitypub.inbox.received', { activity, recipients });

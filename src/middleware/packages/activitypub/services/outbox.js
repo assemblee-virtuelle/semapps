@@ -44,7 +44,7 @@ const OutboxService = {
       // Attach the newly-created activity to the outbox
       ctx.call('activitypub.collection.attach', {
         collectionUri: this.getOutboxUri(username),
-        resource: activity
+        item: activity
       });
 
       ctx.emit('activitypub.outbox.posted', { activity });

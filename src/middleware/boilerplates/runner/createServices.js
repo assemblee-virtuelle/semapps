@@ -6,7 +6,7 @@ const {
   OutboxService,
   InboxService,
   FollowService,
-  TripleStoreCollectionService,
+  MongoDbCollectionService,
   ActorService,
   ObjectService
 } = require('@semapps/activitypub');
@@ -51,7 +51,7 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  broker.createService(TripleStoreCollectionService);
+  broker.createService(MongoDbCollectionService);
   broker.createService(ActorService, {
     adapter: new TripleStoreAdapter('ldp'),
     settings: {

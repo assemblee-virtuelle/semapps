@@ -108,7 +108,5 @@ describe('Posting to followers', () => {
     });
 
     expect(result.orderedItems).toHaveLength(1);
-    expect(result.orderedItems[0]).toHaveProperty('type', 'Create');
-    expect(result.orderedItems[0]).toHaveProperty('actor', simon.id);
   });
 });

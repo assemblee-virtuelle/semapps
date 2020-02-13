@@ -1,6 +1,6 @@
-const JsonLdStorageService = require('../mixins/jsonld-storage');
+const JsonLdStorageService = require('../../mixins/jsonld-storage');
 
-const CollectionService = {
+const MongoDbCollectionService = {
   name: 'activitypub.collection',
   mixins: [JsonLdStorageService],
   adapter: null, // To be set by the user
@@ -43,19 +43,21 @@ const CollectionService = {
     /*
      * Attach an object to a collection
      * @param collectionUri The full URI of the collection
-     * @param objectUri The full URI of the object to add to the collection
+     * @param item The item to add to the collection
      */
     async attach(ctx) {
       const collection = await this._get(ctx, { id: ctx.params.collectionUri });
 
       const itemsKey = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
-      collection[itemsKey] = [ctx.params.resource, ...collection[itemsKey]];
+      collection[itemsKey] = [ctx.params.item, ...collection[itemsKey]];
 
       // Remove duplicates
-      if (typeof ctx.params.resource !== 'object') {
+      if (typeof ctx.params.item !== 'object') {
         collection[itemsKey] = [...new Set(collection[itemsKey])];
       }
+
+      collection.totalItems = collection[itemsKey].length;
 
       return await this._update(ctx, collection);
     }
@@ -70,4 +72,4 @@ const CollectionService = {
   }
 };
 
-module.exports = CollectionService;
+module.exports = MongoDbCollectionService;
