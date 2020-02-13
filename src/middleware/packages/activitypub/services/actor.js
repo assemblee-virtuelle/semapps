@@ -58,10 +58,10 @@ const ActorService = {
       });
     },
     async 'webid.updated'(userData) {
-      // TODO
+      // TODO update actor when webid is updated
     },
     async 'webid.removed'(userData) {
-      // TODO
+      // TODO remove actor (and collections) when webid is removed
     },
     'actor.created'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
