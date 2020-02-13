@@ -1,8 +1,6 @@
-'use strict';
-
 const jsonld = require('jsonld');
 
-const CollectionService = {
+const TripleStoreCollectionService = {
   name: 'activitypub.collection',
   dependencies: ['triplestore'],
   actions: {
@@ -15,7 +13,7 @@ const CollectionService = {
       const collection = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: ctx.params.collectionUri,
-        type: ['Collection', 'OrderedCollection'],
+        type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
         summary: ctx.params.summary
       };
 
@@ -44,18 +42,18 @@ const CollectionService = {
     /*
      * Attach an object to a collection
      * @param collectionUri The full URI of the collection
-     * @param objectUri The full URI of the object to add to the collection
+     * @param item The resource to add to the collection
      */
     async attach(ctx) {
       const collectionExist = ctx.call('activitypub.collection.exist', {
         collectionUri: ctx.params.collectionUri
       });
-      if (!collectionExist) throw new Error('Cannot attach to an unexisting collection !');
+      if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
 
       const collection = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         id: ctx.params.collectionUri,
-        items: ctx.params.objectUri
+        items: typeof ctx.params.item === 'object' ? ctx.params.item['@id'] : ctx.params.item
       };
 
       return await ctx.call('triplestore.insert', {
@@ -64,126 +62,54 @@ const CollectionService = {
       });
     },
     /*
-     * Returns a JSON-LD formatted OrderedCollection stored in the triple store
-     * @param collectionUri The full URI of the collection
-     * @param optionalTriplesToFetch RDF-formatted triples to fetch (use ?item for the base item)
+     * Returns a JSON-LD formatted collection stored in the triple store
+     * @param id The full URI of the collection
      */
-    async queryOrderedCollection(ctx) {
-      const result = await ctx.call('triplestore.query', {
+    async get(ctx) {
+      let collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            # We need to define the CONSTRUCT clause because it doesn't work 
-            # when there is an OPTIONAL parameter in the WHERE clause 
-            <${ctx.params.collectionUri}> 
-              a as:OrderedCollection ;
+            <${ctx.params.id}> 
+              a ?type ;
               as:items ?item .
-            ?item ?itemP ?itemO .
-            ${ctx.params.optionalTriplesToFetch || ''}
           }
           WHERE {
-            <${ctx.params.collectionUri}> a as:OrderedCollection .
+            <${ctx.params.id}> a ?type .
             OPTIONAL { 
-              <${ctx.params.collectionUri}> as:items ?item .
-              ?item ?itemP ?itemO .
-              ${ctx.params.optionalTriplesToFetch || ''}
+              <${ctx.params.id}> as:items ?item .
             }
           }
-          ORDER BY ?published  # Order by activities publication
         `,
         accept: 'json'
       });
 
-      let framed = await jsonld.frame(result, {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'OrderedCollection'
+      collection = await jsonld.compact(collection, {
+        '@context': 'https://www.w3.org/ns/activitystreams'
       });
-      framed = framed['@graph'][0];
 
-      if (!framed) {
-        // If no items was attached, the collection wasn't created
-        return null;
-      } else {
-        if (!framed.items) framed.items = [];
-        // If there is only one item, we receive it as an object so put it in an array
-        else if (!Array.isArray(framed.items)) framed.items = [framed.items];
+      if (!collection.items) collection.items = [];
+      // If there is only one item, we receive it as an object so put it in an array
+      else if (!Array.isArray(collection.items)) collection.items = [collection.items];
 
-        return {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          id: framed.id,
-          type: framed.type,
-          summary: framed.summary,
-          totalItems: framed.items.length,
-          orderedItems: framed.items
-        };
+      collection.totalItems = collection.items.length ;
+
+      if( this.isOrderedCollection(collection) ) {
+        collection.orderedItems = collection.items;
+        delete collection.items;
       }
-    },
-    /*
-     * Returns a JSON-LD formatted Collection stored in the triple store
-     * @param collectionUri The full URI of the collection
-     */
-    async queryCollection(ctx) {
-      const result = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          CONSTRUCT {
-            <${ctx.params.collectionUri}> 
-              a as:Collection ;
-              as:items ?item
-          }
-          WHERE {
-            <${ctx.params.collectionUri}> a as:Collection .
-            OPTIONAL { <${ctx.params.collectionUri}> as:items ?item . }
-          }
-        `,
-        accept: 'json'
-      });
 
-      let framed = await jsonld.frame(result, {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'Collection'
-      });
-      framed = framed['@graph'][0];
-
-      if (!framed) {
-        // If no items was attached, the collection wasn't created
-        return null;
-      } else {
-        if (!framed.items) framed.items = [];
-        // If there is only one item, we receive it as an object so put it in an array
-        else if (!Array.isArray(framed.items)) framed.items = [framed.items];
-
-        return {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          id: framed.id,
-          type: framed.type,
-          summary: framed.summary,
-          totalItems: framed.items ? framed.items.length : 0,
-          items: framed.items
-        };
-      }
-    },
-    /*
-     * Returns a simple array of the resources URIs contained in the collection
-     * @param collectionUri The full URI of the collection
-     */
-    async queryItems(ctx) {
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          SELECT ?item
-          WHERE {
-            <${ctx.params.collectionUri}> 
-              a as:Collection ;
-              as:items ?item
-          }
-        `,
-        accept: 'json'
-      });
-
-      return results ? results.map(item => item.item.value) : [];
+      return collection;
+    }
+  },
+  methods: {
+    isOrderedCollection(collection) {
+      return (
+        collection.type === 'OrderedCollection' ||
+        (Array.isArray(collection.type) && collection.type.includes('OrderedCollection'))
+      );
     }
   }
 };
 
-module.exports = CollectionService;
+module.exports = TripleStoreCollectionService;

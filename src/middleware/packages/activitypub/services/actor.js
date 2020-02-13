@@ -57,6 +57,12 @@ const ActorService = {
         name: userData.name + ' ' + userData.familyName
       });
     },
+    async 'webid.updated'(userData) {
+      // TODO
+    },
+    async 'webid.removed'(userData) {
+      // TODO
+    },
     'actor.created'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }

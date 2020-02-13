@@ -65,7 +65,7 @@ const InboxService = {
         } else if (recipient === this.getFollowersUri(activity.actor)) {
           // Followers list. Add the list of followers.
           const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
-          if (collection) output.push(...this.defaultToArray(collection.items));
+          if (collection && collection.items) output.push(...this.defaultToArray(collection.items));
         } else {
           // Simple actor URI
           output.push(recipient);

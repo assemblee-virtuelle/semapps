@@ -131,7 +131,6 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id) {
-    console.log('_id', _id);
     return this.broker.call(this.ldpServiceName + '.delete', {
       accept: 'application/ld+json',
       '@context': this.service.schema.settings.context,
