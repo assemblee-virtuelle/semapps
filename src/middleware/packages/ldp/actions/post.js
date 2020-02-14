@@ -1,4 +1,4 @@
-const {MoleculerError} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 module.exports = {
   api: async function api(ctx) {
     let { typeURL, containerUri, ...body } = ctx.params;
@@ -7,8 +7,7 @@ module.exports = {
     body['@id'] = generatedId;
     try {
       let out = await ctx.call('ldp.post', {
-        resource: body,
-        webId: ctx.meta.webId
+        resource: body
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
@@ -25,21 +24,26 @@ module.exports = {
     visibility: 'public',
     params: {
       resource: 'object',
-      webId: 'string'
+      webId: { type: 'string', optional: true },
+      accept: { type: 'string', optional: true },
+      contentType: { type: 'string', optional: true }
     },
     async handler(ctx) {
       let resource = ctx.params.resource;
+      const accept = ctx.params.accept || ctx.meta.headers.accept;
+      const webId = ctx.params.webId || ctx.meta.headers.webId;
+      const contentType = ctx.params.contentType || ctx.meta.headers['content-type'];
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {
         resource: resource,
-        webId: ctx.params.webId
+        webId: webId
       });
 
       const out = await ctx.call('ldp.get', {
         resourceUri: resource['@id'],
-        accept: 'application/ld+json',
-        webId: ctx.params.webId
+        accept: accept,
+        webId: webId
       });
 
       return out;

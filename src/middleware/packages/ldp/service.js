@@ -12,6 +12,7 @@ const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
 const constants = require('./constants');
 const Negotiator = require('negotiator');
+const { MoleculerError } = require('moleculer').Errors;
 
 const LdpService = {
   name: 'ldp',
@@ -105,28 +106,30 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
-    negociateAccept(accept){
-      let availableMediaTypes=[];
-      for (const key in constants.MIME_TYPE_SUPPORTED){
-        if(constants.MIME_TYPE_SUPPORTED[key].includes(accept)){
-          accept=`application/${accept}`
+    negociateAccept(accept) {
+      let availableMediaTypes = [];
+      for (const key in constants.MIME_TYPE_SUPPORTED) {
+        if (constants.MIME_TYPE_SUPPORTED[key].includes(accept)) {
+          accept = `application/${accept}`;
         }
         availableMediaTypes.push(`text/${constants.MIME_TYPE_SUPPORTED[key]}`);
         availableMediaTypes.push(`application/${constants.MIME_TYPE_SUPPORTED[key]}`);
       }
-      const negotiator = new Negotiator({headers:{accept:accept}});
+      const negotiator = new Negotiator({ headers: { accept: accept } });
       const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
       let negociatedAccept;
-      if(rawNegociatedAccept!=undefined){
-        for (const key in constants.MIME_TYPE_SUPPORTED){
-          if(rawNegociatedAccept.includes(constants.MIME_TYPE_SUPPORTED[key])){
-            negociatedAccept=constants.MIME_TYPE_SUPPORTED[key];
+      if (rawNegociatedAccept != undefined) {
+        for (const key in constants.MIME_TYPE_SUPPORTED) {
+          if (rawNegociatedAccept.includes(constants.MIME_TYPE_SUPPORTED[key])) {
+            negociatedAccept = constants.MIME_TYPE_SUPPORTED[key];
           }
         }
+      } else {
+        throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
       }
       return negociatedAccept;
     },
-    getAcceptHeader(accept) {
+    getTripleStoreAccept(accept) {
       let negociatedAccept = this.negociateAccept(accept);
       switch (negociatedAccept) {
         case constants.MIME_TYPE_SUPPORTED.TURTLE:
@@ -135,8 +138,6 @@ const LdpService = {
           return 'triple';
         case constants.MIME_TYPE_SUPPORTED.JSON:
           return 'json';
-        default:
-          throw new Error('Accept not supported : ' + accept);
       }
     },
     getPrefixRdf() {
