@@ -10,6 +10,8 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
+const constants = require('./constants');
+const Negotiator = require('negotiator');
 
 const LdpService = {
   name: 'ldp',
@@ -103,16 +105,38 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
+    negociateAccept(accept){
+      let availableMediaTypes=[];
+      for (const key in constants.MIME_TYPE_SUPPORTED){
+        if(constants.MIME_TYPE_SUPPORTED[key].includes(accept)){
+          accept=`application/${accept}`
+        }
+        availableMediaTypes.push(`text/${constants.MIME_TYPE_SUPPORTED[key]}`);
+        availableMediaTypes.push(`application/${constants.MIME_TYPE_SUPPORTED[key]}`);
+      }
+      const negotiator = new Negotiator({headers:{accept:accept}});
+      const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
+      let negociatedAccept;
+      if(rawNegociatedAccept!=undefined){
+        for (const key in constants.MIME_TYPE_SUPPORTED){
+          if(rawNegociatedAccept.includes(constants.MIME_TYPE_SUPPORTED[key])){
+            negociatedAccept=constants.MIME_TYPE_SUPPORTED[key];
+          }
+        }
+      }
+      return negociatedAccept;
+    },
     getAcceptHeader(accept) {
-      switch (accept) {
-        case 'text/turtle':
+      let negociatedAccept = this.negociateAccept(accept);
+      switch (negociatedAccept) {
+        case constants.MIME_TYPE_SUPPORTED.TURTLE:
           return 'turtle';
-        case 'application/n-triples':
+        case constants.MIME_TYPE_SUPPORTED.TRIPLE:
           return 'triple';
-        case 'application/ld+json':
+        case constants.MIME_TYPE_SUPPORTED.JSON:
           return 'json';
         default:
-          throw new Error('Unknown accept parameter: ' + accept);
+          throw new Error('Accept not supported : ' + accept);
       }
     },
     getPrefixRdf() {

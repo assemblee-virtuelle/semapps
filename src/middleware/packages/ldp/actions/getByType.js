@@ -1,3 +1,4 @@
+const {MoleculerError} = require('moleculer').Errors;
 const jsonld = require('jsonld');
 
 module.exports = {
