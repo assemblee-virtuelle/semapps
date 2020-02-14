@@ -1,10 +1,6 @@
 module.exports = {
   api: async function api(ctx) {
-    let {
-      typeURL,
-      containerUri,
-      ...body
-    } = ctx.params;
+    let { typeURL, containerUri, ...body } = ctx.params;
     const slug = ctx.meta.headers.slug;
     const generatedId = this.generateId(typeURL, containerUri, slug);
     body['@id'] = generatedId;
@@ -20,8 +16,8 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
-      ctx.meta.$statusCode =e.code || 500;
-      ctx.meta.$statusMessage=e.message;
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
     }
   },
   action: {

@@ -63,10 +63,10 @@ const WebIdService = {
     async edit(ctx) {
       let { userId, ...body } = ctx.params;
       const webId = await this.getWebId(ctx);
-      body['@id']=webId;
+      body['@id'] = webId;
       return await ctx.call('ldp.patch', {
-        resource : body,
-        webId : webId
+        resource: body,
+        webId: webId
       });
     },
     async list(ctx) {
