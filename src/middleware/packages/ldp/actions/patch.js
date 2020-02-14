@@ -1,5 +1,5 @@
 const MoleculerWebError = require('moleculer-web').Errors;
-const { MoleculerError } = require("moleculer").Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
@@ -17,8 +17,8 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
-      ctx.meta.$statusCode =e.code || 500;
-      ctx.meta.$statusMessage=e.message;
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
     }
   },
   action: {
@@ -47,7 +47,7 @@ module.exports = {
 
         return out;
       } else {
-        throw new MoleculerError("Not found", 404, "NOT_FOUND");
+        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
     }
   }

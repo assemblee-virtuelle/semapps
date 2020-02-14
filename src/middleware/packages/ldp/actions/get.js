@@ -11,8 +11,8 @@ module.exports = {
       ctx.meta.$responseType = accept;
       return body;
     } catch (e) {
-      ctx.meta.$statusCode =e.code || 500;
-      ctx.meta.$statusMessage=e.message;
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
     }
   },
   action: {
@@ -40,7 +40,7 @@ module.exports = {
           accept: this.getAcceptHeader(ctx.params.accept)
         });
       } else {
-        throw new MoleculerError("Not found", 404, "NOT_FOUND");
+        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
     }
   }

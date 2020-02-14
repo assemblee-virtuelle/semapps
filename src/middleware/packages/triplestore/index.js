@@ -34,7 +34,6 @@ const TripleStoreService = {
       });
 
       if (!response.ok) throw new Error(response.statusText);
-
     },
     async patch(ctx) {
       const query = await this.buildPatchQuery(ctx.params);

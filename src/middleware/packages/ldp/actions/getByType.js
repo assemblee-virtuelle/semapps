@@ -15,8 +15,8 @@ module.exports = {
       }
       return body;
     } catch (e) {
-      ctx.meta.$statusCode =e.code || 500;
-      ctx.meta.$statusMessage=e.message;
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
     }
   },
   action: {
