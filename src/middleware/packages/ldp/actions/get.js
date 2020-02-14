@@ -1,4 +1,4 @@
-const {MoleculerError} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 module.exports = {
   api: async function api(ctx) {
     const resourceUri = `${this.settings.baseUrl}${ctx.params.typeURL}/${ctx.params.resourceId}`;

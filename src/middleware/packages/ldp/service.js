@@ -105,22 +105,22 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
-    negociateAccept(accept){
-      let availableMediaTypes=[];
-      for (const key in constants.MIME_TYPE_SUPPORTED){
-        if(constants.MIME_TYPE_SUPPORTED[key].includes(accept)){
-          accept=`application/${accept}`
+    negociateAccept(accept) {
+      let availableMediaTypes = [];
+      for (const key in constants.MIME_TYPE_SUPPORTED) {
+        if (constants.MIME_TYPE_SUPPORTED[key].includes(accept)) {
+          accept = `application/${accept}`;
         }
         availableMediaTypes.push(`text/${constants.MIME_TYPE_SUPPORTED[key]}`);
         availableMediaTypes.push(`application/${constants.MIME_TYPE_SUPPORTED[key]}`);
       }
-      const negotiator = new Negotiator({headers:{accept:accept}});
+      const negotiator = new Negotiator({ headers: { accept: accept } });
       const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
       let negociatedAccept;
-      if(rawNegociatedAccept!=undefined){
-        for (const key in constants.MIME_TYPE_SUPPORTED){
-          if(rawNegociatedAccept.includes(constants.MIME_TYPE_SUPPORTED[key])){
-            negociatedAccept=constants.MIME_TYPE_SUPPORTED[key];
+      if (rawNegociatedAccept != undefined) {
+        for (const key in constants.MIME_TYPE_SUPPORTED) {
+          if (rawNegociatedAccept.includes(constants.MIME_TYPE_SUPPORTED[key])) {
+            negociatedAccept = constants.MIME_TYPE_SUPPORTED[key];
           }
         }
       }

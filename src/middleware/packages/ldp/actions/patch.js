@@ -1,12 +1,8 @@
-const {MoleculerError} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    let {
-      typeURL,
-      resourceId,
-      ...body
-    } = ctx.params;
+    let { typeURL, resourceId, ...body } = ctx.params;
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     body['@id'] = resourceUri;
     try {
@@ -15,8 +11,7 @@ module.exports = {
         resource: body,
         webId: ctx.meta.webId,
         accept: ctx.meta.headers.accept,
-        contentType: ctx.meta.headers['content-type'],
-
+        contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
