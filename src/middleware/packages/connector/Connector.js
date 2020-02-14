@@ -21,7 +21,6 @@ class Connector {
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    // console.log('res.req.user',res.req.user);
     const profileData = this.settings.selectProfileData(res.req.user);
 
     this.settings.findOrCreateProfile(profileData).then(webId => {

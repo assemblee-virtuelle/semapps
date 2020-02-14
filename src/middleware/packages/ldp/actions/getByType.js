@@ -7,7 +7,7 @@ module.exports = {
     try {
       let body = await ctx.call('ldp.getByType', {
         type: type,
-        webId: ctx.meta.webId || 'system'
+        webId: ctx.meta.webId || ''
       });
       ctx.meta.$responseType = accept;
       if (!accept.includes('json')) {
