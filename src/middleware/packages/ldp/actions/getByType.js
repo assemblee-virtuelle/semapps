@@ -15,9 +15,8 @@ module.exports = {
       }
       return body;
     } catch (e) {
-      console.log(e);
-      //TODO manage code from typed Error
-      ctx.meta.$statusCode = 500;
+      ctx.meta.$statusCode =e.code || 500;
+      ctx.meta.$statusMessage=e.message;
     }
   },
   action: {

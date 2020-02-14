@@ -1,9 +1,12 @@
 module.exports = {
   api: async function api(ctx) {
-    let { typeURL, resourceId } = ctx.params;
-    resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     try {
-      let out = await ctx.call('ldp.delete', {
+      const {
+        typeURL,
+        resourceId
+      } = ctx.params;
+      const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
+      await ctx.call('ldp.delete', {
         resourceUri: resourceUri,
         webId: ctx.meta.webId
       });
@@ -13,8 +16,8 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
-      //TODO manage code from typed Error
-      ctx.meta.$statusCode = 500;
+      ctx.meta.$statusCode =e.code || 500;
+      ctx.meta.$statusMessage=e.message;
     }
   },
   action: {
@@ -31,10 +34,10 @@ module.exports = {
       if (triplesNb > 0) {
         await ctx.call('triplestore.delete', {
           uri: resourceUri,
-          webId: ctx.meta.webId
+          webId: ctx.params.webId
         });
       } else {
-        throw new Error('resssource not found');
+        throw new MoleculerError("Not found", 404, "NOT_FOUND");
       }
     }
   }

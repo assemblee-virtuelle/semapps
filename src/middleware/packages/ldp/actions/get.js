@@ -11,8 +11,8 @@ module.exports = {
       ctx.meta.$responseType = accept;
       return body;
     } catch (e) {
-      //TODO manage code from typed Error
-      ctx.meta.$statusCode = 404;
+      ctx.meta.$statusCode =e.code || 500;
+      ctx.meta.$statusMessage=e.message;
     }
   },
   action: {
@@ -26,7 +26,7 @@ module.exports = {
       const resourceUri = ctx.params.resourceUri;
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri,
-        webId: ctx.meta.webId
+        webId: ctx.params.webId
       });
       if (triplesNb > 0) {
         return await ctx.call('triplestore.query', {
@@ -40,7 +40,7 @@ module.exports = {
           accept: this.getAcceptHeader(ctx.params.accept)
         });
       } else {
-        throw new Error('resssource not found');
+        throw new MoleculerError("Not found", 404, "NOT_FOUND");
       }
     }
   }

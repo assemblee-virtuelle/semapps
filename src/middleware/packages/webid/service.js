@@ -29,7 +29,7 @@ const WebIdService = {
           homepage
         };
 
-        let newUri = await ctx.call('ldp.post', {
+        let newPerson = await ctx.call('ldp.post', {
           body: {
             // containerUri: this.settings.usersContainer,
             // slug: nick,
@@ -42,12 +42,7 @@ const WebIdService = {
           }
         });
 
-        webId = newUri;
-
-        ctx.emit('webid.created', {
-          '@id': webId,
-          ...userData
-        });
+        ctx.emit('webid.created', newPerson);
       }
 
       return webId;
@@ -66,18 +61,18 @@ const WebIdService = {
       }
     },
     async edit(ctx) {
-      const { userId, ...body } = ctx.params;
+      let { userId, ...body } = ctx.params;
       const webId = await this.getWebId(ctx);
-
+      body['@id']=webId;
       return await ctx.call('ldp.patch', {
-        resourceUri: webId,
-        ...body
+        resource : body,
+        webId : webId
       });
     },
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
         type: 'foaf:Person',
-        webId: ctx.meta.webId || 'system'
+        webId: ctx.meta.webId || ''
       });
     },
     getUsersContainer(ctx) {

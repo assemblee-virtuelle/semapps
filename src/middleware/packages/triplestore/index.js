@@ -35,7 +35,6 @@ const TripleStoreService = {
 
       if (!response.ok) throw new Error(response.statusText);
 
-      return response;
     },
     async patch(ctx) {
       const query = await this.buildPatchQuery(ctx.params);
@@ -48,10 +47,7 @@ const TripleStoreService = {
           Authorization: this.Authorization
         }
       });
-
       if (!response.ok) throw new Error(response.statusText);
-
-      return response;
     },
     async delete({ params }) {
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
