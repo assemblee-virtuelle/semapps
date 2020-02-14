@@ -21,6 +21,7 @@ class Connector {
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
+    // console.log('res.req.user',res.req.user);
     const profileData = this.settings.selectProfileData(res.req.user);
 
     this.settings.findOrCreateProfile(profileData).then(webId => {
@@ -90,6 +91,7 @@ class Connector {
       if (token) {
         const payload = await this.verifyToken(token);
         ctx.meta.tokenPayload = payload;
+        ctx.meta.webId = await this.getWebId(ctx);
         return Promise.resolve(payload);
       } else {
         return Promise.resolve(null);
@@ -104,6 +106,7 @@ class Connector {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
         ctx.meta.tokenPayload = await this.verifyToken(token);
+        ctx.meta.webId = await this.getWebId(ctx);
         return Promise.resolve(ctx);
       } else {
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));

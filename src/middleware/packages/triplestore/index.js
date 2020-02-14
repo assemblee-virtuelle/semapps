@@ -28,31 +28,25 @@ const TripleStoreService = {
         body: `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
+          'X-SemappsUser': params.webId,
           Authorization: this.Authorization
         }
       });
 
       if (!response.ok) throw new Error(response.statusText);
-
-      return response;
     },
     async patch(ctx) {
       const query = await this.buildPatchQuery(ctx.params);
-
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
         method: 'POST',
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
+          'X-SemappsUser': ctx.params.webId,
           Authorization: this.Authorization
         }
       });
-
       if (!response.ok) throw new Error(response.statusText);
-
-      return response;
     },
     async delete({ params }) {
       const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
@@ -63,7 +57,7 @@ const TripleStoreService = {
             `,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
+          'X-SemappsUser': params.webId,
           Authorization: this.Authorization
         }
       });
@@ -80,7 +74,8 @@ const TripleStoreService = {
             <${ctx.params.uri}> ?p ?v
           }
         `,
-        accept: 'json'
+        accept: 'json',
+        webId: ctx.params.webId
       });
       return results.length;
     },
@@ -88,7 +83,7 @@ const TripleStoreService = {
       // TODO : set X-SemappsUser to 'system' or to the URI of the logged in user
       const headers = {
         'Content-Type': 'application/sparql-query',
-        'X-SemappsUser': 'URIofUser',
+        'X-SemappsUser': params.webId,
         Authorization: this.Authorization,
         Accept: this.getAcceptHeader(params.accept)
       };
@@ -129,7 +124,7 @@ const TripleStoreService = {
         body: 'update=DROP+ALL',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'X-SemappsUser': 'URIofUser',
+          'X-SemappsUser': params.webId,
           Authorization: this.Authorization
         }
       });

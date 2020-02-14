@@ -1,49 +1,54 @@
+const MoleculerWebError = require('moleculer-web').Errors;
+const { MoleculerError } = require('moleculer').Errors;
+
 module.exports = {
   api: async function api(ctx) {
     let { typeURL, resourceId, ...body } = ctx.params;
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     body['@id'] = resourceUri;
-    // const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
     try {
-      let out = await ctx.call('ldp.patch', {
-        body: body
+      await ctx.call('ldp.patch', {
+        resource: body,
+        webId: ctx.meta.webId
       });
-      // ctx.meta.$responseType = ctx.meta.headers.accept;
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
     } catch (e) {
-      //TODO manage code from typed Error
-      ctx.meta.$statusCode = 500;
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
     }
   },
   action: {
     visibility: 'public',
     params: {
-      // accept:'string',
-      // resourceUri: 'string',
-      body: 'object'
+      resource: 'object',
+      webId: 'string'
     },
     async handler(ctx) {
-      let body = ctx.params.body;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: body['@id'] });
+      let resource = ctx.params.resource;
+      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+        uri: resource['@id'],
+        webId: ctx.params.webId
+      });
       if (triplesNb > 0) {
-        // body['@id'] = resourceUri;
-        const out = await ctx.call('triplestore.patch', {
-          resource: body
+        await ctx.call('triplestore.patch', {
+          resource: resource,
+          webId: ctx.params.webId
         });
+
+        const out = await ctx.call('ldp.get', {
+          resourceUri: resource['@id'],
+          accept: 'application/ld+json',
+          webId: ctx.params.webId
+        });
+
         return out;
       } else {
-        throw new Error('resssource not found');
+        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
-
-      // const out = await ctx.call('triplestore.insert', {
-      //   resource: body,
-      //   accept: 'json'
-      // });
-      // return out;
     }
   }
 };
