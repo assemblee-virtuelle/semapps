@@ -1,4 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
+const {MoleculerError} = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
@@ -6,6 +6,7 @@ module.exports = {
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     body['@id'] = resourceUri;
     try {
+      console.log(ctx.meta.headers);
       await ctx.call('ldp.patch', {
         resource: body
       });

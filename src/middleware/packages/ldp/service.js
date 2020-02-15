@@ -129,6 +129,7 @@ const LdpService = {
       } else {
         throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
       }
+      return negociatedAccept;
     },
     getTripleStoreAccept(accept) {
       const negociatedAccept = this.negociateAccept(accept);
