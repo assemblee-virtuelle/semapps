@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "jsonld": "^1.8.1",
+    "negotiator": "^0.6.2",
     "node-fetch": "^2.6.0",
     "rdf-parse": "^1.2.1",
     "sparqljson-parse": "^1.5.1",

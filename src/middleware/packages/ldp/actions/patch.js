@@ -1,4 +1,3 @@
-const MoleculerWebError = require('moleculer-web').Errors;
 const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
@@ -8,8 +7,7 @@ module.exports = {
     body['@id'] = resourceUri;
     try {
       await ctx.call('ldp.patch', {
-        resource: body,
-        webId: ctx.meta.webId
+        resource: body
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -24,11 +22,17 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: 'object',
-      webId: 'string'
+      resource: { type: 'object' },
+      webId: { type: 'string', optional: true },
+      accept: { type: 'string', optional: true },
+      contentType: { type: 'string', optional: true }
     },
     async handler(ctx) {
       let resource = ctx.params.resource;
+      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+      const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
+
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resource['@id'],
         webId: ctx.params.webId
@@ -36,13 +40,13 @@ module.exports = {
       if (triplesNb > 0) {
         await ctx.call('triplestore.patch', {
           resource: resource,
-          webId: ctx.params.webId
+          webId: webId,
+          contentType: contentType
         });
-
         const out = await ctx.call('ldp.get', {
           resourceUri: resource['@id'],
-          accept: 'application/ld+json',
-          webId: ctx.params.webId
+          accept: accept,
+          webId: webId
         });
 
         return out;

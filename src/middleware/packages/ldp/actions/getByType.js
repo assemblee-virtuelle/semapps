@@ -1,4 +1,6 @@
+const { MoleculerError } = require('moleculer').Errors;
 const jsonld = require('jsonld');
+const constants = require('./../constants');
 
 module.exports = {
   api: async function api(ctx) {
@@ -6,13 +8,10 @@ module.exports = {
     const accept = ctx.meta.headers.accept;
     try {
       let body = await ctx.call('ldp.getByType', {
-        type: type,
-        webId: ctx.meta.webId || ''
+        type: type
       });
       ctx.meta.$responseType = accept;
-      if (!accept.includes('json')) {
-        body = await this.jsonldToTriples(body, ctx.meta.headers.accept);
-      }
+
       return body;
     } catch (e) {
       ctx.meta.$statusCode = e.code || 500;
@@ -22,10 +21,13 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      type: 'string',
-      webId: 'string'
+      type: { type: 'string' },
+      webId: { type: 'string', optional: true },
+      accept: { type: 'string', optional: true }
     },
     async handler(ctx) {
+      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
@@ -37,8 +39,7 @@ module.exports = {
               ?predicate ?object.
           }
               `,
-        accept: 'json',
-        webId: ctx.params.webId
+        accept: 'ld+json'
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
@@ -49,6 +50,11 @@ module.exports = {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': contains
       };
+      const negociatedAccept = this.negociateAccept(accept);
+
+      if (negociatedAccept != constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON) {
+        result = await this.jsonldToTriples(result, accept);
+      }
       return result;
     }
   }

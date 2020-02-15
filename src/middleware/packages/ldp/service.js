@@ -10,6 +10,9 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
+const constants = require('./constants');
+const Negotiator = require('negotiator');
+const { MoleculerError } = require('moleculer').Errors;
 
 const LdpService = {
   name: 'ldp',
@@ -91,7 +94,7 @@ const LdpService = {
             FILTER regex(str(?uri), "^${generatedId}")
           }
               `,
-        accept: 'json'
+        accept: 'ld+json'
       });
       let counter = 0;
       if (existingBegining.length > 0) {
@@ -103,17 +106,33 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
-    getAcceptHeader(accept) {
-      switch (accept) {
-        case 'text/turtle':
-          return 'turtle';
-        case 'application/n-triples':
-          return 'triple';
-        case 'application/ld+json':
-          return 'json';
-        default:
-          throw new Error('Unknown accept parameter: ' + accept);
+    negociateAccept(accept) {
+      let availableMediaTypes = [];
+      let negotiatorAccept = accept;
+      for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
+        if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(accept)) {
+          negotiatorAccept = trSupported.mimeFull[0];
+        }
+        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
       }
+      const negotiator = new Negotiator({
+        headers: {
+          accept: negotiatorAccept
+        }
+      });
+      const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
+      if (rawNegociatedAccept != undefined) {
+        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
+      } else {
+        throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
+      }
+      return negociatedAccept;
+    },
+    getTripleStoreAccept(accept) {
+      const negociatedAccept = this.negociateAccept(accept);
+      const negociatedTypeRepo = constants.TYPES_REPO.filter(tr => tr.mime == negociatedAccept)[0];
+      return negociatedTypeRepo.tripleStoreMapping;
     },
     getPrefixRdf() {
       return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
@@ -124,13 +143,11 @@ const LdpService = {
       return pattern;
     },
     getN3Type(accept) {
-      switch (accept) {
-        case 'application/n-triples':
-          return 'N-Triples';
-        case 'text/turtle':
-          return 'Turtle';
-        default:
-          throw new Error('Unknown N3 content-type: ' + accept);
+      const targetTypeRepo = constants.TYPES_REPO.filter(tr => accept.includes(tr.mime))[0];
+      if (targetTypeRepo) {
+        return targetTypeRepo.N3Mapping;
+      } else {
+        throw new Error('Unknown N3 content-type: ' + accept);
       }
     },
     jsonldToTriples(jsonLdObject, outputContentType) {
