@@ -12,9 +12,7 @@ const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
 const constants = require('./constants');
 const Negotiator = require('negotiator');
-const {
-  MoleculerError
-} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 const LdpService = {
   name: 'ldp',
@@ -110,13 +108,13 @@ const LdpService = {
     },
     negociateAccept(accept) {
       let availableMediaTypes = [];
-      let negotiatorAccept=accept;
+      let negotiatorAccept = accept;
       for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
-        let trSupported = constants.TYPES_REPO.filter(tr=>tr.mime==constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
         if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(accept)) {
           negotiatorAccept = trSupported.mimeFull[0];
         }
-        trSupported.mimeFull.forEach(tr=>availableMediaTypes.push(tr));
+        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
       }
       const negotiator = new Negotiator({
         headers: {
@@ -125,7 +123,7 @@ const LdpService = {
       });
       const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
       if (rawNegociatedAccept != undefined) {
-        return constants.TYPES_REPO.filter(tr=>tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
+        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
       } else {
         throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
       }
@@ -133,7 +131,7 @@ const LdpService = {
     },
     getTripleStoreAccept(accept) {
       const negociatedAccept = this.negociateAccept(accept);
-      const negociatedTypeRepo = constants.TYPES_REPO.filter(tr=>tr.mime==negociatedAccept)[0];
+      const negociatedTypeRepo = constants.TYPES_REPO.filter(tr => tr.mime == negociatedAccept)[0];
       return negociatedTypeRepo.tripleStoreMapping;
     },
     getPrefixRdf() {
@@ -145,10 +143,10 @@ const LdpService = {
       return pattern;
     },
     getN3Type(accept) {
-      const targetTypeRepo = constants.TYPES_REPO.filter(tr=>accept.includes(tr.mime))[0];
-      if(targetTypeRepo){
+      const targetTypeRepo = constants.TYPES_REPO.filter(tr => accept.includes(tr.mime))[0];
+      if (targetTypeRepo) {
         return targetTypeRepo.N3Mapping;
-      }else {
+      } else {
         throw new Error('Unknown N3 content-type: ' + accept);
       }
     },

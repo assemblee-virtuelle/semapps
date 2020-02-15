@@ -9,24 +9,24 @@ const CONTENT_MIME_TYPE_SUPPORTED = {
   TRIPLE: ACCEPT_MIME_TYPE_SUPPORTED.TURTLE
 };
 
-const TYPES_REPO =[
+const TYPES_REPO = [
   {
-    mime:ACCEPT_MIME_TYPE_SUPPORTED.JSON,
-    mimeFull:['application/'+ACCEPT_MIME_TYPE_SUPPORTED.JSON,'application/json'],
-    tripleStoreMapping :'application/json',
-    N3Mapping:''
+    mime: ACCEPT_MIME_TYPE_SUPPORTED.JSON,
+    mimeFull: ['application/' + ACCEPT_MIME_TYPE_SUPPORTED.JSON, 'application/json'],
+    tripleStoreMapping: 'application/json',
+    N3Mapping: ''
   },
   {
-    mime:ACCEPT_MIME_TYPE_SUPPORTED.TURTLE,
-    mimeFull:['text/'+ACCEPT_MIME_TYPE_SUPPORTED.TURTLE,'application/'+ACCEPT_MIME_TYPE_SUPPORTED.TURTLE],
-    tripleStoreMapping :'turtle',
-    N3Mapping:'Turtle'
+    mime: ACCEPT_MIME_TYPE_SUPPORTED.TURTLE,
+    mimeFull: ['text/' + ACCEPT_MIME_TYPE_SUPPORTED.TURTLE, 'application/' + ACCEPT_MIME_TYPE_SUPPORTED.TURTLE],
+    tripleStoreMapping: 'turtle',
+    N3Mapping: 'Turtle'
   },
   {
-    mime:ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE,
-    mimeFull:['application/'+ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE],
-    tripleStoreMapping :'triple',
-    N3Mapping:'N-Triples'
+    mime: ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE,
+    mimeFull: ['application/' + ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE],
+    tripleStoreMapping: 'triple',
+    N3Mapping: 'N-Triples'
   }
 ];
 module.exports = {

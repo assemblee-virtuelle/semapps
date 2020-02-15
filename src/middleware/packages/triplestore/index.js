@@ -3,12 +3,8 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const Negotiator = require('negotiator');
-const {
-  SparqlJsonParser
-} = require('sparqljson-parse');
-const {
-  ACCEPT_TYPES
-} = require('./constants');
+const { SparqlJsonParser } = require('sparqljson-parse');
+const { ACCEPT_TYPES } = require('./constants');
 const constants = require('./constants');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
@@ -37,15 +33,13 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
-        const contentType = ctx.params.contentType || (ctx.meta.headers?ctx.meta.headers['content-type']:undefined);
-        const type=this.negociateType(contentType);
+        const { params } = ctx;
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+        const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
+        const type = this.negociateType(contentType);
         let rdf;
         if (type != constants.CONTENT_MIME_TYPE_SUPPORTED.JSON) {
-          rdf = params.resource
+          rdf = params.resource;
         } else {
           rdf = await jsonld.toRDF(params.resource, {
             format: 'application/n-quads'
@@ -81,8 +75,8 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
-        const contentType = ctx.params.contentType || (ctx.meta.headers?ctx.meta.headers['content-type']:undefined);
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+        const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
         const query = await this.buildPatchQuery(ctx.params);
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
@@ -112,10 +106,8 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+        const { params } = ctx;
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
           body: `DELETE
@@ -143,10 +135,10 @@ const TripleStoreService = {
         webId: {
           type: 'string',
           optional: true
-        },
+        }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
         const results = await ctx.call('triplestore.query', {
           query: `
             SELECT ?p ?v
@@ -176,11 +168,9 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
-        const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+        const { params } = ctx;
+        const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
         const acceptType = this.negociateType(accept);
         const fueskiAccept = this.getFusekiAcceptHeader(accept);
         const headers = {
@@ -213,7 +203,10 @@ const TripleStoreService = {
             return jsonResult;
           }
         } else if (params.query.includes('CONSTRUCT')) {
-          if (acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TURTLE || acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE) {
+          if (
+            acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TURTLE ||
+            acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE
+          ) {
             return await response.text();
           } else {
             return await response.json();
@@ -227,10 +220,10 @@ const TripleStoreService = {
         webId: {
           type: 'string',
           optional: true
-        },
+        }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
           body: 'update=DROP+ALL',
@@ -255,13 +248,13 @@ const TripleStoreService = {
   methods: {
     negociateType(incomingType) {
       let availableMediaTypes = [];
-      let negotiatorType=incomingType;
+      let negotiatorType = incomingType;
       for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
-        let trSupported = constants.TYPES_REPO.filter(tr=>tr.mime==constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
         if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(incomingType)) {
           negotiatorType = trSupported.mimeFull[0];
         }
-        trSupported.mimeFull.forEach(tr=>availableMediaTypes.push(tr));
+        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
       }
       const negotiator = new Negotiator({
         headers: {
@@ -270,25 +263,25 @@ const TripleStoreService = {
       });
       const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
       if (rawNegociatedAccept != undefined) {
-        return constants.TYPES_REPO.filter(tr=>tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
+        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
       } else {
         throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
       }
     },
-    getFusekiAcceptHeader(accept){
+    getFusekiAcceptHeader(accept) {
       const type = this.negociateType(accept);
-      return constants.TYPES_REPO.filter(tr=>tr.mime===type)[0].fusekiMapping;
+      return constants.TYPES_REPO.filter(tr => tr.mime === type)[0].fusekiMapping;
     },
-    buildPatchQuery(params){
+    buildPatchQuery(params) {
       return new Promise((resolve, reject) => {
         let deleteSPARQL = '';
         let insertSPARQL = '';
         let counter = 0;
         let query;
         const text =
-          typeof params.resource === 'string' || params.resource instanceof String ?
-          params.resource :
-          JSON.stringify(params.resource);
+          typeof params.resource === 'string' || params.resource instanceof String
+            ? params.resource
+            : JSON.stringify(params.resource);
         const textStream = streamifyString(text);
         rdfParser
           .parse(textStream, {

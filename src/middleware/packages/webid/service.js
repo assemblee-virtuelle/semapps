@@ -40,9 +40,9 @@ const WebIdService = {
             '@id': `${this.settings.usersContainer}${nick}`,
             ...userData
           },
-          contentType:'application/ld+json',
-          accept:'application/ld+json',
-          webId:'system'
+          contentType: 'application/ld+json',
+          accept: 'application/ld+json',
+          webId: 'system'
         });
 
         ctx.emit('webid.created', newPerson);

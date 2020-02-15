@@ -1,4 +1,4 @@
-const {MoleculerError} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
@@ -30,9 +30,9 @@ module.exports = {
     },
     async handler(ctx) {
       let resource = ctx.params.resource;
-      const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
-      const contentType = ctx.params.contentType || (ctx.meta.headers?ctx.meta.headers['content-type']:undefined);
+      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+      const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
 
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resource['@id'],

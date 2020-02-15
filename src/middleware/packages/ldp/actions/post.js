@@ -10,7 +10,7 @@ module.exports = {
     try {
       let out = await ctx.call('ldp.post', {
         resource: body,
-        accept : constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON
+        accept: constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
@@ -33,15 +33,15 @@ module.exports = {
     },
     async handler(ctx) {
       let resource = ctx.params.resource;
-      const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
-      const contentType = ctx.params.contentType || (ctx.meta.headers?ctx.meta.headers['content-type']:undefined);
+      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+      const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {
         resource: resource,
         webId: webId,
-        contentType:contentType
+        contentType: contentType
       });
 
       const out = await ctx.call('ldp.get', {

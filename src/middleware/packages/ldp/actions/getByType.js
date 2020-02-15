@@ -26,8 +26,8 @@ module.exports = {
       accept: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
