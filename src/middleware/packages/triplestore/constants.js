@@ -4,40 +4,40 @@ const ACCEPT_TYPES = {
   TRIPLE: 'triple'
 };
 
-const ACCEPT_MIME_TYPE_SUPPORTED = {
+const SUPPORTED_ACCEPT_MIME_TYPES = {
   JSON: 'ld+json',
   TURTLE: 'turtle',
   TRIPLE: 'n-triples'
 };
-const CONTENT_MIME_TYPE_SUPPORTED = {
-  JSON: ACCEPT_MIME_TYPE_SUPPORTED.JSON,
-  TURTLE: ACCEPT_MIME_TYPE_SUPPORTED.TURTLE,
-  TRIPLE: ACCEPT_MIME_TYPE_SUPPORTED.TURTLE
+const SUPPORTED_CONTENT_MIME_TYPES = {
+  JSON: SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+  TURTLE: SUPPORTED_ACCEPT_MIME_TYPES.TURTLE,
+  TRIPLE: SUPPORTED_ACCEPT_MIME_TYPES.TURTLE
 };
 
 const TYPES_REPO = [
   {
-    mime: ACCEPT_MIME_TYPE_SUPPORTED.JSON,
-    mimeFull: ['application/' + ACCEPT_MIME_TYPE_SUPPORTED.JSON, 'application/json'],
+    mime: SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+    mimeFull: ['application/' + SUPPORTED_ACCEPT_MIME_TYPES.JSON, 'application/json'],
     fusekiMapping: 'application/ld+json, application/sparql-results+json',
     N3Mapping: ''
   },
   {
-    mime: ACCEPT_MIME_TYPE_SUPPORTED.TURTLE,
-    mimeFull: ['text/' + ACCEPT_MIME_TYPE_SUPPORTED.TURTLE, 'application/' + ACCEPT_MIME_TYPE_SUPPORTED.TURTLE],
+    mime: SUPPORTED_ACCEPT_MIME_TYPES.TURTLE,
+    mimeFull: ['text/' + SUPPORTED_ACCEPT_MIME_TYPES.TURTLE, 'application/' + SUPPORTED_ACCEPT_MIME_TYPES.TURTLE],
     fusekiStoreMapping: 'application/n-quad',
     N3Mapping: 'Turtle'
   },
   {
-    mime: ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE,
-    mimeFull: ['application/' + ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE],
+    mime: SUPPORTED_ACCEPT_MIME_TYPES.TRIPLE,
+    mimeFull: ['application/' + SUPPORTED_ACCEPT_MIME_TYPES.TRIPLE],
     fusekiMapping: 'application/n-triples',
     N3Mapping: 'N-Triples'
   }
 ];
 module.exports = {
-  ACCEPT_MIME_TYPE_SUPPORTED,
-  CONTENT_MIME_TYPE_SUPPORTED,
+  SUPPORTED_ACCEPT_MIME_TYPES,
+  SUPPORTED_CONTENT_MIME_TYPES,
   ACCEPT_TYPES,
   TYPES_REPO
 };

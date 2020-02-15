@@ -3,9 +3,7 @@ const ActorService = {
   dependencies: ['activitypub.collection', 'ldp'],
   actions: {
     async create(ctx) {
-      // console.log('ACTION activitypub.actor.create');
       const actorUri = ctx.params.userData['@id'];
-      // console.log('actorUri',actorUri);
 
       await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following' });
       await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers' });

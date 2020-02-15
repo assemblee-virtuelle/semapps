@@ -52,7 +52,7 @@ module.exports = {
       };
       const negociatedAccept = this.negociateAccept(accept);
 
-      if (negociatedAccept != constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON) {
+      if (negociatedAccept != constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
         result = await this.jsonldToTriples(result, accept);
       }
       return result;

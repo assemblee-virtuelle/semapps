@@ -10,7 +10,7 @@ module.exports = {
     try {
       let out = await ctx.call('ldp.post', {
         resource: body,
-        accept: constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON
+        accept: constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {

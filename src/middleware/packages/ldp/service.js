@@ -109,9 +109,9 @@ const LdpService = {
     negociateAccept(accept) {
       let availableMediaTypes = [];
       let negotiatorAccept = accept;
-      for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
-        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
-        if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(accept)) {
+      for (const key in constants.SUPPORTED_ACCEPT_MIME_TYPES) {
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.SUPPORTED_ACCEPT_MIME_TYPES[key])[0];
+        if (constants.SUPPORTED_ACCEPT_MIME_TYPES[key].includes(accept)) {
           negotiatorAccept = trSupported.mimeFull[0];
         }
         trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
@@ -125,7 +125,7 @@ const LdpService = {
       if (rawNegociatedAccept != undefined) {
         return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
       } else {
-        throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
+        throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
       }
       return negociatedAccept;
     },

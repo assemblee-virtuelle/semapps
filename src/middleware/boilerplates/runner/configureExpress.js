@@ -27,8 +27,7 @@ function configureExpress(broker) {
   app.use(passport.session());
 
   const findOrCreateProfile = async profileData => {
-    let out = await broker.call('webid.create', profileData);
-    return out;
+    return await broker.call('webid.create', profileData);
   };
 
   const connector =

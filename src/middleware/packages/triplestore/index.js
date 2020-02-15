@@ -38,7 +38,7 @@ const TripleStoreService = {
         const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
         const type = this.negociateType(contentType);
         let rdf;
-        if (type != constants.CONTENT_MIME_TYPE_SUPPORTED.JSON) {
+        if (type != constants.SUPPORTED_CONTENT_MIME_TYPES.JSON) {
           rdf = params.resource;
         } else {
           rdf = await jsonld.toRDF(params.resource, {
@@ -189,7 +189,7 @@ const TripleStoreService = {
 
         // Return results as JSON or RDF
         if (params.query.includes('ASK')) {
-          if (acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON) {
+          if (acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
             const jsonResult = await response.json();
             return jsonResult.boolean;
           } else {
@@ -197,15 +197,15 @@ const TripleStoreService = {
           }
         } else if (params.query.includes('SELECT')) {
           const jsonResult = await response.json();
-          if (acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON) {
+          if (acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
             return await this.sparqlJsonParser.parseJsonResults(jsonResult);
           } else {
             return jsonResult;
           }
         } else if (params.query.includes('CONSTRUCT')) {
           if (
-            acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TURTLE ||
-            acceptType === constants.ACCEPT_MIME_TYPE_SUPPORTED.TRIPLE
+            acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.TURTLE ||
+            acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.TRIPLE
           ) {
             return await response.text();
           } else {
@@ -249,9 +249,9 @@ const TripleStoreService = {
     negociateType(incomingType) {
       let availableMediaTypes = [];
       let negotiatorType = incomingType;
-      for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
-        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
-        if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(incomingType)) {
+      for (const key in constants.SUPPORTED_ACCEPT_MIME_TYPES) {
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.SUPPORTED_ACCEPT_MIME_TYPES[key])[0];
+        if (constants.SUPPORTED_ACCEPT_MIME_TYPES[key].includes(incomingType)) {
           negotiatorType = trSupported.mimeFull[0];
         }
         trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
