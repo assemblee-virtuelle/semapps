@@ -51,7 +51,9 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  broker.createService(MongoDbCollectionService);
+  broker.createService(MongoDbCollectionService, {
+    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
+  });
   broker.createService(ActorService, {
     adapter: new TripleStoreAdapter('ldp'),
     settings: {
