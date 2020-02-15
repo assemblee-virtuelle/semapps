@@ -13,7 +13,7 @@ const ActorService = {
   },
   actions: {
     async create(ctx) {
-      if (ctx.params.type && !ACTOR_TYPES.includes(ctx.params.type)) {
+      if (ctx.params.type && !Object.values(ACTOR_TYPES).includes(ctx.params.type)) {
         throw new Error('Unknown actor type: ' + ctx.params.type);
       }
 
