@@ -1,7 +1,7 @@
 const { ACTOR_TYPES } = require('../constants');
 
 const BotService = {
-  name: "", // Must be overwritten
+  name: '', // Must be overwritten
   settings: {
     actor: {
       uri: null,
@@ -12,16 +12,15 @@ const BotService = {
   dependencies: ['activitypub.actor'],
   async started(ctx) {
     const actorSettings = this.settings.actor;
-    if( !actorSettings.uri || !actorSettings.username || !actorSettings.name ) {
-      return Promise.reject(new Error("Please set the actor settings in schema!"));
+    if (!actorSettings.uri || !actorSettings.username || !actorSettings.name) {
+      return Promise.reject(new Error('Please set the actor settings in schema!'));
     }
 
-    // let actor = null;
     let actor = await this.broker.call('activitypub.actor.get', {
       id: actorSettings.uri
     });
 
-    if( !actor ) {
+    if (!actor) {
       console.log(`BotService > Actor ${actorSettings.uri} does not exist yet, create it...`);
 
       actor = await this.broker.call('activitypub.actor.create', {
@@ -31,14 +30,14 @@ const BotService = {
         name: actorSettings.name
       });
 
-      if( this.schema.actorCreated ) {
+      if (this.schema.actorCreated) {
         this.schema.actorCreated(actor, this.broker);
       }
     }
   },
   events: {
     'activitypub.inbox.received'(params) {
-      if( this.schema.inboxReceived ) {
+      if (this.schema.inboxReceived) {
         if (params.recipients.includes(this.settings.actor.uri)) {
           this.schema.inboxReceived(params.activity);
         }
