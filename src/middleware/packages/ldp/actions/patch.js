@@ -6,7 +6,6 @@ module.exports = {
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
     body['@id'] = resourceUri;
     try {
-      console.log(ctx.meta.headers);
       await ctx.call('ldp.patch', {
         resource: body
       });
