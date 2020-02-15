@@ -23,8 +23,9 @@ module.exports = {
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
-      const accept = ctx.params.accept || ctx.meta.headers.accept;
-      const webId = ctx.params.webId || ctx.meta.headers.webId;
+      const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
+      const tripleStoreAccept=this.getTripleStoreAccept(accept);
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri,
         webId: ctx.params.webId
@@ -38,7 +39,7 @@ module.exports = {
                 <${resourceUri}> ?predicate ?object.
               }
                   `,
-          accept: this.getTripleStoreAccept(accept)
+          accept: tripleStoreAccept
         });
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');

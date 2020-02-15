@@ -25,7 +25,7 @@ module.exports = {
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
-      const webId = ctx.params.webId || ctx.meta.headers.webId;
+      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });

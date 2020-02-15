@@ -26,8 +26,8 @@ module.exports = {
       accept: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      const accept = ctx.params.accept || ctx.meta.headers.accept;
-      const webId = ctx.params.webId || ctx.meta.headers.webId;
+      const accept = ctx.params.accept || (ctx.meta.headers?ctx.meta.headers.accept:undefined);
+      const webId = ctx.params.webId || (ctx.meta.headers?ctx.meta.headers.webId:undefined);
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
@@ -39,8 +39,7 @@ module.exports = {
               ?predicate ?object.
           }
               `,
-        accept: 'json',
-        webId: webId
+        accept: 'ld+json'
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
@@ -53,7 +52,7 @@ module.exports = {
       };
       const negociatedAccept = this.negociateAccept(accept);
 
-      if (negociatedAccept != constants.MIME_TYPE_SUPPORTED.JSON) {
+      if (negociatedAccept != constants.ACCEPT_MIME_TYPE_SUPPORTED.JSON) {
         result = await this.jsonldToTriples(result, accept);
       }
       return result;

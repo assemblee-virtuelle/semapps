@@ -30,7 +30,7 @@ const WebIdService = {
         };
 
         let newPerson = await ctx.call('ldp.post', {
-          body: {
+          resource: {
             // containerUri: this.settings.usersContainer,
             // slug: nick,
             '@context': {
@@ -39,7 +39,10 @@ const WebIdService = {
             '@type': 'Person',
             '@id': `${this.settings.usersContainer}${nick}`,
             ...userData
-          }
+          },
+          contentType:'application/ld+json',
+          accept:'application/ld+json',
+          webId:'system'
         });
 
         ctx.emit('webid.created', newPerson);
@@ -105,9 +108,9 @@ const WebIdService = {
                    foaf:email "${email}" .
           }
         `,
-        accept: 'json'
+        accept: 'ld+json',
+        webId: 'system'
       });
-
       return results.length > 0 ? results[0].webId.value : null;
     }
   }

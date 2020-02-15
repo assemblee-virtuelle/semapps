@@ -68,7 +68,7 @@ class OidcConnector extends Connector {
                  foaf:email "${email}" .
         }
       `,
-      accept: 'json'
+      accept: 'ld+json'
     });
 
     return results.length > 0 ? results[0].webId.value : null;
