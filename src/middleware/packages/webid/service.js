@@ -44,7 +44,7 @@ const WebIdService = {
           accept: 'application/ld+json',
           webId: 'system'
         });
-
+        webId=newPerson['@id'];
         ctx.emit('webid.created', newPerson);
       }
 
@@ -111,6 +111,7 @@ const WebIdService = {
         accept: 'ld+json',
         webId: 'system'
       });
+
       return results.length > 0 ? results[0].webId.value : null;
     }
   }

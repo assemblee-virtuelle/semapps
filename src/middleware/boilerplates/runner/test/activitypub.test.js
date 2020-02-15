@@ -37,6 +37,7 @@ describe('Posting to followers', () => {
 
     await broker.watchForEvent('actor.created');
 
+
     const sebastienId = await broker.call('webid.create', {
       email: 'srosset81@gmail.com',
       nick: 'srosset81',
@@ -45,6 +46,7 @@ describe('Posting to followers', () => {
     });
 
     await broker.watchForEvent('actor.created');
+
 
     simon = await broker.call('ldp.get', {
       resourceUri: simonId,
@@ -55,6 +57,7 @@ describe('Posting to followers', () => {
       resourceUri: sebastienId,
       accept: 'application/ld+json'
     });
+
 
     expect(simon.inbox).toBe(simonId + '/inbox');
     expect(simon.outbox).toBe(simonId + '/outbox');
