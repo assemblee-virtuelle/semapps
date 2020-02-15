@@ -15,7 +15,7 @@ const ActorService = {
       // Attach the newly-created collections to the user's profile
       await this.broker.call('ldp.patch', {
         accept: 'json',
-        resource:{
+        resource: {
           '@id': actorUri,
           '@context': 'https://www.w3.org/ns/activitystreams',
           // TODO find a way to add two types with the patch method
