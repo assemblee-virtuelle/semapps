@@ -246,19 +246,33 @@ const TripleStoreService = {
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
   methods: {
-    getAcceptHeader: accept => {
-      switch (accept) {
-        case ACCEPT_TYPES.TURTLE:
-          return 'application/n-quad';
-        case ACCEPT_TYPES.TRIPLE:
-          return 'application/n-triples';
-        case ACCEPT_TYPES.JSON:
-          return 'application/ld+json, application/sparql-results+json';
-        default:
-          throw new Error('Unknown accept parameter: ' + accept);
+    negociateType(incomingType) {
+      let availableMediaTypes = [];
+      let negotiatorType = incomingType;
+      for (const key in constants.ACCEPT_MIME_TYPE_SUPPORTED) {
+        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.ACCEPT_MIME_TYPE_SUPPORTED[key])[0];
+        if (constants.ACCEPT_MIME_TYPE_SUPPORTED[key].includes(incomingType)) {
+          negotiatorType = trSupported.mimeFull[0];
+        }
+        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
+      }
+      const negotiator = new Negotiator({
+        headers: {
+          accept: negotiatorType
+        }
+      });
+      const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
+      if (rawNegociatedAccept != undefined) {
+        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
+      } else {
+        throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
       }
     },
-    buildPatchQuery: params => {
+    getFusekiAcceptHeader(accept) {
+      const type = this.negociateType(accept);
+      return constants.TYPES_REPO.filter(tr => tr.mime === type)[0].fusekiMapping;
+    },
+    buildPatchQuery(params) {
       return new Promise((resolve, reject) => {
         let deleteSPARQL = '';
         let insertSPARQL = '';
