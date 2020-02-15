@@ -75,7 +75,7 @@ const WebIdService = {
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
         type: 'foaf:Person',
-        webId: ctx.meta.webId || ''
+        webId: ctx.meta.webId
       });
     },
     getUsersContainer(ctx) {
