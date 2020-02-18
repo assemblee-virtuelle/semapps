@@ -25,14 +25,15 @@ module.exports = {
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
-      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+      if (ctx.params.webId) {
+        ctx.meta.webId = ctx.params.webId;
+      }
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });
       if (triplesNb > 0) {
         await ctx.call('triplestore.delete', {
-          uri: resourceUri,
-          webId: webId
+          uri: resourceUri
         });
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');

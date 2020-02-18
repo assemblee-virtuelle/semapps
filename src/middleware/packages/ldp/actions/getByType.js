@@ -1,6 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
 const jsonld = require('jsonld');
 const constants = require('./../constants');
+const mimeNegotiation = require('@semapps/mime-negotiation');
+const triplestore = require('@semapps/triplestore');
 
 module.exports = {
   api: async function api(ctx) {
@@ -8,7 +10,8 @@ module.exports = {
     const accept = ctx.meta.headers.accept;
     try {
       let body = await ctx.call('ldp.getByType', {
-        type: type
+        type: type,
+        accept: accept
       });
       ctx.meta.$responseType = accept;
 
@@ -23,11 +26,13 @@ module.exports = {
     params: {
       type: { type: 'string' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string', optional: true }
+      accept: { type: 'string' }
     },
     async handler(ctx) {
-      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+      const accept = ctx.params.accept;
+      if (ctx.params.webId) {
+        ctx.meta.webId = ctx.params.webId;
+      }
       let result = await ctx.call('triplestore.query', {
         query: `
           ${this.getPrefixRdf()}
@@ -39,7 +44,7 @@ module.exports = {
               ?predicate ?object.
           }
               `,
-        accept: 'ld+json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
@@ -50,7 +55,7 @@ module.exports = {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': contains
       };
-      const negociatedAccept = this.negociateAccept(accept);
+      const negociatedAccept = mimeNegotiation.negociateTypeMime(accept);
 
       if (negociatedAccept != constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
         result = await this.jsonldToTriples(result, accept);

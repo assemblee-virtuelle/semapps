@@ -13,6 +13,8 @@ const deleteAction = require('./actions/delete');
 const constants = require('./constants');
 const Negotiator = require('negotiator');
 const { MoleculerError } = require('moleculer').Errors;
+const mimeNegotiation = require('@semapps/mime-negotiation');
+const triplestore = require('@semapps/triplestore');
 
 const LdpService = {
   name: 'ldp',
@@ -94,7 +96,7 @@ const LdpService = {
             FILTER regex(str(?uri), "^${generatedId}")
           }
               `,
-        accept: 'ld+json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
       let counter = 0;
       if (existingBegining.length > 0) {
@@ -106,34 +108,6 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
-    negociateAccept(accept) {
-      let availableMediaTypes = [];
-      let negotiatorAccept = accept;
-      for (const key in constants.SUPPORTED_ACCEPT_MIME_TYPES) {
-        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.SUPPORTED_ACCEPT_MIME_TYPES[key])[0];
-        if (constants.SUPPORTED_ACCEPT_MIME_TYPES[key].includes(accept)) {
-          negotiatorAccept = trSupported.mimeFull[0];
-        }
-        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
-      }
-      const negotiator = new Negotiator({
-        headers: {
-          accept: negotiatorAccept
-        }
-      });
-      const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
-      if (rawNegociatedAccept != undefined) {
-        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
-      } else {
-        throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
-      }
-      return negociatedAccept;
-    },
-    getTripleStoreAccept(accept) {
-      const negociatedAccept = this.negociateAccept(accept);
-      const negociatedTypeRepo = constants.TYPES_REPO.filter(tr => tr.mime == negociatedAccept)[0];
-      return negociatedTypeRepo.tripleStoreMapping;
-    },
     getPrefixRdf() {
       return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
     },
@@ -142,24 +116,16 @@ const LdpService = {
       this.settings.ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
       return pattern;
     },
-    getN3Type(accept) {
-      const targetTypeRepo = constants.TYPES_REPO.filter(tr => accept.includes(tr.mime))[0];
-      if (targetTypeRepo) {
-        return targetTypeRepo.N3Mapping;
-      } else {
-        throw new Error('Unknown N3 content-type: ' + accept);
-      }
-    },
     jsonldToTriples(jsonLdObject, outputContentType) {
       return new Promise((resolve, reject) => {
         const textStream = streamifyString(JSON.stringify(jsonLdObject));
         const writer = new N3.Writer({
           prefixes: this.getPrefixJSON(),
-          format: this.getN3Type(outputContentType)
+          format: mimeNegotiation.negociateTypeN3(outputContentType)
         });
         rdfParser
           .parse(textStream, {
-            contentType: 'application/ld+json'
+            contentType: mimeNegotiation.SUPPORTED_MIME_TYPES.JSON
           })
           .on('data', quad => {
             writer.addQuad(quad);

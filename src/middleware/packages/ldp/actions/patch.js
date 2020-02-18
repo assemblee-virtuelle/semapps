@@ -2,12 +2,15 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    let { typeURL, resourceId, ...body } = ctx.params;
+    let { typeURL, resourceId } = ctx.params;
     const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
+    const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
       await ctx.call('ldp.patch', {
-        resource: body
+        resource: body,
+        accept: ctx.meta.headers.accept,
+        contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -24,29 +27,28 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string', optional: true },
-      contentType: { type: 'string', optional: true }
+      accept: { type: 'string' },
+      contentType: { type: 'string' }
     },
     async handler(ctx) {
       let resource = ctx.params.resource;
-      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
-      const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
+      const accept = ctx.params.accept;
+      const contentType = ctx.params.contentType;
+      if (ctx.params.webId) {
+        ctx.meta.webId = ctx.params.webId;
+      }
 
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resource['@id'],
-        webId: ctx.params.webId
+        uri: resource['@id']
       });
       if (triplesNb > 0) {
         await ctx.call('triplestore.patch', {
           resource: resource,
-          webId: webId,
           contentType: contentType
         });
         const out = await ctx.call('ldp.get', {
           resourceUri: resource['@id'],
-          accept: accept,
-          webId: webId
+          accept: accept
         });
 
         return out;

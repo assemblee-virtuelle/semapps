@@ -5,7 +5,8 @@ module.exports = {
     const accept = ctx.meta.headers.accept;
     try {
       const body = await ctx.call('ldp.get', {
-        resourceUri: resourceUri
+        resourceUri: resourceUri,
+        accept: accept
       });
       ctx.meta.$responseType = accept;
       return body;
@@ -17,19 +18,20 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: 'string',
+      resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string', optional: true }
+      accept: { type: 'string' }
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resourceUri;
-      const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
-      const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
-      const tripleStoreAccept = this.getTripleStoreAccept(accept);
+      const accept = ctx.params.accept;
+      if (ctx.params.webId) {
+        ctx.meta.webId = ctx.params.webId;
+      }
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri,
-        webId: ctx.params.webId
+        uri: resourceUri
       });
+
       if (triplesNb > 0) {
         return await ctx.call('triplestore.query', {
           query: `
@@ -39,7 +41,7 @@ module.exports = {
                 <${resourceUri}> ?predicate ?object.
               }
                   `,
-          accept: tripleStoreAccept
+          accept: accept
         });
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');

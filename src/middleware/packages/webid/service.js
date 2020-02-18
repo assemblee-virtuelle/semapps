@@ -1,4 +1,6 @@
 'use strict';
+const ldp = require('@semapps/ldp');
+const triplestore = require('@semapps/triplestore');
 
 const WebIdService = {
   name: 'webid',
@@ -40,8 +42,8 @@ const WebIdService = {
             '@id': `${this.settings.usersContainer}${nick}`,
             ...userData
           },
-          contentType: 'application/ld+json',
-          accept: 'application/ld+json',
+          contentType: ldp.SUPPORTED_CONTENT_MIME_TYPES.JSON,
+          accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
           webId: 'system'
         });
         webId = newPerson['@id'];
@@ -56,7 +58,7 @@ const WebIdService = {
       if (webId) {
         return await ctx.call('ldp.get', {
           resourceUri: webId,
-          accept: 'application/ld+json',
+          accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
           webId: webId
         });
       } else {
@@ -69,13 +71,16 @@ const WebIdService = {
       body['@id'] = webId;
       return await ctx.call('ldp.patch', {
         resource: body,
-        webId: webId
+        webId: webId,
+        contentType: ldp.SUPPORTED_CONTENT_MIME_TYPES.JSON,
+        accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
     },
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
         type: 'foaf:Person',
-        webId: ctx.meta.webId
+        webId: ctx.meta.webId,
+        accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
     },
     getUsersContainer(ctx) {
@@ -108,7 +113,7 @@ const WebIdService = {
                    foaf:email "${email}" .
           }
         `,
-        accept: 'ld+json',
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
         webId: 'system'
       });
 

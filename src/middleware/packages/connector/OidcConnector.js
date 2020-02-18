@@ -2,6 +2,7 @@ const { Issuer, Strategy } = require('openid-client');
 const jose = require('node-jose');
 const base64url = require('base64url');
 const Connector = require('./Connector');
+const triplestore = require('@semapps/triplestore');
 
 class OidcConnector extends Connector {
   constructor(settings) {
@@ -68,7 +69,7 @@ class OidcConnector extends Connector {
                  foaf:email "${email}" .
         }
       `,
-      accept: 'ld+json'
+      accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
     });
 
     return results.length > 0 ? results[0].webId.value : null;

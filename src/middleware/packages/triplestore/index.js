@@ -8,6 +8,7 @@ const { ACCEPT_TYPES } = require('./constants');
 const constants = require('./constants');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
+const mimeNegotiation = require('@semapps/mime-negotiation');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -27,16 +28,15 @@ const TripleStoreService = {
           type: 'string',
           optional: true
         },
-        accept: {
-          type: 'string',
-          optional: true
+        contentType: {
+          type: 'string'
         }
       },
       async handler(ctx) {
         const { params } = ctx;
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
-        const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
-        const type = this.negociateType(contentType);
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const contentType = ctx.params.contentType;
+        const type = mimeNegotiation.negociateTypeMime(contentType);
         let rdf;
         if (type != constants.SUPPORTED_CONTENT_MIME_TYPES.JSON) {
           rdf = params.resource;
@@ -69,14 +69,13 @@ const TripleStoreService = {
           type: 'string',
           optional: true
         },
-        accept: {
-          type: 'string',
-          optional: true
+        contentType: {
+          type: 'string'
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
-        const contentType = ctx.params.contentType || (ctx.meta.headers ? ctx.meta.headers['content-type'] : undefined);
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const contentType = ctx.params.contentType;
         const query = await this.buildPatchQuery(ctx.params);
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
@@ -99,15 +98,11 @@ const TripleStoreService = {
         webId: {
           type: 'string',
           optional: true
-        },
-        accept: {
-          type: 'string',
-          optional: true
         }
       },
       async handler(ctx) {
         const { params } = ctx;
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+        const webId = ctx.params.webId || ctx.meta.webId;
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
           body: `DELETE
@@ -138,7 +133,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+        const webId = ctx.params.webId || ctx.meta.webId;
         const results = await ctx.call('triplestore.query', {
           query: `
             SELECT ?p ?v
@@ -146,7 +141,7 @@ const TripleStoreService = {
               <${ctx.params.uri}> ?p ?v
             }
           `,
-          accept: 'ld+json',
+          accept: constants.SUPPORTED_CONTENT_MIME_TYPES.JSON,
           webId: webId
         });
         return results.length;
@@ -163,16 +158,16 @@ const TripleStoreService = {
           optional: true
         },
         accept: {
-          type: 'string',
-          optional: true
+          type: 'string'
         }
       },
       async handler(ctx) {
         const { params } = ctx;
-        const accept = ctx.params.accept || (ctx.meta.headers ? ctx.meta.headers.accept : undefined);
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
-        const acceptType = this.negociateType(accept);
-        const fueskiAccept = this.getFusekiAcceptHeader(accept);
+        const accept = ctx.params.accept;
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const acceptNegociatedType = mimeNegotiation.negociateType(accept);
+        const acceptType = acceptNegociatedType.mime;
+        const fueskiAccept = acceptNegociatedType.fusekiMapping;
         const headers = {
           'Content-Type': 'application/sparql-query',
           'X-SemappsUser': webId,
@@ -223,7 +218,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || (ctx.meta.headers ? ctx.meta.headers.webId : undefined);
+        const webId = ctx.params.webId || ctx.meta.webId;
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
           body: 'update=DROP+ALL',
@@ -246,32 +241,6 @@ const TripleStoreService = {
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
   methods: {
-    negociateType(incomingType) {
-      let availableMediaTypes = [];
-      let negotiatorType = incomingType;
-      for (const key in constants.SUPPORTED_ACCEPT_MIME_TYPES) {
-        let trSupported = constants.TYPES_REPO.filter(tr => tr.mime == constants.SUPPORTED_ACCEPT_MIME_TYPES[key])[0];
-        if (constants.SUPPORTED_ACCEPT_MIME_TYPES[key].includes(incomingType)) {
-          negotiatorType = trSupported.mimeFull[0];
-        }
-        trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
-      }
-      const negotiator = new Negotiator({
-        headers: {
-          accept: negotiatorType
-        }
-      });
-      const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
-      if (rawNegociatedAccept != undefined) {
-        return constants.TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0].mime;
-      } else {
-        throw new MoleculerError('Accept not supported : ' + accept, 500, 'ACCEPT_NOT_SUPPORTED');
-      }
-    },
-    getFusekiAcceptHeader(accept) {
-      const type = this.negociateType(accept);
-      return constants.TYPES_REPO.filter(tr => tr.mime === type)[0].fusekiMapping;
-    },
     buildPatchQuery(params) {
       return new Promise((resolve, reject) => {
         let deleteSPARQL = '';
@@ -326,4 +295,8 @@ const TripleStoreService = {
   }
 };
 
-module.exports = TripleStoreService;
+module.exports = {
+  TripleStoreService,
+  SUPPORTED_ACCEPT_MIME_TYPES: constants.SUPPORTED_ACCEPT_MIME_TYPES,
+  SUPPORTED_CONTENT_MIME_TYPES: constants.SUPPORTED_CONTENT_MIME_TYPES
+};
