@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <title>{{ title }}</title>
+    <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<!--    <link href="https://www.colibris-lafabrique.org/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css"-->
+<!--          rel="stylesheet"-->
+<!--          type="text/css"/>-->
+<!--    <link href="https://www.colibris-lafabrique.org/sites/default/files/css/css_LS9OUalDR9-d_lCAvF3yUWjNU6yF8ZBm84jEPRvoyuQ.css"-->
+<!--          rel="stylesheet"-->
+<!--          type="text/css"/>-->
+<!--    <link href="https://www.colibris-lafabrique.org/sites/default/files/css/css_vZGDRQX6DExmgwXx-Ktc2_haSfzG1Q2iSx84wLjCR2o.css"-->
+<!--          rel="stylesheet"-->
+<!--          type="text/css"/>-->
+<!--    <link href="https://www.colibris-lafabrique.org/sites/default/files/css/css_4oU1a3YW8KSxm-t1xv5fGagyJ2ehrZgXlN0iCSPwLmY.css"-->
+<!--          rel="stylesheet"-->
+<!--          type="text/css"/>-->
+<!--    <link href="https://www.colibris-lafabrique.org/sites/default/files/css/css_VXzXhXkLhshQgeaGVLy5RzGsjpookKC6UKZqFioWgCk.css"-->
+<!--          rel="stylesheet"-->
+<!--          type="text/css"/>-->
+    <style>
+        /*! CSS Used from: Embedded */
+        .algolia-places{width:100%;}
+        .ap-input{width:100%;padding-right:35px;padding-left:16px;line-height:40px;height:40px;border:1px solid #CCC;border-radius:3px;outline:none;font:inherit;appearance:none;-webkit-appearance:none;box-sizing:border-box;}
+        .ap-input::-ms-clear{display:none;}
+        .ap-input:hover ~ .ap-input-icon svg,.ap-input:focus ~ .ap-input-icon svg,.ap-input-icon:hover svg{fill:#aaaaaa;}
+        .ap-dropdown-menu{width:100%;background:#ffffff;box-shadow:0 1px 10px rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1);border-radius:3px;margin-top:3px;overflow:hidden;}
+        .ap-input-icon{border:0;background:transparent;position:absolute;top:0;bottom:0;right:16px;outline:none;}
+        .ap-input-icon.ap-icon-pin{cursor:pointer;}
+        .ap-input-icon svg{fill:#cfcfcf;position:absolute;top:50%;right:0;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+        /*! CSS Used from: https://www.colibris-lafabrique.org/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css */
+        form{margin:0;padding:0;}
+        .form-item,.form-actions{margin-top:1em;margin-bottom:1em;}
+        .form-item .description{font-size:0.85em;}
+        label{display:block;font-weight:bold;}
+        label.option{display:inline;font-weight:normal;}
+        .form-checkboxes .form-item{margin-top:0.4em;margin-bottom:0.4em;}
+        input.form-checkbox{vertical-align:middle;}
+        .form-required{color:#f00;}
+        /*! CSS Used from: https://www.colibris-lafabrique.org/sites/default/files/css/css_VXzXhXkLhshQgeaGVLy5RzGsjpookKC6UKZqFioWgCk.css */
+        button,input{font-family:sans-serif;color:#222;}
+        body{margin:0;font-size:1em;line-height:1.4;}
+        ::-moz-selection{background:#b3d4fc;text-shadow:none;}
+        ::selection{background:#b3d4fc;text-shadow:none;}
+        pre{font-family:monospace,serif;_font-family:'courier new',monospace;font-size:1em;}
+        pre{white-space:pre;white-space:pre-wrap;word-wrap:break-word;}
+        svg:not(:root){overflow:hidden;}
+        form{margin:0;}
+        label.option{cursor:pointer;}
+        button,input{font-size:100%;margin:0;vertical-align:baseline;*vertical-align:middle;}
+        button,input{line-height:normal;}
+        button,input[type="submit"]{cursor:pointer;-webkit-appearance:button;*overflow:visible;}
+        input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0;*width:13px;*height:13px;}
+        button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+        @media print{
+            *{background:transparent!important;color:#000!important;box-shadow:none!important;text-shadow:none!important;}
+            pre{border:1px solid #999;page-break-inside:avoid;}
+        }
+        *{box-sizing:border-box;}
+        body{background-color:#fff;color:#7e7e7e;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Ubuntu',sans-serif;font-size:16px;font-weight:400;line-height:1.44;overflow-x:hidden;}
+        input:focus{outline:none;}
+        h1{font-family:'geomanistmedium';font-weight:normal;line-height:1.2;}
+        h1{color:#5b6a6c;font-size:2em;text-transform:uppercase;margin:0.5em 0 0.1em;}
+        #edit-submit{float:left;margin:18px 0 0 0;background:#e68c1e;border-radius:0 4px 4px 0;color:#5b6a6c;padding:1px 8px;font-size:14px;}
+        .page-user #title-page h1{text-align:center;text-transform:none;}
+        .page-user #user-profile-form{margin:0 auto;max-width:22em;width:100%;}
+        .page-user #user-profile-form .form-item,.page-user #user-profile-form .form-actions{margin:0 0 1em 0;}
+        .page-user #user-profile-form input[type=text]{max-width:22em;width:100%;display:block;background:#eef0f0;color:#5b6a6c;padding:.5em;border:none;margin:0 0 .5em 0;}
+        .page-user #user-profile-form #edit-submit{border-radius:4px;width:100%;margin:0;padding:1em;font-size:1.2em;text-align:center;color:#fff;background:#e68c1e;}
+        .page-user #user-profile-form #edit-submit:hover{color:#fff;background:#5b6a6c;}
+        .page-user #user-profile-form{max-width:35em;background:white;padding:2em 2em 5em 2em;}
+        .page-user #user-profile-form input[type=text]{max-width:31em;}
+        #page{margin-top:2em;padding-top:1em;background:#eef0f0;}
+        #title-page{margin-top:-4.5em;margin-bottom:2em;}
+        #title-page h1{color:#e68c1e;font-size:1.8em;}
+        .form-submit{border-radius:4px;background:#5b6a6c;color:#fff;display:inline-block;font-family:'geomanistmedium';margin:.5em 0;padding:0.4em 0.8em;text-decoration:none!important;text-shadow:none;border:none;text-transform:uppercase;}
+        .form-submit:hover,.form-submit:active,.form-submit:focus{background:#e68c1e;color:#fff;}
+        #main{margin-bottom:3em;}
+        .content{position:relative;}
+        .content::after{content:'';clear:both;display:table;}
+        #page,#main{clear:both;width:100%;float:left;margin-left:0;margin-right:0;}
+        .wrapper{clear:both;margin-left:auto;margin-right:auto;max-width:1140px;padding:0 1em;position:relative;}
+        @media (max-width:768px){
+            #page{margin-top:1em;}
+            #title-page{margin-top:-3.6em;margin-bottom:2em;text-align:center;}
+            #title-page h1{font-size:1.4em;}
+            #block-system-main{margin-top:4.5em;}
+        }
+        @media (max-width:380px){
+            body{font-size:1em;}
+            .wrapper{padding:0 .5em;}
+        }
+        /*! CSS Used from: Embedded */
+        .form-type-checkbox,.form-type-radio{margin-top:0.4em!important;margin-bottom:0.4em!important;}
+        .side{padding-top:5px;padding-left:20px;padding-right:20px;}
+        #address{border-radius:0!important;}
+        .ap-input-icon{top:-7px;}
+        /*! CSS Used fontfaces */
+        @font-face{font-family:'Ubuntu';font-style:normal;font-weight:400;src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.eot);src:local("Ubuntu Regular"),local("Ubuntu-Regular"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.eot#iefix) format("embedded-opentype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.woff2) format("woff2"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.woff) format("woff"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.ttf) format("truetype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-regular.svg#Ubuntu) format("svg");}
+        @font-face{font-family:'Ubuntu';font-style:italic;font-weight:400;src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.eot);src:local("Ubuntu Italic"),local("Ubuntu-Italic"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.eot#iefix) format("embedded-opentype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.woff2) format("woff2"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.woff) format("woff"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.ttf) format("truetype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-italic.svg#Ubuntu) format("svg");}
+        @font-face{font-family:'Ubuntu';font-style:normal;font-weight:500;src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.eot);src:local("Ubuntu Medium"),local("Ubuntu-Medium"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.eot#iefix) format("embedded-opentype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.woff2) format("woff2"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.woff) format("woff"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.ttf) format("truetype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500.svg#Ubuntu) format("svg");}
+        @font-face{font-family:'Ubuntu';font-style:italic;font-weight:500;src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.eot);src:local("Ubuntu Medium Italic"),local("Ubuntu-MediumItalic"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.eot#iefix) format("embedded-opentype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.woff2) format("woff2"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.woff) format("woff"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.ttf) format("truetype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/ubuntu-v12-latin-500italic.svg#Ubuntu) format("svg");}
+        @font-face{font-family:'geomanistmedium';src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.eot);src:url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.eot#iefix) format("embedded-opentype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.woff2) format("woff2"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.woff) format("woff"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.ttf) format("truetype"),url(https://www.colibris-lafabrique.org/sites/all/themes/fabrique/fonts/geomanist/geomanist-medium-webfont.svg#geomanistregular) format("svg");font-weight:normal;font-style:normal;}
+
+        #projet-node-form {
+            max-width: 35em;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        #projet-node-form .description {
+            position: relative;
+            top: initial;
+            right: initial;
+            width: initial;
+            font-size: 0.85em;
+        }
+
+        .form-type-checkbox, .form-type-radio {
+            margin-top: 0.4em !important;
+            margin-bottom: 0.4em !important;
+        }
+
+        .side {
+            padding-top: 5px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        #address {
+            border-radius: 0 !important;
+        }
+
+        .ap-input-icon {
+            top: -7px;
+        }
+
+    </style>
+</head>
+<body class="page-user">
+<br/><br/>
+<div id="page">
+    <div id="main">
+        <div class="wrapper">
+            <div id="title-page">
+                <h1>{{ title }}</h1>
+            </div>
+            <div class="region region-content">
+                <div class="block block-system block-main" id="block-system-main">
+                    <div class="content">
+                        <form accept-charset="UTF-8" action="/" id="user-profile-form" method="post">
+                            <input name="actor-id" type="hidden" value="{{ actor.[@id] }}" >
+                            <input name="colibris-id" type="hidden" value="{{ colibrisId }}" >
+                            <div>
+                                <label>Oui je souhaite être informé des nouveaux projets de la Fabrique</label>
+                                <div class="form-item form-type-radio">
+                                    <input id="whole-world" type="radio" name="location" value="whole-world" {{#unless actor.location }}checked{{/unless}}>
+                                    <label class="option" for="whole-world">Dans le monde entier</label>
+                                </div>
+                                <div class="form-item form-type-radio">
+                                    <input id="close-to-me" name="location" type="radio" value="close-to-me" {{#if actor.location }}checked{{/if}}>
+                                    <label class="option" for="close-to-me">Près de chez moi</label>
+                                </div>
+                                <div class="side">
+                                    <input id="address" name="address" placeholder="Ma ville ou mon adresse" type="text">
+                                    <input id="address-result" name="address-result" type="hidden">
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-item form-type-checkboxes">
+                                <label>Touchant les thématiques suivantes</label>
+                                {{#each themes}}
+                                <div class="form-checkboxes" id="edit-field-proj-theme-und">
+                                    <div class="form-item form-type-checkbox form-item-field-proj-theme-und-101">
+                                        <input class="form-checkbox" id="theme-{{@index}}" name="themes[]" type="checkbox" value="{{this.[@id]}}" {{ifInActorThemes this.[@id] "checked"}}>
+                                        <label class="option" for="theme-{{@index}}">{{this.preferedLabel}}</label>
+                                    </div>
+                                </div>
+                                {{/each}}
+                            </div>
+                            <br/>
+                            <div class="form-wrapper" id="edit-account">
+                                <div class="form-item form-type-textfield form-item-mail">
+                                    <label for="email">Mon adresse de courriel
+                                        <span class="form-required" title="Ce champ est requis.">*</span>
+                                    </label>
+                                    <input class="form-text required" id="email" maxlength="254" name="email" placeholder="Adresse de courriel" type="text" value="{{actor.[foaf:mbox]}}">
+                                    <div class="description">Ne sera pas rendue publique et ne sera utilisée que
+                                        pour la réception de nouveaux projets de la Fabrique. Vous pourrez à tout
+                                        moment vous désinscrire.
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="form-actions form-wrapper">
+                            {{#if actor.[@id] }}
+                                <input class="form-submit" id="edit-submit" type="submit" value="Mettre à jour">
+                            {{else}}
+                                <input class="form-submit" id="edit-submit" type="submit" value="S'inscrire">
+                            {{/if}}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/json2/20160511/json2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/places.js@1.18.1"></script>
+<script>
+  var placesAutocomplete = places({
+    appId: 'pl572QT8Z08H',
+    apiKey: 'ff16134222d9ee842cbffa1aa9e546cd',
+    container: document.querySelector('#address'),
+    countries: ['fr','be','ch','ca','lu']
+  });
+  {{#if actor }}
+  placesAutocomplete.setVal("{{ actor.location.name }}");
+  {{/if}}
+  placesAutocomplete.on('change', e => {
+    document.getElementById("address-result").value = JSON.stringify(e.suggestion);
+    document.getElementById("close-to-me").checked = true;
+  });
+  placesAutocomplete.on('clear', () => {
+    document.getElementById("whole-world").checked = true;
+  });
+  document.getElementById("whole-world").addEventListener('change', () => {
+    placesAutocomplete.setVal('');
+    document.getElementById("address-result").value = '';
+  });
+</script>
+</body>
+</html>

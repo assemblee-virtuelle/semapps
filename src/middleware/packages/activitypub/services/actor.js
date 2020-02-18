@@ -11,48 +11,39 @@ const ActorService = {
     containerUri: null, // To be set by the user
     context: 'https://www.w3.org/ns/activitystreams'
   },
-  actions: {
-    async create(ctx) {
-      if (ctx.params.type && !Object.values(ACTOR_TYPES).includes(ctx.params.type)) {
-        throw new Error('Unknown actor type: ' + ctx.params.type);
-      }
+  hooks: {
+    after: {
+      create: [
+        async function attachCollections(ctx, res) {
+          const actorUri = res['@id'];
 
-      const actorUri = ctx.params['@id'];
+          // Create the collections associated with the user
+          await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following', ordered: false });
+          await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers', ordered: false });
+          await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/inbox', ordered: true });
+          await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox', ordered: true });
 
-      // Create the collections associated with the user
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following', ordered: false });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers', ordered: false });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/inbox', ordered: true });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox', ordered: true });
+          let actor = {
+            '@id': actorUri,
+            following: actorUri + '/following',
+            followers: actorUri + '/followers',
+            inbox: actorUri + '/inbox',
+            outbox: actorUri + '/outbox'
+          };
 
-      let actor = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        '@id': ctx.params['@id'],
-        type: ctx.params.type || ACTOR_TYPES.PERSON,
-        preferredUsername: ctx.params.preferredUsername,
-        name: ctx.params.name,
-        following: actorUri + '/following',
-        followers: actorUri + '/followers',
-        inbox: actorUri + '/inbox',
-        outbox: actorUri + '/outbox'
-      };
-
-      if (ctx.params.attachToProfile) {
-        actor = await this._update(ctx, actor);
-      } else {
-        actor = await this._create(ctx, actor);
-      }
-
-      this.broker.emit('actor.created', actor);
-
-      return actor;
+          await this._update(ctx, actor);
+        },
+        function emitEvent(ctx, res) {
+          this.broker.emit('actor.created', res);
+        }
+      ]
     }
   },
   events: {
     async 'webid.created'(userData) {
-      await this.broker.call('activitypub.actor.create', {
-        attachToProfile: true,
+      await this.broker.call('activitypub.actor.update', {
         '@id': userData['@id'],
+        type: ACTOR_TYPES.PERSON,
         preferredUsername: userData.nick,
         name: userData.name + ' ' + userData.familyName
       });

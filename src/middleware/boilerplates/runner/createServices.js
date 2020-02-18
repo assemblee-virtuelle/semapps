@@ -3,7 +3,6 @@ const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const {
   ActivityService,
-  BotService,
   OutboxService,
   InboxService,
   FollowService,
@@ -78,32 +77,6 @@ function createServices(broker) {
   broker.createService(FollowService);
   broker.createService(InboxService);
   broker.createService(OutboxService);
-
-  // ActivityPub Bot
-  broker.createService({
-    name: 'match-bot',
-    mixins: [BotService],
-    dependencies: ['activitypub.outbox'],
-    settings: {
-      actor: {
-        uri: CONFIG.HOME_URL + 'users/' + 'match-bot',
-        username: 'match-bot',
-        name: 'Match Bot'
-      }
-    },
-    actorCreated(actor, broker) {
-      broker.call('activitypub.outbox.post', {
-        username: actor.preferredUsername,
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        actor: actor.id,
-        type: 'Follow',
-        object: 'http://localhost:3000/users/srosset81'
-      });
-    },
-    inboxReceived(activity) {
-      console.log('Activity received in inbox', activity);
-    }
-  });
 }
 
 module.exports = createServices;
