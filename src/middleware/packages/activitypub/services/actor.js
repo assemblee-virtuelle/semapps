@@ -31,10 +31,11 @@ const ActorService = {
             outbox: actorUri + '/outbox'
           };
 
-          await this._update(ctx, actor);
+          return await this._update(ctx, actor);
         },
         function emitEvent(ctx, res) {
           this.broker.emit('actor.created', res);
+          return res;
         }
       ]
     }

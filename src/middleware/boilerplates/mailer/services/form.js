@@ -64,16 +64,11 @@ const FormService = {
 
         message = 'updated';
       } else {
-        await ctx.call('activitypub.actor.create', {
+        actor = await ctx.call('activitypub.actor.create', {
           slug: ctx.params.id,
           type: 'Person',
           ...actorData
         });
-
-        // Retrieve the informations about the actor
-        try {
-          actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
-        } catch( e ) {}
 
         message = 'created';
       }

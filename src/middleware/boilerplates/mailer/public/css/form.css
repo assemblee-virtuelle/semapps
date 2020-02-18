@@ -183,7 +183,8 @@ h1 {
     margin: 0;
 }
 
-.page-user #user-profile-form input[type=text] {
+.page-user #user-profile-form input[type=text],
+.page-user #user-profile-form input[type=email] {
     max-width: 22em;
     width: 100%;
     display: block;
@@ -216,7 +217,8 @@ h1 {
     padding: 2em 2em 6em 2em;
 }
 
-.page-user #user-profile-form input[type=text] {
+.page-user #user-profile-form input[type=text],
+.page-user #user-profile-form input[type=email] {
     max-width: 31em;
 }
 

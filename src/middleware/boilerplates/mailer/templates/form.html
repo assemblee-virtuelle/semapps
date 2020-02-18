@@ -20,12 +20,13 @@
                 <div class="block block-system block-main" id="block-system-main">
                     <div class="content">
                         <form accept-charset="UTF-8" action="/" id="user-profile-form" method="post">
-                            <input name="id" type="hidden" value="{{ id }}" >
+                            <input name="id" type="hidden" value="{{ id }}" />
+                            <div class="messages error" id="error-message" style="display: none"></div>
                             {{#ifCond message '===' 'updated' }}
-                            <div class="messages success">Vos informations ont bien été mises à jour.</div>
+                                <div class="messages success" id="success-message">Vos informations ont bien été mises à jour.</div>
                             {{/ifCond}}
                             {{#ifCond message '===' 'created' }}
-                                <div class="messages success">Vous êtes bien inscrits pour recevoir les nouveaux projets.</div>
+                                <div class="messages success" id="success-message">Vous êtes bien inscrits pour recevoir les nouveaux projets.</div>
                             {{/ifCond}}
                             <div>
                                 <label>Oui je souhaite être informé des nouveaux projets de la Fabrique</label>
@@ -60,7 +61,7 @@
                                     <label for="email">Mon adresse de courriel
                                         <span class="form-required" title="Ce champ est requis.">*</span>
                                     </label>
-                                    <input class="form-text required" id="email" maxlength="254" name="email" placeholder="Adresse de courriel" type="text" value="{{actor.[foaf:mbox]}}">
+                                    <input class="form-text required" id="email" maxlength="254" name="email" placeholder="Adresse de courriel" type="email" value="{{actor.[foaf:mbox]}}" required>
                                     <div class="description">Ne sera pas rendue publique et ne sera utilisée que
                                         pour la réception de nouveaux projets de la Fabrique. Vous pourrez à tout
                                         moment vous désinscrire.
@@ -91,9 +92,9 @@
         container: document.querySelector('#address'),
         countries: ['fr','be','ch','ca','lu']
     });
-        {{#if actor }}
+    {{#if actor }}
         placesAutocomplete.setVal("{{ actor.location.name }}");
-        {{/if}}
+    {{/if}}
     placesAutocomplete.on('change', e => {
         document.getElementById("address-result").value = JSON.stringify(e.suggestion);
         document.getElementById("close-to-me").checked = true;
@@ -104,6 +105,22 @@
     document.getElementById("whole-world").addEventListener('change', () => {
         placesAutocomplete.setVal('');
         document.getElementById("address-result").value = '';
+    });
+    document.getElementById("user-profile-form").addEventListener('submit', e => {
+      var numChecked = 0;
+      var checkboxes = document.querySelectorAll('[id^=theme]');
+      checkboxes.forEach(function(checkbox) {
+        if( checkbox.checked ) {
+          numChecked++;
+        }
+      });
+      if( numChecked === 0 ) {
+          e.preventDefault();
+          if( document.getElementById("success-message") ) document.getElementById("success-message").style.display = 'none';
+          document.getElementById("error-message").style.display = 'block';
+          document.getElementById("error-message").innerText = 'Veuillez sélectionner au moins un thème.';
+          return false;
+      }
     });
 </script>
 </body>
