@@ -8,6 +8,14 @@ const JsonLdStorageMixin = {
     idField: '@id' // Use @id as the main ID field (used by MongoDB)
   },
   actions: {
+    async get(ctx) {
+      // Bypass the default action, to avoid thrown errors
+      try {
+        return await this._get(ctx, { id: ctx.params.id });
+      } catch(e) {
+        return null;
+      }
+    },
     clear(ctx) {
       this.adapter.clear(ctx);
     }
@@ -40,6 +48,11 @@ const JsonLdStorageMixin = {
             ctx.params['@context'] = ctx.service.schema.settings.context;
           }
           return ctx;
+        },
+        function useUriAsId(ctx) {
+          if (!ctx.params['@id'].startsWith('http')) {
+            ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['@id'];
+          }
         }
       ],
       get: [

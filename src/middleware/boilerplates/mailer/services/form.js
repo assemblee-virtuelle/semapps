@@ -9,13 +9,8 @@ const FormService = {
       let actor = {};
 
       if( ctx.params.id ) {
-        try {
-          actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
-        } catch( e ) {
-          actor = {};
-        }
+        actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
       }
-
       if( ctx.params.email ) actor['foaf:mbox'] = ctx.params.email;
 
       const themes = await ctx.call('theme.list');
@@ -30,12 +25,10 @@ const FormService = {
       });
     },
     async process(ctx) {
-      let actor, message;
+      let message;
 
       // Check if an actor already exist with this ID
-      try {
-        actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
-      } catch( e ) {}
+      let actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
 
       let actorData = {
         'foaf:mbox': ctx.params.email,
