@@ -180,7 +180,7 @@ h1 {
 }
 
 .page-user #user-profile-form .form-item, .page-user #user-profile-form .form-actions {
-    margin: 0 0 1em 0;
+    margin: 0;
 }
 
 .page-user #user-profile-form input[type=text] {
@@ -299,10 +299,6 @@ h1 {
 
     #title-page h1 {
         font-size: 1.4em;
-    }
-
-    #block-system-main {
-        margin-top: 4.5em;
     }
 }
 

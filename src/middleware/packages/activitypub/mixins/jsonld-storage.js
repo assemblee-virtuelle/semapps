@@ -16,10 +16,11 @@ const JsonLdStorageMixin = {
     before: {
       create: [
         function addId(ctx) {
-          if (!ctx.params['id'] && !ctx.params['@id']) {
+          if (!ctx.params.id && !ctx.params['@id']) {
             // If no ID has been set, generate one based on the container URI
-            if (ctx.params['slug']) {
-              ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['slug'];
+            if (ctx.params.slug) {
+              ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params.slug;
+              delete ctx.params.slug;
             } else {
               ctx.params['@id'] = ctx.service.schema.settings.containerUri + uuid().substring(0, 8);
             }

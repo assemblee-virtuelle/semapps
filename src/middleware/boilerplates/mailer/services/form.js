@@ -24,43 +24,54 @@ const FormService = {
       return this.formTemplate({
         title: 'Suivez les projets de la Fabrique',
         themes: themes.rows,
-        actor,
-        colibrisId: ctx.params['colibris-id']
+        id: ctx.params.id,
+        actor
       });
     },
     async process(ctx) {
-      let actor, location;
+      let actor;
+
+      // Check if an actor already exist with this ID
+      try {
+        actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+      } catch( e ) {}
+
+      let actorData = {
+        'foaf:mbox': ctx.params.email,
+        'pair:hasInterest': ctx.params.themes
+      };
 
       if( ctx.params.location === 'close-to-me' && ctx.params['address-result'] ) {
         const address = JSON.parse(ctx.params['address-result']);
 
-        location = {
+        actorData.location = {
           type: 'Place',
           name: ctx.params.address,
           latitude: address.latlng.lat,
           longitude: address.latlng.lng,
           radius: 20 * 1000 // TODO set radius based on user response
         };
+      } else if ( ctx.params.location === 'whole-world' && actor.location ) {
+        actorData.location = undefined;
       }
 
-      if( ctx.params['actor-id'] ) {
+      if( actor ) {
         actor = await ctx.call('activitypub.actor.update', {
-          '@id': ctx.params['actor-id'],
-          'foaf:mbox': ctx.params.email,
-          'location': location,
-          'pair:hasInterest': [ ctx.params.themes ]
+          '@id': ctx.params.id,
+          ...actorData
         });
       } else {
-        actor = await ctx.call('activitypub.actor.create', {
-          '@id': ctx.params['colibris-id'],
+        await ctx.call('activitypub.actor.create', {
+          slug: ctx.params.id,
           type: 'Person',
-          'foaf:mbox': ctx.params.email,
-          'location': location,
-          'pair:hasInterest': [ ctx.params.themes ]
+          ...actorData
         });
-      }
 
-      console.log('actor', actor);
+        // Retrieve the informations about the actor
+        try {
+          actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+        } catch( e ) {}
+      }
 
       ctx.meta.$statusCode = 302;
       ctx.meta.$location = "/?id=" + encodeURI(actor['@id']);
