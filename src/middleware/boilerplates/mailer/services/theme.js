@@ -1,5 +1,5 @@
 const { JsonLdStorageMixin } = require('@semapps/activitypub');
-const slugify = require('slugify')
+const slugify = require('slugify');
 
 const ThemeService = {
   name: 'theme',
@@ -13,21 +13,21 @@ const ThemeService = {
   },
   async started() {
     let theme = null;
-    for( let themeLabel of this.settings.themes ) {
+    for (let themeLabel of this.settings.themes) {
       // TODO put in LDP service
       const slug = slugify(themeLabel, { lower: true });
 
       theme = await this.actions.get({ id: this.settings.containerUri + slug });
 
-      if( theme ) {
+      if (theme) {
         // If themes have already been created, exit loop
         break;
-      } else if( !theme ) {
+      } else if (!theme) {
         await this.actions.create({
-          'slug': slug,
+          slug: slug,
           '@context': { '@vocab': 'http://virtual-assembly.org/ontologies/pair' },
-          'type': 'Thema',
-          'preferedLabel': themeLabel
+          type: 'Thema',
+          preferedLabel: themeLabel
         });
       }
     }

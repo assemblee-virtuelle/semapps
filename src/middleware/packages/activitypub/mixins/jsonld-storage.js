@@ -12,7 +12,7 @@ const JsonLdStorageMixin = {
       // Bypass the default action, to avoid thrown errors
       try {
         return await this._get(ctx, { id: ctx.params.id });
-      } catch(e) {
+      } catch (e) {
         return null;
       }
     },
@@ -36,7 +36,7 @@ const JsonLdStorageMixin = {
           return ctx;
         },
         function addContext(ctx) {
-          if( !ctx.params['@context'] ) {
+          if (!ctx.params['@context']) {
             ctx.params['@context'] = ctx.service.schema.settings.context;
           }
           return ctx;
@@ -44,7 +44,7 @@ const JsonLdStorageMixin = {
       ],
       update: [
         function addContext(ctx) {
-          if( !ctx.params['@context'] ) {
+          if (!ctx.params['@context']) {
             ctx.params['@context'] = ctx.service.schema.settings.context;
           }
           return ctx;
