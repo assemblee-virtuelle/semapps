@@ -10,6 +10,7 @@
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
     "dotenv-flow": "^3.1.0",
+    "express": "^4.17.1",
     "handlebars": "^4.7.2",
     "moleculer": "^0.13.12",
     "moleculer-web": "^0.9.0-beta7",

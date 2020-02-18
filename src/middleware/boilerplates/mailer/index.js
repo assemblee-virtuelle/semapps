@@ -1,5 +1,6 @@
 const { ServiceBroker } = require('moleculer');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
+const express = require('express');
 const {
   ActivityService,
   OutboxService,
@@ -9,6 +10,7 @@ const {
   ActorService,
   ObjectService
 } = require('@semapps/activitypub');
+
 const FormService = require('./services/form');
 const ApiService = require('./services/api');
 const MatchBotService = require('./services/match-bot');
@@ -67,8 +69,19 @@ broker.createService(ThemeService, {
 });
 
 broker.createService(FormService);
-broker.createService(ApiService);
 broker.createService(MatchBotService);
+const apiService = broker.createService(ApiService);
 
-// Start
+const app = express();
+app.use(apiService.express());
+app.use(express.static('public'));
+
+app.listen(3000, err => {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log('Listening on port 3000');
+  }
+});
+
 broker.start();
