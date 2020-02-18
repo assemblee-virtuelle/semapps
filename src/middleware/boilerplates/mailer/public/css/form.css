@@ -376,3 +376,20 @@ h1 {
 .ap-input-icon {
     top: -7px;
 }
+
+div.messages.error {
+    background: #dc4764;
+    color: #fff;
+}
+div.messages.success {
+    background: #b9cd00;
+    color: #fff;
+}
+div.messages {
+    background: none;
+    border: none;
+    font-size: 0.9em;
+    margin: 0 0 2em 0;
+    padding: 0.75em 1.5em;
+    border-radius: .25em;
+}

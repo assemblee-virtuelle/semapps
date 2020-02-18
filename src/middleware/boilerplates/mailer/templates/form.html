@@ -21,6 +21,12 @@
                     <div class="content">
                         <form accept-charset="UTF-8" action="/" id="user-profile-form" method="post">
                             <input name="id" type="hidden" value="{{ id }}" >
+                            {{#ifCond message '===' 'updated' }}
+                            <div class="messages success">Vos informations ont bien été mises à jour.</div>
+                            {{/ifCond}}
+                            {{#ifCond message '===' 'created' }}
+                                <div class="messages success">Vous êtes bien inscrits pour recevoir les nouveaux projets.</div>
+                            {{/ifCond}}
                             <div>
                                 <label>Oui je souhaite être informé des nouveaux projets de la Fabrique</label>
                                 <div class="form-item form-type-radio">
@@ -61,6 +67,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <br/>
                         <div class="form-actions form-wrapper">
                             {{#if actor.[@id] }}
                                 <input class="form-submit" id="edit-submit" type="submit" value="Mettre à jour">

@@ -25,11 +25,12 @@ const FormService = {
         title: 'Suivez les projets de la Fabrique',
         themes: themes.rows,
         id: ctx.params.id,
-        actor
+        actor,
+        message: ctx.params.message
       });
     },
     async process(ctx) {
-      let actor;
+      let actor, message;
 
       // Check if an actor already exist with this ID
       try {
@@ -60,6 +61,8 @@ const FormService = {
           '@id': ctx.params.id,
           ...actorData
         });
+
+        message = 'updated';
       } else {
         await ctx.call('activitypub.actor.create', {
           slug: ctx.params.id,
@@ -71,10 +74,12 @@ const FormService = {
         try {
           actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
         } catch( e ) {}
+
+        message = 'created';
       }
 
       ctx.meta.$statusCode = 302;
-      ctx.meta.$location = "/?id=" + encodeURI(actor['@id']);
+      ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;
     }
   },
   async started() {
@@ -83,6 +88,33 @@ const FormService = {
     Handlebars.registerHelper('ifInActorThemes', function(elem, returnValue, options) {
       if(options.data.root.actor && options.data.root.actor['pair:hasInterest'] && options.data.root.actor['pair:hasInterest'].includes(elem)) {
         return returnValue;
+      }
+    });
+
+    Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+      switch (operator) {
+        case '==':
+          return (v1 == v2) ? options.fn(this) : options.inverse(this);
+        case '===':
+          return (v1 === v2) ? options.fn(this) : options.inverse(this);
+        case '!=':
+          return (v1 != v2) ? options.fn(this) : options.inverse(this);
+        case '!==':
+          return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+        case '<':
+          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+        case '<=':
+          return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+        case '>':
+          return (v1 > v2) ? options.fn(this) : options.inverse(this);
+        case '>=':
+          return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+        case '&&':
+          return (v1 && v2) ? options.fn(this) : options.inverse(this);
+        case '||':
+          return (v1 || v2) ? options.fn(this) : options.inverse(this);
+        default:
+          return options.inverse(this);
       }
     });
 
