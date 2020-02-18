@@ -114,7 +114,7 @@ const WebIdService = {
           }
         `,
         accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
-        webId: 'system'
+        webId: ''
       });
 
       return results.length > 0 ? results[0].webId.value : null;
