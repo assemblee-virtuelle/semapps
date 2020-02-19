@@ -1,5 +1,5 @@
 'use strict';
-
+const triplestore = require('@semapps/triplestore');
 const jsonld = require('jsonld');
 
 const CollectionService = {
@@ -18,10 +18,10 @@ const CollectionService = {
         type: ['Collection', 'OrderedCollection'],
         summary: ctx.params.summary
       };
-
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+        contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON,
       });
     },
     /*
@@ -38,7 +38,7 @@ const CollectionService = {
             <${ctx.params.collectionUri}> a as:Collection .
           }
         `,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
       });
     },
     /*
@@ -60,7 +60,8 @@ const CollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+        contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON,
       });
     },
     /*
@@ -73,9 +74,9 @@ const CollectionService = {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            # We need to define the CONSTRUCT clause because it doesn't work 
-            # when there is an OPTIONAL parameter in the WHERE clause 
-            <${ctx.params.collectionUri}> 
+            # We need to define the CONSTRUCT clause because it doesn't work
+            # when there is an OPTIONAL parameter in the WHERE clause
+            <${ctx.params.collectionUri}>
               a as:OrderedCollection ;
               as:items ?item .
             ?item ?itemP ?itemO .
@@ -83,7 +84,7 @@ const CollectionService = {
           }
           WHERE {
             <${ctx.params.collectionUri}> a as:OrderedCollection .
-            OPTIONAL { 
+            OPTIONAL {
               <${ctx.params.collectionUri}> as:items ?item .
               ?item ?itemP ?itemO .
               ${ctx.params.optionalTriplesToFetch || ''}
@@ -91,7 +92,7 @@ const CollectionService = {
           }
           ORDER BY ?published  # Order by activities publication
         `,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
       });
 
       let framed = await jsonld.frame(result, {
@@ -127,7 +128,7 @@ const CollectionService = {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${ctx.params.collectionUri}> 
+            <${ctx.params.collectionUri}>
               a as:Collection ;
               as:items ?item
           }
@@ -136,7 +137,7 @@ const CollectionService = {
             OPTIONAL { <${ctx.params.collectionUri}> as:items ?item . }
           }
         `,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
       });
 
       let framed = await jsonld.frame(result, {
@@ -173,12 +174,12 @@ const CollectionService = {
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           SELECT ?item
           WHERE {
-            <${ctx.params.collectionUri}> 
+            <${ctx.params.collectionUri}>
               a as:Collection ;
               as:items ?item
           }
         `,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
       });
 
       return results ? results.map(item => item.item.value) : [];

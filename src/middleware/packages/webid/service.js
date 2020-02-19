@@ -17,10 +17,8 @@ const WebIdService = {
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
       if (!nick) nick = email.split('@')[0].toLowerCase();
-
       // Check if an user already exist with this email address
       let webId = await this.findUserByEmail(ctx, email);
-
       // If no user exist, create one
       if (!webId) {
         const userData = {
@@ -30,7 +28,6 @@ const WebIdService = {
           familyName,
           homepage
         };
-
         let newPerson = await ctx.call('ldp.post', {
           resource: {
             // containerUri: this.settings.usersContainer,

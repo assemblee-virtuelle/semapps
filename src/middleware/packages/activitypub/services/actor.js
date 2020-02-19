@@ -1,3 +1,4 @@
+const ldp = require('@semapps/ldp');
 const ActorService = {
   name: 'activitypub.actor',
   dependencies: ['activitypub.collection', 'ldp'],
@@ -12,7 +13,8 @@ const ActorService = {
 
       // Attach the newly-created collections to the user's profile
       await this.broker.call('ldp.patch', {
-        accept: 'json',
+        contentType: ldp.SUPPORTED_CONTENT_MIME_TYPES.JSON,
+        accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
         resource: {
           '@id': actorUri,
           '@context': 'https://www.w3.org/ns/activitystreams',
