@@ -8,10 +8,10 @@ const FormService = {
     async display(ctx) {
       let actor = {};
 
-      if( ctx.params.id ) {
+      if (ctx.params.id) {
         actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
       }
-      if( ctx.params.email ) actor['foaf:mbox'] = ctx.params.email;
+      if (ctx.params.email) actor['foaf:mbox'] = ctx.params.email;
 
       const themes = await ctx.call('theme.list');
 
@@ -35,7 +35,7 @@ const FormService = {
         'pair:hasInterest': ctx.params.themes
       };
 
-      if( ctx.params.location === 'close-to-me' && ctx.params['address-result'] ) {
+      if (ctx.params.location === 'close-to-me' && ctx.params['address-result']) {
         const address = JSON.parse(ctx.params['address-result']);
 
         actorData.location = {
@@ -45,11 +45,11 @@ const FormService = {
           longitude: address.latlng.lng,
           radius: 20 * 1000 // TODO set radius based on user response
         };
-      } else if ( ctx.params.location === 'whole-world' && actor.location ) {
+      } else if (ctx.params.location === 'whole-world' && actor.location) {
         actorData.location = undefined;
       }
 
-      if( actor ) {
+      if (actor) {
         actor = await ctx.call('activitypub.actor.update', {
           '@id': ctx.params.id,
           ...actorData
@@ -74,33 +74,37 @@ const FormService = {
     const templateFile = await fs.readFile(__dirname + '/../templates/form.html');
 
     Handlebars.registerHelper('ifInActorThemes', function(elem, returnValue, options) {
-      if(options.data.root.actor && options.data.root.actor['pair:hasInterest'] && options.data.root.actor['pair:hasInterest'].includes(elem)) {
+      if (
+        options.data.root.actor &&
+        options.data.root.actor['pair:hasInterest'] &&
+        options.data.root.actor['pair:hasInterest'].includes(elem)
+      ) {
         return returnValue;
       }
     });
 
-    Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+    Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
       switch (operator) {
         case '==':
-          return (v1 == v2) ? options.fn(this) : options.inverse(this);
+          return v1 == v2 ? options.fn(this) : options.inverse(this);
         case '===':
-          return (v1 === v2) ? options.fn(this) : options.inverse(this);
+          return v1 === v2 ? options.fn(this) : options.inverse(this);
         case '!=':
-          return (v1 != v2) ? options.fn(this) : options.inverse(this);
+          return v1 != v2 ? options.fn(this) : options.inverse(this);
         case '!==':
-          return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+          return v1 !== v2 ? options.fn(this) : options.inverse(this);
         case '<':
-          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+          return v1 < v2 ? options.fn(this) : options.inverse(this);
         case '<=':
-          return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+          return v1 <= v2 ? options.fn(this) : options.inverse(this);
         case '>':
-          return (v1 > v2) ? options.fn(this) : options.inverse(this);
+          return v1 > v2 ? options.fn(this) : options.inverse(this);
         case '>=':
-          return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+          return v1 >= v2 ? options.fn(this) : options.inverse(this);
         case '&&':
-          return (v1 && v2) ? options.fn(this) : options.inverse(this);
+          return v1 && v2 ? options.fn(this) : options.inverse(this);
         case '||':
-          return (v1 || v2) ? options.fn(this) : options.inverse(this);
+          return v1 || v2 ? options.fn(this) : options.inverse(this);
         default:
           return options.inverse(this);
       }

@@ -28,8 +28,8 @@ broker.createService(ActorService, {
     containerUri: CONFIG.HOME_URL + 'users/',
     context: {
       '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      'foaf': 'http://xmlns.com/foaf/0.1/',
-      'pair': 'http://virtual-assembly.org/ontologies/pair#'
+      foaf: 'http://xmlns.com/foaf/0.1/',
+      pair: 'http://virtual-assembly.org/ontologies/pair#'
     }
   }
 });
