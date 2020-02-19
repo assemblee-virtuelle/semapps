@@ -16,8 +16,7 @@ const routeConfig = {
       });
     });
 
-    const data = await bodyPromise;
-    ctx.meta.body = data;
+    ctx.meta.body = await bodyPromise;
     ctx.meta.headers = req.headers;
     if (req.headers.accept === undefined || req.headers.accept.includes('*/*')) {
       ctx.meta.headers.accept = this.settings.defaultLdpAccept;

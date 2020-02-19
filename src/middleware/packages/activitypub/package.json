@@ -4,6 +4,9 @@
   "description": "ActivityPub module for SemApps",
   "license": "Apache-2.0",
   "dependencies": {
+    "@semapps/ldp" :"^1.0.0",
+    "@semapps/mime-types" :"^1.0.0",
+    "@semapps/triplestore" :"^1.0.0",
     "jsonld": "^1.8.1",
     "moleculer": "^0.13.12",
     "moleculer-db": "^0.8.4",

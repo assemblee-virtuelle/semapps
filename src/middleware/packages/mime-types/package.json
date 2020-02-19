@@ -1,0 +1,12 @@
+{
+  "name": "@semapps/mime-types",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "main": "index.js",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "negotiator": "^0.6.2",
+    "moleculer": "^0.13.11"
+  }
+}
