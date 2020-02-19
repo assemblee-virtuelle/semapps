@@ -43,11 +43,11 @@
                                     <input id="address-result" name="address-result" type="hidden">
                                     <div class="radio-buttons">
                                         <span>Distance</span>
-                                        <input type="radio" name="radius" value="25000" id="radius25" checked />
+                                        <input type="radio" name="radius" value="25000" id="radius25" {{#ifCond actor.location.radius '==' '25000' }}checked{{/ifCond}}/>
                                         <label for="radius25">< 25km</label>
-                                        <input type="radio" name="radius" value="50000" id="radius50" />
+                                        <input type="radio" name="radius" value="50000" id="radius50" {{#ifCond actor.location.radius '==' '50000' }}checked{{/ifCond}}/>
                                         <label for="radius50">< 50km</label>
-                                        <input type="radio" name="radius" value="100000" id="radius100" />
+                                        <input type="radio" name="radius" value="100000" id="radius100" {{#ifCond actor.location.radius '==' '100000' }}checked{{/ifCond}}/>
                                         <label for="radius100">< 100km</label>
                                     </div>
                                 </div>

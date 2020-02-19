@@ -418,16 +418,18 @@ div.messages {
     display: inline-block;
     font-weight: normal;
     background-color: #eef0f0;
-    padding: 0.4em 0.9em;
+    padding: 0.3em 0.8em;
     margin-right: 0.5em;
     margin-top: 0.2em;
     margin-bottom: 0.2em;
+    border: #eef0f0 solid 2px;
 }
 
 .radio-buttons label:hover {
-    background-color: lightgray;
+    border-color: lightgray;
+    cursor: pointer;
 }
 
 .radio-buttons input[type="radio"]:checked + label {
-    background-color: lightgray;
+    border-color: lightgray;
 }

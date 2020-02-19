@@ -35,18 +35,28 @@ const FormService = {
         'pair:hasInterest': ctx.params.themes
       };
 
-      if (ctx.params.location === 'close-to-me' && ctx.params['address-result']) {
-        const address = JSON.parse(ctx.params['address-result']);
-
-        actorData.location = {
-          type: 'Place',
-          name: ctx.params.address,
-          latitude: address.latlng.lat,
-          longitude: address.latlng.lng,
-          radius: 20 * 1000 // TODO set radius based on user response
-        };
-      } else if (ctx.params.location === 'whole-world' && actor.location) {
-        actorData.location = undefined;
+      if (ctx.params.location === 'close-to-me') {
+        if( ctx.params['address-result'] ) {
+          const address = JSON.parse(ctx.params['address-result']);
+          actorData.location = {
+            type: 'Place',
+            name: ctx.params.address,
+            latitude: address.latlng.lat,
+            longitude: address.latlng.lng,
+            radius: ctx.params.radius
+          };
+        } else if ( actor && actor.location ) {
+          // If actor location is already set, only update the radius
+          actorData.location = {
+            ...actor.location,
+            radius: ctx.params.radius
+          }
+        }
+      } else if (ctx.params.location === 'whole-world') {
+        // If actor location was set, remove it
+        if( actor && actor.location ) {
+          actorData.location = undefined;
+        }
       }
 
       if (actor) {
