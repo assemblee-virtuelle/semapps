@@ -54,7 +54,7 @@ const OutboxService = {
       ctx.call('triplestore.insert', {
         resource: activity,
         contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
 
       // Attach the newly-created activity to the outbox
