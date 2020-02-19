@@ -1,4 +1,5 @@
 const { ServiceSchemaError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 class TripleStoreAdapter {
   constructor(ldpServiceName) {
@@ -38,7 +39,7 @@ class TripleStoreAdapter {
     return this.broker.call(this.ldpServiceName + '.standardContainer', {
       containerUri: this.service.schema.settings.containerUri,
       context: this.service.schema.settings.context,
-      accept: 'application/ld+json'
+      accept: MIME_TYPES.JSON
     });
   }
 
@@ -53,7 +54,7 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    return this.broker.call(this.ldpServiceName + '.get', { resourceUri: _id, accept: 'application/ld+json' });
+    return this.broker.call(this.ldpServiceName + '.get', { resourceUri: _id, accept: MIME_TYPES.JSON });
   }
 
   /**
@@ -82,7 +83,9 @@ class TripleStoreAdapter {
     return this.broker
       .call(this.ldpServiceName + '.post', {
         containerUri: this.service.schema.settings.containerUri,
-        ...entity
+        resource: entity,
+        contentType: MIME_TYPES.JSON,
+        accept: MIME_TYPES.JSON
       })
       .then(body => {
         this.broker.call(this.ldpServiceName + '.attachToContainer', {
@@ -113,10 +116,13 @@ class TripleStoreAdapter {
   updateById(_id, update) {
     const resource = update['$set'];
     return this.broker.call(this.ldpServiceName + '.patch', {
-      accept: 'application/ld+json',
-      '@context': this.service.schema.settings.context,
-      resourceUri: _id,
-      ...resource
+      resource: {
+        '@context': this.service.schema.settings.context,
+        '@id': _id,
+        ...resource
+      },
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
     });
   }
 
@@ -132,8 +138,6 @@ class TripleStoreAdapter {
    */
   removeById(_id) {
     return this.broker.call(this.ldpServiceName + '.delete', {
-      accept: 'application/ld+json',
-      '@context': this.service.schema.settings.context,
       resourceUri: _id
     });
   }

@@ -25,12 +25,15 @@ const ResourceCreatePage = ({ type, navigate }) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(resource)
     });
 
     const resourceUri = response.headers.get('Location');
+
+    console.log('resourceUri', resourceUri);
 
     await dispatch(addResource(resourceUri, resource));
     await dispatch(addToContainer(resourceConfig.container, resourceUri));

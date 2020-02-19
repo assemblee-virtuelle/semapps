@@ -23,7 +23,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
-    "moleculer": "^0.13.11",
+    "moleculer": "^0.13.12",
     "moleculer-web": "^0.9.0-beta7",
     "moleculer-db-adapter-mongo": "^0.4.7",
     "node-fetch": "^2.6.0",

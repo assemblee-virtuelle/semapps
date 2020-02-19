@@ -6,8 +6,8 @@ module.exports = {
     const accept = ctx.meta.headers.accept;
     try {
       const body = await ctx.call('ldp.get', {
-        resourceUri: resourceUri,
-        accept: accept
+        resourceUri,
+        accept
       });
       ctx.meta.$responseType = accept;
       return body;
