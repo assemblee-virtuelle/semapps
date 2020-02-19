@@ -29,6 +29,14 @@ const ACTIVITY_TYPES = {
   VIEW: 'View'
 };
 
+const ACTOR_TYPES = {
+  APPLICATION: 'Application',
+  GROUP: 'Group',
+  ORGANIZATION: 'Organization',
+  PERSON: 'Person',
+  SERVICE: 'Service'
+};
+
 const OBJECT_TYPES = {
   ARTICLE: 'Article',
   AUDIO: 'Audio',
@@ -48,6 +56,7 @@ const PUBLIC_URI = 'https://www.w3.org/ns/activitystreams#Public';
 
 module.exports = {
   ACTIVITY_TYPES,
+  ACTOR_TYPES,
   OBJECT_TYPES,
   PUBLIC_URI
 };

@@ -12,8 +12,8 @@ const FollowService = {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/followers`
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: `${this.settings.usersContainer}${ctx.params.username}/followers`
       });
 
       if (collection) {
@@ -25,8 +25,8 @@ const FollowService = {
     async listFollowing(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/following`
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: `${this.settings.usersContainer}${ctx.params.username}/following`
       });
 
       if (collection) {
@@ -41,11 +41,11 @@ const FollowService = {
       if (activity.type === ACTIVITY_TYPES.FOLLOW) {
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.object + '/followers',
-          objectUri: activity.actor
+          item: activity.actor
         });
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.actor + '/following',
-          objectUri: activity.object
+          item: activity.object
         });
         this.broker.emit('activitypub.follow.added', { follower: activity.actor });
       }

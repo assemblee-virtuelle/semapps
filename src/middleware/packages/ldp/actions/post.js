@@ -1,11 +1,13 @@
-const MIME_TYPES = require('@semapps/mime-types');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
     let { typeURL, containerUri } = ctx.params;
     const body = ctx.meta.body;
     const slug = ctx.meta.headers.slug;
-    body['@id'] = this.generateId(typeURL, containerUri, slug);
+    if (!body['@id']) {
+      body['@id'] = this.generateId(typeURL, containerUri, slug);
+    }
     try {
       let out = await ctx.call('ldp.post', {
         resource: body,

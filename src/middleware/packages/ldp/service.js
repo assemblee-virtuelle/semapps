@@ -9,7 +9,7 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
-const { negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
+const { negotiateType, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
 
 const LdpService = {
   name: 'ldp',
@@ -29,49 +29,49 @@ const LdpService = {
     patch: patchAction.action,
     api_delete: deleteAction.api,
     delete: deleteAction.action,
-    // /*
-    //  * Returns a LDP container persisted in the triple store
-    //  * @param containerUri The full URI of the container
-    //  */
-    // async standardContainer(ctx) {
-    //   ctx.meta.$responseType = ctx.meta.headers.accept;
-    //
-    //   return await ctx.call('triplestore.query', {
-    //     query: `
-    //       ${this.getPrefixRdf()}
-    //       CONSTRUCT {
-    //         ?container ldp:contains ?subject .
-    //       	?subject ?predicate ?object .
-    //       }
-    //       WHERE {
-    //         <${ctx.params.containerUri}>
-    //             a ldp:BasicContainer ;
-    //       	    ldp:contains ?subject .
-    //       	?container ldp:contains ?subject .
-    //         ?subject ?predicate ?object .
-    //       }
-    //           `,
-    //     accept: this.getAcceptHeader(ctx.meta.headers.accept)
-    //   });
-    // },
-    // /*
-    //  * Attach an object to a standard container
-    //  * @param objectUri The full URI of the object to store
-    //  * @param containerUri The full URI of the container where to store the object
-    //  */
-    // async attachToContainer(ctx) {
-    //   const container = {
-    //     '@context': 'http://www.w3.org/ns/ldp',
-    //     id: ctx.params.containerUri,
-    //     type: ['Container', 'BasicContainer'],
-    //     contains: ctx.params.objectUri
-    //   };
-    //
-    //   return await ctx.call('triplestore.insert', {
-    //     resource: container,
-    //     accept: 'json'
-    //   });
-    // },
+    /*
+     * Returns a LDP container persisted in the triple store
+     * @param containerUri The full URI of the container
+     */
+    async standardContainer(ctx) {
+      ctx.meta.$responseType = ctx.params.accept;
+
+      return await ctx.call('triplestore.query', {
+        query: `
+          ${this.getPrefixRdf()}
+          CONSTRUCT {
+            ?container ldp:contains ?subject .
+          	?subject ?predicate ?object .
+          }
+          WHERE {
+            <${ctx.params.containerUri}>
+                a ldp:BasicContainer ;
+          	    ldp:contains ?subject .
+          	?container ldp:contains ?subject .
+            ?subject ?predicate ?object .
+          }
+              `,
+        accept: negotiateType(ctx.params.accept)
+      });
+    },
+    /*
+     * Attach an object to a standard container
+     * @param objectUri The full URI of the object to store
+     * @param containerUri The full URI of the container where to store the object
+     */
+    async attachToContainer(ctx) {
+      const container = {
+        '@context': 'http://www.w3.org/ns/ldp',
+        id: ctx.params.containerUri,
+        type: ['Container', 'BasicContainer'],
+        contains: ctx.params.objectUri
+      };
+
+      return await ctx.call('triplestore.insert', {
+        resource: container,
+        contentType: MIME_TYPES.JSON
+      });
+    },
     getBaseUrl(ctx) {
       return this.settings.baseUrl;
     }

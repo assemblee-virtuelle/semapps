@@ -1,7 +1,6 @@
 version: '3.5'
 services:
   fuseki:
-    # user: fuseki
     build:
       context: ./src/jena/fuseki-docker
       dockerfile: Dockerfile
@@ -18,6 +17,21 @@ services:
       - semapps
     environment:
       ADMIN_PASSWORD: "admin"
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    networks:
+      - semapps
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: semapps
 
   middleware:
     build:
