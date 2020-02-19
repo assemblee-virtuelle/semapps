@@ -5,6 +5,16 @@ const uuid = require('uuid/v1');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
+const getAction = require('./actions/get');
+const getByTypeAction = require('./actions/getByType');
+const postAction = require('./actions/post');
+const patchAction = require('./actions/patch');
+const deleteAction = require('./actions/delete');
+const constants = require('./constants');
+const Negotiator = require('negotiator');
+const { MoleculerError } = require('moleculer').Errors;
+const mimeNegotiation = require('@semapps/mime-negotiation');
+const triplestore = require('@semapps/triplestore');
 
 const LdpService = {
   name: 'ldp',
@@ -14,166 +24,59 @@ const LdpService = {
   },
   dependencies: ['triplestore'],
   actions: {
-    /*
-     * Returns a container constructed by the middleware, making a SparQL query on the fly
-     */
-    async getByType(ctx) {
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-          	?subject ?predicate ?object.
-          }
-          WHERE {
-          	?subject rdf:type ${ctx.params.typeURL} ;
-            	?predicate ?object.
-          }
-              `,
-        accept: 'json'
-      });
-      result = await jsonld.compact(result, this.getPrefixJSON());
-      const { '@graph': graph, '@context': context, ...other } = result;
-
-      const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
-
-      result = {
-        '@context': result['@context'],
-        '@id': `${this.settings.baseUrl}${ctx.params.typeURL}`,
-        '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': contains
-      };
-
-      if (!ctx.meta.headers.accept.includes('json')) {
-        result = await this.jsonldToTriples(result, ctx.meta.headers.accept);
-      }
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-      return result;
-    },
-    async get(ctx) {
-      const resourceUri =
-        ctx.params.resourceUri || `${this.settings.baseUrl}${ctx.params.typeURL}/${ctx.params.resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri
-      });
-
-      if (triplesNb > 0) {
-        ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
-        return await ctx.call('triplestore.query', {
-          query: `
-            ${this.getPrefixRdf()}
-            CONSTRUCT
-            WHERE {
-              <${resourceUri}> ?predicate ?object.
-            }
-                `,
-          accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
-        });
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async post(ctx) {
-      let { typeURL, containerUri, slug, ...body } = ctx.params;
-      slug = slug || ctx.meta.headers.slug;
-      const generatedId = this.generateId(typeURL, containerUri, slug);
-      body['@id'] = await this.findUnusedUri(ctx, generatedId);
-      const out = await ctx.call('triplestore.insert', {
-        resource: body,
-        accept: 'json'
-      });
-      ctx.meta.$statusCode = 201;
-      ctx.meta.$responseHeaders = {
-        Location: body['@id'],
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-      return out;
-    },
-    async patch(ctx) {
-      let { typeURL, resourceId, resourceUri, accept, ...body } = ctx.params;
-      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', { uri: resourceUri });
-      if (triplesNb > 0) {
-        body['@id'] = resourceUri;
-        const out = await ctx.call('triplestore.patch', {
-          resource: body
-        });
-        ctx.meta.$responseType = accept || ctx.meta.headers.accept;
-        ctx.meta.$statusCode = 204;
-        ctx.meta.$responseHeaders = {
-          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-          'Content-Length': 0
-        };
-        return out;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async delete(ctx) {
-      let { typeURL, resourceId, resourceUri } = ctx.params;
-      if (!resourceUri) resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resourceUri
-      });
-      if (triplesNb > 0) {
-        const out = await ctx.call('triplestore.delete', {
-          uri: resourceUri
-        });
-        ctx.meta.$responseType = ctx.meta.headers.accept;
-        ctx.meta.$statusCode = 204;
-        ctx.meta.$responseHeaders = {
-          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-          'Content-Length': 0
-        };
-        return out;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-
-    /*
-     * Returns a LDP container persisted in the triple store
-     * @param containerUri The full URI of the container
-     */
-    async standardContainer(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-
-      return await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-            ?container ldp:contains ?subject .
-          	?subject ?predicate ?object .
-          }
-          WHERE {
-            <${ctx.params.containerUri}>
-                a ldp:BasicContainer ;
-          	    ldp:contains ?subject .
-          	?container ldp:contains ?subject .
-            ?subject ?predicate ?object .
-          }
-              `,
-        accept: this.getAcceptHeader(ctx.meta.headers.accept)
-      });
-    },
-    /*
-     * Attach an object to a standard container
-     * @param objectUri The full URI of the object to store
-     * @param containerUri The full URI of the container where to store the object
-     */
-    async attachToContainer(ctx) {
-      const container = {
-        '@context': 'http://www.w3.org/ns/ldp',
-        id: ctx.params.containerUri,
-        type: ['Container', 'BasicContainer'],
-        contains: ctx.params.objectUri
-      };
-
-      return await ctx.call('triplestore.insert', {
-        resource: container,
-        accept: 'json'
-      });
-    },
+    api_getByType: getByTypeAction.api,
+    getByType: getByTypeAction.action,
+    api_get: getAction.api,
+    get: getAction.action,
+    api_post: postAction.api,
+    post: postAction.action,
+    api_patch: patchAction.api,
+    patch: patchAction.action,
+    api_delete: deleteAction.api,
+    delete: deleteAction.action,
+    // /*
+    //  * Returns a LDP container persisted in the triple store
+    //  * @param containerUri The full URI of the container
+    //  */
+    // async standardContainer(ctx) {
+    //   ctx.meta.$responseType = ctx.meta.headers.accept;
+    //
+    //   return await ctx.call('triplestore.query', {
+    //     query: `
+    //       ${this.getPrefixRdf()}
+    //       CONSTRUCT {
+    //         ?container ldp:contains ?subject .
+    //       	?subject ?predicate ?object .
+    //       }
+    //       WHERE {
+    //         <${ctx.params.containerUri}>
+    //             a ldp:BasicContainer ;
+    //       	    ldp:contains ?subject .
+    //       	?container ldp:contains ?subject .
+    //         ?subject ?predicate ?object .
+    //       }
+    //           `,
+    //     accept: this.getAcceptHeader(ctx.meta.headers.accept)
+    //   });
+    // },
+    // /*
+    //  * Attach an object to a standard container
+    //  * @param objectUri The full URI of the object to store
+    //  * @param containerUri The full URI of the container where to store the object
+    //  */
+    // async attachToContainer(ctx) {
+    //   const container = {
+    //     '@context': 'http://www.w3.org/ns/ldp',
+    //     id: ctx.params.containerUri,
+    //     type: ['Container', 'BasicContainer'],
+    //     contains: ctx.params.objectUri
+    //   };
+    //
+    //   return await ctx.call('triplestore.insert', {
+    //     resource: container,
+    //     accept: 'json'
+    //   });
+    // },
     getBaseUrl(ctx) {
       return this.settings.baseUrl;
     }
@@ -193,7 +96,7 @@ const LdpService = {
             FILTER regex(str(?uri), "^${generatedId}")
           }
               `,
-        accept: 'json'
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
       let counter = 0;
       if (existingBegining.length > 0) {
@@ -205,18 +108,6 @@ const LdpService = {
       }
       return generatedId.concat(counter > 0 ? counter.toString() : '');
     },
-    getAcceptHeader(accept) {
-      switch (accept) {
-        case 'text/turtle':
-          return 'turtle';
-        case 'application/n-triples':
-          return 'triple';
-        case 'application/ld+json':
-          return 'json';
-        default:
-          throw new Error('Unknown accept parameter: ' + accept);
-      }
-    },
     getPrefixRdf() {
       return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
     },
@@ -225,26 +116,16 @@ const LdpService = {
       this.settings.ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
       return pattern;
     },
-    getN3Type(accept) {
-      switch (accept) {
-        case 'application/n-triples':
-          return 'N-Triples';
-        case 'text/turtle':
-          return 'Turtle';
-        default:
-          throw new Error('Unknown N3 content-type: ' + accept);
-      }
-    },
     jsonldToTriples(jsonLdObject, outputContentType) {
       return new Promise((resolve, reject) => {
         const textStream = streamifyString(JSON.stringify(jsonLdObject));
         const writer = new N3.Writer({
           prefixes: this.getPrefixJSON(),
-          format: this.getN3Type(outputContentType)
+          format: mimeNegotiation.negociateTypeN3(outputContentType)
         });
         rdfParser
           .parse(textStream, {
-            contentType: 'application/ld+json'
+            contentType: mimeNegotiation.SUPPORTED_MIME_TYPES.JSON
           })
           .on('data', quad => {
             writer.addQuad(quad);

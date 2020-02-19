@@ -2,7 +2,7 @@
 
 const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
-
+const triplestore = require('@semapps/triplestore');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
 
 const OutboxService = {
@@ -53,7 +53,8 @@ const OutboxService = {
 
       ctx.call('triplestore.insert', {
         resource: activity,
-        accept: 'json'
+        contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON,
+        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
       });
 
       // Attach the newly-created activity to the outbox

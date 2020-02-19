@@ -29,7 +29,7 @@ ENV FUSEKI_SHA512 62ac07f70c65a77fb90127635fa82f719fd5f4f10339c32702ebd664227d78
 ENV FUSEKI_VERSION 3.14.0
 # Tip: No need for https as we've coded the sha512 above
 ENV ASF_MIRROR_EU http://www.eu.apache.org/dist/
-ENV ASF_MIRROR_US https://www.apache.org/dist/
+ENV ASF_MIRROR_US https://downloads.apache.org/
 ENV ASF_ARCHIVE http://archive.apache.org/dist/
 #
 
