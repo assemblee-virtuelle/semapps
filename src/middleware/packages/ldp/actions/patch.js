@@ -46,12 +46,11 @@ module.exports = {
           resource: resource,
           contentType: contentType
         });
-        const out = await ctx.call('ldp.get', {
+
+        return await ctx.call('ldp.get', {
           resourceUri: resource['@id'],
           accept: accept
         });
-
-        return out;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

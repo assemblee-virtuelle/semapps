@@ -1,6 +1,5 @@
 'use strict';
 
-const jsonld = require('jsonld');
 const uuid = require('uuid/v1');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
@@ -10,11 +9,7 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
-const constants = require('./constants');
-const Negotiator = require('negotiator');
-const { MoleculerError } = require('moleculer').Errors;
-const mimeNegotiation = require('@semapps/mime-negotiation');
-const triplestore = require('@semapps/triplestore');
+const { negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
 
 const LdpService = {
   name: 'ldp',
@@ -96,7 +91,7 @@ const LdpService = {
             FILTER regex(str(?uri), "^${generatedId}")
           }
               `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
       let counter = 0;
       if (existingBegining.length > 0) {
@@ -121,11 +116,11 @@ const LdpService = {
         const textStream = streamifyString(JSON.stringify(jsonLdObject));
         const writer = new N3.Writer({
           prefixes: this.getPrefixJSON(),
-          format: mimeNegotiation.negociateTypeN3(outputContentType)
+          format: negotiateTypeN3(outputContentType)
         });
         rdfParser
           .parse(textStream, {
-            contentType: mimeNegotiation.SUPPORTED_MIME_TYPES.JSON
+            contentType: MIME_TYPES.JSON
           })
           .on('data', quad => {
             writer.addQuad(quad);

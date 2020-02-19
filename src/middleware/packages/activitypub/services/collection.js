@@ -1,5 +1,5 @@
 'use strict';
-const triplestore = require('@semapps/triplestore');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
 
 const CollectionService = {
@@ -20,8 +20,8 @@ const CollectionService = {
       };
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
-        contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       });
     },
     /*
@@ -38,7 +38,7 @@ const CollectionService = {
             <${ctx.params.collectionUri}> a as:Collection .
           }
         `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
     },
     /*
@@ -60,8 +60,8 @@ const CollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
-        contentType: triplestore.SUPPORTED_CONTENT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       });
     },
     /*
@@ -92,7 +92,7 @@ const CollectionService = {
           }
           ORDER BY ?published  # Order by activities publication
         `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
 
       let framed = await jsonld.frame(result, {
@@ -137,7 +137,7 @@ const CollectionService = {
             OPTIONAL { <${ctx.params.collectionUri}> as:items ?item . }
           }
         `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
 
       let framed = await jsonld.frame(result, {
@@ -179,7 +179,7 @@ const CollectionService = {
               as:items ?item
           }
         `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
 
       return results ? results.map(item => item.item.value) : [];

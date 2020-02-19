@@ -1,8 +1,5 @@
-const { MoleculerError } = require('moleculer').Errors;
 const jsonld = require('jsonld');
-const constants = require('./../constants');
-const mimeNegotiation = require('@semapps/mime-negotiation');
-const triplestore = require('@semapps/triplestore');
+const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
@@ -44,7 +41,7 @@ module.exports = {
               ?predicate ?object.
           }
               `,
-        accept: triplestore.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
       result = await jsonld.compact(result, this.getPrefixJSON());
       const { '@graph': graph, '@context': context, ...other } = result;
@@ -55,9 +52,9 @@ module.exports = {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': contains
       };
-      const negociatedAccept = mimeNegotiation.negociateTypeMime(accept);
+      const negotiatedAccept = negotiateTypeMime(accept);
 
-      if (negociatedAccept != constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
+      if (negotiatedAccept !== MIME_TYPES.JSON) {
         result = await this.jsonldToTriples(result, accept);
       }
       return result;

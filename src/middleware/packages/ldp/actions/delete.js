@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+
 module.exports = {
   api: async function api(ctx) {
     try {

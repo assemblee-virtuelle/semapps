@@ -1,5 +1,6 @@
-const mimeNegotiation = require('@semapps/mime-negotiation');
 const { MoleculerError } = require('moleculer').Errors;
+const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+
 const routeConfig = {
   path: '/ldp',
   // When using multiple routes we must set the body parser for each route.
@@ -17,20 +18,19 @@ const routeConfig = {
         resolve(data.length > 0 ? data : undefined);
       });
     });
-    const data = await bodyPromise;
-    ctx.meta.body = data;
+    ctx.meta.body = await bodyPromise;
     // Set request headers to context meta
     ctx.meta.headers = req.headers;
     if (req.headers['content-type'] !== undefined) {
       try {
-        const contentSupportedMime = mimeNegotiation.negociateTypeMime(req.headers['content-type']);
+        const contentSupportedMime = negotiateTypeMime(req.headers['content-type']);
         ctx.meta.headers['content-type'] = contentSupportedMime;
-        if (contentSupportedMime === mimeNegotiation.SUPPORTED_MIME_TYPES.JSON) {
+        if (contentSupportedMime === MIME_TYPES.JSON) {
           ctx.meta.body = JSON.parse(ctx.meta.body);
         }
       } catch (e) {
         throw new MoleculerError(
-          'content-type not supported : ' + req.headers['content-type'],
+          'Content-Type not supported : ' + req.headers['content-type'],
           400,
           'CONTENT_NOT_SUPPORTED'
         );
@@ -38,7 +38,7 @@ const routeConfig = {
     } else {
       if (ctx.meta.body) {
         throw new MoleculerError(
-          'content-type have to be specified for non empty body ',
+          'Content-type have to be specified for non empty body ',
           400,
           'CONTENT_TYPE_NOT_SPECIFIED'
         );
@@ -48,10 +48,9 @@ const routeConfig = {
       req.headers.accept = this.settings.defaultLdpAccept;
     } else {
       try {
-        const acceptSupportedMime = mimeNegotiation.negociateTypeMime(req.headers.accept);
-        ctx.meta.headers['content-type'] = acceptSupportedMime;
+        ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers.accept);
       } catch (e) {
-        throw new MoleculerError('accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED');
+        throw new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED');
       }
     }
   }

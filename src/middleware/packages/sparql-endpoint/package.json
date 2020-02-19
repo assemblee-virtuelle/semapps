@@ -1,12 +1,11 @@
 {
-  "name": "@semapps/mime-negotiation",
+  "name": "@semapps/sparql-endpoint",
   "version": "1.0.0",
   "description": "",
-  "author": "",
   "main": "index.js",
+  "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "negotiator": "^0.6.2",
-    "moleculer": "^0.13.11"
+    "@semapps/triplestore" :"^1.0.0"
   }
 }

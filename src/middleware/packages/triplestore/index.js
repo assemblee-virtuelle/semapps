@@ -2,13 +2,10 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const Negotiator = require('negotiator');
 const { SparqlJsonParser } = require('sparqljson-parse');
-const { ACCEPT_TYPES } = require('./constants');
-const constants = require('./constants');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const mimeNegotiation = require('@semapps/mime-negotiation');
+const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -36,9 +33,9 @@ const TripleStoreService = {
         const { params } = ctx;
         const webId = ctx.params.webId || ctx.meta.webId;
         const contentType = ctx.params.contentType;
-        const type = mimeNegotiation.negociateTypeMime(contentType);
+        const type = negotiateTypeMime(contentType);
         let rdf;
-        if (type != constants.SUPPORTED_CONTENT_MIME_TYPES.JSON) {
+        if (type != MIME_TYPES.JSON) {
           rdf = params.resource;
         } else {
           rdf = await jsonld.toRDF(params.resource, {
@@ -141,7 +138,7 @@ const TripleStoreService = {
               <${ctx.params.uri}> ?p ?v
             }
           `,
-          accept: constants.SUPPORTED_CONTENT_MIME_TYPES.JSON,
+          accept: MIME_TYPES.JSON,
           webId: webId
         });
         return results.length;
@@ -165,7 +162,7 @@ const TripleStoreService = {
         const { params } = ctx;
         const accept = ctx.params.accept;
         const webId = ctx.params.webId || ctx.meta.webId;
-        const acceptNegociatedType = mimeNegotiation.negociateType(accept);
+        const acceptNegociatedType = negotiateType(accept);
         const acceptType = acceptNegociatedType.mime;
         const fueskiAccept = acceptNegociatedType.fusekiMapping;
         const headers = {
@@ -184,7 +181,7 @@ const TripleStoreService = {
 
         // Return results as JSON or RDF
         if (params.query.includes('ASK')) {
-          if (acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
+          if (acceptType === MIME_TYPES.JSON) {
             const jsonResult = await response.json();
             return jsonResult.boolean;
           } else {
@@ -192,16 +189,13 @@ const TripleStoreService = {
           }
         } else if (params.query.includes('SELECT')) {
           const jsonResult = await response.json();
-          if (acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON) {
+          if (acceptType === MIME_TYPES.JSON) {
             return await this.sparqlJsonParser.parseJsonResults(jsonResult);
           } else {
             return jsonResult;
           }
         } else if (params.query.includes('CONSTRUCT')) {
-          if (
-            acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.TURTLE ||
-            acceptType === constants.SUPPORTED_ACCEPT_MIME_TYPES.TRIPLE
-          ) {
+          if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
             return await response.text();
           } else {
             return await response.json();
@@ -296,7 +290,5 @@ const TripleStoreService = {
 };
 
 module.exports = {
-  TripleStoreService,
-  SUPPORTED_ACCEPT_MIME_TYPES: constants.SUPPORTED_ACCEPT_MIME_TYPES,
-  SUPPORTED_CONTENT_MIME_TYPES: constants.SUPPORTED_CONTENT_MIME_TYPES
+  TripleStoreService
 };

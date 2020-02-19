@@ -1,4 +1,5 @@
-const ldp = require('@semapps/ldp');
+const { MIME_TYPES } = require('@semapps/mime-types');
+
 const ActorService = {
   name: 'activitypub.actor',
   dependencies: ['activitypub.collection', 'ldp'],
@@ -13,8 +14,8 @@ const ActorService = {
 
       // Attach the newly-created collections to the user's profile
       await this.broker.call('ldp.patch', {
-        contentType: ldp.SUPPORTED_CONTENT_MIME_TYPES.JSON,
-        accept: ldp.SUPPORTED_ACCEPT_MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON,
+        accept: MIME_TYPES.JSON,
         resource: {
           '@id': actorUri,
           '@context': 'https://www.w3.org/ns/activitystreams',
@@ -28,6 +29,7 @@ const ActorService = {
           outbox: actorUri + '/outbox'
         }
       });
+
       this.broker.emit('actor.created', ctx.params.userData);
     }
   },

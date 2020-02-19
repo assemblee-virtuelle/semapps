@@ -1,18 +1,16 @@
-const { MoleculerError } = require('moleculer').Errors;
-const constants = require('./../constants');
+const MIME_TYPES = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
     let { typeURL, containerUri } = ctx.params;
     const body = ctx.meta.body;
     const slug = ctx.meta.headers.slug;
-    const generatedId = this.generateId(typeURL, containerUri, slug);
-    body['@id'] = generatedId;
+    body['@id'] = this.generateId(typeURL, containerUri, slug);
     try {
       let out = await ctx.call('ldp.post', {
         resource: body,
         contentType: ctx.meta.headers['content-type'],
-        accept: constants.SUPPORTED_ACCEPT_MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON
       });
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
@@ -54,12 +52,10 @@ module.exports = {
         contentType: contentType
       });
 
-      const out = await ctx.call('ldp.get', {
+      return await ctx.call('ldp.get', {
         resourceUri: resource['@id'],
         accept: accept
       });
-
-      return out;
     }
   }
 };
