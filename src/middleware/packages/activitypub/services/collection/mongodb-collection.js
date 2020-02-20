@@ -20,7 +20,7 @@ const MongoDbCollectionService = {
       const collectionExist = await this.actions.exist({ collectionUri: ctx.params.collectionUri });
       if (!collectionExist) {
         const collection = {
-          '@context': 'https://www.w3.org/ns/activitystreams',
+          '@context': this.settings.context,
           '@id': ctx.params.collectionUri,
           type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
           summary: ctx.params.summary

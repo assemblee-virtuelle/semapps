@@ -2,16 +2,16 @@ const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  dependencies: ['webid', 'activitypub.collection'],
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   async started() {
-    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
+    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
   },
   actions: {
     async post(ctx) {
-      let { username, ...activity } = ctx.params;
+      let { username, collectionUri, ...activity } = ctx.params;
 
       const collectionExists = await ctx.call('activitypub.collection.exist', {
-        collectionUri: this.getOutboxUri(username)
+        collectionUri: collectionUri || this.getOutboxUri(username)
       });
 
       if (!collectionExists) {
@@ -43,7 +43,7 @@ const OutboxService = {
 
       // Attach the newly-created activity to the outbox
       ctx.call('activitypub.collection.attach', {
-        collectionUri: this.getOutboxUri(username),
+        collectionUri: collectionUri || this.getOutboxUri(username),
         item: activity
       });
 
@@ -67,7 +67,7 @@ const OutboxService = {
   },
   methods: {
     getOutboxUri(username) {
-      return this.settings.usersContainer + username + '/outbox';
+      return this.settings.actorsContainer + username + '/outbox';
     }
   }
 };
