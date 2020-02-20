@@ -8,6 +8,14 @@ const JsonLdStorageMixin = {
     idField: '@id' // Use @id as the main ID field (used by MongoDB)
   },
   actions: {
+    async get(ctx) {
+      // Bypass the default action, to avoid thrown errors
+      try {
+        return await this._get(ctx, { id: ctx.params.id });
+      } catch (e) {
+        return null;
+      }
+    },
     clear(ctx) {
       this.adapter.clear(ctx);
     }
@@ -16,15 +24,35 @@ const JsonLdStorageMixin = {
     before: {
       create: [
         function addId(ctx) {
-          if (!ctx.params['id'] && !ctx.params['@id']) {
+          if (!ctx.params.id && !ctx.params['@id']) {
             // If no ID has been set, generate one based on the container URI
-            if (ctx.params['slug']) {
-              ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['slug'];
+            if (ctx.params.slug) {
+              ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params.slug;
+              delete ctx.params.slug;
             } else {
               ctx.params['@id'] = ctx.service.schema.settings.containerUri + uuid().substring(0, 8);
             }
           }
           return ctx;
+        },
+        function addContext(ctx) {
+          if (!ctx.params['@context']) {
+            ctx.params['@context'] = ctx.service.schema.settings.context;
+          }
+          return ctx;
+        }
+      ],
+      update: [
+        function addContext(ctx) {
+          if (!ctx.params['@context']) {
+            ctx.params['@context'] = ctx.service.schema.settings.context;
+          }
+          return ctx;
+        },
+        function useUriAsId(ctx) {
+          if (!ctx.params['@id'].startsWith('http')) {
+            ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['@id'];
+          }
         }
       ],
       get: [
@@ -36,8 +64,8 @@ const JsonLdStorageMixin = {
       ]
     },
     after: {
-      create: [(ctx, res) => ctx.service.compactJson(res)],
-      get: [(ctx, res) => ctx.service.compactJson(res)]
+      create: [(ctx, res) => ctx.service.compactJson(res)]
+      // get: [(ctx, res) => ctx.service.compactJson(res)]
     }
   },
   methods: {

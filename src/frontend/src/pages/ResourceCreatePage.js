@@ -33,8 +33,6 @@ const ResourceCreatePage = ({ type, navigate }) => {
 
     const resourceUri = response.headers.get('Location');
 
-    console.log('resourceUri', resourceUri);
-
     await dispatch(addResource(resourceUri, resource));
     await dispatch(addToContainer(resourceConfig.container, resourceUri));
 

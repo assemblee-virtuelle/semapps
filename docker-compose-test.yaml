@@ -1,6 +1,6 @@
 version: '3.5'
 services:
-  fuseki:
+  fuseki_tests:
     build:
       context: ./src/jena/fuseki-docker
       dockerfile: Dockerfile
@@ -18,7 +18,7 @@ services:
     environment:
       ADMIN_PASSWORD: "admin"
 
-  mongo:
+  mongo_tests:
     image: mongo
     container_name: mongo_tests
     restart: always

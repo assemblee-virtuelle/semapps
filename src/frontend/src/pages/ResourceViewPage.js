@@ -95,7 +95,7 @@ const ResourceViewPage = ({ type, resourceId }) => {
         <>
           <br />
           <br />
-          <Inbox userUri={resourceUri} inboxUri={data.inbox || data['http://www.w3.org/ns/ldp#inbox']['@id']} />
+          <Inbox userUri={resourceUri} inboxUri={data.inbox || data['as:inbox']['@id']} />
         </>
       )}
     </Page>

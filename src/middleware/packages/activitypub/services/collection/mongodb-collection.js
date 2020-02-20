@@ -11,25 +11,29 @@ const MongoDbCollectionService = {
   actions: {
     /*
      * Create a persisted collection
+     * Do nothing if the collection already exists
      * @param collectionUri The full URI of the collection
      * @param ordered True if you want to create an OrderedCollection
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      const collection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        '@id': ctx.params.collectionUri,
-        type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-        summary: ctx.params.summary
-      };
+      const collectionExist = await this.actions.exist({ collectionUri: ctx.params.collectionUri });
+      if (!collectionExist) {
+        const collection = {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          '@id': ctx.params.collectionUri,
+          type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+          summary: ctx.params.summary
+        };
 
-      if (ctx.params.ordered) {
-        collection.orderedItems = [];
-      } else {
-        collection.items = [];
+        if (ctx.params.ordered) {
+          collection.orderedItems = [];
+        } else {
+          collection.items = [];
+        }
+
+        return await this._create(ctx, collection);
       }
-
-      return await this._create(ctx, collection);
     },
     /*
      * Checks if the collection exists
@@ -37,8 +41,12 @@ const MongoDbCollectionService = {
      * @return true if the collection exists
      */
     async exist(ctx) {
-      const result = await this._get(ctx, { id: ctx.params.collectionUri });
-      return !!result;
+      try {
+        const result = await this._get(ctx, { id: ctx.params.collectionUri });
+        return !!result;
+      } catch (e) {
+        return false;
+      }
     },
     /*
      * Attach an object to a collection

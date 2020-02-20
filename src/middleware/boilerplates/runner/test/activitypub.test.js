@@ -55,6 +55,7 @@ describe('Posting to followers', () => {
       id: simonId
     });
 
+    expect(simon['@id']).toBe(simonId);
     expect(simon.inbox).toBe(simonId + '/inbox');
     expect(simon.outbox).toBe(simonId + '/outbox');
     expect(simon.followers).toBe(simonId + '/followers');
@@ -65,23 +66,23 @@ describe('Posting to followers', () => {
     const result = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: sebastien.id,
+      actor: sebastien['@id'],
       type: 'Follow',
-      object: simon.id
+      object: simon['@id']
     });
 
     // Wait for actor to be added to the followers collection
     await broker.watchForEvent('activitypub.follow.added');
 
     expect(result.type).toBe('Follow');
-  }, 10000);
+  }, 20000);
 
   test('Get followers list', async () => {
     const result = await broker.call('activitypub.follow.listFollowers', {
       username: simon.preferredUsername
     });
 
-    expect(result.items).toContain(sebastien.id);
+    expect(result.items).toContain(sebastien['@id']);
   });
 
   test('Send message to followers', async () => {
@@ -90,7 +91,7 @@ describe('Posting to followers', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Note',
       name: 'Hello World',
-      attributedTo: simon.id,
+      attributedTo: simon['@id'],
       to: [simon.followers],
       content: 'Voilà mon premier message, très content de faire partie du fedivers !'
     });
