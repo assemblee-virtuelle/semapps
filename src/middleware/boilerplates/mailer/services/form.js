@@ -3,14 +3,17 @@ const fs = require('fs').promises;
 
 const FormService = {
   name: 'form',
-  dependencies: ['theme'],
+  dependencies: ['theme', 'match-bot'],
+  settings: {
+    matchBotUri: null
+  },
   actions: {
     async display(ctx) {
       let actor = ctx.params.id && (await ctx.call('activitypub.actor.get', { id: ctx.params.id }));
 
       if (!actor) {
         actor = {
-          'foaf:mbox': ctx.params.email
+          'pair:e-mail': ctx.params.email
         };
       }
 
@@ -42,7 +45,7 @@ const FormService = {
         let actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
 
         let actorData = {
-          'foaf:mbox': ctx.params.email,
+          'pair:e-mail': ctx.params.email,
           'pair:hasInterest': ctx.params.themes
         };
 
@@ -84,6 +87,14 @@ const FormService = {
             ...actorData
           });
 
+          await ctx.call('activitypub.outbox.post', {
+            collectionUri: actor.outbox,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: actor['@id'],
+            type: 'Follow',
+            object: this.settings.matchBotUri
+          });
+
           message = 'created';
         }
 
@@ -93,6 +104,8 @@ const FormService = {
     }
   },
   async started() {
+    this.settings.matchBotUri = await this.broker.call('match-bot.getUri');
+
     const templateFile = await fs.readFile(__dirname + '/../templates/form.html');
 
     Handlebars.registerHelper('ifInActorThemes', function(elem, returnValue, options) {

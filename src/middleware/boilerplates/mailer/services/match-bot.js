@@ -1,13 +1,10 @@
 const { BotService } = require('@semapps/activitypub');
-const CONFIG = require('../config');
 
 const MatchBotService = {
   name: 'match-bot',
   mixins: [BotService],
-  dependencies: ['activitypub.outbox'],
   settings: {
     actor: {
-      uri: CONFIG.HOME_URL + 'users/' + 'match-bot',
       username: 'match-bot',
       name: 'Match Bot'
     }

@@ -20,7 +20,13 @@ const CONFIG = require('./config');
 const broker = new ServiceBroker();
 
 broker.createService(MongoDbCollectionService, {
-  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
+  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+  settings: {
+    context: {
+      '@vocab': 'https://www.w3.org/ns/activitystreams#',
+      pair: 'http://virtual-assembly.org/ontologies/pair#'
+    }
+  }
 });
 broker.createService(ActorService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
@@ -28,7 +34,6 @@ broker.createService(ActorService, {
     containerUri: CONFIG.HOME_URL + 'users/',
     context: {
       '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      foaf: 'http://xmlns.com/foaf/0.1/',
       pair: 'http://virtual-assembly.org/ontologies/pair#'
     }
   }
@@ -76,12 +81,12 @@ const app = express();
 app.use(apiService.express());
 app.use(express.static('public'));
 
-app.listen(3000, err => {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log('Listening on port 3000');
-  }
+broker.start().then(() => {
+  app.listen(3000, err => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Listening on port 3000');
+    }
+  });
 });
-
-broker.start();

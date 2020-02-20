@@ -10,21 +10,26 @@ const BotService = {
     }
   },
   dependencies: ['activitypub.actor'],
+  actions: {
+    getUri(ctx) {
+      return this.settings.actor.uri;
+    }
+  },
   async started(ctx) {
     const actorSettings = this.settings.actor;
-    if (!actorSettings.uri || !actorSettings.username || !actorSettings.name) {
+    if (!actorSettings.username || !actorSettings.name) {
       return Promise.reject(new Error('Please set the actor settings in schema!'));
     }
 
     let actor = await this.broker.call('activitypub.actor.get', {
-      id: actorSettings.uri
+      id: actorSettings.username
     });
 
     if (!actor) {
-      console.log(`BotService > Actor ${actorSettings.uri} does not exist yet, create it...`);
+      console.log(`BotService > Actor ${actorSettings.username} does not exist yet, create it...`);
 
       actor = await this.broker.call('activitypub.actor.create', {
-        '@id': actorSettings.uri,
+        slug: actorSettings.username,
         type: ACTOR_TYPES.APPLICATION,
         preferredUsername: actorSettings.username,
         name: actorSettings.name
@@ -34,6 +39,8 @@ const BotService = {
         this.schema.actorCreated(actor, this.broker);
       }
     }
+
+    this.settings.actor.uri = actor['@id'];
   },
   events: {
     'activitypub.inbox.received'(params) {
