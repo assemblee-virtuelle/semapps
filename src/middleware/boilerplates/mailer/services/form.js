@@ -36,7 +36,7 @@ const FormService = {
       };
 
       if (ctx.params.location === 'close-to-me') {
-        if( ctx.params['address-result'] ) {
+        if (ctx.params['address-result']) {
           const address = JSON.parse(ctx.params['address-result']);
           actorData.location = {
             type: 'Place',
@@ -45,16 +45,16 @@ const FormService = {
             longitude: address.latlng.lng,
             radius: ctx.params.radius
           };
-        } else if ( actor && actor.location ) {
+        } else if (actor && actor.location) {
           // If actor location is already set, only update the radius
           actorData.location = {
             ...actor.location,
             radius: ctx.params.radius
-          }
+          };
         }
       } else if (ctx.params.location === 'whole-world') {
         // If actor location was set, remove it
-        if( actor && actor.location ) {
+        if (actor && actor.location) {
           actorData.location = undefined;
         }
       }
