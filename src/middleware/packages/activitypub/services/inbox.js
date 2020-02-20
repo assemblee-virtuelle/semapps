@@ -12,6 +12,10 @@ const InboxService = {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
 
+      if (!username && !collectionUri) {
+        throw new Error('Inbox post: a username or collectionUri must be specified');
+      }
+
       const collectionExists = await ctx.call('activitypub.collection.exist', {
         collectionUri: collectionUri || this.getInboxUri(username)
       });
