@@ -64,8 +64,8 @@ const JsonLdStorageMixin = {
       ]
     },
     after: {
-      create: [(ctx, res) => ctx.service.compactJson(res)],
-      get: [(ctx, res) => ctx.service.compactJson(res)]
+      create: [(ctx, res) => ctx.service.compactJson(res)]
+      // get: [(ctx, res) => ctx.service.compactJson(res)]
     }
   },
   methods: {

@@ -10,7 +10,7 @@ const {
   ActorService,
   ObjectService
 } = require('@semapps/activitypub');
-const TripleStoreService = require('@semapps/triplestore');
+const { TripleStoreService } = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const CONFIG = require('./config');

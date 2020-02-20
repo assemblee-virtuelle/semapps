@@ -3,9 +3,9 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
-const { ACCEPT_TYPES } = require('./constants');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
+const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -15,128 +15,218 @@ const TripleStoreService = {
     jenaPassword: null
   },
   actions: {
-    async insert({ params }) {
-      const rdf =
-        typeof params.resource === 'string' || params.resource instanceof String
-          ? params.resource
-          : await jsonld.toRDF(params.resource, {
-              format: 'application/n-quads'
-            });
-
-      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-        method: 'POST',
-        body: `INSERT DATA { ${rdf} }`,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
-          Authorization: this.Authorization
+    insert: {
+      visibility: 'public',
+      params: {
+        resource: {
+          type: 'object'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        },
+        contentType: {
+          type: 'string'
         }
-      });
-
-      if (!response.ok) throw new Error(response.statusText);
-
-      return response;
-    },
-    async patch(ctx) {
-      const query = await this.buildPatchQuery(ctx.params);
-
-      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-        method: 'POST',
-        body: query,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
-          Authorization: this.Authorization
+      },
+      async handler(ctx) {
+        const { params } = ctx;
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const contentType = ctx.params.contentType;
+        const type = negotiateTypeMime(contentType);
+        let rdf;
+        if (type != MIME_TYPES.JSON) {
+          rdf = params.resource;
+        } else {
+          rdf = await jsonld.toRDF(params.resource, {
+            format: 'application/n-quads'
+          });
         }
-      });
 
-      if (!response.ok) throw new Error(response.statusText);
-
-      return response;
-    },
-    async delete({ params }) {
-      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-        method: 'POST',
-        body: `DELETE
-            WHERE
-            { <${params.uri}> ?p ?v }
-            `,
-        headers: {
-          'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': 'URIofUser',
-          Authorization: this.Authorization
-        }
-      });
-
-      if (!response.ok) throw new Error(response.statusText);
-
-      return response;
-    },
-    async countTripleOfSubject(ctx) {
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          SELECT ?p ?v
-          WHERE {
-            <${ctx.params.uri}> ?p ?v
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: `INSERT DATA { ${rdf} }`,
+          headers: {
+            'Content-Type': 'application/sparql-update',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
           }
-        `,
-        accept: 'json'
-      });
-      return results.length;
+        });
+
+        if (!response.ok) throw new Error(response.statusText);
+      }
     },
-    async query({ params }) {
-      // TODO : set X-SemappsUser to 'system' or to the URI of the logged in user
-      const headers = {
-        'Content-Type': 'application/sparql-query',
-        'X-SemappsUser': 'URIofUser',
-        Authorization: this.Authorization,
-        Accept: this.getAcceptHeader(params.accept)
-      };
+    patch: {
+      visibility: 'public',
+      params: {
+        resource: {
+          type: 'object'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        },
+        contentType: {
+          type: 'string'
+        }
+      },
+      async handler(ctx) {
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const contentType = ctx.params.contentType;
+        const query = await this.buildPatchQuery(ctx.params);
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: query,
+          headers: {
+            'Content-Type': 'application/sparql-update',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
+          }
+        });
+        if (!response.ok) throw new Error(response.statusText);
+      }
+    },
+    delete: {
+      visibility: 'public',
+      params: {
+        uri: {
+          type: 'string'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        }
+      },
+      async handler(ctx) {
+        const { params } = ctx;
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: `DELETE
+              WHERE
+              { <${params.uri}> ?p ?v }
+              `,
+          headers: {
+            'Content-Type': 'application/sparql-update',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
+          }
+        });
 
-      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
-        method: 'POST',
-        body: params.query,
-        headers
-      });
-      if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) throw new Error(response.statusText);
 
-      // Return results as JSON or RDF
-      if (params.query.includes('ASK')) {
-        if (params.accept === ACCEPT_TYPES.JSON) {
+        return response;
+      }
+    },
+    countTripleOfSubject: {
+      visibility: 'public',
+      params: {
+        uri: {
+          type: 'string'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        }
+      },
+      async handler(ctx) {
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const results = await ctx.call('triplestore.query', {
+          query: `
+            SELECT ?p ?v
+            WHERE {
+              <${ctx.params.uri}> ?p ?v
+            }
+          `,
+          accept: MIME_TYPES.JSON,
+          webId: webId
+        });
+        return results.length;
+      }
+    },
+    query: {
+      visibility: 'public',
+      params: {
+        query: {
+          type: 'string'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        },
+        accept: {
+          type: 'string'
+        }
+      },
+      async handler(ctx) {
+        const { params } = ctx;
+        const accept = ctx.params.accept;
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const acceptNegociatedType = negotiateType(accept);
+        const acceptType = acceptNegociatedType.mime;
+        const fueskiAccept = acceptNegociatedType.fusekiMapping;
+        const headers = {
+          'Content-Type': 'application/sparql-query',
+          'X-SemappsUser': webId,
+          Authorization: this.Authorization,
+          Accept: fueskiAccept
+        };
+
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
+          method: 'POST',
+          body: params.query,
+          headers
+        });
+        if (!response.ok) throw new Error(response.statusText);
+
+        // Return results as JSON or RDF
+        if (params.query.includes('ASK')) {
+          if (acceptType === MIME_TYPES.JSON) {
+            const jsonResult = await response.json();
+            return jsonResult.boolean;
+          } else {
+            throw new Error('Only JSON accept type is currently allowed for ASK queries');
+          }
+        } else if (params.query.includes('SELECT')) {
           const jsonResult = await response.json();
-          return jsonResult.boolean;
-        } else {
-          throw new Error('Only JSON accept type is currently allowed for ASK queries');
-        }
-      } else if (params.query.includes('SELECT')) {
-        const jsonResult = await response.json();
-        if (params.accept === ACCEPT_TYPES.JSON) {
-          return await this.sparqlJsonParser.parseJsonResults(jsonResult);
-        } else {
-          return jsonResult;
-        }
-      } else if (params.query.includes('CONSTRUCT')) {
-        if (params.accept === ACCEPT_TYPES.TURTLE || params.accept === ACCEPT_TYPES.TRIPLE) {
-          return await response.text();
-        } else {
-          return await response.json();
+          if (acceptType === MIME_TYPES.JSON) {
+            return await this.sparqlJsonParser.parseJsonResults(jsonResult);
+          } else {
+            return jsonResult;
+          }
+        } else if (params.query.includes('CONSTRUCT')) {
+          if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
+            return await response.text();
+          } else {
+            return await response.json();
+          }
         }
       }
     },
-    async dropAll({ params }) {
-      const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-        method: 'POST',
-        body: 'update=DROP+ALL',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-SemappsUser': 'URIofUser',
-          Authorization: this.Authorization
+    dropAll: {
+      visibility: 'public',
+      params: {
+        webId: {
+          type: 'string',
+          optional: true
         }
-      });
+      },
+      async handler(ctx) {
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: 'update=DROP+ALL',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
+          }
+        });
 
-      if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) throw new Error(response.statusText);
 
-      return response;
+        return response;
+      }
     }
   },
   started() {
@@ -145,19 +235,7 @@ const TripleStoreService = {
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
   methods: {
-    getAcceptHeader: accept => {
-      switch (accept) {
-        case ACCEPT_TYPES.TURTLE:
-          return 'application/n-quad';
-        case ACCEPT_TYPES.TRIPLE:
-          return 'application/n-triples';
-        case ACCEPT_TYPES.JSON:
-          return 'application/ld+json, application/sparql-results+json';
-        default:
-          throw new Error('Unknown accept parameter: ' + accept);
-      }
-    },
-    buildPatchQuery: params => {
+    buildPatchQuery(params) {
       return new Promise((resolve, reject) => {
         let deleteSPARQL = '';
         let insertSPARQL = '';
@@ -211,4 +289,6 @@ const TripleStoreService = {
   }
 };
 
-module.exports = TripleStoreService;
+module.exports = {
+  TripleStoreService
+};

@@ -32,7 +32,7 @@ const NavBar = () => {
         <Link to="/profile" className="float-right ">
           <button className="btn btn-outline-dark" type="submit">
             <i className="fa fa-user-o"></i>&nbsp;
-            {user ? user.name : 'Se connecter'}
+            {user ? user['foaf:name'] || user.name : 'Se connecter'}
           </button>
         </Link>
       </div>
