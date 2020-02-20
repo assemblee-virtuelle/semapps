@@ -4,9 +4,9 @@ const BotService = {
   name: '', // Must be overwritten
   settings: {
     actor: {
-      uri: null,
       username: null,
-      name: null
+      name: null,
+      uri: null // Automatically set
     }
   },
   dependencies: ['activitypub.actor'],
@@ -35,8 +35,8 @@ const BotService = {
         name: actorSettings.name
       });
 
-      if (this.schema.actorCreated) {
-        this.schema.actorCreated(actor, this.broker);
+      if (this.actorCreated) {
+        this.actorCreated(actor);
       }
     }
 
@@ -44,11 +44,19 @@ const BotService = {
   },
   events: {
     'activitypub.inbox.received'(params) {
-      if (this.schema.inboxReceived) {
+      if (this.inboxReceived) {
         if (params.recipients.includes(this.settings.actor.uri)) {
-          this.schema.inboxReceived(params.activity);
+          this.inboxReceived(params.activity);
         }
       }
+    }
+  },
+  methods: {
+    async getFollowers() {
+      const result = await this.broker.call('activitypub.follow.listFollowers', {
+        username: this.settings.actor.username
+      });
+      return result && result.items;
     }
   }
 };
