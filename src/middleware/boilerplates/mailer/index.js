@@ -85,11 +85,11 @@ app.use(apiService.express());
 app.use(express.static('public'));
 
 broker.start().then(() => {
-  app.listen(process.env.PORT || 3000, err => {
+  app.listen(process.env.NODE_PORT || 3000, err => {
     if (err) {
       console.error(err);
     } else {
-      console.log('Listening on port ' + process.env.PORT || 3000);
+      console.log('Listening on port ' + process.env.NODE_PORT || 3000);
     }
   });
 });

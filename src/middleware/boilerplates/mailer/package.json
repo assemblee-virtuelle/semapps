@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "start": "nodemon --watch ../..",
-    "prod": "PORT=80 pm2 start index.js --name mailer"
+    "prod": "NODE_PORT=80 pm2 start index.js --name mailer -- --port 80"
   },
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
