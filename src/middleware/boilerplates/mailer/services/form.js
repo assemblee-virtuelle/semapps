@@ -6,12 +6,17 @@ const FormService = {
   dependencies: ['theme'],
   actions: {
     async display(ctx) {
-      let actor = {};
+      let actor = ctx.params.id && await ctx.call('activitypub.actor.get', { id: ctx.params.id });
 
-      if (ctx.params.id) {
-        actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+      if( !actor ) {
+        actor = {
+          'foaf:mbox': ctx.params.email
+        };
       }
-      if (ctx.params.email) actor['foaf:mbox'] = ctx.params.email;
+
+      if( !actor.location ) {
+        actor.location = { radius: '25000' };
+      }
 
       const themes = await ctx.call('theme.list');
 

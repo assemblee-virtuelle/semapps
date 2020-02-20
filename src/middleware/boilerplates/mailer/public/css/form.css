@@ -159,7 +159,6 @@ h1 {
 }
 
 #edit-submit {
-    float: left;
     margin: 18px 0 0 0;
     background: #e68c1e;
     border-radius: 0 4px 4px 0;
@@ -214,7 +213,7 @@ h1 {
 .page-user #user-profile-form {
     max-width: 35em;
     background: white;
-    padding: 2em 2em 6em 2em;
+    padding: 2em;
 }
 
 .page-user #user-profile-form input[type=text],

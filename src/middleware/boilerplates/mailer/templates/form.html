@@ -31,11 +31,11 @@
                             <div>
                                 <label>Oui je souhaite être informé des nouveaux projets de la Fabrique</label>
                                 <div class="form-item form-type-radio">
-                                    <input id="whole-world" type="radio" name="location" value="whole-world" {{#unless actor.location }}checked{{/unless}}>
+                                    <input id="whole-world" type="radio" name="location" value="whole-world" {{#unless actor.location.name }}checked{{/unless}}>
                                     <label class="option" for="whole-world">Dans le monde entier</label>
                                 </div>
                                 <div class="form-item form-type-radio">
-                                    <input id="close-to-me" name="location" type="radio" value="close-to-me" {{#if actor.location }}checked{{/if}}>
+                                    <input id="close-to-me" name="location" type="radio" value="close-to-me" {{#if actor.location.name }}checked{{/if}}>
                                     <label class="option" for="close-to-me">Près de chez moi</label>
                                 </div>
                                 <div class="side">
@@ -82,7 +82,7 @@
                             {{#if actor.[@id] }}
                                 <input class="form-submit" id="edit-submit" type="submit" value="Mettre à jour">
                             {{else}}
-                                <input class="form-submit" id="edit-submit" type="submit" value="S'inscrire">
+                                <input class="form-submit" id="edit-submit" type="submit" value="S'abonner">
                             {{/if}}
                         </div>
                     </form>
