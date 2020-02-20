@@ -44,6 +44,15 @@ const ActorService = {
           this.broker.emit('actor.created', res);
           return res;
         }
+      ],
+      remove: [
+        async function removeCollections(ctx, res) {
+          const actorUri = res['@id'];
+          await ctx.call('activitypub.collection.remove', { id: actorUri + '/following' });
+          await ctx.call('activitypub.collection.remove', { id: actorUri + '/followers' });
+          await ctx.call('activitypub.collection.remove', { id: actorUri + '/inbox' });
+          await ctx.call('activitypub.collection.remove', { id: actorUri + '/outbox' });
+        }
       ]
     }
   },

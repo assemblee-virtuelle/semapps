@@ -28,6 +28,9 @@
                             {{#ifCond message '===' 'created' }}
                                 <div class="messages success" id="success-message">Vous êtes bien inscrits pour recevoir les nouveaux projets.</div>
                             {{/ifCond}}
+                            {{#ifCond message '===' 'deleted' }}
+                                <div class="messages success" id="success-message">Vous avez été désinscrit et vos informations ont été supprimées.</div>
+                            {{/ifCond}}
                             <div>
                                 <label>Oui je souhaite être informé des nouveaux projets de la Fabrique</label>
                                 <div class="form-item form-type-radio">
@@ -78,9 +81,14 @@
                                 </div>
                             </div>
                             <br/>
-                        <div class="form-actions form-wrapper">
+                        <div class="buttons">
                             {{#if actor.[@id] }}
-                                <input class="form-submit" id="edit-submit" type="submit" value="Mettre à jour">
+                                <div class="divide">
+                                    <input class="form-submit" id="edit-submit" type="submit" value="Mettre à jour">
+                                </div>
+                                <div class="divide">
+                                    <input class="form-submit" id="edit-submit" type="submit" value="Se désabonner" name="unsubscribe">
+                                </div>
                             {{else}}
                                 <input class="form-submit" id="edit-submit" type="submit" value="S'abonner">
                             {{/if}}

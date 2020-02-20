@@ -6,15 +6,15 @@ const FormService = {
   dependencies: ['theme'],
   actions: {
     async display(ctx) {
-      let actor = ctx.params.id && await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+      let actor = ctx.params.id && (await ctx.call('activitypub.actor.get', { id: ctx.params.id }));
 
-      if( !actor ) {
+      if (!actor) {
         actor = {
           'foaf:mbox': ctx.params.email
         };
       }
 
-      if( !actor.location ) {
+      if (!actor.location) {
         actor.location = { radius: '25000' };
       }
 
@@ -32,57 +32,64 @@ const FormService = {
     async process(ctx) {
       let message;
 
-      // Check if an actor already exist with this ID
-      let actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+      if (ctx.params.unsubscribe) {
+        await ctx.call('activitypub.actor.remove', { id: ctx.params.id });
 
-      let actorData = {
-        'foaf:mbox': ctx.params.email,
-        'pair:hasInterest': ctx.params.themes
-      };
-
-      if (ctx.params.location === 'close-to-me') {
-        if (ctx.params['address-result']) {
-          const address = JSON.parse(ctx.params['address-result']);
-          actorData.location = {
-            type: 'Place',
-            name: ctx.params.address,
-            latitude: address.latlng.lat,
-            longitude: address.latlng.lng,
-            radius: ctx.params.radius
-          };
-        } else if (actor && actor.location) {
-          // If actor location is already set, only update the radius
-          actorData.location = {
-            ...actor.location,
-            radius: ctx.params.radius
-          };
-        }
-      } else if (ctx.params.location === 'whole-world') {
-        // If actor location was set, remove it
-        if (actor && actor.location) {
-          actorData.location = undefined;
-        }
-      }
-
-      if (actor) {
-        actor = await ctx.call('activitypub.actor.update', {
-          '@id': ctx.params.id,
-          ...actorData
-        });
-
-        message = 'updated';
+        ctx.meta.$statusCode = 302;
+        ctx.meta.$location = `/?message=deleted`;
       } else {
-        actor = await ctx.call('activitypub.actor.create', {
-          slug: ctx.params.id,
-          type: 'Person',
-          ...actorData
-        });
+        // Check if an actor already exist with this ID
+        let actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
 
-        message = 'created';
+        let actorData = {
+          'foaf:mbox': ctx.params.email,
+          'pair:hasInterest': ctx.params.themes
+        };
+
+        if (ctx.params.location === 'close-to-me') {
+          if (ctx.params['address-result']) {
+            const address = JSON.parse(ctx.params['address-result']);
+            actorData.location = {
+              type: 'Place',
+              name: ctx.params.address,
+              latitude: address.latlng.lat,
+              longitude: address.latlng.lng,
+              radius: ctx.params.radius
+            };
+          } else if (actor && actor.location) {
+            // If actor location is already set, only update the radius
+            actorData.location = {
+              ...actor.location,
+              radius: ctx.params.radius
+            };
+          }
+        } else if (ctx.params.location === 'whole-world') {
+          // If actor location was set, remove it
+          if (actor && actor.location) {
+            actorData.location = undefined;
+          }
+        }
+
+        if (actor) {
+          actor = await ctx.call('activitypub.actor.update', {
+            '@id': ctx.params.id,
+            ...actorData
+          });
+
+          message = 'updated';
+        } else {
+          actor = await ctx.call('activitypub.actor.create', {
+            slug: ctx.params.id,
+            type: 'Person',
+            ...actorData
+          });
+
+          message = 'created';
+        }
+
+        ctx.meta.$statusCode = 302;
+        ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;
       }
-
-      ctx.meta.$statusCode = 302;
-      ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;
     }
   },
   async started() {
