@@ -1,5 +1,4 @@
 const JsonLdStorageMixin = require('../mixins/jsonld-storage');
-const { ACTOR_TYPES } = require('../constants');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -31,6 +30,9 @@ const ActorService = {
         inbox: actorUri + '/inbox',
         outbox: actorUri + '/outbox'
       });
+    },
+    getContainerUri(ctx) {
+      return this.settings.containerUri;
     }
   },
   hooks: {

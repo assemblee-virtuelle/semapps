@@ -4,16 +4,16 @@ const { ACTIVITY_TYPES } = require('../constants');
 
 const FollowService = {
   name: 'activitypub.follow',
-  dependencies: ['webid', 'activitypub.collection'],
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   async started() {
-    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
+    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
   },
   actions: {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.usersContainer}${ctx.params.username}/followers`
+        id: `${this.settings.actorsContainer}${ctx.params.username}/followers`
       });
 
       if (collection) {
@@ -26,7 +26,7 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.usersContainer}${ctx.params.username}/following`
+        id: `${this.settings.actorsContainer}${ctx.params.username}/following`
       });
 
       if (collection) {

@@ -4,11 +4,36 @@ const { PUBLIC_URI } = require('../constants');
 
 const InboxService = {
   name: 'activitypub.inbox',
-  dependencies: ['webid', 'activitypub.collection'],
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   async started() {
-    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
+    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
   },
   actions: {
+    async post(ctx) {
+      let { username, collectionUri, ...activity } = ctx.params;
+
+      const collectionExists = await ctx.call('activitypub.collection.exist', {
+        collectionUri: collectionUri || this.getInboxUri(username)
+      });
+
+      if (!collectionExists) {
+        ctx.meta.$statusCode = 404;
+        return;
+      }
+
+      // TODO check JSON-LD signature
+      // TODO check object is valid
+
+      // Attach the newly-created activity to the inbox
+      ctx.call('activitypub.collection.attach', {
+        collectionUri: collectionUri || this.getInboxUri(username),
+        item: activity
+      });
+
+      ctx.emit('activitypub.inbox.received', { activity, recipients: [this.settings.actorsContainer + username] });
+
+      return activity;
+    },
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
@@ -43,13 +68,13 @@ const InboxService = {
   },
   methods: {
     getInboxUri(username) {
-      return this.settings.usersContainer + username + '/inbox';
+      return this.settings.actorsContainer + username + '/inbox';
     },
     getFollowersUri(actorUri) {
       return actorUri + '/followers';
     },
     isLocalUri(uri) {
-      return uri.startsWith(this.settings.usersContainer);
+      return uri.startsWith(this.settings.actorsContainer);
     },
     defaultToArray(value) {
       // Items or recipients may be string or array, so default to array for easier handling
