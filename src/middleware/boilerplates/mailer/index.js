@@ -14,40 +14,42 @@ const {
 const FormService = require('./services/form');
 const ApiService = require('./services/api');
 const MatchBotService = require('./services/match-bot');
+const MailerService = require('./services/mailer');
 const ThemeService = require('./services/theme');
 const CONFIG = require('./config');
+
+const context = {
+  '@vocab': 'https://www.w3.org/ns/activitystreams#',
+  pair: 'http://virtual-assembly.org/ontologies/pair#'
+};
 
 const broker = new ServiceBroker();
 
 broker.createService(MongoDbCollectionService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   settings: {
-    context: {
-      '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      pair: 'http://virtual-assembly.org/ontologies/pair#'
-    }
+    context
   }
 });
 broker.createService(ActorService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   settings: {
     containerUri: CONFIG.HOME_URL + 'users/',
-    context: {
-      '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      pair: 'http://virtual-assembly.org/ontologies/pair#'
-    }
+    context
   }
 });
 broker.createService(ActivityService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   settings: {
-    containerUri: CONFIG.HOME_URL + 'activities/'
+    containerUri: CONFIG.HOME_URL + 'activities/',
+    context
   }
 });
 broker.createService(ObjectService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   settings: {
-    containerUri: CONFIG.HOME_URL + 'objects/'
+    containerUri: CONFIG.HOME_URL + 'objects/',
+    context
   }
 });
 broker.createService(FollowService);
@@ -74,6 +76,7 @@ broker.createService(ThemeService, {
 });
 
 broker.createService(FormService);
+broker.createService(MailerService);
 broker.createService(MatchBotService);
 const apiService = broker.createService(ApiService);
 

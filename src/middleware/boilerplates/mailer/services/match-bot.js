@@ -1,4 +1,4 @@
-const { BotService } = require('@semapps/activitypub');
+const { BotService, ACTIVITY_TYPES } = require('@semapps/activitypub');
 
 const MatchBotService = {
   name: 'match-bot',
@@ -15,34 +15,40 @@ const MatchBotService = {
       //   collectionUri: this.settings.actor.uri + '/outbox',
       //   '@context': 'https://www.w3.org/ns/activitystreams',
       //   actor: this.settings.actor.uri,
-      //   type: 'Follow',
-      //   object: 'URL_OF_LAFABRIQUE_ACTOR'
+      //   type: ACTIVITY_TYPES.FOLLOW,
+      //   object: 'URL_OF_LA_FABRIQUE_ACTOR'
       // });
     },
     async inboxReceived(activity) {
-      let matchingActors = [];
+      if (activity.type === ACTIVITY_TYPES.CREATE) {
+        const matchingFollowers = await this.getMatchingFollowers(activity);
+
+        if (matchingFollowers.length > 0) {
+          await this.broker.call('activitypub.outbox.post', {
+            collectionUri: this.settings.actor.uri + '/outbox',
+            '@context': activity['@context'],
+            actor: this.settings.actor.uri,
+            to: matchingFollowers,
+            type: ACTIVITY_TYPES.ANNOUNCE,
+            activity: activity
+          });
+        }
+      }
+    },
+    async getMatchingFollowers(activity) {
+      let matchingFollowers = [];
       const actors = await this.getFollowers();
 
       for (let actorUri of actors) {
         const actor = await this.broker.call('activitypub.actor.get', { id: actorUri });
         if (this.matchInterests(activity.object, actor)) {
           if (this.matchLocation(activity.object, actor)) {
-            matchingActors.push(actor['@id']);
+            matchingFollowers.push(actor['@id']);
           }
         }
       }
 
-      // If one or more actor match, announce the activity to them
-      if (matchingActors.length > 0) {
-        await this.broker.call('activitypub.outbox.post', {
-          collectionUri: this.settings.actor.uri + '/outbox',
-          '@context': activity.context,
-          actor: this.settings.actor.uri,
-          to: matchingActors,
-          type: 'Announce',
-          activity: activity
-        });
-      }
+      return matchingFollowers;
     },
     matchInterests(object, actor) {
       const actorInterests = Array.isArray(actor['pair:hasInterest'])
@@ -54,6 +60,7 @@ const MatchBotService = {
       return actorInterests.filter(theme => activityInterests.includes(theme)).length > 0;
     },
     matchLocation(object, actor) {
+      // If no location is set, we assume the user wants to be notified of all objects
       if (!actor.location) return true;
       const distance = this.distanceBetweenPoints(
         actor.location.latitude,

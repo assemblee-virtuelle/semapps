@@ -1,3 +1,5 @@
+const constants = require('./constants');
+
 module.exports = {
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
@@ -9,5 +11,6 @@ module.exports = {
   InboxService: require('./services/inbox'),
   ObjectService: require('./services/object'),
   OutboxService: require('./services/outbox'),
-  Routes: require('./routes')
+  Routes: require('./routes'),
+  ...constants
 };
