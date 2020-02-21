@@ -1,9 +1,9 @@
 import produce from 'immer';
 
 const isResourcesList = (data, type) => {
-  if(type==='graph'&& data['@graph']!=undefined){
-    return true
-  }else {
+  if (type === 'graph' && data['@graph'] != undefined) {
+    return true;
+  } else {
     return (
       data['@type'] === type ||
       data['type'] === type ||
@@ -11,7 +11,6 @@ const isResourcesList = (data, type) => {
       (Array.isArray(data['type']) && data['type'].includes(type))
     );
   }
-
 };
 
 const extractItems = (data, predicate) => {
@@ -28,7 +27,6 @@ const extractItems = (data, predicate) => {
 
 const apiReducer = (state = { queries: {} }, action) =>
   produce(state, newState => {
-
     switch (action.type) {
       case 'QUERY_TRIGGER':
         // newState.queries[action.uri] = {
@@ -48,7 +46,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'Collection')) {
@@ -60,7 +58,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'OrderedCollection')) {
@@ -72,7 +70,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'graph')) {
@@ -84,16 +82,16 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else {
-          let data = action.onlyArray?[action.data['@id']]:action.data;
+          let data = action.onlyArray ? [action.data['@id']] : action.data;
           newState.queries[action.uri] = {
-            data: action.onlyArray?[action.data['@id']]:action.data,
+            data: action.onlyArray ? [action.data['@id']] : action.data,
             loading: false,
             error: null,
-            body:action.body
+            body: action.body
           };
         }
         break;
