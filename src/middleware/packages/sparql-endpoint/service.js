@@ -10,7 +10,7 @@ const SparqlEndpointService = {
       ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
       return await ctx.call('triplestore.query', {
         query: query,
-        accept: this.getAcceptHeader(ctx.params.accept || ctx.meta.headers.accept)
+        accept: ctx.params.accept || ctx.meta.headers.accept
       });
     }
   },

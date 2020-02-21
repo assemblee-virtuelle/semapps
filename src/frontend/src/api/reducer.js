@@ -1,12 +1,17 @@
 import produce from 'immer';
 
 const isResourcesList = (data, type) => {
-  return (
-    data['@type'] === type ||
-    data['type'] === type ||
-    (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
-    (Array.isArray(data['type']) && data['type'].includes(type))
-  );
+  if(type==='graph'&& data['@graph']!=undefined){
+    return true
+  }else {
+    return (
+      data['@type'] === type ||
+      data['type'] === type ||
+      (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
+      (Array.isArray(data['type']) && data['type'].includes(type))
+    );
+  }
+
 };
 
 const extractItems = (data, predicate) => {
@@ -23,13 +28,14 @@ const extractItems = (data, predicate) => {
 
 const apiReducer = (state = { queries: {} }, action) =>
   produce(state, newState => {
+
     switch (action.type) {
       case 'QUERY_TRIGGER':
-        newState.queries[action.uri] = {
-          data: null,
-          loading: true,
-          error: null
-        };
+        // newState.queries[action.uri] = {
+        //   data: null,
+        //   loading: true,
+        //   error: null
+        // };
         break;
 
       case 'QUERY_SUCCESS': {
@@ -41,7 +47,8 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body:action.body
             }
           };
         } else if (isResourcesList(action.data, 'Collection')) {
@@ -52,7 +59,8 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body:action.body
             }
           };
         } else if (isResourcesList(action.data, 'OrderedCollection')) {
@@ -63,14 +71,29 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body:action.body
+            }
+          };
+        } else if (isResourcesList(action.data, 'graph')) {
+          const items = extractItems(action.data, '@graph');
+          newState.queries = {
+            ...newState.queries,
+            ...items,
+            [action.uri]: {
+              data: Object.keys(items),
+              loading: false,
+              error: null,
+              body:action.body
             }
           };
         } else {
+          let data = action.onlyArray?[action.data['@id']]:action.data;
           newState.queries[action.uri] = {
-            data: action.data,
+            data: action.onlyArray?[action.data['@id']]:action.data,
             loading: false,
-            error: null
+            error: null,
+            body:action.body
           };
         }
         break;
