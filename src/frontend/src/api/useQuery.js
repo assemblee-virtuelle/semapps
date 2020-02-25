@@ -11,7 +11,7 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
   const callFetch = useCallback(() => {
 
 
-    let { cacheOnly,forceFetch, headers,body,method,onlyArray, ...fetchOptions } = options;
+    let { cacheOnly, headers,body,method,onlyArray, ...fetchOptions } = options;
 
     if (!cachedQuery || (cachedQuery&&cachedQuery.body!=options.body)) {
 
