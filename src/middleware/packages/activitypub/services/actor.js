@@ -50,7 +50,9 @@ const ActorService = {
     }
   },
   events: {
-    async 'webid.created'(userData) {
+    async 'webid.created'(ctx) {
+      const userData = ctx.params;
+
       await this.broker.call('activitypub.actor.update', {
         '@id': userData['@id'],
         '@type': ['Person', 'foaf:Person'],
@@ -63,10 +65,10 @@ const ActorService = {
 
       this.broker.emit('actor.created', actor);
     },
-    async 'webid.updated'(userData) {
+    async 'webid.updated'() {
       // TODO update actor when webid is updated
     },
-    async 'webid.removed'(userData) {
+    async 'webid.removed'() {
       // TODO remove actor (and collections) when webid is removed
     },
     'actor.created'() {

@@ -37,7 +37,9 @@ const FollowService = {
     }
   },
   events: {
-    async 'activitypub.outbox.posted'({ activity }) {
+    async 'activitypub.outbox.posted'(ctx) {
+      const { activity } = ctx.params;
+
       if (activity.type === ACTIVITY_TYPES.FOLLOW) {
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.object + '/followers',

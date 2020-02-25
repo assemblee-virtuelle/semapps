@@ -53,7 +53,9 @@ const InboxService = {
     }
   },
   events: {
-    async 'activitypub.outbox.posted'({ activity }) {
+    async 'activitypub.outbox.posted'(ctx) {
+      const { activity } = ctx.params;
+
       if (activity.to) {
         const recipients = await this.getAllRecipients(activity);
         for (const recipient of recipients) {
