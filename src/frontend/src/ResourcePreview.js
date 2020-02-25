@@ -10,7 +10,7 @@ const ResourcePreview = ({ resourceUri, type }) => {
       <div className="card w25">
         <div className="card-body">
           <h5 className="card-title">
-            {resource.label || resource['pair:label'] || resource.name || resource['foaf:name']}
+            {resource.preferedLabel || resource['pair:preferedLabel'] || resource.name || resource['foaf:name']}
           </h5>
           <Link to={'/resources/' + type + '/' + getResourceId(resourceUri, type)} className="btn btn-primary">
             Voir

@@ -9,11 +9,12 @@ import { addFlash } from '../app/actions';
 import resourcesTypes from '../resourcesTypes';
 import ResourceField from '../ResourceField';
 import { getInitialValues } from '../utils';
+import { MIDDLEWARE_URL } from "../config";
 
 const ResourceEditPage = ({ type, resourceId, navigate }) => {
   useAuth({ force: true });
   const resourceConfig = resourcesTypes[type];
-  const resourceUri = `${resourceConfig.container}/${resourceId}`;
+  const resourceUri = `${MIDDLEWARE_URL}ldp/object/${resourceId}`;
   const { data } = useQuery(resourceUri);
   const dispatch = useDispatch();
 

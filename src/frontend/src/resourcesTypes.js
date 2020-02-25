@@ -3,14 +3,19 @@ import CONFIG from './config';
 const resourcesTypes = {
   projects: {
     name: 'Projets',
-    ontology: 'http://virtual-assembly.org/ontologies/pair#',
+    ontology: 'http://virtual-assembly.org/pair#',
     class: 'Project',
     container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Project`,
     readOnly: false,
     fields: [
       {
-        type: 'pair:label',
+        type: 'pair:preferedLabel',
         label: 'Titre',
+        datatype: 'string'
+      },
+      {
+        type: 'pair:comment',
+        label: 'Commentaire',
         datatype: 'string'
       },
       {
@@ -19,7 +24,7 @@ const resourcesTypes = {
         datatype: 'text'
       },
       {
-        type: 'pair:webPage',
+        type: 'pair:aboutPage',
         label: 'Site web',
         datatype: 'url'
       }

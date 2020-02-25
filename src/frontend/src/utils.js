@@ -1,8 +1,9 @@
 import React from 'react';
-import resourcesTypes from './resourcesTypes';
+import { MIDDLEWARE_URL } from './config';
 
 export const getResourceId = (uri, type) => {
-  const pattern = `${resourcesTypes[type].container.replace(/\//g, '\\/')}\\/(.*)`;
+  const baseUri = MIDDLEWARE_URL + 'ldp/object';
+  const pattern = `${baseUri.replace(/\//g, '\\/')}\\/(.*)`;
   const matches = uri.match(new RegExp(pattern));
   return matches[1];
 };
