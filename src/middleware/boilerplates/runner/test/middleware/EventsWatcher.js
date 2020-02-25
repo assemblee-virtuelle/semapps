@@ -9,9 +9,9 @@
 
 const EventsWatcher = {
   localEvent(next, event) {
-    return function(payload, sender, eventName) {
-      event.service.broker.latestEvent = eventName;
-      return next(payload, sender, eventName);
+    return ctx => {
+      event.service.broker.latestEvent = ctx.eventName;
+      return next(ctx);
     };
   },
 

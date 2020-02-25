@@ -10,7 +10,7 @@
     "@semapps/mime-types" :"^1.0.0",
     "@semapps/triplestore" :"^1.0.0",
     "jsonld": "^1.8.1",
-    "moleculer": "^0.13.12",
+    "moleculer": "^0.14.3",
     "n3": "^1.3.5",
     "rdf-parse": "^1.2.1",
     "streamify-string": "^1.0.1"
