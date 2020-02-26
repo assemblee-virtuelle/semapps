@@ -7,11 +7,15 @@ import Page from '../Page';
 import { Form, Field } from 'react-final-form';
 
 const ResourcesListPage = ({ type }) => {
-  const [typeState, setTypeState] = useState();
-  const [body, setBody] = useState();
+  const computeRootSparql = resourceConfig => {
+    const bodyRoot = `PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}> CONSTRUCT { ?s ?p ?o} WHERE { ?s ?p ?o .  ?s a ${resourceConfig.prefix}:${resourceConfig.class}`;
+    return bodyRoot;
+  };
+
+  const [typeState, setTypeState] = useState(type);
   const resourceConfig = resourcesTypes[typeState];
+  const [body, setBody] = useState(`${computeRootSparql(resourcesTypes[type])}}`);
   const uri = 'http://localhost:3000/sparql/';
-  const validType = type === typeState;
 
   useEffect(() => {
     setBody(`${computeRootSparql(resourcesTypes[type])}}`);
@@ -24,10 +28,7 @@ const ResourcesListPage = ({ type }) => {
     onlyArray: true
   });
 
-  const computeRootSparql = resourceConfig => {
-    const bodyRoot = `PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}> CONSTRUCT { ?s ?p ?o} WHERE { ?s ?p ?o .  ?s a ${resourceConfig.prefix}:${resourceConfig.class}`;
-    return bodyRoot;
-  };
+
 
   const search = async values => {
     let newRequest;
@@ -39,11 +40,14 @@ const ResourcesListPage = ({ type }) => {
     setBody(newRequest);
   };
 
+  console.log(typeState);
+
+
   return (
     <Page>
       <h2 className="mb-3">
-        {resourceConfig && resourceConfig.name}
-        {resourceConfig && !resourceConfig.readOnly && (
+        {resourceConfig.name}
+        {!resourceConfig.readOnly && (
           <Link to={`/resources/${type}/create`}>
             <button className="btn btn-primary pull-right">
               <i className="fa fa-plus-circle" />
@@ -65,8 +69,7 @@ const ResourcesListPage = ({ type }) => {
           )}
         />
       </div>
-      {validType &&
-        data &&
+      { data &&
         data.map(resourceUri => (
           <div key={resourceUri}>
             <ResourcePreview resourceUri={resourceUri} type={typeState} /> <br />
