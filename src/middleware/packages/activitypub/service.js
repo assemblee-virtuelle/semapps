@@ -24,43 +24,43 @@ const ActivityPubService = {
   },
   created() {
     this.broker.createService(
-      this.originalSchema.storage.collections.constructor.name === 'TripleStoreAdapter'
+      this.schema.storage.collections.constructor.name === 'TripleStoreAdapter'
         ? TripleStoreCollectionService
         : MongoDbCollectionService,
       {
-        adapter: this.originalSchema.storage.collections,
+        adapter: this.schema.storage.collections,
         settings: {
-          context: this.originalSchema.context
+          context: this.schema.context
         },
-        dependencies: this.originalSchema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+        dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
       }
     );
 
     this.broker.createService(ActorService, {
-      adapter: this.originalSchema.storage.actors,
+      adapter: this.schema.storage.actors,
       settings: {
-        containerUri: this.originalSchema.baseUri + 'users/',
-        context: this.originalSchema.context
+        containerUri: this.schema.baseUri + 'users/',
+        context: this.schema.context
       },
-      dependencies: this.originalSchema.storage.actors.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+      dependencies: this.schema.storage.actors.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
     });
 
     this.broker.createService(ActivityService, {
-      adapter: this.originalSchema.storage.activities,
+      adapter: this.schema.storage.activities,
       settings: {
-        containerUri: this.originalSchema.baseUri + 'activities/',
-        context: this.originalSchema.context
+        containerUri: this.schema.baseUri + 'activities/',
+        context: this.schema.context
       },
-      dependencies: this.originalSchema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+      dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
     });
 
     this.broker.createService(ObjectService, {
-      adapter: this.originalSchema.storage.objects,
+      adapter: this.schema.storage.objects,
       settings: {
-        containerUri: this.originalSchema.baseUri + 'objects/',
-        context: this.originalSchema.context
+        containerUri: this.schema.baseUri + 'objects/',
+        context: this.schema.context
       },
-      dependencies: this.originalSchema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+      dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
     });
 
     this.broker.createService(FollowService);
