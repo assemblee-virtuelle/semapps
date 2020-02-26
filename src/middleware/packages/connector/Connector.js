@@ -82,6 +82,10 @@ class Connector {
       await new Promise(resolve => middleware(req, res, resolve));
     }
   }
+  async getWebId(ctx) {
+    // By default, get the webId from the token payload
+    return ctx.meta.tokenPayload.webId;
+  }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
     try {
