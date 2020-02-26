@@ -4,25 +4,39 @@ import { useDispatch, useSelector } from 'react-redux';
 const initialValues = { data: null, body:null, loading: true, error: null };
 
 const useQuery = (uri, options = { cacheOnly: false }) => {
-    // console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
   const dispatch = useDispatch();
-  const cachedQuery = useSelector(state => state.api.queries[uri]);
+  const cachedQuery = useSelector(state => {
+    let resource = state.api.queries[uri];
+    // if(options.forceFetch){
+    //   options.forceFetch=false;
+    //   return undefined;
+    // }else {
+      console.log('resource',resource);
+      if(!options.body){
+        return resource;
+      }else if (resource && resource.body===options.body) {
+        return resource
+      }else  {
+        return undefined;
+      }
+    // }
+
+  });
 
   const callFetch = useCallback(() => {
 
-
     let { cacheOnly, headers,body,method,onlyArray, ...fetchOptions } = options;
+    const validRequest = uri!==undefined && ((options.method!==undefined && options.method==='POST')?options.body!==undefined:true)
+    if (validRequest && !cachedQuery) {
 
-    if (!cachedQuery || (cachedQuery&&cachedQuery.body!=options.body)) {
-
-      dispatch({ type: 'QUERY_TRIGGER', uri });
+      dispatch({ type: 'QUERY_TRIGGER', uri,body:options.body});
       headers = {
         Accept: 'application/ld+json',
         ...headers
       };
       const token = localStorage.getItem('token');
       if (token) headers.Authorization = `Bearer ${token}`;
-                console.log('FETCH',uri,body);
+
       fetch(uri, {
         method: method||'GET',
         headers,
@@ -37,20 +51,18 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
           }
         })
         .then(data => {
-          console.log('Good Way',data);
           dispatch({ type: 'QUERY_SUCCESS', uri, data ,onlyArray,body});
         })
         .catch(error => {
-          console.log(error);
-          dispatch({ type: 'QUERY_FAILURE', uri, error: error.message });
+          dispatch({ type: 'QUERY_FAILURE', uri,body:options.body, error: error.message });
         });
     }
-  }, [uri, options]);
+  }, [uri, options, dispatch, cachedQuery]);
 
   useEffect(() => {
     // console.log('useEffect');
     if (options.cacheOnly !== true) callFetch();
-  }, [options]);
+  }, [uri,options, callFetch]);
   return { ...initialValues, ...cachedQuery, retry: callFetch };
 };
 

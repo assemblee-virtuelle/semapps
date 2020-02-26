@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import { Link } from '@reach/router';
 import useQuery from '../api/useQuery';
 import ResourcePreview from '../ResourcePreview';
@@ -7,35 +7,45 @@ import Page from '../Page';
 import { Form, Field } from 'react-final-form';
 
 const ResourcesListPage = ({ type }) => {
-  console.log('--------------ResourcesListPage ');
-  const resourceConfig = resourcesTypes[type];
-  const bodyRoot=`PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}> CONSTRUCT { ?s ?p ?o} WHERE { ?s ?p ?o .  ?s a ${resourceConfig.prefix}:${resourceConfig.class}`;
-  const [uri,setUri] = useState("http://localhost:3000/sparql/")
-  const [body,setBody] = useState(`${bodyRoot}}`)
-  const { data } = useQuery(uri,{
+  const [typeState,setTypeState] = useState();
+  const [body,setBody] = useState();
+  const resourceConfig = resourcesTypes[typeState];
+  const uri = "http://localhost:3000/sparql/"
+  // const [uri,setUri] = useState("http://localhost:3000/sparql/");
+  const validType=type===typeState;
+
+  useEffect(() => {
+    setBody(`${computeRootSparql(resourcesTypes[type])}}`);
+    setTypeState(type);
+  }, [type]);
+
+  const {data} = useQuery(uri,{
     body : body,
     method:'POST',
-    onlyArray:true,
-    forceFetch:true
+    onlyArray:true
   });
+
+  const computeRootSparql = resourceConfig => {
+    const bodyRoot=`PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}> CONSTRUCT { ?s ?p ?o} WHERE { ?s ?p ?o .  ?s a ${resourceConfig.prefix}:${resourceConfig.class}`;
+    return bodyRoot;
+  }
 
 
   const search = async values => {
     let newRequest;
-    if(values.searchInput==undefined){
-      newRequest = `${bodyRoot}}`
+    if(values.searchInput===undefined){
+      newRequest = `${computeRootSparql(resourceConfig)}}`
     }else {
-      newRequest = `${bodyRoot}. FILTER regex(str(?o), "${values.searchInput}")}`
+      newRequest = `${computeRootSparql(resourceConfig)}. FILTER regex(str(?o), "${values.searchInput}")}`
     }
     setBody(newRequest);
-
   }
 
   return (
     <Page>
      <h2 className="mb-3">
-       {resourceConfig.name}
-       {!resourceConfig.readOnly && (
+       {resourceConfig && resourceConfig.name}
+       {resourceConfig && !resourceConfig.readOnly && (
          <Link to={`/resources/${type}/create`}>
            <button className="btn btn-primary pull-right">
              <i className="fa fa-plus-circle" />
@@ -57,10 +67,10 @@ const ResourcesListPage = ({ type }) => {
          )}/>
 
        </div>
-     {data &&
+     {validType && data &&
        data.map(resourceUri => (
          <div key={resourceUri}>
-           <ResourcePreview resourceUri={resourceUri} type={type} /> <br />
+           <ResourcePreview resourceUri={resourceUri} type={typeState} /> <br />
          </div>
        ))}
 

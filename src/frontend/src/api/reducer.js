@@ -1,7 +1,7 @@
 import produce from 'immer';
 
 const isResourcesList = (data, type) => {
-  if(type==='graph'&& data['@graph']!=undefined){
+  if(type==='graph'&& data['@graph']!==undefined){
     return true
   }else {
     return (
@@ -31,11 +31,15 @@ const apiReducer = (state = { queries: {} }, action) =>
 
     switch (action.type) {
       case 'QUERY_TRIGGER':
-        // newState.queries[action.uri] = {
-        //   data: null,
-        //   loading: true,
-        //   error: null
-        // };
+        newState.queries[action.uri] = {
+          data: null,
+          loading: true,
+          error: null,
+          body:action.body
+        };
+        break;
+      case 'QUERY_CLEAN':
+        newState.queries[action.uri] = undefined;
         break;
 
       case 'QUERY_SUCCESS': {
@@ -88,7 +92,6 @@ const apiReducer = (state = { queries: {} }, action) =>
             }
           };
         } else {
-          let data = action.onlyArray?[action.data['@id']]:action.data;
           newState.queries[action.uri] = {
             data: action.onlyArray?[action.data['@id']]:action.data,
             loading: false,
@@ -103,7 +106,8 @@ const apiReducer = (state = { queries: {} }, action) =>
         newState.queries[action.uri] = {
           data: null,
           loading: false,
-          error: action.error
+          error: action.error,
+          body:action.body
         };
         break;
 
