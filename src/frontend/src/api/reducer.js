@@ -36,6 +36,7 @@ const apiReducer = (state = { queries: {} }, action) =>
           body: action.body
         };
         break;
+
       case 'QUERY_SUCCESS': {
         if (isResourcesList(action.data, 'ldp:Container')) {
           const items = extractItems(action.data, 'ldp:contains');
