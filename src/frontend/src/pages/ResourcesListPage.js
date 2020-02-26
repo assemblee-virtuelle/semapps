@@ -28,8 +28,6 @@ const ResourcesListPage = ({ type }) => {
     onlyArray: true
   });
 
-
-
   const search = async values => {
     let newRequest;
     if (values.searchInput === undefined) {
@@ -41,7 +39,6 @@ const ResourcesListPage = ({ type }) => {
   };
 
   console.log(typeState);
-
 
   return (
     <Page>
@@ -69,7 +66,7 @@ const ResourcesListPage = ({ type }) => {
           )}
         />
       </div>
-      { data &&
+      {data &&
         data.map(resourceUri => (
           <div key={resourceUri}>
             <ResourcePreview resourceUri={resourceUri} type={typeState} /> <br />

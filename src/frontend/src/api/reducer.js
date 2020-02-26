@@ -2,12 +2,12 @@ import produce from 'immer';
 
 const isResourcesList = (data, type) => {
   return (
-        (type === 'graph' && data['@graph']) ||
-        data['@type'] === type ||
-        data['type'] === type ||
-        (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
-        (Array.isArray(data['type']) && data['type'].includes(type))
-      );
+    (type === 'graph' && data['@graph']) ||
+    data['@type'] === type ||
+    data['type'] === type ||
+    (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
+    (Array.isArray(data['type']) && data['type'].includes(type))
+  );
 };
 
 const extractItems = (data, predicate) => {
