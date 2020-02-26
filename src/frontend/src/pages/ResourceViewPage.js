@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React from 'react';
 import { Link } from '@reach/router';
 import { useDispatch } from 'react-redux';
 import useQuery from '../api/useQuery';
@@ -12,26 +12,9 @@ import useAuth from '../auth/useAuth';
 const ResourceViewPage = ({ type, resourceId }) => {
   const { user, webId, isLogged } = useAuth();
   const dispatch = useDispatch();
-  const [resourceUri,setResourceUri]=useState();
   const resourceConfig = resourcesTypes[type];
-  // const resourceUri = `${resourceConfig.container}/${resourceId}`;
-  const newResouceUri = `${resourceConfig.container}/${resourceId}`
-  const validResourceUri=newResouceUri===resourceUri;
-  console.log('validResourceUri',validResourceUri);
-  useEffect(() => {
-
-    // force useQuery to fetch because SPARQL data are not enough
-    // execute only if resourceId change to not reproduce on final rendering
-    if(!validResourceUri){
-      dispatch({ type: 'QUERY_CLEAN', newResouceUri});
-    }
-    setResourceUri(newResouceUri);
-    // setBody(`${computeRootSparql(resourcesTypes[type])}}`);
-    // setTypeState(type);
-  }, [type]);
-
-  console.log('call useQuery',newResouceUri);
-  const { data } = useQuery(newResouceUri);
+  const resourceUri = `${resourceConfig.container}/${resourceId}`;
+  const { data } = useQuery(resourceUri);
 
   const follow = async () => {
     const followActivity = {
@@ -55,7 +38,7 @@ const ResourceViewPage = ({ type, resourceId }) => {
 
   return (
     <Page>
-      {validResourceUri && data && (
+      {data && (
         <>
           <h2>{resourceConfig.name} > Voir</h2>
           <ul className="list-group">

@@ -1,9 +1,9 @@
 import produce from 'immer';
 
 const isResourcesList = (data, type) => {
-  if(type==='graph'&& data['@graph']!==undefined){
-    return true
-  }else {
+  if (type === 'graph' && data['@graph'] !== undefined) {
+    return true;
+  } else {
     return (
       data['@type'] === type ||
       data['type'] === type ||
@@ -11,7 +11,6 @@ const isResourcesList = (data, type) => {
       (Array.isArray(data['type']) && data['type'].includes(type))
     );
   }
-
 };
 
 const extractItems = (data, predicate) => {
@@ -28,20 +27,15 @@ const extractItems = (data, predicate) => {
 
 const apiReducer = (state = { queries: {} }, action) =>
   produce(state, newState => {
-
     switch (action.type) {
       case 'QUERY_TRIGGER':
         newState.queries[action.uri] = {
           data: null,
           loading: true,
           error: null,
-          body:action.body
+          body: action.body
         };
         break;
-      case 'QUERY_CLEAN':
-        newState.queries[action.uri] = undefined;
-        break;
-
       case 'QUERY_SUCCESS': {
         if (isResourcesList(action.data, 'ldp:Container')) {
           const items = extractItems(action.data, 'ldp:contains');
@@ -52,7 +46,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'Collection')) {
@@ -64,7 +58,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'OrderedCollection')) {
@@ -76,7 +70,7 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'graph')) {
@@ -88,15 +82,15 @@ const apiReducer = (state = { queries: {} }, action) =>
               data: Object.keys(items),
               loading: false,
               error: null,
-              body:action.body
+              body: action.body
             }
           };
         } else {
           newState.queries[action.uri] = {
-            data: action.onlyArray?[action.data['@id']]:action.data,
+            data: action.onlyArray ? [action.data['@id']] : action.data,
             loading: false,
             error: null,
-            body:action.body
+            body: action.body
           };
         }
         break;
@@ -107,7 +101,7 @@ const apiReducer = (state = { queries: {} }, action) =>
           data: null,
           loading: false,
           error: action.error,
-          body:action.body
+          body: action.body
         };
         break;
 
