@@ -1,6 +1,7 @@
 const constants = require('./constants');
 
 module.exports = {
+  ActivityPubService: require('./service'),
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
   MongoDbCollectionService: require('./services/collection/mongodb-collection'),
