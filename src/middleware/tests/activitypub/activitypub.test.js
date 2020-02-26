@@ -1,27 +1,32 @@
 const { ServiceBroker } = require('moleculer');
-const EventsWatcher = require('./middleware/EventsWatcher');
-const createServices = require('../createServices');
-const CONFIG = require('../config');
+const MongoDbAdapter = require('moleculer-db-adapter-mongo');
+const { ActivityPubService } = require('@semapps/activitypub');
+const EventsWatcher = require('../middleware/EventsWatcher');
+const CONFIG = require('./config');
 
-jest.setTimeout(22000);
+jest.setTimeout(20000);
 
 const broker = new ServiceBroker({
-  // logger: false,
   middlewares: [EventsWatcher]
 });
 
 beforeAll(async () => {
-  createServices(broker);
+  broker.createService(ActivityPubService, {
+    baseUri: CONFIG.HOME_URL,
+    storage: {
+      collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      actors: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      objects: new MongoDbAdapter(CONFIG.MONGODB_URL)
+    }
+  });
 
   await broker.start();
 
-  await broker.call('fuseki-admin.initDataset', {
-    dataset: CONFIG.MAIN_DATASET
-  });
-
-  await broker.call('triplestore.dropAll');
   await broker.call('activitypub.activity.clear');
+  await broker.call('activitypub.actor.clear');
   await broker.call('activitypub.collection.clear');
+  await broker.call('activitypub.object.clear');
 });
 
 afterAll(async () => {
@@ -38,28 +43,14 @@ describe('Posting to followers', () => {
       name: 'Sébastien Rosset'
     });
 
+    simon = await broker.call('activitypub.actor.create', {
+      slug: 'simonLouvet',
+      preferredUsername: 'simonLouvet',
+      name: 'Simon Louvet'
+    });
+
     expect(sebastien.preferredUsername).toBe('srosset81');
-  }, 20000);
-
-  test('Create actor through WebID', async () => {
-    const simonId = await broker.call('webid.create', {
-      email: 'simon.louvet.zen@gmail.com',
-      nick: 'simonLouvet',
-      name: 'Simon',
-      familyName: 'Louvet'
-    });
-
-    await broker.watchForEvent('actor.created');
-
-    simon = await broker.call('activitypub.actor.get', {
-      id: simonId
-    });
-
-    expect(simon['@id']).toBe(simonId);
-    expect(simon.inbox).toBe(simonId + '/inbox');
-    expect(simon.outbox).toBe(simonId + '/outbox');
-    expect(simon.followers).toBe(simonId + '/followers');
-    expect(simon.following).toBe(simonId + '/following');
+    expect(simon.preferredUsername).toBe('simonLouvet');
   }, 20000);
 
   test('Post follow request', async () => {
