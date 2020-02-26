@@ -23,7 +23,7 @@ broker.createService(ActivityPubService, {
     collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
     activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
     actors: new MongoDbAdapter(CONFIG.MONGODB_URL),
-    objects: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    objects: new MongoDbAdapter(CONFIG.MONGODB_URL)
   }
 });
 
@@ -60,7 +60,7 @@ broker.start().then(() => {
     if (err) {
       console.error(err);
     } else {
-      console.log('Listening on port ' + ( process.env.NODE_PORT || 3000 ));
+      console.log('Listening on port ' + (process.env.NODE_PORT || 3000));
     }
   });
 });
