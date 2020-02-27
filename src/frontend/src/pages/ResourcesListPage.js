@@ -7,19 +7,41 @@ import Page from '../Page';
 import { Form, Field } from 'react-final-form';
 
 const ResourcesListPage = ({ type }) => {
-  const computeRootSparql = resourceConfig => {
-    const bodyRoot = `PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}> CONSTRUCT { ?s ?p ?o} WHERE { ?s ?p ?o .  ?s a ${resourceConfig.prefix}:${resourceConfig.class}`;
-    return bodyRoot;
+  const computeSparql = ({resourceConfig,search}) => {
+    console.log(search);
+    let subjectsRequest='';
+    if(search && search.length>0){
+      subjectsRequest=`
+      {
+        SELECT  ?s1
+        WHERE {
+          ?s1 ?p1 ?o1 .
+          FILTER regex(str(?o1), "${search}")
+          FILTER NOT EXISTS {?s1 a ?o1}
+        }
+      }
+      `
+    }
+    const request = `
+    PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}>
+    CONSTRUCT {?s1 ?p2 ?o2}
+    WHERE{
+      ${subjectsRequest}
+      ?s1 a ${resourceConfig.prefix}:${resourceConfig.class}.
+      ?s1 ?p2 ?o2 .
+    }
+    `
+    return request;
   };
 
   const [typeState, setTypeState] = useState(type);
   const [search,setSearch]= useState();
   const resourceConfig = resourcesTypes[typeState];
-  const [body, setBody] = useState(`${computeRootSparql(resourcesTypes[type])}}`);
+  const [body, setBody] = useState(computeSparql({resourceConfig:resourcesTypes[type]}));
   const uri = 'http://localhost:3000/sparql/';
 
   useEffect(() => {
-    setBody(`${computeRootSparql(resourcesTypes[type])}}`);
+    setBody(computeSparql({resourceConfig:resourcesTypes[type]}));
     setSearch(undefined);
     setTypeState(type);
   }, [type]);
@@ -34,12 +56,9 @@ const ResourcesListPage = ({ type }) => {
 
   const searchSubmit = async values => {
     let newRequest;
-    if (values.searchInput === undefined) {
-      newRequest = `${computeRootSparql(resourceConfig)}}`;
-    } else {
-      setSearch(values.searchInput);
-      newRequest = `${computeRootSparql(resourceConfig)}. FILTER regex(str(?o), "${values.searchInput}")}`;
-    }
+    setSearch(values.searchInput);
+    newRequest = computeSparql({resourceConfig:resourcesTypes[type],search:values.searchInput});
+    console.log(newRequest);
     setBody(newRequest);
   };
 

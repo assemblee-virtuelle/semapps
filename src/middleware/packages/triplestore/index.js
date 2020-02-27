@@ -2,10 +2,16 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const { SparqlJsonParser } = require('sparqljson-parse');
+const {
+  SparqlJsonParser
+} = require('sparqljson-parse');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
+const {
+  MIME_TYPES,
+  negotiateType,
+  negotiateTypeMime
+} = require('@semapps/mime-types');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -30,7 +36,9 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const { params } = ctx;
+        const {
+          params
+        } = ctx;
         const webId = ctx.params.webId || ctx.meta.webId;
         const contentType = ctx.params.contentType;
         const type = negotiateTypeMime(contentType);
@@ -98,7 +106,9 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const { params } = ctx;
+        const {
+          params
+        } = ctx;
         const webId = ctx.params.webId || ctx.meta.webId;
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
@@ -159,7 +169,9 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const { params } = ctx;
+        const {
+          params
+        } = ctx;
         const accept = ctx.params.accept;
         const webId = ctx.params.webId || ctx.meta.webId;
         const acceptNegociatedType = negotiateType(accept);
@@ -178,28 +190,34 @@ const TripleStoreService = {
           headers
         });
         if (!response.ok) throw new Error(response.statusText);
-
-        // Return results as JSON or RDF
-        if (params.query.includes('ASK')) {
-          if (acceptType === MIME_TYPES.JSON) {
+        const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
+        const verb = regex.exec(params.query)[1];
+        switch (verb) {
+          case 'ASK':
+            if (acceptType === MIME_TYPES.JSON) {
+              const jsonResult = await response.json();
+              return jsonResult.boolean;
+            } else {
+              throw new Error('Only JSON accept type is currently allowed for ASK queries');
+            }
+            break;
+          case 'SELECT':
             const jsonResult = await response.json();
-            return jsonResult.boolean;
-          } else {
-            throw new Error('Only JSON accept type is currently allowed for ASK queries');
-          }
-        } else if (params.query.includes('SELECT')) {
-          const jsonResult = await response.json();
-          if (acceptType === MIME_TYPES.JSON) {
-            return await this.sparqlJsonParser.parseJsonResults(jsonResult);
-          } else {
-            return jsonResult;
-          }
-        } else if (params.query.includes('CONSTRUCT')) {
-          if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
-            return await response.text();
-          } else {
-            return await response.json();
-          }
+            if (acceptType === MIME_TYPES.JSON) {
+              return await this.sparqlJsonParser.parseJsonResults(jsonResult);
+            } else {
+              return jsonResult;
+            }
+            break;
+          case 'CONSTRUCT':
+            if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
+              return await response.text();
+            } else {
+              return await response.json();
+            }
+            break;
+          default:
+            throw new Error('SPARQL Verb not supported');
         }
       }
     },
@@ -242,9 +260,9 @@ const TripleStoreService = {
         let counter = 0;
         let query;
         const text =
-          typeof params.resource === 'string' || params.resource instanceof String
-            ? params.resource
-            : JSON.stringify(params.resource);
+          typeof params.resource === 'string' || params.resource instanceof String ?
+          params.resource :
+          JSON.stringify(params.resource);
         const textStream = streamifyString(text);
         rdfParser
           .parse(textStream, {
