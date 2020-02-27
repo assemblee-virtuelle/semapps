@@ -13,12 +13,14 @@ const ResourcesListPage = ({ type }) => {
   };
 
   const [typeState, setTypeState] = useState(type);
+  const [search,setSearch]= useState();
   const resourceConfig = resourcesTypes[typeState];
   const [body, setBody] = useState(`${computeRootSparql(resourcesTypes[type])}}`);
   const uri = 'http://localhost:3000/sparql/';
 
   useEffect(() => {
     setBody(`${computeRootSparql(resourcesTypes[type])}}`);
+    setSearch(undefined);
     setTypeState(type);
   }, [type]);
 
@@ -30,15 +32,17 @@ const ResourcesListPage = ({ type }) => {
 
 
 
-  const search = async values => {
+  const searchSubmit = async values => {
     let newRequest;
     if (values.searchInput === undefined) {
       newRequest = `${computeRootSparql(resourceConfig)}}`;
     } else {
+      setSearch(values.searchInput);
       newRequest = `${computeRootSparql(resourceConfig)}. FILTER regex(str(?o), "${values.searchInput}")}`;
     }
     setBody(newRequest);
   };
+
 
   return (
     <Page>
@@ -55,10 +59,11 @@ const ResourcesListPage = ({ type }) => {
       </h2>
       <div className="mb-3">
         <Form
-          onSubmit={search}
+          onSubmit={searchSubmit}
+          initialValues={{searchInput:search}}
           render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <Field name="searchInput" component="input" type="text" className="form-control" id="searchInput" />
+              <Field name="searchInput" component="input" type="text" className="form-control" id="searchInput" value={search} />
               <button type="submit" className="btn btn-primary w-100">
                 Rechercher
               </button>
