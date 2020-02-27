@@ -19,7 +19,7 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
   });
 
   const callFetch = useCallback(() => {
-    let { cacheOnly, headers, body, method, onlyArray, ...fetchOptions } = options;
+    let { cacheOnly, headers, body, method, ...fetchOptions } = options;
     const validRequest =
       uri !== undefined &&
       (options.method !== undefined && options.method === 'POST' ? options.body !== undefined : true);
@@ -46,7 +46,7 @@ const useQuery = (uri, options = { cacheOnly: false }) => {
           }
         })
         .then(data => {
-          dispatch({ type: 'QUERY_SUCCESS', uri, data, onlyArray, body });
+          dispatch({ type: 'QUERY_SUCCESS', uri, data, body });
         })
         .catch(error => {
           dispatch({ type: 'QUERY_FAILURE', uri, body: options.body, error: error.message });

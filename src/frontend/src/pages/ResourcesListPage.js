@@ -47,8 +47,7 @@ const ResourcesListPage = ({ type }) => {
 
   const { data } = useQuery(uri, {
     body: body,
-    method: 'POST',
-    onlyArray: true
+    method: 'POST'
   });
 
   const searchSubmit = async values => {
