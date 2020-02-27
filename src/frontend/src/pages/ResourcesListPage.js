@@ -35,7 +35,7 @@ const ResourcesListPage = ({ type }) => {
   };
 
   const [typeState, setTypeState] = useState(type);
-  const [search,setSearch]= useState();
+  const [search, setSearch] = useState();
   const resourceConfig = resourcesTypes[typeState];
   const [body, setBody] = useState(computeSparql({resourceConfig:resourcesTypes[type]}));
   const uri = 'http://localhost:3000/sparql/';
@@ -52,8 +52,6 @@ const ResourcesListPage = ({ type }) => {
     onlyArray: true
   });
 
-
-
   const searchSubmit = async values => {
     let newRequest;
     setSearch(values.searchInput);
@@ -61,7 +59,6 @@ const ResourcesListPage = ({ type }) => {
     console.log(newRequest);
     setBody(newRequest);
   };
-
 
   return (
     <Page>
@@ -79,10 +76,17 @@ const ResourcesListPage = ({ type }) => {
       <div className="mb-3">
         <Form
           onSubmit={searchSubmit}
-          initialValues={{searchInput:search}}
+          initialValues={{ searchInput: search }}
           render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <Field name="searchInput" component="input" type="text" className="form-control" id="searchInput" value={search} />
+              <Field
+                name="searchInput"
+                component="input"
+                type="text"
+                className="form-control"
+                id="searchInput"
+                value={search}
+              />
               <button type="submit" className="btn btn-primary w-100">
                 Rechercher
               </button>
@@ -90,7 +94,7 @@ const ResourcesListPage = ({ type }) => {
           )}
         />
       </div>
-      { data &&
+      {data &&
         data.map(resourceUri => (
           <div key={resourceUri}>
             <ResourcePreview resourceUri={resourceUri} type={typeState} /> <br />
