@@ -8,7 +8,6 @@ import { Form, Field } from 'react-final-form';
 
 const ResourcesListPage = ({ type }) => {
   const computeSparql = ({ resourceConfig, search }) => {
-    console.log(search);
     let subjectsRequest = '';
     if (search && search.length > 0) {
       subjectsRequest = `
@@ -79,17 +78,29 @@ const ResourcesListPage = ({ type }) => {
           initialValues={{ searchInput: search }}
           render={({ handleSubmit }) => (
             <form onSubmit={handleSubmit}>
-              <Field
-                name="searchInput"
-                component="input"
-                type="text"
-                className="form-control"
-                id="searchInput"
-                value={search}
-              />
-              <button type="submit" className="btn btn-primary w-100">
-                Rechercher
-              </button>
+              <div style={{ display: 'flex' }}>
+                <Field
+                  name="searchInput"
+                  component="input"
+                  type="text"
+                  className="form-control"
+                  id="searchInput"
+                  value={search}
+                />
+                <button
+                  style={{
+                    'flex-basis': '10%',
+                    display: 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'space-around'
+                  }}
+                  type="submit"
+                  className="btn btn-primary pull-right"
+                >
+                  <i className="fa fa-search" style={{ padding: '5px' }} />
+                  <span>Rechercher</span>
+                </button>
+              </div>
             </form>
           )}
         />

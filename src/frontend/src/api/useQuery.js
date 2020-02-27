@@ -6,6 +6,8 @@ const initialValues = { data: null, body: null, loading: true, error: null };
 const useQuery = (uri, options = { cacheOnly: false }) => {
   const dispatch = useDispatch();
   const cachedQuery = useSelector(state => {
+    // provide data coresponding to Uri
+    // if options contains body, return data only if body is tehe same
     let resource = state.api.queries[uri];
     if (!options.body) {
       return resource;
