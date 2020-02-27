@@ -2,16 +2,10 @@
 
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
-const {
-  SparqlJsonParser
-} = require('sparqljson-parse');
+const { SparqlJsonParser } = require('sparqljson-parse');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const {
-  MIME_TYPES,
-  negotiateType,
-  negotiateTypeMime
-} = require('@semapps/mime-types');
+const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -36,9 +30,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
+        const { params } = ctx;
         const webId = ctx.params.webId || ctx.meta.webId;
         const contentType = ctx.params.contentType;
         const type = negotiateTypeMime(contentType);
@@ -106,9 +98,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
+        const { params } = ctx;
         const webId = ctx.params.webId || ctx.meta.webId;
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
           method: 'POST',
@@ -169,9 +159,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const {
-          params
-        } = ctx;
+        const { params } = ctx;
         const accept = ctx.params.accept;
         const webId = ctx.params.webId || ctx.meta.webId;
         const acceptNegociatedType = negotiateType(accept);
@@ -260,9 +248,9 @@ const TripleStoreService = {
         let counter = 0;
         let query;
         const text =
-          typeof params.resource === 'string' || params.resource instanceof String ?
-          params.resource :
-          JSON.stringify(params.resource);
+          typeof params.resource === 'string' || params.resource instanceof String
+            ? params.resource
+            : JSON.stringify(params.resource);
         const textStream = streamifyString(text);
         rdfParser
           .parse(textStream, {

@@ -7,11 +7,11 @@ import Page from '../Page';
 import { Form, Field } from 'react-final-form';
 
 const ResourcesListPage = ({ type }) => {
-  const computeSparql = ({resourceConfig,search}) => {
+  const computeSparql = ({ resourceConfig, search }) => {
     console.log(search);
-    let subjectsRequest='';
-    if(search && search.length>0){
-      subjectsRequest=`
+    let subjectsRequest = '';
+    if (search && search.length > 0) {
+      subjectsRequest = `
       {
         SELECT  ?s1
         WHERE {
@@ -20,7 +20,7 @@ const ResourcesListPage = ({ type }) => {
           FILTER NOT EXISTS {?s1 a ?o1}
         }
       }
-      `
+      `;
     }
     const request = `
     PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}>
@@ -30,18 +30,18 @@ const ResourcesListPage = ({ type }) => {
       ?s1 a ${resourceConfig.prefix}:${resourceConfig.class}.
       ?s1 ?p2 ?o2 .
     }
-    `
+    `;
     return request;
   };
 
   const [typeState, setTypeState] = useState(type);
   const [search, setSearch] = useState();
   const resourceConfig = resourcesTypes[typeState];
-  const [body, setBody] = useState(computeSparql({resourceConfig:resourcesTypes[type]}));
+  const [body, setBody] = useState(computeSparql({ resourceConfig: resourcesTypes[type] }));
   const uri = 'http://localhost:3000/sparql/';
 
   useEffect(() => {
-    setBody(computeSparql({resourceConfig:resourcesTypes[type]}));
+    setBody(computeSparql({ resourceConfig: resourcesTypes[type] }));
     setSearch(undefined);
     setTypeState(type);
   }, [type]);
@@ -55,7 +55,7 @@ const ResourcesListPage = ({ type }) => {
   const searchSubmit = async values => {
     let newRequest;
     setSearch(values.searchInput);
-    newRequest = computeSparql({resourceConfig:resourcesTypes[type],search:values.searchInput});
+    newRequest = computeSparql({ resourceConfig: resourcesTypes[type], search: values.searchInput });
     console.log(newRequest);
     setBody(newRequest);
   };
