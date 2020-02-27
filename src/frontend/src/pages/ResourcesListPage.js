@@ -40,9 +40,6 @@ const ResourcesListPage = ({ type }) => {
     setBody(newRequest);
   };
 
-  console.log(typeState);
-
-
   return (
     <Page>
       <h2 className="mb-3">
