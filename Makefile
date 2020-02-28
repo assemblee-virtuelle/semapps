@@ -78,3 +78,11 @@ test:
 	npm run test --prefix ./src/middleware/tests
 	$(DOCKER_COMPOSE_TEST) kill
 	$(DOCKER_COMPOSE_TEST) rm -fv
+
+repl:
+	$(DOCKER_COMPOSE) restart middleware
+	# This doesn't work, we see the log but we can't enter commands (no TTY)
+	docker attach middleware
+	# The following works, but we don't see the current Node process
+	# And if we kill it, it kills also the container
+    # docker exec -it middleware bash

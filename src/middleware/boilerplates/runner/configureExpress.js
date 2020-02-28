@@ -9,6 +9,7 @@ const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { Routes: WebIdRoutes } = require('@semapps/webid');
+const { Routes: WebhooksRoutes } = require('@semapps/webhooks');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
 const CONFIG = require('./config');
@@ -71,7 +72,7 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes],
+      routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {

@@ -27,13 +27,16 @@ broker
     })
   )
   .then(() => {
+    console.log('Server started. Node ID: ', broker.nodeID, ' Transporter:', broker.transporter, ' PID:', process.pid);
+
     app.listen(3000, err => {
       if (err) {
         console.error(err);
       } else {
         console.log('Listening on port 3000');
+
+        // Start REPL mode, which allows to send commands through the CLI
+        broker.repl();
       }
     });
-
-    console.log('Server started. nodeID: ', broker.nodeID, ' TRANSPORTER:', transporter, ' PID:', process.pid);
   });

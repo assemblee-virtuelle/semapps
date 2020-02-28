@@ -4,6 +4,7 @@ const FusekiAdminService = require('@semapps/fuseki-admin');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
+const { WebhooksService } = require('@semapps/webhooks');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
@@ -50,6 +51,13 @@ function createServices(broker) {
       activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
       actors: new TripleStoreAdapter('ldp'),
       objects: new TripleStoreAdapter('ldp')
+    }
+  });
+
+  broker.createService(WebhooksService, {
+    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    settings: {
+      baseUri: CONFIG.HOME_URL,
     }
   });
 }
