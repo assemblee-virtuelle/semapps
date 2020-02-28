@@ -82,3 +82,5 @@ test:
 repl:
 	$(DOCKER_COMPOSE) restart middleware
 	docker attach middleware
+	# Restart the container, since leaving the console will stop it
+	$(DOCKER_COMPOSE) restart middleware
