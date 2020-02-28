@@ -21,7 +21,7 @@ const WebhooksService = {
     async process(ctx) {
       const { hash, ...data } = ctx.params;
       const webhook = await this.actions.get({ id: hash });
-      if( webhook ) {
+      if (webhook) {
         const transformedData = this.transformData(data, webhook.user);
 
         return await ctx.call('activitypub.outbox.post', {
@@ -34,7 +34,9 @@ const WebhooksService = {
       }
     },
     async generate(ctx) {
-      const user = ctx.params.userUri.startsWith('http') ? ctx.params.userUri : this.settings.actorsContainer + ctx.params.userUri;
+      const user = ctx.params.userUri.startsWith('http')
+        ? ctx.params.userUri
+        : this.settings.actorsContainer + ctx.params.userUri;
       return this.actions.create({
         '@type': 'Webhook',
         user
