@@ -50,6 +50,8 @@ services:
     expose:
       - "3000"
     command: npm run start --prefix ./boilerplates/runner
+    stdin_open: true
+    tty: true
 
   frontend:
     build:
