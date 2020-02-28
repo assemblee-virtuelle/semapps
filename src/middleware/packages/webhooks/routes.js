@@ -12,5 +12,14 @@ module.exports = [
       'POST webhooks/:hash': 'webhooks.process'
     },
     ...routeConfig
+  },
+  // Secured routes
+  {
+    authorization: true,
+    authentication: false,
+    aliases: {
+      'POST webhooks': 'webhooks.generate'
+    },
+    ...routeConfig
   }
 ];

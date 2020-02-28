@@ -34,9 +34,9 @@ const WebhooksService = {
       }
     },
     async generate(ctx) {
-      const user = ctx.params.userUri.startsWith('http')
-        ? ctx.params.userUri
-        : this.settings.actorsContainer + ctx.params.userUri;
+      let user = ctx.params.userId || ctx.meta.webId;
+      if( !user.startsWith('http') ) user = this.settings.actorsContainer + user;
+
       return this.actions.create({
         '@type': 'Webhook',
         user
