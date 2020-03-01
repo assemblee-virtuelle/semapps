@@ -57,7 +57,19 @@ function createServices(broker) {
   broker.createService(WebhooksService, {
     adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
     settings: {
-      baseUri: CONFIG.HOME_URL
+      baseUri: CONFIG.HOME_URL,
+      usersContainer: CONFIG.HOME_URL + 'users/',
+      allowedActions: ['postOutbox']
+    },
+    dependencies: ['activitypub.outbox'],
+    actions: {
+      async postOutbox(ctx) {
+        return await ctx.call('activitypub.outbox.post', {
+          collectionUri: ctx.params.user + '/outbox',
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          ...ctx.params.data
+        });
+      }
     }
   });
 }

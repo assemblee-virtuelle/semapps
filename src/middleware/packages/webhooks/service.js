@@ -1,12 +1,16 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { JsonLdStorageMixin } = require('@semapps/ldp');
 
 const WebhooksService = {
   name: 'webhooks',
   mixins: [JsonLdStorageMixin],
   collection: 'webhooks',
-  dependencies: ['activitypub.outbox', 'activitypub.actor'],
   settings: {
+    // To be set by user
     baseUri: null,
+    usersContainer: null,
+    allowedActions: [],
+    // Set automatically
     containerUri: null,
     context: null
   },
@@ -15,38 +19,36 @@ const WebhooksService = {
     this.settings.context = {
       '@vocab': this.settings.baseUri + 'ontology/semapps#'
     };
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
   },
   actions: {
     async process(ctx) {
-      const { hash, ...data } = ctx.params;
+      const { hash, action, ...data } = ctx.params;
       const webhook = await this.actions.get({ id: hash });
       if (webhook) {
-        const transformedData = this.transformData(data, webhook.user);
-
-        return await ctx.call('activitypub.outbox.post', {
-          collectionUri: webhook.user + '/outbox',
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          ...transformedData
-        });
+        await this.actions[webhook.action]({ data, user: webhook.user });
       } else {
         ctx.meta.$statusCode = 404;
       }
     },
     async generate(ctx) {
-      let user = ctx.params.userId || ctx.meta.webId;
-      if( !user.startsWith('http') ) user = this.settings.actorsContainer + user;
+      let userId = ctx.meta.webId || ctx.params.userId,
+        action = ctx.params.action;
 
-      return this.actions.create({
+      if (!userId || !action || this.settings.allowedActions.includes(action)) {
+        throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
+      }
+
+      if (!userId.startsWith('http')) userId = this.settings.usersContainer + userId;
+
+      const webhook = this.actions.create({
         '@type': 'Webhook',
-        user
+        action,
+        user: userId
       });
-    }
-  },
-  methods: {
-    // Custom user fonction to transform received data
-    transformData(data, user) {
-      return data;
+
+      console.log(webhook);
+
+      return webhook;
     }
   }
 };
