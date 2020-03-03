@@ -86,7 +86,7 @@ const apiReducer = (state = { queries: {} }, action) =>
         } else {
           newState.queries[action.uri] = {
             // if @id of data isn't the same that uri requiered, that means that uri is SPARQL request
-            data: action.uri !== action.data['@id'] ? [action.data['@id']] : action.data,
+            data: action.uri.includes('sparql') ? [action.data['@id']] : action.data,
             loading: false,
             error: null,
             body: action.body
