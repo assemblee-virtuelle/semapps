@@ -3,6 +3,7 @@ import CONFIG from './config';
 const resourcesTypes = {
   projects: {
     name: 'Projets',
+    prefix: 'pair',
     ontology: 'http://virtual-assembly.org/ontologies/pair#',
     class: 'Project',
     container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Project`,
@@ -29,6 +30,7 @@ const resourcesTypes = {
     name: 'Utilisateurs',
     ontology: 'http://xmlns.com/foaf/0.1/',
     class: 'Person',
+    prefix: 'foaf',
     container: `${CONFIG.MIDDLEWARE_URL}users`,
     readOnly: true,
     fields: [

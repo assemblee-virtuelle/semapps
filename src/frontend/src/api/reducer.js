@@ -2,6 +2,7 @@ import produce from 'immer';
 
 const isResourcesList = (data, type) => {
   return (
+    (type === 'graph' && data['@graph']) ||
     data['@type'] === type ||
     data['type'] === type ||
     (Array.isArray(data['@type']) && data['@type'].includes(type)) ||
@@ -28,7 +29,8 @@ const apiReducer = (state = { queries: {} }, action) =>
         newState.queries[action.uri] = {
           data: null,
           loading: true,
-          error: null
+          error: null,
+          body: action.body
         };
         break;
 
@@ -41,7 +43,8 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'Collection')) {
@@ -52,7 +55,8 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body: action.body
             }
           };
         } else if (isResourcesList(action.data, 'OrderedCollection')) {
@@ -63,14 +67,29 @@ const apiReducer = (state = { queries: {} }, action) =>
             [action.uri]: {
               data: Object.keys(items),
               loading: false,
-              error: null
+              error: null,
+              body: action.body
+            }
+          };
+        } else if (isResourcesList(action.data, 'graph')) {
+          const items = extractItems(action.data, '@graph');
+          newState.queries = {
+            ...newState.queries,
+            ...items,
+            [action.uri]: {
+              data: Object.keys(items),
+              loading: false,
+              error: null,
+              body: action.body
             }
           };
         } else {
           newState.queries[action.uri] = {
-            data: action.data,
+            // if @id of data isn't the same that uri requiered, that means that uri is SPARQL request
+            data: action.uri.includes('sparql') ? [action.data['@id']] : action.data,
             loading: false,
-            error: null
+            error: null,
+            body: action.body
           };
         }
         break;
@@ -80,7 +99,8 @@ const apiReducer = (state = { queries: {} }, action) =>
         newState.queries[action.uri] = {
           data: null,
           loading: false,
-          error: action.error
+          error: action.error,
+          body: action.body
         };
         break;
 

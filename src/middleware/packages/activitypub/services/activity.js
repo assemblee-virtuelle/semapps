@@ -1,4 +1,4 @@
-const JsonLdStorageMixin = require('../mixins/jsonld-storage');
+const { JsonLdStorageMixin } = require('@semapps/ldp');
 
 const ActivityService = {
   name: 'activitypub.activity',

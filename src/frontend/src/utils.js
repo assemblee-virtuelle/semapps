@@ -33,3 +33,28 @@ export const getInitialValues = (fields, data) => {
   });
   return initialValues;
 };
+
+export const computeSparqlSearch = ({ resourceConfig, search }) => {
+  let subjectsRequest = '';
+  if (search && search.length > 0) {
+    subjectsRequest = `
+      {
+        SELECT  ?s1
+        WHERE {
+          ?s1 ?p1 ?o1 .
+          FILTER regex(str(?o1), "${search}")
+          FILTER NOT EXISTS {?s1 a ?o1}
+        }
+      }
+      `;
+  }
+  return `
+    PREFIX ${resourceConfig.prefix}:<${resourceConfig.ontology}>
+    CONSTRUCT {?s1 ?p2 ?o2}
+    WHERE{
+      ${subjectsRequest}
+      ?s1 a ${resourceConfig.prefix}:${resourceConfig.class}.
+      ?s1 ?p2 ?o2 .
+    }
+  `;
+};

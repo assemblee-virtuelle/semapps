@@ -1,12 +1,11 @@
 {
-  "name": "runner",
+  "name": "semapps-tests",
   "version": "1.0.0",
-  "description": "EntryPoints of SemApps servers",
-  "main": "index.js",
+  "description": "SemApps integration tests",
   "scripts": {
-    "start": "nodemon --watch ../.."
+    "test": "jest --detectOpenHandles --forceExit"
   },
-  "author": "",
+  "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
@@ -17,21 +16,12 @@
     "@semapps/webid": "^1.0.0",
     "@semapps/sparql-endpoint": "^1.0.0",
     "@semapps/mime-types" :"^1.0.0",
-    "cors": "^2.8.5",
     "dotenv-flow": "^3.1.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.0",
-    "jsonwebtoken": "^8.5.1",
     "moleculer": "^0.14.3",
     "moleculer-web": "^0.9.0",
-    "moleculer-db-adapter-mongo": "^0.4.7",
-    "node-fetch": "^2.6.0",
-    "node-jose": "^1.1.3",
-    "openid-client": "^3.11.0",
-    "passport": "^0.4.1",
-    "passport-cas2": "0.0.11"
+    "moleculer-db-adapter-mongo": "^0.4.7"
   },
   "devDependencies": {
-    "nodemon": "^2.0.1"
+    "jest": "^24.9.0"
   }
 }
