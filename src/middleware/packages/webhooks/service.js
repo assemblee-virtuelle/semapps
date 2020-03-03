@@ -1,4 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
 const { JsonLdStorageMixin } = require('@semapps/ldp');
 
 const WebhooksService = {
@@ -15,6 +15,11 @@ const WebhooksService = {
     context: null
   },
   async started() {
+    this.settings.allowedActions.forEach(actionName => {
+      if( !this.actions[actionName] ) {
+        throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
+      }
+    });
     this.settings.containerUri = this.settings.baseUri + 'webhooks/';
     this.settings.context = {
       '@vocab': this.settings.baseUri + 'ontology/semapps#'
@@ -22,10 +27,10 @@ const WebhooksService = {
   },
   actions: {
     async process(ctx) {
-      const { hash, action, ...data } = ctx.params;
+      const { hash, ...data } = ctx.params;
       const webhook = await this.actions.get({ id: hash });
       if (webhook) {
-        await this.actions[webhook.action]({ data, user: webhook.user });
+        return await this.actions[webhook.action]({ data, user: webhook.user });
       } else {
         ctx.meta.$statusCode = 404;
       }
@@ -34,21 +39,19 @@ const WebhooksService = {
       let userId = ctx.meta.webId || ctx.params.userId,
         action = ctx.params.action;
 
-      if (!userId || !action || this.settings.allowedActions.includes(action)) {
+      if (!userId || !action || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
       if (!userId.startsWith('http')) userId = this.settings.usersContainer + userId;
 
-      const webhook = this.actions.create({
+      const webhook = await this.actions.create({
         '@type': 'Webhook',
         action,
         user: userId
       });
 
-      console.log(webhook);
-
-      return webhook;
+      return webhook['@id'];
     }
   }
 };

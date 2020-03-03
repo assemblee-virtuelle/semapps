@@ -55,20 +55,23 @@ function createServices(broker) {
   });
 
   broker.createService(WebhooksService, {
-    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    adapter: new TripleStoreAdapter('ldp'),
     settings: {
       baseUri: CONFIG.HOME_URL,
       usersContainer: CONFIG.HOME_URL + 'users/',
       allowedActions: ['postOutbox']
     },
-    dependencies: ['activitypub.outbox'],
+    dependencies: ['activitypub.outbox', 'activitypub.actor'],
     actions: {
       async postOutbox(ctx) {
-        return await ctx.call('activitypub.outbox.post', {
-          collectionUri: ctx.params.user + '/outbox',
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          ...ctx.params.data
-        });
+        const actor = await ctx.call('activitypub.actor.get', { id: ctx.params.user });
+        if( actor ) {
+          return await ctx.call('activitypub.outbox.post', {
+            collectionUri: actor.outbox,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            ...ctx.params.data
+          });
+        }
       }
     }
   });

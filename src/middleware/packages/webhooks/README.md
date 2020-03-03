@@ -1,6 +1,6 @@
 # WebhooksService
 
-This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/Webhook), in order to allow users to perform some actions directly.
+This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/Webhook), in order to allow users to perform some actions directly, bypassing the endpoints authorizations.
 
 ## Features
 
@@ -55,7 +55,9 @@ broker.createService({
 });
 ```
 
-## Generating a new webhook
+## Generating new webhooks
+
+You generate a webhook by providing a user and an action. The action must be in the list of `allowedActions`, in the settings.
 
 ### Through the command line
 
@@ -67,7 +69,7 @@ mol$ call webhooks.generate --userId myUser --action myAction
 
 ### Through a secured endpoint
 
-`POST` to the `/webhooks` endpoint as a logged-in user, providing the action that will be handled by this endpoint as JSON (it must be in the list of `allowedActions` in the settings).
+`POST` to the `/webhooks` endpoint as a logged-in user, providing the action that will be handled by this endpoint as JSON.
 
 ```
 POST /webhooks HTTP/1.1
@@ -79,3 +81,7 @@ Authorization: Bearer XXX
   "action": "myAction",
 }
 ```
+
+## Posting to a webhook
+
+When you generate a webhook, you will receive an URI in response. You can then post JSON data to this webhook. It will be handled by the action(s) you defined.
