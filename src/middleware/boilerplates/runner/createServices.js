@@ -65,7 +65,7 @@ function createServices(broker) {
     actions: {
       async postOutbox(ctx) {
         const actor = await ctx.call('activitypub.actor.get', { id: ctx.params.user });
-        if( actor ) {
+        if (actor) {
           return await ctx.call('activitypub.outbox.post', {
             collectionUri: actor.outbox,
             '@context': 'https://www.w3.org/ns/activitystreams',

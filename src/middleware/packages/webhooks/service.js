@@ -16,7 +16,7 @@ const WebhooksService = {
   },
   async started() {
     this.settings.allowedActions.forEach(actionName => {
-      if( !this.actions[actionName] ) {
+      if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
