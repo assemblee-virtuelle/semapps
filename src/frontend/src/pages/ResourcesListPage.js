@@ -12,7 +12,7 @@ const ResourcesListPage = ({ type }) => {
   const [typeState, setTypeState] = useState(type);
   const [search, setSearch] = useState();
   const resourceConfig = resourcesTypes[typeState];
-  const [body, setBody] = useState(computeSparql({ resourceConfig: resourcesTypes[type] }));
+  const [body, setBody] = useState(computeSparqlSearch({ resourceConfig: resourcesTypes[type] }));
   const uri = MIDDLEWARE_URL + 'sparql/';
 
   useEffect(() => {
