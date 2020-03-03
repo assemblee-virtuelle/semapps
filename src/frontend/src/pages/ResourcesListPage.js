@@ -54,7 +54,6 @@ const ResourcesListPage = ({ type }) => {
     let newRequest;
     setSearch(values.searchInput);
     newRequest = computeSparql({ resourceConfig: resourcesTypes[type], search: values.searchInput });
-    console.log(newRequest);
     setBody(newRequest);
   };
 
@@ -71,39 +70,30 @@ const ResourcesListPage = ({ type }) => {
           </Link>
         )}
       </h2>
-      <div className="mb-3">
-        <Form
-          onSubmit={searchSubmit}
-          initialValues={{ searchInput: search }}
-          render={({ handleSubmit }) => (
-            <form onSubmit={handleSubmit}>
-              <div style={{ display: 'flex' }}>
-                <Field
-                  name="searchInput"
-                  component="input"
-                  type="text"
-                  className="form-control"
-                  id="searchInput"
-                  value={search}
-                />
-                <button
-                  style={{
-                    'flex-basis': '10%',
-                    display: 'flex',
-                    'align-items': 'center',
-                    'justify-content': 'space-around'
-                  }}
-                  type="submit"
-                  className="btn btn-primary pull-right"
-                >
-                  <i className="fa fa-search" style={{ padding: '5px' }} />
-                  <span>Rechercher</span>
+      <Form
+        onSubmit={searchSubmit}
+        initialValues={{ searchInput: search }}
+        render={({ handleSubmit }) => (
+          <form onSubmit={handleSubmit}>
+            <div className="input-group mb-3">
+              <Field
+                name="searchInput"
+                component="input"
+                type="text"
+                className="form-control"
+                id="searchInput"
+                value={search}
+              />
+              <div className="input-group-append" id="button-addon4">
+                <button className="btn btn-primary" type="submit">
+                  <i className="fa fa-search" />
+                  &nbsp; Rechercher
                 </button>
               </div>
-            </form>
-          )}
-        />
-      </div>
+            </div>
+          </form>
+        )}
+      />
       {data &&
         data.map(resourceUri => (
           <div key={resourceUri}>
