@@ -99,7 +99,7 @@ const FormService = {
         }
 
         // TODO make sure we don't overwrite other users interests
-        for( let themeUri of ctx.params.theme ) {
+        for (let themeUri of ctx.params.theme) {
           await ctx.call('theme.update', {
             '@id': themeUri,
             'pair:interestOf': actor['@id']
