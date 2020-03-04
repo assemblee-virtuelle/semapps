@@ -98,6 +98,14 @@ const FormService = {
           message = 'created';
         }
 
+        // TODO make sure we don't overwrite other users interests
+        for( let themeUri of ctx.params.theme ) {
+          await ctx.call('theme.update', {
+            '@id': themeUri,
+            'pair:interestOf': actor['@id']
+          });
+        }
+
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;
       }
