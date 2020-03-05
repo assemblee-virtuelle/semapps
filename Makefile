@@ -78,3 +78,9 @@ test:
 	npm run test --prefix ./src/middleware/tests
 	$(DOCKER_COMPOSE_TEST) kill
 	$(DOCKER_COMPOSE_TEST) rm -fv
+
+repl:
+	$(DOCKER_COMPOSE) restart middleware
+	docker attach middleware
+	# Restart the container, since leaving the console will stop it
+	$(DOCKER_COMPOSE) restart middleware

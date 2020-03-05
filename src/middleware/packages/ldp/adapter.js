@@ -10,9 +10,10 @@ class TripleStoreAdapter {
     this.broker = broker;
     this.service = service;
 
-    if (!this.service.schema.settings.containerUri) {
-      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
-    }
+    // This doesn't work if the containerUri is defined in the started method
+    // if (!this.service.schema.settings.containerUri) {
+    //   throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
+    // }
   }
 
   connect() {
