@@ -58,7 +58,7 @@ init :
 
 install :
 	npm install --prefix ./src/middleware
-	npm install --prefix ./src/frontend
+	npm install --prefix ./src/frontend/playground
 
 build:docker-build
 
@@ -66,7 +66,7 @@ build-prod: docker-build-prod
 
 prettier:
 	npm run prettier --prefix ./src/middleware
-	npm run prettier --prefix ./src/frontend
+	npm run prettier --prefix ./src/frontend/playground
 
 bootstrap:
 	npm run bootstrap --prefix ./src/middleware
