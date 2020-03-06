@@ -52,7 +52,7 @@ services:
 
   frontend:
     build:
-      context: ./src/frontend
+      context: ./src/frontend/playground
       dockerfile: Dockerfile
     container_name: frontend
     restart: always
