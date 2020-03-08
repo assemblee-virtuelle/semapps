@@ -35,7 +35,7 @@ const TripleStoreService = {
         const contentType = ctx.params.contentType;
         const type = negotiateTypeMime(contentType);
         let rdf;
-        if (type != MIME_TYPES.JSON) {
+        if (type !== MIME_TYPES.JSON) {
           rdf = params.resource;
         } else {
           rdf = await jsonld.toRDF(params.resource, {
@@ -164,12 +164,12 @@ const TripleStoreService = {
         const webId = ctx.params.webId || ctx.meta.webId;
         const acceptNegociatedType = negotiateType(accept);
         const acceptType = acceptNegociatedType.mime;
-        const fueskiAccept = acceptNegociatedType.fusekiMapping;
+        const fusekiAccept = acceptNegociatedType.fusekiMapping;
         const headers = {
           'Content-Type': 'application/sparql-query',
           'X-SemappsUser': webId,
           Authorization: this.Authorization,
-          Accept: fueskiAccept
+          Accept: fusekiAccept
         };
 
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
