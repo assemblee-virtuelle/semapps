@@ -7,9 +7,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: amondnet/now-deployment@v2
         with:
-          zeit-token: ${{ secrets.ZEIT_TOKEN }} # Required
+          zeit-token: ${{ secrets.ZEIT_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }} # Optional
-#         zeit-team-id: team_XXXXXXXXXXX # Optional
+          zeit-team-id: 'team_Lirf6L6BdNRARtO7mBp1uBct' # Optional
 #         now-args: '--prod' # Optional
           now-org-id: 'team_Lirf6L6BdNRARtO7mBp1uBct'
           now-project-id: 'QmaojiX3jHJAaqREDhmSeBm1omBWzg8YNDB923pQwtPCe1'
