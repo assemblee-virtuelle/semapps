@@ -9,8 +9,8 @@ jobs:
         with:
           zeit-token: ${{ secrets.ZEIT_TOKEN }} # Required
           github-token: ${{ secrets.GITHUB_TOKEN }} # Optional
-#          zeit-team-id: team_XXXXXXXXXXX # Optional
-#          now-args: '--prod' # Optional
+#         zeit-team-id: team_XXXXXXXXXXX # Optional
+#         now-args: '--prod' # Optional
           now-org-id: 'team_Lirf6L6BdNRARtO7mBp1uBct'
           now-project-id: 'QmaojiX3jHJAaqREDhmSeBm1omBWzg8YNDB923pQwtPCe1'
           working-directory: ./website
