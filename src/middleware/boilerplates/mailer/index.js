@@ -53,8 +53,25 @@ broker.createService(MailQueueService, {
   }
 });
 
+broker.createService(MailerService,
+{
+  settings: {
+    baseUri: CONFIG.HOME_URL,
+    fromEmail: 'reconnexion.app@gmail.com',
+    fromName: 'Colibris la Fabrique',
+    smtpServer: {
+      host: CONFIG.SMTP_HOST,
+      port: 465,
+      secure: true,
+      auth: {
+        user: CONFIG.SMTP_USER,
+        pass: CONFIG.SMTP_PASS
+      }
+    }
+  }
+});
+
 broker.createService(FormService);
-broker.createService(MailerService);
 broker.createService(MatchBotService);
 const apiService = broker.createService(ApiService);
 

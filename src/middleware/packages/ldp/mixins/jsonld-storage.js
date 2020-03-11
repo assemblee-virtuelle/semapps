@@ -58,7 +58,7 @@ const JsonLdStorageMixin = {
       ],
       get: [
         function useUriAsId(ctx) {
-          if (!ctx.params['id'].startsWith('http')) {
+          if (!Array.isArray(ctx.params['id']) && !ctx.params['id'].startsWith('http')) {
             ctx.params['id'] = ctx.service.schema.settings.containerUri + ctx.params['id'];
           }
         }
