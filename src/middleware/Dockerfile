@@ -23,7 +23,7 @@ RUN cd /main/ && npm cache clean --force && npm install --loglevel verbose
 # add src & build configuraiton
 COPY . /main/
 RUN cd /main/ && npm run bootstrap
-RUN cd /main/boilerplates/runner && npm install 
+#RUN cd /main/boilerplates/runner && npm install 
 
 # Generate public/private keys for JWT unless they already exist
 RUN cd /main/boilerplates/runner/jwt && \
