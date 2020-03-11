@@ -53,8 +53,7 @@ broker.createService(MailQueueService, {
   }
 });
 
-broker.createService(MailerService,
-{
+broker.createService(MailerService, {
   settings: {
     baseUri: CONFIG.HOME_URL,
     fromEmail: 'reconnexion.app@gmail.com',
