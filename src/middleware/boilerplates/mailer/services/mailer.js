@@ -7,6 +7,7 @@ const MailerService = {
   name: 'mailer',
   dependencies: ['match-bot', 'activitypub.actor', 'mail-queue'],
   settings: {
+    baseUri: null,
     fromEmail: null,
     fromName: null,
     smtpServer: {
@@ -26,30 +27,58 @@ const MailerService = {
 
     this.transporter = mailer.createTransport(this.settings.smtpServer);
 
-    const templateFile = await fs.readFile(__dirname + '/../templates/confirmation-mail.html');
-    this.confirmationMailTemplate = Handlebars.compile(templateFile.toString());
+    const confirmationMailFile = await fs.readFile(__dirname + '/../templates/confirmation-mail.html');
+    this.confirmationMailTemplate = Handlebars.compile(confirmationMailFile.toString());
+
+    const notificationMailFile = await fs.readFile(__dirname + '/../templates/notification-mail.html');
+    this.notificationMailTemplate = Handlebars.compile(notificationMailFile.toString());
   },
   actions: {
     async processQueue(ctx) {
       const { frequency } = ctx.params;
 
-      const mails = await this.broker.call('mail-queue.find', { query: { frequency, sentAt: null } });
+      const mails = await this.broker.call('mail-queue.find', { query: { frequency, sentAt: null, errorResponse: null } });
 
       for( let mail of mails ) {
+        const info = await this.actions.sendNotificationMail({ mail });
 
-        this.actions.sendNotificationMail({ mail });
-
-        // Mark email as sent
-        // await this.broker.call('mail-queue.update', {
-        //   id: mails[0]['@id'],
-        //   sentAt: new Date().toISOString()
-        // });
+        if( info.accepted.length > 0 ) {
+          // Mark mail as sent
+          await this.broker.call('mail-queue.update', {
+            id: mails[0]['@id'],
+            sentAt: new Date().toISOString()
+          });
+        } else {
+          // Mark mail as error
+          await this.broker.call('mail-queue.update', {
+            id: mails[0]['@id'],
+            errorResponse: info.response
+          });
+        }
       }
     },
     async sendNotificationMail(ctx) {
-      const actor = await this.broker.call('activitypub.actor.get', { id: ctx.params.mail['actor'] });
+      const { mail } = ctx.params;
+      const actor = await this.broker.call('activitypub.actor.get', { id: mail['actor'] });
 
-      console.log('Sending email to : ', actor['pair:e-mail'], ctx.params.mail);
+      let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
+      if( !Array.isArray(themes) ) themes = [themes];
+
+      const html = this.notificationMailTemplate({
+        projects: mail.objects,
+        locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
+        themeParam: `Concernant les thématiques: ${themes.map(theme => theme.preferedLabel).join(', ')}`,
+        preferencesUrl: this.settings.baseUri + '?id=' + actor['@id'],
+        email: actor['pair:e-mail']
+      });
+
+      return await this.transporter.sendMail({
+        from: `"${this.settings.fromName}" <${this.settings.fromEmail}>`,
+        to: actor['pair:e-mail'],
+        subject: "Nouveaux projets sur la Fabrique",
+        // text: "Hello world",
+        html
+      });
     },
     async sendConfirmationMail(ctx) {
       const { actor } = ctx.params;
@@ -61,13 +90,13 @@ const MailerService = {
         locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
         themeParam: `Concernant les thématiques: ${themes.map(theme => theme.preferedLabel).join(', ')}`,
         frequency: actor['semapps:mailFrequency'] === 'daily' ? 'une fois par jour' : 'une fois par semaine',
-        preferencesUrl: 'http://localhost:3000/?id=' + actor['@id'],
+        preferencesUrl: this.settings.baseUri + '?id=' + actor['@id'],
         email: actor['pair:e-mail']
       });
 
-      this.transporter.sendMail({
+      return await this.transporter.sendMail({
         from: `"${this.settings.fromName}" <${this.settings.fromEmail}>`,
-        to: "srosset81@gmail.com",
+        to: actor['pair:e-mail'],
         subject: "Notification des nouveaux projets sur la Fabrique",
         // text: "Hello world",
         html
@@ -87,7 +116,7 @@ const MailerService = {
   methods: {
     async queueObject(actor, object) {
       // Find if there is a mail in queue for the actor
-      const mails = await this.broker.call('mail-queue.find', { query: { actor: actor['@id'], sentAt: null } });
+      const mails = await this.broker.call('mail-queue.find', { query: { actor: actor['@id'], sentAt: null, errorResponse: null } });
 
       if( mails.length > 0 ) {
         // Add the object to the existing mail
@@ -107,7 +136,8 @@ const MailerService = {
             object
           ],
           frequency: actor['semapps:mailFrequency'],
-          sentAt: null
+          sentAt: null,
+          errorResponse: null
         });
       }
     }

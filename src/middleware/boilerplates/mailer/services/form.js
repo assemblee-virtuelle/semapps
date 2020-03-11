@@ -97,7 +97,8 @@ const FormService = {
             object: this.settings.matchBotUri
           });
 
-          await ctx.call('mailer.sendConfirmationMail', { actor });
+          // Do not wait for mail to be sent
+          ctx.call('mailer.sendConfirmationMail', { actor });
 
           message = 'created';
         }
