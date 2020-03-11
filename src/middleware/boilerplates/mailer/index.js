@@ -49,7 +49,7 @@ broker.createService(ThemeService, {
 broker.createService(MailQueueService, {
   adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   settings: {
-    containerUri: CONFIG.HOME_URL + 'mails/',
+    containerUri: CONFIG.HOME_URL + 'mails/'
   }
 });
 
