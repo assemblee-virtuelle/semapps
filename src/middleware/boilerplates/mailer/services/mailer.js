@@ -37,12 +37,14 @@ const MailerService = {
     async processQueue(ctx) {
       const { frequency } = ctx.params;
 
-      const mails = await this.broker.call('mail-queue.find', { query: { frequency, sentAt: null, errorResponse: null } });
+      const mails = await this.broker.call('mail-queue.find', {
+        query: { frequency, sentAt: null, errorResponse: null }
+      });
 
-      for( let mail of mails ) {
+      for (let mail of mails) {
         const info = await this.actions.sendNotificationMail({ mail });
 
-        if( info.accepted.length > 0 ) {
+        if (info.accepted.length > 0) {
           // Mark mail as sent
           await this.broker.call('mail-queue.update', {
             id: mails[0]['@id'],
@@ -62,7 +64,7 @@ const MailerService = {
       const actor = await this.broker.call('activitypub.actor.get', { id: mail['actor'] });
 
       let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
-      if( !Array.isArray(themes) ) themes = [themes];
+      if (!Array.isArray(themes)) themes = [themes];
 
       const html = this.notificationMailTemplate({
         projects: mail.objects,
@@ -75,7 +77,7 @@ const MailerService = {
       return await this.transporter.sendMail({
         from: `"${this.settings.fromName}" <${this.settings.fromEmail}>`,
         to: actor['pair:e-mail'],
-        subject: "Nouveaux projets sur la Fabrique",
+        subject: 'Nouveaux projets sur la Fabrique',
         // text: "Hello world",
         html
       });
@@ -84,7 +86,7 @@ const MailerService = {
       const { actor } = ctx.params;
 
       let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
-      if( !Array.isArray(themes) ) themes = [themes];
+      if (!Array.isArray(themes)) themes = [themes];
 
       const html = this.confirmationMailTemplate({
         locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
@@ -97,7 +99,7 @@ const MailerService = {
       return await this.transporter.sendMail({
         from: `"${this.settings.fromName}" <${this.settings.fromEmail}>`,
         to: actor['pair:e-mail'],
-        subject: "Notification des nouveaux projets sur la Fabrique",
+        subject: 'Notification des nouveaux projets sur la Fabrique',
         // text: "Hello world",
         html
       });
@@ -116,25 +118,22 @@ const MailerService = {
   methods: {
     async queueObject(actor, object) {
       // Find if there is a mail in queue for the actor
-      const mails = await this.broker.call('mail-queue.find', { query: { actor: actor['@id'], sentAt: null, errorResponse: null } });
+      const mails = await this.broker.call('mail-queue.find', {
+        query: { actor: actor['@id'], sentAt: null, errorResponse: null }
+      });
 
-      if( mails.length > 0 ) {
+      if (mails.length > 0) {
         // Add the object to the existing mail
         this.broker.call('mail-queue.update', {
           '@id': mails[0]['@id'],
-          objects: [
-            object,
-            ...mails[0].objects
-          ]
+          objects: [object, ...mails[0].objects]
         });
       } else {
         // Create a new mail for the actor
         this.broker.call('mail-queue.create', {
           '@type': 'Mail',
           actor: actor['@id'],
-          objects: [
-            object
-          ],
+          objects: [object],
           frequency: actor['semapps:mailFrequency'],
           sentAt: null,
           errorResponse: null
