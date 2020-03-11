@@ -43,7 +43,7 @@ const OutboxService = {
       // This will be used to order the ordered collections
       activity.published = new Date().toISOString();
 
-      activity = await ctx.call('activitypub.activity.create', activity);
+      await ctx.call('activitypub.activity.create', activity);
 
       // Attach the newly-created activity to the outbox
       ctx.call('activitypub.collection.attach', {
