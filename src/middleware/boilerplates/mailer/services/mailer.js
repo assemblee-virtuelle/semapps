@@ -15,8 +15,7 @@ const MailerService = {
 
       const mails = await this.broker.call('mail-queue.find', { query: { frequency, sentAt: null } });
 
-      for( let mail of mails ) {
-
+      for (let mail of mails) {
         await this.sendMail(mail);
 
         // Mark email as sent
@@ -44,23 +43,18 @@ const MailerService = {
 
       console.log('mails', mails, actor);
 
-      if( mails.length > 0 ) {
+      if (mails.length > 0) {
         // Add the object to the existing email
         this.broker.call('mail-queue.update', {
           '@id': mails[0]['@id'],
-          objects: [
-            object,
-            ...mails[0].objects
-          ]
+          objects: [object, ...mails[0].objects]
         });
       } else {
         // Create a new email for the actor
         this.broker.call('mail-queue.create', {
           '@type': 'Mail',
           actor: actor['@id'],
-          objects: [
-            object
-          ],
+          objects: [object],
           frequency: actor['semapps:mailFrequency'],
           sentAt: null
         });
