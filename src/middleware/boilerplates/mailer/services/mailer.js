@@ -35,8 +35,7 @@ const MailerService = {
 
       const mails = await this.broker.call('mail-queue.find', { query: { frequency, sentAt: null } });
 
-      for( let mail of mails ) {
-
+      for (let mail of mails) {
         this.actions.sendNotificationMail({ mail });
 
         // Mark email as sent
@@ -55,7 +54,7 @@ const MailerService = {
       const { actor } = ctx.params;
 
       let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
-      if( !Array.isArray(themes) ) themes = [themes];
+      if (!Array.isArray(themes)) themes = [themes];
 
       const html = this.confirmationMailTemplate({
         locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
@@ -67,8 +66,8 @@ const MailerService = {
 
       this.transporter.sendMail({
         from: `"${this.settings.fromName}" <${this.settings.fromEmail}>`,
-        to: "srosset81@gmail.com",
-        subject: "Notification des nouveaux projets sur la Fabrique",
+        to: 'srosset81@gmail.com',
+        subject: 'Notification des nouveaux projets sur la Fabrique',
         // text: "Hello world",
         html
       });
@@ -89,23 +88,18 @@ const MailerService = {
       // Find if there is a mail in queue for the actor
       const mails = await this.broker.call('mail-queue.find', { query: { actor: actor['@id'], sentAt: null } });
 
-      if( mails.length > 0 ) {
+      if (mails.length > 0) {
         // Add the object to the existing mail
         this.broker.call('mail-queue.update', {
           '@id': mails[0]['@id'],
-          objects: [
-            object,
-            ...mails[0].objects
-          ]
+          objects: [object, ...mails[0].objects]
         });
       } else {
         // Create a new mail for the actor
         this.broker.call('mail-queue.create', {
           '@type': 'Mail',
           actor: actor['@id'],
-          objects: [
-            object
-          ],
+          objects: [object],
           frequency: actor['semapps:mailFrequency'],
           sentAt: null
         });
