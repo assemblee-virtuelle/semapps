@@ -13,7 +13,8 @@ const FormService = {
 
       if (!actor) {
         actor = {
-          'pair:e-mail': ctx.params.email
+          'pair:e-mail': ctx.params.email,
+          'semapps:mailFrequency': 'weekly'
         };
       }
 
@@ -46,7 +47,8 @@ const FormService = {
 
         let actorData = {
           'pair:e-mail': ctx.params.email,
-          'pair:hasInterest': ctx.params.themes
+          'pair:hasInterest': ctx.params.themes,
+          'semapps:mailFrequency': ctx.params.frequency
         };
 
         if (ctx.params.location === 'close-to-me') {
@@ -99,12 +101,12 @@ const FormService = {
         }
 
         // TODO make sure we don't overwrite other users interests
-        for( let themeUri of ctx.params.theme ) {
-          await ctx.call('theme.update', {
-            '@id': themeUri,
-            'pair:interestOf': actor['@id']
-          });
-        }
+        // for( let themeUri of ctx.params.theme ) {
+        //   await ctx.call('theme.update', {
+        //     '@id': themeUri,
+        //     'pair:interestOf': actor['@id']
+        //   });
+        // }
 
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;

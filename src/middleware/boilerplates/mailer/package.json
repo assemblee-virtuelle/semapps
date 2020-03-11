@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@semapps/activitypub": "^1.0.0",
+    "@semapps/ldp": "^1.0.0",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "handlebars": "^4.7.2",

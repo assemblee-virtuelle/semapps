@@ -6,6 +6,7 @@ const { ActivityPubService } = require('@semapps/activitypub');
 const FormService = require('./services/form');
 const ApiService = require('./services/api');
 const MatchBotService = require('./services/match-bot');
+const MailQueueService = require('./services/mail-queue');
 const MailerService = require('./services/mailer');
 const ThemeService = require('./services/theme');
 const CONFIG = require('./config');
@@ -14,11 +15,10 @@ const broker = new ServiceBroker();
 
 broker.createService(ActivityPubService, {
   baseUri: CONFIG.HOME_URL,
-  context: {
-    '@vocab': 'https://www.w3.org/ns/activitystreams#',
-    foaf: 'http://xmlns.com/foaf/0.1/',
-    pair: 'http://virtual-assembly.org/ontologies/pair#'
-  },
+  // context: {
+  //   '@vocab': 'https://www.w3.org/ns/activitystreams',
+  //   pair: 'http://virtual-assembly.org/ontologies/pair#'
+  // },
   storage: {
     collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
     activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
@@ -43,6 +43,13 @@ broker.createService(ThemeService, {
       'Bien-être',
       'Autre'
     ]
+  }
+});
+
+broker.createService(MailQueueService, {
+  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
+  settings: {
+    containerUri: CONFIG.HOME_URL + 'mails/',
   }
 });
 

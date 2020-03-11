@@ -1,4 +1,4 @@
-const { JsonLdStorageMixin } = require('@semapps/activitypub');
+const { JsonLdStorageMixin } = require('@semapps/ldp');
 const slugify = require('slugify');
 
 const ThemeService = {

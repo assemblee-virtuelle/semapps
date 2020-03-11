@@ -71,12 +71,26 @@
                             <div class="form-wrapper" id="edit-account">
                                 <div class="form-item form-type-textfield form-item-mail">
                                     <label for="email">Mon adresse de courriel
-                                        <span class="form-required" title="Ce champ est requis.">*</span>
+                                        <!-- <span class="form-required" title="Ce champ est requis.">*</span>-->
                                     </label>
                                     <input class="form-text required" id="email" maxlength="254" name="email" placeholder="Adresse de courriel" type="email" value="{{actor.[pair:e-mail]}}" required>
                                     <div class="description">Ne sera pas rendue publique et ne sera utilisée que
                                         pour la réception de nouveaux projets de la Fabrique. Vous pourrez à tout
                                         moment vous désinscrire.
+                                    </div>
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="form-wrapper">
+                                <div class="form-item form-type-textfield form-item-mail">
+                                    <label for="email">Fréquence maximale des envois
+                                        <!-- <span class="form-required" title="Ce champ est requis.">*</span>-->
+                                    </label>
+                                    <div class="radio-buttons">
+                                        <input type="radio" name="frequency" value="weekly" id="weekly" {{#ifCond actor.[semapps:mailFrequency] '==' 'weekly' }}checked{{/ifCond}}/>
+                                        <label for="weekly">Une fois par semaine</label>
+                                        <input type="radio" name="frequency" value="daily" id="daily" {{#ifCond actor.[semapps:mailFrequency] '==' 'daily' }}checked{{/ifCond}}/>
+                                        <label for="daily">Une fois par jour</label>
                                     </div>
                                 </div>
                             </div>
