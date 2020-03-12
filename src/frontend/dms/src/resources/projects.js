@@ -21,7 +21,7 @@ export const ProjectList = (props) => {
   return (
     <List title="Projets" {...props}>
       <Datagrid>
-        <TextField source="pair:preferedLabel" label="Nom" />
+        <TextField source="pairv1:preferedLabel" label="Nom" />
         <EditButton basePath="/Project" />
       </Datagrid>
     </List>
@@ -29,16 +29,16 @@ export const ProjectList = (props) => {
 };
 
 const ProjectTitle = ({ record }) => {
-  return <span>Projet {record ? `"${record['pair:preferedLabel']}"` : ''}</span>;
+  return <span>Projet {record ? `"${record['pairv1:preferedLabel']}"` : ''}</span>;
 };
 
 export const ProjectEdit = (props) => (
   <Edit title={<ProjectTitle />} {...props}>
     <JsonLdSimpleForm>
-      <TextInput source="pair:preferedLabel" label="Nom" fullWidth />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pair:isManagedBy" />
+      <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
+      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
+      <TextInput source="pairv1:homePage" label="Site web" fullWidth />
+      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pairv1:isManagedBy" />
     </JsonLdSimpleForm>
   </Edit>
 );
@@ -46,9 +46,9 @@ export const ProjectEdit = (props) => (
 export const ProjectCreate = (props) => (
   <Create title="Créer un projet" {...props}>
     <SimpleForm>
-      <TextInput source="pair:preferedLabel" label="Nom" />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" />
+      <TextInput source="pairv1:preferedLabel" label="Nom" />
+      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
+      <TextInput source="pairv1:homePage" label="Site web" />
     </SimpleForm>
   </Create>
 );

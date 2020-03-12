@@ -9,7 +9,7 @@ const JsonLdAutocompleteInput = props => (
   <AutocompleteArrayInput
     {...props}
     input={{ ...props.input, value: props.input.value && props.input.value.map(v => typeof v === 'object' ? v['@id'] : v)}}
-    optionText={record => ( record && ( record['pair:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
+    optionText={record => ( record && ( record['pairv1:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
     fullWidth
   />
 );

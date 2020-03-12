@@ -11,7 +11,7 @@ import { PersonList, PersonIcon } from './resources/persons';
 function App() {
   return (
     <Admin
-      dataProvider={ldpDataProvider('http://localhost:3000/ldp/', 'pair', httpClient)}
+      dataProvider={ldpDataProvider('https://middleware.semapps.org/ldp/', 'pairv1', httpClient)}
       authProvider={authProvider}
       logoutButton={LogoutButton}
     >
