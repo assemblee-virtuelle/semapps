@@ -50,8 +50,9 @@ const JsonLdStorageMixin = {
           return ctx;
         },
         function useUriAsId(ctx) {
-          if (!ctx.params['@id'].startsWith('http')) {
-            ctx.params['@id'] = ctx.service.schema.settings.containerUri + ctx.params['@id'];
+          const idField = ctx.params['@id'] ? '@id' : 'id';
+          if (ctx.params[idField] && !ctx.params[idField].startsWith('http')) {
+            ctx.params[idField] = ctx.service.schema.settings.containerUri + ctx.params[idField];
           }
         }
       ],

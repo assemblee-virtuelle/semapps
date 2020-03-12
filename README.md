@@ -6,6 +6,12 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven
 More information about the project http://semapps.org
 
 # Usage
+
+## Prerequisites
+docker
+docker-compose
+[make](https://www.gnu.org/software/make/)
+
 ## First time (mandatory to dev, not to deploy)
 ```
 make init
@@ -27,6 +33,24 @@ make log
 ```
 make stop
 ```
+## production commands
+
+edit local env variables
+```
+nano src/middleware/boilerplates/runner/.env.local
+```
+first time : run the nginx certbot script
+```
+init-letsencrypt.sh
+```
+
+build and start
+```
+make build-prod
+make start-prod
+
+```
+
 ## Cleanup code
 Please do this before every PR submission.
 ```
