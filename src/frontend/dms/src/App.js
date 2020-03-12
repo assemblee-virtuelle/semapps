@@ -12,7 +12,7 @@ function App() {
   return (
     <Admin
       dataProvider={ldpDataProvider('https://middleware.semapps.org/ldp/', 'pairv1', httpClient)}
-      authProvider={authProvider}
+      authProvider={authProvider('https://middleware.semapps.org')}
       logoutButton={LogoutButton}
     >
       <Resource name="Project" list={ProjectList} edit={ProjectEdit} create={ProjectCreate} icon={ProjectIcon} options={{ label: 'Projets' }}/>
