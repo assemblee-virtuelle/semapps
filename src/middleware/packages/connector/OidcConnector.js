@@ -2,6 +2,7 @@ const { Issuer, Strategy } = require('openid-client');
 const jose = require('node-jose');
 const base64url = require('base64url');
 const Connector = require('./Connector');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 class OidcConnector extends Connector {
   constructor(settings) {
@@ -53,6 +54,25 @@ class OidcConnector extends Connector {
         }
       )
     );
+  }
+  async getWebId(ctx) {
+    return this.findUserByEmail(ctx, ctx.meta.tokenPayload.email);
+  }
+  async findUserByEmail(ctx, email) {
+    const results = await ctx.call('triplestore.query', {
+      query: `
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        SELECT ?webId
+        WHERE {
+          ?webId rdf:type foaf:Person ;
+                 foaf:email "${email}" .
+        }
+      `,
+      accept: MIME_TYPES.JSON
+    });
+
+    return results.length > 0 ? results[0].webId.value : null;
   }
   globalLogout(req, res, next) {
     res.redirect(

@@ -4,16 +4,16 @@ const { ACTIVITY_TYPES } = require('../constants');
 
 const FollowService = {
   name: 'activitypub.follow',
-  dependencies: ['webid', 'activitypub.collection'],
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   async started() {
-    this.settings.usersContainer = await this.broker.call('webid.getUsersContainer');
+    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
   },
   actions: {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/followers`
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: `${this.settings.actorsContainer}${ctx.params.username}/followers`
       });
 
       if (collection) {
@@ -25,8 +25,8 @@ const FollowService = {
     async listFollowing(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
-      const collection = await ctx.call('activitypub.collection.queryCollection', {
-        collectionUri: `${this.settings.usersContainer}${ctx.params.username}/following`
+      const collection = await ctx.call('activitypub.collection.get', {
+        id: `${this.settings.actorsContainer}${ctx.params.username}/following`
       });
 
       if (collection) {
@@ -37,15 +37,17 @@ const FollowService = {
     }
   },
   events: {
-    async 'activitypub.outbox.posted'({ activity }) {
+    async 'activitypub.outbox.posted'(ctx) {
+      const { activity } = ctx.params;
+
       if (activity.type === ACTIVITY_TYPES.FOLLOW) {
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.object + '/followers',
-          objectUri: activity.actor
+          item: activity.actor
         });
         await this.broker.call('activitypub.collection.attach', {
           collectionUri: activity.actor + '/following',
-          objectUri: activity.object
+          item: activity.object
         });
         this.broker.emit('activitypub.follow.added', { follower: activity.actor });
       }

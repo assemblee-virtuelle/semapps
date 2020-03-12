@@ -22,7 +22,6 @@ class Connector {
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
     const profileData = this.settings.selectProfileData(res.req.user);
-
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we may need it for the token generation
       res.req.user.webId = webId;
@@ -83,6 +82,10 @@ class Connector {
       await new Promise(resolve => middleware(req, res, resolve));
     }
   }
+  async getWebId(ctx) {
+    // By default, get the webId from the token payload
+    return ctx.meta.tokenPayload.webId;
+  }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
     try {
@@ -90,6 +93,7 @@ class Connector {
       if (token) {
         const payload = await this.verifyToken(token);
         ctx.meta.tokenPayload = payload;
+        ctx.meta.webId = await this.getWebId(ctx);
         return Promise.resolve(payload);
       } else {
         return Promise.resolve(null);
@@ -104,6 +108,7 @@ class Connector {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
         ctx.meta.tokenPayload = await this.verifyToken(token);
+        ctx.meta.webId = await this.getWebId(ctx);
         return Promise.resolve(ctx);
       } else {
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));

@@ -6,6 +6,12 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven
 More information about the project http://semapps.org
 
 # Usage
+
+## Prerequisites
+docker
+docker-compose
+[make](https://www.gnu.org/software/make/)
+
 ## First time (mandatory to dev, not to deploy)
 ```
 make init

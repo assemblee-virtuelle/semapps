@@ -1,4 +1,5 @@
 'use strict';
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebIdService = {
   name: 'webid',
@@ -15,10 +16,8 @@ const WebIdService = {
 
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
       if (!nick) nick = email.split('@')[0].toLowerCase();
-
       // Check if an user already exist with this email address
       let webId = await this.findUserByEmail(ctx, email);
-
       // If no user exist, create one
       if (!webId) {
         const userData = {
@@ -28,18 +27,23 @@ const WebIdService = {
           familyName,
           homepage
         };
-
-        await ctx.call('ldp.post', {
-          containerUri: this.settings.usersContainer,
-          slug: nick,
-          '@context': { '@vocab': 'http://xmlns.com/foaf/0.1/' },
-          '@type': 'Person',
-          ...userData
+        let newPerson = await ctx.call('ldp.post', {
+          resource: {
+            // containerUri: this.settings.usersContainer,
+            // slug: nick,
+            '@context': {
+              '@vocab': 'http://xmlns.com/foaf/0.1/'
+            },
+            '@type': 'Person',
+            '@id': `${this.settings.usersContainer}${nick}`,
+            ...userData
+          },
+          contentType: MIME_TYPES.JSON,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
         });
-
-        webId = ctx.meta.$responseHeaders.Location;
-
-        ctx.emit('webid.created', { '@id': webId, ...userData });
+        webId = newPerson['@id'];
+        ctx.emit('webid.created', newPerson);
       }
 
       return webId;
@@ -49,24 +53,30 @@ const WebIdService = {
 
       if (webId) {
         return await ctx.call('ldp.get', {
-          resourceUri: webId
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON,
+          webId: webId
         });
       } else {
         ctx.meta.$statusCode = 404;
       }
     },
     async edit(ctx) {
-      const { userId, ...body } = ctx.params;
+      let { userId, ...body } = ctx.params;
       const webId = await this.getWebId(ctx);
-
+      body['@id'] = webId;
       return await ctx.call('ldp.patch', {
-        resourceUri: webId,
-        ...body
+        resource: body,
+        webId: webId,
+        contentType: MIME_TYPES.JSON,
+        accept: MIME_TYPES.JSON
       });
     },
     async list(ctx) {
       return await ctx.call('ldp.getByType', {
-        typeURL: 'foaf:Person'
+        type: 'foaf:Person',
+        webId: ctx.meta.webId,
+        accept: MIME_TYPES.JSON
       });
     },
     getUsersContainer(ctx) {
@@ -99,7 +109,7 @@ const WebIdService = {
                    foaf:email "${email}" .
           }
         `,
-        accept: 'json'
+        accept: MIME_TYPES.JSON
       });
 
       return results.length > 0 ? results[0].webId.value : null;

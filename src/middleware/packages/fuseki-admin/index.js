@@ -18,7 +18,7 @@ const FusekiAdminService = {
         }
       });
       if (response.status === 404) {
-        console.warn(`dataset ${ctx.params.dataset} not exist. creating...`);
+        console.warn(`Data ${ctx.params.dataset} doesn't exist. Creating...`);
         let response2 = await fetch(
           this.settings.sparqlEndpoint + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + ctx.params.dataset,
           {
@@ -29,15 +29,14 @@ const FusekiAdminService = {
           }
         );
         if (response2.status === 200) {
-          console.log(`dataset ${ctx.params.dataset} created`);
+          console.log(`Dataset ${ctx.params.dataset} created`);
         } else {
-          console.warn(`problem creating dataset ${ctx.params.dataset}`);
+          console.warn(`Problem creating dataset ${ctx.params.dataset}`);
         }
       } else if (response.status === 200) {
         // Dataset exist, do nothing...
       } else {
-        let message = `problem initilising dataset ${ctx.params.dataset}`;
-        throw new Error(`message`);
+        throw new Error(`Problem initializing dataset ${ctx.params.dataset}`);
       }
       return;
     }

@@ -3,6 +3,8 @@
 
 DOCKER_COMPOSE=docker-compose -f docker-compose.yaml
 DOCKER_COMPOSE_PROD=docker-compose -f docker-compose-prod.yaml
+DOCKER_COMPOSE_TEST=docker-compose -f docker-compose-test.yaml
+
 # Docker
 docker-build:
 	$(DOCKER_COMPOSE) build
@@ -35,10 +37,10 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware fuseki frontend
+	$(DOCKER_COMPOSE) logs -f middleware frontend
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend
+	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend mongo
 
 start: docker-start
 
@@ -56,7 +58,7 @@ init :
 
 install :
 	npm install --prefix ./src/middleware
-	npm install --prefix ./src/frontend
+	npm install --prefix ./src/frontend/playground
 
 build:docker-build
 
@@ -64,15 +66,21 @@ build-prod: docker-build-prod
 
 prettier:
 	npm run prettier --prefix ./src/middleware
-	npm run prettier --prefix ./src/frontend
+	npm run prettier --prefix ./src/frontend/playground
 
 bootstrap:
 	npm run bootstrap --prefix ./src/middleware
 
+# For tests we currently only need fuseki and mongodb
 test:
-	$(DOCKER_COMPOSE) build fuseki
-	$(DOCKER_COMPOSE) up -d fuseki
-	npm run test --prefix ./src/middleware/boilerplates/runner
-	docker logs fuseki
-	$(DOCKER_COMPOSE) kill fuseki
-	$(DOCKER_COMPOSE) rm -fv fuseki
+	$(DOCKER_COMPOSE_TEST) build
+	$(DOCKER_COMPOSE_TEST) up -d
+	npm run test --prefix ./src/middleware/tests
+	$(DOCKER_COMPOSE_TEST) kill
+	$(DOCKER_COMPOSE_TEST) rm -fv
+
+repl:
+	$(DOCKER_COMPOSE) restart middleware
+	docker attach middleware
+	# Restart the container, since leaving the console will stop it
+	$(DOCKER_COMPOSE) restart middleware

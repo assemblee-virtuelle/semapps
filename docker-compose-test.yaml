@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+  fuseki_tests:
+    build:
+      context: ./src/jena/fuseki-docker
+      dockerfile: Dockerfile
+    container_name: fuseki_tests
+    restart: always
+    volumes:
+      - rdf_data:/fuseki
+      - staging:/staging
+    ports:
+      - "3030:3030"
+    expose:
+      - "3030"
+    networks:
+      - semapps
+    environment:
+      ADMIN_PASSWORD: "admin"
+
+  mongo_tests:
+    image: mongo
+    container_name: mongo_tests
+    restart: always
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    networks:
+      - semapps
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_INITDB_DATABASE: semapps
+
+volumes:
+  rdf_data:
+  staging:
+networks:
+  semapps:
+    name: semapps_network
