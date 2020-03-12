@@ -1,3 +1,3 @@
 module.exports = {
-  ImporterService: require('./service'),
+  ImporterService: require('./service')
 };
