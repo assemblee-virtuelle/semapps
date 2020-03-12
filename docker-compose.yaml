@@ -49,13 +49,13 @@ services:
       - "3000:3000"
     expose:
       - "3000"
-    command: npm run start --prefix ./boilerplates/runner
+    command: ./boilerplates/${MIDDLEWARE}/entrypoint.sh
     stdin_open: true
     tty: true
 
   frontend:
     build:
-      context: ./src/frontend/playground
+      context: ./src/frontend/${FRONTEND}
       dockerfile: Dockerfile
     container_name: frontend
     restart: always
@@ -64,7 +64,7 @@ services:
     environment:
       - PORT=5000
     volumes:
-      - ./src/frontend/playground:/app
+      - ./src/frontend/${FRONTEND}:/app
     networks:
       - semapps
     ports:
