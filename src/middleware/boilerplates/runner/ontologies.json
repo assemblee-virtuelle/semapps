@@ -28,6 +28,10 @@
     "prefix": "pair",
     "owl": "",
     "url": "http://virtual-assembly.org/ontologies/pair#"
-
+  },
+  {
+    "prefix": "pairv1",
+    "owl": "",
+    "url": "http://virtual-assembly.org/pair#"
   }
 ]
