@@ -93,7 +93,7 @@ function createServices(broker) {
           updated: data.updated
         }
       })
-    },
+    }
   });
 }
 
