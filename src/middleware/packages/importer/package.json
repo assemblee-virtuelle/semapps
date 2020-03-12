@@ -1,0 +1,10 @@
+{
+  "name": "@semapps/importer",
+  "version": "1.0.0",
+  "description": "Mass importer for SemApps",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@semapps/ldp" :"^1.0.0",
+    "@semapps/mime-types" :"^1.0.0"
+  }
+}
