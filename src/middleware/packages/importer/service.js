@@ -14,14 +14,15 @@ const ImporterService = {
   dependencies: ['ldp'],
   actions: {
     async import(ctx) {
-      let { fileName, userId } = ctx.params, slug;
+      let { fileName, userId } = ctx.params,
+        slug;
 
       if (!userId.startsWith('http')) userId = this.settings.usersContainer + userId;
 
       const file = await fs.readFile(path.resolve(this.settings.baseDir, fileName));
       const json = JSON.parse(file.toString());
 
-      for( let data of json ) {
+      for (let data of json) {
         data = this.settings.transformData(data);
 
         console.log({
