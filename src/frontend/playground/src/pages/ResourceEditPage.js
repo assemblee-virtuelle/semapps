@@ -9,7 +9,7 @@ import { addFlash } from '../app/actions';
 import resourcesTypes from '../resourcesTypes';
 import ResourceField from '../ResourceField';
 import { getInitialValues } from '../utils';
-import { MIDDLEWARE_URL } from "../config";
+import { MIDDLEWARE_URL } from '../config';
 
 const ResourceEditPage = ({ type, resourceId, navigate }) => {
   useAuth({ force: true });
