@@ -48,11 +48,11 @@ services:
       - "3000:3000"
     expose:
       - "3000"
-    command: npm run start --prefix ./boilerplates/runner
+    command: npm run start --prefix ./boilerplates/${MIDDLEWARE}
 
   frontend:
     build:
-      context: ./src/frontend/playground
+      context: ./src/frontend/${FRONTEND}
       dockerfile: Dockerfile
     container_name: frontend
     restart: always

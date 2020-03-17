@@ -77,9 +77,8 @@ const LdpService = {
     }
   },
   methods: {
-    generateId(type, containerUri, slug) {
-      const id = slug || uuid().substring(0, 8);
-      return containerUri ? `${containerUri}${id}` : `${this.settings.baseUrl}${type}/${id}`;
+    generateId() {
+      return uuid().substring(0, 8);
     },
     async findUnusedUri(ctx, generatedId) {
       let existingBegining = await ctx.call('triplestore.query', {
