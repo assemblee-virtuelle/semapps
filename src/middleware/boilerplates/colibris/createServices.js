@@ -77,7 +77,7 @@ function createServices(broker) {
             '@vocab': 'https://www.w3.org/ns/activitystreams#',
             pair: 'http://virtual-assembly.org/ontologies/pair#'
           },
-          '@type': ['Object', 'pair:Project'],
+          '@type': ['Organization', 'pair:Project'],
           // PAIR
           'pair:label': data.name,
           'pair:description': data.content,
