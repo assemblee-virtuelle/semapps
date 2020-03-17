@@ -55,8 +55,10 @@ services:
 
   frontend:
     build:
-      context: ./src/frontend/${FRONTEND}
-      dockerfile: Dockerfile
+      context: ./src/frontend
+      dockerfile: Dockerfile.dev
+      args:
+        - FRONTEND
     container_name: frontend
     restart: always
     depends_on:

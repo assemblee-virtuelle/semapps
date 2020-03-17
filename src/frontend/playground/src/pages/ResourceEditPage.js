@@ -13,7 +13,7 @@ import { getInitialValues } from '../utils';
 const ResourceEditPage = ({ type, resourceId, navigate }) => {
   useAuth({ force: true });
   const resourceConfig = resourcesTypes[type];
-  const resourceUri = `${resourceConfig.container}/${resourceId}`;
+  const resourceUri = resourceConfig.baseUri + resourceId;
   const { data } = useQuery(resourceUri);
   const dispatch = useDispatch();
 
