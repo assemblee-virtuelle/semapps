@@ -1,4 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
+const jsonld = require('jsonld');
 
 module.exports = {
   api: async function api(ctx) {
@@ -34,7 +36,7 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        return await ctx.call('triplestore.query', {
+        let result = await ctx.call('triplestore.query', {
           query: `
               ${this.getPrefixRdf()}
               CONSTRUCT
@@ -44,6 +46,11 @@ module.exports = {
                   `,
           accept: accept
         });
+        // If we asked for JSON-LD, compact it using our ontologies in order to have clean, consistent results
+        if (accept === MIME_TYPES.JSON) {
+          result = await jsonld.compact(result, this.getPrefixJSON());
+        }
+        return result;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

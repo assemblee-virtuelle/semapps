@@ -1,17 +1,10 @@
 const { LdpService, TripleStoreAdapter } = require('@semapps/ldp');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
-const {
-  ActivityService,
-  OutboxService,
-  InboxService,
-  FollowService,
-  MongoDbCollectionService,
-  ActorService,
-  ObjectService
-} = require('@semapps/activitypub');
+const { ActivityPubService } = require('@semapps/activitypub');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
+const { WebhooksService } = require('@semapps/webhooks');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
@@ -51,32 +44,37 @@ function createServices(broker) {
   });
 
   // ActivityPub
-  broker.createService(MongoDbCollectionService, {
-    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL)
-  });
-  broker.createService(ActorService, {
-    adapter: new TripleStoreAdapter('ldp'),
-    settings: {
-      containerUri: CONFIG.HOME_URL + 'users/'
-    },
-    dependencies: ['ldp'] // TODO set this in TripleStoreAdapter
-  });
-  broker.createService(ActivityService, {
-    adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
-    settings: {
-      containerUri: CONFIG.HOME_URL + 'activities/'
+  broker.createService(ActivityPubService, {
+    baseUri: CONFIG.HOME_URL,
+    storage: {
+      collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      actors: new TripleStoreAdapter('ldp'),
+      objects: new TripleStoreAdapter('ldp')
     }
   });
-  broker.createService(ObjectService, {
+
+  broker.createService(WebhooksService, {
     adapter: new TripleStoreAdapter('ldp'),
     settings: {
-      containerUri: CONFIG.HOME_URL + 'objects/'
+      baseUri: CONFIG.HOME_URL,
+      usersContainer: CONFIG.HOME_URL + 'users/',
+      allowedActions: ['postOutbox']
     },
-    dependencies: ['ldp'] // TODO set this in TripleStoreAdapter
+    dependencies: ['activitypub.outbox', 'activitypub.actor'],
+    actions: {
+      async postOutbox(ctx) {
+        const actor = await ctx.call('activitypub.actor.get', { id: ctx.params.user });
+        if (actor) {
+          return await ctx.call('activitypub.outbox.post', {
+            collectionUri: actor.outbox,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            ...ctx.params.data
+          });
+        }
+      }
+    }
   });
-  broker.createService(FollowService);
-  broker.createService(InboxService);
-  broker.createService(OutboxService);
 }
 
 module.exports = createServices;

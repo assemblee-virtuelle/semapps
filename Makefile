@@ -58,7 +58,7 @@ init :
 
 install :
 	npm install --prefix ./src/middleware
-	npm install --prefix ./src/frontend
+	npm install --prefix ./src/frontend/playground
 
 build:docker-build
 
@@ -66,7 +66,7 @@ build-prod: docker-build-prod
 
 prettier:
 	npm run prettier --prefix ./src/middleware
-	npm run prettier --prefix ./src/frontend
+	npm run prettier --prefix ./src/frontend/playground
 
 bootstrap:
 	npm run bootstrap --prefix ./src/middleware
@@ -75,6 +75,12 @@ bootstrap:
 test:
 	$(DOCKER_COMPOSE_TEST) build
 	$(DOCKER_COMPOSE_TEST) up -d
-	npm run test --prefix ./src/middleware/boilerplates/runner
+	npm run test --prefix ./src/middleware/tests
 	$(DOCKER_COMPOSE_TEST) kill
 	$(DOCKER_COMPOSE_TEST) rm -fv
+
+repl:
+	$(DOCKER_COMPOSE) restart middleware
+	docker attach middleware
+	# Restart the container, since leaving the console will stop it
+	$(DOCKER_COMPOSE) restart middleware

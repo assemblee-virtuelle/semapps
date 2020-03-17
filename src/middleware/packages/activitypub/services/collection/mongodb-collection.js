@@ -1,8 +1,8 @@
-const JsonLdStorageService = require('../../mixins/jsonld-storage');
+const { JsonLdStorageMixin } = require('@semapps/ldp');
 
 const MongoDbCollectionService = {
   name: 'activitypub.collection',
-  mixins: [JsonLdStorageService],
+  mixins: [JsonLdStorageMixin],
   adapter: null, // To be set by the user
   collection: 'collections',
   settings: {

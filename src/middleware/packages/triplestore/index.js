@@ -35,7 +35,7 @@ const TripleStoreService = {
         const contentType = ctx.params.contentType;
         const type = negotiateTypeMime(contentType);
         let rdf;
-        if (type != MIME_TYPES.JSON) {
+        if (type !== MIME_TYPES.JSON) {
           rdf = params.resource;
         } else {
           rdf = await jsonld.toRDF(params.resource, {
@@ -164,12 +164,12 @@ const TripleStoreService = {
         const webId = ctx.params.webId || ctx.meta.webId;
         const acceptNegociatedType = negotiateType(accept);
         const acceptType = acceptNegociatedType.mime;
-        const fueskiAccept = acceptNegociatedType.fusekiMapping;
+        const fusekiAccept = acceptNegociatedType.fusekiMapping;
         const headers = {
           'Content-Type': 'application/sparql-query',
           'X-SemappsUser': webId,
           Authorization: this.Authorization,
-          Accept: fueskiAccept
+          Accept: fusekiAccept
         };
 
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
@@ -178,28 +178,34 @@ const TripleStoreService = {
           headers
         });
         if (!response.ok) throw new Error(response.statusText);
-
-        // Return results as JSON or RDF
-        if (params.query.includes('ASK')) {
-          if (acceptType === MIME_TYPES.JSON) {
+        const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
+        const verb = regex.exec(params.query)[1];
+        switch (verb) {
+          case 'ASK':
+            if (acceptType === MIME_TYPES.JSON) {
+              const jsonResult = await response.json();
+              return jsonResult.boolean;
+            } else {
+              throw new Error('Only JSON accept type is currently allowed for ASK queries');
+            }
+            break;
+          case 'SELECT':
             const jsonResult = await response.json();
-            return jsonResult.boolean;
-          } else {
-            throw new Error('Only JSON accept type is currently allowed for ASK queries');
-          }
-        } else if (params.query.includes('SELECT')) {
-          const jsonResult = await response.json();
-          if (acceptType === MIME_TYPES.JSON) {
-            return await this.sparqlJsonParser.parseJsonResults(jsonResult);
-          } else {
-            return jsonResult;
-          }
-        } else if (params.query.includes('CONSTRUCT')) {
-          if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
-            return await response.text();
-          } else {
-            return await response.json();
-          }
+            if (acceptType === MIME_TYPES.JSON) {
+              return await this.sparqlJsonParser.parseJsonResults(jsonResult);
+            } else {
+              return jsonResult;
+            }
+            break;
+          case 'CONSTRUCT':
+            if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
+              return await response.text();
+            } else {
+              return await response.json();
+            }
+            break;
+          default:
+            throw new Error('SPARQL Verb not supported');
         }
       }
     },
