@@ -8,13 +8,13 @@ import ResourceValue from '../ResourceValue';
 import Inbox from '../Inbox';
 import { addFlash } from '../app/actions';
 import useAuth from '../auth/useAuth';
-import { MIDDLEWARE_URL } from '../config';
 
 const ResourceViewPage = ({ type, resourceId }) => {
   const { user, webId, isLogged } = useAuth();
   const dispatch = useDispatch();
   const resourceConfig = resourcesTypes[type];
-  const resourceUri = `${MIDDLEWARE_URL}ldp/object/${resourceId}`;
+  const resourceUri = resourceConfig.baseUri + resourceId;
+  console.log('resourceUri', resourceUri);
   const { data } = useQuery(resourceUri);
 
   const follow = async () => {
