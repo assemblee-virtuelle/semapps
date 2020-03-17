@@ -14,7 +14,6 @@ const ResourceViewPage = ({ type, resourceId }) => {
   const dispatch = useDispatch();
   const resourceConfig = resourcesTypes[type];
   const resourceUri = resourceConfig.baseUri + resourceId;
-  console.log('resourceUri', resourceUri);
   const { data } = useQuery(resourceUri);
 
   const follow = async () => {
@@ -74,7 +73,7 @@ const ResourceViewPage = ({ type, resourceId }) => {
               </Link>
             </>
           )}
-          {type === 'users' && isLogged && webId !== resourceUri && (
+          {/*type === 'users' && isLogged && webId !== resourceUri && (
             <>
               <br />
               <button className="btn btn-primary" onClick={follow}>
@@ -89,16 +88,16 @@ const ResourceViewPage = ({ type, resourceId }) => {
                 </button>
               </Link>
             </>
-          )}
+          )*/}
         </>
       )}
-      {data && type === 'users' && (
+      {/*data && type === 'users' && (
         <>
           <br />
           <br />
           <Inbox userUri={resourceUri} inboxUri={data.inbox || data['as:inbox']['@id']} />
         </>
-      )}
+      )*/}
     </Page>
   );
 };
