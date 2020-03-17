@@ -7,7 +7,8 @@ const ResourcePreview = ({ resourceUri, type }) => {
   const { data: resource } = useQuery(resourceUri);
   const resourceId = resource && getResourceId(resourceUri, type);
   return (
-    resource && resourceId && (
+    resource &&
+    resourceId && (
       <>
         <div className="card w25">
           <div className="card-body">
@@ -19,7 +20,7 @@ const ResourcePreview = ({ resourceUri, type }) => {
             </Link>
           </div>
         </div>
-        <br/>
+        <br />
       </>
     )
   );
