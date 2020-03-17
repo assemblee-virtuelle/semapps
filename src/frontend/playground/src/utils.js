@@ -1,5 +1,5 @@
 import React from 'react';
-import resourcesTypes from "./resourcesTypes";
+import resourcesTypes from './resourcesTypes';
 
 export const getResourceId = (uri, type) => {
   const baseUri = resourcesTypes[type].baseUri;
