@@ -59,7 +59,7 @@ const resourcesTypes = {
     ]
   },
   users: {
-    name: 'Contributeurs',
+    name: 'Utilisateurs',
     ontology: 'http://xmlns.com/foaf/0.1/',
     class: 'Person',
     prefix: 'foaf',
