@@ -31,6 +31,36 @@ const resourcesTypes = {
       }
     ]
   },
+  organizations: {
+    name: 'Organisations',
+    prefix: 'pairv1',
+    ontology: 'http://virtual-assembly.org/pair#',
+    class: 'Organization',
+    container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Organization`,
+    readOnly: false,
+    fields: [
+      {
+        type: 'pairv1:preferedLabel',
+        label: 'Titre',
+        datatype: 'string'
+      },
+      {
+        type: 'pairv1:comment',
+        label: 'Commentaire',
+        datatype: 'string'
+      },
+      {
+        type: 'pairv1:description',
+        label: 'Description',
+        datatype: 'text'
+      },
+      {
+        type: 'pairv1:aboutPage',
+        label: 'Site web',
+        datatype: 'url'
+      }
+    ]
+  },
   users: {
     name: 'Utilisateurs',
     ontology: 'http://xmlns.com/foaf/0.1/',
