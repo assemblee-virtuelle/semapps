@@ -6,7 +6,7 @@ const resourcesTypes = {
     prefix: 'pairv1',
     ontology: 'http://virtual-assembly.org/pair#',
     class: 'Project',
-    container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Project`,
+    container: `${CONFIG.MIDDLEWARE_URL}ldp/pairv1:Project`,
     baseUri: `${CONFIG.MIDDLEWARE_URL}ldp/object/`,
     readOnly: false,
     fields: [
@@ -37,7 +37,7 @@ const resourcesTypes = {
     prefix: 'pairv1',
     ontology: 'http://virtual-assembly.org/pair#',
     class: 'Organization',
-    container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Organization`,
+    container: `${CONFIG.MIDDLEWARE_URL}ldp/pairv1:Organization`,
     baseUri: `${CONFIG.MIDDLEWARE_URL}ldp/object/`,
     readOnly: false,
     fields: [
