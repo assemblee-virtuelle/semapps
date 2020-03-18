@@ -14,7 +14,7 @@
     "react-scripts": "3.4.0"
   },
   "scripts": {
-    "start": "PORT=5001 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
