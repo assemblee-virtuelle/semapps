@@ -1,6 +1,6 @@
 const pathToType = path => path.replace('-', ':');
 
-const ldpDataProvider = (baseUrl, httpClient) => ({
+const dataProvider = (baseUrl, httpClient) => ({
   getList: async (resource, params) => {
     const { json } = await httpClient(baseUrl + pathToType(resource));
 
@@ -19,7 +19,7 @@ const ldpDataProvider = (baseUrl, httpClient) => ({
   getMany: async (resource, params) => {
     let returnData = [];
 
-    for( let id of params.ids ) {
+    for (let id of params.ids) {
       id = typeof id === 'object' ? id['@id'] : id;
 
       let { json } = await httpClient(id);
@@ -29,12 +29,12 @@ const ldpDataProvider = (baseUrl, httpClient) => ({
 
     return { data: returnData };
   },
-  getManyReference: (resource, params) => (new Promise()),
+  getManyReference: (resource, params) => new Promise(),
   create: async (resource, params) => {
     const { headers } = await httpClient(baseUrl + pathToType(resource), {
       method: 'POST',
       body: JSON.stringify({
-        '@context': { 'pair': 'http://virtual-assembly.org/ontologies/pair#' },
+        '@context': { pair: 'http://virtual-assembly.org/ontologies/pair#' },
         '@type': resource,
         ...params.data
       })
@@ -54,7 +54,7 @@ const ldpDataProvider = (baseUrl, httpClient) => ({
 
     return { data: params.data };
   },
-  updateMany: (resource, params) => (new Promise()),
+  updateMany: (resource, params) => new Promise(),
   delete: async (resource, params) => {
     await httpClient(params.id, {
       method: 'DELETE'
@@ -62,7 +62,7 @@ const ldpDataProvider = (baseUrl, httpClient) => ({
 
     return { data: { id: params.id } };
   },
-  deleteMany: (resource, params) => (new Promise()),
+  deleteMany: (resource, params) => new Promise()
 });
 
-export default ldpDataProvider;
+export default dataProvider;

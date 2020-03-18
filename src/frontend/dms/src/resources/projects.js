@@ -13,11 +13,11 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { JsonLdReferenceInput, UriInput } from '../utils/jsonLdInputs';
+import { JsonLdReferenceInput, UriInput } from '../semapps';
 
 export const ProjectIcon = SettingsIcon;
 
-export const ProjectList = (props) => {
+export const ProjectList = props => {
   useAuthenticated();
   return (
     <List title="Projets" {...props}>
@@ -33,7 +33,7 @@ const ProjectTitle = ({ record }) => {
   return <span>Projet {record ? `"${record['pairv1:preferedLabel']}"` : ''}</span>;
 };
 
-export const ProjectEdit = (props) => (
+export const ProjectEdit = props => (
   <Edit title={<ProjectTitle />} {...props}>
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
@@ -43,13 +43,15 @@ export const ProjectEdit = (props) => (
       <TextInput source="pairv1:adress" label="Adresse" fullWidth />
       <JsonLdReferenceInput label="Géré par" reference="pairv1-Organization" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
-          optionText={record => ( record && ( record['pairv1:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
+          optionText={record =>
+            (record && (record['pairv1:preferedLabel'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
+          }
           fullWidth
         />
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Intérêts" reference="skos-Concept" source="pairv1:hasInterest">
         <AutocompleteArrayInput
-          optionText={record => ( record && record['skos:prefLabel']['@value'] ) || 'LABEL MANQUANT'}
+          optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
           fullWidth
         />
       </JsonLdReferenceInput>
@@ -57,7 +59,7 @@ export const ProjectEdit = (props) => (
   </Edit>
 );
 
-export const ProjectCreate = (props) => (
+export const ProjectCreate = props => (
   <Create title="Créer un projet" {...props}>
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" />
