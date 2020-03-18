@@ -3,7 +3,7 @@ import { fetchUtils } from 'react-admin';
 const httpClient = (url, options = {}) => {
   if (!options.headers) options.headers = new Headers();
 
-  switch(options.method) {
+  switch (options.method) {
     case 'POST':
     case 'PATCH':
       options.headers.set('Accept', 'application/ld+json');

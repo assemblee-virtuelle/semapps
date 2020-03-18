@@ -12,11 +12,11 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import GroupIcon from '@material-ui/icons/Group';
-import { JsonLdReferenceInput, UriInput } from '../utils/jsonLdInputs';
+import { JsonLdReferenceInput, UriInput } from '../semapps';
 
 export const OrganizationIcon = GroupIcon;
 
-export const OrganizationList = (props) => (
+export const OrganizationList = props => (
   <List title="Organisations" {...props}>
     <Datagrid>
       <TextField source="pairv1:preferedLabel" label="Nom" />
@@ -29,7 +29,7 @@ const OrganizationTitle = ({ record }) => {
   return <span>Organisation {record ? `"${record['pairv1:label'] || record['pairv1:preferedLabel']}"` : ''}</span>;
 };
 
-export const OrganizationEdit = (props) => (
+export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" />
@@ -52,13 +52,15 @@ export const OrganizationEdit = (props) => (
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Partenaires" reference="pairv1-Organization" source="pairv1:isPartnerOf">
         <AutocompleteArrayInput
-          optionText={record => ( record && ( record['pairv1:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
+          optionText={record =>
+            (record && (record['pairv1:preferedLabel'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
+          }
           fullWidth
         />
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Intérêts" reference="skos-Concept" source="pairv1:hasInterest">
         <AutocompleteArrayInput
-          optionText={record => ( record && record['skos:prefLabel']['@value'] ) || 'LABEL MANQUANT'}
+          optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
           fullWidth
         />
       </JsonLdReferenceInput>
@@ -66,7 +68,7 @@ export const OrganizationEdit = (props) => (
   </Edit>
 );
 
-export const OrganizationCreate = (props) => (
+export const OrganizationCreate = props => (
   <Create title="Créer une organisation" {...props}>
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" />

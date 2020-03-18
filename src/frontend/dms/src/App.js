@@ -1,8 +1,6 @@
 import React from 'react';
 import { Admin, Resource } from 'react-admin';
-import ldpDataProvider from './ldpDataProvider';
-import authProvider from "./authProvider";
-import httpClient from "./httpClient";
+import { dataProvider, authProvider, httpClient } from './semapps';
 import LogoutButton from "./auth/LogoutButton";
 import { ActionList, ActionEdit, ActionCreate, ActionIcon } from './resources/actions';
 // import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resources/projects';
@@ -13,7 +11,7 @@ import { ActionList, ActionEdit, ActionCreate, ActionIcon } from './resources/ac
 function App() {
   return (
     <Admin
-      dataProvider={ldpDataProvider(process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/', httpClient)}
+      dataProvider={dataProvider(process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/', httpClient)}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
