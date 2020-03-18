@@ -61,6 +61,7 @@ describe('CRUD Project', () => {
       containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`,
     }
 
+    let meta;
     projet1= await broker.call('ldp.post', urlParamsPost, {meta});
     expect(projet1['pair:description']).toBe('qsdf');
   }, 20000);
