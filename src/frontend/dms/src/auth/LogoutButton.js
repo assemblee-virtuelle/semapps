@@ -11,16 +11,10 @@ const LogoutButton = forwardRef((props, ref) => {
   const payload = token && jwtDecode(token);
   return (
     <>
-      {payload &&
-        <MenuItem>
-          {payload.name}
-        </MenuItem>
-      }
-      <MenuItem
-        onClick={handleClick}
-        ref={ref}
-      >
-        <ExitIcon />&nbsp; Logout
+      {payload && <MenuItem>{payload.name}</MenuItem>}
+      <MenuItem onClick={handleClick} ref={ref}>
+        <ExitIcon />
+        &nbsp; Logout
       </MenuItem>
     </>
   );
