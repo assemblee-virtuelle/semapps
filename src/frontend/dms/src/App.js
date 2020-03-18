@@ -11,13 +11,13 @@ import { PersonList, PersonIcon } from './resources/persons';
 function App() {
   return (
     <Admin
-      dataProvider={ldpDataProvider('https://middleware.semapps.org/ldp/', 'pairv1', httpClient)}
-      authProvider={authProvider('https://middleware.semapps.org')}
+      dataProvider={ldpDataProvider('http://localhost:3000/ldp/', 'pair', httpClient)}
+      authProvider={authProvider('http://localhost:3000')}
       logoutButton={LogoutButton}
     >
       <Resource name="Project" list={ProjectList} edit={ProjectEdit} create={ProjectCreate} icon={ProjectIcon} options={{ label: 'Projets' }}/>
-      <Resource name="Organization" list={OrganizationList} edit={OrganizationEdit} create={OrganizationCreate} icon={OrganizationIcon} options={{ label: 'Organisations' }}/>
-      <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }}/>
+      {/*<Resource name="Organization" list={OrganizationList} edit={OrganizationEdit} create={OrganizationCreate} icon={OrganizationIcon} options={{ label: 'Organisations' }}/>*/}
+      {/*<Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }}/>*/}
     </Admin>
   );
 }

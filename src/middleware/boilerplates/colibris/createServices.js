@@ -70,7 +70,7 @@ function createServices(broker) {
       baseDir: path.resolve(__dirname, 'imports'),
       usersContainer: CONFIG.HOME_URL + 'actors/',
       transformData: data => ({
-        containerUri: CONFIG.HOME_URL + 'projects/',
+        containerUri: CONFIG.HOME_URL + 'objects/',
         slug: data.slug,
         resource: {
           '@context': {

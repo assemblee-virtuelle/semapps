@@ -21,7 +21,7 @@ export const ProjectList = (props) => {
   return (
     <List title="Projets" {...props}>
       <Datagrid>
-        <TextField source="pairv1:preferedLabel" label="Nom" />
+        <TextField source="pair:label" label="Nom" />
         <EditButton basePath="/Project" />
       </Datagrid>
     </List>
@@ -29,26 +29,26 @@ export const ProjectList = (props) => {
 };
 
 const ProjectTitle = ({ record }) => {
-  return <span>Projet {record ? `"${record['pairv1:preferedLabel']}"` : ''}</span>;
+  return <span>Projet {record ? `"${record['pair:label']}"` : ''}</span>;
 };
 
 export const ProjectEdit = (props) => (
   <Edit title={<ProjectTitle />} {...props}>
-    <JsonLdSimpleForm>
-      <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
-      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <TextInput source="pairv1:homePage" label="Site web" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pairv1:isManagedBy" />
-    </JsonLdSimpleForm>
+    <SimpleForm>
+      <TextInput source="pair:label" label="Nom" fullWidth />
+      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
+      <TextInput source="pair:homePage" label="Site web" fullWidth />
+      <TextInput source="as:image" label="Image" fullWidth />
+    </SimpleForm>
   </Edit>
 );
 
 export const ProjectCreate = (props) => (
   <Create title="Créer un projet" {...props}>
     <SimpleForm>
-      <TextInput source="pairv1:preferedLabel" label="Nom" />
-      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <TextInput source="pairv1:homePage" label="Site web" />
+      <TextInput source="pair:label" label="Nom" />
+      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
+      <TextInput source="pair:homePage" label="Site web" />
     </SimpleForm>
   </Create>
 );
