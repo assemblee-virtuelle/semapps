@@ -17,7 +17,7 @@ import copyValues from '../utils/copyValues';
 
 export const ActionIcon = SettingsIcon;
 
-export const ActionList = (props) => {
+export const ActionList = props => {
   useAuthenticated();
   return (
     <List title="Actions" {...props}>
@@ -33,9 +33,13 @@ const ActionTitle = ({ record }) => {
   return <span>Action {record ? `"${record['pair:label']}"` : ''}</span>;
 };
 
-export const ActionEdit = (props) => (
+export const ActionEdit = props => (
   <Edit title={<ActionTitle />} {...props}>
-    <SimpleForm decorators={[copyValues({'as:name': 'pair:label', 'as:content': 'pair:description', 'as:url': 'pair:homePage'})]}>
+    <SimpleForm
+      decorators={[
+        copyValues({ 'as:name': 'pair:label', 'as:content': 'pair:description', 'as:url': 'pair:homePage' })
+      ]}
+    >
       <TextInput source="as:name" label="Nom" fullWidth />
       <MarkdownInput multiline source="as:content" label="Description" fullWidth />
       <TextInput source="as:url" label="Site web" fullWidth />
@@ -46,7 +50,7 @@ export const ActionEdit = (props) => (
   </Edit>
 );
 
-export const ActionCreate = (props) => (
+export const ActionCreate = props => (
   <Create title="Créer un projet" {...props}>
     <SimpleForm>
       <TextInput source="pair:label" label="Nom" />
