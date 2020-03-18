@@ -7,6 +7,7 @@ const { ActivityPubService } = require('@semapps/activitypub');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebhooksService } = require('@semapps/webhooks');
 const { ImporterService } = require('@semapps/importer');
+const ThemesService = require('./services/themes');
 
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
@@ -39,7 +40,8 @@ function createServices(broker) {
       activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
       actors: new TripleStoreAdapter('ldp'),
       objects: new TripleStoreAdapter('ldp')
-    }
+    },
+    dependencies: ['ldp']
   });
 
   broker.createService(WebhooksService, {
@@ -87,12 +89,32 @@ function createServices(broker) {
           content: data.content,
           image: data.image,
           location: data.location,
-          tag: data.tag.map(tag => CONFIG.HOME_URL + 'theme/' + tag.name.toLowerCase()),
+          tag: data.tag.map(tag => CONFIG.HOME_URL + 'themes/' + tag.name.toLowerCase()),
           url: data.url,
           published: data.published,
           updated: data.updated
         }
       })
+    }
+  });
+
+  broker.createService(ThemesService, {
+    adapter: new TripleStoreAdapter('ldp'),
+    dependencies: ['ldp'],
+    settings: {
+      containerUri: CONFIG.HOME_URL + 'themes/',
+      themes: [
+        'Culture',
+        'Social',
+        'Agriculture',
+        'Alimentation',
+        'Démocratie',
+        'Gouvernance',
+        'Énergie',
+        'Habitat',
+        'Économie',
+        'Éducation'
+      ]
     }
   });
 }

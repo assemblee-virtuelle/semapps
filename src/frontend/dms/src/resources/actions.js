@@ -9,11 +9,12 @@ import {
   EditButton,
   TextInput,
   DateTimeInput,
-  useAuthenticated
+  useAuthenticated,
+  AutocompleteArrayInput
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { copyValues } from '../semapps';
+import { copyValues, JsonLdReferenceInput } from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
@@ -44,6 +45,9 @@ export const ActionEdit = props => (
       <MarkdownInput multiline source="as:content" label="Description" fullWidth />
       <TextInput source="as:url" label="Site web" fullWidth />
       <TextInput source="as:image" label="Image" fullWidth />
+      <JsonLdReferenceInput label="Tags" reference="pair-Thema" source="as:tag">
+        <AutocompleteArrayInput optionText={record => record['pair:preferedLabel']} fullWidth />
+      </JsonLdReferenceInput>
       <DateTimeInput source="as:published" label="Publié le" fullWidth />
       <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
     </SimpleForm>

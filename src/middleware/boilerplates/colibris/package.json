@@ -25,7 +25,8 @@
     "moleculer-web": "^0.9.0",
     "moleculer-repl": "^0.6.3",
     "moleculer-db-adapter-mongo": "^0.4.7",
-    "passport": "^0.4.1"
+    "passport": "^0.4.1",
+    "slugify": "^1.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.1"

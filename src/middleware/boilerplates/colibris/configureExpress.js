@@ -54,7 +54,20 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...ActivityPubRoutes, ...WebhooksRoutes],
+      routes: [
+        ...LdpRoutes,
+        ...SparqlEndpointRoutes,
+        ...ActivityPubRoutes,
+        ...WebhooksRoutes,
+        {
+          authorization: false,
+          authentication: true,
+          bodyParsers: { json: true },
+          aliases: {
+            'GET themes/:id': 'themes.get'
+          }
+        }
+      ],
       defaultLdpAccept: 'text/turtle'
     },
     methods: {
