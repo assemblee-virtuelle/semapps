@@ -51,7 +51,7 @@ module.exports = {
       if (webId) ctx.meta.webId = webId;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = `${containerUri}${slug || this.generateId()}`;
+      resource['@id'] = resource['@id'] || `${containerUri}${slug || this.generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {
