@@ -13,7 +13,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import copyValues from '../utils/copyValues';
+import { copyValues } from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
