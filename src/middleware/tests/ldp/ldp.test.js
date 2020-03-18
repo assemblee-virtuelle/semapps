@@ -1,12 +1,6 @@
-const {
-  ServiceBroker
-} = require('moleculer');
-const {
-  LdpService
-} = require('@semapps/ldp');
-const {
-  TripleStoreService
-} = require('@semapps/triplestore');
+const { ServiceBroker } = require('moleculer');
+const { LdpService } = require('@semapps/ldp');
+const { TripleStoreService } = require('@semapps/triplestore');
 const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('./config');
@@ -15,11 +9,10 @@ const ontologies = require('./ontologies');
 jest.setTimeout(20000);
 const transporter = null;
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher],
+  middlewares: [EventsWatcher]
 });
 
 beforeAll(async () => {
-
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -35,8 +28,7 @@ beforeAll(async () => {
     }
   });
 
-  await broker.start()
-
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -49,21 +41,20 @@ describe('CRUD Project', () => {
   test('Create project', async () => {
     const urlParamsPost = {
       resource: {
-        "@context": {
-          "@vocab": "http://virtual-assembly.org/ontologies/pair#"
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
-        "@type": "Project",
-        "description": "qsdf",
-        "label": "un vrai titre svp"
+        '@type': 'Project',
+        description: 'qsdf',
+        label: 'un vrai titre svp'
       },
       accept: 'application/ld+json',
       contentType: 'application/ld+json',
-      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`,
-    }
+      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`
+    };
 
     let meta;
-    projet1= await broker.call('ldp.post', urlParamsPost, {meta});
+    projet1 = await broker.call('ldp.post', urlParamsPost, { meta });
     expect(projet1['pair:description']).toBe('qsdf');
   }, 20000);
-
 });
