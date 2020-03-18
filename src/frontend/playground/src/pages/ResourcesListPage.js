@@ -71,11 +71,7 @@ const ResourcesListPage = ({ type }) => {
         )}
       />
       {data &&
-        data.map(resourceUri => (
-          <div key={resourceUri}>
-            <ResourcePreview resourceUri={resourceUri} type={typeState} /> <br />
-          </div>
-        ))}
+        data.map(resourceUri => <ResourcePreview key={resourceUri} resourceUri={resourceUri} type={typeState} />)}
     </Page>
   );
 };

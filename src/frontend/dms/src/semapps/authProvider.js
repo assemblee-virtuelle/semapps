@@ -3,10 +3,10 @@ const authProvider = middlewareUri => ({
   login: params => Promise.resolve(),
   logout: () => {
     localStorage.removeItem('token');
-    window.location.href = `${middlewareUri}/auth/logout?global=true`;
+    window.location.href = `${middlewareUri}auth/logout?global=true`;
   },
   checkAuth: () => {
-    if( localStorage.getItem('token') ) {
+    if (localStorage.getItem('token')) {
       return Promise.resolve();
     } else {
       const url = new URL(window.location);
@@ -15,12 +15,12 @@ const authProvider = middlewareUri => ({
         url.searchParams.delete('token');
         window.location.href = url.toString();
       } else {
-        window.location.href = `${middlewareUri}/auth?redirectUrl=` + encodeURI(window.location.href)
+        window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURI(window.location.href);
       }
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: params => Promise.resolve(),
+  getPermissions: params => Promise.resolve()
 });
 
 export default authProvider;

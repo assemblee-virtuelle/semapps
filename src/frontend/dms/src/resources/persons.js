@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  List,
-  Datagrid,
-  TextField,
-  useAuthenticated
-} from 'react-admin';
+import { List, Datagrid, TextField, useAuthenticated } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 
 export const PersonIcon = Icon;
 
-export const PersonList = (props) => {
+export const PersonList = props => {
   useAuthenticated();
   return (
     <List title="Contributeurs" {...props}>

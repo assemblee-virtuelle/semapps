@@ -16,8 +16,11 @@ module.exports = [
       'GET users/:username/inbox': 'activitypub.inbox.list',
       'GET users/:username/followers': 'activitypub.follow.listFollowers',
       'GET users/:username/following': 'activitypub.follow.listFollowing',
+      'POST objects': 'activitypub.object.create',
       'GET objects': 'activitypub.object.find',
-      'GET objects/:id': 'activitypub.object.get'
+      'GET objects/:id': 'activitypub.object.get',
+      'PATCH objects/:id': 'activitypub.object.update',
+      'DELETE objects/:id': 'activitypub.object.delete'
     },
     ...routeConfig
   },
