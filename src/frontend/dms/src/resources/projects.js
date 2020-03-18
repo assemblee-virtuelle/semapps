@@ -23,7 +23,7 @@ export const ProjectList = (props) => {
     <List title="Projets" {...props}>
       <Datagrid>
         <TextField source="pairv1:preferedLabel" label="Nom" />
-        <EditButton basePath="/Project" />
+        <EditButton basePath="/pairv1-Project" />
       </Datagrid>
     </List>
   );
@@ -37,11 +37,19 @@ export const ProjectEdit = (props) => (
   <Edit title={<ProjectTitle />} {...props}>
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
+      <TextInput source="pairv1:comment" label="Commentaire" fullWidth />
       <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
       <UriInput source="pairv1:homePage" label="Site web" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pairv1:isManagedBy">
+      <TextInput source="pairv1:adress" label="Adresse" fullWidth />
+      <JsonLdReferenceInput label="Géré par" reference="pairv1-Organization" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
           optionText={record => ( record && ( record['pairv1:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
+          fullWidth
+        />
+      </JsonLdReferenceInput>
+      <JsonLdReferenceInput label="Intérêts" reference="skos-Concept" source="pairv1:hasInterest">
+        <AutocompleteArrayInput
+          optionText={record => ( record && record['skos:prefLabel']['@value'] ) || 'LABEL MANQUANT'}
           fullWidth
         />
       </JsonLdReferenceInput>

@@ -1,6 +1,8 @@
-const ldpDataProvider = (baseUrl, ontology, httpClient) => ({
+const pathToType = path => path.replace('-', ':');
+
+const ldpDataProvider = (baseUrl, httpClient) => ({
   getList: async (resource, params) => {
-    const { json } = await httpClient(baseUrl + ontology + ':' + resource);
+    const { json } = await httpClient(baseUrl + pathToType(resource));
 
     const returnData = json['ldp:contains'].map(item => {
       item.id = item['@id'];
@@ -29,7 +31,7 @@ const ldpDataProvider = (baseUrl, ontology, httpClient) => ({
   },
   getManyReference: (resource, params) => (new Promise()),
   create: async (resource, params) => {
-    const { headers } = await httpClient(baseUrl + ontology + ':' + resource, {
+    const { headers } = await httpClient(baseUrl + pathToType(resource), {
       method: 'POST',
       body: JSON.stringify({
         '@context': { 'pair': 'http://virtual-assembly.org/ontologies/pair#' },

@@ -1,8 +1,18 @@
 import React from 'react';
 import { ReferenceArrayInput, TextInput } from 'react-admin';
 
+const selectLanguage = value => {
+  if( typeof value === 'object' && value['@value'] ) {
+    return value['@value'];
+  } else {
+    return value;
+  }
+};
+
 export const JsonLdReferenceInput = props => (
   <ReferenceArrayInput {...props} format={value => {
+    // If there is no value, return immediately
+    if( !value ) return value;
     // if the linked field value is not an array, turns it into an array.
     // Necessary as JSON-LD are sometimes arrays, sometimes not (when there is one value)
     // and the ReferenceArrayInput component only accept arrays
@@ -22,4 +32,8 @@ export const UriInput = props => (
     if( props.format ) value = props.format(value);
     return value;
   }} />
+);
+
+export const StringField = ({ source, record = {} }) => (
+  <span>{selectLanguage(record[source])}</span>
 );
