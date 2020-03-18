@@ -38,8 +38,6 @@ const ImporterService = {
           contentType: MIME_TYPES.JSON,
           ...data
         });
-
-        return;
       }
     }
   }
