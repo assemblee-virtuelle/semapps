@@ -1,7 +1,17 @@
 import React from 'react';
-import { List, Datagrid, Edit, Create, SimpleForm, TextField, EditButton, TextInput } from 'react-admin';
+import {
+  List,
+  Datagrid,
+  Edit,
+  Create,
+  SimpleForm,
+  TextField,
+  EditButton,
+  TextInput,
+  AutocompleteArrayInput
+} from 'react-admin';
 import GroupIcon from '@material-ui/icons/Group';
-import { JsonLdSimpleForm, JsonLdReferenceInput } from '../utils/jsonLdInputs';
+import { JsonLdReferenceInput } from '../utils/jsonLdInputs';
 
 export const OrganizationIcon = GroupIcon;
 
@@ -20,12 +30,21 @@ const OrganizationTitle = ({ record }) => {
 
 export const OrganizationEdit = (props) => (
   <Edit title={<OrganizationTitle />} {...props}>
-    <JsonLdSimpleForm>
-      <TextInput disabled source="@id" />
+    <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" />
-      <JsonLdReferenceInput label="Responsables" reference="Person" source="pairv1:hasResponsible" />
-      <JsonLdReferenceInput label="Membres" reference="Person" source="pairv1:hasMember" />
-    </JsonLdSimpleForm>
+      <JsonLdReferenceInput label="Responsables" reference="Person" source="pairv1:hasResponsible">
+        <AutocompleteArrayInput
+          optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
+          fullWidth
+        />
+      </JsonLdReferenceInput>
+      <JsonLdReferenceInput label="Membres" reference="Person" source="pairv1:hasMember">
+        <AutocompleteArrayInput
+          optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
+          fullWidth
+        />
+      </JsonLdReferenceInput>
+    </SimpleForm>
   </Edit>
 );
 

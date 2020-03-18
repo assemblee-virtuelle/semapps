@@ -8,11 +8,12 @@ import {
   TextField,
   EditButton,
   TextInput,
-  useAuthenticated
+  useAuthenticated,
+  AutocompleteArrayInput
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { JsonLdSimpleForm, JsonLdReferenceInput } from '../utils/jsonLdInputs';
+import { JsonLdReferenceInput, UriInput } from '../utils/jsonLdInputs';
 
 export const ProjectIcon = SettingsIcon;
 
@@ -34,12 +35,17 @@ const ProjectTitle = ({ record }) => {
 
 export const ProjectEdit = (props) => (
   <Edit title={<ProjectTitle />} {...props}>
-    <JsonLdSimpleForm>
+    <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
       <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <TextInput source="pairv1:homePage" label="Site web" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pairv1:isManagedBy" />
-    </JsonLdSimpleForm>
+      <UriInput source="pairv1:homePage" label="Site web" fullWidth />
+      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pairv1:isManagedBy">
+        <AutocompleteArrayInput
+          optionText={record => ( record && ( record['pairv1:preferedLabel'] || record['foaf:givenName'] ) ) || 'LABEL MANQUANT'}
+          fullWidth
+        />
+      </JsonLdReferenceInput>
+    </SimpleForm>
   </Edit>
 );
 
@@ -48,7 +54,7 @@ export const ProjectCreate = (props) => (
     <SimpleForm>
       <TextInput source="pairv1:preferedLabel" label="Nom" />
       <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <TextInput source="pairv1:homePage" label="Site web" />
+      <UriInput source="pairv1:homePage" label="Site web" />
     </SimpleForm>
   </Create>
 );
