@@ -3,7 +3,7 @@ const authProvider = middlewareUri => ({
   login: params => Promise.resolve(),
   logout: () => {
     localStorage.removeItem('token');
-    window.location.href = `${middlewareUri}/auth/logout?global=true`;
+    window.location.href = `${middlewareUri}auth/logout?global=true`;
   },
   checkAuth: () => {
     if( localStorage.getItem('token') ) {
@@ -15,7 +15,7 @@ const authProvider = middlewareUri => ({
         url.searchParams.delete('token');
         window.location.href = url.toString();
       } else {
-        window.location.href = `${middlewareUri}/auth?redirectUrl=` + encodeURI(window.location.href)
+        window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURI(window.location.href)
       }
     }
   },
