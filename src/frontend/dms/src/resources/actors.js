@@ -1,5 +1,15 @@
 import React from 'react';
-import {List, Datagrid, TextField, useAuthenticated, ShowButton, Show, SimpleShowLayout, DateField, RichTextField } from 'react-admin';
+import {
+  List,
+  Datagrid,
+  TextField,
+  useAuthenticated,
+  ShowButton,
+  Show,
+  SimpleShowLayout,
+  DateField,
+  RichTextField
+} from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 
 export const ActorIcon = Icon;
@@ -21,7 +31,7 @@ export const ActorList = props => {
   );
 };
 
-export const ActorShow = (props) => (
+export const ActorShow = props => (
   <Show title={<ActorTitle />} {...props}>
     <SimpleShowLayout>
       <TextField source="as:preferredUsername" label="Username" />
