@@ -75,7 +75,7 @@ function createServices(broker) {
       baseUri: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, 'imports'),
       usersContainer: CONFIG.HOME_URL + 'actors/',
-      transformData: data => ({
+      transformData: (data, userId) => ({
         containerUri: CONFIG.HOME_URL + 'objects/',
         slug: data.slug,
         resource: {
@@ -96,7 +96,8 @@ function createServices(broker) {
           tag: data.tag.map(tag => CONFIG.HOME_URL + 'themes/' + tag.name.toLowerCase()),
           url: data.url,
           published: data.published,
-          updated: data.updated
+          updated: data.updated,
+          attributedTo: userId
         }
       })
     }

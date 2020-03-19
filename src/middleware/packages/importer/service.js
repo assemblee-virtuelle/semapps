@@ -23,14 +23,7 @@ const ImporterService = {
       const json = JSON.parse(file.toString());
 
       for (let data of json) {
-        data = this.settings.transformData(data);
-
-        console.log({
-          webId: userId,
-          accept: MIME_TYPES.JSON,
-          contentType: MIME_TYPES.JSON,
-          ...data
-        });
+        data = this.settings.transformData(data, userId);
 
         await ctx.call('ldp.post', {
           webId: userId,

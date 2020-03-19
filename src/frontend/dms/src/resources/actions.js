@@ -48,6 +48,9 @@ export const ActionEdit = props => (
       <JsonLdReferenceInput label="Tags" reference="pair-Thema" source="as:tag">
         <AutocompleteArrayInput optionText={record => record['pair:preferedLabel']} fullWidth />
       </JsonLdReferenceInput>
+      <JsonLdReferenceInput label="Auteurs" reference="as-Person" source="as:attributedTo">
+        <AutocompleteArrayInput optionText={record => record['as:name']} fullWidth />
+      </JsonLdReferenceInput>
       <DateTimeInput source="as:published" label="Publié le" fullWidth />
       <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
     </SimpleForm>
