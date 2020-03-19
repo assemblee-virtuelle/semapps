@@ -31,13 +31,15 @@ function configureExpress(broker) {
     privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
     publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
     selectProfileData: authData => ({
-      nick: authData.displayName,
-      email: authData.mail[0],
-      name: authData.field_first_name[0],
-      familyName: authData.field_last_name[0]
+      slug: authData.displayName,
+      preferredUsername: authData.displayName,
+      name: `${authData.field_first_name[0]} ${authData.field_last_name[0]}`
     }),
     findOrCreateProfile: profileData => {
-      return broker.call('activitypub.actor.create', profileData);
+      return broker.call('activitypub.actor.create', {
+        '@type': 'Person',
+        ...profileData
+      });
     }
   });
 

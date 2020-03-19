@@ -2,6 +2,7 @@ import React from 'react';
 import { Admin, Resource } from 'react-admin';
 import { dataProvider, authProvider, httpClient } from './semapps';
 import LogoutButton from './auth/LogoutButton';
+import { ActorList, ActorShow, ActorIcon } from './resources/actors';
 import { ActionList, ActionEdit, ActionCreate, ActionIcon } from './resources/actions';
 import { ThemeList, ThemeIcon } from './resources/themes';
 // import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resources/projects';
@@ -16,6 +17,7 @@ function App() {
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
+      <Resource name="as-Person" list={ActorList} show={ActorShow} icon={ActorIcon} options={{ label: 'Acteurs' }} />
       <Resource
         name="pair-Project"
         list={ActionList}

@@ -41,6 +41,10 @@ function createServices(broker) {
       actors: new TripleStoreAdapter('ldp'),
       objects: new TripleStoreAdapter('ldp')
     },
+    context: {
+      as: 'https://www.w3.org/ns/activitystreams#',
+      pair: 'http://virtual-assembly.org/ontologies/pair#'
+    },
     dependencies: ['ldp']
   });
 
