@@ -52,14 +52,13 @@ describe('WebId user creation', () => {
     };
     const uri = `${CONFIG.HOME_URL}users/${profileData.nick}`;
     try {
-      await broker.call('ldp.delete',{resourceUri: uri});
+      await broker.call('ldp.delete', { resourceUri: uri });
     } catch (e) {
       //all is good : 404 : this user is not supposed to exist
     }
 
     let webId = await broker.call('webid.create', profileData);
     expect(webId).toBe(uri);
-    await broker.call('ldp.delete',{resourceUri: webId});
-
+    await broker.call('ldp.delete', { resourceUri: webId });
   }, 20000);
 });
