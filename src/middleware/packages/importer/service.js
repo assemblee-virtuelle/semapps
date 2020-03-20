@@ -9,36 +9,35 @@ const ImporterService = {
     baseUri: null,
     baseDir: null,
     usersContainer: null,
-    transformData: data => data
+    allowedActions: []
   },
-  dependencies: ['ldp'],
+  async started() {
+    this.settings.allowedActions.forEach(actionName => {
+      if (!this.actions[actionName]) {
+        throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
+      }
+    });
+  },
   actions: {
     async import(ctx) {
-      let { fileName, userId } = ctx.params,
-        slug;
+      let { action, fileName, userId, ...otherParams } = ctx.params;
 
-      if (!userId.startsWith('http')) userId = this.settings.usersContainer + userId;
+      if (!action || !fileName || !this.settings.allowedActions.includes(action)) {
+        throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
+      }
+
+      if (userId && !userId.startsWith('http')) userId = this.settings.usersContainer + userId;
 
       const file = await fs.readFile(path.resolve(this.settings.baseDir, fileName));
       const json = JSON.parse(file.toString());
 
+      console.log(`Importing ${json.length} items...`);
+
       for (let data of json) {
-        data = this.settings.transformData(data);
-
-        console.log({
-          webId: userId,
-          accept: MIME_TYPES.JSON,
-          contentType: MIME_TYPES.JSON,
-          ...data
-        });
-
-        await ctx.call('ldp.post', {
-          webId: userId,
-          accept: MIME_TYPES.JSON,
-          contentType: MIME_TYPES.JSON,
-          ...data
-        });
+        await this.actions[action]({ data, userId, ...otherParams });
       }
+
+      console.log('Import finished !');
     }
   }
 };
