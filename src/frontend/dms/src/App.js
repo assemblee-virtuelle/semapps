@@ -26,13 +26,7 @@ function App() {
         icon={ActionIcon}
         options={{ label: 'Actions' }}
       />
-      <Resource
-        name="as-Note"
-        list={NoteList}
-        edit={NoteEdit}
-        icon={NoteIcon}
-        options={{ label: 'Actualités' }}
-      />
+      <Resource name="as-Note" list={NoteList} edit={NoteEdit} icon={NoteIcon} options={{ label: 'Actualités' }} />
       <Resource name="pair-Thema" list={ThemeList} icon={ThemeIcon} options={{ label: 'Thèmes' }} />
       {/*<Resource name="pairv1-Organization" list={OrganizationList} edit={OrganizationEdit} create={OrganizationCreate} icon={OrganizationIcon} options={{ label: 'Organisations' }}/>*/}
       {/*<Resource name="pairv1-Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }}/>*/}

@@ -38,7 +38,7 @@ export const NoteEdit = props => (
       <TextInput source="as:name" label="Nom" fullWidth />
       <MarkdownInput multiline source="as:content" label="Description" fullWidth />
       <JsonLdReferenceInput label="Auteur" reference="pair-Project" source="as:attributedTo">
-        <AutocompleteArrayInput optionText={record => record ? record['as:name'] : ''} fullWidth />
+        <AutocompleteArrayInput optionText={record => (record ? record['as:name'] : '')} fullWidth />
       </JsonLdReferenceInput>
       <DateTimeInput source="as:published" label="Publié le" fullWidth />
       <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
