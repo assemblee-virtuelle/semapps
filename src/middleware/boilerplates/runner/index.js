@@ -6,6 +6,7 @@ const os = require('os');
 const createServices = require('./createServices');
 const configureExpress = require('./configureExpress');
 const CONFIG = require('./config');
+console.log(CONFIG);
 
 // Broker init
 const transporter = null;

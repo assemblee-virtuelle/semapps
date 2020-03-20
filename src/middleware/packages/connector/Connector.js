@@ -14,6 +14,7 @@ class Connector {
     }
   }
   saveRedirectUrl(req, res, next) {
+    console.log('ALLO');
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
     req.session.redirectUrl = req.query.redirectUrl || req.headers.referer || req.session.redirectUrl;
