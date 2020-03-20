@@ -9,7 +9,7 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
-const { negotiateType, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
+const { negotiateTypeMime, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
 
 const LdpService = {
   name: 'ldp',
@@ -50,8 +50,8 @@ const LdpService = {
           	?container ldp:contains ?subject .
             ?subject ?predicate ?object .
           }
-              `,
-        accept: negotiateType(ctx.params.accept)
+        `,
+        accept: negotiateTypeMime(ctx.params.accept)
       });
     },
     /*
