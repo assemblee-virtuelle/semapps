@@ -38,8 +38,8 @@ const WebIdService = {
             // '@id': `${this.settings.usersContainer}${nick}`,
             ...userData
           },
-          slug:nick,
-          containerUri:this.settings.usersContainer,
+          slug: nick,
+          containerUri: this.settings.usersContainer,
           contentType: MIME_TYPES.JSON,
           accept: MIME_TYPES.JSON,
           webId: 'system'
