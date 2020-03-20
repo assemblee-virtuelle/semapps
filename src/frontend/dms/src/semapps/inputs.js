@@ -40,11 +40,6 @@ export const UriInput = props => (
   />
 );
 
-export const DateTimeInput = props => (
-  <RaDateTimeInput
-    {...props}
-    format={value => selectLanguage(value)}
-  />
-);
+export const DateTimeInput = props => <RaDateTimeInput {...props} format={value => selectLanguage(value)} />;
 
 export const StringField = ({ source, record = {} }) => <span>{selectLanguage(record[source])}</span>;

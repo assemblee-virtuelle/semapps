@@ -67,7 +67,7 @@ const ImporterService = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Follow',
         actor: this.settings.usersContainer + data.username,
-        object: this.settings.usersContainer + data.following,
+        object: this.settings.usersContainer + data.following
       });
 
       console.log(`Actor ${data.username} follow ${data.following}`);

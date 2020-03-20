@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  List,
-  Datagrid,
-  TextField,
-  useAuthenticated,
-  ShowButton,
-  Show,
-  TabbedShowLayout,
-  Tab
-} from 'react-admin';
+import { List, Datagrid, TextField, useAuthenticated, ShowButton, Show, TabbedShowLayout, Tab } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 
 export const ActorIcon = Icon;
