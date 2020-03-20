@@ -6,9 +6,8 @@ import {
   useAuthenticated,
   ShowButton,
   Show,
-  SimpleShowLayout,
-  DateField,
-  RichTextField
+  TabbedShowLayout,
+  Tab
 } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 
@@ -33,9 +32,11 @@ export const ActorList = props => {
 
 export const ActorShow = props => (
   <Show title={<ActorTitle />} {...props}>
-    <SimpleShowLayout>
-      <TextField source="as:preferredUsername" label="Username" />
-      <TextField source="as:name" label="Nom" />
-    </SimpleShowLayout>
+    <TabbedShowLayout>
+      <Tab label="Profil">
+        <TextField source="as:preferredUsername" label="Username" />
+        <TextField source="as:name" label="Nom" />
+      </Tab>
+    </TabbedShowLayout>
   </Show>
 );

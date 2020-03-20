@@ -2,7 +2,7 @@ const { JsonLdStorageMixin } = require('@semapps/ldp');
 const slugify = require('slugify');
 
 const ThemeService = {
-  name: 'theme',
+  name: 'themes',
   mixins: [JsonLdStorageMixin],
   adapter: null, // To be set by the user
   collection: 'themes',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReferenceArrayInput, TextInput } from 'react-admin';
+import { ReferenceArrayInput, TextInput, DateTimeInput as RaDateTimeInput } from 'react-admin';
 
 const selectLanguage = value => {
   if (typeof value === 'object' && value['@value']) {
@@ -37,6 +37,13 @@ export const UriInput = props => (
       if (props.format) value = props.format(value);
       return value;
     }}
+  />
+);
+
+export const DateTimeInput = props => (
+  <RaDateTimeInput
+    {...props}
+    format={value => selectLanguage(value)}
   />
 );
 

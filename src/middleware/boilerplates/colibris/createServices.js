@@ -6,7 +6,8 @@ const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebhooksService } = require('@semapps/webhooks');
-const { ImporterService } = require('@semapps/importer');
+
+const ImporterService = require('./services/importer');
 const ThemesService = require('./services/themes');
 
 const CONFIG = require('./config');
@@ -74,32 +75,7 @@ function createServices(broker) {
     settings: {
       baseUri: CONFIG.HOME_URL,
       baseDir: path.resolve(__dirname, 'imports'),
-      usersContainer: CONFIG.HOME_URL + 'actors/',
-      transformData: (data, userId) => ({
-        containerUri: CONFIG.HOME_URL + 'objects/',
-        slug: data.slug,
-        resource: {
-          '@context': {
-            '@vocab': 'https://www.w3.org/ns/activitystreams#',
-            pair: 'http://virtual-assembly.org/ontologies/pair#'
-          },
-          '@type': ['Organization', 'pair:Project'],
-          // PAIR
-          'pair:label': data.name,
-          'pair:description': data.content,
-          'pair:aboutPage': data.url,
-          // ActivityStreams
-          name: data.name,
-          content: data.content,
-          image: data.image,
-          location: data.location,
-          tag: data.tag.map(tag => CONFIG.HOME_URL + 'themes/' + tag.name.toLowerCase()),
-          url: data.url,
-          published: data.published,
-          updated: data.updated,
-          attributedTo: userId
-        }
-      })
+      usersContainer: CONFIG.HOME_URL + 'actors/'
     }
   });
 

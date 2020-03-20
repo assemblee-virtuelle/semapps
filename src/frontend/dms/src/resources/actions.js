@@ -3,7 +3,6 @@ import {
   List,
   Datagrid,
   Edit,
-  Create,
   SimpleForm,
   TextField,
   EditButton,
@@ -55,14 +54,4 @@ export const ActionEdit = props => (
       <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
     </SimpleForm>
   </Edit>
-);
-
-export const ActionCreate = props => (
-  <Create title="Créer un projet" {...props}>
-    <SimpleForm>
-      <TextInput source="pair:label" label="Nom" />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" />
-    </SimpleForm>
-  </Create>
 );
