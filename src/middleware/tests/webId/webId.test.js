@@ -36,7 +36,6 @@ beforeAll(async () => {
 
   await broker.start();
   await broker.call('triplestore.dropAll');
-
 });
 
 afterAll(async () => {
