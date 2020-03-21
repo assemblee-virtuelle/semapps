@@ -65,6 +65,7 @@ afterAll(async () => {
 
 describe('CRUD Project', () => {
   let projet1;
+  const containerUrl=`/ldp/pair:Project`
 
   test('Create project', async () => {
     const body = {
@@ -72,12 +73,12 @@ describe('CRUD Project', () => {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
       '@type': 'Project',
-      description: 'qsdf',
-      label: 'un vrai titre svp'
+      description: 'myProject',
+      label: 'myLabel'
     };
 
     const postResponse = await expressMocked
-      .post(`/ldp/pair:Project`)
+      .post(containerUrl)
       .send(body)
       .set('content-type', 'application/json');
 
@@ -86,6 +87,42 @@ describe('CRUD Project', () => {
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
     projet1 = response.body;
 
-    expect(projet1['pair:description']).toBe('qsdf');
+    expect(projet1['pair:description']).toBe('myProject');
+  }, 20000);
+
+  test('Get One project', async () => {
+    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/')).set('Accept', 'application/ld+json');
+    expect(response.body['pair:description']).toBe('myProject');
+  }, 20000);
+
+  test('Get Many project', async () => {
+    const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
+    expect(response.body['ldp:contains'].filter(p=>p['@id']==projet1['@id']).length).toBe(1);
+  }, 20000);
+
+  test('Update One Project', async () => {
+
+    const body = {
+      '@context': {
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+      },
+      description: 'myProjectUpdated',
+    };
+
+    const postResponse = await expressMocked
+      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/json');
+
+    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/')).set('Accept', 'application/ld+json');
+    expect(response.body['pair:description']).toBe('myProjectUpdated');
+
+  }, 20000);
+
+  test('Delete project', async () => {
+    const responseDelete = await expressMocked.delete(projet1['@id'].replace(CONFIG.HOME_URL, '/'));
+    expect(responseDelete.status).toBe(204);
+    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/'));
+    expect(response.status).toBe(404);
   }, 20000);
 });
