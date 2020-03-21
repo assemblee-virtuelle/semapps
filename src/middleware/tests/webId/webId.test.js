@@ -35,6 +35,8 @@ beforeAll(async () => {
   });
 
   await broker.start();
+  await broker.call('triplestore.dropAll');
+
 });
 
 afterAll(async () => {
@@ -51,14 +53,8 @@ describe('WebId user creation', () => {
       homepage: 'http://example.org/myPage'
     };
     const uri = `${CONFIG.HOME_URL}users/${profileData.nick}`;
-    try {
-      await broker.call('ldp.delete', { resourceUri: uri });
-    } catch (e) {
-      //all is good : 404 : this user is not supposed to exist
-    }
 
     let webId = await broker.call('webid.create', profileData);
     expect(webId).toBe(uri);
-    await broker.call('ldp.delete', { resourceUri: webId });
   }, 20000);
 });
