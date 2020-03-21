@@ -65,7 +65,7 @@ afterAll(async () => {
 
 describe('CRUD Project', () => {
   let projet1;
-  const containerUrl=`/ldp/pair:Project`
+  const containerUrl = `/ldp/pair:Project`;
 
   test('Create project', async () => {
     const body = {
@@ -91,22 +91,23 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get One project', async () => {
-    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/')).set('Accept', 'application/ld+json');
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProject');
   }, 20000);
 
   test('Get Many project', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
-    expect(response.body['ldp:contains'].filter(p=>p['@id']==projet1['@id']).length).toBe(1);
+    expect(response.body['ldp:contains'].filter(p => p['@id'] == projet1['@id']).length).toBe(1);
   }, 20000);
 
   test('Update One Project', async () => {
-
     const body = {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      description: 'myProjectUpdated',
+      description: 'myProjectUpdated'
     };
 
     const postResponse = await expressMocked
@@ -114,9 +115,10 @@ describe('CRUD Project', () => {
       .send(body)
       .set('content-type', 'application/json');
 
-    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/')).set('Accept', 'application/ld+json');
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
-
   }, 20000);
 
   test('Delete project', async () => {

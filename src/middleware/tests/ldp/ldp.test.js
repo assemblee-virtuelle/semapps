@@ -1,13 +1,6 @@
-const {
-  ServiceBroker,
-  Errors
-} = require('moleculer');
-const {
-  LdpService
-} = require('@semapps/ldp');
-const {
-  TripleStoreService
-} = require('@semapps/triplestore');
+const { ServiceBroker, Errors } = require('moleculer');
+const { LdpService } = require('@semapps/ldp');
+const { TripleStoreService } = require('@semapps/triplestore');
 const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('./config');
@@ -71,17 +64,17 @@ describe('CRUD Project', () => {
   test('Get One project', async () => {
     const newProject = await broker.call('ldp.get', {
       accept: 'application/ld+json',
-      resourceUri : projet1['@id']
-    })
+      resourceUri: projet1['@id']
+    });
     expect(newProject['pair:description']).toBe('myProject');
   }, 20000);
 
   test('Get Many projects', async () => {
     const Projects = await broker.call('ldp.getByType', {
       accept: 'application/ld+json',
-      type : 'pair:Project'
-    })
-    expect(Projects['ldp:contains'].filter(p=>p['@id']==projet1['@id']).length).toBe(1);
+      type: 'pair:Project'
+    });
+    expect(Projects['ldp:contains'].filter(p => p['@id'] == projet1['@id']).length).toBe(1);
   }, 20000);
 
   test('Update One Project', async () => {
@@ -90,24 +83,24 @@ describe('CRUD Project', () => {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@id':projet1['@id'],
-        description: 'myProjectUpdated',
+        '@id': projet1['@id'],
+        description: 'myProjectUpdated'
       },
       accept: 'application/ld+json',
-      contentType: 'application/ld+json',
+      contentType: 'application/ld+json'
     };
-    const updatedProject = await broker.call('ldp.patch',urlParamsPatch)
+    const updatedProject = await broker.call('ldp.patch', urlParamsPatch);
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
     const updatedPersistProject = await broker.call('ldp.get', {
       accept: 'application/ld+json',
-      resourceUri : projet1['@id']
-    })
+      resourceUri: projet1['@id']
+    });
     expect(updatedPersistProject['pair:description']).toBe('myProjectUpdated');
   }, 20000);
 
   test('Delete project', async () => {
     const params = {
-      resourceUri: projet1['@id'],
+      resourceUri: projet1['@id']
     };
     await broker.call('ldp.delete', params);
 
@@ -116,12 +109,11 @@ describe('CRUD Project', () => {
       await broker.call('ldp.get', {
         accept: 'applicaiton/ld+json',
         ...params
-      })
+      });
     } catch (e) {
       error = e;
     } finally {
       expect(error && error.code).toBe(404);
     }
-
   }, 20000);
 });
