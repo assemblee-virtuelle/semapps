@@ -5,9 +5,7 @@ const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
-const {
-  MIME_TYPES
-} = require('@semapps/mime-types');
+const { MIME_TYPES } = require('@semapps/mime-types');
 // const { MoleculerError } = require('moleculer').Errors;
 
 jest.setTimeout(20000);
@@ -68,7 +66,7 @@ describe('CRUD Project', () => {
     const newProject = await broker.call('ldp.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: projet1['@id']
-    })
+    });
     expect(newProject['pair:description']).toBe('myProject');
   }, 20000);
 
@@ -76,7 +74,7 @@ describe('CRUD Project', () => {
     const Projects = await broker.call('ldp.getByType', {
       accept: MIME_TYPES.JSON,
       type: 'pair:Project'
-    })
+    });
     expect(Projects['ldp:contains'].filter(p => p['@id'] == projet1['@id']).length).toBe(1);
   }, 20000);
 
@@ -87,17 +85,17 @@ describe('CRUD Project', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@id': projet1['@id'],
-        description: 'myProjectUpdated',
+        description: 'myProjectUpdated'
       },
       accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
     };
-    const updatedProject = await broker.call('ldp.patch', urlParamsPatch)
+    const updatedProject = await broker.call('ldp.patch', urlParamsPatch);
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
     const updatedPersistProject = await broker.call('ldp.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: projet1['@id']
-    })
+    });
     expect(updatedPersistProject['pair:description']).toBe('myProjectUpdated');
   }, 20000);
 
@@ -106,7 +104,7 @@ describe('CRUD Project', () => {
     const newProject = await broker.call('ldp.get', {
       accept: MIME_TYPES.TURTLE,
       resourceUri: projet1['@id']
-    })
+    });
     let regex = new RegExp(`<${projet1['@id']}>`);
     expect(newProject).toMatch(new RegExp(`<${projet1['@id']}>`));
     expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
@@ -115,21 +113,27 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get One project triple', async () => {
-
     const newProject = await broker.call('ldp.get', {
       accept: MIME_TYPES.TRIPLE,
       resourceUri: projet1['@id']
-    })
+    });
     let regex = new RegExp(`<${projet1['@id']}>`);
-    expect(newProject).toMatch(new RegExp(`<${projet1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`));
-    expect(newProject).toMatch(new RegExp(`<${projet1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProjectUpdated"`));
-    expect(newProject).toMatch(new RegExp(`<${projet1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`));
-
+    expect(newProject).toMatch(
+      new RegExp(
+        `<${projet1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
+      )
+    );
+    expect(newProject).toMatch(
+      new RegExp(`<${projet1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProjectUpdated"`)
+    );
+    expect(newProject).toMatch(
+      new RegExp(`<${projet1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
+    );
   }, 20000);
 
   test('Delete project', async () => {
     const params = {
-      resourceUri: projet1['@id'],
+      resourceUri: projet1['@id']
     };
     await broker.call('ldp.delete', params);
 
@@ -138,12 +142,11 @@ describe('CRUD Project', () => {
       await broker.call('ldp.get', {
         accept: 'applicaiton/ld+json',
         ...params
-      })
+      });
     } catch (e) {
       error = e;
     } finally {
       expect(error && error.code).toBe(404);
     }
-
   }, 20000);
 });
