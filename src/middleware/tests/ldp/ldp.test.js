@@ -1,13 +1,6 @@
-const {
-  ServiceBroker,
-  Errors
-} = require('moleculer');
-const {
-  LdpService
-} = require('@semapps/ldp');
-const {
-  TripleStoreService
-} = require('@semapps/triplestore');
+const { ServiceBroker, Errors } = require('moleculer');
+const { LdpService } = require('@semapps/ldp');
+const { TripleStoreService } = require('@semapps/triplestore');
 const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('./config');
@@ -151,5 +144,6 @@ describe('CRUD Project', () => {
     } finally {
       expect(error && error.code).toBe(404);
     }
+
   }, 20000);
 });
