@@ -2,15 +2,14 @@
   "name": "@semapps/webid",
   "version": "0.1.0",
   "description": "WebID service for SemApps",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp" :"^0.1.0",
     "@semapps/triplestore" :"^0.1.0",
     "@semapps/mime-types" :"^0.1.0"
   },
-  "license": "Apache-2.0"
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Triple store module for SemApps",
   "license": "Apache-2.0",
+  "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/mime-types" :"^0.1.0",
     "jsonld": "^1.8.1",
@@ -11,5 +12,8 @@
     "rdf-parse": "^1.2.1",
     "sparqljson-parse": "^1.5.1",
     "streamify-string": "^1.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

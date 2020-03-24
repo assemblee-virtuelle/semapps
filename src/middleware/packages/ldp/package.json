@@ -2,10 +2,8 @@
   "name": "@semapps/ldp",
   "version": "0.1.0",
   "description": "LDP module for SemApps",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/mime-types" :"^0.1.0",
     "@semapps/triplestore" :"^0.1.0",
@@ -17,6 +15,7 @@
     "streamify-string": "^1.0.1",
     "uuid": "^3.3.3"
   },
-  "author": "SemApps Team",
-  "license": "Apache-2.0"
+  "publishConfig": {
+    "access": "public"
+  }
 }

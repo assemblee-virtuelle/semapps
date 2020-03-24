@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "description": "Incoming webhooks for SemApps",
   "license": "Apache-2.0",
+  "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp" :"^0.1.0",
     "moleculer": "^0.14.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
