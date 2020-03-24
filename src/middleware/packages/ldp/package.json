@@ -1,14 +1,14 @@
 {
   "name": "@semapps/ldp",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "LDP module for SemApps",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@semapps/mime-types" :"^1.0.0",
-    "@semapps/triplestore" :"^1.0.0",
+    "@semapps/mime-types" :"^0.1.0",
+    "@semapps/triplestore" :"^0.1.0",
     "jsonld": "^1.8.1",
     "moleculer": "^0.14.3",
     "moleculer-db": "^0.8.5",

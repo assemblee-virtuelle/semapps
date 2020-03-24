@@ -1,12 +1,12 @@
 {
   "name": "@semapps/activitypub",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "ActivityPub module for SemApps",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/ldp" :"^1.0.0",
-    "@semapps/mime-types" :"^1.0.0",
-    "@semapps/triplestore" :"^1.0.0",
+    "@semapps/ldp" :"^0.1.0",
+    "@semapps/mime-types" :"^0.1.0",
+    "@semapps/triplestore" :"^0.1.0",
     "jsonld": "^1.8.1",
     "moleculer": "^0.14.3"
   }
