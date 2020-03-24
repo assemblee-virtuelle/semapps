@@ -1,0 +1,22 @@
+{
+  "name": "create-sem-app",
+  "version": "0.1.0",
+  "description": "Easily create semantic apps with SemApps",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=8"
+  },
+  "bugs": {
+    "url": "https://github.com/facebook/create-react-app/issues"
+  },
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "create-sem-app": "node index.js"
+  },
+  "dependencies": {
+    "chalk": "3.0.0",
+    "inquirer": "^7.1.0"
+  }
+}
