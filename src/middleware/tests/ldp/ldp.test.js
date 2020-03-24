@@ -55,7 +55,6 @@ describe('CRUD Project', () => {
       containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`
     };
 
-
     projet1 = await broker.call('ldp.post', urlParamsPost);
     expect(projet1['pair:description']).toBe('myProject');
   }, 20000);
@@ -98,6 +97,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get One project turtle', async () => {
+    console.log(MIME_TYPES);
     const newProject = await broker.call('ldp.get', {
       accept: MIME_TYPES.TURTLE,
       resourceUri: projet1['@id']
@@ -113,7 +113,6 @@ describe('CRUD Project', () => {
       accept: MIME_TYPES.TRIPLE,
       resourceUri: projet1['@id']
     });
-    let regex = new RegExp(`<${projet1['@id']}>`);
     expect(newProject).toMatch(
       new RegExp(
         `<${projet1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
