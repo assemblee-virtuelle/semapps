@@ -9,6 +9,7 @@ const OutboxService = {
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
+      const activityType = activity.type || activity['@type'];
 
       if (!username && !collectionUri) {
         throw new Error('Outbox post: a username or collectionUri must be specified');
@@ -23,19 +24,19 @@ const OutboxService = {
         return;
       }
 
-      if (Object.values(OBJECT_TYPES).includes(activity.type)) {
+      if (Object.values(OBJECT_TYPES).includes(activityType)) {
         const object = await ctx.call('activitypub.object.create', activity);
 
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
           type: 'Create',
-          to: object.to,
-          actor: object.attributedTo,
+          to: activity.to,
+          actor: activity.attributedTo,
           object: object
         };
-      } else if (activity.type === ACTIVITY_TYPES.UPDATE) {
+      } else if (activityType === ACTIVITY_TYPES.UPDATE) {
         await ctx.call('activitypub.object.update', activity.object);
-      } else if (activity.type === ACTIVITY_TYPES.DELETE) {
+      } else if (activityType === ACTIVITY_TYPES.DELETE) {
         await ctx.call('activitypub.object.remove', { id: activity.object });
       }
 

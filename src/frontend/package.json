@@ -1,0 +1,11 @@
+{
+  "name": "semapps-frontend",
+  "private": true,
+  "license": "Apache-2.0",
+  "scripts": {
+    "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1"
+  }
+}

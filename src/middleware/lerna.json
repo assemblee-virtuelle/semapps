@@ -1,6 +1,6 @@
 {
+  "version": "independent",
   "packages": [
-    "packages/*", "boilerplates/*", "tests"
-  ],
-  "version": "0.0.0"
+    "packages/*"
+  ]
 }

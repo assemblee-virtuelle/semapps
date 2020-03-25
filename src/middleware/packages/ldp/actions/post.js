@@ -2,21 +2,19 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
-    let { typeURL, containerUri } = ctx.params;
-    const body = ctx.meta.body;
-    const slug = ctx.meta.headers.slug;
-    if (!body['@id']) {
-      body['@id'] = this.generateId(typeURL, containerUri, slug);
-    }
+    let { typeURL } = ctx.params;
     try {
-      let out = await ctx.call('ldp.post', {
-        resource: body,
+      const resource = await ctx.call('ldp.post', {
+        containerUri: `${this.settings.baseUrl}${typeURL}/`,
+        slug: ctx.meta.headers.slug,
+        resource: ctx.meta.body,
         contentType: ctx.meta.headers['content-type'],
         accept: MIME_TYPES.JSON
       });
+
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
-        Location: out['@id'],
+        Location: resource['@id'],
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
@@ -38,25 +36,32 @@ module.exports = {
       },
       contentType: {
         type: 'string'
+      },
+      containerUri: {
+        type: 'string'
+      },
+      slug: {
+        type: 'string',
+        optional: true
       }
     },
     async handler(ctx) {
-      let resource = ctx.params.resource;
-      const accept = ctx.params.accept;
-      const contentType = ctx.params.contentType;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resource, containerUri, slug, accept, contentType, webId } = ctx.params;
+
+      if (webId) ctx.meta.webId = webId;
+
+      // Generate ID and make sure it doesn't exist already
+      resource['@id'] = resource['@id'] || `${containerUri}${slug || this.generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {
-        resource: resource,
-        contentType: contentType
+        resource,
+        contentType
       });
 
       return await ctx.call('ldp.get', {
         resourceUri: resource['@id'],
-        accept: accept
+        accept
       });
     }
   }

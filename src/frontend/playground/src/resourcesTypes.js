@@ -3,26 +3,58 @@ import CONFIG from './config';
 const resourcesTypes = {
   projects: {
     name: 'Projets',
-    prefix: 'pair',
-    ontology: 'http://virtual-assembly.org/ontologies/pair#',
+    prefix: 'pairv1',
+    ontology: 'http://virtual-assembly.org/pair#',
     class: 'Project',
-    container: `${CONFIG.MIDDLEWARE_URL}ldp/pair:Project`,
+    container: `${CONFIG.MIDDLEWARE_URL}ldp/pairv1:Project`,
+    baseUri: `${CONFIG.MIDDLEWARE_URL}ldp/object/`,
     readOnly: false,
     fields: [
       {
-        type: 'pair:label',
+        type: 'pairv1:preferedLabel',
         label: 'Titre',
         datatype: 'string'
       },
       {
-        type: 'pair:description',
+        type: 'pairv1:comment',
+        label: 'Commentaire',
+        datatype: 'string'
+      },
+      {
+        type: 'pairv1:description',
         label: 'Description',
         datatype: 'text'
       },
       {
-        type: 'pair:webPage',
+        type: 'pairv1:aboutPage',
         label: 'Site web',
         datatype: 'url'
+      }
+    ]
+  },
+  organizations: {
+    name: 'Organisations',
+    prefix: 'pairv1',
+    ontology: 'http://virtual-assembly.org/pair#',
+    class: 'Organization',
+    container: `${CONFIG.MIDDLEWARE_URL}ldp/pairv1:Organization`,
+    baseUri: `${CONFIG.MIDDLEWARE_URL}ldp/object/`,
+    readOnly: false,
+    fields: [
+      {
+        type: 'pairv1:preferedLabel',
+        label: 'Titre',
+        datatype: 'string'
+      },
+      {
+        type: 'pairv1:comment',
+        label: 'Commentaire',
+        datatype: 'string'
+      },
+      {
+        type: 'pairv1:description',
+        label: 'Description',
+        datatype: 'text'
       }
     ]
   },
@@ -32,6 +64,7 @@ const resourcesTypes = {
     class: 'Person',
     prefix: 'foaf',
     container: `${CONFIG.MIDDLEWARE_URL}users`,
+    baseUri: `${CONFIG.MIDDLEWARE_URL}users/`,
     readOnly: true,
     fields: [
       {

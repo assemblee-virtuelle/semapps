@@ -9,7 +9,7 @@ const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const deleteAction = require('./actions/delete');
-const { negotiateType, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
+const { negotiateTypeMime, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
 
 const LdpService = {
   name: 'ldp',
@@ -50,8 +50,8 @@ const LdpService = {
           	?container ldp:contains ?subject .
             ?subject ?predicate ?object .
           }
-              `,
-        accept: negotiateType(ctx.params.accept)
+        `,
+        accept: negotiateTypeMime(ctx.params.accept)
       });
     },
     /*
@@ -77,9 +77,8 @@ const LdpService = {
     }
   },
   methods: {
-    generateId(type, containerUri, slug) {
-      const id = slug || uuid().substring(0, 8);
-      return containerUri ? `${containerUri}${id}` : `${this.settings.baseUrl}${type}/${id}`;
+    generateId() {
+      return uuid().substring(0, 8);
     },
     async findUnusedUri(ctx, generatedId) {
       let existingBegining = await ctx.call('triplestore.query', {
