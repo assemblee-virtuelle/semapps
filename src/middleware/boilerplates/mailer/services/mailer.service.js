@@ -2,21 +2,22 @@ const mailer = require('nodemailer');
 const Handlebars = require('handlebars');
 const fs = require('fs').promises;
 const { ACTIVITY_TYPES } = require('@semapps/activitypub');
+const CONFIG = require('../config');
 
 const MailerService = {
   name: 'mailer',
   dependencies: ['match-bot', 'activitypub.actor', 'mail-queue'],
   settings: {
-    baseUri: null,
-    fromEmail: null,
-    fromName: null,
+    baseUri: CONFIG.HOME_URL,
+    fromEmail: 'reconnexion.app@gmail.com',
+    fromName: 'Colibris la Fabrique',
     smtpServer: {
-      host: null,
+      host: CONFIG.SMTP_HOST,
       port: 465,
       secure: true,
       auth: {
-        user: null,
-        pass: null
+        user: CONFIG.SMTP_USER,
+        pass: CONFIG.SMTP_PASS
       }
     },
     // Set automatically

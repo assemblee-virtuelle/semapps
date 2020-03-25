@@ -3,7 +3,11 @@ const ApiGateway = require('moleculer-web');
 const ApiService = {
   mixins: [ApiGateway],
   settings: {
-    server: false,
+    server: true,
+    assets: {
+      folder: './public',
+      options: {} // `server-static` module options
+    },
     routes: [
       {
         bodyParsers: {

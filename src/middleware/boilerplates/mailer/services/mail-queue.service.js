@@ -1,12 +1,14 @@
 const { JsonLdStorageMixin } = require('@semapps/ldp');
+const MongoDbAdapter = require('moleculer-db-adapter-mongo');
+const CONFIG = require('../config');
 
 const MailQueueService = {
   name: 'mail-queue',
   mixins: [JsonLdStorageMixin],
-  adapter: null, // To be set by the user
+  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   collection: 'mails',
   settings: {
-    containerUri: null, // To be set by the user
+    containerUri: CONFIG.HOME_URL + 'mails/',
     context: {
       '@vocab': 'http://www.semapps.org/ontology#'
     }

@@ -1,15 +1,28 @@
 const { JsonLdStorageMixin } = require('@semapps/ldp');
+const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const slugify = require('slugify');
+const CONFIG = require('../config');
 
 const ThemeService = {
   name: 'theme',
   mixins: [JsonLdStorageMixin],
-  adapter: null, // To be set by the user
+  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
   collection: 'themes',
   settings: {
-    containerUri: null, // To be set by the user
+    containerUri: CONFIG.HOME_URL + 'themes/',
     context: 'https://www.w3.org/ns/activitystreams',
-    themes: []
+    themes: [
+      'Agriculture & alimentation',
+      'Economie locale',
+      'Démocratie',
+      'Arts & culture',
+      'Education',
+      'Habitat & oasis',
+      'Energie',
+      'Transport',
+      'Bien-être',
+      'Autre'
+    ]
   },
   async started() {
     let theme = null;
