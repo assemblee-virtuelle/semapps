@@ -15,8 +15,8 @@ module.exports = {
       // },
       links: [
         {to: 'docs/governance/team', label: 'Gouvernance', position: 'left'},
-        {to: 'docs/participate/how-to', label: 'Participer', position: 'left'},
-        {to: 'docs/style-guide', label: 'Documentation', position: 'left'},
+        {to: 'docs/participate/style-guide', label: 'Participer', position: 'left'},
+        {to: 'docs/tech/get-started', label: 'Documentation', position: 'left'},
         {to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',

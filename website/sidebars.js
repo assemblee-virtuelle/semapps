@@ -7,7 +7,7 @@
 
 module.exports = {
   docs: {
-    Introduction: ['style-guide'],
+    'Get started': ['tech/get-started'],
     Packages: ['packages/incoming-webhooks'],
   },
   gouvernance: {
