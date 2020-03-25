@@ -21,19 +21,19 @@ class Connector {
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    const profileData = this.settings.selectProfileData(res.req.user);
+    const profileData = this.settings.selectProfileData(req.user);
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we may need it for the token generation
-      res.req.user.webId = webId;
+      req.user.webId = webId;
       next();
     });
   }
   generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step
-    if (!res.req.user.token) {
-      const profileData = this.settings.selectProfileData(res.req.user);
-      const payload = { webId: res.req.user.webId, ...profileData };
-      res.req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
+    if (!req.user.token) {
+      const profileData = this.settings.selectProfileData(req.user);
+      const payload = { webId: req.user.webId, ...profileData };
+      req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
     next();
   }
@@ -48,16 +48,16 @@ class Connector {
     // Redirect browser to the redirect URL pushed in session
     let redirectUrl = req.session.redirectUrl;
     // If a token was stored, add it to the URL so that the client may use it
-    if (res.req.user && res.req.user.token) redirectUrl += '?token=' + res.req.user.token;
-    res.redirect(redirectUrl);
+    if (req.user && req.user.token) redirectUrl += '?token=' + req.user.token;
+    // Redirect using NodeJS HTTP
+    res.writeHead(302, { Location: redirectUrl });
+    res.end();
   }
   login() {
     return (req, res) => {
       const middlewares = [
         this.saveRedirectUrl.bind(this),
-        this.passport.authenticate(this.passportId, {
-          session: false
-        }),
+        this.passport.authenticate(this.passportId),
         this.findOrCreateProfile.bind(this),
         this.generateToken.bind(this),
         this.redirectToFront.bind(this)
