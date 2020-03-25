@@ -6,11 +6,11 @@ const CONFIG = require('../config');
 module.exports = {
   mixins: [ActivityPubService],
   baseUri: CONFIG.HOME_URL,
-    storage: {
+  storage: {
     collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      actors: new TripleStoreAdapter('ldp'),
-      objects: new TripleStoreAdapter('ldp')
+    activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
+    actors: new TripleStoreAdapter('ldp'),
+    objects: new TripleStoreAdapter('ldp')
   },
   context: {
     as: 'https://www.w3.org/ns/activitystreams#',
