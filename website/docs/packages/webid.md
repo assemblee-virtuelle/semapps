@@ -1,5 +1,5 @@
 ---
-title: @semapps/webid
+title: WebID
 ---
 
 This service allows you to create and view WebID-conform profiles.

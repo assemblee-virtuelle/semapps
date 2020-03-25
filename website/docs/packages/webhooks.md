@@ -1,5 +1,5 @@
 ---
-title: @semapps/webhooks
+title: Incoming Webhooks
 ---
 
 This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/Webhook), in order to allow users to perform some actions directly, bypassing the endpoints authorizations.
