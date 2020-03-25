@@ -1,15 +1,27 @@
-const { JsonLdStorageMixin } = require('@semapps/ldp');
+const { TripleStoreAdapter, JsonLdStorageMixin } = require('@semapps/ldp');
 const slugify = require('slugify');
 
 const ThemeService = {
   name: 'themes',
   mixins: [JsonLdStorageMixin],
-  adapter: null, // To be set by the user
+  dependencies: ['ldp'],
+  adapter: new TripleStoreAdapter('ldp'),
   collection: 'themes',
   settings: {
-    containerUri: null, // To be set by the user
+    containerUri: CONFIG.HOME_URL + 'themes/',
     context: { '@vocab': 'http://virtual-assembly.org/ontologies/pair#' },
-    themes: []
+    themes: [
+      'Culture',
+      'Social',
+      'Agriculture',
+      'Alimentation',
+      'Démocratie',
+      'Gouvernance',
+      'Énergie',
+      'Habitat',
+      'Économie',
+      'Éducation'
+    ]
   },
   async started() {
     let theme = null;
