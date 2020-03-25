@@ -2,9 +2,14 @@ const pathToType = path => path.replace('-', ':');
 
 const dataProvider = (baseUrl, httpClient) => ({
   getList: async (resource, params) => {
-    const { json } = await httpClient(baseUrl + pathToType(resource));
+    const url = params.id || params['@id'] || baseUrl + pathToType(resource);
+    const { json } = await httpClient(url);
 
-    const returnData = json['ldp:contains'].map(item => {
+    const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
+    const listProperty = listProperties.find(p => json[p]);
+    if( !listProperty ) throw new Error('Unknown list type');
+
+    const returnData = json[listProperty].map(item => {
       item.id = item['@id'];
       return item;
     });

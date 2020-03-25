@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, useAuthenticated, ShowButton, Show, TabbedShowLayout, Tab } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
+import { ActivitiesList, ActivitiesGrid } from '../semapps';
 
 export const ActorIcon = Icon;
 
@@ -27,6 +28,11 @@ export const ActorShow = props => (
       <Tab label="Profil">
         <TextField source="as:preferredUsername" label="Username" />
         <TextField source="as:name" label="Nom" />
+      </Tab>
+      <Tab label="Outbox">
+        <ActivitiesList source="as:outbox">
+          <ActivitiesGrid />
+        </ActivitiesList>
       </Tab>
     </TabbedShowLayout>
   </Show>
