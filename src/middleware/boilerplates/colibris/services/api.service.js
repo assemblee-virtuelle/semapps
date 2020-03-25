@@ -13,7 +13,7 @@ const CONFIG = require('../config');
 let connector;
 
 module.exports = {
-  name: "api",
+  name: 'api',
   mixins: [ApiGatewayService],
   settings: {
     server: true,
@@ -72,7 +72,7 @@ module.exports = {
         },
         'GET auth'(req, res) {
           connector.login()(req, res);
-        },
+        }
       }
     });
   },
