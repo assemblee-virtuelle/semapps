@@ -17,6 +17,7 @@ const authProvider = middlewareUri => ({
       } else {
         window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURI(window.location.href);
       }
+      return Promise.resolve();
     }
   },
   checkError: error => Promise.resolve(),
