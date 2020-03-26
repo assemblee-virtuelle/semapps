@@ -1,5 +1,5 @@
 import React from "react";
-import {DateField, ReferenceField, TextField, useQueryWithStore} from "react-admin";
+import {DateField, TextField, useQueryWithStore, useReference, LinearProgress, ReferenceField} from "react-admin";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -12,19 +12,33 @@ const cardStyle = {
   backgroundColor: '#EEEEEE'
 };
 
+const FollowDescription = ({ activity }) => {
+  const { referenceRecord: object } = useReference({
+    reference: 'pair-Project',
+    id: activity.object,
+  });
+
+  if( !object ) {
+    return <LinearProgress />
+  } else {
+    return `Suit maintenant "${object['as:name']}"`;
+  }
+};
+
 export const ActivitiesGrid = ({ ids, data, basePath }) => (
   <div style={{ margin: '0.5em', marginTop: '1em' }}>
     {ids.map(id =>
       <Card key={id} style={cardStyle}>
         <CardHeader
-          title={<TextField record={data[id]} source="@type" />}
+          title={
+            <ReferenceField basePath="/as-Person" record={data[id]} reference="as-Person" source="actor">
+              <TextField source="as:name" />
+            </ReferenceField>
+          }
           subheader={<DateField record={data[id]} source="published" />}
           avatar={<Avatar><FollowIcon /></Avatar>}/>
         <CardContent>
-          Anna Elisa suit maintenant "Créer un cercle actif"
-          <ReferenceField basePath={basePath} record={data[id]} reference="as-Person" source="object">
-            <TextField source="as:name" />
-          </ReferenceField>
+          <FollowDescription activity={data[id]} />
         </CardContent>
       </Card>
     )}

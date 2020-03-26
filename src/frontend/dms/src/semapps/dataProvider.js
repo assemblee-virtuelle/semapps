@@ -29,12 +29,12 @@ const dataProvider = (baseUrl, httpClient) => ({
 
       let { json } = await httpClient(id);
       json.id = json['@id'];
-      returnData[json.id] = json;
+      returnData.push(json);
     }
 
     return { data: returnData };
   },
-  getManyReference: (resource, params) => new Promise(),
+  getManyReference: (resource, params) => { throw new Error('getManyReference is not implemented') },
   create: async (resource, params) => {
     const { headers } = await httpClient(baseUrl + pathToType(resource), {
       method: 'POST',
@@ -59,7 +59,7 @@ const dataProvider = (baseUrl, httpClient) => ({
 
     return { data: params.data };
   },
-  updateMany: (resource, params) => new Promise(),
+  updateMany: (resource, params) => { throw new Error('updateMany is not implemented') },
   delete: async (resource, params) => {
     await httpClient(params.id, {
       method: 'DELETE'
@@ -67,7 +67,7 @@ const dataProvider = (baseUrl, httpClient) => ({
 
     return { data: { id: params.id } };
   },
-  deleteMany: (resource, params) => new Promise()
+  deleteMany: (resource, params) => { throw new Error('deleteMany is not implemented') }
 });
 
 export default dataProvider;
