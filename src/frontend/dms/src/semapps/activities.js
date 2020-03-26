@@ -1,5 +1,14 @@
 import React from 'react';
-import { DateField, TextField, useQueryWithStore, useReference, LinearProgress, ReferenceField } from 'react-admin';
+import {
+  DateField,
+  TextField,
+  useQueryWithStore,
+  useReference,
+  LinearProgress,
+  ReferenceField,
+  getResourceLinkPath,
+  Link
+} from 'react-admin';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -18,10 +27,17 @@ const FollowDescription = ({ activity }) => {
     id: activity.object
   });
 
+  // TODO calculate the basePath depending on the object @type
+  const resourceLinkPath = getResourceLinkPath({ record: activity, source: 'object', basePath: '/pair-Project' });
+
   if (!object) {
     return <LinearProgress />;
   } else {
-    return `Suit maintenant "${object['as:name']}"`;
+    return (
+      <span>
+        Suit maintenant <Link to={resourceLinkPath}>{object['as:name']}</Link>
+      </span>
+    );
   }
 };
 
