@@ -7,7 +7,7 @@ const dataProvider = (baseUrl, httpClient) => ({
 
     const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
     const listProperty = listProperties.find(p => json[p]);
-    if( !listProperty ) throw new Error('Unknown list type');
+    if (!listProperty) throw new Error('Unknown list type');
 
     const returnData = json[listProperty].map(item => {
       item.id = item['@id'];
