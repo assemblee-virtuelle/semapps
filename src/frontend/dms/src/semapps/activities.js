@@ -75,14 +75,14 @@ export const ActivitiesGrid = ({ ids, data, basePath }) => (
           subheader={<DateField record={data[id]} source="published" />}
           avatar={
             <Avatar>
-              {data[id]['@type']==='Follow' && <FollowIcon />}
-              {data[id]['@type']==='Create' && <CreateIcon />}
+              {data[id]['@type'] === 'Follow' && <FollowIcon />}
+              {data[id]['@type'] === 'Create' && <CreateIcon />}
             </Avatar>
           }
         />
         <CardContent>
-          {data[id]['@type']==='Follow' && <FollowDescription activity={data[id]} />}
-          {data[id]['@type']==='Create' && <CreateDescription activity={data[id]} />}
+          {data[id]['@type'] === 'Follow' && <FollowDescription activity={data[id]} />}
+          {data[id]['@type'] === 'Create' && <CreateDescription activity={data[id]} />}
         </CardContent>
       </Card>
     ))}
