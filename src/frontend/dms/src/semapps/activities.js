@@ -1,5 +1,5 @@
-import React from "react";
-import {DateField, TextField, useQueryWithStore, useReference, LinearProgress, ReferenceField} from "react-admin";
+import React from 'react';
+import { DateField, TextField, useQueryWithStore, useReference, LinearProgress, ReferenceField } from 'react-admin';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -15,11 +15,11 @@ const cardStyle = {
 const FollowDescription = ({ activity }) => {
   const { referenceRecord: object } = useReference({
     reference: 'pair-Project',
-    id: activity.object,
+    id: activity.object
   });
 
-  if( !object ) {
-    return <LinearProgress />
+  if (!object) {
+    return <LinearProgress />;
   } else {
     return `Suit maintenant "${object['as:name']}"`;
   }
@@ -27,7 +27,7 @@ const FollowDescription = ({ activity }) => {
 
 export const ActivitiesGrid = ({ ids, data, basePath }) => (
   <div style={{ margin: '0.5em', marginTop: '1em' }}>
-    {ids.map(id =>
+    {ids.map(id => (
       <Card key={id} style={cardStyle}>
         <CardHeader
           title={
@@ -36,12 +36,17 @@ export const ActivitiesGrid = ({ ids, data, basePath }) => (
             </ReferenceField>
           }
           subheader={<DateField record={data[id]} source="published" />}
-          avatar={<Avatar><FollowIcon /></Avatar>}/>
+          avatar={
+            <Avatar>
+              <FollowIcon />
+            </Avatar>
+          }
+        />
         <CardContent>
           <FollowDescription activity={data[id]} />
         </CardContent>
       </Card>
-    )}
+    ))}
   </div>
 );
 
@@ -56,10 +61,10 @@ export const ActivitiesList = ({ children, source, record = {} }) => {
     payload: { id: record[source]['@id'] }
   });
 
-  if( !data ) return null;
+  if (!data) return null;
 
   return React.cloneElement(children, {
-    data: data.reduce((o, activity) => ({...o, [activity.id]: activity}), {}),
+    data: data.reduce((o, activity) => ({ ...o, [activity.id]: activity }), {}),
     ids: data.map(activity => activity.id),
     basePath: '/as-Activity'
   });
