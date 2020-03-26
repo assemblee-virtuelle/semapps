@@ -9,11 +9,15 @@ import {
   TextInput,
   DateTimeInput,
   useAuthenticated,
-  AutocompleteArrayInput, Show, TabbedShowLayout, Tab, ShowButton
+  AutocompleteArrayInput,
+  Show,
+  TabbedShowLayout,
+  Tab,
+  ShowButton
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import {ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput} from '../semapps';
+import { ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput } from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
