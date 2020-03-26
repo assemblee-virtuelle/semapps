@@ -65,7 +65,28 @@ const JsonLdStorageMixin = {
       ]
     },
     after: {
-      create: [(ctx, res) => ctx.service.compactJson(res)]
+      create: [(ctx, res) => ctx.service.compactJson(res)],
+      find: [
+        (ctx, res) => {
+          if( Array.isArray(res) ) {
+            return({
+              '@context': {
+                as: "https://www.w3.org/ns/activitystreams#",
+                pair: "http://virtual-assembly.org/ontologies/pair#"
+              },
+              type: [
+                "as:Collection",
+                "as:OrderedCollection"
+              ],
+              orderedItems: res.map(json => {
+                delete json['@context'];
+                return json;
+              }),
+              totalItems: res.length
+            })
+          }
+        }
+      ]
       // get: [(ctx, res) => ctx.service.compactJson(res)]
     }
   },

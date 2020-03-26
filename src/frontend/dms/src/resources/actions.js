@@ -9,11 +9,11 @@ import {
   TextInput,
   DateTimeInput,
   useAuthenticated,
-  AutocompleteArrayInput
+  AutocompleteArrayInput, Show, TabbedShowLayout, Tab, ShowButton
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { copyValues, JsonLdReferenceInput } from '../semapps';
+import {ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput} from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
@@ -23,6 +23,7 @@ export const ActionList = props => {
     <List title="Actions" {...props}>
       <Datagrid>
         <TextField source="pair:label" label="Nom" />
+        <ShowButton basePath="/pair-Project" />
         <EditButton basePath="/pair-Project" />
       </Datagrid>
     </List>
@@ -54,4 +55,24 @@ export const ActionEdit = props => (
       <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
     </SimpleForm>
   </Edit>
+);
+
+export const ActionShow = props => (
+  <Show title={<ActionTitle />} {...props}>
+    <TabbedShowLayout>
+      <Tab label="Description">
+        <TextField source="as:name" label="Nom" />
+      </Tab>
+      <Tab label="Activités émises">
+        <ActivitiesList source="as:outbox">
+          <ActivitiesGrid />
+        </ActivitiesList>
+      </Tab>
+      <Tab label="Activités reçues">
+        <ActivitiesList source="as:inbox">
+          <ActivitiesGrid />
+        </ActivitiesList>
+      </Tab>
+    </TabbedShowLayout>
+  </Show>
 );

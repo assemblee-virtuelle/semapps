@@ -29,8 +29,13 @@ export const ActorShow = props => (
         <TextField source="as:preferredUsername" label="Username" />
         <TextField source="as:name" label="Nom" />
       </Tab>
-      <Tab label="Outbox">
+      <Tab label="Activités émises">
         <ActivitiesList source="as:outbox">
+          <ActivitiesGrid />
+        </ActivitiesList>
+      </Tab>
+      <Tab label="Activités reçues">
+        <ActivitiesList source="as:inbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>

@@ -14,6 +14,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import FollowIcon from '@material-ui/icons/PersonAdd';
+import CreateIcon from '@material-ui/icons/Add';
 
 const cardStyle = {
   marginBottom: '1.5em',
@@ -35,7 +36,27 @@ const FollowDescription = ({ activity }) => {
   } else {
     return (
       <span>
-        Suit maintenant <Link to={resourceLinkPath}>{object['as:name']}</Link>
+        A suivi l'action <Link to={resourceLinkPath}>{object['as:name']}</Link>
+      </span>
+    );
+  }
+};
+
+const CreateDescription = ({ activity }) => {
+  const { referenceRecord: object } = useReference({
+    reference: 'as-Note',
+    id: activity.object['@id']
+  });
+
+  // TODO calculate the basePath depending on the object @type
+  const resourceLinkPath = getResourceLinkPath({ record: activity.object, source: '@id', basePath: '/as-Note' });
+
+  if (!object) {
+    return <LinearProgress />;
+  } else {
+    return (
+      <span>
+        A posté l'actualité <Link to={resourceLinkPath}>{object['as:name']}</Link>
       </span>
     );
   }
@@ -54,12 +75,14 @@ export const ActivitiesGrid = ({ ids, data, basePath }) => (
           subheader={<DateField record={data[id]} source="published" />}
           avatar={
             <Avatar>
-              <FollowIcon />
+              {data[id]['@type']==='Follow' && <FollowIcon />}
+              {data[id]['@type']==='Create' && <CreateIcon />}
             </Avatar>
           }
         />
         <CardContent>
-          <FollowDescription activity={data[id]} />
+          {data[id]['@type']==='Follow' && <FollowDescription activity={data[id]} />}
+          {data[id]['@type']==='Create' && <CreateDescription activity={data[id]} />}
         </CardContent>
       </Card>
     ))}
