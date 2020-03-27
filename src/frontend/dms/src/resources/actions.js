@@ -16,7 +16,15 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { ActivitiesList, ActivitiesGrid, CollectionList, ActorsGrid, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
+import {
+  ActivitiesList,
+  ActivitiesGrid,
+  CollectionList,
+  ActorsGrid,
+  copyValues,
+  JsonLdReferenceInput,
+  DateTimeInput
+} from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 

@@ -1,4 +1,4 @@
-import {Datagrid, ShowButton, TextField} from 'react-admin';
+import { Datagrid, ShowButton, TextField } from 'react-admin';
 import React from 'react';
 
 const ActorsGrid = props => (
