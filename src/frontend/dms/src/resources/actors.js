@@ -1,8 +1,7 @@
 import React from 'react';
 import { List, Datagrid, TextField, useAuthenticated, ShowButton, Show, TabbedShowLayout, Tab } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
-import { ActivitiesList } from '../semapps';
-import ActivitiesGrid from '../components/ActivitiesGrid';
+import { ActivitiesList, ActivitiesGrid, CollectionList, ActorsGrid } from '../semapps';
 
 export const ActorIcon = Icon;
 
@@ -39,6 +38,16 @@ export const ActorShow = props => (
         <ActivitiesList source="as:inbox">
           <ActivitiesGrid />
         </ActivitiesList>
+      </Tab>
+      <Tab label="Abonnés">
+        <CollectionList source="as:followers">
+          <ActorsGrid />
+        </CollectionList>
+      </Tab>
+      <Tab label="Abonnements">
+        <CollectionList source="as:following">
+          <ActorsGrid />
+        </CollectionList>
       </Tab>
     </TabbedShowLayout>
   </Show>

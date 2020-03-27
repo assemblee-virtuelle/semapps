@@ -1,5 +1,5 @@
 import { Datagrid, DateField, ReferenceField, TextField } from 'react-admin';
-import { ActivityDescription } from '../semapps';
+import ActivityDescription from './ActivityDescription';
 import React from 'react';
 
 const ActivitiesGrid = props => (

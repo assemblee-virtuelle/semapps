@@ -16,8 +16,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { ActivitiesList, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
-import ActivitiesGrid from '../components/ActivitiesGrid';
+import { ActivitiesList, ActivitiesGrid, CollectionList, ActorsGrid, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
@@ -76,6 +75,16 @@ export const ActionShow = props => (
         <ActivitiesList source="as:inbox">
           <ActivitiesGrid />
         </ActivitiesList>
+      </Tab>
+      <Tab label="Abonnés">
+        <CollectionList source="as:followers">
+          <ActorsGrid />
+        </CollectionList>
+      </Tab>
+      <Tab label="Abonnements">
+        <CollectionList source="as:following">
+          <ActorsGrid />
+        </CollectionList>
       </Tab>
     </TabbedShowLayout>
   </Show>
