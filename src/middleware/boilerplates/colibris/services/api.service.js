@@ -47,11 +47,18 @@ module.exports = {
         preferredUsername: authData.displayName,
         name: `${authData.field_first_name[0]} ${authData.field_last_name[0]}`
       }),
-      findOrCreateProfile: profileData => {
-        return this.broker.call('activitypub.actor.create', {
-          '@type': 'Person',
-          ...profileData
+      findOrCreateProfile: async profileData => {
+        const actor = await this.broker.call('activitypub.actor.get', {
+          id: profileData.slug
         });
+        if( actor ) {
+          return actor;
+        } else {
+          return await this.broker.call('activitypub.actor.create', {
+            '@type': 'Person',
+            ...profileData
+          });
+        }
       }
     });
 
