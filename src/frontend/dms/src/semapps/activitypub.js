@@ -24,12 +24,12 @@ const cardStyle = {
 
 const FollowDescription = ({ activity }) => {
   const { referenceRecord: object } = useReference({
-    reference: 'pair-Project',
+    reference: 'Project',
     id: activity.object
   });
 
   // TODO calculate the basePath depending on the object @type
-  const resourceLinkPath = getResourceLinkPath({ record: activity, source: 'object', basePath: '/pair-Project' });
+  const resourceLinkPath = getResourceLinkPath({ record: activity, source: 'object', basePath: '/Project' });
 
   if (!object) {
     return <LinearProgress />;
@@ -44,12 +44,12 @@ const FollowDescription = ({ activity }) => {
 
 const CreateDescription = ({ activity }) => {
   const { referenceRecord: object } = useReference({
-    reference: 'as-Note',
+    reference: 'Note',
     id: activity.object['@id']
   });
 
   // TODO calculate the basePath depending on the object @type
-  const resourceLinkPath = getResourceLinkPath({ record: activity.object, source: '@id', basePath: '/as-Note' });
+  const resourceLinkPath = getResourceLinkPath({ record: activity.object, source: '@id', basePath: '/Note' });
 
   if (!object) {
     return <LinearProgress />;
@@ -68,7 +68,7 @@ export const ActivitiesGrid = ({ ids, data, basePath }) => (
       <Card key={id} style={cardStyle}>
         <CardHeader
           title={
-            <ReferenceField basePath="/as-Person" record={data[id]} reference="as-Person" source="actor">
+            <ReferenceField basePath="/Actor" record={data[id]} reference="Actor" source="actor">
               <TextField source="as:name" />
             </ReferenceField>
           }
@@ -96,7 +96,7 @@ export const ActivitiesList = ({ children, source, record = {} }) => {
 
   const { data } = useQueryWithStore({
     type: 'getList',
-    resource: 'as-Activity',
+    resource: 'Activity',
     payload: { id: record[source]['@id'] }
   });
 
@@ -105,6 +105,6 @@ export const ActivitiesList = ({ children, source, record = {} }) => {
   return React.cloneElement(children, {
     data: data.reduce((o, activity) => ({ ...o, [activity.id]: activity }), {}),
     ids: data.map(activity => activity.id),
-    basePath: '/as-Activity'
+    basePath: '/Activity'
   });
 };

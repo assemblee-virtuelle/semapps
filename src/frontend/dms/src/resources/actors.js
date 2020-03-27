@@ -16,7 +16,7 @@ export const ActorList = props => {
       <Datagrid>
         <TextField source="as:preferredUsername" label="Username" />
         <TextField source="as:name" label="Nom" />
-        <ShowButton basePath="/as-Person" />
+        <ShowButton basePath="/Actor" />
       </Datagrid>
     </List>
   );

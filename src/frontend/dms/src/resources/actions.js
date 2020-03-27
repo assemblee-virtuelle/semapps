@@ -27,8 +27,8 @@ export const ActionList = props => {
     <List title="Actions" {...props}>
       <Datagrid>
         <TextField source="pair:label" label="Nom" />
-        <ShowButton basePath="/pair-Project" />
-        <EditButton basePath="/pair-Project" />
+        <ShowButton basePath="/Project" />
+        <EditButton basePath="/Project" />
       </Datagrid>
     </List>
   );
@@ -49,10 +49,10 @@ export const ActionEdit = props => (
       <MarkdownInput multiline source="as:content" label="Description" fullWidth />
       <TextInput source="as:url" label="Site web" fullWidth />
       <TextInput source="as:image" label="Image" fullWidth />
-      <JsonLdReferenceInput label="Tags" reference="pair-Thema" source="as:tag">
+      <JsonLdReferenceInput label="Tags" reference="Theme" source="as:tag">
         <AutocompleteArrayInput optionText={record => record['pair:preferedLabel']} fullWidth />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Auteurs" reference="as-Person" source="as:attributedTo">
+      <JsonLdReferenceInput label="Auteurs" reference="Actor" source="as:attributedTo">
         <AutocompleteArrayInput optionText={record => record['as:name']} fullWidth />
       </JsonLdReferenceInput>
       <DateTimeInput source="as:published" label="Publié le" fullWidth />

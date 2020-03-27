@@ -1,14 +1,7 @@
-const pathToType = path => {
-  if (path.includes('-')) {
-    return 'ldp/' + path.replace('-', ':');
-  } else {
-    return path;
-  }
-};
-
-const dataProvider = (baseUrl, httpClient) => ({
+const dataProvider = (baseUrl, httpClient, containersMap) => ({
   getList: async (resource, params) => {
-    const url = params.id || params['@id'] || baseUrl + pathToType(resource);
+    if( !containersMap[resource] ) Error(`Resource ${resource} is not mapped in containersMap`);
+    const url = params.id || params['@id'] || baseUrl + containersMap[resource];
     const { json } = await httpClient(url);
 
     const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
@@ -44,7 +37,9 @@ const dataProvider = (baseUrl, httpClient) => ({
     throw new Error('getManyReference is not implemented');
   },
   create: async (resource, params) => {
-    const { headers } = await httpClient(baseUrl + pathToType(resource), {
+    if( !containersMap[resource] ) Error(`Resource ${resource} is not mapped in containersMap`);
+
+    const { headers } = await httpClient(baseUrl + containersMap[resource], {
       method: 'POST',
       body: JSON.stringify({
         '@context': { pair: 'http://virtual-assembly.org/ontologies/pair#' },
