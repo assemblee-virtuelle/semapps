@@ -4,7 +4,6 @@ const path = require('path');
 const ImporterService = {
   name: 'importer',
   settings: {
-    baseUri: null,
     baseDir: null,
     allowedActions: []
   },
