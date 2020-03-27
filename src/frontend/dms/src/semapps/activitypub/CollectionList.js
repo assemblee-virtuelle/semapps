@@ -1,5 +1,5 @@
-import React  from "react";
-import { useQueryWithStore, useGetMany } from "react-admin";
+import React from 'react';
+import { useQueryWithStore, useGetMany } from 'react-admin';
 
 const ActorsList = ({ ids, children }) => {
   if (React.Children.count(children) !== 1) {
@@ -26,11 +26,7 @@ const CollectionList = ({ children, source, record }) => {
     payload: { id: record[source]['@id'] }
   });
 
-  return data && data.items.length > 0 ? (
-    <ActorsList ids={data.items}>
-      {children}
-    </ActorsList>
-  ) : null;
+  return data && data.items.length > 0 ? <ActorsList ids={data.items}>{children}</ActorsList> : null;
 };
 
 export default CollectionList;
