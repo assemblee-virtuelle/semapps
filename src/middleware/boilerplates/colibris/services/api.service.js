@@ -51,7 +51,7 @@ module.exports = {
         const actor = await this.broker.call('activitypub.actor.get', {
           id: profileData.slug
         });
-        if( actor ) {
+        if (actor) {
           return actor;
         } else {
           return await this.broker.call('activitypub.actor.create', {
