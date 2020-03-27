@@ -1,14 +1,10 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
 const fs = require('fs').promises;
 const path = require('path');
 
 const ImporterService = {
   name: 'importer',
   settings: {
-    // To be set by user
-    baseUri: null,
-    baseDir: null,
-    usersContainer: null,
+    importsDir: null,
     allowedActions: []
   },
   async started() {
@@ -20,21 +16,19 @@ const ImporterService = {
   },
   actions: {
     async import(ctx) {
-      let { action, fileName, userId, ...otherParams } = ctx.params;
+      let { action, fileName, ...otherParams } = ctx.params;
 
       if (!action || !fileName || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
-      if (userId && !userId.startsWith('http')) userId = this.settings.usersContainer + userId;
-
-      const file = await fs.readFile(path.resolve(this.settings.baseDir, fileName));
+      const file = await fs.readFile(path.resolve(this.settings.importsDir, fileName));
       const json = JSON.parse(file.toString());
 
       console.log(`Importing ${json.length} items...`);
 
       for (let data of json) {
-        await this.actions[action]({ data, userId, ...otherParams });
+        await this.actions[action]({ data, ...otherParams });
       }
 
       console.log('Import finished !');
