@@ -1,5 +1,6 @@
 const { TripleStoreAdapter, JsonLdStorageMixin } = require('@semapps/ldp');
 const slugify = require('slugify');
+const CONFIG = require('../config');
 
 const ThemeService = {
   name: 'themes',
@@ -35,7 +36,7 @@ const ThemeService = {
         // If themes have already been created, exit loop
         break;
       } else if (!theme) {
-        const result = await this.actions.create({
+        await this.actions.create({
           slug: slug,
           '@context': { '@vocab': 'http://virtual-assembly.org/ontologies/pair#' },
           '@type': 'Thema',
