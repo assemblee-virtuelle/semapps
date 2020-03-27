@@ -23,15 +23,15 @@ $ npm install @semapps/webid --save
 ## Usage
 
 ```js
-const { ServiceBroker } = require('moleculer');
 const { WebIdService } = require('@semapps/webid');
 
-const broker = new ServiceBroker();
-broker.createService(WebIdService, {
+module.exports = {
+  name: 'webid',
+  mixins: [WebIdService],
   settings: {
-    ... // See below
+    usersContainer: 'http://localhost:3000/users/'
   }
-});
+};
 ```
 
 Optionally, you can configure the default routes with moleculer-web:

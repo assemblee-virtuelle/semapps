@@ -2,12 +2,13 @@
 title: Importer
 ---
 
-This service allows to import JSON data easily.
+This service allows you to import JSON data easily.
 
 ## Features
 
 - Import data, under the form of JSON-formatted arrays
-- Allow to create different kind of imports
+- Allow to create different kind of import actions
+- The import action will be called once per items in the JSON array
 
 ## Dependencies
 
@@ -33,7 +34,8 @@ module.exports = {
     allowedActions: ['createObject']
   },
   actions: {
-    async createObject(ctx) {
+    // Called once per items in array
+    createObject(ctx) {
       const { data, userId } = ctx.params;
       // Handle stuff here...
     }
@@ -41,7 +43,7 @@ module.exports = {
 };
 ```
 
-## Importing data
+### Importing data
 
 Start Moleculer in REPL mode and call the `import` action like this:
 
@@ -59,8 +61,6 @@ Any other parameter you give will be passed to the action.
 | `allowedActions` | `array` | **required** | List of allowed import actions |
 
 ## Actions
-
-The following service actions are available:
 
 ### `import`
 

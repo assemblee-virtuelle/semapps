@@ -23,24 +23,23 @@ $ npm install @semapps/webhooks --save
 ## Usage
 
 ```js
-const { ServiceBroker } = require('moleculer');
 const { WebhooksService } = require('@semapps/webhooks');
 
-const broker = new ServiceBroker();
-broker.createService(WebhooksService, {
-    adapter: new MongoDbAdapter(),
-    settings: {
-      baseUri: "http://localhost:3000",
-      usersContainer: "http://localhost:3000/users/",
-      allowedActions: ['myAction']
-    },
-    actions: {
-      async myAction(ctx) {
-        const { user, data } = ctx.params;
-        // Handle stuff here...
-      }
+module.exports = {
+  name: 'webhooks',
+  mixins: [WebhooksService],
+  settings: {
+    baseUri: "http://localhost:3000",
+    usersContainer: "http://localhost:3000/users/",
+    allowedActions: ['myAction']
+  },
+  actions: {
+    async myAction(ctx) {
+      const { user, data } = ctx.params;
+      // Handle stuff here...
     }
-});
+  }
+}
 ```
 
 Optionally, you can configure the default routes with moleculer-web:
