@@ -7,7 +7,6 @@ import {
   TextField,
   EditButton,
   TextInput,
-  DateTimeInput,
   useAuthenticated,
   AutocompleteArrayInput,
   Show,
@@ -17,7 +16,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput } from '../semapps';
+import { ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
 
 export const ActionIcon = SettingsIcon;
 
