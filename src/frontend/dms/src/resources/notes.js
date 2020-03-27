@@ -20,7 +20,7 @@ export const NoteList = props => {
   useAuthenticated();
   return (
     <List title="Actualités" {...props}>
-      <Datagrid>
+      <Datagrid rowClick="edit">
         <TextField source="as:name" label="Nom" />
         <EditButton basePath="/Note" />
       </Datagrid>

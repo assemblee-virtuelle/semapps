@@ -16,7 +16,8 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { ActivitiesGrid, ActivitiesList, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
+import { ActivitiesList, copyValues, JsonLdReferenceInput, DateTimeInput } from '../semapps';
+import ActivitiesGrid from '../components/ActivitiesGrid';
 
 export const ActionIcon = SettingsIcon;
 
@@ -24,7 +25,7 @@ export const ActionList = props => {
   useAuthenticated();
   return (
     <List title="Actions" {...props}>
-      <Datagrid>
+      <Datagrid rowClick="show">
         <TextField source="pair:label" label="Nom" />
         <ShowButton basePath="/Project" />
         <EditButton basePath="/Project" />

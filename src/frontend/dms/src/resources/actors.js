@@ -1,7 +1,8 @@
 import React from 'react';
 import { List, Datagrid, TextField, useAuthenticated, ShowButton, Show, TabbedShowLayout, Tab } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
-import { ActivitiesList, ActivitiesGrid } from '../semapps';
+import { ActivitiesList } from '../semapps';
+import ActivitiesGrid from '../components/ActivitiesGrid';
 
 export const ActorIcon = Icon;
 
@@ -13,7 +14,7 @@ export const ActorList = props => {
   useAuthenticated();
   return (
     <List title="Acteurs" {...props}>
-      <Datagrid>
+      <Datagrid rowClick="show">
         <TextField source="as:preferredUsername" label="Username" />
         <TextField source="as:name" label="Nom" />
         <ShowButton basePath="/Actor" />

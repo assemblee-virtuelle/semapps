@@ -1,6 +1,6 @@
 const dataProvider = (baseUrl, httpClient, containersMap) => ({
   getList: async (resource, params) => {
-    if( !containersMap[resource] ) Error(`Resource ${resource} is not mapped in containersMap`);
+    if (!containersMap[resource]) Error(`Resource ${resource} is not mapped in containersMap`);
     const url = params.id || params['@id'] || baseUrl + containersMap[resource];
     const { json } = await httpClient(url);
 
@@ -37,7 +37,7 @@ const dataProvider = (baseUrl, httpClient, containersMap) => ({
     throw new Error('getManyReference is not implemented');
   },
   create: async (resource, params) => {
-    if( !containersMap[resource] ) Error(`Resource ${resource} is not mapped in containersMap`);
+    if (!containersMap[resource]) Error(`Resource ${resource} is not mapped in containersMap`);
 
     const { headers } = await httpClient(baseUrl + containersMap[resource], {
       method: 'POST',
