@@ -4,7 +4,7 @@ const path = require('path');
 const ImporterService = {
   name: 'importer',
   settings: {
-    baseDir: null,
+    importsDir: null,
     allowedActions: []
   },
   async started() {
@@ -22,7 +22,7 @@ const ImporterService = {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
-      const file = await fs.readFile(path.resolve(this.settings.baseDir, fileName));
+      const file = await fs.readFile(path.resolve(this.settings.importsDir, fileName));
       const json = JSON.parse(file.toString());
 
       console.log(`Importing ${json.length} items...`);
