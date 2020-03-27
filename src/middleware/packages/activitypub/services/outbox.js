@@ -29,7 +29,7 @@ const OutboxService = {
 
         activity = {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          type: 'Create',
+          '@type': 'Create',
           to: activity.to,
           actor: activity.attributedTo,
           object: object
