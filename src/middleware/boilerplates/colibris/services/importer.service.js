@@ -1,12 +1,16 @@
-const { ImporterService: ImporterMixin } = require('@semapps/importer');
+const { ImporterService } = require('@semapps/importer');
 const path = require('path');
 const slugify = require('slugify');
+const CONFIG = require('../config');
 
-const ImporterService = {
-  mixins: [ImporterMixin],
+module.exports = {
+  mixins: [ImporterService],
   settings: {
     importsDir: path.resolve(__dirname, '../imports'),
-    allowedActions: ['createProject', 'createUser', 'followProject', 'postNews']
+    allowedActions: ['createProject', 'createUser', 'followProject', 'postNews'],
+    // Custom settings
+    baseUri: CONFIG.HOME_URL,
+    usersContainer: CONFIG.HOME_URL + 'users/'
   },
   dependencies: ['ldp', 'activitypub.actor', 'activitypub.outbox'],
   actions: {
@@ -93,5 +97,3 @@ const ImporterService = {
     }
   }
 };
-
-module.exports = ImporterService;
