@@ -46,6 +46,7 @@ export const ProjectEdit = props => (
       <JsonLdReferenceInput label="Géré par" reference="Agent" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
           optionText={record => {
+            // TODO improve the handling of the many possible cases
             if (!record) return 'Label manquant';
             if (record['rdf:type'] === 'pairv1:Organization' || record['@type'] === 'pairv1:Organization') {
               if (Array.isArray(record['pairv1:preferedLabel'])) {
