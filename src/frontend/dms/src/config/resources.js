@@ -1,4 +1,4 @@
-const resourcesConfig = {
+const resources = {
   Project: {
     types: ['pairv1:Project'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/pairv1:Project'
@@ -20,4 +20,4 @@ const resourcesConfig = {
   }
 };
 
-export default resourcesConfig;
+export default resources;

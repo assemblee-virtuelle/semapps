@@ -41,17 +41,17 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
   `;
 };
 
-const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
-  getList: async (resource, params) => {
-    if (!resourcesConfig[resource]) Error(`Resource ${resource} is not mapped in resourcesConfig`);
+const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => ({
+  getList: async (resourceId, params) => {
+    if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-    if (resourcesConfig[resource].types) {
+    if (resources[resourceId].types) {
       /*
        * Types are defined, do a SPARQL search
        */
-      const body = computeSparqlSearch({ types: resourcesConfig[resource].types, params, ontologies });
+      const body = computeSparqlSearch({ types: resources[resourceId].types, params, ontologies });
 
-      const { json } = await httpClient(baseUrl, {
+      const { json } = await httpClient(sparqlEndpoint, {
         method: 'POST',
         body
       });
@@ -77,7 +77,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
       /*
        * Types are not defined, query the container
        */
-      const url = params.id || params['@id'] || resourcesConfig[resource].containerUri;
+      const url = params.id || params['@id'] || resources[resourceId].containerUri;
       const { json } = await httpClient(url);
 
       const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
@@ -97,12 +97,12 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
       return { data: returnData, total: returnData.length };
     }
   },
-  getOne: async (resource, params) => {
+  getOne: async (resourceId, params) => {
     let { json } = await httpClient(params.id);
     json.id = json['@id'];
     return { data: json };
   },
-  getMany: async (resource, params) => {
+  getMany: async (resourceId, params) => {
     let returnData = [];
 
     for (let id of params.ids) {
@@ -115,17 +115,17 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
 
     return { data: returnData };
   },
-  getManyReference: (resource, params) => {
+  getManyReference: (resourceId, params) => {
     throw new Error('getManyReference is not implemented yet');
   },
-  create: async (resource, params) => {
-    if (!resourcesConfig[resource]) Error(`Resource ${resource} is not mapped in resourcesConfig`);
+  create: async (resourceId, params) => {
+    if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-    const { headers } = await httpClient(baseUrl + resourcesConfig[resource].containerUri, {
+    const { headers } = await httpClient(resources[resourceId].containerUri, {
       method: 'POST',
       body: JSON.stringify({
         '@context': { ...getPrefixJSON(ontologies) },
-        '@type': resource,
+        '@type': resources[resourceId].types,
         ...params.data
       })
     });
@@ -136,7 +136,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
     json.id = json['@id'];
     return { data: json };
   },
-  update: async (resource, params) => {
+  update: async (resourceId, params) => {
     await httpClient(params.id, {
       method: 'PATCH',
       body: JSON.stringify(params.data)
@@ -144,17 +144,17 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
 
     return { data: params.data };
   },
-  updateMany: (resource, params) => {
+  updateMany: (resourceId, params) => {
     throw new Error('updateMany is not implemented yet');
   },
-  delete: async (resource, params) => {
+  delete: async (resourceId, params) => {
     await httpClient(params.id, {
       method: 'DELETE'
     });
 
     return { data: { id: params.id } };
   },
-  deleteMany: (resource, params) => {
+  deleteMany: (resourceId, params) => {
     throw new Error('deleteMany is not implemented yet');
   }
 });

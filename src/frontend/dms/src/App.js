@@ -6,18 +6,18 @@ import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resource
 import { OrganizationList, OrganizationEdit, OrganizationCreate, OrganizationIcon } from './resources/organizations';
 import { PersonList, PersonIcon } from './resources/persons';
 import { ConceptList, ConceptIcon } from './resources/concepts';
-import resourcesConfig from './config/resourcesConfig';
+import resources from './config/resources';
 import ontologies from './config/ontologies';
 
 function App() {
   return (
     <Admin
-      dataProvider={dataProvider(
-        process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
+      dataProvider={dataProvider({
+        sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
         httpClient,
-        resourcesConfig,
+        resources,
         ontologies
-      )}
+      })}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
