@@ -36,25 +36,34 @@ const resourcesMap = {
 function App() {
   return (
     <Admin
-      dataProvider={dataProvider(process.env.REACT_APP_MIDDLEWARE_URL, httpClient, resourcesMap)}
+      dataProvider={dataProvider({
+        sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
+        httpClient,
+        resources,
+        ontologies
+      })}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
-      <Resource name="Actor" list={ActorList} show={ActorShow} icon={ActorIcon} options={{ label: 'Acteurs' }} />
-      <Resource name="Activity" list={ActivityList} icon={ActivityIcon} options={{ label: 'Activités' }} />
       <Resource
         name="Project"
-        list={ActionList}
-        show={ActionShow}
-        edit={ActionEdit}
-        icon={ActionIcon}
-        options={{ label: 'Actions' }}
+        list={ProjectList}
+        edit={ProjectEdit}
+        create={ProjectCreate}
+        icon={ProjectIcon}
+        options={{ label: 'Projets' }}
       />
-      <Resource name="Note" list={NoteList} edit={NoteEdit} icon={NoteIcon} options={{ label: 'Actualités' }} />
-      <Resource name="Theme" list={ThemeList} icon={ThemeIcon} options={{ label: 'Thèmes' }} />
-      {/*<Resource name="pairv1-Organization" list={OrganizationList} edit={OrganizationEdit} create={OrganizationCreate} icon={OrganizationIcon} options={{ label: 'Organisations' }}/>*/}
-      {/*<Resource name="pairv1-Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }}/>*/}
-      {/*<Resource name="skos-Concept"list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }}/>*/}
+      <Resource
+        name="Organization"
+        list={OrganizationList}
+        edit={OrganizationEdit}
+        create={OrganizationCreate}
+        icon={OrganizationIcon}
+        options={{ label: 'Organisations' }}
+      />
+      <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
+      <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
+      <Resource name="Agent" />
     </Admin>
   );
 }
