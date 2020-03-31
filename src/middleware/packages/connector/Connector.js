@@ -92,7 +92,7 @@ class Connector {
     return ctx.meta.tokenPayload.webId;
   }
   getRoute() {
-    return({
+    return {
       use: [
         session({
           secret: this.settings.sessionSecret,
@@ -109,7 +109,7 @@ class Connector {
           this.connector.login()(req, res);
         }
       }
-    });
+    };
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {

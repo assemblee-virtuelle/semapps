@@ -77,30 +77,30 @@ function createServices(broker) {
       this.connector =
         CONFIG.CONNECT_TYPE === 'OIDC'
           ? new OidcConnector({
-            issuer: CONFIG.OIDC_ISSUER,
-            clientId: CONFIG.OIDC_CLIENT_ID,
-            clientSecret: CONFIG.OIDC_CLIENT_SECRET,
-            publicKey: CONFIG.OIDC_PUBLIC_KEY,
-            redirectUri: CONFIG.HOME_URL + 'auth',
-            selectProfileData: authData => ({
-              email: authData.email,
-              name: authData.given_name,
-              familyName: authData.family_name
-            }),
-            findOrCreateProfile
-          })
+              issuer: CONFIG.OIDC_ISSUER,
+              clientId: CONFIG.OIDC_CLIENT_ID,
+              clientSecret: CONFIG.OIDC_CLIENT_SECRET,
+              publicKey: CONFIG.OIDC_PUBLIC_KEY,
+              redirectUri: CONFIG.HOME_URL + 'auth',
+              selectProfileData: authData => ({
+                email: authData.email,
+                name: authData.given_name,
+                familyName: authData.family_name
+              }),
+              findOrCreateProfile
+            })
           : new CasConnector({
-            casUrl: CONFIG.CAS_URL,
-            privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
-            publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
-            selectProfileData: authData => ({
-              nick: authData.displayName,
-              email: authData.mail[0],
-              name: authData.field_first_name[0],
-              familyName: authData.field_last_name[0]
-            }),
-            findOrCreateProfile
-          });
+              casUrl: CONFIG.CAS_URL,
+              privateKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key'),
+              publicKeyPath: path.resolve(__dirname, './jwt/jwtRS256.key.pub'),
+              selectProfileData: authData => ({
+                nick: authData.displayName,
+                email: authData.mail[0],
+                name: authData.field_first_name[0],
+                familyName: authData.field_last_name[0]
+              }),
+              findOrCreateProfile
+            });
 
       await this.connector.initialize();
 

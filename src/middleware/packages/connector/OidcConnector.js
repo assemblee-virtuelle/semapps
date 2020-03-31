@@ -75,7 +75,11 @@ class OidcConnector extends Connector {
   }
   globalLogout(req, res, next) {
     // Redirect using NodeJS HTTP
-    res.writeHead(302, { Location: `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(req.session.redirectUrl)}` });
+    res.writeHead(302, {
+      Location: `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(
+        req.session.redirectUrl
+      )}`
+    });
     res.end();
   }
 }
