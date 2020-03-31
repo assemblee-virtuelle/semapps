@@ -1,7 +1,7 @@
-import React from "react";
-import {Filter, TextInput} from "react-admin";
+import React from 'react';
+import { Filter, TextInput } from 'react-admin';
 
-const SearchFilter = (props) => (
+const SearchFilter = props => (
   <Filter {...props}>
     <TextInput label="Search" source="q" alwaysOn />
   </Filter>

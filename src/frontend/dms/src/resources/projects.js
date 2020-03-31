@@ -15,7 +15,7 @@ import {
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { JsonLdReferenceInput, UriInput } from '../semapps';
-import SearchFilter from "../components/SearchFilter";
+import SearchFilter from '../components/SearchFilter';
 
 export const ProjectIcon = SettingsIcon;
 
@@ -45,20 +45,17 @@ export const ProjectEdit = props => (
       <TextInput source="pairv1:adress" label="Adresse" fullWidth />
       <JsonLdReferenceInput label="Géré par" reference="Agent" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
-          optionText={record =>
-          {
-            if( !record ) return "Label manquant";
-            if( record['rdf:type'] === 'pairv1:Organization' || record['@type'] === 'pairv1:Organization' ) {
-
-              if( Array.isArray(record['pairv1:preferedLabel']) ) {
+          optionText={record => {
+            if (!record) return 'Label manquant';
+            if (record['rdf:type'] === 'pairv1:Organization' || record['@type'] === 'pairv1:Organization') {
+              if (Array.isArray(record['pairv1:preferedLabel'])) {
                 return record['pairv1:preferedLabel'][0];
               } else {
                 return record['pairv1:preferedLabel'] || 'Label manquant';
               }
             }
-            return( `${record['foaf:givenName']} ${record['foaf:familyName']}` || 'Label manquant' );
-          }
-          }
+            return `${record['foaf:givenName']} ${record['foaf:familyName']}` || 'Label manquant';
+          }}
           fullWidth
         />
       </JsonLdReferenceInput>

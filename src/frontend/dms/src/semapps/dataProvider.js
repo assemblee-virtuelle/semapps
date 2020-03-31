@@ -1,4 +1,4 @@
-const jsonld = require('jsonld');
+import jsonld from 'jsonld';
 
 const getPrefixJSON = ontologies => {
   let pattern = {};
@@ -37,7 +37,7 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
     }
     # TODO try to make pagination work in SPARQL as this doesn't work.
     # LIMIT ${pagination.perPage}
-    # OFFSET ${(pagination.page-1) * pagination.perPage}
+    # OFFSET ${(pagination.page - 1) * pagination.perPage}
   `;
 };
 
@@ -45,7 +45,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
   getList: async (resource, params) => {
     if (!resourcesConfig[resource]) Error(`Resource ${resource} is not mapped in resourcesConfig`);
 
-    if( resourcesConfig[resource].types ) {
+    if (resourcesConfig[resource].types) {
       /*
        * Types are defined, do a SPARQL search
        */
@@ -58,7 +58,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
 
       const compactJson = await jsonld.compact(json, getPrefixJSON(ontologies));
 
-      if( !compactJson['@graph'] || compactJson['@graph'].length === 0 ) {
+      if (!compactJson['@graph'] || compactJson['@graph'].length === 0) {
         return { data: [], total: 0 };
       }
 
@@ -67,10 +67,16 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
           item.id = item['@id'];
           return item;
         })
-        .slice((params.pagination.page-1) * params.pagination.perPage, params.pagination.page * params.pagination.perPage);
+        .slice(
+          (params.pagination.page - 1) * params.pagination.perPage,
+          params.pagination.page * params.pagination.perPage
+        );
 
       return { data: returnData, total: compactJson['@graph'].length };
     } else {
+      /*
+       * Types are not defined, query the container
+       */
       const url = params.id || params['@id'] || resourcesConfig[resource].containerUri;
       const { json } = await httpClient(url);
 
@@ -78,10 +84,15 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
       const listProperty = listProperties.find(p => json[p]);
       if (!listProperty) throw new Error('Unknown list type');
 
-      const returnData = json[listProperty].map(item => {
-        item.id = item['@id'];
-        return item;
-      });
+      const returnData = json[listProperty]
+        .map(item => {
+          item.id = item['@id'];
+          return item;
+        })
+        .slice(
+          (params.pagination.page - 1) * params.pagination.perPage,
+          params.pagination.page * params.pagination.perPage
+        );
 
       return { data: returnData, total: returnData.length };
     }
@@ -105,7 +116,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
     return { data: returnData };
   },
   getManyReference: (resource, params) => {
-    throw new Error('getManyReference is not implemented');
+    throw new Error('getManyReference is not implemented yet');
   },
   create: async (resource, params) => {
     if (!resourcesConfig[resource]) Error(`Resource ${resource} is not mapped in resourcesConfig`);
@@ -113,7 +124,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
     const { headers } = await httpClient(baseUrl + resourcesConfig[resource].containerUri, {
       method: 'POST',
       body: JSON.stringify({
-        '@context': { pair: 'http://virtual-assembly.org/ontologies/pair#' },
+        '@context': { ...getPrefixJSON(ontologies) },
         '@type': resource,
         ...params.data
       })
@@ -134,7 +145,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
     return { data: params.data };
   },
   updateMany: (resource, params) => {
-    throw new Error('updateMany is not implemented');
+    throw new Error('updateMany is not implemented yet');
   },
   delete: async (resource, params) => {
     await httpClient(params.id, {
@@ -144,7 +155,7 @@ const dataProvider = (baseUrl, httpClient, resourcesConfig, ontologies) => ({
     return { data: { id: params.id } };
   },
   deleteMany: (resource, params) => {
-    throw new Error('deleteMany is not implemented');
+    throw new Error('deleteMany is not implemented yet');
   }
 });
 

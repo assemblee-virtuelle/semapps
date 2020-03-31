@@ -13,12 +13,12 @@ import {
 import MarkdownInput from 'ra-input-markdown';
 import GroupIcon from '@material-ui/icons/Group';
 import { JsonLdReferenceInput, UriInput } from '../semapps';
-import SearchFilter from "../components/SearchFilter";
+import SearchFilter from '../components/SearchFilter';
 
 export const OrganizationIcon = GroupIcon;
 
 export const OrganizationList = props => (
-  <List title="Organisations"  perPage={25} filters={<SearchFilter />} {...props}>
+  <List title="Organisations" perPage={25} filters={<SearchFilter />} {...props}>
     <Datagrid rowClick="edit">
       <TextField source="pairv1:preferedLabel" label="Nom" />
       <EditButton basePath="/Organization" />
