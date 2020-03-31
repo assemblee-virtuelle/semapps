@@ -1,5 +1,3 @@
-const passport = require('passport');
-const session = require('express-session');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
@@ -10,7 +8,6 @@ const { Routes: WebhooksRoutes } = require('@semapps/webhooks');
 const { CasConnector } = require('@semapps/connector');
 
 const CONFIG = require('../config');
-let connector;
 
 module.exports = {
   name: 'api',
@@ -38,7 +35,7 @@ module.exports = {
     defaultLdpAccept: 'text/turtle'
   },
   async started() {
-    connector = new CasConnector({
+    this.connector = new CasConnector({
       casUrl: CONFIG.CAS_URL,
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
       publicKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key.pub'),
@@ -62,33 +59,15 @@ module.exports = {
       }
     });
 
-    await connector.configurePassport(passport);
-
-    this.addRoute({
-      use: [
-        session({
-          secret: 's€m@pps',
-          maxAge: null
-        }),
-        passport.initialize(),
-        passport.session()
-      ],
-      aliases: {
-        'GET auth/logout'(req, res) {
-          connector.logout()(req, res);
-        },
-        'GET auth'(req, res) {
-          connector.login()(req, res);
-        }
-      }
-    });
+    await this.connector.initialize();
+    this.addRoute(this.connector.getRoute());
   },
   methods: {
     authenticate(ctx, route, req, res) {
-      return connector.authenticate(ctx, route, req, res);
+      return this.connector.authenticate(ctx, route, req, res);
     },
     authorize(ctx, route, req, res) {
-      return connector.authorize(ctx, route, req, res);
+      return this.connector.authorize(ctx, route, req, res);
     }
   }
 };
