@@ -45,9 +45,34 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
   getList: async (resourceId, params) => {
     if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-    if (resources[resourceId].types) {
+    if (params.id || params['@id'] || !resources[resourceId].types) {
       /*
-       * Types are defined, do a SPARQL search
+       * Query the container
+       */
+      const url = params.id || params['@id'] || resources[resourceId].containerUri;
+      const { json } = await httpClient(url);
+
+      const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
+      const listProperty = listProperties.find(p => json[p]);
+      if (!listProperty) throw new Error('Unknown list type');
+
+      let returnData = json[listProperty]
+        .map(item => {
+          item.id = item['@id'];
+          return item;
+        });
+
+      if( params.pagination ) {
+        returnData = returnData.slice(
+          (params.pagination.page - 1) * params.pagination.perPage,
+          params.pagination.page * params.pagination.perPage
+        );
+      }
+
+      return { data: returnData, total: json[listProperty].length };
+    } else {
+      /*
+       * Do a SPARQL search
        */
       const body = computeSparqlSearch({ types: resources[resourceId].types, params, ontologies });
 
@@ -73,28 +98,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
         );
 
       return { data: returnData, total: compactJson['@graph'].length };
-    } else {
-      /*
-       * Types are not defined, query the container
-       */
-      const url = params.id || params['@id'] || resources[resourceId].containerUri;
-      const { json } = await httpClient(url);
-
-      const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
-      const listProperty = listProperties.find(p => json[p]);
-      if (!listProperty) throw new Error('Unknown list type');
-
-      const returnData = json[listProperty]
-        .map(item => {
-          item.id = item['@id'];
-          return item;
-        })
-        .slice(
-          (params.pagination.page - 1) * params.pagination.perPage,
-          params.pagination.page * params.pagination.perPage
-        );
-
-      return { data: returnData, total: returnData.length };
     }
   },
   getOne: async (resourceId, params) => {
