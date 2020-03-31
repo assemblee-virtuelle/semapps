@@ -57,7 +57,9 @@ class Connector {
     return (req, res) => {
       const middlewares = [
         this.saveRedirectUrl.bind(this),
-        this.passport.authenticate(this.passportId),
+        this.passport.authenticate(this.passportId, {
+          session: false
+        }),
         this.findOrCreateProfile.bind(this),
         this.generateToken.bind(this),
         this.redirectToFront.bind(this)
