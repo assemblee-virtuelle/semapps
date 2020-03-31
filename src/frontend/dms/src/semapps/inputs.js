@@ -45,9 +45,7 @@ export const DateTimeInput = props => (
 );
 
 export const DateField = props => {
-  return (
-    <span>{selectValue(props.record[props.source]).replace('T', ' ')}</span>
-  );
+  return <span>{selectValue(props.record[props.source]).replace('T', ' ')}</span>;
 };
 
 export const StringField = ({ source, record = {} }) => <span>{selectValue(record[source])}</span>;
