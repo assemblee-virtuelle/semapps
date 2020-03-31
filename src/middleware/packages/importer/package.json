@@ -3,5 +3,6 @@
   "version": "0.1.2",
   "description": "Mass importer for SemApps",
   "license": "Apache-2.0",
-  "author": "Virtual Assembly"
+  "author": "Virtual Assembly",
+  "gitHead": "7c4e44e764d7d0b0c025749ff561c4bb61ed7555"
 }
