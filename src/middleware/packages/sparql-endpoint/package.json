@@ -1,11 +1,11 @@
 {
   "name": "@semapps/sparql-endpoint",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SPARQL endpoint for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/triplestore" :"^0.1.0"
+    "@semapps/triplestore": "^0.1.1"
   },
   "publishConfig": {
     "access": "public"

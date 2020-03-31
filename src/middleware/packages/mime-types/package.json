@@ -1,12 +1,12 @@
 {
   "name": "@semapps/mime-types",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MIME types handling for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "negotiator": "^0.6.2",
-    "moleculer": "^0.14.3"
+    "moleculer": "^0.14.3",
+    "negotiator": "^0.6.2"
   },
   "publishConfig": {
     "access": "public"
