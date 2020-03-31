@@ -3,24 +3,46 @@ const path = require('path');
 const slugify = require('slugify');
 const CONFIG = require('../config');
 
+// Transform camelCase to camel-case
+const camelCaseToHyphens = str => str.replace(/[A-Z]/g, s => "-" + s).toLowerCase();
+
 module.exports = {
   mixins: [ImporterService],
   settings: {
     importsDir: path.resolve(__dirname, '../imports'),
-    allowedActions: ['createProject', 'createUser', 'followProject', 'postNews'],
+    allowedActions: ['createOrganization', 'createProject', 'createUser', 'followProject', 'postNews'],
     // Custom settings
     baseUri: CONFIG.HOME_URL,
     usersContainer: CONFIG.HOME_URL + 'users/'
   },
   dependencies: ['ldp', 'activitypub.actor', 'activitypub.outbox'],
   actions: {
+    async createOrganization(ctx) {
+      const { data } = ctx.params;
+
+      await ctx.call('activitypub.actor.create', {
+        slug: data.slug,
+        '@context': {
+          as: 'https://www.w3.org/ns/activitystreams#',
+          pair: 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': ['as:Organization', 'pair:Organization'],
+        // PAIR
+        'pair:label': data.name,
+        // ActivityStreams
+        'as:name': data.name,
+        'as:preferredUsername': data.slug
+      });
+
+      console.log(`Organization ${data.slug} created`);
+    },
     async createProject(ctx) {
       const { data, groupSlug } = ctx.params;
 
       if (!groupSlug) throw new Error('Missing groupSlug argument');
 
       await ctx.call('activitypub.actor.create', {
-        slug: data.slug.substring(0, 36),
+        slug: camelCaseToHyphens(data.slug.substring(0, 36)),
         '@context': {
           as: 'https://www.w3.org/ns/activitystreams#',
           pair: 'http://virtual-assembly.org/ontologies/pair#'
@@ -72,7 +94,7 @@ module.exports = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Follow',
         actor: this.settings.usersContainer + data.username,
-        object: this.settings.usersContainer + data.following
+        object: this.settings.usersContainer + camelCaseToHyphens(data.following)
       });
 
       console.log(`Actor ${data.username} follow ${data.following}`);
@@ -80,7 +102,7 @@ module.exports = {
     async postNews(ctx) {
       const { data } = ctx.params;
 
-      const posterUri = this.settings.usersContainer + data.attributedTo.substring(0, 36);
+      const posterUri = this.settings.usersContainer + camelCaseToHyphens(data.attributedTo.substring(0, 36));
 
       const activity = await ctx.call('activitypub.outbox.post', {
         username: data.attributedTo.substring(0, 36),

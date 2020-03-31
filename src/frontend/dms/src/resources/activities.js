@@ -8,7 +8,7 @@ export const ActivityIcon = Icon;
 export const ActivityList = props => {
   useAuthenticated();
   return (
-    <List title="Activités" {...props}>
+    <List title="Activités" perPage={25} {...props}>
       <ActivitiesGrid />
     </List>
   );

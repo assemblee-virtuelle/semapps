@@ -1,22 +1,21 @@
 const resources = {
+  Actor: {
+    types: ['as:Person', 'as:Organization']
+  },
+  Activity: {
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'activities'
+  },
   Project: {
-    types: ['pairv1:Project'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/pairv1:Project'
+    types: ['pair:Project'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/projects'
   },
-  Organization: {
-    types: ['pairv1:Organization'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/pairv1:Organization'
+  Note: {
+    types: ['as:Note'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/notes'
   },
-  Person: {
-    types: ['pairv1:Person'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/pairv1:Person'
-  },
-  Concept: {
-    types: ['skos:Concept'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/skos:Concept'
-  },
-  Agent: {
-    types: ['pairv1:Person', 'pairv1:Organization']
+  Theme: {
+    types: ['pair:Thema'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/themes'
   }
 };
 
