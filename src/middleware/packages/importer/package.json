@@ -1,12 +1,9 @@
 {
-  "name": "@semapps/sparql-endpoint",
+  "name": "@semapps/importer",
   "version": "0.1.3",
-  "description": "SPARQL endpoint for SemApps",
+  "description": "Mass importer for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "dependencies": {
-    "@semapps/triplestore": "^0.1.3"
-  },
   "publishConfig": {
     "access": "public"
   },

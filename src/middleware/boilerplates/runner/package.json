@@ -1,6 +1,5 @@
 {
   "name": "runner",
-  "version": "1.0.0",
   "private": true,
   "description": "EntryPoints of SemApps servers",
   "main": "index.js",
