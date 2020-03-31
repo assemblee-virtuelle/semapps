@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const session = require('express-session');
 const E = require('moleculer-web').Errors;
 
 class Connector {
   constructor(passportId, settings) {
+    this.passport = passport;
     this.passportId = passportId;
     this.settings = settings;
   }
@@ -57,7 +60,9 @@ class Connector {
     return (req, res) => {
       const middlewares = [
         this.saveRedirectUrl.bind(this),
-        this.passport.authenticate(this.passportId),
+        this.passport.authenticate(this.passportId, {
+          session: false
+        }),
         this.findOrCreateProfile.bind(this),
         this.generateToken.bind(this),
         this.redirectToFront.bind(this)
@@ -85,6 +90,26 @@ class Connector {
   async getWebId(ctx) {
     // By default, get the webId from the token payload
     return ctx.meta.tokenPayload.webId;
+  }
+  getRoute() {
+    return {
+      use: [
+        session({
+          secret: this.settings.sessionSecret,
+          maxAge: null
+        }),
+        this.passport.initialize(),
+        this.passport.session()
+      ],
+      aliases: {
+        'GET auth/logout'(req, res) {
+          this.connector.logout()(req, res);
+        },
+        'GET auth'(req, res) {
+          this.connector.login()(req, res);
+        }
+      }
+    };
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
