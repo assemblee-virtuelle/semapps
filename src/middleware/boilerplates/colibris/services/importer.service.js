@@ -4,7 +4,7 @@ const slugify = require('slugify');
 const CONFIG = require('../config');
 
 // Transform camelCase to camel-case
-const camelCaseToHyphens = str => str.replace(/[A-Z]/g, s => "-" + s).toLowerCase();
+const camelCaseToHyphens = str => str.replace(/[A-Z]/g, s => '-' + s).toLowerCase();
 
 module.exports = {
   mixins: [ImporterService],

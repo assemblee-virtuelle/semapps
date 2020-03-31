@@ -56,13 +56,12 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
       const listProperty = listProperties.find(p => json[p]);
       if (!listProperty) throw new Error('Unknown list type');
 
-      let returnData = json[listProperty]
-        .map(item => {
-          item.id = item['@id'];
-          return item;
-        });
+      let returnData = json[listProperty].map(item => {
+        item.id = item['@id'];
+        return item;
+      });
 
-      if( params.pagination ) {
+      if (params.pagination) {
         returnData = returnData.slice(
           (params.pagination.page - 1) * params.pagination.perPage,
           params.pagination.page * params.pagination.perPage
