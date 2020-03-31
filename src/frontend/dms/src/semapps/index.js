@@ -9,4 +9,4 @@ export { default as ActivitiesGrid } from './activitypub/ActivitiesGrid';
 export { default as CollectionList } from './activitypub/CollectionList';
 export { default as ActorsGrid } from './activitypub/ActorsGrid';
 
-export { JsonLdReferenceInput, StringField, UriInput, DateTimeInput } from './inputs';
+export { JsonLdReferenceInput, StringField, UriInput, DateTimeInput, DateField } from './inputs';

@@ -15,28 +15,31 @@ module.exports = {
   dependencies: ['ldp', 'activitypub.actor', 'activitypub.outbox'],
   actions: {
     async createProject(ctx) {
-      const { data } = ctx.params;
+      const { data, groupSlug } = ctx.params;
+
+      if (!groupSlug) throw new Error('Missing groupSlug argument');
 
       await ctx.call('activitypub.actor.create', {
         slug: data.slug.substring(0, 36),
         '@context': {
-          '@vocab': 'https://www.w3.org/ns/activitystreams#',
+          as: 'https://www.w3.org/ns/activitystreams#',
           pair: 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@type': ['Organization', 'pair:Project'],
+        '@type': ['as:Group', 'pair:Project'],
         // PAIR
         'pair:label': data.name,
         'pair:description': data.content,
         'pair:aboutPage': `https://colibris.cc/groupeslocaux/?${data.slug}/iframe&showActu=1`,
+        'pair:involves': this.settings.usersContainer + groupSlug,
         // ActivityStreams
-        name: data.name,
-        content: data.content,
-        image: data.image,
-        location: data.location,
-        tag: data.tag.map(tag => this.settings.baseUri + 'themes/' + slugify(tag.name, { lower: true })),
-        url: data.url,
-        published: data.published,
-        updated: data.updated
+        'as:name': data.name,
+        'as:content': data.content,
+        'as:image': data.image,
+        'as:location': data.location,
+        'as:tag': data.tag.map(tag => this.settings.baseUri + 'themes/' + slugify(tag.name, { lower: true })),
+        'as:url': data.url,
+        'as:published': data.published,
+        'as:updated': data.updated
       });
 
       console.log(`Project ${data.name} created`);
@@ -47,16 +50,16 @@ module.exports = {
       await ctx.call('activitypub.actor.create', {
         slug: data.username,
         '@context': {
-          '@vocab': 'https://www.w3.org/ns/activitystreams#',
+          as: 'https://www.w3.org/ns/activitystreams#',
           pair: 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@type': ['Person', 'pair:Person'],
+        '@type': ['as:Person', 'pair:Person'],
         // PAIR
         'pair:label': data.name,
         'pair:e-mail': data.email,
         // ActivityStreams
-        name: data.name,
-        preferredUsername: data.username
+        'as:name': data.name,
+        'as:preferredUsername': data.username
       });
 
       console.log(`Actor ${data.username} created`);

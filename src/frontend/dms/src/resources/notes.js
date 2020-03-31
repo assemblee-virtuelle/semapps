@@ -12,7 +12,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import Icon from '@material-ui/icons/InsertComment';
-import { DateTimeInput, JsonLdReferenceInput } from '../semapps';
+import { DateTimeInput, JsonLdReferenceInput, DateField } from '../semapps';
 
 export const NoteIcon = Icon;
 
@@ -21,6 +21,7 @@ export const NoteList = props => {
   return (
     <List title="Actualités" {...props}>
       <Datagrid rowClick="edit">
+        <DateField showTime source="as:published" label="Publié le" />
         <TextField source="as:name" label="Nom" />
         <EditButton basePath="/Note" />
       </Datagrid>

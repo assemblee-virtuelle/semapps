@@ -12,18 +12,31 @@ import { ThemeList, ThemeIcon } from './resources/themes';
 // import { PersonList, PersonIcon } from './resources/persons';
 // import { ConceptList, ConceptIcon } from './resources/concepts';
 
-const containersMap = {
-  Actor: 'ldp/as:Person',
-  Activity: 'activities',
-  Project: 'ldp/pair:Project',
-  Note: 'ldp/as:Note',
-  Theme: 'ldp/pair:Thema'
+const resourcesMap = {
+  Actor: {
+    classes: ['as:Person', 'as:Group', 'as:Organization']
+  },
+  Activity: {
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'activities'
+  },
+  Project: {
+    classes: ['pair:Project'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/projects'
+  },
+  Note: {
+    classes: ['as:Note'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/notes'
+  },
+  Theme: {
+    classes: ['pair:Thema'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/themes'
+  }
 };
 
 function App() {
   return (
     <Admin
-      dataProvider={dataProvider(process.env.REACT_APP_MIDDLEWARE_URL, httpClient, containersMap)}
+      dataProvider={dataProvider(process.env.REACT_APP_MIDDLEWARE_URL, httpClient, resourcesMap)}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
