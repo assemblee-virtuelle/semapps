@@ -31,7 +31,10 @@ function createServices(broker) {
   broker.createService(LdpService, {
     settings: {
       baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      ontologies,
+      containers: [
+        'objects/places'
+      ]
     }
   });
   broker.createService(SparqlEndpointService, {
