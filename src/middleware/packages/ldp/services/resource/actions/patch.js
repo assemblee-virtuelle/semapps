@@ -7,7 +7,7 @@ module.exports = {
     const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
-      await ctx.call('ldp.patch', {
+      await ctx.call('ldp.resource.patch', {
         resource: body,
         accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type']
@@ -47,7 +47,7 @@ module.exports = {
           contentType: contentType
         });
 
-        return await ctx.call('ldp.get', {
+        return await ctx.call('ldp.resource.get', {
           resourceUri: resource['@id'],
           accept: accept
         });

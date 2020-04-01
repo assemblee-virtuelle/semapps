@@ -1,13 +1,14 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
+const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const resourceUri = `${this.settings.baseUrl}${ctx.params.typeURL}/${ctx.params.resourceId}`;
     const accept = ctx.meta.headers.accept;
     try {
-      const body = await ctx.call('ldp.get', {
+      const body = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept
       });
@@ -38,17 +39,17 @@ module.exports = {
       if (triplesNb > 0) {
         let result = await ctx.call('triplestore.query', {
           query: `
-              ${this.getPrefixRdf()}
-              CONSTRUCT
-              WHERE {
-                <${resourceUri}> ?predicate ?object.
-              }
-                  `,
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT
+            WHERE {
+              <${resourceUri}> ?predicate ?object.
+            }
+          `,
           accept: accept
         });
         // If we asked for JSON-LD, compact it using our ontologies in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          result = await jsonld.compact(result, this.getPrefixJSON());
+          result = await jsonld.compact(result, getPrefixJSON(this.settings.ontologies));
         }
         return result;
       } else {

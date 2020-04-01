@@ -5,7 +5,7 @@ module.exports = {
     try {
       const { typeURL, resourceId } = ctx.params;
       const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      await ctx.call('ldp.delete', {
+      await ctx.call('ldp.resource.delete', {
         resourceUri
       });
       ctx.meta.$statusCode = 204;

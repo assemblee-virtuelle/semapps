@@ -62,8 +62,8 @@ module.exports = [
     authorization: false,
     authentication: true,
     aliases: {
-      'GET :typeURL': 'ldp.api_getByType',
-      'GET :typeURL/:resourceId': 'ldp.api_get'
+      'GET :typeURL': 'ldp.resource.api_getByType',
+      'GET :typeURL/:resourceId': 'ldp.resource.api_get'
     },
     ...routeConfig
   },
@@ -72,9 +72,9 @@ module.exports = [
     authorization: true,
     authentication: false,
     aliases: {
-      'POST :typeURL': 'ldp.api_post',
-      'DELETE :typeURL/:resourceId': 'ldp.api_delete',
-      'PATCH :typeURL/:resourceId': 'ldp.api_patch'
+      'POST :typeURL': 'ldp.resource.api_post',
+      'DELETE :typeURL/:resourceId': 'ldp.resource.api_delete',
+      'PATCH :typeURL/:resourceId': 'ldp.resource.api_patch'
     },
     ...routeConfig
   }

@@ -1,10 +1,11 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { generateId } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     let { typeURL } = ctx.params;
     try {
-      const resource = await ctx.call('ldp.post', {
+      const resource = await ctx.call('ldp.resource.post', {
         containerUri: `${this.settings.baseUrl}${typeURL}/`,
         slug: ctx.meta.headers.slug,
         resource: ctx.meta.body,
@@ -19,6 +20,7 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }
@@ -51,7 +53,7 @@ module.exports = {
       if (webId) ctx.meta.webId = webId;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = resource['@id'] || `${containerUri}${slug || this.generateId()}`;
+      resource['@id'] = resource['@id'] || `${containerUri}${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {
@@ -59,7 +61,7 @@ module.exports = {
         contentType
       });
 
-      return await ctx.call('ldp.get', {
+      return await ctx.call('ldp.resource.get', {
         resourceUri: resource['@id'],
         accept
       });

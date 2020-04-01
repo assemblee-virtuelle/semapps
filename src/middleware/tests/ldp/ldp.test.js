@@ -55,12 +55,12 @@ describe('CRUD Project', () => {
       containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`
     };
 
-    projet1 = await broker.call('ldp.post', urlParamsPost);
+    projet1 = await broker.call('ldp.resource.post', urlParamsPost);
     expect(projet1['pair:description']).toBe('myProject');
   }, 20000);
 
   test('Get One project', async () => {
-    const newProject = await broker.call('ldp.get', {
+    const newProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: projet1['@id']
     });
@@ -68,7 +68,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get Many projects', async () => {
-    const projects = await broker.call('ldp.getByType', {
+    const projects = await broker.call('ldp.resource.getByType', {
       accept: MIME_TYPES.JSON,
       type: 'pair:Project'
     });
@@ -87,9 +87,9 @@ describe('CRUD Project', () => {
       accept: MIME_TYPES.JSON,
       contentType: MIME_TYPES.JSON
     };
-    const updatedProject = await broker.call('ldp.patch', urlParamsPatch);
+    const updatedProject = await broker.call('ldp.resource.patch', urlParamsPatch);
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
-    const updatedPersistProject = await broker.call('ldp.get', {
+    const updatedPersistProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: projet1['@id']
     });
@@ -97,8 +97,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get One project turtle', async () => {
-    console.log(MIME_TYPES);
-    const newProject = await broker.call('ldp.get', {
+    const newProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.TURTLE,
       resourceUri: projet1['@id']
     });
@@ -109,7 +108,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Get One project triple', async () => {
-    const newProject = await broker.call('ldp.get', {
+    const newProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.TRIPLE,
       resourceUri: projet1['@id']
     });
@@ -130,11 +129,11 @@ describe('CRUD Project', () => {
     const params = {
       resourceUri: projet1['@id']
     };
-    await broker.call('ldp.delete', params);
+    await broker.call('ldp.resource.delete', params);
 
     let error;
     try {
-      await broker.call('ldp.get', {
+      await broker.call('ldp.resource.get', {
         accept: MIME_TYPES.JSON,
         ...params
       });

@@ -1,12 +1,13 @@
 const jsonld = require('jsonld');
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const type = ctx.params.typeURL;
     const accept = ctx.meta.headers.accept;
     try {
-      let body = await ctx.call('ldp.getByType', {
+      let body = await ctx.call('ldp.resource.getByType', {
         type,
         accept
       });
@@ -32,7 +33,7 @@ module.exports = {
       }
       let result = await ctx.call('triplestore.query', {
         query: `
-          ${this.getPrefixRdf()}
+          ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT {
             ?subject ?predicate ?object.
           }
@@ -40,10 +41,10 @@ module.exports = {
             ?subject rdf:type ${ctx.params.type} ;
               ?predicate ?object.
           }
-              `,
+        `,
         accept: MIME_TYPES.JSON
       });
-      result = await jsonld.compact(result, this.getPrefixJSON());
+      result = await jsonld.compact(result, getPrefixJSON(this.settings.ontologies));
       const { '@graph': graph, '@context': context, ...other } = result;
       const contains = graph || (Object.keys(other).length === 0 ? [] : [other]);
       result = {
