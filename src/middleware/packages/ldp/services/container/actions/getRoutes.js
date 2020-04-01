@@ -12,10 +12,10 @@ module.exports = {
       };
     });
 
-    return ({
+    return {
       authorization: false,
       authentication: true,
       aliases
-    });
+    };
   }
 };

@@ -15,7 +15,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies
-      },
+      }
     });
 
     this.broker.createService(ContainerService, {
@@ -23,7 +23,7 @@ module.exports = {
         baseUrl,
         ontologies,
         containers
-      },
+      }
     });
   }
 };
