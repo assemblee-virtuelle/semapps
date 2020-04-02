@@ -75,10 +75,10 @@ function configureExpress(broker) {
       routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes],
       defaultLdpAccept: 'text/turtle'
     },
-    dependencies: ['ldp.container'],
+    dependencies: ['ldp', 'ldp.container'],
     async started() {
       let routes = [];
-      routes.push( await this.broker.call('ldp.container.getRoutes') );
+      routes.push( await this.broker.call('ldp.getApiRoutes') );
       routes.forEach(route => this.addRoute(route));
     },
     methods: {

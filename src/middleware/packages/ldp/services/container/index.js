@@ -2,7 +2,6 @@ const attach = require('./actions/attach');
 const create = require('./actions/create');
 const exist = require('./actions/exist');
 const get = require('./actions/get');
-const getRoutes = require('./actions/getRoutes');
 
 module.exports = {
   name: 'ldp.container',
@@ -16,10 +15,9 @@ module.exports = {
     attach,
     create,
     exist,
-    get,
-    getRoutes
+    get
   },
-  async started(ctx) {
+  async started() {
     for( let containerPath of this.settings.containers ) {
       const containerUri = this.settings.baseUrl + containerPath;
       const exists = await this.actions.exist({ containerUri });
