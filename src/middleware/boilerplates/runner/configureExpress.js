@@ -78,7 +78,7 @@ function configureExpress(broker) {
     dependencies: ['ldp', 'ldp.container'],
     async started() {
       let routes = [];
-      routes.push( await this.broker.call('ldp.getApiRoutes') );
+      routes.push(await this.broker.call('ldp.getApiRoutes'));
       routes.forEach(route => this.addRoute(route));
     },
     methods: {

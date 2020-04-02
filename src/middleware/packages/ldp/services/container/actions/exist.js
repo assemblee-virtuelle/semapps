@@ -11,4 +11,4 @@ module.exports = async function exist(ctx) {
     `,
     accept: MIME_TYPES.JSON
   });
-}
+};

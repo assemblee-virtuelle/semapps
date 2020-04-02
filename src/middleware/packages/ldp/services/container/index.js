@@ -18,10 +18,10 @@ module.exports = {
     get
   },
   async started() {
-    for( let containerPath of this.settings.containers ) {
+    for (let containerPath of this.settings.containers) {
       const containerUri = this.settings.baseUrl + containerPath;
       const exists = await this.actions.exist({ containerUri });
-      if( !exists ) {
+      if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);
         await this.actions.create({ containerUri });
       }
