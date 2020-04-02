@@ -32,7 +32,7 @@ function createServices(broker) {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       // Needed by ActivityPub service
-      containers: ['objects']
+      containers: ['ldp/object']
     }
   });
   broker.createService(SparqlEndpointService, {
