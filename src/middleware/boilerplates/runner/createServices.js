@@ -4,7 +4,6 @@ const FusekiAdminService = require('@semapps/fuseki-admin');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebIdService } = require('@semapps/webid');
-const { WebhooksService } = require('@semapps/webhooks');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
@@ -32,7 +31,8 @@ function createServices(broker) {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['resources']
+      // Needed by ActivityPub service
+      containers: ['objects']
     }
   });
   broker.createService(SparqlEndpointService, {
@@ -50,30 +50,8 @@ function createServices(broker) {
     storage: {
       collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
       activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      actors: new TripleStoreAdapter('ldp'),
-      objects: new TripleStoreAdapter('ldp')
-    }
-  });
-
-  broker.createService(WebhooksService, {
-    adapter: new TripleStoreAdapter('ldp'),
-    settings: {
-      baseUri: CONFIG.HOME_URL,
-      usersContainer: CONFIG.HOME_URL + 'users/',
-      allowedActions: ['postOutbox']
-    },
-    dependencies: ['activitypub.outbox', 'activitypub.actor'],
-    actions: {
-      async postOutbox(ctx) {
-        const actor = await ctx.call('activitypub.actor.get', { id: ctx.params.user });
-        if (actor) {
-          return await ctx.call('activitypub.outbox.post', {
-            collectionUri: actor.outbox,
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            ...ctx.params.data
-          });
-        }
-      }
+      actors: new TripleStoreAdapter(),
+      objects: new TripleStoreAdapter()
     }
   });
 }

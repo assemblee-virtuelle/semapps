@@ -129,7 +129,6 @@ module.exports = {
           );
         }
       }
-      console.log('this.settings.defaultLdpAccept', this.settings.defaultLdpAccept);
       if (req.headers.accept === undefined || req.headers.accept === '*/*') {
         req.headers.accept = this.settings.defaultLdpAccept;
       } else {

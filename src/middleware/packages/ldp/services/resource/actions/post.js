@@ -61,6 +61,11 @@ module.exports = {
         contentType
       });
 
+      await ctx.call('ldp.container.attach', {
+        resourceUri: resource['@id'],
+        containerUri
+      });
+
       return await ctx.call('ldp.resource.get', {
         resourceUri: resource['@id'],
         accept

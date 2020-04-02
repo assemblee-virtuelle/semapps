@@ -1,10 +1,11 @@
-const { negotiateTypeMime } = require('@semapps/mime-types');
-const { getPrefixRdf } = require('../../../utils');
+const jsonld = require('jsonld');
+const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const accept = ctx.meta.headers.accept;
+    const accept = negotiateTypeMime(ctx.meta.headers.accept);
     try {
       const body = await ctx.call('ldp.container.get', {
         containerUri,
@@ -13,6 +14,7 @@ module.exports = {
       ctx.meta.$responseType = accept;
       return body;
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }
@@ -24,24 +26,36 @@ module.exports = {
       accept: { type: 'string' }
     },
     async handler(ctx) {
-      console.log('negotiateTypeMime(ctx.params.accept)', ctx.params.accept, negotiateTypeMime(ctx.params.accept));
-      return await ctx.call('triplestore.query', {
+      const { accept, containerUri } = ctx.params;
+
+      const result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
-          CONSTRUCT {
-            ?container ldp:contains ?subject .
-            ?subject ?predicate ?object .
-          }
+          CONSTRUCT
           WHERE {
-            <${ctx.params.containerUri}>
-                a ldp:BasicContainer ;
-                ldp:contains ?subject .
-            ?container ldp:contains ?subject .
-            ?subject ?predicate ?object .
+            <${containerUri}>
+              a ldp:BasicContainer ;
+              ldp:contains ?resource .
+            ?resource ?resourceP ?resourceO .
           }
         `,
-        accept: negotiateTypeMime(ctx.params.accept)
+        accept
       });
+
+      if (accept === MIME_TYPES.JSON) {
+        const framedResult = await jsonld.frame(result, {
+          '@context': getPrefixJSON(this.settings.ontologies),
+          '@type': 'ldp:BasicContainer'
+        });
+
+        // Return the result without the @graph
+        return {
+          '@context': framedResult['@context'],
+          ...framedResult['@graph'][0]
+        };
+      } else {
+        return result;
+      }
     }
   }
 };

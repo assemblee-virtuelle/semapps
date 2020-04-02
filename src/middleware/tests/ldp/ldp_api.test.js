@@ -26,8 +26,9 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers: ['resources']
     }
   });
 
@@ -39,9 +40,13 @@ beforeAll(async () => {
       cors: {
         origin: '*',
         exposedHeaders: '*'
-      },
-      routes: [...LdpRoutes],
-      defaultLdpAccept: 'text/turtle'
+      }
+    },
+    dependencies: ['ldp'],
+    async started() {
+      let routes = [];
+      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+      routes.forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -65,7 +70,7 @@ afterAll(async () => {
 
 describe('CRUD Project', () => {
   let projet1;
-  const containerUrl = `/ldp/pair:Project`;
+  const containerUrl = `/resources`;
 
   test('Create project', async () => {
     const body = {
@@ -83,6 +88,9 @@ describe('CRUD Project', () => {
       .set('content-type', 'application/json');
 
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
+
+    console.log('location', location);
+    expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
     projet1 = response.body;

@@ -15,6 +15,7 @@ module.exports = {
 
       return body;
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }

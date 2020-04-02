@@ -18,6 +18,7 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }
