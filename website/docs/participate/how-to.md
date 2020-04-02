@@ -1,3 +1,15 @@
 ---
 title: Comment participer ?
 ---
+- **Ou éditer la documentation docusaurus : **
+    - Sur **https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs** : On y trouve Les fichiers de documentation (gouvernance, participer, documentation) sont dans website/docs 
+    - Sur **https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js**
+        - Footer
+    - Sur **https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js**
+        - Textes et images de la page d'accueil
+    - Sur **https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js**
+        -  
+- **Comment éditer le docusaurus :** 
+    - Sur github directement 
+    - Créer un fichier markdown 
+        - Il faut obligatoirement un "title" 
