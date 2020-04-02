@@ -1,5 +1,5 @@
 const { ServiceBroker } = require('moleculer');
-const { LdpService, Routes: LdpRoutes } = require('@semapps/ldp');
+const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
 const express = require('express');
 const supertest = require('supertest');
@@ -70,25 +70,22 @@ afterAll(async () => {
 
 describe('CRUD Project', () => {
   let projet1;
-  const containerUrl = `/resources`;
+  const containerUrl = '/resources';
 
   test('Create project', async () => {
-    const body = {
-      '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-      },
-      '@type': 'Project',
-      description: 'myProject',
-      label: 'myLabel'
-    };
-
     const postResponse = await expressMocked
       .post(containerUrl)
-      .send(body)
+      .send({
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Project',
+        description: 'myProject',
+        label: 'myLabel'
+      })
       .set('content-type', 'application/json');
 
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
-
     expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
@@ -106,7 +103,8 @@ describe('CRUD Project', () => {
 
   test('Get Many project', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
-    expect(response.body['ldp:contains'].filter(p => p['@id'] == projet1['@id']).length).toBe(1);
+
+    expect(response.body['ldp:contains']['@id']).toBe(projet1['@id']);
   }, 20000);
 
   test('Update One Project', async () => {
@@ -117,7 +115,7 @@ describe('CRUD Project', () => {
       description: 'myProjectUpdated'
     };
 
-    const postResponse = await expressMocked
+    await expressMocked
       .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
       .set('content-type', 'application/json');

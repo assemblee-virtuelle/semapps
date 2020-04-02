@@ -6,7 +6,7 @@ module.exports = {
     let { containerUri, typeURL } = ctx.params;
     try {
       const resource = await ctx.call('ldp.resource.post', {
-        containerUri: containerUri || `${this.settings.baseUrl}${typeURL}/`,
+        containerUri: containerUri || this.settings.baseUrl + typeURL,
         slug: ctx.meta.headers.slug,
         resource: ctx.meta.body,
         contentType: ctx.meta.headers['content-type'],
@@ -53,7 +53,7 @@ module.exports = {
       if (webId) ctx.meta.webId = webId;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = resource['@id'] || `${containerUri}${slug || generateId()}`;
+      resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       await ctx.call('triplestore.insert', {

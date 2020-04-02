@@ -1,12 +1,10 @@
-const { ServiceBroker, Errors } = require('moleculer');
+const { ServiceBroker } = require('moleculer');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
-const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('./config');
 const ontologies = require('./ontologies');
 const { MIME_TYPES } = require('@semapps/mime-types');
-// const { MoleculerError } = require('moleculer').Errors;
 
 jest.setTimeout(20000);
 const transporter = null;
