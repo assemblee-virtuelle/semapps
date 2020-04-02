@@ -30,9 +30,9 @@ function createServices(broker) {
   // SOLiD
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
+      baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['objects/places']
+      containers: ['resources']
     }
   });
   broker.createService(SparqlEndpointService, {

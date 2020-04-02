@@ -1,21 +1,23 @@
-const attach = require('./actions/attach');
-const create = require('./actions/create');
-const exist = require('./actions/exist');
-const get = require('./actions/get');
+const attachAction = require('./actions/attach');
+const createAction = require('./actions/create');
+const existAction = require('./actions/exist');
+const getAction = require('./actions/get');
 
 module.exports = {
   name: 'ldp.container',
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: []
+    containers: ['resources']
   },
   dependencies: ['triplestore'],
   actions: {
-    attach,
-    create,
-    exist,
-    get
+    attach: attachAction,
+    create: createAction,
+    exist: existAction,
+    // Actions accessible through the API
+    api_get: getAction.api,
+    get: getAction.action
   },
   async started() {
     for (let containerPath of this.settings.containers) {

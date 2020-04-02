@@ -5,7 +5,6 @@ const cors = require('cors');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
-const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { Routes: WebIdRoutes } = require('@semapps/webid');
@@ -72,13 +71,12 @@ function configureExpress(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes],
-      defaultLdpAccept: 'text/turtle'
+      routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes]
     },
     dependencies: ['ldp', 'ldp.container'],
     async started() {
       let routes = [];
-      routes.push(await this.broker.call('ldp.getApiRoutes'));
+      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
       routes.forEach(route => this.addRoute(route));
     },
     methods: {
