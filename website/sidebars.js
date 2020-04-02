@@ -11,6 +11,6 @@ module.exports = {
     Packages: ['packages/incoming-webhooks'],
   },
   gouvernance: {
-    Gouvernance: ['governance/team'],
+    Gouvernance: ['governance/team', 'governance/hello'],
   }
 };
