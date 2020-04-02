@@ -73,7 +73,7 @@ function configureExpress(broker) {
       },
       routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes]
     },
-    dependencies: ['ldp', 'ldp.container'],
+    dependencies: ['ldp'],
     async started() {
       let routes = [];
       routes.push(...(await this.broker.call('ldp.getApiRoutes')));

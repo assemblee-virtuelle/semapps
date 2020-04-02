@@ -31,7 +31,6 @@ function createServices(broker) {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      // Needed by ActivityPub service
       containers: ['ldp/object']
     }
   });
