@@ -106,7 +106,7 @@ module.exports = {
 
       // Set request headers to context meta
       ctx.meta.headers = req.headers;
-      if (req.headers['content-type'] !== undefined) {
+      if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
         try {
           const contentSupportedMime = negotiateTypeMime(req.headers['content-type']);
           ctx.meta.headers['content-type'] = contentSupportedMime;
