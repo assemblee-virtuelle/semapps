@@ -89,7 +89,6 @@ describe('CRUD Project', () => {
 
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
 
-    console.log('location', location);
     expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
