@@ -18,6 +18,18 @@ const JsonLdStorageMixin = {
     },
     clear(ctx) {
       this.adapter.clear(ctx);
+    },
+    getApiRoutes(ctx) {
+      return ctx.call('ldp.route.getApiRoutes', {
+        containerUri: this.settings.containerUri,
+        services: {
+          get: this.name + '.get',
+          list: this.name + '.find',
+          post: this.name + '.create',
+          patch: this.name + '.update',
+          delete: this.name + '.remove'
+        }
+      });
     }
   },
   hooks: {

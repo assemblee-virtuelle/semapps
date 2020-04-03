@@ -17,7 +17,7 @@ module.exports = {
     },
     routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes]
   },
-  dependencies: ['ldp'],
+  dependencies: ['ldp', 'activitypub.actor', 'activitypub.object'],
   async started() {
     let routes = [];
 
@@ -57,6 +57,8 @@ module.exports = {
 
     routes.push(this.connector.getRoute());
     routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+    routes.push(...(await this.broker.call('activitypub.actor.getApiRoutes')));
+    routes.push(...(await this.broker.call('activitypub.object.getApiRoutes')));
 
     routes.forEach(route => this.addRoute(route));
   },

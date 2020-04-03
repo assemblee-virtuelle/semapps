@@ -3,8 +3,8 @@ const { MoleculerError } = require('moleculer').Errors;
 module.exports = {
   api: async function api(ctx) {
     try {
-      const { typeURL, resourceId, containerUri } = ctx.params;
-      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
+      const { typeURL, id, containerUri } = ctx.params;
+      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
       await ctx.call('ldp.resource.delete', {
         resourceUri
       });

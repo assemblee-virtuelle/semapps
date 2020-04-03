@@ -17,7 +17,7 @@ module.exports = {
       };
 
       const commonRouteConfig = {
-        path: containerUri.replace(this.settings.baseUri, '/'),
+        path: containerUri.replace(this.settings.baseUrl, '/'),
         // When using multiple routes we must set the body parser for each route.
         bodyParsers: {
           json: false,
@@ -34,7 +34,7 @@ module.exports = {
           authentication: true,
           aliases: {
             'GET /': [addContainerUriMiddleware, services.list],
-            'GET /:resourceId': [addContainerUriMiddleware, services.get]
+            'GET /:id': [addContainerUriMiddleware, services.get]
           },
           ...commonRouteConfig
         },
@@ -43,8 +43,8 @@ module.exports = {
           authentication: false,
           aliases: {
             'POST /': [addContainerUriMiddleware, services.post],
-            'PATCH /:resourceId': [addContainerUriMiddleware, services.patch],
-            'DELETE /:resourceId': [addContainerUriMiddleware, services.delete]
+            'PATCH /:id': [addContainerUriMiddleware, services.patch],
+            'DELETE /:id': [addContainerUriMiddleware, services.delete]
           },
           ...commonRouteConfig
         }

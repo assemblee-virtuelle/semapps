@@ -7,16 +7,20 @@ class TripleStoreAdapter {
   init(broker, service) {
     this.broker = broker;
     this.service = service;
-
-    // This doesn't work if the containerUri is defined in the started method
-    // if (!this.service.schema.settings.containerUri) {
-    //   throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
-    // }
   }
 
-  connect() {
-    // TODO create standard container
-    return Promise.resolve();
+  async connect() {
+    if (!this.service.schema.settings.containerUri) {
+      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
+    }
+
+    const containerUri = this.service.schema.settings.containerUri;
+    const exists = await this.broker.call('ldp.container.exist', { containerUri });
+
+    if (!exists) {
+      console.log(`Container ${containerUri} doesn't exist, creating it...`);
+      await this.broker.call('ldp.container.create', { containerUri });
+    }
   }
 
   disconnect() {

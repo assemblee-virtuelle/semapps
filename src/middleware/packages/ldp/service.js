@@ -39,9 +39,10 @@ module.exports = {
     async getApiRoutes(ctx) {
       let routes = [];
 
+      // Associate all containers in settings with the LDP service
       for( let containerPath of this.settings.containers ) {
         routes.push(...await ctx.call('ldp.route.getApiRoutes', {
-          containerPath,
+          containerUri: this.settings.baseUrl + containerPath,
           services: {
             list: 'ldp.container.api_get',
             get: 'ldp.resource.api_get',

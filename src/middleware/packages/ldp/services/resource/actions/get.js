@@ -5,8 +5,8 @@ const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const { typeURL, resourceId, containerUri } = ctx.params;
-    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
+    const { typeURL, id, containerUri } = ctx.params;
+    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
     const accept = ctx.meta.headers.accept;
     try {
       const body = await ctx.call('ldp.resource.get', {
