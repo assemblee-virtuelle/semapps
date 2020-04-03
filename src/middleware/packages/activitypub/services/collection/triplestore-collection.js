@@ -1,4 +1,5 @@
 const jsonld = require('jsonld');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const TripleStoreCollectionService = {
   name: 'activitypub.collection',
@@ -19,7 +20,7 @@ const TripleStoreCollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: 'json'
+        accept: MIME_TYPES.JSON
       });
     },
     /*
@@ -36,7 +37,7 @@ const TripleStoreCollectionService = {
             <${ctx.params.collectionUri}> a as:Collection .
           }
         `,
-        accept: 'json'
+        accept: MIME_TYPES.JSON
       });
     },
     /*
@@ -58,7 +59,7 @@ const TripleStoreCollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: 'json'
+        accept: MIME_TYPES.JSON
       });
     },
     /*
@@ -81,7 +82,7 @@ const TripleStoreCollectionService = {
             }
           }
         `,
-        accept: 'json'
+        accept: MIME_TYPES.JSON
       });
 
       collection = await jsonld.compact(collection, {

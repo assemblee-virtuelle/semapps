@@ -3,9 +3,9 @@ const { MoleculerError } = require('moleculer').Errors;
 module.exports = {
   api: async function api(ctx) {
     try {
-      const { typeURL, resourceId } = ctx.params;
-      const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
-      await ctx.call('ldp.delete', {
+      const { typeURL, resourceId, containerUri } = ctx.params;
+      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
+      await ctx.call('ldp.resource.delete', {
         resourceUri
       });
       ctx.meta.$statusCode = 204;
@@ -14,6 +14,7 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }

@@ -1,138 +1,143 @@
-'use strict';
+const ResourceService = require('./services/resource');
+const ContainerService = require('./services/container');
+const { MoleculerError } = require('moleculer').Errors;
+const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 
-const uuid = require('uuid/v1');
-const rdfParser = require('rdf-parse').default;
-const streamifyString = require('streamify-string');
-const N3 = require('n3');
-const getAction = require('./actions/get');
-const getByTypeAction = require('./actions/getByType');
-const postAction = require('./actions/post');
-const patchAction = require('./actions/patch');
-const deleteAction = require('./actions/delete');
-const { negotiateTypeMime, negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
-
-const LdpService = {
+module.exports = {
   name: 'ldp',
   settings: {
     baseUrl: null,
-    ontologies: []
+    ontologies: [],
+    containers: ['resources'],
+    defaultLdpAccept: 'text/turtle'
   },
-  dependencies: ['triplestore'],
-  actions: {
-    api_getByType: getByTypeAction.api,
-    getByType: getByTypeAction.action,
-    api_get: getAction.api,
-    get: getAction.action,
-    api_post: postAction.api,
-    post: postAction.action,
-    api_patch: patchAction.api,
-    patch: patchAction.action,
-    api_delete: deleteAction.api,
-    delete: deleteAction.action,
-    /*
-     * Returns a LDP container persisted in the triple store
-     * @param containerUri The full URI of the container
-     */
-    async standardContainer(ctx) {
-      ctx.meta.$responseType = ctx.params.accept;
+  async created() {
+    const { baseUrl, ontologies, containers } = this.schema.settings;
 
-      return await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          CONSTRUCT {
-            ?container ldp:contains ?subject .
-          	?subject ?predicate ?object .
-          }
-          WHERE {
-            <${ctx.params.containerUri}>
-                a ldp:BasicContainer ;
-          	    ldp:contains ?subject .
-          	?container ldp:contains ?subject .
-            ?subject ?predicate ?object .
-          }
-        `,
-        accept: negotiateTypeMime(ctx.params.accept)
-      });
-    },
-    /*
-     * Attach an object to a standard container
-     * @param objectUri The full URI of the object to store
-     * @param containerUri The full URI of the container where to store the object
-     */
-    async attachToContainer(ctx) {
-      const container = {
-        '@context': 'http://www.w3.org/ns/ldp',
-        id: ctx.params.containerUri,
-        type: ['Container', 'BasicContainer'],
-        contains: ctx.params.objectUri
+    await this.broker.createService(ResourceService, {
+      settings: {
+        baseUrl,
+        ontologies
+      }
+    });
+
+    await this.broker.createService(ContainerService, {
+      settings: {
+        baseUrl,
+        ontologies,
+        containers
+      }
+    });
+  },
+  actions: {
+    getApiRoutes(ctx) {
+      let securedRoutes = {},
+        unsecuredRoutes = {};
+
+      const addContainerUriMiddleware = containerPath => (req, res, next) => {
+        req.$params.containerUri = this.settings.baseUrl + containerPath;
+        next();
       };
 
-      return await ctx.call('triplestore.insert', {
-        resource: container,
-        contentType: MIME_TYPES.JSON
+      this.settings.containers.forEach(containerPath => {
+        unsecuredRoutes['GET ' + containerPath] = [addContainerUriMiddleware(containerPath), 'ldp.container.api_get'];
+
+        unsecuredRoutes['GET ' + containerPath + '/:resourceId'] = [
+          addContainerUriMiddleware(containerPath),
+          'ldp.resource.api_get'
+        ];
+
+        securedRoutes['POST ' + containerPath] = [addContainerUriMiddleware(containerPath), 'ldp.resource.api_post'];
+
+        securedRoutes['DELETE ' + containerPath + '/:resourceId'] = [
+          addContainerUriMiddleware(containerPath),
+          'ldp.resource.api_delete'
+        ];
+
+        securedRoutes['PATCH ' + containerPath + '/:resourceId'] = [
+          addContainerUriMiddleware(containerPath),
+          'ldp.resource.api_patch'
+        ];
       });
-    },
-    getBaseUrl(ctx) {
-      return this.settings.baseUrl;
+
+      // TODO put legacy "automatic container" on another service
+      unsecuredRoutes['GET ldp/:typeURL'] = 'ldp.resource.api_getByType';
+
+      const commonRouteConfig = {
+        path: ctx.params.path,
+        // When using multiple routes we must set the body parser for each route.
+        bodyParsers: {
+          json: false,
+          urlencoded: false
+        },
+        onBeforeCall: async (ctx, route, req, res) => {
+          await this.saveHeaders(ctx, route, req, res);
+        }
+      };
+
+      return [
+        {
+          authorization: false,
+          authentication: true,
+          aliases: unsecuredRoutes,
+          ...commonRouteConfig
+        },
+        {
+          authorization: true,
+          authentication: false,
+          aliases: securedRoutes,
+          ...commonRouteConfig
+        }
+      ];
     }
   },
   methods: {
-    generateId() {
-      return uuid().substring(0, 8);
-    },
-    async findUnusedUri(ctx, generatedId) {
-      let existingBegining = await ctx.call('triplestore.query', {
-        query: `
-          ${this.getPrefixRdf()}
-          SELECT distinct ?uri
-          WHERE {
-            ?uri ?predicate ?object.
-            FILTER regex(str(?uri), "^${generatedId}")
-          }
-              `,
-        accept: MIME_TYPES.JSON
+    async saveHeaders(ctx, route, req, res) {
+      const bodyPromise = new Promise((resolve, reject) => {
+        let data = '';
+        req.on('data', function(chunk) {
+          data += chunk;
+        });
+        req.on('end', function() {
+          resolve(data.length > 0 ? data : undefined);
+        });
       });
-      let counter = 0;
-      if (existingBegining.length > 0) {
-        counter = 1;
-        existingBegining = existingBegining.map(r => r.uri.value);
-        while (existingBegining.includes(generatedId.concat(counter))) {
-          counter++;
+      ctx.meta.body = await bodyPromise;
+
+      // Set request headers to context meta
+      ctx.meta.headers = req.headers;
+      if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
+        try {
+          const contentSupportedMime = negotiateTypeMime(req.headers['content-type']);
+          ctx.meta.headers['content-type'] = contentSupportedMime;
+          if (contentSupportedMime === MIME_TYPES.JSON) {
+            ctx.meta.body = JSON.parse(ctx.meta.body);
+          }
+        } catch (e) {
+          throw new MoleculerError(
+            'Content-Type not supported : ' + req.headers['content-type'],
+            400,
+            'CONTENT_NOT_SUPPORTED'
+          );
+        }
+      } else {
+        if (ctx.meta.body) {
+          throw new MoleculerError(
+            'Content-type have to be specified for non empty body ',
+            400,
+            'CONTENT_TYPE_NOT_SPECIFIED'
+          );
         }
       }
-      return generatedId.concat(counter > 0 ? counter.toString() : '');
-    },
-    getPrefixRdf() {
-      return this.settings.ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-    },
-    getPrefixJSON() {
-      let pattern = {};
-      this.settings.ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-      return pattern;
-    },
-    jsonldToTriples(jsonLdObject, outputContentType) {
-      return new Promise((resolve, reject) => {
-        const textStream = streamifyString(JSON.stringify(jsonLdObject));
-        const writer = new N3.Writer({
-          prefixes: this.getPrefixJSON(),
-          format: negotiateTypeN3(outputContentType)
-        });
-        rdfParser
-          .parse(textStream, {
-            contentType: MIME_TYPES.JSON
-          })
-          .on('data', quad => {
-            writer.addQuad(quad);
-          })
-          .on('error', error => console.error(error))
-          .on('end', () => {
-            writer.end((error, result) => {
-              resolve(result);
-            });
-          });
-      });
+      if (req.headers.accept === undefined || req.headers.accept === '*/*') {
+        req.headers.accept = this.settings.defaultLdpAccept;
+      } else {
+        try {
+          ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers.accept);
+        } catch (e) {
+          throw new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED');
+        }
+      }
     }
   }
 };
-
-module.exports = LdpService;
