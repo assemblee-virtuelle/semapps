@@ -50,8 +50,6 @@ services:
     expose:
       - "3000"
     command: ./boilerplates/${MIDDLEWARE}/entrypoint.sh
-    stdin_open: true
-    tty: true
 
   frontend:
     build:
