@@ -9,8 +9,8 @@ module.exports = {
   storage: {
     collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
     activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-    actors: new TripleStoreAdapter('ldp'),
-    objects: new TripleStoreAdapter('ldp')
+    actors: new TripleStoreAdapter(),
+    objects: new TripleStoreAdapter()
   },
   context: {
     as: 'https://www.w3.org/ns/activitystreams#',

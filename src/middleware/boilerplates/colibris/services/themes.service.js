@@ -6,7 +6,7 @@ const ThemeService = {
   name: 'themes',
   mixins: [JsonLdStorageMixin],
   dependencies: ['ldp'],
-  adapter: new TripleStoreAdapter('ldp'),
+  adapter: new TripleStoreAdapter(),
   collection: 'themes',
   settings: {
     containerUri: CONFIG.HOME_URL + 'themes/',

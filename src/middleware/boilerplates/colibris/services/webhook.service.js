@@ -4,7 +4,7 @@ const CONFIG = require('../config');
 
 module.exports = {
   mixins: [WebhooksService],
-  adapter: new TripleStoreAdapter('ldp'),
+  adapter: new TripleStoreAdapter(),
   settings: {
     baseUri: CONFIG.HOME_URL,
     usersContainer: CONFIG.HOME_URL + 'actors/',

@@ -13,10 +13,10 @@ module.exports = [
       'GET activities/:id': 'activitypub.activity.get',
       'GET actors/:id': 'activitypub.actor.get',
       'POST actors': 'activitypub.actor.create',
-      'GET users/:username/outbox': 'activitypub.outbox.list',
-      'GET users/:username/inbox': 'activitypub.inbox.list',
-      'GET users/:username/followers': 'activitypub.follow.listFollowers',
-      'GET users/:username/following': 'activitypub.follow.listFollowing'
+      'GET actors/:username/outbox': 'activitypub.outbox.list',
+      'GET actors/:username/inbox': 'activitypub.inbox.list',
+      'GET actors/:username/followers': 'activitypub.follow.listFollowers',
+      'GET actors/:username/following': 'activitypub.follow.listFollowing'
     },
     ...routeConfig
   },
@@ -25,7 +25,7 @@ module.exports = [
     authorization: true,
     authentication: false,
     aliases: {
-      'POST users/:username/outbox': 'activitypub.outbox.post'
+      'POST actors/:username/outbox': 'activitypub.outbox.post'
     },
     ...routeConfig
   }

@@ -1,7 +1,6 @@
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
-const { Routes: LdpRoutes } = require('@semapps/ldp');
 const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
 const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { Routes: WebhooksRoutes } = require('@semapps/webhooks');
@@ -19,22 +18,15 @@ module.exports = {
       exposedHeaders: '*'
     },
     routes: [
-      ...LdpRoutes,
       ...SparqlEndpointRoutes,
       ...ActivityPubRoutes,
-      ...WebhooksRoutes,
-      {
-        authorization: false,
-        authentication: true,
-        bodyParsers: { json: true },
-        aliases: {
-          'GET themes/:id': 'themes.get'
-        }
-      }
+      ...WebhooksRoutes
     ],
     defaultLdpAccept: 'text/turtle'
   },
   async started() {
+    let routes = [];
+
     this.connector = new CasConnector({
       casUrl: CONFIG.CAS_URL,
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
@@ -60,7 +52,11 @@ module.exports = {
     });
 
     await this.connector.initialize();
-    this.addRoute(this.connector.getRoute());
+
+    routes.push(this.connector.getRoute());
+    routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+
+    routes.forEach(route => this.addRoute(route));
   },
   methods: {
     authenticate(ctx, route, req, res) {
