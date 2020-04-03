@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+const session = require('express-session');
 const E = require('moleculer-web').Errors;
 
 class Connector {
   constructor(passportId, settings) {
+    this.passport = passport;
     this.passportId = passportId;
     this.settings = settings;
   }
@@ -21,19 +24,19 @@ class Connector {
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    const profileData = this.settings.selectProfileData(res.req.user);
+    const profileData = this.settings.selectProfileData(req.user);
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we may need it for the token generation
-      res.req.user.webId = webId;
+      req.user.webId = webId;
       next();
     });
   }
   generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step
-    if (!res.req.user.token) {
-      const profileData = this.settings.selectProfileData(res.req.user);
-      const payload = { webId: res.req.user.webId, ...profileData };
-      res.req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
+    if (!req.user.token) {
+      const profileData = this.settings.selectProfileData(req.user);
+      const payload = { webId: req.user.webId, ...profileData };
+      req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
     next();
   }
@@ -48,8 +51,10 @@ class Connector {
     // Redirect browser to the redirect URL pushed in session
     let redirectUrl = req.session.redirectUrl;
     // If a token was stored, add it to the URL so that the client may use it
-    if (res.req.user && res.req.user.token) redirectUrl += '?token=' + res.req.user.token;
-    res.redirect(redirectUrl);
+    if (req.user && req.user.token) redirectUrl += '?token=' + req.user.token;
+    // Redirect using NodeJS HTTP
+    res.writeHead(302, { Location: redirectUrl });
+    res.end();
   }
   login() {
     return (req, res) => {
@@ -85,6 +90,26 @@ class Connector {
   async getWebId(ctx) {
     // By default, get the webId from the token payload
     return ctx.meta.tokenPayload.webId;
+  }
+  getRoute() {
+    return {
+      use: [
+        session({
+          secret: this.settings.sessionSecret,
+          maxAge: null
+        }),
+        this.passport.initialize(),
+        this.passport.session()
+      ],
+      aliases: {
+        'GET auth/logout'(req, res) {
+          this.connector.logout()(req, res);
+        },
+        'GET auth'(req, res) {
+          this.connector.login()(req, res);
+        }
+      }
+    };
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
