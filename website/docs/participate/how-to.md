@@ -1,3 +1,3 @@
 ---
-title: Comment participerons-nous ?
+title: Comment participerons-nous, tous ensemble ?
 ---
