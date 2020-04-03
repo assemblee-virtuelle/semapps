@@ -12,5 +12,6 @@ module.exports = {
   },
   gouvernance: {
     Gouvernance: ['governance/team'],
+    Gouvernance: ['governance/hello'],
   }
 };
