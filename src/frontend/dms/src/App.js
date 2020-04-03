@@ -8,7 +8,7 @@ import { ActionList, ActionShow, ActionEdit, ActionIcon } from './resources/acti
 import { NoteList, NoteEdit, NoteIcon } from './resources/notes';
 import { ThemeList, ThemeIcon } from './resources/themes';
 import ontologies from './config/ontologies';
-import resources from "./config/resources";
+import resources from './config/resources';
 
 function App() {
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Datagrid, TextField, useAuthenticated, ShowButton, Show, TabbedShowLayout, Tab } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 import { ActivitiesList, ActivitiesGrid, CollectionList, ActorsGrid } from '../semapps';
-import SearchFilter from "../components/SearchFilter";
+import SearchFilter from '../components/SearchFilter';
 
 export const ActorIcon = Icon;
 
@@ -13,7 +13,7 @@ const ActorTitle = ({ record }) => {
 export const ActorList = props => {
   useAuthenticated();
   return (
-    <List title="Acteurs" perPage={25} filters={<SearchFilter/>} {...props}>
+    <List title="Acteurs" perPage={25} filters={<SearchFilter />} {...props}>
       <Datagrid rowClick="show">
         <TextField source="as:name" label="Nom" />
         <TextField source="as:preferredUsername" label="Username" />
