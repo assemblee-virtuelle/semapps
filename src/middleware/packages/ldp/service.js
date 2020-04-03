@@ -40,17 +40,19 @@ module.exports = {
       let routes = [];
 
       // Associate all containers in settings with the LDP service
-      for( let containerPath of this.settings.containers ) {
-        routes.push(...await ctx.call('ldp.route.getApiRoutes', {
-          containerUri: this.settings.baseUrl + containerPath,
-          services: {
-            list: 'ldp.container.api_get',
-            get: 'ldp.resource.api_get',
-            post: 'ldp.resource.api_post',
-            patch: 'ldp.resource.api_patch',
-            delete: 'ldp.resource.api_delete'
-          }
-        }));
+      for (let containerPath of this.settings.containers) {
+        routes.push(
+          ...(await ctx.call('ldp.route.getApiRoutes', {
+            containerUri: this.settings.baseUrl + containerPath,
+            services: {
+              list: 'ldp.container.api_get',
+              get: 'ldp.resource.api_get',
+              post: 'ldp.resource.api_post',
+              patch: 'ldp.resource.api_patch',
+              delete: 'ldp.resource.api_delete'
+            }
+          }))
+        );
       }
 
       return routes;
