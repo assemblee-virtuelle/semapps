@@ -35,20 +35,20 @@ const PushNotificationsService = {
       const { userUri, pushToken } = ctx.params;
 
       let device = await ctx.call('push-notifications.device.find', {
-        'ownedBy': userUri,
+        ownedBy: userUri
       });
 
-      if( !device ) {
+      if (!device) {
         device = await ctx.call('push-notifications.device.create', {
           '@type': 'Device',
           ownedBy: userUri,
           pushToken
         });
 
-        if( this.settings.welcomeNotification && this.settings.welcomeNotification.message ) {
+        if (this.settings.welcomeNotification && this.settings.welcomeNotification.message) {
           await this.actions.notifyUser({ userUri, ...this.settings.welcomeNotification });
         }
-      } else if ( device.errorMessage ) {
+      } else if (device.errorMessage) {
         // If there was an error message on the device, clear it
         device = await ctx.call('push-notifications.device.update', {
           '@id': device['@id'],
@@ -62,10 +62,10 @@ const PushNotificationsService = {
       const { userUri, message, data } = ctx.params;
 
       const device = await ctx.call('push-notifications.device.find', {
-        'ownedBy': userUri,
+        ownedBy: userUri
       });
 
-      if( device && !device.errorMessage ) {
+      if (device && !device.errorMessage) {
         if (!Expo.isExpoPushToken(ctx.params.pushToken)) {
           console.error(`Push token ${ctx.params.pushToken} is not a valid Expo push token`);
           return;
@@ -90,7 +90,7 @@ const PushNotificationsService = {
       }
     },
     async checkReceipts() {
-      if( this.tickets.length > 0 ) {
+      if (this.tickets.length > 0) {
         let receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(this.tickets.map(ticket => ticket.id));
 
         // Like sending notifications, there are different strategies you could use
@@ -103,10 +103,9 @@ const PushNotificationsService = {
             // notification and information about an error, if one occurred.
             for (const receiptId in receipts) {
               let { status, message, details } = receipts[receiptId];
-              if (status === "ok") {
+              if (status === 'ok') {
                 continue;
-              } else if (status === "error") {
-
+              } else if (status === 'error') {
                 if (details && details.error) {
                   // The error codes are listed in the Expo documentation:
                   // https://docs.expo.io/versions/latest/guides/push-notifications/#individual-errors
@@ -117,15 +116,15 @@ const PushNotificationsService = {
                 const pushToken = '...';
 
                 const device = await ctx.call('push-notifications.device.find', {
-                  pushToken,
+                  pushToken
                 });
 
-                if( device ) {
+                if (device) {
                   await ctx.call('push-notifications.device.update', {
                     '@id': device['@id'],
                     pushToken,
                     errorMessage: message
-                  })
+                  });
                 }
               }
             }
