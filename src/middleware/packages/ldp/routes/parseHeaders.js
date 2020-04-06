@@ -2,15 +2,16 @@ const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 
 // We must parse the body ourselves because the ApiGateway only understands JSON body
-const getBody = req => new Promise((resolve, reject) => {
-  let data = '';
-  req.on('data', function(chunk) {
-    data += chunk;
+const getBody = req =>
+  new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', function(chunk) {
+      data += chunk;
+    });
+    req.on('end', function() {
+      resolve(data.length > 0 ? data : undefined);
+    });
   });
-  req.on('end', function() {
-    resolve(data.length > 0 ? data : undefined);
-  });
-});
 
 async function parseHeaders(ctx, route, req, res) {
   // Body
