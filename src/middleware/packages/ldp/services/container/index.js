@@ -8,7 +8,8 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['resources']
+    containers: ['resources'],
+    defaultAccept: null
   },
   dependencies: ['triplestore'],
   actions: {

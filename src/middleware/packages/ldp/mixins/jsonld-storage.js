@@ -1,6 +1,7 @@
 const DbService = require('moleculer-db');
 const uuid = require('uuid/v1');
 const jsonld = require('jsonld');
+const getApiRoutes = require('../routes/getApiRoutes');
 
 const JsonLdStorageMixin = {
   mixins: [DbService],
@@ -19,8 +20,8 @@ const JsonLdStorageMixin = {
     clear(ctx) {
       this.adapter.clear(ctx);
     },
-    getApiRoutes(ctx) {
-      return ctx.call('ldp.route.getApiRoutes', {
+    getApiRoutes() {
+      return getApiRoutes({
         containerUri: this.settings.containerUri,
         services: {
           get: this.name + '.get',

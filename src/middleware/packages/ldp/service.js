@@ -1,6 +1,6 @@
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
-const LdpRouteService = require('./services/route');
+const getApiRoutes = require('./routes/getApiRoutes');
 
 module.exports = {
   name: 'ldp',
@@ -8,40 +8,35 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: ['resources'],
-    defaultLdpAccept: 'text/turtle'
+    defaultAccept: 'text/turtle'
   },
   async created() {
-    const { baseUrl, ontologies, containers, defaultLdpAccept } = this.schema.settings;
+    const { baseUrl, ontologies, containers, defaultAccept } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
-        containers
+        containers,
+        defaultAccept
       }
     });
 
     await this.broker.createService(LdpResourceService, {
       settings: {
         baseUrl,
-        ontologies
-      }
-    });
-
-    await this.broker.createService(LdpRouteService, {
-      settings: {
-        baseUrl,
-        defaultLdpAccept
+        ontologies,
+        defaultAccept
       }
     });
   },
   actions: {
-    async getApiRoutes(ctx) {
+    getApiRoutes() {
       let routes = [];
 
       // Associate all containers in settings with the LDP service
       for( let containerPath of this.settings.containers ) {
-        routes.push(...await ctx.call('ldp.route.getApiRoutes', {
+        routes.push(...getApiRoutes({
           containerUri: this.settings.baseUrl + containerPath,
           services: {
             list: 'ldp.container.api_get',

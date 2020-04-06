@@ -1,11 +1,11 @@
 const jsonld = require('jsonld');
-const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const accept = negotiateTypeMime(ctx.meta.headers.accept);
+    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
       const body = await ctx.call('ldp.container.get', {
         containerUri,

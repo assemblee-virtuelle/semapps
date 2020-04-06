@@ -7,7 +7,7 @@ module.exports = {
   api: async function api(ctx) {
     const { typeURL, id, containerUri } = ctx.params;
     const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-    const accept = ctx.meta.headers.accept;
+    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
       const body = await ctx.call('ldp.resource.get', {
         resourceUri,

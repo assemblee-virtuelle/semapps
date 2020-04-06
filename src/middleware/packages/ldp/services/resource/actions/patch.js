@@ -4,12 +4,13 @@ module.exports = {
   api: async function api(ctx) {
     const { typeURL, id, containerUri } = ctx.params;
     const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
+    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
       await ctx.call('ldp.resource.patch', {
         resource: body,
-        accept: ctx.meta.headers.accept,
+        accept,
         contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
