@@ -1,7 +1,7 @@
 import React from 'react';
 import resourcesTypes from './resourcesTypes';
 
-export const getResourceId = (uri) => {
+export const getResourceId = uri => {
   const pattern = `.*/(.*)`;
   const matches = uri.match(new RegExp(pattern));
   return matches && matches[1];
