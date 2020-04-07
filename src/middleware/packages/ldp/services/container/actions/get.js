@@ -24,49 +24,44 @@ module.exports = {
     params: {
       containerUri: { type: 'string' },
       accept: { type: 'string' },
-      level: { type: 'number', default: 0 },
+      expand: { type: 'array', optional: true },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri, level, jsonContext } = ctx.params;
+      const { accept, containerUri, expand, jsonContext } = ctx.params;
+      let constructOptions = '', whereOptions = '';
 
-      const query =
-        level === 0
-          ? `
-            ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT  {
-              <${containerUri}>
-                a ldp:BasicContainer ;
-                ldp:contains ?rS .
-              ?rS ?rP ?rO .
-            }
-            WHERE {
-              <${containerUri}>
-                a ldp:BasicContainer ;
-                ldp:contains ?rS .
-              OPTIONAL { ?rS ?rP ?rO . }
-            }
-          `
-          : `
-            ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT  {
-              <${containerUri}>
-                a ldp:BasicContainer ;
-                ldp:contains ?rS .
-              ?rS ?rP ?rO .
-              ?rO ?srP ?srO . 
-            }
-            WHERE {
-              <${containerUri}>
-                a ldp:BasicContainer ;
-                ldp:contains ?rS .
-              OPTIONAL { ?rS ?rP ?rO . }
-              OPTIONAL { ?rO ?srP ?srO . }
-            }
-          `;
+      if( expand ) {
+        constructOptions = `?rO ?srP ?srO .`;
+        whereOptions = `
+          OPTIONAL {
+            ?item ?propsToExpand ?rO .
+            FILTER(?propsToExpand IN (${expand.join(', ')})) .
+            ?rO ?srP ?srO .
+          }
+        `
+      }
 
       const result = await ctx.call('triplestore.query', {
-        query: query,
+        query: `
+          ${getPrefixRdf(this.settings.ontologies)}
+          CONSTRUCT  {
+            <${containerUri}>
+              a ldp:BasicContainer ;
+              ldp:contains ?rS .
+            ?rS ?rP ?rO .
+            ${constructOptions}
+          }
+          WHERE {
+            <${containerUri}>
+              a ldp:BasicContainer ;
+              ldp:contains ?rS .
+            OPTIONAL { 
+              ?rS ?rP ?rO . 
+              ${whereOptions}
+            }
+          }
+        `,
         accept
       });
 

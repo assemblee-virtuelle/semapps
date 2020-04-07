@@ -69,22 +69,35 @@ const TripleStoreCollectionService = {
      * @param id The full URI of the collection
      */
     async get(ctx) {
+      const { id, expand } = ctx.params;
+      let constructOptions = '', whereOptions = '';
+
+      if( expand ) {
+        constructOptions = `?iO ?siP ?siO .`;
+        whereOptions = `
+          OPTIONAL {
+            ?item ?propsToExpand ?iO .
+            FILTER(?propsToExpand IN (${expand.join(', ')})) .
+            ?iO ?siP ?siO .
+          }
+        `
+      }
+
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${ctx.params.id}> 
-              a ?type ;
+            <${id}> a ?type ;
               as:items ?item .
-              ?item ?iP ?iO .
-              ?iO ?siP ?siO .
+            ?item ?iP ?iO .
+            ${constructOptions}
           }
           WHERE {
-            <${ctx.params.id}> a ?type .
+            <${id}> a ?type .
             OPTIONAL { 
-              <${ctx.params.id}> as:items ?item .
+              <${id}> as:items ?item .
               ?item ?iP ?iO .
-              ?iO ?siP ?siO .
+              ${whereOptions}
             }
           }
         `,
@@ -93,7 +106,7 @@ const TripleStoreCollectionService = {
 
       result = await jsonld.frame(result, {
         '@context': 'https://www.w3.org/ns/activitystreams',
-        '@id': ctx.params.id
+        '@id': id
       });
 
       let { items, ...collection } = result['@graph'][0];

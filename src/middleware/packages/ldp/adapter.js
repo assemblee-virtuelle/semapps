@@ -41,7 +41,7 @@ class TripleStoreAdapter {
   find(filters) {
     return this.broker.call('ldp.container.get', {
       containerUri: this.service.schema.settings.containerUri,
-      level: this.service.schema.settings.level,
+      expand: this.service.schema.settings.expand,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
@@ -60,7 +60,7 @@ class TripleStoreAdapter {
   findById(_id) {
     return this.broker.call('ldp.resource.get', {
       resourceUri: _id,
-      level: this.service.schema.settings.level,
+      expand: this.service.schema.settings.expand,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });

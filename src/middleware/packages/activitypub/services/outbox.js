@@ -1,4 +1,5 @@
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
+const { objectCurrentToId } = require('../functions');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -64,11 +65,15 @@ const OutboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getOutboxUri(ctx.params.username)
+        id: this.getOutboxUri(ctx.params.username),
+        expand: ['as:object']
       });
 
       if (collection) {
-        return collection;
+        return {
+          ...collection,
+          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
+        };
       } else {
         ctx.meta.$statusCode = 404;
       }
