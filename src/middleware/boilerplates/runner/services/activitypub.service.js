@@ -15,7 +15,7 @@ module.exports = {
       }
     ],
     storage: {
-      collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      collections: new TripleStoreAdapter(),
       activities: new TripleStoreAdapter(),
       actors: new TripleStoreAdapter(),
       objects: new TripleStoreAdapter()

@@ -27,24 +27,28 @@ const OutboxService = {
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
         const object = await ctx.call('activitypub.object.create', activity);
 
+        const { to, attributedTo, '@context': context } = activity;
         activity = {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: 'Create',
-          to: activity.to,
-          actor: activity.attributedTo,
-          object: object
+          '@context': context,
+          '@type': 'Create',
+          to,
+          actor: attributedTo,
+          object
         };
-      } else if (activityType === ACTIVITY_TYPES.UPDATE) {
-        await ctx.call('activitypub.object.update', activity.object);
-      } else if (activityType === ACTIVITY_TYPES.DELETE) {
-        await ctx.call('activitypub.object.remove', { id: activity.object });
       }
+      // if (activityType === ACTIVITY_TYPES.CREATE) {
+      //   
+      // } else if (activityType === ACTIVITY_TYPES.UPDATE) {
+      //   await ctx.call('activitypub.object.update', activity.object);
+      // } else if (activityType === ACTIVITY_TYPES.DELETE) {
+      //   await ctx.call('activitypub.object.remove', { id: activity.object });
+      // }
 
       // Use the current time for the activity's publish date
       // This will be used to order the ordered collections
       activity.published = new Date().toISOString();
 
-      await ctx.call('activitypub.activity.create', activity);
+      activity = await ctx.call('activitypub.activity.create', activity);
 
       // Attach the newly-created activity to the outbox
       ctx.call('activitypub.collection.attach', {

@@ -36,7 +36,7 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       adapter: this.settings.storage.actors,
       settings: {
-        containerUri: this.settings.baseUri + 'actors/',
+        containerUri: this.settings.baseUri + 'users/',
         context: this.settings.context
       },
       dependencies: this.settings.storage.actors.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter

@@ -1,4 +1,3 @@
-'use strict';
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebIdService = {
@@ -37,8 +36,8 @@ const WebIdService = {
           },
           slug: nick,
           containerUri: this.settings.usersContainer,
-          contentType: MIME_TYPES.JSON,
           accept: MIME_TYPES.JSON,
+          contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
         webId = newPerson['@id'];
@@ -54,6 +53,7 @@ const WebIdService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
+          contentType: MIME_TYPES.JSON,
           webId: webId
         });
       } else {
@@ -104,7 +104,7 @@ const WebIdService = {
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           SELECT ?webId
           WHERE {
-            ?webId rdf:type foaf:Person ;
+            ?webId rdf:type "foaf:Person" ;
                    foaf:email "${email}" .
           }
         `,
