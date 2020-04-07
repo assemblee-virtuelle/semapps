@@ -67,7 +67,7 @@ function createServices(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes, ...WebhooksRoutes]
+      routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes]
     },
     dependencies: ['ldp'],
     async started() {
