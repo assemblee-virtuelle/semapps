@@ -38,7 +38,7 @@ const OutboxService = {
         };
       }
       // if (activityType === ACTIVITY_TYPES.CREATE) {
-      //   
+      //
       // } else if (activityType === ACTIVITY_TYPES.UPDATE) {
       //   await ctx.call('activitypub.object.update', activity.object);
       // } else if (activityType === ACTIVITY_TYPES.DELETE) {
