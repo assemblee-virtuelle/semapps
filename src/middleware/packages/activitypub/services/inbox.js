@@ -1,5 +1,3 @@
-'use strict';
-
 const { PUBLIC_URI } = require('../constants');
 
 const InboxService = {

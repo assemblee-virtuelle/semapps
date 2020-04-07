@@ -1,5 +1,3 @@
-'use strict';
-
 const { ACTIVITY_TYPES } = require('../constants');
 
 const FollowService = {
