@@ -11,10 +11,7 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    context: {
-      '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    },
+    context: 'https://www.w3.org/ns/activitystreams',
     storage: {
       collections: null,
       activities: null,

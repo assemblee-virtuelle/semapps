@@ -7,9 +7,16 @@ module.exports = {
   mixins: [ActivityPubService],
   settings: {
     baseUri: CONFIG.HOME_URL,
+    context: [
+      'https://www.w3.org/ns/activitystreams',
+      {
+        ldp: 'http://www.w3.org/ns/ldp#',
+        pair: 'http://virtual-assembly.org/ontologies/pair#'
+      }
+    ],
     storage: {
       collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
+      activities: new TripleStoreAdapter(),
       actors: new TripleStoreAdapter(),
       objects: new TripleStoreAdapter()
     }

@@ -8,10 +8,7 @@ const ActorService = {
   collection: 'actors',
   settings: {
     containerUri: null, // To be set by the user
-    context: {
-      '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    }
+    context: 'https://www.w3.org/ns/activitystreams'
   },
   actions: {
     async attachCollections(ctx) {

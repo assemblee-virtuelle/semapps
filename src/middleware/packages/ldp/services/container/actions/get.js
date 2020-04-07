@@ -23,35 +23,65 @@ module.exports = {
     visibility: 'public',
     params: {
       containerUri: { type: 'string' },
-      accept: { type: 'string' }
+      accept: { type: 'string' },
+      level: { type: 'number', default: 0 },
+      jsonContext: { type: 'multi', rules: [ { type: 'array' }, { type: 'object' }, { type: 'string' } ], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri } = ctx.params;
+      const { accept, containerUri, level, jsonContext } = ctx.params;
+
+      const query = level === 0
+        ? `
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT  {
+              <${containerUri}>
+                a ldp:BasicContainer ;
+                ldp:contains ?rS .
+              ?rS ?rP ?rO .
+            }
+            WHERE {
+              <${containerUri}>
+                a ldp:BasicContainer ;
+                ldp:contains ?rS .
+              OPTIONAL { ?rS ?rP ?rO . }
+            }
+          `
+        : `
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT  {
+              <${containerUri}>
+                a ldp:BasicContainer ;
+                ldp:contains ?rS .
+              ?rS ?rP ?rO .
+              ?rO ?srP ?srO . 
+            }
+            WHERE {
+              <${containerUri}>
+                a ldp:BasicContainer ;
+                ldp:contains ?rS .
+              OPTIONAL { ?rS ?rP ?rO . }
+              OPTIONAL { ?rO ?srP ?srO . }
+            }
+          `;
 
       const result = await ctx.call('triplestore.query', {
-        query: `
-          ${getPrefixRdf(this.settings.ontologies)}
-          CONSTRUCT
-          WHERE {
-            <${containerUri}>
-              a ldp:BasicContainer ;
-              ldp:contains ?resource .
-            ?resource ?resourceP ?resourceO .
-          }
-        `,
+        query: query,
         accept
       });
 
       if (accept === MIME_TYPES.JSON) {
         const framedResult = await jsonld.frame(result, {
-          '@context': getPrefixJSON(this.settings.ontologies),
-          '@type': 'ldp:BasicContainer'
+          '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+          '@id': containerUri
         });
 
         // Return the result without the @graph
         return {
           '@context': framedResult['@context'],
-          ...framedResult['@graph'][0]
+          ...framedResult['@graph'][0],
+          'ldp:contains': Array.isArray(framedResult['@graph'][0]['ldp:contains'])
+            ? framedResult['@graph'][0]['ldp:contains']
+            : [framedResult['@graph'][0]['ldp:contains']]
         };
       } else {
         return result;

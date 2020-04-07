@@ -26,32 +26,59 @@ module.exports = {
     params: {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string' }
+      accept: { type: 'string' },
+      level: { type: 'number', default: 0 },
+      jsonContext: { type: 'multi', rules: [ { type: 'array' }, { type: 'object' }, { type: 'string' } ], optional: true }
     },
     async handler(ctx) {
-      const resourceUri = ctx.params.resourceUri;
-      const accept = ctx.params.accept;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resourceUri, accept, webId, level, jsonContext } = ctx.params;
+
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });
 
       if (triplesNb > 0) {
+        const query = level === 0
+          ? `
+              ${getPrefixRdf(this.settings.ontologies)}
+              CONSTRUCT
+              WHERE {
+                <${resourceUri}> ?rP ?rO .
+              }
+            `
+          : `
+              ${getPrefixRdf(this.settings.ontologies)}
+              CONSTRUCT  {
+                 <${resourceUri}> ?rP ?rO .
+                 ?rO ?srP ?srO . 
+              }
+              WHERE {
+                <${resourceUri}> ?rP ?rO .
+                OPTIONAL { ?rO ?srP ?srO . }
+              }
+            `;
+
         let result = await ctx.call('triplestore.query', {
-          query: `
-            ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT
-            WHERE {
-              <${resourceUri}> ?predicate ?object.
-            }
-          `,
-          accept: accept
+          query,
+          accept,
+          webId
         });
+
         // If we asked for JSON-LD, compact it using our ontologies in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          result = await jsonld.compact(result, getPrefixJSON(this.settings.ontologies));
+          if( level === 0 ) {
+            result = await jsonld.compact(result, jsonContext || getPrefixJSON(this.settings.ontologies));
+          } else {
+            result = await jsonld.frame(result, {
+              '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+              '@id': resourceUri
+            });
+
+            result = {
+              '@context': result['@context'],
+              ...result['@graph'][0]
+            };
+          }
         }
         return result;
       } else {
