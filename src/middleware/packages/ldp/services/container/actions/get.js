@@ -25,13 +25,14 @@ module.exports = {
       containerUri: { type: 'string' },
       accept: { type: 'string' },
       level: { type: 'number', default: 0 },
-      jsonContext: { type: 'multi', rules: [ { type: 'array' }, { type: 'object' }, { type: 'string' } ], optional: true }
+      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
       const { accept, containerUri, level, jsonContext } = ctx.params;
 
-      const query = level === 0
-        ? `
+      const query =
+        level === 0
+          ? `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
               <${containerUri}>
@@ -46,7 +47,7 @@ module.exports = {
               OPTIONAL { ?rS ?rP ?rO . }
             }
           `
-        : `
+          : `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
               <${containerUri}>

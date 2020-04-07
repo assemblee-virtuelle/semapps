@@ -8,7 +8,7 @@ const ActivityService = {
   settings: {
     containerUri: null, // To be set by the user
     level: 1,
-    context: 'https://www.w3.org/ns/activitystreams',
+    context: 'https://www.w3.org/ns/activitystreams'
   },
   hooks: {
     before: {
@@ -37,7 +37,7 @@ const ActivityService = {
   },
   methods: {
     idToCurrent(activityJson) {
-      if( activityJson.object ) {
+      if (activityJson.object) {
         const { id, ...object } = activityJson.object;
         return {
           ...activityJson,
@@ -51,7 +51,7 @@ const ActivityService = {
       }
     },
     currentToId(activityJson) {
-      if( activityJson.object ) {
+      if (activityJson.object) {
         const { current, ...object } = activityJson.object;
         return {
           ...activityJson,

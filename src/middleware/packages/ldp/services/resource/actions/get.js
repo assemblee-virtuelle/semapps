@@ -28,7 +28,7 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
       level: { type: 'number', default: 0 },
-      jsonContext: { type: 'multi', rules: [ { type: 'array' }, { type: 'object' }, { type: 'string' } ], optional: true }
+      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
       const { resourceUri, accept, webId, level, jsonContext } = ctx.params;
@@ -38,15 +38,16 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        const query = level === 0
-          ? `
+        const query =
+          level === 0
+            ? `
               ${getPrefixRdf(this.settings.ontologies)}
               CONSTRUCT
               WHERE {
                 <${resourceUri}> ?rP ?rO .
               }
             `
-          : `
+            : `
               ${getPrefixRdf(this.settings.ontologies)}
               CONSTRUCT  {
                  <${resourceUri}> ?rP ?rO .
@@ -66,7 +67,7 @@ module.exports = {
 
         // If we asked for JSON-LD, compact it using our ontologies in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          if( level === 0 ) {
+          if (level === 0) {
             result = await jsonld.compact(result, jsonContext || getPrefixJSON(this.settings.ontologies));
           } else {
             result = await jsonld.frame(result, {
