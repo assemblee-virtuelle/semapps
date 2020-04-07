@@ -29,9 +29,10 @@ module.exports = {
     },
     async handler(ctx) {
       const { accept, containerUri, expand, jsonContext } = ctx.params;
-      let constructOptions = '', whereOptions = '';
+      let constructOptions = '',
+        whereOptions = '';
 
-      if( expand ) {
+      if (expand) {
         constructOptions = `?rO ?srP ?srO .`;
         whereOptions = `
           OPTIONAL {
@@ -39,7 +40,7 @@ module.exports = {
             FILTER(?propsToExpand IN (${expand.join(', ')})) .
             ?rO ?srP ?srO .
           }
-        `
+        `;
       }
 
       const result = await ctx.call('triplestore.query', {
