@@ -1,7 +1,7 @@
 const ApiGatewayService = require('moleculer-web');
 const MongoDbAdapter = require('moleculer-db-adapter-mongo');
 
-const { LdpService, TripleStoreAdapter, Routes: LdpRoutes } = require('@semapps/ldp');
+const { LdpService, TripleStoreAdapter } = require('@semapps/ldp');
 const { SparqlEndpointService, Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const { ActivityPubService, Routes: ActivityPubRoutes } = require('@semapps/activitypub');
@@ -34,8 +34,9 @@ function createServices(broker) {
   // SOLiD
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers: ['ldp/object']
     }
   });
   broker.createService(SparqlEndpointService, {
@@ -53,8 +54,8 @@ function createServices(broker) {
     storage: {
       collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
       activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      actors: new TripleStoreAdapter('ldp'),
-      objects: new TripleStoreAdapter('ldp')
+      actors: new TripleStoreAdapter(),
+      objects: new TripleStoreAdapter()
     }
   });
 
@@ -66,10 +67,12 @@ function createServices(broker) {
         origin: '*',
         exposedHeaders: '*'
       },
-      routes: [...LdpRoutes, ...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes],
-      defaultLdpAccept: 'text/turtle'
+      routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes]
     },
+    dependencies: ['ldp'],
     async started() {
+      let routes = [];
+
       const findOrCreateProfile = async profileData => {
         return await this.broker.call('webid.create', profileData);
       };
@@ -104,7 +107,10 @@ function createServices(broker) {
 
       await this.connector.initialize();
 
-      this.addRoute(this.connector.getRoute());
+      routes.push(this.connector.getRoute());
+      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+
+      routes.forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {

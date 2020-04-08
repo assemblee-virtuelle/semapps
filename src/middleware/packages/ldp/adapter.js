@@ -2,9 +2,7 @@ const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 class TripleStoreAdapter {
-  constructor(ldpServiceName) {
-    this.ldpServiceName = ldpServiceName;
-  }
+  constructor() {}
 
   init(broker, service) {
     this.broker = broker;
@@ -37,9 +35,8 @@ class TripleStoreAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call(this.ldpServiceName + '.standardContainer', {
+    return this.broker.call('ldp.container.get', {
       containerUri: this.service.schema.settings.containerUri,
-      context: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
   }
@@ -55,7 +52,7 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    return this.broker.call(this.ldpServiceName + '.get', { resourceUri: _id, accept: MIME_TYPES.JSON });
+    return this.broker.call('ldp.resource.get', { resourceUri: _id, accept: MIME_TYPES.JSON });
   }
 
   /**
@@ -82,16 +79,16 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     return this.broker
-      .call(this.ldpServiceName + '.post', {
+      .call('ldp.resource.post', {
         containerUri: this.service.schema.settings.containerUri,
         resource: entity,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
       })
       .then(body => {
-        this.broker.call(this.ldpServiceName + '.attachToContainer', {
+        this.broker.call('ldp.container.attach', {
           containerUri: this.service.schema.settings.containerUri,
-          objectUri: body['@id']
+          resourceUri: body['@id']
         });
         return body;
       });
@@ -116,7 +113,7 @@ class TripleStoreAdapter {
    */
   updateById(_id, update) {
     const resource = update['$set'];
-    return this.broker.call(this.ldpServiceName + '.patch', {
+    return this.broker.call('ldp.resource.patch', {
       resource: {
         '@context': this.service.schema.settings.context,
         '@id': _id,
@@ -138,7 +135,7 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id) {
-    return this.broker.call(this.ldpServiceName + '.delete', {
+    return this.broker.call('ldp.resource.delete', {
       resourceUri: _id
     });
   }

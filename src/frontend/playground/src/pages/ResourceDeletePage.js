@@ -8,14 +8,13 @@ import resourcesTypes from '../resourcesTypes';
 const ResourceDeletePage = ({ type, resourceId, navigate }) => {
   useAuth({ force: true });
   const resourceConfig = resourcesTypes[type];
-  const resourceUri = `${resourceConfig.container}/${resourceId}`;
+  const resourceUri = resourceConfig.container + resourceId;
   const dispatch = useDispatch();
 
   const remove = useCallback(async () => {
     await fetch(resourceUri, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     });

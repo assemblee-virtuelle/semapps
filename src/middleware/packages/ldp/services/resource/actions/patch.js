@@ -2,12 +2,12 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    let { typeURL, resourceId } = ctx.params;
-    const resourceUri = `${this.settings.baseUrl}${typeURL}/${resourceId}`;
+    const { typeURL, resourceId, containerUri } = ctx.params;
+    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
     const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
-      await ctx.call('ldp.patch', {
+      await ctx.call('ldp.resource.patch', {
         resource: body,
         accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type']
@@ -18,6 +18,7 @@ module.exports = {
         'Content-Length': 0
       };
     } catch (e) {
+      console.error(e);
       ctx.meta.$statusCode = e.code || 500;
       ctx.meta.$statusMessage = e.message;
     }
@@ -47,7 +48,7 @@ module.exports = {
           contentType: contentType
         });
 
-        return await ctx.call('ldp.get', {
+        return await ctx.call('ldp.resource.get', {
           resourceUri: resource['@id'],
           accept: accept
         });

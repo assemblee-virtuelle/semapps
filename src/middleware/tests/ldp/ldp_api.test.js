@@ -1,5 +1,5 @@
 const { ServiceBroker } = require('moleculer');
-const { LdpService, Routes: LdpRoutes } = require('@semapps/ldp');
+const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
 const express = require('express');
 const supertest = require('supertest');
@@ -26,8 +26,9 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers: ['resources']
     }
   });
 
@@ -39,9 +40,13 @@ beforeAll(async () => {
       cors: {
         origin: '*',
         exposedHeaders: '*'
-      },
-      routes: [...LdpRoutes],
-      defaultLdpAccept: 'text/turtle'
+      }
+    },
+    dependencies: ['ldp'],
+    async started() {
+      let routes = [];
+      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+      routes.forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -65,24 +70,23 @@ afterAll(async () => {
 
 describe('CRUD Project', () => {
   let projet1;
-  const containerUrl = `/ldp/pair:Project`;
+  const containerUrl = '/resources';
 
   test('Create project', async () => {
-    const body = {
-      '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-      },
-      '@type': 'Project',
-      description: 'myProject',
-      label: 'myLabel'
-    };
-
     const postResponse = await expressMocked
       .post(containerUrl)
-      .send(body)
+      .send({
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Project',
+        description: 'myProject',
+        label: 'myLabel'
+      })
       .set('content-type', 'application/json');
 
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
+    expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
     projet1 = response.body;
@@ -99,7 +103,8 @@ describe('CRUD Project', () => {
 
   test('Get Many project', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
-    expect(response.body['ldp:contains'].filter(p => p['@id'] == projet1['@id']).length).toBe(1);
+
+    expect(response.body['ldp:contains']['@id']).toBe(projet1['@id']);
   }, 20000);
 
   test('Update One Project', async () => {
@@ -110,7 +115,7 @@ describe('CRUD Project', () => {
       description: 'myProjectUpdated'
     };
 
-    const postResponse = await expressMocked
+    await expressMocked
       .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
       .set('content-type', 'application/json');

@@ -5,7 +5,7 @@ import { getResourceId } from './utils';
 
 const ResourcePreview = ({ resourceUri, type }) => {
   const { data: resource } = useQuery(resourceUri);
-  const resourceId = resource && getResourceId(resourceUri, type);
+  const resourceId = resource && getResourceId(resourceUri);
   return (
     resource &&
     resourceId && (

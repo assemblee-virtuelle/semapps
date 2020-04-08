@@ -24,7 +24,7 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
+      baseUrl: CONFIG.HOME_URL,
       ontologies
     }
   });
