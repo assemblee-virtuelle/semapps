@@ -53,8 +53,8 @@ const ActorService = {
       await this.broker.call('activitypub.actor.update', {
         '@id': userData['@id'],
         '@type': ['Person', 'foaf:Person'],
-        preferredUsername: userData.nick,
-        name: userData.name + ' ' + userData.familyName
+        preferredUsername: userData['foaf:nick'],
+        name: userData['foaf:name'] + ' ' + userData['foaf:familyName']
       });
 
       // We must do that here, as the post-create hooks are not called

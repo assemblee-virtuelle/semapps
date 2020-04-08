@@ -15,11 +15,11 @@ const objectCurrentToId = activityJson => {
 
 const objectIdToCurrent = activityJson => {
   if (activityJson.object && typeof activityJson.object === 'object') {
-    const { id, ...object } = activityJson.object;
+    const { id, '@id': arobaseId, ...object } = activityJson.object;
     return {
       ...activityJson,
       object: {
-        current: id,
+        current: id || arobaseId,
         ...object
       }
     };

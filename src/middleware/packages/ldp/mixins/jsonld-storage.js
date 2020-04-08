@@ -1,13 +1,12 @@
 const DbService = require('moleculer-db');
 const uuid = require('uuid/v1');
-const jsonld = require('jsonld');
 const getApiRoutes = require('../routes/getApiRoutes');
 
 const JsonLdStorageMixin = {
   mixins: [DbService],
-  settings: {
-    idField: '@id' // Use @id as the main ID field (used by MongoDB)
-  },
+  // settings: {
+  //   idField: '@id' // Use @id as the main ID field (used by MongoDB)
+  // },
   actions: {
     async get(ctx) {
       // Bypass the default action, to avoid thrown errors
@@ -76,17 +75,6 @@ const JsonLdStorageMixin = {
           }
         }
       ]
-    },
-    after: {
-      create: [(ctx, res) => ctx.service.compactJson(res)]
-      // get: [(ctx, res) => ctx.service.compactJson(res)]
-    }
-  },
-  methods: {
-    compactJson(res) {
-      return jsonld.compact(res, {
-        '@context': this.settings.context
-      });
     }
   }
 };

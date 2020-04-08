@@ -33,8 +33,6 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri, accept, webId, expand, jsonContext } = ctx.params;
 
-      console.log('COUNT TRIPLES OF', resourceUri);
-
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });
@@ -83,8 +81,6 @@ module.exports = {
             ...result['@graph'][0]
           };
         }
-
-        console.log('RESULT', resourceUri, result);
 
         return result;
       } else {

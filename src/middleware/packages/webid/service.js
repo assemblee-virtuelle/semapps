@@ -26,7 +26,7 @@ const WebIdService = {
           familyName,
           homepage
         };
-        let newPerson = await ctx.call('ldp.resource.post', {
+        webId = await ctx.call('ldp.resource.post', {
           resource: {
             '@context': {
               '@vocab': 'http://xmlns.com/foaf/0.1/'
@@ -36,11 +36,14 @@ const WebIdService = {
           },
           slug: nick,
           containerUri: this.settings.usersContainer,
-          accept: MIME_TYPES.JSON,
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          contentType: MIME_TYPES.JSON
         });
-        webId = newPerson['@id'];
+
+        let newPerson = await ctx.call('ldp.resource.get', {
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON
+        });
+        
         ctx.emit('webid.created', newPerson);
       }
 

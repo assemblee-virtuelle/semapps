@@ -33,25 +33,21 @@ module.exports = {
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      let resource = ctx.params.resource;
-      const accept = ctx.params.accept;
-      const contentType = ctx.params.contentType;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resource, accept, contentType, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resource['@id']
       });
       if (triplesNb > 0) {
         await ctx.call('triplestore.patch', {
-          resource: resource,
-          contentType: contentType
+          resource,
+          contentType
         });
 
         return await ctx.call('ldp.resource.get', {
           resourceUri: resource['@id'],
-          accept: accept
+          accept,
+          webId
         });
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
