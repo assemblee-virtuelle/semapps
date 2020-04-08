@@ -140,8 +140,14 @@ class TripleStoreAdapter {
         '@id': _id,
         ...resource
       },
-      accept: MIME_TYPES.JSON,
       contentType: MIME_TYPES.JSON
+    }).then(resourceUri => {
+      return this.broker.call(this.resourceService + '.get', {
+        resourceUri,
+        expand: this.service.schema.settings.expand,
+        jsonContext: this.service.schema.settings.context,
+        accept: MIME_TYPES.JSON
+      });
     });
   }
 

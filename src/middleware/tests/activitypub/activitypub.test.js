@@ -1,8 +1,10 @@
 const { ServiceBroker } = require('moleculer');
-const MongoDbAdapter = require('moleculer-db-adapter-mongo');
+const { TripleStoreService } = require('@semapps/triplestore');
+const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService } = require('@semapps/activitypub');
 const EventsWatcher = require('../middleware/EventsWatcher');
-const CONFIG = require('./config');
+const CONFIG = require('../config');
+const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 
@@ -11,24 +13,29 @@ const broker = new ServiceBroker({
 });
 
 beforeAll(async () => {
+  broker.createService(TripleStoreService, {
+    settings: {
+      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
+      mainDataset: CONFIG.MAIN_DATASET,
+      jenaUser: CONFIG.JENA_USER,
+      jenaPassword: CONFIG.JENA_PASSWORD
+    }
+  });
+  broker.createService(LdpService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL + 'ldp/',
+      ontologies
+    }
+  });
   broker.createService(ActivityPubService, {
     settings: {
       baseUri: CONFIG.HOME_URL,
-      storage: {
-        collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
-        activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-        actors: new MongoDbAdapter(CONFIG.MONGODB_URL),
-        objects: new MongoDbAdapter(CONFIG.MONGODB_URL)
-      }
+      additionalContext: getPrefixJSON(ontologies)
     }
   });
 
   await broker.start();
-
-  await broker.call('activitypub.activity.clear');
-  await broker.call('activitypub.actor.clear');
-  await broker.call('activitypub.collection.clear');
-  await broker.call('activitypub.object.clear');
+  await broker.call('triplestore.dropAll');
 });
 
 afterAll(async () => {
@@ -59,9 +66,9 @@ describe('Posting to followers', () => {
     const result = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: sebastien['@id'],
+      actor: sebastien.id,
       type: 'Follow',
-      object: simon['@id']
+      object: simon.id
     });
 
     // Wait for actor to be added to the followers collection
@@ -75,7 +82,7 @@ describe('Posting to followers', () => {
       username: simon.preferredUsername
     });
 
-    expect(result.items).toContain(sebastien['@id']);
+    expect(result.items).toContain(sebastien.id);
   });
 
   test('Send message to followers', async () => {
@@ -84,7 +91,7 @@ describe('Posting to followers', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Note',
       name: 'Hello World',
-      attributedTo: simon['@id'],
+      attributedTo: simon.id,
       to: [simon.followers],
       content: 'Voilà mon premier message, très content de faire partie du fedivers !'
     });

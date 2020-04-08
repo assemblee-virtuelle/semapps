@@ -5,11 +5,10 @@ const express = require('express');
 const supertest = require('supertest');
 const ApiGatewayService = require('moleculer-web');
 const EventsWatcher = require('../middleware/EventsWatcher');
-const CONFIG = require('./config');
-const ontologies = require('./ontologies');
+const CONFIG = require('../config');
+const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
-const transporter = null;
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
 });
@@ -60,6 +59,7 @@ beforeAll(async () => {
   app.use(apiGateway.express());
 
   await broker.start();
+  await broker.call('triplestore.dropAll');
 
   expressMocked = supertest(app);
 });
@@ -104,7 +104,7 @@ describe('CRUD Project', () => {
   test('Get Many project', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
 
-    expect(response.body['ldp:contains']['@id']).toBe(projet1['@id']);
+    expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);
   }, 20000);
 
   test('Update One Project', async () => {

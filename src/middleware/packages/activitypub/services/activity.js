@@ -27,7 +27,6 @@ const ActivityService = {
       ],
       create: [
         function currentToId(ctx, activityJson) {
-          console.log(activityJson);
           return objectCurrentToId(activityJson);
         }
       ],

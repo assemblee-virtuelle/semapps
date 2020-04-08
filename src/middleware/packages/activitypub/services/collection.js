@@ -70,15 +70,21 @@ const CollectionService = {
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param id The full URI of the collection
+     * @param dereferenceItems Should we dereference the items in the collection ?
+     * @param expand Array of items' properties we want to expand
      */
     async get(ctx) {
-      const { id, expand } = ctx.params;
+      const { id, dereferenceItems = false, expand } = ctx.params;
       let constructOptions = '',
         whereOptions = '';
 
-      if (expand) {
-        constructOptions = `?iO ?siP ?siO .`;
-        whereOptions = `
+      if( dereferenceItems ) {
+        constructOptions = `?item ?iP ?iO .`;
+        whereOptions = `?item ?iP ?iO .`;
+
+        if (expand) {
+          constructOptions += `?iO ?siP ?siO .`;
+          whereOptions += `
           OPTIONAL {
             ?item ?propsToExpand ?iO .
             FILTER(?propsToExpand IN (${expand.join(', ')})) .
@@ -87,6 +93,7 @@ const CollectionService = {
             ?iO ?siP ?siO .
           }
         `;
+        }
       }
 
       let result = await ctx.call('triplestore.query', {
@@ -95,14 +102,12 @@ const CollectionService = {
           CONSTRUCT {
             <${id}> a ?type ;
               as:items ?item .
-            ?item ?iP ?iO .
             ${constructOptions}
           }
           WHERE {
             <${id}> a ?type .
             OPTIONAL { 
               <${id}> as:items ?item .
-              ?item ?iP ?iO .
               ${whereOptions}
             }
           }

@@ -14,8 +14,9 @@ const ActivityPubService = {
   },
   dependencies: ['ldp'],
   created() {
-    let context = ['https://www.w3.org/ns/activitystreams'];
-    if (this.settings.additionalContext) context.push(this.settings.additionalContext);
+    const context = this.settings.additionalContext
+      ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
+      : 'https://www.w3.org/ns/activitystreams';
 
     this.broker.createService(CollectionService, {
       settings: {

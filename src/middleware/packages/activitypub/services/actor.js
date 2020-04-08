@@ -35,7 +35,7 @@ const ActorService = {
     after: {
       create: [
         function attachCollections(ctx, res) {
-          return ctx.call('activitypub.actor.attachCollections', { actorUri: res['@id'] });
+          return ctx.call('activitypub.actor.attachCollections', { actorUri: res.id });
         },
         function emitEvent(ctx, res) {
           // TODO set this on the JsonLdStorageMixin

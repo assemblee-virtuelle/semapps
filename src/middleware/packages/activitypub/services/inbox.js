@@ -1,4 +1,5 @@
 const { PUBLIC_URI } = require('../constants');
+const { objectCurrentToId } = require('../functions');
 
 const InboxService = {
   name: 'activitypub.inbox',
@@ -40,11 +41,16 @@ const InboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getInboxUri(ctx.params.username)
+        id: this.getInboxUri(ctx.params.username),
+        dereferenceItems: true,
+        expand: ['as:object']
       });
 
       if (collection) {
-        return collection;
+        return {
+          ...collection,
+          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
+        };
       } else {
         ctx.meta.$statusCode = 404;
       }

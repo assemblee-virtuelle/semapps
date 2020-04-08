@@ -4,7 +4,10 @@ const WebIdService = {
   name: 'webid',
   dependencies: ['ldp.resource', 'triplestore'],
   settings: {
-    usersContainer: null
+    usersContainer: null,
+    context: {
+      'foaf': 'http://xmlns.com/foaf/0.1/'
+    }
   },
   actions: {
     /**
@@ -41,7 +44,9 @@ const WebIdService = {
 
         let newPerson = await ctx.call('ldp.resource.get', {
           resourceUri: webId,
-          accept: MIME_TYPES.JSON
+          accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
+          webId
         });
 
         ctx.emit('webid.created', newPerson);
@@ -56,7 +61,7 @@ const WebIdService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
-          contentType: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
           webId: webId
         });
       } else {

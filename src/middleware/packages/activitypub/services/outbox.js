@@ -64,6 +64,7 @@ const OutboxService = {
 
       const collection = await ctx.call('activitypub.collection.get', {
         id: this.getOutboxUri(ctx.params.username),
+        dereferenceItems: true,
         expand: ['as:object']
       });
 

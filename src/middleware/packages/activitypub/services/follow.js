@@ -11,7 +11,8 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.actorsContainer}${ctx.params.username}/followers`
+        id: `${this.settings.actorsContainer}${ctx.params.username}/followers`,
+        dereferenceItems: false
       });
 
       if (collection) {
@@ -24,7 +25,8 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.actorsContainer}${ctx.params.username}/following`
+        id: `${this.settings.actorsContainer}${ctx.params.username}/following`,
+        dereferenceItems: false
       });
 
       if (collection) {

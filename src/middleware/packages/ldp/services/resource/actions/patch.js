@@ -4,13 +4,11 @@ module.exports = {
   api: async function api(ctx) {
     const { typeURL, id, containerUri } = ctx.params;
     const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
       await ctx.call('ldp.resource.patch', {
         resource: body,
-        accept,
         contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
@@ -29,26 +27,23 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string' },
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType, webId } = ctx.params;
+      const { resource, contentType, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resource['@id']
       });
+
       if (triplesNb > 0) {
         await ctx.call('triplestore.patch', {
           resource,
-          contentType
-        });
-
-        return await ctx.call('ldp.resource.get', {
-          resourceUri: resource['@id'],
-          accept,
+          contentType,
           webId
         });
+
+        return resource['@id'];
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
