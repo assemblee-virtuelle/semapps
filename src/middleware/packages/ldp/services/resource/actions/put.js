@@ -7,7 +7,7 @@ module.exports = {
     const body = ctx.meta.body;
     body['@id'] = resourceUri;
     try {
-      await ctx.call('ldp.resource.patch', {
+      await ctx.call('ldp.resource.put', {
         resource: body,
         accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type']
@@ -43,9 +43,12 @@ module.exports = {
         uri: resource['@id']
       });
       if (triplesNb > 0) {
-        await ctx.call('triplestore.patch', {
-          resource: resource,
-          contentType: contentType
+        await ctx.call('triplestore.delete', {
+          uri: resource['@id']
+        });
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType
         });
 
         return await ctx.call('ldp.resource.get', {

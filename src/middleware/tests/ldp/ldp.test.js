@@ -87,11 +87,14 @@ describe('CRUD Project', () => {
     };
     const updatedProject = await broker.call('ldp.resource.patch', urlParamsPatch);
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBe('myTitle');
+
     const updatedPersistProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: projet1['@id']
     });
     expect(updatedPersistProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBe('myTitle');
   }, 20000);
 
   test('Get One project turtle', async () => {
@@ -121,6 +124,31 @@ describe('CRUD Project', () => {
     expect(newProject).toMatch(
       new RegExp(`<${projet1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
     );
+  }, 20000);
+
+  test('Replace One Project', async () => {
+    const urlParamsPut = {
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@id': projet1['@id'],
+        description: 'myProjectUpdated'
+      },
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    };
+    const updatedProject = await broker.call('ldp.resource.put', urlParamsPut);
+    expect(updatedProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBe(undefined);
+    console.log(updatedProject);
+
+    const updatedPersistProject = await broker.call('ldp.resource.get', {
+      accept: MIME_TYPES.JSON,
+      resourceUri: projet1['@id']
+    });
+    expect(updatedPersistProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBe(undefined);
   }, 20000);
 
   test('Delete project', async () => {

@@ -34,7 +34,7 @@ module.exports = {
       if (ctx.params.webId) {
         ctx.meta.webId = ctx.params.webId;
       }
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resourceUri
       });
 

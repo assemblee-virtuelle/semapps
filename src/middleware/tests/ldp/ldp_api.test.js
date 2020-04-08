@@ -124,6 +124,27 @@ describe('CRUD Project', () => {
       .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
+    expect(response.body['pair:label']).toBe('myLabel');
+  }, 20000);
+
+  test('Replace One Project', async () => {
+    const body = {
+      '@context': {
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+      },
+      description: 'myProjectUpdated'
+    };
+
+    await expressMocked
+      .put(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/json');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:description']).toBe('myProjectUpdated');
+    expect(response.body['pair:label']).toBe(undefined);
   }, 20000);
 
   test('Delete project', async () => {

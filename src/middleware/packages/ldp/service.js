@@ -58,6 +58,11 @@ module.exports = {
           addContainerUriMiddleware(containerPath),
           'ldp.resource.api_patch'
         ];
+
+        securedRoutes['PUT ' + containerPath + '/:resourceId'] = [
+          addContainerUriMiddleware(containerPath),
+          'ldp.resource.api_put'
+        ];
       });
 
       // TODO put legacy "automatic container" on another service
