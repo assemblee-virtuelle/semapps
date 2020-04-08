@@ -12,12 +12,14 @@ const broker = new ServiceBroker({
 
 beforeAll(async () => {
   broker.createService(ActivityPubService, {
-    baseUri: CONFIG.HOME_URL,
-    storage: {
-      collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      actors: new MongoDbAdapter(CONFIG.MONGODB_URL),
-      objects: new MongoDbAdapter(CONFIG.MONGODB_URL)
+    settings: {
+      baseUri: CONFIG.HOME_URL,
+      storage: {
+        collections: new MongoDbAdapter(CONFIG.MONGODB_URL),
+        activities: new MongoDbAdapter(CONFIG.MONGODB_URL),
+        actors: new MongoDbAdapter(CONFIG.MONGODB_URL),
+        objects: new MongoDbAdapter(CONFIG.MONGODB_URL)
+      }
     }
   });
 
