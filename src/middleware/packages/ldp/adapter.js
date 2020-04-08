@@ -153,6 +153,10 @@ class TripleStoreAdapter {
   removeById(_id) {
     return this.broker.call('ldp.resource.delete', {
       resourceUri: _id
+    }).then(() => {
+      // We must return the number of deleted resource
+      // Otherwise the DB adapter returns an error
+      return 1;
     });
   }
 
