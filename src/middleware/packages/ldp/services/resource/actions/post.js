@@ -54,7 +54,7 @@ module.exports = {
       resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
-      if( !resource['@context'] ) {
+      if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
 
