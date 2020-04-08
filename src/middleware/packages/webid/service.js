@@ -6,7 +6,7 @@ const WebIdService = {
   settings: {
     usersContainer: null,
     context: {
-      'foaf': 'http://xmlns.com/foaf/0.1/'
+      foaf: 'http://xmlns.com/foaf/0.1/'
     }
   },
   actions: {

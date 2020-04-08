@@ -134,21 +134,23 @@ class TripleStoreAdapter {
    */
   updateById(_id, update) {
     const resource = update['$set'];
-    return this.broker.call(this.resourceService + '.patch', {
-      resource: {
-        '@context': this.service.schema.settings.context,
-        '@id': _id,
-        ...resource
-      },
-      contentType: MIME_TYPES.JSON
-    }).then(resourceUri => {
-      return this.broker.call(this.resourceService + '.get', {
-        resourceUri,
-        expand: this.service.schema.settings.expand,
-        jsonContext: this.service.schema.settings.context,
-        accept: MIME_TYPES.JSON
+    return this.broker
+      .call(this.resourceService + '.patch', {
+        resource: {
+          '@context': this.service.schema.settings.context,
+          '@id': _id,
+          ...resource
+        },
+        contentType: MIME_TYPES.JSON
+      })
+      .then(resourceUri => {
+        return this.broker.call(this.resourceService + '.get', {
+          resourceUri,
+          expand: this.service.schema.settings.expand,
+          jsonContext: this.service.schema.settings.context,
+          accept: MIME_TYPES.JSON
+        });
       });
-    });
   }
 
   /**
