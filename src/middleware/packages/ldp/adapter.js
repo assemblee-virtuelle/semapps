@@ -93,15 +93,20 @@ class TripleStoreAdapter {
       .call('ldp.resource.post', {
         containerUri: this.service.schema.settings.containerUri,
         resource: entity,
-        contentType: MIME_TYPES.JSON,
-        accept: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON
       })
-      .then(body => {
+      .then(resourceUri => {
         this.broker.call('ldp.container.attach', {
           containerUri: this.service.schema.settings.containerUri,
-          resourceUri: body['@id']
+          resourceUri
         });
-        return body;
+
+        return this.broker.call('ldp.resource.get', {
+          resourceUri,
+          expand: this.service.schema.settings.expand,
+          jsonContext: this.service.schema.settings.context,
+          accept: MIME_TYPES.JSON
+        });
       });
   }
 

@@ -26,24 +26,22 @@ const OutboxService = {
       }
 
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        const object = await ctx.call('activitypub.object.create', activity);
-
-        const { to, attributedTo, '@context': context } = activity;
+        let { to, '@context': context, '@id': id, ...object } = activity;
+        object = await ctx.call('activitypub.object.create', object);
         activity = {
           '@context': context,
-          '@type': 'Create',
+          type: ACTIVITY_TYPES.CREATE,
           to,
-          actor: attributedTo,
+          actor: object.attributedTo,
           object
         };
+      } else if (activityType === ACTIVITY_TYPES.CREATE) {
+        activity.object = await ctx.call('activitypub.object.create', activity.object);
+      } else if (activityType === ACTIVITY_TYPES.UPDATE) {
+        activity.object = await ctx.call('activitypub.object.update', activity.object);
+      } else if (activityType === ACTIVITY_TYPES.DELETE) {
+        await ctx.call('activitypub.object.remove', { id: activity.object });
       }
-      // if (activityType === ACTIVITY_TYPES.CREATE) {
-      //
-      // } else if (activityType === ACTIVITY_TYPES.UPDATE) {
-      //   await ctx.call('activitypub.object.update', activity.object);
-      // } else if (activityType === ACTIVITY_TYPES.DELETE) {
-      //   await ctx.call('activitypub.object.remove', { id: activity.object });
-      // }
 
       // Use the current time for the activity's publish date
       // This will be used to order the ordered collections

@@ -26,6 +26,12 @@ const ActivityService = {
           return objectCurrentToId(activityJson);
         }
       ],
+      create: [
+        function currentToId(ctx, activityJson) {
+          console.log(activityJson);
+          return objectCurrentToId(activityJson);
+        }
+      ],
       find: [
         function currentToId(ctx, containerJson) {
           return {
@@ -34,6 +40,14 @@ const ActivityService = {
           };
         }
       ]
+    }
+  },
+  actions: {
+    update() {
+      throw new Error('Updating activities is not allowed')
+    },
+    remove() {
+      throw new Error('Removing activities is not allowed')
     }
   }
 };
