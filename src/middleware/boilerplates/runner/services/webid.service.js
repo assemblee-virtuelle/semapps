@@ -7,9 +7,6 @@ module.exports = {
   mixins: [WebIdService],
   settings: {
     usersContainer: CONFIG.HOME_URL + 'users/',
-    context: [
-      'https://www.w3.org/ns/activitystreams',
-      getPrefixJSON(ontologies)
-    ]
+    context: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
   }
 };

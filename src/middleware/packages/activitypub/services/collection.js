@@ -78,7 +78,7 @@ const CollectionService = {
       let constructOptions = '',
         whereOptions = '';
 
-      if( dereferenceItems ) {
+      if (dereferenceItems) {
         constructOptions = `?item ?iP ?iO .`;
         whereOptions = `?item ?iP ?iO .`;
 

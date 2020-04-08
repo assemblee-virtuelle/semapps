@@ -87,7 +87,10 @@ describe('CRUD Project', () => {
     };
 
     await broker.call('ldp.resource.patch', urlParamsPatch);
-    const updatedProject = await broker.call('ldp.resource.get', { resourceUri: project1['@id'], accept: MIME_TYPES.JSON });
+    const updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
 
     const updatedPersistProject = await broker.call('ldp.resource.get', {
