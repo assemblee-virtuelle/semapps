@@ -1,8 +1,11 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-const TripleStoreCollectionService = {
+const CollectionService = {
   name: 'activitypub.collection',
+  settings: {
+    context: 'https://www.w3.org/ns/activitystreams'
+  },
   dependencies: ['triplestore'],
   actions: {
     /*
@@ -79,6 +82,8 @@ const TripleStoreCollectionService = {
           OPTIONAL {
             ?item ?propsToExpand ?iO .
             FILTER(?propsToExpand IN (${expand.join(', ')})) .
+            # We don't want to expand URIs as it creates problems when compacting
+            FILTER(!(isIRI(?iO))) .
             ?iO ?siP ?siO .
           }
         `;
@@ -106,7 +111,7 @@ const TripleStoreCollectionService = {
       });
 
       result = await jsonld.frame(result, {
-        '@context': 'https://www.w3.org/ns/activitystreams',
+        '@context': this.settings.context,
         '@id': id
       });
 
@@ -138,4 +143,4 @@ const TripleStoreCollectionService = {
   }
 };
 
-module.exports = TripleStoreCollectionService;
+module.exports = CollectionService;

@@ -2,7 +2,10 @@ const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 class TripleStoreAdapter {
-  constructor() {}
+  constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container'} = {}) {
+    this.resourceService = resourceService;
+    this.containerService = containerService;
+  }
 
   init(broker, service) {
     this.broker = broker;
@@ -14,12 +17,14 @@ class TripleStoreAdapter {
       throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
     }
 
+    await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
+
     const containerUri = this.service.schema.settings.containerUri;
-    const exists = await this.broker.call('ldp.container.exist', { containerUri });
+    const exists = await this.broker.call(this.containerService + '.exist', { containerUri });
 
     if (!exists) {
       console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call('ldp.container.create', { containerUri });
+      await this.broker.call(this.containerService + '.create', { containerUri });
     }
   }
 
@@ -39,7 +44,7 @@ class TripleStoreAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call('ldp.container.get', {
+    return this.broker.call(this.resourceService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
       expand: this.service.schema.settings.expand,
       jsonContext: this.service.schema.settings.context,
@@ -58,7 +63,7 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    return this.broker.call('ldp.resource.get', {
+    return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
       expand: this.service.schema.settings.expand,
       jsonContext: this.service.schema.settings.context,
@@ -90,18 +95,18 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     return this.broker
-      .call('ldp.resource.post', {
+      .call(this.resourceService + '.post', {
         containerUri: this.service.schema.settings.containerUri,
         resource: entity,
         contentType: MIME_TYPES.JSON
       })
       .then(resourceUri => {
-        this.broker.call('ldp.container.attach', {
+        this.broker.call(this.containerService + '.attach', {
           containerUri: this.service.schema.settings.containerUri,
           resourceUri
         });
 
-        return this.broker.call('ldp.resource.get', {
+        return this.broker.call(this.resourceService + '.get', {
           resourceUri,
           expand: this.service.schema.settings.expand,
           jsonContext: this.service.schema.settings.context,
@@ -129,7 +134,7 @@ class TripleStoreAdapter {
    */
   updateById(_id, update) {
     const resource = update['$set'];
-    return this.broker.call('ldp.resource.patch', {
+    return this.broker.call(this.resourceService + '.patch', {
       resource: {
         '@context': this.service.schema.settings.context,
         '@id': _id,
@@ -151,7 +156,7 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id) {
-    return this.broker.call('ldp.resource.delete', {
+    return this.broker.call(this.resourceService + '.delete', {
       resourceUri: _id
     }).then(() => {
       // We must return the number of deleted resource

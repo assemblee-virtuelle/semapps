@@ -107,7 +107,7 @@ const WebIdService = {
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
           SELECT ?webId
           WHERE {
-            ?webId rdf:type "foaf:Person" ;
+            ?webId rdf:type foaf:Person ;
                    foaf:email "${email}" .
           }
         `,

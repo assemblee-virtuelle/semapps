@@ -1,10 +1,9 @@
-const { JsonLdStorageMixin } = require('@semapps/ldp');
+const { JsonLdStorageMixin, TripleStoreAdapter } = require('@semapps/ldp');
 
 const ObjectService = {
   name: 'activitypub.object',
   mixins: [JsonLdStorageMixin],
-  adapter: null, // To be set by the user
-  collection: 'objects',
+  adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null, // To be set by the user
     context: 'https://www.w3.org/ns/activitystreams'

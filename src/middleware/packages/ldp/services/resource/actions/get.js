@@ -47,6 +47,8 @@ module.exports = {
             OPTIONAL {
               ?item ?propsToExpand ?rO .
               FILTER(?propsToExpand IN (${expand.join(', ')})) .
+              # We don't want to expand URIs as it creates problems when compacting
+              FILTER(!(isIRI(?rO))) .
               ?rO ?srP ?srO .
             }
           `;
