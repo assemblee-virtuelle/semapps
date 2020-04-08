@@ -9,12 +9,16 @@
 # Ou trouver la documentation docusaurus
 - https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs
   - On y trouve les **fichiers de documentation** (gouvernance, participer, documentation) sont dans website/docs 
+    => j'y ai trouvé les répertoires governance, packages et participate et le fichier style-guide.md
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js
   - On y trouve le **menu**, le **header** et le **footer**
+    => On y trouve le **menu** (navbar), le **header** (title et tagline) et le **footer**
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js
   - On y trouve les textes et images de la page d'accueil
+    => On y trouve le contenu du corps de la page d'accueil et du bouton (Commencer) ?
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js
   - On y trouve les pages apparaissant dans la sidebar
+    => j'en vois qu'une seule, je suppose que la page hello serait mise au même endroit (sidebars.js)
   
 # Comment contribuer à la documentation
 
@@ -26,6 +30,8 @@
 ## Modifier une page du docusaurus**
 Rendez-vous à l'endroit pertinent en vous référant au paragraphe ci-dessus. 
 - Si c'est une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page, puis "commitez" sur la branche __Master__. Décrivez votre modification à l'endroit réservé à cet effet. 
+    => Si c'est une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page depuis la branche __Master__ puis "commitez". Décrivez votre modification à l'endroit réservé à cet effet. 
+        Pour l'exemple, j'ai "Commit directly to the master branch" la modif "title: Comment participerons-nous ???" (j'avais déjà fait avec apparition puis disparition de la modif dans le wiki)  
 - Si c'est une modification substantielle : 
   - effectuez la modification en éditant la page, 
   - "commitez" ensuite sur une nouvelle branche que vous pourrez nommer de manière explicite.
@@ -40,5 +46,6 @@ Rendez-vous à l'endroit pertinent en vous référant au paragraphe ci-dessus.
   title: [le titre de votre page]
   ---
   ```
+    => J'ai cru qu'il fallait ajouter les " ```" bêtement - Penser à ajouter l'extension md.
 - Commitez et faites un pull request sur une branche dédiée. 
 - Une fois validée par les reviewers que vous aurez identifié, mergez la pull request sur la branche master. 
