@@ -46,21 +46,9 @@ const JsonLdStorageMixin = {
             }
           }
           return ctx;
-        },
-        function addContext(ctx) {
-          if (!ctx.params['@context']) {
-            ctx.params['@context'] = ctx.service.schema.settings.context;
-          }
-          return ctx;
         }
       ],
       update: [
-        function addContext(ctx) {
-          if (!ctx.params['@context']) {
-            ctx.params['@context'] = ctx.service.schema.settings.context;
-          }
-          return ctx;
-        },
         function useUriAsId(ctx) {
           const idField = ctx.params['@id'] ? '@id' : 'id';
           if (ctx.params[idField] && !ctx.params[idField].startsWith('http')) {

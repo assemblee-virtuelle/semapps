@@ -1,3 +1,4 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { generateId } = require('../../../utils');
 
@@ -52,6 +53,10 @@ module.exports = {
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
+
+      if( !resource['@context'] ) {
+        throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
+      }
 
       await ctx.call('triplestore.insert', {
         resource,

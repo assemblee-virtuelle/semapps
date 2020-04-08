@@ -48,12 +48,14 @@ describe('Posting to followers', () => {
   test('Create actor directly', async () => {
     sebastien = await broker.call('activitypub.actor.create', {
       slug: 'srosset81',
+      '@context': 'https://www.w3.org/ns/activitystreams',
       preferredUsername: 'srosset81',
       name: 'Sébastien Rosset'
     });
 
     simon = await broker.call('activitypub.actor.create', {
       slug: 'simonLouvet',
+      '@context': 'https://www.w3.org/ns/activitystreams',
       preferredUsername: 'simonLouvet',
       name: 'Simon Louvet'
     });

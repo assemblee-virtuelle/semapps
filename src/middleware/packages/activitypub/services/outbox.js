@@ -26,10 +26,10 @@ const OutboxService = {
       }
 
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        let { to, '@context': context, '@id': id, ...object } = activity;
+        let { to, '@id': id, ...object } = activity;
         object = await ctx.call('activitypub.object.create', object);
         activity = {
-          '@context': context,
+          '@context': object['@context'],
           type: ACTIVITY_TYPES.CREATE,
           to,
           actor: object.attributedTo,
