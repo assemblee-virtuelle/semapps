@@ -70,9 +70,10 @@ const TripleStoreCollectionService = {
      */
     async get(ctx) {
       const { id, expand } = ctx.params;
-      let constructOptions = '', whereOptions = '';
+      let constructOptions = '',
+        whereOptions = '';
 
-      if( expand ) {
+      if (expand) {
         constructOptions = `?iO ?siP ?siO .`;
         whereOptions = `
           OPTIONAL {
@@ -80,7 +81,7 @@ const TripleStoreCollectionService = {
             FILTER(?propsToExpand IN (${expand.join(', ')})) .
             ?iO ?siP ?siO .
           }
-        `
+        `;
       }
 
       let result = await ctx.call('triplestore.query', {

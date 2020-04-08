@@ -40,9 +40,10 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        let constructOptions = '', whereOptions = '';
+        let constructOptions = '',
+          whereOptions = '';
 
-        if( expand ) {
+        if (expand) {
           constructOptions = `?rO ?srP ?srO .`;
           whereOptions = `
             OPTIONAL {
