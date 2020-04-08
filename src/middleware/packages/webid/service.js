@@ -43,7 +43,7 @@ const WebIdService = {
           resourceUri: webId,
           accept: MIME_TYPES.JSON
         });
-        
+
         ctx.emit('webid.created', newPerson);
       }
 
