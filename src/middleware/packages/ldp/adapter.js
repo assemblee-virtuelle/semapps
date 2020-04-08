@@ -2,7 +2,7 @@ const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 class TripleStoreAdapter {
-  constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container'} = {}) {
+  constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
     this.resourceService = resourceService;
     this.containerService = containerService;
   }
@@ -156,13 +156,15 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id) {
-    return this.broker.call(this.resourceService + '.delete', {
-      resourceUri: _id
-    }).then(() => {
-      // We must return the number of deleted resource
-      // Otherwise the DB adapter returns an error
-      return 1;
-    });
+    return this.broker
+      .call(this.resourceService + '.delete', {
+        resourceUri: _id
+      })
+      .then(() => {
+        // We must return the number of deleted resource
+        // Otherwise the DB adapter returns an error
+        return 1;
+      });
   }
 
   /**

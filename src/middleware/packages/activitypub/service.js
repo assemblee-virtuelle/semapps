@@ -15,16 +15,13 @@ const ActivityPubService = {
   dependencies: ['ldp'],
   created() {
     let context = ['https://www.w3.org/ns/activitystreams'];
-    if( this.settings.additionalContext ) context.push(this.settings.additionalContext);
+    if (this.settings.additionalContext) context.push(this.settings.additionalContext);
 
-    this.broker.createService(
-      CollectionService,
-      {
-        settings: {
-          context
-        }
+    this.broker.createService(CollectionService, {
+      settings: {
+        context
       }
-    );
+    });
 
     this.broker.createService(ActorService, {
       settings: {
