@@ -44,10 +44,10 @@ const ActivityService = {
   },
   actions: {
     update() {
-      throw new Error('Updating activities is not allowed')
+      throw new Error('Updating activities is not allowed');
     },
     remove() {
-      throw new Error('Removing activities is not allowed')
+      throw new Error('Removing activities is not allowed');
     }
   }
 };
