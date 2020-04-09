@@ -63,6 +63,9 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
+    if (!_id.startsWith('http')) {
+      _id = this.service.schema.settings.containerUri + _id;
+    }
     return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
       expand: this.service.schema.settings.expand,
@@ -94,10 +97,13 @@ class TripleStoreAdapter {
    * Insert an entity
    */
   insert(entity) {
+    const { slug, ...resource } = entity;
+
     return this.broker
       .call(this.resourceService + '.post', {
         containerUri: this.service.schema.settings.containerUri,
-        resource: entity,
+        resource,
+        slug,
         contentType: MIME_TYPES.JSON
       })
       .then(resourceUri => {
@@ -133,7 +139,13 @@ class TripleStoreAdapter {
    * Update an entity by ID
    */
   updateById(_id, update) {
-    const resource = update['$set'];
+    const { id, '@id': arobaseId, ...resource } = update['$set'];
+
+    // Check ID and transform it to URI if necessary
+    _id = _id || id || arobaseId;
+    if( !_id ) throw new Error('An ID must be specified to update resources');
+    if (!_id.startsWith('http')) _id = this.service.schema.settings.containerUri + _id;
+
     return this.broker
       .call(this.resourceService + '.patch', {
         resource: {
