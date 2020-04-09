@@ -9,7 +9,7 @@ const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
 });
 beforeAll(initialize(broker));
-afterAll(async() => {
+afterAll(async () => {
   await broker.stop();
 });
 
@@ -70,7 +70,7 @@ describe('Create/Update/Delete objects', () => {
       type: ACTIVITY_TYPES.UPDATE,
       object: {
         id: objectUri,
-        name: 'Mon premier bel article',
+        name: 'Mon premier bel article'
       },
       to: sebastien.followers
     });
@@ -122,5 +122,5 @@ describe('Create/Update/Delete objects', () => {
     const object = await broker.call('activitypub.object.get', { id: objectUri });
     expect(object).toHaveProperty('type', OBJECT_TYPES.TOMBSTONE);
     expect(object).toHaveProperty('deleted');
-  })
+  });
 });
