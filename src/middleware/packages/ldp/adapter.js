@@ -143,7 +143,7 @@ class TripleStoreAdapter {
 
     // Check ID and transform it to URI if necessary
     _id = _id || id || arobaseId;
-    if( !_id ) throw new Error('An ID must be specified to update resources');
+    if (!_id) throw new Error('An ID must be specified to update resources');
     if (!_id.startsWith('http')) _id = this.service.schema.settings.containerUri + _id;
 
     return this.broker
