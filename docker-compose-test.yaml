@@ -10,9 +10,9 @@ services:
       - rdf_data:/fuseki
       - staging:/staging
     ports:
-      - "3030:3030"
+      - "3040:3030"
     expose:
-      - "3030"
+      - "3040"
     networks:
       - semapps
     environment:

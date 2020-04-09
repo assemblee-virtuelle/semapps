@@ -44,7 +44,7 @@ class TripleStoreAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call(this.resourceService + '.get', {
+    return this.broker.call(this.containerService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
       expand: this.service.schema.settings.expand,
       jsonContext: this.service.schema.settings.context,
