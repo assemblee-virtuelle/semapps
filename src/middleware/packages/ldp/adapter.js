@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -14,7 +15,7 @@ class TripleStoreAdapter {
 
   async connect() {
     if (!this.service.schema.settings.containerUri) {
-      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
+      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service ' + this.service.schema.name);
     }
 
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
@@ -64,7 +65,7 @@ class TripleStoreAdapter {
    */
   findById(_id) {
     if (!_id.startsWith('http')) {
-      _id = this.service.schema.settings.containerUri + _id;
+      _id = urlJoin(this.service.schema.settings.containerUri, _id);
     }
     return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
@@ -144,7 +145,7 @@ class TripleStoreAdapter {
     // Check ID and transform it to URI if necessary
     _id = _id || id || arobaseId;
     if (!_id) throw new Error('An ID must be specified to update resources');
-    if (!_id.startsWith('http')) _id = this.service.schema.settings.containerUri + _id;
+    if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
     return this.broker
       .call(this.resourceService + '.patch', {

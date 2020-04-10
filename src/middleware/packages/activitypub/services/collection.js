@@ -120,19 +120,23 @@ const CollectionService = {
         '@id': id
       });
 
-      let { items, ...collection } = result['@graph'][0];
-      items = !items ? [] : Array.isArray(items) ? items : [items];
+      if (result['@graph'].length === 0) {
+        ctx.meta.$statusCode = 404;
+      } else {
+        let { items, ...collection } = result['@graph'][0];
+        items = !items ? [] : Array.isArray(items) ? items : [items];
 
-      const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
+        const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
-      collection = {
-        '@context': result['@context'],
-        ...collection,
-        [itemsProp]: items,
-        totalItems: items.length
-      };
+        collection = {
+          '@context': result['@context'],
+          ...collection,
+          [itemsProp]: items,
+          totalItems: items.length
+        };
 
-      return collection;
+        return collection;
+      }
     },
     clear(ctx) {
       // Do nothing. This is just to ensure tests don't break.
