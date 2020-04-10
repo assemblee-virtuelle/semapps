@@ -25,13 +25,13 @@ const ImporterService = {
       const file = await fs.readFile(path.resolve(this.settings.importsDir, fileName));
       const json = JSON.parse(file.toString());
 
-      console.log(`Importing ${json.length} items...`);
+      console.log(`[${action}] Importing ${json.length} items...`);
 
       for (let data of json) {
         await this.actions[action]({ data, ...otherParams });
       }
 
-      console.log('Import finished !');
+      console.log(`[${action}] Import finished !`);
     }
   }
 };
