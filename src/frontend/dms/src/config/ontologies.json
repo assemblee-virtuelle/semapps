@@ -2,7 +2,8 @@
   {
     "prefix": "as",
     "owl": "",
-    "url": "https://www.w3.org/ns/activitystreams#"
+    "url": "https://www.w3.org/ns/activitystreams#",
+    "context": "https://www.w3.org/ns/activitystreams"
   },
   {
     "prefix": "rdf",

@@ -7,7 +7,7 @@ import SearchFilter from '../components/SearchFilter';
 export const ActorIcon = Icon;
 
 const ActorTitle = ({ record }) => {
-  return <span>Acteur {record ? `"${record['as:preferredUsername']}"` : ''}</span>;
+  return <span>Acteur {record ? `"${record.preferredUsername}"` : ''}</span>;
 };
 
 export const ActorList = props => {
@@ -15,8 +15,8 @@ export const ActorList = props => {
   return (
     <List title="Acteurs" perPage={25} filters={<SearchFilter />} {...props}>
       <Datagrid rowClick="show">
-        <TextField source="as:name" label="Nom" />
-        <TextField source="as:preferredUsername" label="Username" />
+        <TextField source="name" label="Nom" />
+        <TextField source="preferredUsername" label="Username" />
         <ShowButton basePath="/Actor" />
       </Datagrid>
     </List>
@@ -27,26 +27,26 @@ export const ActorShow = props => (
   <Show title={<ActorTitle />} {...props}>
     <TabbedShowLayout>
       <Tab label="Profil">
-        <TextField source="as:preferredUsername" label="Username" />
-        <TextField source="as:name" label="Nom" />
+        <TextField source="preferredUsername" label="Username" />
+        <TextField source="name" label="Nom" />
       </Tab>
       <Tab label="Activités émises">
-        <ActivitiesList source="as:outbox">
+        <ActivitiesList source="outbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>
       <Tab label="Activités reçues">
-        <ActivitiesList source="ldp:inbox">
+        <ActivitiesList source="inbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>
       <Tab label="Abonnés">
-        <CollectionList source="as:followers">
+        <CollectionList source="followers">
           <ActorsGrid />
         </CollectionList>
       </Tab>
       <Tab label="Abonnements">
-        <CollectionList source="as:following">
+        <CollectionList source="following">
           <ActorsGrid />
         </CollectionList>
       </Tab>

@@ -6,7 +6,7 @@ const parseDescriptionFromActivity = activity => {
     case 'Create':
       return {
         description: "A posté l'actualité",
-        reference: { resource: 'Note', id: activity.object['@id'], source: 'name', basePath: '/Note' }
+        reference: { resource: 'Note', id: activity.object.id, value: activity.object.name, basePath: '/Note' }
       };
     case 'Follow':
       return {
@@ -35,7 +35,11 @@ const ActivityDescription = ({ record }) => {
     <span>
       {description}
       &nbsp;
-      {reference && <ActivityDescriptionReference {...reference} />}
+      {reference.value ? (
+        <Link to={`${reference.basePath}/${encodeURIComponent(reference.id)}`}>{reference.value}</Link>
+      ) : (
+        <ActivityDescriptionReference {...reference} />
+      )}
     </span>
   );
 };

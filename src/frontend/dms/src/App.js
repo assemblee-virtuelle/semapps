@@ -17,7 +17,8 @@ function App() {
         sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
         httpClient,
         resources,
-        ontologies
+        ontologies,
+        mainOntology: 'as'
       })}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}

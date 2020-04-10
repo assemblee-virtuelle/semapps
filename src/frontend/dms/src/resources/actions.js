@@ -77,25 +77,25 @@ export const ActionShow = props => (
   <Show title={<ActionTitle />} {...props}>
     <TabbedShowLayout>
       <Tab label="Description">
-        <TextField source="as:name" label="Nom" />
+        <TextField source="name" label="Nom" />
       </Tab>
       <Tab label="Activités émises">
-        <ActivitiesList source="as:outbox">
+        <ActivitiesList source="outbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>
       <Tab label="Activités reçues">
-        <ActivitiesList source="as:inbox">
+        <ActivitiesList source="inbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>
       <Tab label="Abonnés">
-        <CollectionList source="as:followers">
+        <CollectionList source="followers">
           <ActorsGrid />
         </CollectionList>
       </Tab>
       <Tab label="Abonnements">
-        <CollectionList source="as:following">
+        <CollectionList source="following">
           <ActorsGrid />
         </CollectionList>
       </Tab>

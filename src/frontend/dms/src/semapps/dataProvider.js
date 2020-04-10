@@ -1,9 +1,14 @@
 import jsonld from 'jsonld';
 
-const getPrefixJSON = ontologies => {
+const getJsonContext = (ontologies, mainOntology) => {
   let pattern = {};
   ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-  return pattern;
+  if (mainOntology) {
+    delete pattern[mainOntology];
+    return [ontologies.find(ontology => ontology.prefix === mainOntology).context, pattern];
+  } else {
+    return pattern;
+  }
 };
 
 const getPrefixRdf = ontologies => {
@@ -41,7 +46,7 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
   `;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => ({
+const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainOntology }) => ({
   getList: async (resourceId, params) => {
     if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
@@ -57,7 +62,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
       if (!listProperty) throw new Error('Unknown list type');
 
       let returnData = json[listProperty].map(item => {
-        item.id = item['@id'];
+        item.id = item.id || item['@id'];
         return item;
       });
 
@@ -80,7 +85,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
         body
       });
 
-      const compactJson = await jsonld.compact(json, getPrefixJSON(ontologies));
+      const compactJson = await jsonld.compact(json, getJsonContext(ontologies, mainOntology));
 
       if (!compactJson['@graph'] || compactJson['@graph'].length === 0) {
         return { data: [], total: 0 };
@@ -88,7 +93,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
 
       const returnData = compactJson['@graph']
         .map(item => {
-          item.id = item['@id'];
+          item.id = item.id || item['@id'];
           return item;
         })
         .slice(
@@ -126,7 +131,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
     const { headers } = await httpClient(resources[resourceId].containerUri, {
       method: 'POST',
       body: JSON.stringify({
-        '@context': { ...getPrefixJSON(ontologies) },
+        '@context': getJsonContext(ontologies, mainOntology),
         '@type': resources[resourceId].types,
         ...params.data
       })
