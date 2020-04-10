@@ -1,8 +1,10 @@
-const { JsonLdStorageMixin, TripleStoreAdapter } = require('@semapps/ldp');
+const urlJoin = require('url-join');
+const DbService = require("moleculer-db");
+const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const ActorService = {
   name: 'activitypub.actor',
-  mixins: [JsonLdStorageMixin],
+  mixins: [DbService],
   adapter: new TripleStoreAdapter(),
   dependencies: ['activitypub.collection'],
   settings: {
@@ -14,21 +16,18 @@ const ActorService = {
       const { actorUri } = ctx.params;
 
       // Create the collections associated with the user
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/following', ordered: false });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/followers', ordered: false });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/inbox', ordered: true });
-      await ctx.call('activitypub.collection.create', { collectionUri: actorUri + '/outbox', ordered: true });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'following'), ordered: false });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'followers'), ordered: false });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'inbox'), ordered: true });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'outbox'), ordered: true });
 
       return await this._update(ctx, {
         '@id': actorUri,
-        following: actorUri + '/following',
-        followers: actorUri + '/followers',
-        inbox: actorUri + '/inbox',
-        outbox: actorUri + '/outbox'
+        following: urlJoin(actorUri, 'following'),
+        followers: urlJoin(actorUri, 'followers'),
+        inbox: urlJoin(actorUri, 'inbox'),
+        outbox: urlJoin(actorUri, 'outbox')
       });
-    },
-    getContainerUri(ctx) {
-      return this.settings.containerUri;
     }
   },
   hooks: {

@@ -9,6 +9,5 @@ module.exports = {
   InboxService: require('./services/inbox'),
   ObjectService: require('./services/object'),
   OutboxService: require('./services/outbox'),
-  Routes: require('./routes'),
   ...constants
 };

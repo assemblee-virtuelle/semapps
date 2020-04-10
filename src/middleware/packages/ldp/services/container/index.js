@@ -1,3 +1,4 @@
+const url = require('url');
 const attachAction = require('./actions/attach');
 const createAction = require('./actions/create');
 const existAction = require('./actions/exist');
@@ -22,7 +23,7 @@ module.exports = {
   },
   async started() {
     for (let containerPath of this.settings.containers) {
-      const containerUri = this.settings.baseUrl + containerPath;
+      const containerUri = url.resolve(this.settings.baseUrl, containerPath);
       const exists = await this.actions.exist({ containerUri });
       if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);

@@ -5,7 +5,7 @@ module.exports = {
   LdpContainerService: require('./services/container'),
   LdpResourceService: require('./services/resource'),
   TripleStoreAdapter: require('./adapter'),
-  JsonLdStorageMixin: require('./mixins/jsonld-storage'),
+  getContainerRoutes: require('./routes/getContainerRoutes'),
   getPrefixJSON,
   getPrefixRdf,
   generateId

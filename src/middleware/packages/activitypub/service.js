@@ -1,3 +1,5 @@
+const url = require('url');
+const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');
@@ -10,44 +12,93 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    additionalContext: {}
+    additionalContext: {},
+    containers: {
+      activities: '/activities',
+      actors: '/users',
+      objects: '/objects'
+    }
   },
   dependencies: ['ldp'],
-  created() {
+  async created() {
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
       : 'https://www.w3.org/ns/activitystreams';
 
-    this.broker.createService(CollectionService, {
+    await this.broker.createService(CollectionService, {
       settings: {
         context
       }
     });
 
-    this.broker.createService(ActorService, {
+    await this.broker.createService(ActorService, {
       settings: {
-        containerUri: this.settings.baseUri + 'users/',
+        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.actors),
         context
       }
     });
 
-    this.broker.createService(ActivityService, {
+    await this.broker.createService(ActivityService, {
       settings: {
-        containerUri: this.settings.baseUri + 'activities/',
+        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.activities),
         context
       }
     });
 
-    this.broker.createService(ObjectService, {
+    await this.broker.createService(ObjectService, {
       settings: {
-        containerUri: this.settings.baseUri + 'objects/',
+        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.objects),
         context
       }
     });
 
-    this.broker.createService(FollowService);
-    this.broker.createService(InboxService);
-    this.broker.createService(OutboxService);
+    await this.broker.createService(FollowService, {
+      settings: {
+        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+
+    await this.broker.createService(InboxService, {
+      settings: {
+        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+
+    await this.broker.createService(OutboxService, {
+      settings: {
+        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+  },
+  actions: {
+    getApiRoutes() {
+      return [
+        ...getContainerRoutes(url.resolve(this.settings.baseUri, this.settings.containers.activities), 'activitypub.activity'),
+        ...getContainerRoutes(url.resolve(this.settings.baseUri, this.settings.containers.actors), 'activitypub.actor'),
+        ...getContainerRoutes(url.resolve(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
+        // Unsecured routes
+        {
+          bodyParsers: { json: true },
+          authorization: false,
+          authentication: true,
+          aliases: {
+            [`GET ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.list',
+            [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
+            [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
+            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing'
+          }
+        },
+        // Secured routes
+        {
+          bodyParsers: { json: true },
+          authorization: true,
+          authentication: false,
+          aliases: {
+            [`POST ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.post'
+          }
+        }
+      ];
+    }
   }
 };
 

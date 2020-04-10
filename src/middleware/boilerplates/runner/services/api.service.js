@@ -2,7 +2,6 @@ const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
 const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
-const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
 const { Routes: WebIdRoutes } = require('@semapps/webid');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
@@ -15,12 +14,10 @@ module.exports = {
       origin: '*',
       exposedHeaders: '*'
     },
-    routes: [...SparqlEndpointRoutes, ...WebIdRoutes, ...ActivityPubRoutes]
+    routes: [...SparqlEndpointRoutes, ...WebIdRoutes]
   },
-  dependencies: ['ldp', 'activitypub.actor', 'activitypub.object'],
+  dependencies: ['ldp', 'activitypub'],
   async started() {
-    let routes = [];
-
     const findOrCreateProfile = async profileData => {
       return await this.broker.call('webid.create', profileData);
     };
@@ -55,12 +52,11 @@ module.exports = {
 
     await this.connector.initialize();
 
-    routes.push(this.connector.getRoute());
-    routes.push(...(await this.broker.call('ldp.getApiRoutes')));
-    routes.push(...(await this.broker.call('activitypub.activity.getApiRoutes')));
-    routes.push(...(await this.broker.call('activitypub.actor.getApiRoutes')));
-    routes.push(...(await this.broker.call('activitypub.object.getApiRoutes')));
-
+    const routes = [
+      this.connector.getRoute(),
+      ...(await this.broker.call('ldp.getApiRoutes')),
+      ...(await this.broker.call('activitypub.getApiRoutes'))
+    ];
     routes.forEach(route => this.addRoute(route));
   },
   methods: {

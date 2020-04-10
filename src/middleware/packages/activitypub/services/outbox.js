@@ -1,12 +1,13 @@
+const urlJoin = require('url-join');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 const { objectCurrentToId } = require('../functions');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
-  async started() {
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
+  settings: {
+    actorsContainer: null
   },
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
@@ -80,7 +81,7 @@ const OutboxService = {
   },
   methods: {
     getOutboxUri(username) {
-      return this.settings.actorsContainer + username + '/outbox';
+      return urlJoin(this.settings.actorsContainer, username, 'outbox');
     }
   }
 };
