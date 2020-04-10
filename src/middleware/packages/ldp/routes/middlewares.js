@@ -13,7 +13,7 @@ const parseBody = (req, res, next) => {
 };
 
 const negotiateContentType = (req, res, next) => {
-  if( !req.$ctx.meta.headers ) req.$ctx.meta.headers = {};
+  if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
@@ -37,7 +37,7 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const negotiateAccept = (req, res, next) => {
-  if( !req.$ctx.meta.headers ) req.$ctx.meta.headers = {};
+  if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   if (req.headers.accept !== undefined && req.headers.accept !== '*/*') {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
