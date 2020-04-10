@@ -1,4 +1,4 @@
-const url = require('url');
+const urlJoin = require('url-join');
 const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
@@ -15,7 +15,7 @@ const ActivityPubService = {
     additionalContext: {},
     containers: {
       activities: '/activities',
-      actors: '/users',
+      actors: '/actors',
       objects: '/objects'
     }
   },
@@ -33,55 +33,49 @@ const ActivityPubService = {
 
     await this.broker.createService(ActorService, {
       settings: {
-        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.actors),
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.actors),
         context
       }
     });
 
     await this.broker.createService(ActivityService, {
       settings: {
-        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.activities),
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.activities),
         context
       }
     });
 
     await this.broker.createService(ObjectService, {
       settings: {
-        containerUri: url.resolve(this.settings.baseUri, this.settings.containers.objects),
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.objects),
         context
       }
     });
 
     await this.broker.createService(FollowService, {
       settings: {
-        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
     await this.broker.createService(InboxService, {
       settings: {
-        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
     await this.broker.createService(OutboxService, {
       settings: {
-        actorsContainer: url.resolve(this.settings.baseUri, this.settings.containers.actors)
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
   },
   actions: {
     getApiRoutes() {
       return [
-        ...getContainerRoutes(
-          url.resolve(this.settings.baseUri, this.settings.containers.activities),
-          'activitypub.activity'
-        ),
-        ...getContainerRoutes(url.resolve(this.settings.baseUri, this.settings.containers.actors), 'activitypub.actor'),
-        ...getContainerRoutes(
-          url.resolve(this.settings.baseUri, this.settings.containers.objects),
-          'activitypub.object'
-        ),
+        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.activities), 'activitypub.activity'),
+        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.actors), 'activitypub.actor'),
+        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
         // Unsecured routes
         {
           bodyParsers: { json: true },

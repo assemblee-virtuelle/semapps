@@ -1,4 +1,4 @@
-const url = require('url');
+const urlJoin = require('url-join');
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
 const getContainerRoutes = require('./routes/getContainerRoutes');
@@ -8,7 +8,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['resources'],
+    containers: ['/resources'],
     defaultAccept: 'text/turtle'
   },
   async created() {
@@ -36,7 +36,7 @@ module.exports = {
       let routes = [];
       // Associate all containers in settings with the LDP service
       for (let containerPath of this.settings.containers) {
-        routes.push(...getContainerRoutes(url.resolve(this.settings.baseUrl, containerPath)));
+        routes.push(...getContainerRoutes(urlJoin(this.settings.baseUrl, containerPath)));
       }
       return routes;
     }

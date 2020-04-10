@@ -7,6 +7,11 @@ module.exports = {
   mixins: [ActivityPubService],
   settings: {
     baseUri: CONFIG.HOME_URL,
-    additionalContext: getPrefixJSON(ontologies)
+    additionalContext: getPrefixJSON(ontologies),
+    containers: {
+      activities: '/activities',
+      actors: '/users',
+      objects: '/objects'
+    }
   }
 };
