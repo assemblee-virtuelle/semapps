@@ -28,11 +28,11 @@ function getContainerRoutes(containerUri, serviceName) {
   // If no serviceName is specified, map routes to the LDP container/resource service
   const actions = serviceName
     ? {
-        list: serviceName + '.list',
+        list: serviceName + '.find',
         get: serviceName + '.get',
-        post: serviceName + '.post',
-        patch: serviceName + '.patch',
-        delete: serviceName + '.delete'
+        post: serviceName + '.create',
+        patch: serviceName + '.update',
+        delete: serviceName + '.remove'
       }
     : {
         list: 'ldp.container.api_get',
