@@ -15,7 +15,9 @@ class TripleStoreAdapter {
 
   async connect() {
     if (!this.service.schema.settings.containerUri) {
-      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service ' + this.service.schema.name);
+      throw new ServiceSchemaError(
+        'Missing `containerUri` definition in settings of service ' + this.service.schema.name
+      );
     }
 
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
