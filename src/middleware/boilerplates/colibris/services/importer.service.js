@@ -1,10 +1,11 @@
+const urlJoin = require('url-join');
 const { ImporterService } = require('@semapps/importer');
 const path = require('path');
 const slugify = require('slugify');
 const CONFIG = require('../config');
 
-// Transform camelCase to camel-case
-const camelCaseToHyphens = str => str.replace(/[A-Z]/g, s => '-' + s).toLowerCase();
+// Transform PascalCase to pascal-case
+const pascalCaseToHyphens = str => str.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase();
 
 module.exports = {
   mixins: [ImporterService],
@@ -13,7 +14,7 @@ module.exports = {
     allowedActions: ['createOrganization', 'createProject', 'createUser', 'followProject', 'postNews'],
     // Custom settings
     baseUri: CONFIG.HOME_URL,
-    usersContainer: CONFIG.HOME_URL + 'users/'
+    usersContainer: urlJoin(CONFIG.HOME_URL, 'actors')
   },
   dependencies: ['ldp', 'activitypub.actor', 'activitypub.outbox'],
   actions: {
@@ -42,26 +43,28 @@ module.exports = {
       if (!groupSlug) throw new Error('Missing groupSlug argument');
 
       await ctx.call('activitypub.actor.create', {
-        slug: camelCaseToHyphens(data.slug.substring(0, 36)),
-        '@context': {
-          as: 'https://www.w3.org/ns/activitystreams#',
-          pair: 'http://virtual-assembly.org/ontologies/pair#'
-        },
-        '@type': ['as:Group', 'pair:Project'],
+        slug: pascalCaseToHyphens(data.slug.substring(0, 36)),
+        '@context': [
+          'https://www.w3.org/ns/activitystreams',
+          {
+            pair: 'http://virtual-assembly.org/ontologies/pair#'
+          }
+        ],
+        '@type': ['Group', 'pair:Project'],
         // PAIR
         'pair:label': data.name,
         'pair:description': data.content,
         'pair:aboutPage': `https://colibris.cc/groupeslocaux/?${data.slug}/iframe&showActu=1`,
-        'pair:involves': this.settings.usersContainer + groupSlug,
+        'pair:involves': urlJoin(this.settings.usersContainer, groupSlug),
         // ActivityStreams
-        'as:name': data.name,
-        'as:content': data.content,
-        'as:image': data.image,
-        'as:location': data.location,
-        'as:tag': data.tag.map(tag => this.settings.baseUri + 'themes/' + slugify(tag.name, { lower: true })),
-        'as:url': data.url,
-        'as:published': data.published,
-        'as:updated': data.updated
+        name: data.name,
+        content: data.content,
+        image: data.image,
+        location: data.location,
+        tag: data.tag.map(tag => urlJoin(this.settings.baseUri, 'themes', slugify(tag.name, { lower: true }))),
+        url: data.url,
+        published: data.published,
+        updated: data.updated
       });
 
       console.log(`Project ${data.name} created`);
@@ -93,8 +96,8 @@ module.exports = {
         username: data.username,
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Follow',
-        actor: this.settings.usersContainer + data.username,
-        object: this.settings.usersContainer + camelCaseToHyphens(data.following)
+        actor: urlJoin(this.settings.usersContainer, data.username),
+        object: urlJoin(this.settings.usersContainer, pascalCaseToHyphens(data.following))
       });
 
       console.log(`Actor ${data.username} follow ${data.following}`);
@@ -102,14 +105,14 @@ module.exports = {
     async postNews(ctx) {
       const { data } = ctx.params;
 
-      const posterUri = this.settings.usersContainer + camelCaseToHyphens(data.attributedTo.substring(0, 36));
+      const posterUri = urlJoin(this.settings.usersContainer, pascalCaseToHyphens(data.attributedTo.substring(0, 36)));
 
       const activity = await ctx.call('activitypub.outbox.post', {
-        username: data.attributedTo.substring(0, 36),
+        username: pascalCaseToHyphens(data.attributedTo.substring(0, 36)),
         slug: data.id,
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Note',
-        to: [posterUri + '/followers'],
+        to: [urlJoin(posterUri, 'followers')],
         name: data.name,
         content: data.content,
         image: data.image,
@@ -118,7 +121,7 @@ module.exports = {
         updated: data.updated
       });
 
-      console.log(`Note "${data.name}" posted: ${activity['@id']}`);
+      console.log(`Note "${data.name}" posted: ${data.id}`);
     }
   }
 };

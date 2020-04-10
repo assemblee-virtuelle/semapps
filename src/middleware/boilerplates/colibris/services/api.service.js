@@ -1,9 +1,9 @@
 const path = require('path');
+const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
 
+const { getContainerRoutes } = require('@semapps/ldp');
 const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
-const { Routes: ActivityPubRoutes } = require('@semapps/activitypub');
-const { Routes: WebhooksRoutes } = require('@semapps/webhooks');
 const { CasConnector } = require('@semapps/connector');
 
 const CONFIG = require('../config');
@@ -17,12 +17,11 @@ module.exports = {
       origin: '*',
       exposedHeaders: '*'
     },
-    routes: [...SparqlEndpointRoutes, ...ActivityPubRoutes, ...WebhooksRoutes],
+    routes: [...SparqlEndpointRoutes],
     defaultLdpAccept: 'text/turtle'
   },
+  dependencies: ['ldp', 'activitypub', 'webhooks'],
   async started() {
-    let routes = [];
-
     this.connector = new CasConnector({
       casUrl: CONFIG.CAS_URL,
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
@@ -49,10 +48,13 @@ module.exports = {
 
     await this.connector.initialize();
 
-    routes.push(this.connector.getRoute());
-    routes.push(...(await this.broker.call('ldp.getApiRoutes')));
-
-    routes.forEach(route => this.addRoute(route));
+    [
+      this.connector.getRoute(),
+      ...(await this.broker.call('ldp.getApiRoutes')),
+      ...(await this.broker.call('activitypub.getApiRoutes')),
+      ...(await this.broker.call('webhooks.getApiRoutes')),
+      ...(getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes'))
+    ].forEach(route => this.addRoute(route));
   },
   methods: {
     authenticate(ctx, route, req, res) {

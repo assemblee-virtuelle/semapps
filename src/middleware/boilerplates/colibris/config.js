@@ -7,6 +7,5 @@ module.exports = {
   SPARQL_ENDPOINT: process.env.SEMAPPS_SPARQL_ENDPOINT,
   JENA_USER: process.env.SEMAPPS_JENA_USER,
   JENA_PASSWORD: process.env.SEMAPPS_JENA_PASSWORD,
-  MONGODB_URL: process.env.SEMAPPS_MONGODB_URL,
   CAS_URL: process.env.SEMAPPS_CAS_URL
 };

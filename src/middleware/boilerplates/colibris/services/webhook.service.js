@@ -1,16 +1,15 @@
+const urlJoin = require('url-join');
 const { WebhooksService } = require('@semapps/webhooks');
-const { TripleStoreAdapter } = require('@semapps/ldp');
 const CONFIG = require('../config');
 
 module.exports = {
   mixins: [WebhooksService],
-  adapter: new TripleStoreAdapter(),
   settings: {
-    baseUri: CONFIG.HOME_URL,
-    usersContainer: CONFIG.HOME_URL + 'actors/',
+    containerUri: urlJoin(CONFIG.HOME_URL, 'webhooks'),
+    usersContainer: urlJoin(CONFIG.HOME_URL, 'actors'),
     allowedActions: ['postOutbox']
   },
-  dependencies: ['ldp', 'activitypub.outbox', 'activitypub.actor'],
+  dependencies: ['activitypub.outbox', 'activitypub.actor'],
   actions: {
     async postOutbox(ctx) {
       const actor = await ctx.call('activitypub.actor.get', { id: ctx.params.user });
