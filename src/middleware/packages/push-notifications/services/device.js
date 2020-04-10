@@ -1,10 +1,10 @@
-const JsonLdStorageMixin = require('../mixins/jsonld-storage');
+const DbService = require('moleculer-db');
+const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const DeviceService = {
   name: 'push-notifications.device',
-  mixins: [JsonLdStorageMixin],
-  adapter: null,
-  collection: 'devices',
+  mixins: [DbService],
+  adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null,
     context: null

@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const DeviceService = require('./services/device');
 const { Expo } = require('expo-server-sdk');
 
@@ -17,10 +18,8 @@ const PushNotificationsService = {
     this.broker.createService(DeviceService, {
       adapter: this.schema.storage.devices,
       settings: {
-        containerUri: this.schema.baseUri + 'objects/',
-        context: {
-          '@vocab': this.schema.baseUri + 'ontology/semapps#'
-        }
+        containerUri: urlJoin(this.schema.baseUri, 'devices'),
+        context: { '@vocab': 'http://semapps.org/ontology/devices#' }
       }
     });
   },
