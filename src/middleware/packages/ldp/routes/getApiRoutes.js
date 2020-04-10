@@ -1,4 +1,10 @@
-const { parseBody, negotiateContentType, negotiateAccept, parseJson, addContainerUriMiddleware } = require('./middlewares');
+const {
+  parseBody,
+  negotiateContentType,
+  negotiateAccept,
+  parseJson,
+  addContainerUriMiddleware
+} = require('./middlewares');
 
 function getApiRoutes({ containerUri, services }) {
   const commonRouteConfig = {
