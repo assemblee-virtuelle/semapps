@@ -22,7 +22,7 @@ export const JsonLdReferenceInput = props => (
       // If a format prop was defined, apply it to the array
       if (props.format) value = props.format(value);
       // If the values are objects with @id field, turn it to a simple string
-      return value.map(v => (typeof v === 'object' ? (v.id || v['@id']) : v));
+      return value.map(v => (typeof v === 'object' ? v.id || v['@id'] : v));
     }}
   />
 );
@@ -41,10 +41,13 @@ export const UriInput = props => (
 );
 
 export const DateTimeInput = props => (
-  <RaDateTimeInput {...props} format={value => {
-    value = selectValue(value);
-    if( value ) return value.replace(' ', 'T')
-  }} />
+  <RaDateTimeInput
+    {...props}
+    format={value => {
+      value = selectValue(value);
+      if (value) return value.replace(' ', 'T');
+    }}
+  />
 );
 
 export const DateField = props => {

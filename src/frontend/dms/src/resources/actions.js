@@ -49,11 +49,7 @@ const ActionTitle = ({ record }) => {
 
 export const ActionEdit = props => (
   <Edit title={<ActionTitle />} {...props}>
-    <SimpleForm
-      decorators={[
-        copyValues({ 'name': 'pair:label', 'content': 'pair:description', 'url': 'pair:homePage' })
-      ]}
-    >
+    <SimpleForm decorators={[copyValues({ name: 'pair:label', content: 'pair:description', url: 'pair:homePage' })]}>
       <TextInput source="name" label="Nom" fullWidth />
       <MarkdownInput multiline source="content" label="Description" fullWidth />
       <TextInput source="url" label="Site web" fullWidth />
