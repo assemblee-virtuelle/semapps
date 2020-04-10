@@ -26,7 +26,7 @@ const WebhooksService = {
       try {
         const webhook = await this.actions.get({ id: hash });
         return await this.actions[webhook.action]({ data, user: webhook.user });
-      } catch(e) {
+      } catch (e) {
         ctx.meta.$statusCode = 404;
       }
     },
@@ -49,7 +49,7 @@ const WebhooksService = {
       return webhook['@id'];
     },
     getApiRoutes() {
-      return([
+      return [
         // Unsecured routes
         {
           bodyParsers: { json: true },
@@ -68,7 +68,7 @@ const WebhooksService = {
             'POST webhooks': 'webhooks.generate'
           }
         }
-      ]);
+      ];
     }
   }
 };
