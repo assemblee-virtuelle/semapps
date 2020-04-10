@@ -6,7 +6,7 @@ const ActivitiesGrid = props => (
   <Datagrid {...props}>
     <DateField source="published" showTime label="Date" />
     <ReferenceField basePath="/Actor" reference="Actor" source="actor" label="Acteur">
-      <TextField source="as:name" />
+      <TextField source="name" />
     </ReferenceField>
     <ActivityDescription label="Description" />
   </Datagrid>

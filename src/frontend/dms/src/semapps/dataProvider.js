@@ -101,7 +101,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
   },
   getOne: async (resourceId, params) => {
     let { json } = await httpClient(params.id);
-    json.id = json['@id'];
+    json.id = json.id || json['@id'];
     return { data: json };
   },
   getMany: async (resourceId, params) => {
@@ -111,7 +111,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
       id = typeof id === 'object' ? id['@id'] : id;
 
       let { json } = await httpClient(id);
-      json.id = json['@id'];
+      json.id = json.id || json['@id'];
       returnData.push(json);
     }
 
@@ -135,7 +135,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
     // Retrieve newly-created resource
     const resourceUri = headers.get('Location');
     let { json } = await httpClient(resourceUri);
-    json.id = json['@id'];
+    json.id = json.id || json['@id'];
     return { data: json };
   },
   update: async (resourceId, params) => {

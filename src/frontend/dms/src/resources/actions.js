@@ -12,7 +12,9 @@ import {
   Show,
   TabbedShowLayout,
   Tab,
-  ShowButton
+  ShowButton,
+  NumberInput,
+  Labeled
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -49,21 +51,28 @@ export const ActionEdit = props => (
   <Edit title={<ActionTitle />} {...props}>
     <SimpleForm
       decorators={[
-        copyValues({ 'as:name': 'pair:label', 'as:content': 'pair:description', 'as:url': 'pair:homePage' })
+        copyValues({ 'name': 'pair:label', 'content': 'pair:description', 'url': 'pair:homePage' })
       ]}
     >
-      <TextInput source="as:name" label="Nom" fullWidth />
-      <MarkdownInput multiline source="as:content" label="Description" fullWidth />
-      <TextInput source="as:url" label="Site web" fullWidth />
-      <TextInput source="as:image" label="Image" fullWidth />
-      <JsonLdReferenceInput label="Tags" reference="Theme" source="as:tag">
+      <TextInput source="name" label="Nom" fullWidth />
+      <MarkdownInput multiline source="content" label="Description" fullWidth />
+      <TextInput source="url" label="Site web" fullWidth />
+      <TextInput source="image" label="Image" fullWidth />
+      <JsonLdReferenceInput label="Tags" reference="Theme" source="tag">
         <AutocompleteArrayInput optionText={record => record['pair:preferedLabel']} fullWidth />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Auteurs" reference="Actor" source="as:attributedTo">
-        <AutocompleteArrayInput optionText={record => record['as:name']} fullWidth />
-      </JsonLdReferenceInput>
-      <DateTimeInput source="as:published" label="Publié le" fullWidth />
-      <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
+      {/*<JsonLdReferenceInput label="Auteurs" reference="Actor" source="attributedTo">*/}
+      {/*  <AutocompleteArrayInput optionText={record => record.name} fullWidth />*/}
+      {/*</JsonLdReferenceInput>*/}
+      <Labeled label="Location">
+        <span>
+          <NumberInput source="location.latitude" />
+          &nbsp;
+          <NumberInput source="location.longitude" />
+        </span>
+      </Labeled>
+      <DateTimeInput source="published" label="Publié le" fullWidth />
+      <DateTimeInput source="updated" label="Mis à jour le" fullWidth />
     </SimpleForm>
   </Edit>
 );

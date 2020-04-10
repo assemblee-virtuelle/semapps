@@ -21,8 +21,8 @@ export const NoteList = props => {
   return (
     <List title="Actualités" {...props}>
       <Datagrid rowClick="edit">
-        <DateField showTime source="as:published" label="Publié le" />
-        <TextField source="as:name" label="Nom" />
+        <DateField showTime source="published" label="Publié le" />
+        <TextField source="name" label="Nom" />
         <EditButton basePath="/Note" />
       </Datagrid>
     </List>
@@ -36,13 +36,13 @@ const NoteTitle = ({ record }) => {
 export const NoteEdit = props => (
   <Edit title={<NoteTitle />} {...props}>
     <SimpleForm>
-      <TextInput source="as:name" label="Nom" fullWidth />
-      <MarkdownInput multiline source="as:content" label="Description" fullWidth />
-      <JsonLdReferenceInput label="Auteur" reference="Project" source="as:attributedTo">
+      <TextInput source="name" label="Nom" fullWidth />
+      <MarkdownInput multiline source="content" label="Description" fullWidth />
+      <JsonLdReferenceInput label="Auteur" reference="Project" source="attributedTo">
         <AutocompleteArrayInput optionText={record => (record ? record['as:name'] : '')} fullWidth />
       </JsonLdReferenceInput>
-      <DateTimeInput source="as:published" label="Publié le" fullWidth />
-      <DateTimeInput source="as:updated" label="Mis à jour le" fullWidth />
+      <DateTimeInput source="published" label="Publié le" fullWidth />
+      <DateTimeInput source="updated" label="Mis à jour le" fullWidth />
     </SimpleForm>
   </Edit>
 );

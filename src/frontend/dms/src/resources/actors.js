@@ -36,7 +36,7 @@ export const ActorShow = props => (
         </ActivitiesList>
       </Tab>
       <Tab label="Activités reçues">
-        <ActivitiesList source="as:inbox">
+        <ActivitiesList source="ldp:inbox">
           <ActivitiesGrid />
         </ActivitiesList>
       </Tab>

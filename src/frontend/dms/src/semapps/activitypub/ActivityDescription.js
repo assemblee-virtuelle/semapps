@@ -2,16 +2,16 @@ import React from 'react';
 import { useReference, LinearProgress, Link } from 'react-admin';
 
 const parseDescriptionFromActivity = activity => {
-  switch (activity['@type']) {
+  switch (activity.type) {
     case 'Create':
       return {
         description: "A posté l'actualité",
-        reference: { resource: 'Note', id: activity.object['@id'], source: 'as:name', basePath: '/Note' }
+        reference: { resource: 'Note', id: activity.object['@id'], source: 'name', basePath: '/Note' }
       };
     case 'Follow':
       return {
         description: "A suivi l'action",
-        reference: { resource: 'Project', id: activity.object, source: 'as:name', basePath: '/Project' }
+        reference: { resource: 'Project', id: activity.object, source: 'name', basePath: '/Project' }
       };
     default:
       return {
