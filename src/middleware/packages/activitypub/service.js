@@ -73,7 +73,10 @@ const ActivityPubService = {
   actions: {
     getApiRoutes() {
       return [
-        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.activities), 'activitypub.activity'),
+        ...getContainerRoutes(
+          urlJoin(this.settings.baseUri, this.settings.containers.activities),
+          'activitypub.activity'
+        ),
         ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.actors), 'activitypub.actor'),
         ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
         // Unsecured routes
