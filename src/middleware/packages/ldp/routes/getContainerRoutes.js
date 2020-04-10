@@ -1,4 +1,10 @@
-const { parseBody, negotiateContentType, negotiateAccept, parseJson, addContainerUriMiddleware } = require('./middlewares');
+const {
+  parseBody,
+  negotiateContentType,
+  negotiateAccept,
+  parseJson,
+  addContainerUriMiddleware
+} = require('./middlewares');
 
 function getContainerRoutes(containerUri, serviceName) {
   const commonRouteConfig = {
@@ -26,7 +32,7 @@ function getContainerRoutes(containerUri, serviceName) {
         get: serviceName + '.get',
         post: serviceName + '.post',
         patch: serviceName + '.patch',
-        delete: serviceName + '.delete',
+        delete: serviceName + '.delete'
       }
     : {
         list: 'ldp.container.api_get',

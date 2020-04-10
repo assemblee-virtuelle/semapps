@@ -1,4 +1,4 @@
-const DbService = require("moleculer-db");
+const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const ObjectService = {

@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const DbService = require("moleculer-db");
+const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const ActorService = {
@@ -16,8 +16,14 @@ const ActorService = {
       const { actorUri } = ctx.params;
 
       // Create the collections associated with the user
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'following'), ordered: false });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'followers'), ordered: false });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(actorUri, 'following'),
+        ordered: false
+      });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(actorUri, 'followers'),
+        ordered: false
+      });
       await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'inbox'), ordered: true });
       await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'outbox'), ordered: true });
 

@@ -34,7 +34,10 @@ const InboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.inbox.received', { activity, recipients: [urlJoin(this.settings.actorsContainer, username)] });
+      ctx.emit('activitypub.inbox.received', {
+        activity,
+        recipients: [urlJoin(this.settings.actorsContainer, username)]
+      });
 
       return activity;
     },
