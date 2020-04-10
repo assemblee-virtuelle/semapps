@@ -1,10 +1,10 @@
-const { JsonLdStorageMixin } = require('@semapps/ldp');
+const DbService = require('moleculer-db');
+const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const ObjectService = {
   name: 'activitypub.object',
-  mixins: [JsonLdStorageMixin],
-  adapter: null, // To be set by the user
-  collection: 'objects',
+  mixins: [DbService],
+  adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null, // To be set by the user
     context: 'https://www.w3.org/ns/activitystreams'

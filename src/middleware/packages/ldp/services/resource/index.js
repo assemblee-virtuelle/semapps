@@ -9,7 +9,8 @@ module.exports = {
   name: 'ldp.resource',
   settings: {
     baseUrl: null,
-    ontologies: []
+    ontologies: [],
+    defaultAccept: null
   },
   dependencies: ['triplestore'],
   actions: {

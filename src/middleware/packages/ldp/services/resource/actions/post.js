@@ -1,3 +1,4 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { generateId } = require('../../../utils');
 
@@ -5,7 +6,7 @@ module.exports = {
   api: async function api(ctx) {
     let { containerUri, typeURL } = ctx.params;
     try {
-      const resource = await ctx.call('ldp.resource.post', {
+      const resourceUri = await ctx.call('ldp.resource.post', {
         containerUri: containerUri || this.settings.baseUrl + typeURL,
         slug: ctx.meta.headers.slug,
         resource: ctx.meta.body,
@@ -15,7 +16,7 @@ module.exports = {
 
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
-        Location: resource['@id'],
+        Location: resourceUri,
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
@@ -33,9 +34,6 @@ module.exports = {
         type: 'string',
         optional: true
       },
-      accept: {
-        type: 'string'
-      },
       contentType: {
         type: 'string'
       },
@@ -48,13 +46,17 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const { resource, containerUri, slug, accept, contentType, webId } = ctx.params;
+      const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
       if (webId) ctx.meta.webId = webId;
 
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
+
+      if (!resource['@context']) {
+        throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
+      }
 
       await ctx.call('triplestore.insert', {
         resource,
@@ -66,10 +68,7 @@ module.exports = {
         containerUri
       });
 
-      return await ctx.call('ldp.resource.get', {
-        resourceUri: resource['@id'],
-        accept
-      });
+      return resource['@id'];
     }
   }
 };

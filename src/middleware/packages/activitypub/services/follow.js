@@ -1,19 +1,19 @@
-'use strict';
-
+const urlJoin = require('url-join');
 const { ACTIVITY_TYPES } = require('../constants');
 
 const FollowService = {
   name: 'activitypub.follow',
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
-  async started() {
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
+  settings: {
+    actorsContainer: null
   },
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.actorsContainer}${ctx.params.username}/followers`
+        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'followers'),
+        dereferenceItems: false
       });
 
       if (collection) {
@@ -26,7 +26,8 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: `${this.settings.actorsContainer}${ctx.params.username}/following`
+        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'following'),
+        dereferenceItems: false
       });
 
       if (collection) {
@@ -42,11 +43,11 @@ const FollowService = {
 
       if (activity.type === ACTIVITY_TYPES.FOLLOW || activity['@type'] === ACTIVITY_TYPES.FOLLOW) {
         await this.broker.call('activitypub.collection.attach', {
-          collectionUri: activity.object + '/followers',
+          collectionUri: urlJoin(activity.object, 'followers'),
           item: activity.actor
         });
         await this.broker.call('activitypub.collection.attach', {
-          collectionUri: activity.actor + '/following',
+          collectionUri: urlJoin(activity.object, 'following'),
           item: activity.object
         });
         this.broker.emit('activitypub.follow.added', { follower: activity.actor });

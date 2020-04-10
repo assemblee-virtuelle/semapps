@@ -5,9 +5,9 @@ const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const { typeURL, resourceId, containerUri } = ctx.params;
-    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
-    const accept = ctx.meta.headers.accept;
+    const { typeURL, id, containerUri } = ctx.params;
+    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
+    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
       const body = await ctx.call('ldp.resource.get', {
         resourceUri,
@@ -26,33 +26,64 @@ module.exports = {
     params: {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string' }
+      accept: { type: 'string' },
+      expand: { type: 'array', optional: true },
+      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const resourceUri = ctx.params.resourceUri;
-      const accept = ctx.params.accept;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resourceUri, accept, webId, expand, jsonContext } = ctx.params;
+
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });
 
       if (triplesNb > 0) {
+        let constructOptions = '',
+          whereOptions = '';
+
+        if (expand) {
+          constructOptions = `?rO ?srP ?srO .`;
+          whereOptions = `
+            OPTIONAL {
+              ?item ?propsToExpand ?rO .
+              FILTER(?propsToExpand IN (${expand.join(', ')})) .
+              # We don't want to expand URIs as it creates problems when compacting
+              FILTER(!(isIRI(?rO))) .
+              ?rO ?srP ?srO .
+            }
+          `;
+        }
+
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
-            CONSTRUCT
+            CONSTRUCT  {
+              <${resourceUri}> ?rP ?rO .
+              ${constructOptions}
+            }
             WHERE {
-              <${resourceUri}> ?predicate ?object.
+              <${resourceUri}> ?rP ?rO .
+              ${whereOptions}
             }
           `,
-          accept: accept
+          accept,
+          webId
         });
-        // If we asked for JSON-LD, compact it using our ontologies in order to have clean, consistent results
+
+        // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          result = await jsonld.compact(result, getPrefixJSON(this.settings.ontologies));
+          result = await jsonld.frame(result, {
+            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+            '@id': resourceUri
+          });
+
+          // Remove the @graph as we have a single result
+          result = {
+            '@context': result['@context'],
+            ...result['@graph'][0]
+          };
         }
+
         return result;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');

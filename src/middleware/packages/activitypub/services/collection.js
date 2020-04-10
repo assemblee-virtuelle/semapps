@@ -1,8 +1,11 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-const TripleStoreCollectionService = {
+const CollectionService = {
   name: 'activitypub.collection',
+  settings: {
+    context: 'https://www.w3.org/ns/activitystreams'
+  },
   dependencies: ['triplestore'],
   actions: {
     /*
@@ -20,7 +23,8 @@ const TripleStoreCollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       });
     },
     /*
@@ -59,46 +63,74 @@ const TripleStoreCollectionService = {
 
       return await ctx.call('triplestore.insert', {
         resource: collection,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       });
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param id The full URI of the collection
+     * @param dereferenceItems Should we dereference the items in the collection ?
+     * @param expand Array of items' properties we want to expand
      */
     async get(ctx) {
-      let collection = await ctx.call('triplestore.query', {
+      const { id, dereferenceItems = false, expand } = ctx.params;
+      let constructOptions = '',
+        whereOptions = '';
+
+      if (dereferenceItems) {
+        constructOptions = `?item ?iP ?iO .`;
+        whereOptions = `?item ?iP ?iO .`;
+
+        if (expand) {
+          constructOptions += `?iO ?siP ?siO .`;
+          whereOptions += `
+          OPTIONAL {
+            ?item ?propsToExpand ?iO .
+            FILTER(?propsToExpand IN (${expand.join(', ')})) .
+            # We don't want to expand URIs as it creates problems when compacting
+            FILTER(!(isIRI(?iO))) .
+            ?iO ?siP ?siO .
+          }
+        `;
+        }
+      }
+
+      let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${ctx.params.id}> 
-              a ?type ;
+            <${id}> a ?type ;
               as:items ?item .
+            ${constructOptions}
           }
           WHERE {
-            <${ctx.params.id}> a ?type .
+            <${id}> a ?type .
             OPTIONAL { 
-              <${ctx.params.id}> as:items ?item .
+              <${id}> as:items ?item .
+              ${whereOptions}
             }
           }
         `,
         accept: MIME_TYPES.JSON
       });
 
-      collection = await jsonld.compact(collection, {
-        '@context': 'https://www.w3.org/ns/activitystreams'
+      result = await jsonld.frame(result, {
+        '@context': this.settings.context,
+        '@id': id
       });
 
-      if (!collection.items) collection.items = [];
-      // If there is only one item, we receive it as an object so put it in an array
-      else if (!Array.isArray(collection.items)) collection.items = [collection.items];
+      let { items, ...collection } = result['@graph'][0];
+      items = !items ? [] : Array.isArray(items) ? items : [items];
 
-      collection.totalItems = collection.items.length;
+      const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
-      if (this.isOrderedCollection(collection)) {
-        collection.orderedItems = collection.items;
-        delete collection.items;
-      }
+      collection = {
+        '@context': result['@context'],
+        ...collection,
+        [itemsProp]: items,
+        totalItems: items.length
+      };
 
       return collection;
     },
@@ -116,4 +148,4 @@ const TripleStoreCollectionService = {
   }
 };
 
-module.exports = TripleStoreCollectionService;
+module.exports = CollectionService;
