@@ -11,8 +11,8 @@ const ThemeService = {
   settings: {
     containerUri: urlJoin(CONFIG.HOME_URL, 'themes'),
     context: {
-      'ldp': 'http://www.w3.org/ns/ldp#',
-      'pair': 'http://virtual-assembly.org/ontologies/pair#'
+      ldp: 'http://www.w3.org/ns/ldp#',
+      pair: 'http://virtual-assembly.org/ontologies/pair#'
     },
     themes: [
       'Culture',
@@ -37,7 +37,7 @@ const ThemeService = {
         // If we get an error, it means the theme doesn't exist, so create it
         await this.actions.create({
           slug: slug,
-          '@context': { 'pair': 'http://virtual-assembly.org/ontologies/pair#' },
+          '@context': { pair: 'http://virtual-assembly.org/ontologies/pair#' },
           '@type': 'pair:Thema',
           'pair:preferedLabel': themeLabel
         });
