@@ -1,30 +1,31 @@
-const parseHeaders = require('./parseHeaders');
+const { parseBody, negotiateContentType, negotiateAccept, parseJson, addContainerUriMiddleware } = require('./middlewares');
 
 function getApiRoutes({ containerUri, services }) {
-  const addContainerUriMiddleware = (req, res, next) => {
-    req.$params.containerUri = containerUri;
-    next();
-  };
-
   const commonRouteConfig = {
     path: new URL(containerUri).pathname,
-    // When using multiple routes we must set the body parser for each route.
+    // Disable the body parsers so that we can parse the body ourselves
+    // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: {
       json: false,
       urlencoded: false
-    },
-    onBeforeCall: (ctx, route, req, res) => {
-      return parseHeaders(ctx, route, req, res);
     }
   };
+
+  const middlewares = [
+    parseBody,
+    negotiateContentType,
+    negotiateAccept,
+    parseJson,
+    addContainerUriMiddleware(containerUri)
+  ];
 
   return [
     {
       authorization: false,
       authentication: true,
       aliases: {
-        'GET /': [addContainerUriMiddleware, services.list],
-        'GET /:id': [addContainerUriMiddleware, services.get]
+        'GET /': [...middlewares, services.list],
+        'GET /:id': [...middlewares, services.get]
       },
       ...commonRouteConfig
     },
@@ -32,9 +33,9 @@ function getApiRoutes({ containerUri, services }) {
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [addContainerUriMiddleware, services.post],
-        'PATCH /:id': [addContainerUriMiddleware, services.patch],
-        'DELETE /:id': [addContainerUriMiddleware, services.delete]
+        'POST /': [...middlewares, services.post],
+        'PATCH /:id': [...middlewares, services.patch],
+        'DELETE /:id': [...middlewares, services.delete]
       },
       ...commonRouteConfig
     }

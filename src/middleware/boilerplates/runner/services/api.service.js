@@ -57,6 +57,7 @@ module.exports = {
 
     routes.push(this.connector.getRoute());
     routes.push(...(await this.broker.call('ldp.getApiRoutes')));
+    routes.push(...(await this.broker.call('activitypub.activity.getApiRoutes')));
     routes.push(...(await this.broker.call('activitypub.actor.getApiRoutes')));
     routes.push(...(await this.broker.call('activitypub.object.getApiRoutes')));
 

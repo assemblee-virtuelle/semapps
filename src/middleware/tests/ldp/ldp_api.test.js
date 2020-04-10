@@ -83,7 +83,7 @@ describe('CRUD Project', () => {
         description: 'myProject',
         label: 'myLabel'
       })
-      .set('content-type', 'application/json');
+      .set('content-type', 'application/ld+json');
 
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
     expect(location).not.toBeNull();
@@ -118,7 +118,7 @@ describe('CRUD Project', () => {
     await expressMocked
       .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
-      .set('content-type', 'application/json');
+      .set('content-type', 'application/ld+json');
 
     const response = await expressMocked
       .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
