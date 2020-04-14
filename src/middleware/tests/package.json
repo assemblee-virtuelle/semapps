@@ -3,7 +3,7 @@
   "private": true,
   "description": "SemApps integration tests",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit"
+    "test": "jest /ldp --detectOpenHandles --forceExit"
   },
   "author": "SemApps Team",
   "license": "Apache-2.0",

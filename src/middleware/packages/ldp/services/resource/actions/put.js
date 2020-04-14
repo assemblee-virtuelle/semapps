@@ -2,13 +2,17 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    const { typeURL, resourceId, containerUri } = ctx.params;
-    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
-    const body = ctx.meta.body;
-    body['@id'] = resourceUri;
+    const { containerUri,id, ...resource} = ctx.params;
+
+    if(id){
+      resource['@id'] = `${containerUri}/${id}`;
+    } else if (resource['@id'] && !resource['@id'].startsWith('http')) {
+      resource['@id'] = `${containerUri}/${resource['@id']}`;
+    }
+
     try {
       await ctx.call('ldp.resource.put', {
-        resource: body,
+        resource,
         accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type']
       });
@@ -28,16 +32,10 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string' },
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      let resource = ctx.params.resource;
-      const accept = ctx.params.accept;
-      const contentType = ctx.params.contentType;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resource, accept, contentType, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
@@ -48,13 +46,11 @@ module.exports = {
         });
         await ctx.call('triplestore.insert', {
           resource,
-          contentType
+          contentType,
+          webId
         });
 
-        return await ctx.call('ldp.resource.get', {
-          resourceUri: resource['@id'],
-          accept: accept
-        });
+        return resource['@id'];
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

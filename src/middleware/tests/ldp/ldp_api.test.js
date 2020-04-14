@@ -144,7 +144,7 @@ describe('CRUD Project', () => {
       .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
-    expect(response.body['pair:label']).toBe(undefined);
+    expect(response.body['pair:label']).toBeUndefined();
   }, 20000);
 
   test('Delete project', async () => {
