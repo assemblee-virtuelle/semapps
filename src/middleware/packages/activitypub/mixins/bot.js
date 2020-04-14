@@ -26,7 +26,7 @@ const BotService = {
       actor = await this.broker.call('activitypub.actor.get', {
         id: actorSettings.username
       });
-    } catch(e) {
+    } catch (e) {
       actor = null;
     }
 

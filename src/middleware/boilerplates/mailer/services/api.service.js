@@ -19,7 +19,7 @@ const ApiService = {
         aliases: {
           'POST /': 'form.process',
           'GET /': 'form.display',
-          'GET /mailer/:frequency': 'mailer.processQueue',
+          'GET /mailer/:frequency': 'mailer.processQueue'
         }
       }
     ]
