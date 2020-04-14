@@ -97,7 +97,7 @@ module.exports = {
         '@context': 'https://www.w3.org/ns/activitystreams',
         '@type': 'Follow',
         actor: urlJoin(this.settings.usersContainer, data.username),
-        object: urlJoin(this.settings.usersContainer, pascalCaseToHyphens(data.following))
+        object: urlJoin(this.settings.usersContainer, pascalCaseToHyphens(data.following.substring(0, 36)))
       });
 
       console.log(`Actor ${data.username} follow ${data.following}`);

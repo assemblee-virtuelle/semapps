@@ -30,16 +30,16 @@ export const NoteList = props => {
 };
 
 const NoteTitle = ({ record }) => {
-  return <span>Actualite {record ? `"${record.name}"` : ''}</span>;
+  return <span>Actualité {record ? `"${record.name}"` : ''}</span>;
 };
 
 export const NoteEdit = props => (
   <Edit title={<NoteTitle />} {...props}>
     <SimpleForm>
       <TextInput source="name" label="Nom" fullWidth />
-      <MarkdownInput multiline source="content" label="Description" fullWidth />
+      <MarkdownInput source="content" label="Description" fullWidth />
       <JsonLdReferenceInput label="Auteur" reference="Project" source="attributedTo">
-        <AutocompleteArrayInput optionText={record => (record ? record.name : '')} fullWidth />
+        <AutocompleteArrayInput optionText={record => record ? record['pair:label'] : 'Label manquant'} fullWidth />
       </JsonLdReferenceInput>
       <DateTimeInput source="published" label="Publié le" fullWidth />
       <DateTimeInput source="updated" label="Mis à jour le" fullWidth />

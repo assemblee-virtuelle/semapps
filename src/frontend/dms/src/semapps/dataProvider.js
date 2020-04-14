@@ -38,6 +38,7 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
       ${searchRequest}
       ?s1 a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
+      FILTER( (isIRI(?s1)) ) .
       ?s1 ?p2 ?o2 .
     }
     # TODO try to make pagination work in SPARQL as this doesn't work.
