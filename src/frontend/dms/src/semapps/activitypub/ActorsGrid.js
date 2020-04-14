@@ -3,7 +3,7 @@ import React from 'react';
 
 const ActorsGrid = props => (
   <Datagrid rowClick="show" {...props}>
-    <TextField source="as:name" label="Nom" />
+    <TextField source="name" label="Nom" />
     <ShowButton basePath="/Actor" />
   </Datagrid>
 );

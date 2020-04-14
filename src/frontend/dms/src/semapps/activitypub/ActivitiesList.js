@@ -9,7 +9,7 @@ const ActivitiesList = ({ children, source, record = {} }) => {
   const { data } = useQueryWithStore({
     type: 'getList',
     resource: 'Activity',
-    payload: { id: record[source]['@id'] }
+    payload: { id: record[source] }
   });
 
   if (!data) return null;

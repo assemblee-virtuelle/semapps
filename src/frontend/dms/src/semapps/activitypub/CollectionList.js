@@ -23,7 +23,7 @@ const CollectionList = ({ children, source, record }) => {
   const { data } = useQueryWithStore({
     type: 'getOne',
     resource: 'Collection',
-    payload: { id: record[source]['@id'] }
+    payload: { id: record[source] }
   });
 
   return data && data.items.length > 0 ? <ActorsList ids={data.items}>{children}</ActorsList> : null;
