@@ -94,8 +94,6 @@ describe('CRUD Project', () => {
     });
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
     expect(updatedProject['pair:label']).toBe('myTitle');
-
-
   }, 20000);
 
   test('Get One project turtle', async () => {
@@ -146,7 +144,6 @@ describe('CRUD Project', () => {
     });
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
     expect(updatedProject['pair:label']).toBeUndefined();
-
   }, 20000);
 
   test('Delete project', async () => {
