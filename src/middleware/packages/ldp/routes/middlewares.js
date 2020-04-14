@@ -7,7 +7,7 @@ const parseBody = (req, res, next) => {
     data += chunk;
   });
   req.on('end', function() {
-    req.$ctx.meta.body = data.length > 0 ? data : undefined;
+    req.$params.body = data.length > 0 ? data : undefined;
     next();
   });
 };
@@ -25,7 +25,7 @@ const negotiateContentType = (req, res, next) => {
       );
     }
   } else {
-    if (req.$ctx.meta.body) {
+    if (req.$params.body) {
       throw new MoleculerError(
         'Content-Type has to be specified for a non-empty body ',
         400,
@@ -50,7 +50,11 @@ const negotiateAccept = (req, res, next) => {
 
 const parseJson = (req, res, next) => {
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
-    req.$ctx.meta.body = JSON.parse(req.$ctx.meta.body);
+    const { body, ...otherParams } = req.$params;
+    req.$params = {
+      ...otherParams,
+      ...JSON.parse(body)
+    };
   }
   next();
 };

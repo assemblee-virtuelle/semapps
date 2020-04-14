@@ -47,7 +47,7 @@ const FollowService = {
           item: activity.actor
         });
         await this.broker.call('activitypub.collection.attach', {
-          collectionUri: urlJoin(activity.object, 'following'),
+          collectionUri: urlJoin(activity.actor, 'following'),
           item: activity.object
         });
         this.broker.emit('activitypub.follow.added', { follower: activity.actor });
