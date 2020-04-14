@@ -2,13 +2,14 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    const { typeURL, id, containerUri } = ctx.params;
-    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-    const body = ctx.meta.body;
-    body['@id'] = resourceUri;
+    const { typeURL, containerUri, ...resource } = ctx.params;
+
+    if( resource['@id'] && !resource['@id'].startsWith('http') ) resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource['@id']}`;
+    if( resource.id && !resource.id.startsWith('http') ) resource.id = `${containerUri || this.settings.baseUrl + typeURL}/${resource.id}`;
+
     try {
       await ctx.call('ldp.resource.patch', {
-        resource: body,
+        resource,
         contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
@@ -33,7 +34,7 @@ module.exports = {
       const { resource, contentType, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
-        uri: resource['@id']
+        uri: resource['@id'] || resource.id
       });
 
       if (triplesNb > 0) {
@@ -43,7 +44,7 @@ module.exports = {
           webId
         });
 
-        return resource['@id'];
+        return resource['@id']  || resource.id;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

@@ -4,12 +4,12 @@ const { generateId } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, typeURL } = ctx.params;
+    let { containerUri, typeURL, ...resource } = ctx.params;
     try {
       const resourceUri = await ctx.call('ldp.resource.post', {
         containerUri: containerUri || this.settings.baseUrl + typeURL,
         slug: ctx.meta.headers.slug,
-        resource: ctx.meta.body,
+        resource,
         contentType: ctx.meta.headers['content-type'],
         accept: MIME_TYPES.JSON
       });
