@@ -7,7 +7,7 @@ module.exports = {
     if (resource['@id'] && !resource['@id'].startsWith('http'))
       resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource['@id']}`;
     if (resource.id && !resource.id.startsWith('http'))
-      resource.id = `${containerUri || this.settings.baseUrl + typeURL}/${resource.id}`;
+      resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource.id}`;
 
     try {
       await ctx.call('ldp.resource.patch', {

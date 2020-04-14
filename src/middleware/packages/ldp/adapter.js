@@ -85,7 +85,7 @@ class TripleStoreAdapter {
   }
 
   /**
-   * Get count of filtered entites
+   * Get count of filtered entities
    *
    * Available filter props:
    *  - search
@@ -93,7 +93,12 @@ class TripleStoreAdapter {
    *  - query
    */
   count(filters = {}) {
-    throw new Error('Method not implemented');
+    return this.broker.call(this.containerService + '.get', {
+      containerUri: this.service.schema.settings.containerUri,
+      expand: this.service.schema.settings.expand,
+      jsonContext: this.service.schema.settings.context,
+      accept: MIME_TYPES.JSON
+    }).then(result => result['ldp:contains'].length);
   }
 
   /**
