@@ -1,11 +1,13 @@
-'use strict';
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebIdService = {
   name: 'webid',
   dependencies: ['ldp.resource', 'triplestore'],
   settings: {
-    usersContainer: null
+    usersContainer: null,
+    context: {
+      foaf: 'http://xmlns.com/foaf/0.1/'
+    }
   },
   actions: {
     /**
@@ -27,7 +29,7 @@ const WebIdService = {
           familyName,
           homepage
         };
-        let newPerson = await ctx.call('ldp.resource.post', {
+        webId = await ctx.call('ldp.resource.post', {
           resource: {
             '@context': {
               '@vocab': 'http://xmlns.com/foaf/0.1/'
@@ -37,11 +39,16 @@ const WebIdService = {
           },
           slug: nick,
           containerUri: this.settings.usersContainer,
-          contentType: MIME_TYPES.JSON,
-          accept: MIME_TYPES.JSON,
-          webId: 'system'
+          contentType: MIME_TYPES.JSON
         });
-        webId = newPerson['@id'];
+
+        let newPerson = await ctx.call('ldp.resource.get', {
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
+          webId
+        });
+
         ctx.emit('webid.created', newPerson);
       }
 
@@ -54,6 +61,7 @@ const WebIdService = {
         return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
           webId: webId
         });
       } else {

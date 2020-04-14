@@ -1,4 +1,3 @@
 module.exports = {
-  WebhooksService: require('./service'),
-  Routes: require('./routes')
+  WebhooksService: require('./service')
 };

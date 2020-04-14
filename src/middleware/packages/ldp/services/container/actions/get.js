@@ -1,11 +1,11 @@
 const jsonld = require('jsonld');
-const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const accept = negotiateTypeMime(ctx.meta.headers.accept);
+    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
       const body = await ctx.call('ldp.container.get', {
         containerUri,
@@ -23,20 +23,46 @@ module.exports = {
     visibility: 'public',
     params: {
       containerUri: { type: 'string' },
-      accept: { type: 'string' }
+      accept: { type: 'string' },
+      expand: { type: 'array', optional: true },
+      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri } = ctx.params;
+      const { accept, containerUri, expand, jsonContext } = ctx.params;
+      let constructOptions = '',
+        whereOptions = '';
+
+      if (expand) {
+        constructOptions = `?rO ?srP ?srO .`;
+        whereOptions = `
+          OPTIONAL {
+            ?item ?propsToExpand ?rO .
+            FILTER(?propsToExpand IN (${expand.join(', ')})) .
+            # We don't want to expand URIs as it creates problems when compacting
+            FILTER(!(isIRI(?rO))) .
+            ?rO ?srP ?srO .
+          }
+        `;
+      }
 
       const result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
-          CONSTRUCT
+          CONSTRUCT  {
+            <${containerUri}>
+              a ldp:BasicContainer ;
+              ldp:contains ?rS .
+            ?rS ?rP ?rO .
+            ${constructOptions}
+          }
           WHERE {
             <${containerUri}>
               a ldp:BasicContainer ;
-              ldp:contains ?resource .
-            ?resource ?resourceP ?resourceO .
+              ldp:contains ?rS .
+            OPTIONAL { 
+              ?rS ?rP ?rO . 
+              ${whereOptions}
+            }
           }
         `,
         accept
@@ -44,14 +70,17 @@ module.exports = {
 
       if (accept === MIME_TYPES.JSON) {
         const framedResult = await jsonld.frame(result, {
-          '@context': getPrefixJSON(this.settings.ontologies),
-          '@type': 'ldp:BasicContainer'
+          '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+          '@id': containerUri
         });
 
         // Return the result without the @graph
         return {
           '@context': framedResult['@context'],
-          ...framedResult['@graph'][0]
+          ...framedResult['@graph'][0],
+          'ldp:contains': Array.isArray(framedResult['@graph'][0]['ldp:contains'])
+            ? framedResult['@graph'][0]['ldp:contains']
+            : [framedResult['@graph'][0]['ldp:contains']]
         };
       } else {
         return result;

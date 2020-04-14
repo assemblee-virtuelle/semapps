@@ -40,7 +40,7 @@ log:
 	$(DOCKER_COMPOSE) logs -f middleware frontend
 
 log-prod:
-	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend mongo
+	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend
 
 start: docker-start
 
@@ -71,7 +71,7 @@ prettier:
 bootstrap:
 	npm run bootstrap --prefix ./src/middleware
 
-# For tests we currently only need fuseki and mongodb
+# For tests we currently only need fuseki
 test:
 	$(DOCKER_COMPOSE_TEST) build
 	$(DOCKER_COMPOSE_TEST) up -d
