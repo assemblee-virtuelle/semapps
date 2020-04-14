@@ -1,13 +1,13 @@
-'use strict';
-
+const urlJoin = require('url-join');
 const { PUBLIC_URI } = require('../constants');
+const { objectCurrentToId } = require('../functions');
 
 const InboxService = {
   name: 'activitypub.inbox',
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
-  async started() {
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
+  settings: {
+    actorsContainer: null
   },
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
@@ -34,7 +34,10 @@ const InboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.inbox.received', { activity, recipients: [this.settings.actorsContainer + username] });
+      ctx.emit('activitypub.inbox.received', {
+        activity,
+        recipients: [urlJoin(this.settings.actorsContainer, username)]
+      });
 
       return activity;
     },
@@ -42,11 +45,16 @@ const InboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getInboxUri(ctx.params.username)
+        id: this.getInboxUri(ctx.params.username),
+        dereferenceItems: true,
+        expand: ['as:object']
       });
 
       if (collection) {
-        return collection;
+        return {
+          ...collection,
+          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
+        };
       } else {
         ctx.meta.$statusCode = 404;
       }
@@ -61,7 +69,7 @@ const InboxService = {
         for (const recipient of recipients) {
           // Attach the activity to the inbox of the recipient
           await this.broker.call('activitypub.collection.attach', {
-            collectionUri: recipient + '/inbox',
+            collectionUri: urlJoin(recipient, 'inbox'),
             item: activity
           });
         }
@@ -74,17 +82,17 @@ const InboxService = {
   },
   methods: {
     getInboxUri(username) {
-      return this.settings.actorsContainer + username + '/inbox';
+      return urlJoin(this.settings.actorsContainer, username, 'inbox');
     },
     getFollowersUri(actorUri) {
-      return actorUri + '/followers';
+      return urlJoin(actorUri, 'followers');
     },
     isLocalUri(uri) {
       return uri.startsWith(this.settings.actorsContainer);
     },
     defaultToArray(value) {
       // Items or recipients may be string or array, so default to array for easier handling
-      return Array.isArray(value) ? value : [value];
+      return !value ? undefined : Array.isArray(value) ? value : [value];
     },
     async getAllRecipients(activity) {
       let output = [],

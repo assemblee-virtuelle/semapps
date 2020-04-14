@@ -7,6 +7,6 @@ module.exports = {
   settings: {
     baseUrl: CONFIG.HOME_URL,
     ontologies,
-    containers: ['ldp/object']
+    containers: ['/ldp/object']
   }
 };

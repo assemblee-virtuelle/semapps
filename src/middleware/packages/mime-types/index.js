@@ -13,11 +13,11 @@ const negotiateType = function(incomingType) {
       accept: negotiatorType
     }
   });
-  const rawNegociatedAccept = negotiator.mediaType(availableMediaTypes);
-  if (rawNegociatedAccept !== undefined) {
-    return TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegociatedAccept))[0];
+  const rawNegotiatedAccept = negotiator.mediaType(availableMediaTypes);
+  if (rawNegotiatedAccept !== undefined) {
+    return TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegotiatedAccept))[0];
   } else {
-    throw new MoleculerError('type not supported : ' + incomingType, 400, 'TYPE_NOT_SUPPORTED');
+    throw new MoleculerError('Type not supported : ' + incomingType, 400, 'TYPE_NOT_SUPPORTED');
   }
 };
 

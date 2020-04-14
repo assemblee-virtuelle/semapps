@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
 const createAction = require('./actions/create');
 const existAction = require('./actions/exist');
@@ -8,7 +9,8 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['resources']
+    containers: ['resources'],
+    defaultAccept: null
   },
   dependencies: ['triplestore'],
   actions: {
@@ -21,7 +23,7 @@ module.exports = {
   },
   async started() {
     for (let containerPath of this.settings.containers) {
-      const containerUri = this.settings.baseUrl + containerPath;
+      const containerUri = urlJoin(this.settings.baseUrl, containerPath);
       const exists = await this.actions.exist({ containerUri });
       if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);

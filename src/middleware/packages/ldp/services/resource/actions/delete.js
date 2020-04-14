@@ -3,8 +3,8 @@ const { MoleculerError } = require('moleculer').Errors;
 module.exports = {
   api: async function api(ctx) {
     try {
-      const { typeURL, resourceId, containerUri } = ctx.params;
-      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${resourceId}`;
+      const { typeURL, id, containerUri } = ctx.params;
+      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
       await ctx.call('ldp.resource.delete', {
         resourceUri
       });
@@ -26,16 +26,16 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      const resourceUri = ctx.params.resourceUri;
-      if (ctx.params.webId) {
-        ctx.meta.webId = ctx.params.webId;
-      }
+      const { resourceUri, webId } = ctx.params;
+
       const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
         uri: resourceUri
       });
+
       if (triplesNb > 0) {
         await ctx.call('triplestore.delete', {
-          uri: resourceUri
+          uri: resourceUri,
+          webId
         });
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
