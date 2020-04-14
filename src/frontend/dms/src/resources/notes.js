@@ -39,7 +39,7 @@ export const NoteEdit = props => (
       <TextInput source="name" label="Nom" fullWidth />
       <MarkdownInput source="content" label="Description" fullWidth />
       <JsonLdReferenceInput label="Auteur" reference="Project" source="attributedTo">
-        <AutocompleteArrayInput optionText={record => record ? record['pair:label'] : 'Label manquant'} fullWidth />
+        <AutocompleteArrayInput optionText={record => (record ? record['pair:label'] : 'Label manquant')} fullWidth />
       </JsonLdReferenceInput>
       <DateTimeInput source="published" label="Publié le" fullWidth />
       <DateTimeInput source="updated" label="Mis à jour le" fullWidth />

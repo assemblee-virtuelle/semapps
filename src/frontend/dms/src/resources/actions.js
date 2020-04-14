@@ -47,9 +47,7 @@ const ActionTitle = ({ record }) => {
   return <span>Action {record ? `"${record['pair:label']}"` : ''}</span>;
 };
 
-const decorators = [
-  copyValues({ name: 'pair:label', content: 'pair:description', url: 'pair:homePage' })
-];
+const decorators = [copyValues({ name: 'pair:label', content: 'pair:description', url: 'pair:homePage' })];
 
 export const ActionEdit = props => (
   <Edit title={<ActionTitle />} {...props}>
