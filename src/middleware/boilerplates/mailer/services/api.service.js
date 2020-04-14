@@ -1,9 +1,11 @@
+const urlJoin = require('url-join');
 const ApiGateway = require('moleculer-web');
+const { getContainerRoutes } = require('@semapps/ldp');
+const CONFIG = require('../config');
 
 const ApiService = {
   mixins: [ApiGateway],
   settings: {
-    server: true,
     assets: {
       folder: './public',
       options: {} // `server-static` module options
@@ -17,18 +19,17 @@ const ApiService = {
         aliases: {
           'POST /': 'form.process',
           'GET /': 'form.display',
-          'POST /users/:username/inbox': 'activitypub.inbox.post',
           'GET /mailer/:frequency': 'mailer.processQueue',
-          // TODO remove as we don't need to make these URLs public
-          'GET /users/:id': 'activitypub.actor.get',
-          'GET /activities/:id': 'activitypub.activity.get',
-          'GET /users/:username/inbox': 'activitypub.inbox.list',
-          'GET /users/:username/outbox': 'activitypub.outbox.list',
-          'GET /users/:username/followers': 'activitypub.follow.listFollowers',
-          'GET /users/:username/following': 'activitypub.follow.listFollowing'
         }
       }
     ]
+  },
+  dependencies: ['activitypub'],
+  async started() {
+    [
+      ...(await this.broker.call('activitypub.getApiRoutes')),
+      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes')
+    ].forEach(route => this.addRoute(route));
   }
 };
 

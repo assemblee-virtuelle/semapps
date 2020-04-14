@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 
 const FormService = {
   name: 'form',
-  dependencies: ['theme', 'match-bot'],
+  dependencies: ['themes', 'match-bot'],
   settings: {
     matchBotUri: null
   },
@@ -22,12 +22,12 @@ const FormService = {
         actor.location = { radius: '25000' };
       }
 
-      const themes = await ctx.call('theme.list');
+      const themes = await ctx.call('themes.find');
 
       ctx.meta.$responseType = 'text/html';
       return this.formTemplate({
         title: 'Suivez les projets de la Fabrique',
-        themes: themes.rows,
+        themes: themes['ldp:contains'],
         id: ctx.params.id,
         actor,
         message: ctx.params.message
@@ -43,7 +43,7 @@ const FormService = {
         ctx.meta.$location = `/?message=deleted`;
       } else {
         // Check if an actor already exist with this ID
-        let actor = await ctx.call('activitypub.actor.get', { id: ctx.params.id });
+        let actor = ctx.params.id ? await ctx.call('activitypub.actor.get', { id: ctx.params.id }) : null;
 
         let actorData = {
           'pair:e-mail': ctx.params.email,
@@ -77,6 +77,7 @@ const FormService = {
 
         if (actor) {
           actor = await ctx.call('activitypub.actor.update', {
+            '@context': 'https://www.w3.org/ns/activitystreams',
             '@id': ctx.params.id,
             ...actorData
           });
@@ -85,6 +86,7 @@ const FormService = {
         } else {
           actor = await ctx.call('activitypub.actor.create', {
             slug: ctx.params.id,
+            '@context': 'https://www.w3.org/ns/activitystreams',
             type: 'Person',
             ...actorData
           });

@@ -16,19 +16,25 @@ const BotService = {
     }
   },
   async started(ctx) {
+    let actor;
     const actorSettings = this.settings.actor;
     if (!actorSettings.username || !actorSettings.name) {
       return Promise.reject(new Error('Please set the actor settings in schema!'));
     }
 
-    let actor = await this.broker.call('activitypub.actor.get', {
-      id: actorSettings.username
-    });
+    try {
+      actor = await this.broker.call('activitypub.actor.get', {
+        id: actorSettings.username
+      });
+    } catch(e) {
+      actor = null;
+    }
 
     if (!actor) {
       console.log(`BotService > Actor ${actorSettings.username} does not exist yet, create it...`);
 
       actor = await this.broker.call('activitypub.actor.create', {
+        '@context': 'https://www.w3.org/ns/activitystreams',
         slug: actorSettings.username,
         type: ACTOR_TYPES.APPLICATION,
         preferredUsername: actorSettings.username,

@@ -64,7 +64,7 @@ const MailerService = {
       const { mail } = ctx.params;
       const actor = await this.broker.call('activitypub.actor.get', { id: mail['actor'] });
 
-      let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
+      let themes = await ctx.call('themes.get', { id: actor['pair:hasInterest'] });
       if (!Array.isArray(themes)) themes = [themes];
 
       const html = this.notificationMailTemplate({
@@ -86,7 +86,7 @@ const MailerService = {
     async sendConfirmationMail(ctx) {
       const { actor } = ctx.params;
 
-      let themes = await ctx.call('theme.get', { id: actor['pair:hasInterest'] });
+      let themes = await ctx.call('themes.get', { id: actor['pair:hasInterest'] });
       if (!Array.isArray(themes)) themes = [themes];
 
       const html = this.confirmationMailTemplate({

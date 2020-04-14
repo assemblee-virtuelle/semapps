@@ -62,7 +62,7 @@
                                 <div class="form-checkboxes" id="edit-field-proj-theme-und">
                                     <div class="form-item form-type-checkbox form-item-field-proj-theme-und-101">
                                         <input class="form-checkbox" id="theme-{{@index}}" name="themes[]" type="checkbox" value="{{this.[@id]}}" {{ifInActorThemes this.[@id] "checked"}}>
-                                        <label class="option" for="theme-{{@index}}">{{this.preferedLabel}}</label>
+                                        <label class="option" for="theme-{{@index}}">{{this.[pair:preferedLabel]}}</label>
                                     </div>
                                 </div>
                                 {{/each}}

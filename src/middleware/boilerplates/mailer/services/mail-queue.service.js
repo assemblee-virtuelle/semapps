@@ -1,16 +1,16 @@
-const { JsonLdStorageMixin } = require('@semapps/ldp');
-const MongoDbAdapter = require('moleculer-db-adapter-mongo');
+const urlJoin = require('url-join');
+const DbService = require('moleculer-db');
+const { TripleStoreAdapter } = require('@semapps/ldp');
 const CONFIG = require('../config');
 
 const MailQueueService = {
   name: 'mail-queue',
-  mixins: [JsonLdStorageMixin],
-  adapter: new MongoDbAdapter(CONFIG.MONGODB_URL),
-  collection: 'mails',
+  mixins: [DbService],
+  adapter: new TripleStoreAdapter(),
   settings: {
-    containerUri: CONFIG.HOME_URL + 'mails/',
+    containerUri: urlJoin(CONFIG.HOME_URL, 'mails'),
     context: {
-      '@vocab': 'http://www.semapps.org/ontology#'
+      '@vocab': 'http://semapps.org/ontology/mail#'
     }
   }
 };
