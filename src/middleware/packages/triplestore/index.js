@@ -118,7 +118,7 @@ const TripleStoreService = {
         return response;
       }
     },
-    countTripleOfSubject: {
+    countTriplesOfSubject: {
       visibility: 'public',
       params: {
         uri: {

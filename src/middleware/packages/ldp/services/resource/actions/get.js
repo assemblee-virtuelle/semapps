@@ -5,8 +5,8 @@ const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const { typeURL, id, containerUri } = ctx.params;
-    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
+    const { id, containerUri } = ctx.params;
+    const resourceUri = `${containerUri}/${id}`;
     const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
       const body = await ctx.call('ldp.resource.get', {
@@ -33,7 +33,7 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri, accept, webId, expand, jsonContext } = ctx.params;
 
-      const triplesNb = await ctx.call('triplestore.countTripleOfSubject', {
+      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resourceUri
       });
 
