@@ -6,16 +6,23 @@ import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resource
 import { OrganizationList, OrganizationEdit, OrganizationCreate, OrganizationIcon } from './resources/organizations';
 import { PersonList, PersonIcon } from './resources/persons';
 import { ConceptList, ConceptIcon } from './resources/concepts';
+import resources from './config/resources';
+import ontologies from './config/ontologies';
 
 function App() {
   return (
     <Admin
-      dataProvider={dataProvider(process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/', httpClient)}
+      dataProvider={dataProvider({
+        sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
+        httpClient,
+        resources,
+        ontologies
+      })}
       authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
       <Resource
-        name="pairv1-Project"
+        name="Project"
         list={ProjectList}
         edit={ProjectEdit}
         create={ProjectCreate}
@@ -23,15 +30,16 @@ function App() {
         options={{ label: 'Projets' }}
       />
       <Resource
-        name="pairv1-Organization"
+        name="Organization"
         list={OrganizationList}
         edit={OrganizationEdit}
         create={OrganizationCreate}
         icon={OrganizationIcon}
         options={{ label: 'Organisations' }}
       />
-      <Resource name="pairv1-Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
-      <Resource name="skos-Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
+      <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
+      <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
+      <Resource name="Agent" />
     </Admin>
   );
 }

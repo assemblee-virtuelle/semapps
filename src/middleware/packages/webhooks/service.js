@@ -1,18 +1,17 @@
+const urlJoin = require('url-join');
+const DbService = require('moleculer-db');
 const { MoleculerError, ServiceSchemaError } = require('moleculer').Errors;
-const { JsonLdStorageMixin } = require('@semapps/ldp');
+const { TripleStoreAdapter } = require('@semapps/ldp');
 
 const WebhooksService = {
   name: 'webhooks',
-  mixins: [JsonLdStorageMixin],
-  collection: 'webhooks',
+  mixins: [DbService],
+  adapter: new TripleStoreAdapter(),
   settings: {
-    // To be set by user
-    baseUri: null,
+    containerUri: null,
     usersContainer: null,
     allowedActions: [],
-    // Set automatically
-    containerUri: null,
-    context: null
+    context: { '@vocab': 'http://semapps.org/ontology/webhooks#' }
   },
   async started() {
     this.settings.allowedActions.forEach(actionName => {
@@ -20,18 +19,14 @@ const WebhooksService = {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
-    this.settings.containerUri = this.settings.baseUri + 'webhooks/';
-    this.settings.context = {
-      '@vocab': this.settings.baseUri + 'ontology/semapps#'
-    };
   },
   actions: {
     async process(ctx) {
       const { hash, ...data } = ctx.params;
-      const webhook = await this.actions.get({ id: hash });
-      if (webhook) {
+      try {
+        const webhook = await this.actions.get({ id: hash });
         return await this.actions[webhook.action]({ data, user: webhook.user });
-      } else {
+      } catch (e) {
         ctx.meta.$statusCode = 404;
       }
     },
@@ -43,7 +38,7 @@ const WebhooksService = {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
-      if (!userId.startsWith('http')) userId = this.settings.usersContainer + userId;
+      if (!userId.startsWith('http')) userId = urlJoin(this.settings.usersContainer, userId);
 
       const webhook = await this.actions.create({
         '@type': 'Webhook',
@@ -52,6 +47,28 @@ const WebhooksService = {
       });
 
       return webhook['@id'];
+    },
+    getApiRoutes() {
+      return [
+        // Unsecured routes
+        {
+          bodyParsers: { json: true },
+          authorization: false,
+          authentication: true,
+          aliases: {
+            'POST webhooks/:hash': 'webhooks.process'
+          }
+        },
+        // Secured routes
+        {
+          bodyParsers: { json: true },
+          authorization: true,
+          authentication: false,
+          aliases: {
+            'POST webhooks': 'webhooks.generate'
+          }
+        }
+      ];
     }
   }
 };

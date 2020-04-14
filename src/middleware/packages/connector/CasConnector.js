@@ -10,18 +10,17 @@ class CasConnector extends Connector {
       casUrl: settings.casUrl,
       privateKey,
       publicKey,
+      sessionSecret: settings.sessionSecret || 's€m@pps',
       selectProfileData: settings.selectProfileData,
       findOrCreateProfile: settings.findOrCreateProfile
     });
   }
-  async configurePassport(passport) {
-    this.passport = passport;
-
-    passport.serializeUser(function(user, done) {
+  async initialize() {
+    this.passport.serializeUser(function(user, done) {
       done(null, user);
     });
 
-    passport.deserializeUser(function(user, done) {
+    this.passport.deserializeUser(function(user, done) {
       done(null, user);
     });
 
@@ -34,7 +33,7 @@ class CasConnector extends Connector {
       }
     );
 
-    passport.use(this.casStrategy);
+    this.passport.use(this.casStrategy);
   }
   globalLogout(req, res, next) {
     // We access directly the `cas` object in order to set the doRedirect parameter as false

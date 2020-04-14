@@ -4,11 +4,10 @@ const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
 const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
-const CONFIG = require('./config');
-const ontologies = require('./ontologies');
+const CONFIG = require('../config');
+const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
-const transporter = null;
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
 });
@@ -24,7 +23,7 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
+      baseUrl: CONFIG.HOME_URL,
       ontologies
     }
   });

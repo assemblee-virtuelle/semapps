@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Filter,
   List,
   Datagrid,
   Edit,
@@ -14,16 +15,17 @@ import {
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { JsonLdReferenceInput, UriInput } from '../semapps';
+import SearchFilter from '../components/SearchFilter';
 
 export const ProjectIcon = SettingsIcon;
 
 export const ProjectList = props => {
   useAuthenticated();
   return (
-    <List title="Projets" {...props}>
-      <Datagrid>
+    <List title="Projets" perPage={25} filters={<SearchFilter />} {...props}>
+      <Datagrid rowClick="edit">
         <TextField source="pairv1:preferedLabel" label="Nom" />
-        <EditButton basePath="/pairv1-Project" />
+        <EditButton basePath="/Project" />
       </Datagrid>
     </List>
   );
@@ -41,15 +43,24 @@ export const ProjectEdit = props => (
       <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
       <UriInput source="pairv1:homePage" label="Site web" fullWidth />
       <TextInput source="pairv1:adress" label="Adresse" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="pairv1-Organization" source="pairv1:isManagedBy">
+      <JsonLdReferenceInput label="Géré par" reference="Agent" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
-          optionText={record =>
-            (record && (record['pairv1:preferedLabel'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
-          }
+          optionText={record => {
+            // TODO improve the handling of the many possible cases
+            if (!record) return 'Label manquant';
+            if (record['rdf:type'] === 'pairv1:Organization' || record['@type'] === 'pairv1:Organization') {
+              if (Array.isArray(record['pairv1:preferedLabel'])) {
+                return record['pairv1:preferedLabel'][0];
+              } else {
+                return record['pairv1:preferedLabel'] || 'Label manquant';
+              }
+            }
+            return `${record['foaf:givenName']} ${record['foaf:familyName']}` || 'Label manquant';
+          }}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Intérêts" reference="skos-Concept" source="pairv1:hasInterest">
+      <JsonLdReferenceInput label="Intérêts" reference="Concept" source="pairv1:hasInterest">
         <AutocompleteArrayInput
           optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
           fullWidth
