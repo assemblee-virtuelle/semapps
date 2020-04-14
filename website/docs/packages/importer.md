@@ -27,7 +27,6 @@ const { ImporterService } = require('@semapps/importer');
 const path = require('path');
 
 module.exports = {
-  name: "importer",
   mixins: [ImporterService],
   settings: {
     importsDir: path.resolve(__dirname, '../imports'),

@@ -12,7 +12,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 
 ## Dependencies
 
-- LdpService (if the TripleStoreAdapter is used)
+- LdpService
 
 ## Install
 
@@ -26,10 +26,9 @@ $ npm install @semapps/webhooks --save
 const { WebhooksService } = require('@semapps/webhooks');
 
 module.exports = {
-  name: 'webhooks',
   mixins: [WebhooksService],
   settings: {
-    baseUri: "http://localhost:3000",
+    containerUri: "http://localhost:3000/webhooks/",
     usersContainer: "http://localhost:3000/users/",
     allowedActions: ['myAction']
   },
@@ -42,18 +41,21 @@ module.exports = {
 }
 ```
 
-Optionally, you can configure the default routes with moleculer-web:
+Optionally, you can configure the API routes with moleculer-web:
 
 ```js
 const { ApiGatewayService } = require('moleculer-web');
-const { Routes } = require('@semapps/webhooks');
 
-broker.createService({
+module.exports = {
   mixins: [ApiGatewayService],
-  settings: {
-    routes: [...Routes, /* Other routes here */],
+  dependencies: ['webhooks'],
+  async started() {
+    [
+      ...(await this.broker.call('webhooks.getApiRoutes')),
+      // Other routes here...
+    ].forEach(route => this.addRoute(route));
   }
-});
+}
 ```
 
 ## Generating new webhooks

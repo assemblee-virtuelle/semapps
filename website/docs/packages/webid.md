@@ -26,7 +26,6 @@ $ npm install @semapps/webid --save
 const { WebIdService } = require('@semapps/webid');
 
 module.exports = {
-  name: 'webid',
   mixins: [WebIdService],
   settings: {
     usersContainer: 'http://localhost:3000/users/'
@@ -34,7 +33,7 @@ module.exports = {
 };
 ```
 
-Optionally, you can configure the default routes with moleculer-web:
+Optionally, you can configure the API routes with moleculer-web:
 
 ```js
 const { ApiGatewayService } = require('moleculer-web');
