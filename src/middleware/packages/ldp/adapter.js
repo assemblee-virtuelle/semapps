@@ -93,12 +93,14 @@ class TripleStoreAdapter {
    *  - query
    */
   count(filters = {}) {
-    return this.broker.call(this.containerService + '.get', {
-      containerUri: this.service.schema.settings.containerUri,
-      expand: this.service.schema.settings.expand,
-      jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON
-    }).then(result => result['ldp:contains'].length);
+    return this.broker
+      .call(this.containerService + '.get', {
+        containerUri: this.service.schema.settings.containerUri,
+        expand: this.service.schema.settings.expand,
+        jsonContext: this.service.schema.settings.context,
+        accept: MIME_TYPES.JSON
+      })
+      .then(result => result['ldp:contains'].length);
   }
 
   /**

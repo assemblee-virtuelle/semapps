@@ -28,7 +28,7 @@ module.exports = {
       accept: { type: 'string' }
     },
     async handler(ctx) {
-      const { accept, webId} = ctx.params;
+      const { accept, webId } = ctx.params;
       let result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
