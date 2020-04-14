@@ -4,8 +4,10 @@ module.exports = {
   api: async function api(ctx) {
     const { typeURL, containerUri, ...resource } = ctx.params;
 
-    if( resource['@id'] && !resource['@id'].startsWith('http') ) resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource['@id']}`;
-    if( resource.id && !resource.id.startsWith('http') ) resource.id = `${containerUri || this.settings.baseUrl + typeURL}/${resource.id}`;
+    if (resource['@id'] && !resource['@id'].startsWith('http'))
+      resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource['@id']}`;
+    if (resource.id && !resource.id.startsWith('http'))
+      resource['@id'] = `${containerUri || this.settings.baseUrl + typeURL}/${resource.id}`;
 
     try {
       await ctx.call('ldp.resource.patch', {
@@ -44,7 +46,7 @@ module.exports = {
           webId
         });
 
-        return resource['@id']  || resource.id;
+        return resource['@id'] || resource.id;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

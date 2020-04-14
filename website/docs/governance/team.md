@@ -1,5 +1,5 @@
 ---
-title: La dream team
+title: La Dream Team
 ---
 
 - Simon Louvet
