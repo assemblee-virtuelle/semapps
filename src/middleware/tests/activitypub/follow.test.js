@@ -3,7 +3,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 
-jest.setTimeout(20000);
+jest.setTimeout(100000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
@@ -33,7 +33,7 @@ describe('Posting to followers', () => {
 
     expect(sebastien.preferredUsername).toBe('srosset81');
     expect(simon.preferredUsername).toBe('simonLouvet');
-  }, 20000);
+  });
 
   test('Post follow request', async () => {
     let result = await broker.call('activitypub.outbox.post', {
@@ -58,7 +58,7 @@ describe('Posting to followers', () => {
     });
 
     expect(result.items).toContain(sebastien.id);
-  }, 20000);
+  });
 
   test('Send message to followers', async () => {
     let result = await broker.call('activitypub.outbox.post', {

@@ -3,8 +3,6 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
-const rdfParser = require('rdf-parse').default;
-const streamifyString = require('streamify-string');
 const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
 
 const TripleStoreService = {

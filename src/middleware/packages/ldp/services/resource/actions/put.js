@@ -4,13 +4,12 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //resource['@id'] is old value and can be different that new container
-    resource['@id'] = resource['@id'] || `${containerUri}/${id}`;
+    //PUT have to stay in same container and @id can't be different
+    resource['@id'] = `${containerUri}/${id}`;
 
     try {
       await ctx.call('ldp.resource.put', {
         resource,
-        accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
         slug: id
@@ -32,11 +31,13 @@ module.exports = {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
       contentType: { type: 'string' },
-      containerUri: { type: 'string' },
-      slug: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType, containerUri, slug, webId } = ctx.params;
+      const { resource, accept, contentType, webId } = ctx.params;
+      const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
+      const effetivContainerUri = matches[1];
+      const slug = matches[2];
+      console.log(resource['@id'],effetivContainerUri,slug);
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
@@ -49,7 +50,7 @@ module.exports = {
           resource,
           contentType,
           webId,
-          containerUri,
+          containerUri : effetivContainerUri,
           slug
         });
 

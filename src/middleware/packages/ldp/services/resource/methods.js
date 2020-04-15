@@ -50,15 +50,15 @@ module.exports = {
         });
     });
   },
-  buildPatchDeleteQuery(params) {
+  buildDeleteQueryFromResource(resource) {
     return new Promise((resolve, reject) => {
       let deleteSPARQL = '';
       let counter = 0;
       let query;
       const text =
-        typeof params.resource === 'string' || params.resource instanceof String
-          ? params.resource
-          : JSON.stringify(params.resource);
+        typeof resource === 'string' || resource instanceof String
+          ? resource
+          : JSON.stringify(resource);
       const textStream = streamifyString(text);
       rdfParser
         .parse(textStream, {

@@ -3,7 +3,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 
-jest.setTimeout(20000);
+jest.setTimeout(100000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
@@ -25,7 +25,7 @@ describe('Create/Update/Delete objects', () => {
     });
 
     expect(sebastien.preferredUsername).toBe('srosset81');
-  }, 20000);
+  });
 
   test('Create object', async () => {
     await broker.call('activitypub.outbox.post', {

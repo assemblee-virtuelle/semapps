@@ -136,9 +136,7 @@ describe('CRUD Project', () => {
         description: 'myProjectUpdated'
       },
       accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON,
-      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`,
-      slug
+      contentType: MIME_TYPES.JSON
     };
     await broker.call('ldp.resource.put', urlParamsPut);
     const updatedProject = await broker.call('ldp.resource.get', {

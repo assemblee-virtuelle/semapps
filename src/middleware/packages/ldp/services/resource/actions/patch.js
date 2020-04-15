@@ -4,14 +4,13 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //PATCH have to still in same container and @id can't be different
+    //PATCH have to stay in same container and @id can't be different
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
       await ctx.call('ldp.resource.patch', {
         resource,
-        contentType: ctx.meta.headers['content-type'],
-        containerUri
+        contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -46,10 +45,7 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        const query = await this.buildPatchDeleteQuery({
-          resource
-        });
-        // console.log(query);
+        const query = await this.buildDeleteQueryFromResource(resource);
 
         await ctx.call('triplestore.update', {
           query,
