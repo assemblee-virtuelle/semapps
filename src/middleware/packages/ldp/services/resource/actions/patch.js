@@ -1,16 +1,10 @@
-const {
-  MoleculerError
-} = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    const {
-      containerUri,
-      id,
-      ...resource
-    } = ctx.params;
+    const { containerUri, id, ...resource } = ctx.params;
 
-    //PATCH have to still in same container and @id can't be different 
+    //PATCH have to still in same container and @id can't be different
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
@@ -45,22 +39,16 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const {
-        resource,
-        contentType,
-        webId
-      } = ctx.params;
+      const { resource, contentType, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
       });
 
       if (triplesNb > 0) {
-
-
         const query = await this.buildPatchDeleteQuery({
           resource
-        })
+        });
         // console.log(query);
 
         await ctx.call('triplestore.update', {

@@ -26,20 +26,17 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      const {
-        resourceUri,
-        webId
-      } = ctx.params;
+      const { resourceUri, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resourceUri
       });
 
       if (triplesNb > 0) {
-        const query =`DELETE
+        const query = `DELETE
             WHERE
             { <${resourceUri}> ?p ?v }
-            `
+            `;
         await ctx.call('triplestore.update', {
           query,
           webId
