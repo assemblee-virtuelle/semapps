@@ -6,8 +6,14 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 ## Features
 
-- CRUD operations in WebID
-- Storage in triple store
+- Store activities, actors and objects in the triple store
+- Handle all kind of ontologies (see `additionalContext` setting)
+- Allow to create actors when new WebID are created
+- Currently supported activities:
+  - `Create`
+  - `Update`
+  - `Delete`
+  - `Follow`
 
 ## Dependencies
 
@@ -67,6 +73,11 @@ module.exports = {
 }
 ```
 
+### Creating actors on WebID creations
+
+This is done automatically when a `webid.created` event is detected.
+
+
 ## Settings
 
 | Property | Type | Default | Description |
@@ -80,58 +91,7 @@ module.exports = {
 
 The following service actions are available:
 
-### `create`
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `email` | `string` | **required** | Email address |
-| `nick` | `string` | First part of the email address | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
+### `getApiRoutes`
 
 ##### Return
-`Object` - Created profile
-
-### `view`
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
-
-##### Return
-`Object` - User's profile
-
-### `edit`
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
-| `email` | `string` | null | Email address |
-| `nick` | `string` | null | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
-
-##### Return
-`Object` - Modified profile
-
-### `list`
-
-##### Return
-`String` - LDP container with all registered users
-
-## Events
-
-The following events are emitted.
-
-### `webid.created`
-
-Sent after a new profile is created.
-
-##### Parameters
-
-`Object` - Created profile
+`Object` - Routes formatted for the Moleculer ApiGateway
