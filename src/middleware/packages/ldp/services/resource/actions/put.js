@@ -37,7 +37,6 @@ module.exports = {
       const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
       const effetivContainerUri = matches[1];
       const slug = matches[2];
-      console.log(resource['@id'], effetivContainerUri, slug);
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
