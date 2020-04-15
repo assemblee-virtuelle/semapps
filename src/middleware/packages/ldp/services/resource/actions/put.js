@@ -13,7 +13,7 @@ module.exports = {
         accept: ctx.meta.headers.accept,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
-        slug:id
+        slug: id
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -32,11 +32,11 @@ module.exports = {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
       contentType: { type: 'string' },
-      containerUri : { type: 'string' },
-      slug :  { type: 'string' }
+      containerUri: { type: 'string' },
+      slug: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType,containerUri,slug, webId } = ctx.params;
+      const { resource, accept, contentType, containerUri, slug, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']

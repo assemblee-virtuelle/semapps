@@ -82,32 +82,32 @@ const TripleStoreService = {
         return results.length;
       }
     },
-    update : {
-        visibility: 'public',
-        params: {
-          query: {
-            type: 'string'
-          },
-          webId: {
-            type: 'string',
-            optional: true
-          }
+    update: {
+      visibility: 'public',
+      params: {
+        query: {
+          type: 'string'
         },
-        async handler(ctx) {
-          const webId = ctx.params.webId || ctx.meta.webId;
-          const query = ctx.params.query;
-          const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-            method: 'POST',
-            body: query,
-            headers: {
-              'Content-Type': 'application/sparql-update',
-              'X-SemappsUser': webId,
-              Authorization: this.Authorization
-            }
-          });
-          if (!response.ok) throw new Error(response.statusText);
+        webId: {
+          type: 'string',
+          optional: true
         }
       },
+      async handler(ctx) {
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const query = ctx.params.query;
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: query,
+          headers: {
+            'Content-Type': 'application/sparql-update',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
+          }
+        });
+        if (!response.ok) throw new Error(response.statusText);
+      }
+    },
     query: {
       visibility: 'public',
       params: {
@@ -204,9 +204,7 @@ const TripleStoreService = {
     this.Authorization =
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
-  methods: {
-
-  }
+  methods: {}
 };
 
 module.exports = {
