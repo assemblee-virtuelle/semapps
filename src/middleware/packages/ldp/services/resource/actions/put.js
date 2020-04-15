@@ -30,14 +30,14 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' },
+      contentType: { type: 'string' }
     },
     async handler(ctx) {
       const { resource, accept, contentType, webId } = ctx.params;
       const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
       const effetivContainerUri = matches[1];
       const slug = matches[2];
-      console.log(resource['@id'],effetivContainerUri,slug);
+      console.log(resource['@id'], effetivContainerUri, slug);
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
@@ -50,7 +50,7 @@ module.exports = {
           resource,
           contentType,
           webId,
-          containerUri : effetivContainerUri,
+          containerUri: effetivContainerUri,
           slug
         });
 

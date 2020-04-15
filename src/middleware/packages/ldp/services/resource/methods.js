@@ -55,10 +55,7 @@ module.exports = {
       let deleteSPARQL = '';
       let counter = 0;
       let query;
-      const text =
-        typeof resource === 'string' || resource instanceof String
-          ? resource
-          : JSON.stringify(resource);
+      const text = typeof resource === 'string' || resource instanceof String ? resource : JSON.stringify(resource);
       const textStream = streamifyString(text);
       rdfParser
         .parse(textStream, {
