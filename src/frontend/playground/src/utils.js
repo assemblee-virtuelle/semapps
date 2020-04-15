@@ -1,9 +1,8 @@
 import React from 'react';
 import resourcesTypes from './resourcesTypes';
 
-export const getResourceId = (uri, type) => {
-  const baseUri = resourcesTypes[type].baseUri;
-  const pattern = `${baseUri.replace(/\//g, '\\/')}(.*)`;
+export const getResourceId = uri => {
+  const pattern = `.*/(.*)`;
   const matches = uri.match(new RegExp(pattern));
   return matches && matches[1];
 };

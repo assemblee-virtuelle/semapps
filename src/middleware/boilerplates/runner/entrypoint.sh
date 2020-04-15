@@ -11,4 +11,4 @@ else
   echo "Public/private keys already exist, skipping..." ;
 fi
 
-npm run start
+npm run dev

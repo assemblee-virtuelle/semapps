@@ -4,12 +4,10 @@ module.exports = {
   ActivityPubService: require('./service'),
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
-  MongoDbCollectionService: require('./services/collection/mongodb-collection'),
-  TripleStoreCollectionService: require('./services/collection/triplestore-collection'),
+  CollectionService: require('./services/collection'),
   FollowService: require('./services/follow'),
   InboxService: require('./services/inbox'),
   ObjectService: require('./services/object'),
   OutboxService: require('./services/outbox'),
-  Routes: require('./routes'),
   ...constants
 };

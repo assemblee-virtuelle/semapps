@@ -12,6 +12,7 @@ class OidcConnector extends Connector {
       clientSecret: settings.clientSecret,
       publicKey: settings.publicKey,
       redirectUri: settings.redirectUri,
+      sessionSecret: settings.sessionSecret || 's€m@pps',
       selectProfileData: settings.selectProfileData,
       findOrCreateProfile: settings.findOrCreateProfile
     });
@@ -25,9 +26,7 @@ class OidcConnector extends Connector {
     const components = token.split('.');
     return JSON.parse(base64url.decode(components[1]));
   }
-  async configurePassport(passport) {
-    this.passport = passport;
-
+  async initialize() {
     this.issuer = await Issuer.discover(this.settings.issuer);
     const client = new this.issuer.Client({
       client_id: this.settings.clientId,
@@ -42,7 +41,7 @@ class OidcConnector extends Connector {
       // scope defaults to 'openid'
     };
 
-    passport.use(
+    this.passport.use(
       'oidc',
       new Strategy(
         {
@@ -75,10 +74,13 @@ class OidcConnector extends Connector {
     return results.length > 0 ? results[0].webId.value : null;
   }
   globalLogout(req, res, next) {
-    res.redirect(
-      `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(req.session.redirectUrl)}`
-    );
-    next();
+    // Redirect using NodeJS HTTP
+    res.writeHead(302, {
+      Location: `${this.issuer.end_session_endpoint}?post_logout_redirect_uri=${encodeURIComponent(
+        req.session.redirectUrl
+      )}`
+    });
+    res.end();
   }
 }
 

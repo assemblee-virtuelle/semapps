@@ -1,11 +1,13 @@
-'use strict';
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebIdService = {
   name: 'webid',
-  dependencies: ['ldp', 'triplestore'],
+  dependencies: ['ldp.resource', 'triplestore'],
   settings: {
-    usersContainer: null
+    usersContainer: null,
+    context: {
+      foaf: 'http://xmlns.com/foaf/0.1/'
+    }
   },
   actions: {
     /**
@@ -27,22 +29,26 @@ const WebIdService = {
           familyName,
           homepage
         };
-        let newPerson = await ctx.call('ldp.post', {
+        webId = await ctx.call('ldp.resource.post', {
           resource: {
-            // containerUri: this.settings.usersContainer,
-            // slug: nick,
             '@context': {
               '@vocab': 'http://xmlns.com/foaf/0.1/'
             },
             '@type': 'Person',
-            '@id': `${this.settings.usersContainer}${nick}`,
             ...userData
           },
-          contentType: MIME_TYPES.JSON,
-          accept: MIME_TYPES.JSON,
-          webId: 'system'
+          slug: nick,
+          containerUri: this.settings.usersContainer,
+          contentType: MIME_TYPES.JSON
         });
-        webId = newPerson['@id'];
+
+        let newPerson = await ctx.call('ldp.resource.get', {
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
+          webId
+        });
+
         ctx.emit('webid.created', newPerson);
       }
 
@@ -52,9 +58,10 @@ const WebIdService = {
       const webId = await this.getWebId(ctx);
 
       if (webId) {
-        return await ctx.call('ldp.get', {
+        return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.context,
           webId: webId
         });
       } else {
@@ -65,7 +72,7 @@ const WebIdService = {
       let { userId, ...body } = ctx.params;
       const webId = await this.getWebId(ctx);
       body['@id'] = webId;
-      return await ctx.call('ldp.patch', {
+      return await ctx.call('ldp.resource.patch', {
         resource: body,
         webId: webId,
         contentType: MIME_TYPES.JSON,
@@ -73,7 +80,7 @@ const WebIdService = {
       });
     },
     async list(ctx) {
-      return await ctx.call('ldp.getByType', {
+      return await ctx.call('ldp.resource.getByType', {
         type: 'foaf:Person',
         webId: ctx.meta.webId,
         accept: MIME_TYPES.JSON

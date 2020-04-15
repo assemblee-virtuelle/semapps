@@ -1,6 +1,6 @@
 {
   "name": "semapps-tests",
-  "version": "1.0.0",
+  "private": true,
   "description": "SemApps integration tests",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit"
@@ -8,20 +8,22 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "^1.0.0",
-    "@semapps/fuseki-admin": "^1.0.0",
-    "@semapps/ldp": "^1.0.0",
-    "@semapps/triplestore": "^1.0.0",
-    "@semapps/connector": "^1.0.0",
-    "@semapps/webid": "^1.0.0",
-    "@semapps/sparql-endpoint": "^1.0.0",
-    "@semapps/mime-types" :"^1.0.0",
+    "@semapps/activitypub": "^0.1.0",
+    "@semapps/connector": "^0.1.0",
+    "@semapps/fuseki-admin": "^0.1.0",
+    "@semapps/ldp": "^0.1.0",
+    "@semapps/mime-types": "^0.1.0",
+    "@semapps/sparql-endpoint": "^0.1.0",
+    "@semapps/triplestore": "^0.1.0",
+    "@semapps/webid": "^0.1.0",
     "dotenv-flow": "^3.1.0",
+    "express": "^4.17.1",
     "moleculer": "^0.14.3",
-    "moleculer-web": "^0.9.0",
-    "moleculer-db-adapter-mongo": "^0.4.7"
+    "moleculer-db-adapter-mongo": "^0.4.7",
+    "moleculer-web": "^0.9.0"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "supertest": "^4.0.2"
   }
 }
