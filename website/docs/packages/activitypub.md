@@ -8,7 +8,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 - Store activities, actors and objects in the triple store
 - Handle all kind of ontologies (see `additionalContext` setting)
-- Allow to create actors when new WebID are created
+- Allow to create actors when new [WebIDs](./webid.md) are created
 - Currently supported activities:
   - `Create`
   - `Update`

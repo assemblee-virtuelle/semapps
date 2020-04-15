@@ -8,7 +8,7 @@
 module.exports = {
   docs: {
     'Get started': ['tech/get-started'],
-    Packages: ['package/activitypub','package/connector', 'packages/webid', 'packages/importer', 'packages/webhooks'],
+    Packages: ['packages/activitypub', 'packages/connector', 'packages/webid', 'packages/importer', 'packages/webhooks'],
   },
   gouvernance: {
     Gouvernance: ['governance/team'],
