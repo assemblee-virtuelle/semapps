@@ -16,11 +16,10 @@ const ObjectService = {
 
       const tombstone = {
         '@context': this.settings.context,
-        '@id': ctx.params.id,
         type: 'Tombstone',
+        slug: ctx.params.id.match(new RegExp(`.*/(.*)`))[1],
         deleted: new Date().toISOString()
       };
-
       return await this._create(ctx, tombstone);
     }
   }

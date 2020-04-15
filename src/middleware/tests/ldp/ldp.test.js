@@ -126,6 +126,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Replace One Project', async () => {
+    const slug = project1['@id'].match(new RegExp(`.*/(.*)`))[1];
     const urlParamsPut = {
       resource: {
         '@context': {

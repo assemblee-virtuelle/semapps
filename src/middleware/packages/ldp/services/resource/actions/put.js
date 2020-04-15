@@ -4,17 +4,15 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    if (id) {
-      resource['@id'] = `${containerUri}/${id}`;
-    } else if (resource['@id'] && !resource['@id'].startsWith('http')) {
-      resource['@id'] = `${containerUri}/${resource['@id']}`;
-    }
+    //PUT have to stay in same container and @id can't be different
+    resource['@id'] = `${containerUri}/${id}`;
 
     try {
       await ctx.call('ldp.resource.put', {
         resource,
-        accept: ctx.meta.headers.accept,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
+        containerUri,
+        slug: id
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -36,18 +34,23 @@ module.exports = {
     },
     async handler(ctx) {
       const { resource, accept, contentType, webId } = ctx.params;
+      const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
+      const effetivContainerUri = matches[1];
+      const slug = matches[2];
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
       });
       if (triplesNb > 0) {
-        await ctx.call('triplestore.delete', {
-          uri: resource['@id']
+        await ctx.call('ldp.resource.delete', {
+          resourceUri: resource['@id']
         });
-        await ctx.call('triplestore.insert', {
+        await ctx.call('ldp.resource.post', {
           resource,
           contentType,
-          webId
+          webId,
+          containerUri: effetivContainerUri,
+          slug
         });
 
         return resource['@id'];
