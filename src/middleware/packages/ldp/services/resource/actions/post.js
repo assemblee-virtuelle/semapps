@@ -49,7 +49,7 @@ module.exports = {
       const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
+      resource['@id'] = `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
       if (!resource['@context']) {

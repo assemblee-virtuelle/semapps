@@ -1,18 +1,23 @@
-const { MoleculerError } = require('moleculer').Errors;
+const {
+  MoleculerError
+} = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
-    if (id) {
-      resource['@id'] = `${containerUri}/${id}`;
-    } else if (resource['@id'] && !resource['@id'].startsWith('http')) {
-      resource['@id'] = `${containerUri}/${resource['@id']}`;
-    }
+    const {
+      containerUri,
+      id,
+      ...resource
+    } = ctx.params;
+
+    //PATCH have to still in same container and @id can't be different 
+    resource['@id'] = `${containerUri}/${id}`;
 
     try {
       await ctx.call('ldp.resource.patch', {
         resource,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
+        containerUri
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -28,19 +33,42 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: { type: 'object' },
-      webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      resource: {
+        type: 'object'
+      },
+      webId: {
+        type: 'string',
+        optional: true
+      },
+      contentType: {
+        type: 'string'
+      }
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
+      const {
+        resource,
+        contentType,
+        webId
+      } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resource['@id'] || resource.id
+        uri: resource['@id']
       });
 
       if (triplesNb > 0) {
-        await ctx.call('triplestore.patch', {
+
+
+        const query = await this.buildPatchDeleteQuery({
+          resource
+        })
+        // console.log(query);
+
+        await ctx.call('triplestore.update', {
+          query,
+          webId
+        });
+
+        await ctx.call('triplestore.insert', {
           resource,
           contentType,
           webId

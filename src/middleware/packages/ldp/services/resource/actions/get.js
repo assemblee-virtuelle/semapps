@@ -86,6 +86,7 @@ module.exports = {
 
         return result;
       } else {
+        console.log('HIHI',resourceUri);
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
     }

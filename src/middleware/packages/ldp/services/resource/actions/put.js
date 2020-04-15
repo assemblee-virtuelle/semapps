@@ -4,17 +4,16 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    if (id) {
-      resource['@id'] = `${containerUri}/${id}`;
-    } else if (resource['@id'] && !resource['@id'].startsWith('http')) {
-      resource['@id'] = `${containerUri}/${resource['@id']}`;
-    }
+    //resource['@id'] is old value and can be different that new container
+    resource['@id'] = resource['@id'] || `${containerUri}/${id}`;
 
     try {
       await ctx.call('ldp.resource.put', {
         resource,
         accept: ctx.meta.headers.accept,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
+        containerUri,
+        slug:id
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -32,22 +31,26 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      contentType: { type: 'string' },
+      containerUri : { type: 'string' },
+      slug :  { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType, webId } = ctx.params;
+      const { resource, accept, contentType,containerUri,slug, webId } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
       });
       if (triplesNb > 0) {
-        await ctx.call('triplestore.delete', {
-          uri: resource['@id']
+        await ctx.call('ldp.resource.delete', {
+          resourceUri: resource['@id']
         });
-        await ctx.call('triplestore.insert', {
+        await ctx.call('ldp.resource.post', {
           resource,
           contentType,
-          webId
+          webId,
+          containerUri,
+          slug
         });
 
         return resource['@id'];

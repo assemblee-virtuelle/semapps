@@ -126,6 +126,7 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Replace One Project', async () => {
+    const slug = project1['@id'].match(new RegExp(`.*/(.*)`))[1];
     const urlParamsPut = {
       resource: {
         '@context': {
@@ -135,7 +136,9 @@ describe('CRUD Project', () => {
         description: 'myProjectUpdated'
       },
       accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
+      contentType: MIME_TYPES.JSON,
+      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`,
+      slug
     };
     await broker.call('ldp.resource.put', urlParamsPut);
     const updatedProject = await broker.call('ldp.resource.get', {
