@@ -59,7 +59,7 @@ const MatchBotService = {
     },
     matchLocation(object, actor) {
       // If no location is set, we assume the user wants to be notified of all objects
-      if (!actor.location) return true;
+      if (!actor.location || !actor.location.latitude) return true;
       const distance = this.distanceBetweenPoints(
         actor.location.latitude,
         actor.location.longitude,

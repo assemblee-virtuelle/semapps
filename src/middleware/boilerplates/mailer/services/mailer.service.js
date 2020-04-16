@@ -70,8 +70,8 @@ const MailerService = {
       const html = this.notificationMailTemplate({
         projects: mail.objects,
         locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
-        themeParam: `Concernant les thématiques: ${themes.map(theme => theme.preferedLabel).join(', ')}`,
-        preferencesUrl: this.settings.baseUri + '?id=' + actor['@id'],
+        themeParam: `Concernant les thématiques: ${themes.map(theme => theme['pair:preferedLabel']).join(', ')}`,
+        preferencesUrl: this.settings.baseUri + '?id=' + actor.id,
         email: actor['pair:e-mail']
       });
 
@@ -91,9 +91,9 @@ const MailerService = {
 
       const html = this.confirmationMailTemplate({
         locationParam: actor.location ? `A ${actor.location.radius / 1000} km de chez vous` : 'Dans le monde entier',
-        themeParam: `Concernant les thématiques: ${themes.map(theme => theme.preferedLabel).join(', ')}`,
+        themeParam: `Concernant les thématiques: ${themes.map(theme => theme['pair:preferedLabel']).join(', ')}`,
         frequency: actor['semapps:mailFrequency'] === 'daily' ? 'une fois par jour' : 'une fois par semaine',
-        preferencesUrl: this.settings.baseUri + '?id=' + actor['@id'],
+        preferencesUrl: this.settings.baseUri + '?id=' + actor.id,
         email: actor['pair:e-mail']
       });
 
@@ -108,10 +108,14 @@ const MailerService = {
   },
   events: {
     async 'activitypub.inbox.received'({ activity, recipients }) {
-      if (activity.actor === this.settings.matchBotUri && activity.type === ACTIVITY_TYPES.ANNOUNCE) {
+      if (
+        activity.actor === this.settings.matchBotUri &&
+        activity.type === ACTIVITY_TYPES.ANNOUNCE &&
+        activity.object.type === ACTIVITY_TYPES.CREATE
+      ) {
         for (let actorUri of recipients) {
           const actor = await this.broker.call('activitypub.actor.get', { id: actorUri });
-          this.queueObject(actor, { '@context': activity['@context'], ...activity.activity.object });
+          this.queueObject(actor, { '@context': activity['@context'], ...activity.object.object });
         }
       }
     }
@@ -120,21 +124,28 @@ const MailerService = {
     async queueObject(actor, object) {
       // Find if there is a mail in queue for the actor
       const mails = await this.broker.call('mail-queue.find', {
-        query: { actor: actor['@id'], sentAt: null, errorResponse: null }
+        query: {
+          'http://semapps.org/ontology/mail#actor': actor.id,
+          'http://semapps.org/ontology/mail#sentAt': null,
+          'http://semapps.org/ontology/mail#errorResponse': null
+        }
       });
 
-      if (mails.length > 0) {
+      if (mails['ldp:contains'].length > 0) {
+        const mail = mails['ldp:contains'][0];
+        const objects = Array.isArray(mail.objects) ? mail.objects : [mail.objects];
+
         // Add the object to the existing mail
         this.broker.call('mail-queue.update', {
-          '@id': mails[0]['@id'],
-          objects: [object, ...mails[0].objects]
+          '@id': mail['@id'],
+          objects: [object.id, ...objects]
         });
       } else {
         // Create a new mail for the actor
         this.broker.call('mail-queue.create', {
           '@type': 'Mail',
-          actor: actor['@id'],
-          objects: [object],
+          actor: actor.id,
+          objects: object.id,
           frequency: actor['semapps:mailFrequency'],
           sentAt: null,
           errorResponse: null

@@ -71,7 +71,9 @@ const FormService = {
         } else if (ctx.params.location === 'whole-world') {
           // If actor location was set, remove it
           if (actor && actor.location) {
-            actorData.location = undefined;
+            actorData.location = {
+              type: 'Place'
+            };
           }
         }
 
@@ -134,6 +136,7 @@ const FormService = {
     });
 
     Handlebars.registerHelper('ifCond', function(v1, operator, v2, options) {
+      if (typeof v2 === 'number') v1 = parseInt(v1, 10);
       switch (operator) {
         case '==':
           return v1 == v2 ? options.fn(this) : options.inverse(this);

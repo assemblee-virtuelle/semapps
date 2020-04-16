@@ -28,7 +28,8 @@ const ApiService = {
   async started() {
     [
       ...(await this.broker.call('activitypub.getApiRoutes')),
-      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes')
+      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes'),
+      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'mails'), 'mail-queue')
     ].forEach(route => this.addRoute(route));
   }
 };
