@@ -46,7 +46,7 @@ const BotService = {
       }
     }
 
-    this.settings.actor.uri = actor['@id'];
+    this.settings.actor.uri = actor.id;
   },
   events: {
     'activitypub.inbox.received'(params) {

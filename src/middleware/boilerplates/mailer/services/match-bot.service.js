@@ -1,4 +1,4 @@
-const { BotService, ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { BotService, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 
 const MatchBotService = {
   name: 'match-bot',
@@ -23,16 +23,14 @@ const MatchBotService = {
       if (activity.type === ACTIVITY_TYPES.CREATE) {
         const matchingFollowers = await this.getMatchingFollowers(activity);
 
-        if (matchingFollowers.length > 0) {
-          await this.broker.call('activitypub.outbox.post', {
-            collectionUri: this.settings.actor.uri + '/outbox',
-            '@context': activity['@context'],
-            actor: this.settings.actor.uri,
-            to: matchingFollowers,
-            type: ACTIVITY_TYPES.ANNOUNCE,
-            activity: activity
-          });
-        }
+        await this.broker.call('activitypub.outbox.post', {
+          collectionUri: this.settings.actor.uri + '/outbox',
+          '@context': activity['@context'],
+          actor: this.settings.actor.uri,
+          to: [PUBLIC_URI, ...matchingFollowers],
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: activity
+        });
       }
     },
     async getMatchingFollowers(activity) {
@@ -43,7 +41,7 @@ const MatchBotService = {
         const actor = await this.broker.call('activitypub.actor.get', { id: actorUri });
         if (this.matchInterests(activity.object, actor)) {
           if (this.matchLocation(activity.object, actor)) {
-            matchingFollowers.push(actor['@id']);
+            matchingFollowers.push(actor.id);
           }
         }
       }

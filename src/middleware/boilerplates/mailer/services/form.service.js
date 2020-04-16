@@ -94,7 +94,7 @@ const FormService = {
           await ctx.call('activitypub.outbox.post', {
             collectionUri: actor.outbox,
             '@context': 'https://www.w3.org/ns/activitystreams',
-            actor: actor['@id'],
+            actor: actor.id,
             type: 'Follow',
             object: this.settings.matchBotUri
           });
@@ -114,7 +114,7 @@ const FormService = {
         // }
 
         ctx.meta.$statusCode = 302;
-        ctx.meta.$location = `/?id=${encodeURI(actor['@id'])}&message=${message}`;
+        ctx.meta.$location = `/?id=${encodeURI(actor.id)}&message=${message}`;
       }
     }
   },
