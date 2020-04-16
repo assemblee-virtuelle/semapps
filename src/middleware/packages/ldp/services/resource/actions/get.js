@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
-const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
+const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -27,43 +27,29 @@ module.exports = {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
-      expand: { type: 'array', optional: true },
+      queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { resourceUri, accept, webId, expand, jsonContext } = ctx.params;
+      const { resourceUri, accept, webId, queryDepth, jsonContext } = ctx.params;
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resourceUri
       });
 
       if (triplesNb > 0) {
-        let constructOptions = '',
-          whereOptions = '';
-
-        if (expand) {
-          constructOptions = `?rO ?srP ?srO .`;
-          whereOptions = `
-            OPTIONAL {
-              ?item ?propsToExpand ?rO .
-              FILTER(?propsToExpand IN (${expand.join(', ')})) .
-              # We don't want to expand URIs as it creates problems when compacting
-              FILTER(!(isIRI(?rO))) .
-              ?rO ?srP ?srO .
-            }
-          `;
-        }
+        const [ constructQuery, whereQuery ] = buildBlankNodesQuery(queryDepth);
 
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
-              <${resourceUri}> ?rP ?rO .
-              ${constructOptions}
+              <${resourceUri}> ?p1 ?o1 .
+              ${constructQuery}
             }
             WHERE {
-              <${resourceUri}> ?rP ?rO .
-              ${whereOptions}
+              <${resourceUri}> ?p1 ?o1 .
+              ${whereQuery}
             }
           `,
           accept,

@@ -1,6 +1,6 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
+const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -24,26 +24,12 @@ module.exports = {
     params: {
       containerUri: { type: 'string' },
       accept: { type: 'string' },
-      expand: { type: 'array', optional: true },
+      queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri, expand, jsonContext } = ctx.params;
-      let constructOptions = '',
-        whereOptions = '';
-
-      if (expand) {
-        constructOptions = `?rO ?srP ?srO .`;
-        whereOptions = `
-          OPTIONAL {
-            ?item ?propsToExpand ?rO .
-            FILTER(?propsToExpand IN (${expand.join(', ')})) .
-            # We don't want to expand URIs as it creates problems when compacting
-            FILTER(!(isIRI(?rO))) .
-            ?rO ?srP ?srO .
-          }
-        `;
-      }
+      const { accept, containerUri, queryDepth, jsonContext } = ctx.params;
+      const [ constructQuery, whereQuery ] = buildBlankNodesQuery(queryDepth);
 
       const result = await ctx.call('triplestore.query', {
         query: `
@@ -51,17 +37,17 @@ module.exports = {
           CONSTRUCT  {
             <${containerUri}>
               a ldp:BasicContainer ;
-              ldp:contains ?rS .
-            ?rS ?rP ?rO .
-            ${constructOptions}
+              ldp:contains ?s1 .
+            ?s1 ?p1 ?o1 .
+            ${constructQuery}
           }
           WHERE {
             <${containerUri}>
               a ldp:BasicContainer ;
-              ldp:contains ?rS .
+              ldp:contains ?s1 .
             OPTIONAL { 
-              ?rS ?rP ?rO . 
-              ${whereOptions}
+              ?s1 ?p1 ?o1 .
+              ${whereQuery}
             }
           }
         `,
