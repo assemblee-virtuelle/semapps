@@ -24,12 +24,27 @@ module.exports = {
     params: {
       containerUri: { type: 'string' },
       accept: { type: 'string' },
+      query: { type: 'object', optional: true },
       queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri, queryDepth, jsonContext } = ctx.params;
-      const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
+      const { accept, containerUri, query, queryDepth, jsonContext } = ctx.params;
+      let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
+
+      if (query) {
+        Object.keys(query).forEach(predicate => {
+          if (query[predicate]) {
+            whereQuery += `
+              FILTER EXISTS { ?s1 <${predicate}> "${query[predicate]}" } .
+            `;
+          } else {
+            whereQuery += `
+              FILTER NOT EXISTS { ?s1 <${predicate}> ?p1 } .
+            `;
+          }
+        });
+      }
 
       const result = await ctx.call('triplestore.query', {
         query: `
@@ -42,10 +57,9 @@ module.exports = {
             ${constructQuery}
           }
           WHERE {
-            <${containerUri}>
-              a ldp:BasicContainer ;
-              ldp:contains ?s1 .
+            <${containerUri}> a ldp:BasicContainer .
             OPTIONAL { 
+              <${containerUri}> ldp:contains ?s1 .
               ?s1 ?p1 ?o1 .
               ${whereQuery}
             }
