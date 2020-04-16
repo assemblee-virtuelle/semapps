@@ -6,14 +6,14 @@ const buildBlankNodesQuery = depth => {
   if (depth > 0) {
     for (let i = 1; i <= depth; i++) {
       constructQuery += `
-      ?o${i} ?p${i + 1} ?o${i + 1} .
-    `;
-      whereQuery += `
-      OPTIONAL {
-        FILTER((isBLANK(?o${i}))) .
         ?o${i} ?p${i + 1} ?o${i + 1} .
-      }
-    `;
+      `;
+      whereQuery += `
+        OPTIONAL {
+          FILTER((isBLANK(?o${i}))) .
+          ?o${i} ?p${i + 1} ?o${i + 1} .
+        }
+      `;
     }
   }
   return [constructQuery, whereQuery];
