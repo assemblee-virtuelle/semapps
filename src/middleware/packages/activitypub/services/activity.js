@@ -1,6 +1,6 @@
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/ldp');
-const { objectCurrentToId, objectIdToCurrent } = require('../functions');
+const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
 const ActivityService = {
   name: 'activitypub.activity',
@@ -8,7 +8,7 @@ const ActivityService = {
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null, // To be set by the user
-    expand: ['as:object'],
+    queryDepth: 3,
     context: 'https://www.w3.org/ns/activitystreams'
   },
   hooks: {

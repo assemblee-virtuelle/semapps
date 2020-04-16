@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { PUBLIC_URI } = require('../constants');
-const { objectCurrentToId } = require('../functions');
+const { objectCurrentToId } = require('../utils');
 
 const InboxService = {
   name: 'activitypub.inbox',
@@ -47,7 +47,7 @@ const InboxService = {
       const collection = await ctx.call('activitypub.collection.get', {
         id: this.getInboxUri(ctx.params.username),
         dereferenceItems: true,
-        expand: ['as:object']
+        queryDepth: 3
       });
 
       if (collection) {
