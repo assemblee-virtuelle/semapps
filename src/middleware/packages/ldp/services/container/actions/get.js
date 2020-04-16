@@ -29,7 +29,7 @@ module.exports = {
     },
     async handler(ctx) {
       const { accept, containerUri, queryDepth, jsonContext } = ctx.params;
-      const [ constructQuery, whereQuery ] = buildBlankNodesQuery(queryDepth);
+      const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
       const result = await ctx.call('triplestore.query', {
         query: `

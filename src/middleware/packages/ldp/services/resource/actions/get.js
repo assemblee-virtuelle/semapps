@@ -38,7 +38,7 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        const [ constructQuery, whereQuery ] = buildBlankNodesQuery(queryDepth);
+        const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
         let result = await ctx.call('triplestore.query', {
           query: `
