@@ -76,10 +76,11 @@ const CollectionService = {
      */
     async get(ctx) {
       const { id, dereferenceItems = false, queryDepth } = ctx.params;
-      let constructQuery = '', whereQuery = '';
+      let constructQuery = '',
+        whereQuery = '';
 
       if (dereferenceItems) {
-        const [ constructBnQuery, whereBnQuery ] = buildBlankNodesQuery(queryDepth);
+        const [constructBnQuery, whereBnQuery] = buildBlankNodesQuery(queryDepth);
         constructQuery = '?s1 ?p1 ?o1 .' + constructBnQuery;
         whereQuery = '?s1 ?p1 ?o1 .' + whereBnQuery;
       }
