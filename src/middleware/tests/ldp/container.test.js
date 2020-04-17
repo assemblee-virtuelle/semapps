@@ -43,11 +43,15 @@ describe('Create container and post resource', () => {
   let resourceUri;
 
   test('Ensure container created in LdpService settings exists', async () => {
-    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'resources' })).resolves.toBe(true);
+    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'resources' })).resolves.toBe(
+      true
+    );
   });
 
   test('Create a new container', async () => {
-    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(false);
+    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(
+      false
+    );
 
     await broker.call('ldp.container.create', { containerUri: CONFIG.HOME_URL + 'objects' });
 
