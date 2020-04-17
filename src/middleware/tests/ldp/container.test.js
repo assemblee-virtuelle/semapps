@@ -43,17 +43,17 @@ describe('Create container and post resource', () => {
   let resourceUri;
 
   test('Ensure container created in LdpService settings exists', async () => {
-    expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'resources' })).resolves.toBe(true);
+    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'resources' })).resolves.toBe(true);
   });
 
   test('Create a new container', async () => {
-    expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(false);
+    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(false);
 
     await broker.call('ldp.container.create', { containerUri: CONFIG.HOME_URL + 'objects' });
 
-    expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(true);
+    await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(true);
 
-    expect(
+    await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'objects',
         accept: MIME_TYPES.JSON
@@ -77,7 +77,7 @@ describe('Create container and post resource', () => {
       }
     });
 
-    expect(
+    await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
         accept: MIME_TYPES.JSON
@@ -97,7 +97,7 @@ describe('Create container and post resource', () => {
   });
 
   test('Post a resource in a non-existing container', async () => {
-    expect(
+    await expect(
       broker.call('ldp.resource.post', {
         containerUri: CONFIG.HOME_URL + 'unknownContainer',
         contentType: MIME_TYPES.JSON,
@@ -113,7 +113,7 @@ describe('Create container and post resource', () => {
   });
 
   test('Attach a resource to a non-existing container', async () => {
-    expect(
+    await expect(
       broker.call('ldp.container.attach', {
         containerUri: CONFIG.HOME_URL + 'unknownContainer',
         resourceUri
@@ -122,7 +122,7 @@ describe('Create container and post resource', () => {
   });
 
   test('Get container with jsonContext param', async () => {
-    expect(
+    await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
         accept: MIME_TYPES.JSON,
@@ -160,7 +160,7 @@ describe('Create container and post resource', () => {
     });
 
     // Get without query param
-    expect(
+    await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
         accept: MIME_TYPES.JSON
@@ -179,7 +179,7 @@ describe('Create container and post resource', () => {
     });
 
     // Get with query param
-    expect(
+    await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
         accept: MIME_TYPES.JSON,
