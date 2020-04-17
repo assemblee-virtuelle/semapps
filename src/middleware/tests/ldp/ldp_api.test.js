@@ -43,9 +43,9 @@ beforeAll(async () => {
     },
     dependencies: ['ldp'],
     async started() {
-      let routes = [];
-      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
-      routes.forEach(route => this.addRoute(route));
+      [
+        ...await this.broker.call('ldp.getApiRoutes')
+      ].forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -60,6 +60,9 @@ beforeAll(async () => {
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 
   expressMocked = supertest(app);
 });
