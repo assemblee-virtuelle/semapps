@@ -43,9 +43,7 @@ beforeAll(async () => {
     },
     dependencies: ['ldp'],
     async started() {
-      [
-        ...await this.broker.call('ldp.getApiRoutes')
-      ].forEach(route => this.addRoute(route));
+      [...(await this.broker.call('ldp.getApiRoutes'))].forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {
