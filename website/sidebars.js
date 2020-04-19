@@ -13,4 +13,7 @@ module.exports = {
   gouvernance: {
     Gouvernance: ['governance/team'],
   }
+  participate: {
+    Participer: ['participate/documentation']
+  }
 };

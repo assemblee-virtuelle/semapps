@@ -45,12 +45,8 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              label: 'Riot',
+              href: 'https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org',
             },
           ],
         },
@@ -63,11 +59,7 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              href: 'https://github.com/assemblee-virtuelle/semapps',
             },
           ],
         },
