@@ -49,7 +49,7 @@ class TripleStoreAdapter {
   find(filters) {
     return this.broker.call(this.containerService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
-      expand: this.service.schema.settings.expand,
+      queryDepth: this.service.schema.settings.queryDepth,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
@@ -71,7 +71,7 @@ class TripleStoreAdapter {
     }
     return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
-      expand: this.service.schema.settings.expand,
+      queryDepth: this.service.schema.settings.queryDepth,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
@@ -81,7 +81,7 @@ class TripleStoreAdapter {
    * Find all entities by IDs
    */
   findByIds(ids) {
-    throw new Error('Method not implemented');
+    return Promise.all(ids.map(id => this.findById(id)));
   }
 
   /**
@@ -93,14 +93,7 @@ class TripleStoreAdapter {
    *  - query
    */
   count(filters = {}) {
-    return this.broker
-      .call(this.containerService + '.get', {
-        containerUri: this.service.schema.settings.containerUri,
-        expand: this.service.schema.settings.expand,
-        jsonContext: this.service.schema.settings.context,
-        accept: MIME_TYPES.JSON
-      })
-      .then(result => result['ldp:contains'].length);
+    return this.find(filters).then(result => result['ldp:contains'].length);
   }
 
   /**
@@ -122,12 +115,7 @@ class TripleStoreAdapter {
           resourceUri
         });
 
-        return this.broker.call(this.resourceService + '.get', {
-          resourceUri,
-          expand: this.service.schema.settings.expand,
-          jsonContext: this.service.schema.settings.context,
-          accept: MIME_TYPES.JSON
-        });
+        return this.findById(resourceUri);
       });
   }
 
@@ -165,14 +153,7 @@ class TripleStoreAdapter {
         },
         contentType: MIME_TYPES.JSON
       })
-      .then(resourceUri => {
-        return this.broker.call(this.resourceService + '.get', {
-          resourceUri,
-          expand: this.service.schema.settings.expand,
-          jsonContext: this.service.schema.settings.context,
-          accept: MIME_TYPES.JSON
-        });
-      });
+      .then(resourceUri => this.findById(resourceUri));
   }
 
   /**

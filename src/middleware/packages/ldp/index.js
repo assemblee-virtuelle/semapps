@@ -1,4 +1,4 @@
-const { getPrefixJSON, generateId, getPrefixRdf } = require('./utils');
+const utils = require('./utils');
 
 module.exports = {
   LdpService: require('./service'),
@@ -6,7 +6,5 @@ module.exports = {
   LdpResourceService: require('./services/resource'),
   TripleStoreAdapter: require('./adapter'),
   getContainerRoutes: require('./routes/getContainerRoutes'),
-  getPrefixJSON,
-  getPrefixRdf,
-  generateId
+  ...utils
 };

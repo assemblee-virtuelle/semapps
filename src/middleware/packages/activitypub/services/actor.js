@@ -9,7 +9,7 @@ const ActorService = {
   dependencies: ['activitypub.collection'],
   settings: {
     containerUri: null, // To be set by the user
-    expand: ['as:location'],
+    queryDepth: 1,
     context: 'https://www.w3.org/ns/activitystreams'
   },
   actions: {
