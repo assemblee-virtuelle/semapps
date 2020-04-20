@@ -36,17 +36,17 @@ module.exports = {
         Object.keys(query).forEach(predicate => {
           if (query[predicate]) {
             whereQuery += `
-              FILTER EXISTS { ?s1 <${predicate}> "${query[predicate]}" } .
+              FILTER EXISTS { ?s1 ${predicate} "${query[predicate]}" } .
             `;
           } else {
             whereQuery += `
-              FILTER NOT EXISTS { ?s1 <${predicate}> ?p1 } .
+              FILTER NOT EXISTS { ?s1 ${predicate} ?p1 } .
             `;
           }
         });
       }
 
-      const result = await ctx.call('triplestore.query', {
+      let result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
@@ -69,22 +69,27 @@ module.exports = {
       });
 
       if (accept === MIME_TYPES.JSON) {
-        const framedResult = await jsonld.frame(result, {
+        result = await jsonld.frame(result, {
           '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
           '@id': containerUri
         });
 
-        // Return the result without the @graph
-        return {
-          '@context': framedResult['@context'],
-          ...framedResult['@graph'][0],
-          'ldp:contains': Array.isArray(framedResult['@graph'][0]['ldp:contains'])
-            ? framedResult['@graph'][0]['ldp:contains']
-            : [framedResult['@graph'][0]['ldp:contains']]
+        // Remove the @graph
+        result = {
+          '@context': result['@context'],
+          ...result['@graph'][0]
         };
-      } else {
-        return result;
+
+        // If the ldp:contains is a single object, wrap it in an array
+        const ldpContainsKey = Object.keys(result).find(key =>
+          ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
+        );
+        if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
+          result[ldpContainsKey] = [result[ldpContainsKey]];
+        }
       }
+
+      return result;
     }
   }
 };

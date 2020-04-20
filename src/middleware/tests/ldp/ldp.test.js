@@ -22,13 +22,17 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers: ['/resources']
     }
   });
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -48,9 +52,8 @@ describe('CRUD Project', () => {
         description: 'myProject',
         label: 'myTitle'
       },
-      accept: MIME_TYPES.JSON,
       contentType: MIME_TYPES.JSON,
-      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`
+      containerUri: CONFIG.HOME_URL + 'resources'
     };
 
     const resourceUri = await broker.call('ldp.resource.post', urlParamsPost);
@@ -64,14 +67,6 @@ describe('CRUD Project', () => {
       resourceUri: project1['@id']
     });
     expect(newProject['pair:description']).toBe('myProject');
-  }, 20000);
-
-  test('Get Many projects', async () => {
-    const projects = await broker.call('ldp.resource.getByType', {
-      accept: MIME_TYPES.JSON,
-      type: 'pair:Project'
-    });
-    expect(projects['ldp:contains'].filter(p => p['@id'] === project1['@id']).length).toBe(1);
   }, 20000);
 
   test('Update One Project', async () => {
@@ -126,7 +121,6 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Replace One Project', async () => {
-    const slug = project1['@id'].match(new RegExp(`.*/(.*)`))[1];
     const urlParamsPut = {
       resource: {
         '@context': {
@@ -165,4 +159,49 @@ describe('CRUD Project', () => {
       expect(error && error.code).toBe(404);
     }
   }, 20000);
+
+  test('Get resource with queryDepth', async () => {
+    const resourceUri = await broker.call('ldp.resource.post', {
+      resource: {
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        type: 'Event',
+        location: {
+          type: 'Place',
+          name: 'Chantilly'
+        }
+      },
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'resources'
+    });
+
+    // Get resource without queryDepth
+    await expect(
+      broker.call('ldp.resource.get', {
+        resourceUri,
+        accept: MIME_TYPES.JSON,
+        jsonContext: 'https://www.w3.org/ns/activitystreams'
+      })
+    ).resolves.toMatchObject({
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: 'Event',
+      location: '_:b0'
+    });
+
+    // Get resource with queryDepth
+    await expect(
+      broker.call('ldp.resource.get', {
+        resourceUri,
+        queryDepth: 1,
+        accept: MIME_TYPES.JSON,
+        jsonContext: 'https://www.w3.org/ns/activitystreams'
+      })
+    ).resolves.toMatchObject({
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: 'Event',
+      location: {
+        type: 'Place',
+        name: 'Chantilly'
+      }
+    });
+  });
 });

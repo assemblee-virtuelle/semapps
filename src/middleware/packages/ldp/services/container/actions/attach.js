@@ -8,7 +8,7 @@ module.exports = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    const containerExists = this.actions.exist({ containerUri });
+    const containerExists = await this.actions.exist({ containerUri });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container !');
 
     return await ctx.call('triplestore.insert', {

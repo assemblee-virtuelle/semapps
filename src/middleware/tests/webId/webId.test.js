@@ -2,7 +2,6 @@ const { ServiceBroker } = require('moleculer');
 const { WebIdService } = require('@semapps/webid');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
-const os = require('os');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
@@ -24,7 +23,8 @@ beforeAll(async () => {
   broker.createService(LdpService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
-      ontologies
+      ontologies,
+      containers: ['/users']
     }
   });
   broker.createService(WebIdService, {
@@ -35,6 +35,9 @@ beforeAll(async () => {
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 });
 
 afterAll(async () => {

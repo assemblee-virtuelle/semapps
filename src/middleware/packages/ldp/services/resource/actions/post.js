@@ -52,6 +52,15 @@ module.exports = {
       resource['@id'] = `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
 
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
+      if (!containerExist) {
+        throw new MoleculerError(
+          `Cannot create resource in non-existing container ${containerUri}`,
+          400,
+          'BAD_REQUEST'
+        );
+      }
+
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
