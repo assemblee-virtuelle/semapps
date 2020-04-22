@@ -30,8 +30,7 @@ afterAll(async () => {
 });
 
 describe('Test match-bot service', () => {
-  let actors = [],
-    projects = [];
+  let actors = [];
 
   test('Create 3 actors and make them follow the match bot', async () => {
     actors[1] = await broker.call('activitypub.actor.create', require('./actors/actor1.json'));
