@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "pair": "http://virtual-assembly.org/ontologies/pair#",
+      "semapps": "http://semapps.org/ns/"
+    }
+  ],
+  "type": "Person",
+  "pair:e-mail": "sebastien@test.com",
+  "pair:hasInterest": [
+    "http://localhost:3000/themes/democratie",
+    "http://localhost:3000/themes/energie"
+  ],
+  "location": {
+    "type": "Place",
+    "name": "Chantilly, Hauts-de-France, France",
+    "latitude": 49.1869,
+    "longitude": 2.4607,
+    "radius": 25000.0
+  },
+  "semapps:mailFrequency": "weekly"
+}

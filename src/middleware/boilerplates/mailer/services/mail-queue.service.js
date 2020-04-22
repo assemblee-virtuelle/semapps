@@ -10,7 +10,7 @@ const MailQueueService = {
   settings: {
     containerUri: urlJoin(CONFIG.HOME_URL, 'mails'),
     context: {
-      '@vocab': 'http://semapps.org/ontology/mail#',
+      '@vocab': 'http://semapps.org/ns/',
       ldp: 'http://www.w3.org/ns/ldp#'
     }
   }

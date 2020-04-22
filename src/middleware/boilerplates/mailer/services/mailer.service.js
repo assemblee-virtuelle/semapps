@@ -26,6 +26,14 @@ const MailerService = {
   async started() {
     this.settings.matchBotUri = await this.broker.call('match-bot.getUri');
 
+    if( this.settings.smtpServer.host === 'smtp.ethereal.email' ) {
+      const testAccount = await mailer.createTestAccount();
+      this.settings.smtpServer.auth.user = testAccount.user;
+      this.settings.smtpServer.auth.pass = testAccount.pass;
+      this.settings.smtpServer.port = testAccount.smtp.port;
+      this.settings.smtpServer.secure = testAccount.smtp.secure;
+    }
+
     this.transporter = mailer.createTransport(this.settings.smtpServer);
 
     const confirmationMailFile = await fs.readFile(__dirname + '/../templates/confirmation-mail.html');
@@ -37,35 +45,49 @@ const MailerService = {
   actions: {
     async processQueue(ctx) {
       const { frequency } = ctx.params;
+      let returnInfo = [];
 
-      const mails = await this.broker.call('mail-queue.find', {
-        query: { frequency, sentAt: null, errorResponse: null }
+      const container = await this.broker.call('mail-queue.find', {
+        query: {
+          'http://semapps.org/ns/frequency': frequency,
+          'http://semapps.org/ns/sentAt': null,
+          'http://semapps.org/ns/errorResponse': null
+        }
       });
 
-      for (let mail of mails) {
-        const info = await this.actions.sendNotificationMail({ mail });
+      if( container['ldp:contains'] && container['ldp:contains'].length > 0 ) {
+        for (let mail of container['ldp:contains']) {
+          const info = await this.actions.sendNotificationMail({ mail });
 
-        if (info.accepted.length > 0) {
-          // Mark mail as sent
-          await this.broker.call('mail-queue.update', {
-            id: mails[0]['@id'],
-            sentAt: new Date().toISOString()
-          });
-        } else {
-          // Mark mail as error
-          await this.broker.call('mail-queue.update', {
-            id: mails[0]['@id'],
-            errorResponse: info.response
-          });
+          if (info.accepted.length > 0) {
+            // Mark mail as sent
+            await this.broker.call('mail-queue.update', {
+              '@id': mail['@id'],
+              sentAt: new Date().toISOString()
+            });
+          } else {
+            // Mark mail as error
+            await this.broker.call('mail-queue.update', {
+              '@id': mail['@id'],
+              errorResponse: info.response
+            });
+          }
+
+          returnInfo.push(info);
         }
       }
+
+      return returnInfo;
     },
     async sendNotificationMail(ctx) {
       const { mail } = ctx.params;
+
       const actor = await this.broker.call('activitypub.actor.get', { id: mail['actor'] });
 
       let themes = await ctx.call('themes.get', { id: actor['pair:hasInterest'] });
       if (!Array.isArray(themes)) themes = [themes];
+
+      // TODO fetch objects from ID
 
       const html = this.notificationMailTemplate({
         projects: mail.objects,
@@ -115,9 +137,13 @@ const MailerService = {
       ) {
         for (let actorUri of recipients) {
           const actor = await this.broker.call('activitypub.actor.get', { id: actorUri });
-          this.queueObject(actor, { '@context': activity['@context'], ...activity.object.object });
+          await this.queueObject(actor, { '@context': activity['@context'], ...activity.object.object });
         }
+        this.broker.emit('mailer.objects.queued');
       }
+    },
+    'mailer.objects.queued'() {
+      // Do nothing
     }
   },
   methods: {
@@ -125,24 +151,24 @@ const MailerService = {
       // Find if there is a mail in queue for the actor
       const mails = await this.broker.call('mail-queue.find', {
         query: {
-          'http://semapps.org/ontology/mail#actor': actor.id,
-          'http://semapps.org/ontology/mail#sentAt': null,
-          'http://semapps.org/ontology/mail#errorResponse': null
+          'http://semapps.org/ns/actor': actor.id,
+          'http://semapps.org/ns/sentAt': null,
+          'http://semapps.org/ns/errorResponse': null
         }
       });
 
-      if (mails['ldp:contains'].length > 0) {
+      if (mails['ldp:contains'] && mails['ldp:contains'].length > 0) {
         const mail = mails['ldp:contains'][0];
         const objects = Array.isArray(mail.objects) ? mail.objects : [mail.objects];
 
         // Add the object to the existing mail
-        this.broker.call('mail-queue.update', {
+        await this.broker.call('mail-queue.update', {
           '@id': mail['@id'],
           objects: [object.id, ...objects]
         });
       } else {
         // Create a new mail for the actor
-        this.broker.call('mail-queue.create', {
+        await this.broker.call('mail-queue.create', {
           '@type': 'Mail',
           actor: actor.id,
           objects: object.id,

@@ -6,7 +6,8 @@ module.exports = {
   settings: {
     baseUri: CONFIG.HOME_URL,
     additionalContext: {
-      pair: 'http://virtual-assembly.org/ontologies/pair#'
+      pair: 'http://virtual-assembly.org/ontologies/pair#',
+      semapps: 'http://semapps.org/ns/'
     }
   }
 };

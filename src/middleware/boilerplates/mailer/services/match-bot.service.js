@@ -61,12 +61,12 @@ const MatchBotService = {
       // If no location is set, we assume the user wants to be notified of all objects
       if (!actor.location || !actor.location.latitude) return true;
       const distance = this.distanceBetweenPoints(
-        actor.location.latitude,
-        actor.location.longitude,
-        object.location.latitude,
-        object.location.longitude
+        parseFloat(actor.location.latitude),
+        parseFloat(actor.location.longitude),
+        parseFloat(object.location.latitude),
+        parseFloat(object.location.longitude)
       );
-      return distance <= actor.location.radius / 1000;
+      return distance <= parseFloat(actor.location.radius) / 1000;
     },
     distanceBetweenPoints(lat1, lon1, lat2, lon2) {
       // Taken from https://stackoverflow.com/a/21623206/7900695
