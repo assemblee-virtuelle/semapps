@@ -36,7 +36,9 @@ module.exports = {
         Object.keys(query).forEach((predicate, i) => {
           if (query[predicate]) {
             whereQuery += `
-              FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} "${query[predicate]}" } .
+              FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} "${
+              query[predicate]
+            }" } .
             `;
           } else {
             whereQuery += `
