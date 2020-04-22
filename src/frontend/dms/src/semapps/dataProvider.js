@@ -88,21 +88,25 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
 
       const compactJson = await jsonld.compact(json, getJsonContext(ontologies, mainOntology));
 
-      if (!compactJson['@graph'] || compactJson['@graph'].length === 0) {
+      if (Object.keys(compactJson).length === 1) {
+        // If we have only the context, it means there is no match
         return { data: [], total: 0 };
+      } else if (!compactJson['@graph']) {
+        // If we have several fields but no @graph, there is a single match
+        return { data: [compactJson], total: 1 };
+      } else {
+        const returnData = compactJson['@graph']
+          .map(item => {
+            item.id = item.id || item['@id'];
+            return item;
+          })
+          .slice(
+            (params.pagination.page - 1) * params.pagination.perPage,
+            params.pagination.page * params.pagination.perPage
+          );
+
+        return { data: returnData, total: compactJson['@graph'].length };
       }
-
-      const returnData = compactJson['@graph']
-        .map(item => {
-          item.id = item.id || item['@id'];
-          return item;
-        })
-        .slice(
-          (params.pagination.page - 1) * params.pagination.perPage,
-          params.pagination.page * params.pagination.perPage
-        );
-
-      return { data: returnData, total: compactJson['@graph'].length };
     }
   },
   getOne: async (resourceId, params) => {
