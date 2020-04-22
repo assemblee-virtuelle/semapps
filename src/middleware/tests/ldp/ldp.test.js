@@ -22,13 +22,17 @@ beforeAll(async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers: ['/resources']
     }
   });
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 });
 
 afterAll(async () => {
@@ -49,7 +53,7 @@ describe('CRUD Project', () => {
         label: 'myTitle'
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: `${CONFIG.HOME_URL}ldp/pair:Project`
+      containerUri: CONFIG.HOME_URL + 'resources'
     };
 
     const resourceUri = await broker.call('ldp.resource.post', urlParamsPost);
@@ -63,14 +67,6 @@ describe('CRUD Project', () => {
       resourceUri: project1['@id']
     });
     expect(newProject['pair:description']).toBe('myProject');
-  }, 20000);
-
-  test('Get Many projects', async () => {
-    const projects = await broker.call('ldp.resource.getByType', {
-      accept: MIME_TYPES.JSON,
-      type: 'pair:Project'
-    });
-    expect(projects['ldp:contains'].filter(p => p['@id'] === project1['@id']).length).toBe(1);
   }, 20000);
 
   test('Update One Project', async () => {
@@ -92,12 +88,7 @@ describe('CRUD Project', () => {
       accept: MIME_TYPES.JSON
     });
     expect(updatedProject['pair:description']).toBe('myProjectUpdated');
-
-    const updatedPersistProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.JSON,
-      resourceUri: project1['@id']
-    });
-    expect(updatedPersistProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBe('myTitle');
   }, 20000);
 
   test('Get One project turtle', async () => {
@@ -129,6 +120,27 @@ describe('CRUD Project', () => {
     );
   }, 20000);
 
+  test('Replace One Project', async () => {
+    const urlParamsPut = {
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@id': project1['@id'],
+        description: 'myProjectUpdated'
+      },
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    };
+    await broker.call('ldp.resource.put', urlParamsPut);
+    const updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+    expect(updatedProject['pair:description']).toBe('myProjectUpdated');
+    expect(updatedProject['pair:label']).toBeUndefined();
+  }, 20000);
+
   test('Delete project', async () => {
     const params = {
       resourceUri: project1['@id']
@@ -147,4 +159,49 @@ describe('CRUD Project', () => {
       expect(error && error.code).toBe(404);
     }
   }, 20000);
+
+  test('Get resource with queryDepth', async () => {
+    const resourceUri = await broker.call('ldp.resource.post', {
+      resource: {
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        type: 'Event',
+        location: {
+          type: 'Place',
+          name: 'Chantilly'
+        }
+      },
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'resources'
+    });
+
+    // Get resource without queryDepth
+    await expect(
+      broker.call('ldp.resource.get', {
+        resourceUri,
+        accept: MIME_TYPES.JSON,
+        jsonContext: 'https://www.w3.org/ns/activitystreams'
+      })
+    ).resolves.toMatchObject({
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: 'Event',
+      location: '_:b0'
+    });
+
+    // Get resource with queryDepth
+    await expect(
+      broker.call('ldp.resource.get', {
+        resourceUri,
+        queryDepth: 1,
+        accept: MIME_TYPES.JSON,
+        jsonContext: 'https://www.w3.org/ns/activitystreams'
+      })
+    ).resolves.toMatchObject({
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      type: 'Event',
+      location: {
+        type: 'Place',
+        name: 'Chantilly'
+      }
+    });
+  });
 });

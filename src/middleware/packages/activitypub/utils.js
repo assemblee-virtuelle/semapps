@@ -5,7 +5,7 @@ const objectCurrentToId = activityJson => {
       ...activityJson,
       object: {
         id: current,
-        ...object
+        ...objectCurrentToId(object)
       }
     };
   } else {
@@ -20,7 +20,7 @@ const objectIdToCurrent = activityJson => {
       ...activityJson,
       object: {
         current: id || arobaseId,
-        ...object
+        ...objectIdToCurrent(object)
       }
     };
   } else {

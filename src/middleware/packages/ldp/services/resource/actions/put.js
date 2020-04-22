@@ -4,13 +4,15 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //PATCH have to stay in same container and @id can't be different
+    //PUT have to stay in same container and @id can't be different
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
-      await ctx.call('ldp.resource.patch', {
+      await ctx.call('ldp.resource.put', {
         resource,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
+        containerUri,
+        slug: id
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -26,36 +28,29 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: {
-        type: 'object'
-      },
-      webId: {
-        type: 'string',
-        optional: true
-      },
-      contentType: {
-        type: 'string'
-      }
+      resource: { type: 'object' },
+      webId: { type: 'string', optional: true },
+      contentType: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
+      const { resource, accept, contentType, webId } = ctx.params;
+      const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
+      const effetivContainerUri = matches[1];
+      const slug = matches[2];
 
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
       });
-
       if (triplesNb > 0) {
-        const query = await this.buildDeleteQueryFromResource(resource);
-
-        await ctx.call('triplestore.update', {
-          query,
-          webId
+        await ctx.call('ldp.resource.delete', {
+          resourceUri: resource['@id']
         });
-
-        await ctx.call('triplestore.insert', {
+        await ctx.call('ldp.resource.post', {
           resource,
           contentType,
-          webId
+          webId,
+          containerUri: effetivContainerUri,
+          slug
         });
 
         return resource['@id'];

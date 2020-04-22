@@ -88,7 +88,8 @@ const ActivityPubService = {
             [`GET ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.list',
             [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
             [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
-            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing'
+            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing',
+            [`POST ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.post'
           }
         },
         // Secured routes

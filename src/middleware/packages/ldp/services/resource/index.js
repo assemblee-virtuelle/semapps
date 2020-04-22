@@ -1,7 +1,7 @@
 const getAction = require('./actions/get');
-const getByTypeAction = require('./actions/getByType');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
+const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const methods = require('./methods');
 
@@ -14,8 +14,6 @@ module.exports = {
   },
   dependencies: ['triplestore'],
   actions: {
-    api_getByType: getByTypeAction.api,
-    getByType: getByTypeAction.action,
     api_get: getAction.api,
     get: getAction.action,
     api_post: postAction.api,
@@ -23,7 +21,9 @@ module.exports = {
     api_patch: patchAction.api,
     patch: patchAction.action,
     api_delete: deleteAction.api,
-    delete: deleteAction.action
+    delete: deleteAction.action,
+    api_put: putAction.api,
+    put: putAction.action
   },
   methods
 };

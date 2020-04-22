@@ -49,5 +49,29 @@ module.exports = {
           });
         });
     });
+  },
+  buildDeleteQueryFromResource(resource) {
+    return new Promise((resolve, reject) => {
+      let deleteSPARQL = '';
+      let counter = 0;
+      let query;
+      const text = typeof resource === 'string' || resource instanceof String ? resource : JSON.stringify(resource);
+      const textStream = streamifyString(text);
+      rdfParser
+        .parse(textStream, {
+          contentType: 'application/ld+json'
+        })
+        .on('data', quad => {
+          deleteSPARQL = deleteSPARQL.concat(
+            `DELETE WHERE  {<${quad.subject.value}> <${quad.predicate.value}> ?o};
+            `
+          );
+          counter++;
+        })
+        .on('error', error => console.error(error))
+        .on('end', () => {
+          resolve(deleteSPARQL);
+        });
+    });
   }
 };

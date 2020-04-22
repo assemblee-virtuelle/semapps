@@ -28,6 +28,9 @@ const initialize = broker => async () => {
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 };
 
 module.exports = initialize;

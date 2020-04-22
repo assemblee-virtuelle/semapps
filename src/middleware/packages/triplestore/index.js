@@ -3,8 +3,6 @@
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
-const rdfParser = require('rdf-parse').default;
-const streamifyString = require('streamify-string');
 const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
 
 const TripleStoreService = {
@@ -56,69 +54,7 @@ const TripleStoreService = {
         if (!response.ok) throw new Error(response.statusText);
       }
     },
-    patch: {
-      visibility: 'public',
-      params: {
-        resource: {
-          type: 'object'
-        },
-        webId: {
-          type: 'string',
-          optional: true
-        },
-        contentType: {
-          type: 'string'
-        }
-      },
-      async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const contentType = ctx.params.contentType;
-        const query = await this.buildPatchQuery(ctx.params);
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-          method: 'POST',
-          body: query,
-          headers: {
-            'Content-Type': 'application/sparql-update',
-            'X-SemappsUser': webId,
-            Authorization: this.Authorization
-          }
-        });
-        if (!response.ok) throw new Error(response.statusText);
-      }
-    },
-    delete: {
-      visibility: 'public',
-      params: {
-        uri: {
-          type: 'string'
-        },
-        webId: {
-          type: 'string',
-          optional: true
-        }
-      },
-      async handler(ctx) {
-        const { params } = ctx;
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
-          method: 'POST',
-          body: `DELETE
-              WHERE
-              { <${params.uri}> ?p ?v }
-              `,
-          headers: {
-            'Content-Type': 'application/sparql-update',
-            'X-SemappsUser': webId,
-            Authorization: this.Authorization
-          }
-        });
-
-        if (!response.ok) throw new Error(response.statusText);
-
-        return response;
-      }
-    },
-    countTripleOfSubject: {
+    countTriplesOfSubject: {
       visibility: 'public',
       params: {
         uri: {
@@ -142,6 +78,32 @@ const TripleStoreService = {
           webId: webId
         });
         return results.length;
+      }
+    },
+    update: {
+      visibility: 'public',
+      params: {
+        query: {
+          type: 'string'
+        },
+        webId: {
+          type: 'string',
+          optional: true
+        }
+      },
+      async handler(ctx) {
+        const webId = ctx.params.webId || ctx.meta.webId;
+        const query = ctx.params.query;
+        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+          method: 'POST',
+          body: query,
+          headers: {
+            'Content-Type': 'application/sparql-update',
+            'X-SemappsUser': webId,
+            Authorization: this.Authorization
+          }
+        });
+        if (!response.ok) throw new Error(response.statusText);
       }
     },
     query: {
@@ -240,59 +202,7 @@ const TripleStoreService = {
     this.Authorization =
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
-  methods: {
-    buildPatchQuery(params) {
-      return new Promise((resolve, reject) => {
-        let deleteSPARQL = '';
-        let insertSPARQL = '';
-        let counter = 0;
-        let query;
-        const text =
-          typeof params.resource === 'string' || params.resource instanceof String
-            ? params.resource
-            : JSON.stringify(params.resource);
-        const textStream = streamifyString(text);
-        rdfParser
-          .parse(textStream, {
-            contentType: 'application/ld+json'
-          })
-          .on('data', quad => {
-            deleteSPARQL = deleteSPARQL.concat(
-              `DELETE WHERE  {<${quad.subject.value}> <${quad.predicate.value}> ?o};
-              `
-            );
-            if (insertSPARQL.length === 0) {
-              insertSPARQL = insertSPARQL.concat(`<${quad.subject.value}>`);
-            } else {
-              insertSPARQL = insertSPARQL.concat(';');
-            }
-
-            if (quad.object.value.startsWith('http')) {
-              insertSPARQL = insertSPARQL.concat(` <${quad.predicate.value}> <${quad.object.value}>`);
-            } else {
-              insertSPARQL = insertSPARQL.concat(
-                ` <${quad.predicate.value}> "${quad.object.value.replace(/(\r\n|\r|\n)/g, '\\n')}"`
-              );
-            }
-
-            if (quad.object.datatype !== undefined && !quad.object.value.startsWith('http')) {
-              insertSPARQL = insertSPARQL.concat(`^^<${quad.object.datatype.value}>`);
-            }
-
-            counter++;
-          })
-          .on('error', error => console.error(error))
-          .on('end', () => {
-            insertSPARQL = insertSPARQL.concat('.');
-            query = `
-            ${deleteSPARQL}
-            INSERT DATA {${insertSPARQL}};
-            `;
-            resolve(query);
-          });
-      });
-    }
-  }
+  methods: {}
 };
 
 module.exports = {

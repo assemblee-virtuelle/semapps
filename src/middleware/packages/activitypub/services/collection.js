@@ -1,5 +1,6 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { buildBlankNodesQuery } = require('@semapps/ldp');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -71,29 +72,17 @@ const CollectionService = {
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param id The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param expand Array of items' properties we want to expand
+     * @param queryDepth Number of blank nodes we want to dereference
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, expand } = ctx.params;
-      let constructOptions = '',
-        whereOptions = '';
+      const { id, dereferenceItems = false, queryDepth } = ctx.params;
+      let constructQuery = '',
+        whereQuery = '';
 
       if (dereferenceItems) {
-        constructOptions = `?item ?iP ?iO .`;
-        whereOptions = `?item ?iP ?iO .`;
-
-        if (expand) {
-          constructOptions += `?iO ?siP ?siO .`;
-          whereOptions += `
-          OPTIONAL {
-            ?item ?propsToExpand ?iO .
-            FILTER(?propsToExpand IN (${expand.join(', ')})) .
-            # We don't want to expand URIs as it creates problems when compacting
-            FILTER(!(isIRI(?iO))) .
-            ?iO ?siP ?siO .
-          }
-        `;
-        }
+        const [constructBnQuery, whereBnQuery] = buildBlankNodesQuery(queryDepth);
+        constructQuery = '?s1 ?p1 ?o1 .' + constructBnQuery;
+        whereQuery = '?s1 ?p1 ?o1 .' + whereBnQuery;
       }
 
       let result = await ctx.call('triplestore.query', {
@@ -101,14 +90,14 @@ const CollectionService = {
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
             <${id}> a ?type ;
-              as:items ?item .
-            ${constructOptions}
+              as:items ?s1 .
+            ${constructQuery}
           }
           WHERE {
             <${id}> a ?type .
             OPTIONAL { 
-              <${id}> as:items ?item .
-              ${whereOptions}
+              <${id}> as:items ?s1 .
+              ${whereQuery}
             }
           }
         `,
