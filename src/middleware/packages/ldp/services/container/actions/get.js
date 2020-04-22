@@ -33,14 +33,14 @@ module.exports = {
       let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
       if (query) {
-        Object.keys(query).forEach(predicate => {
+        Object.keys(query).forEach((predicate, i) => {
           if (query[predicate]) {
             whereQuery += `
-              FILTER EXISTS { ?s1 ${predicate} "${query[predicate]}" } .
+              FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} "${query[predicate]}" } .
             `;
           } else {
             whereQuery += `
-              FILTER NOT EXISTS { ?s1 ${predicate} ?p1 } .
+              FILTER NOT EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ?unwanted${i} } .
             `;
           }
         });

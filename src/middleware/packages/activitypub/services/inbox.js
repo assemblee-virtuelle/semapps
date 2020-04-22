@@ -45,7 +45,7 @@ const InboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getInboxUri(ctx.params.username),
+        id: ctx.params.collectionUri || this.getInboxUri(ctx.params.username),
         dereferenceItems: true,
         queryDepth: 3
       });
