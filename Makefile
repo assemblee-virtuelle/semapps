@@ -76,5 +76,6 @@ test:
 	$(DOCKER_COMPOSE_TEST) build
 	$(DOCKER_COMPOSE_TEST) up -d
 	npm run test --prefix ./src/middleware/tests/
+	npm run test --prefix ./src/middleware/boilerplates/mailer/
 	$(DOCKER_COMPOSE_TEST) kill
 	$(DOCKER_COMPOSE_TEST) rm -fv
