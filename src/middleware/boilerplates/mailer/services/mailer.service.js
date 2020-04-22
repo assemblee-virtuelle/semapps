@@ -26,7 +26,7 @@ const MailerService = {
   async started() {
     this.settings.matchBotUri = await this.broker.call('match-bot.getUri');
 
-    if( this.settings.smtpServer.host === 'smtp.ethereal.email' ) {
+    if (this.settings.smtpServer.host === 'smtp.ethereal.email') {
       const testAccount = await mailer.createTestAccount();
       this.settings.smtpServer.auth.user = testAccount.user;
       this.settings.smtpServer.auth.pass = testAccount.pass;
@@ -55,7 +55,7 @@ const MailerService = {
         }
       });
 
-      if( container['ldp:contains'] && container['ldp:contains'].length > 0 ) {
+      if (container['ldp:contains'] && container['ldp:contains'].length > 0) {
         for (let mail of container['ldp:contains']) {
           const info = await this.actions.sendNotificationMail({ mail });
 

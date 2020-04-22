@@ -20,7 +20,7 @@ beforeAll(async () => {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization: 'Basic ' + Buffer.from(CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD).toString('base64')
     }
-  })
+  });
   await broker.loadServices(path.resolve(__dirname, '../services'));
   await broker.start();
 });
@@ -30,14 +30,15 @@ afterAll(async () => {
 });
 
 describe('Test match-bot service', () => {
-  let actors = [], projects = [];
+  let actors = [],
+    projects = [];
 
   test('Create 3 actors and make them follow the match bot', async () => {
     actors[1] = await broker.call('activitypub.actor.create', require('./actors/actor1.json'));
     actors[2] = await broker.call('activitypub.actor.create', require('./actors/actor2.json'));
     actors[3] = await broker.call('activitypub.actor.create', require('./actors/actor3.json'));
 
-    for( let i=1; i<=3; i++ ) {
+    for (let i = 1; i <= 3; i++) {
       await broker.call('activitypub.outbox.post', {
         collectionUri: actors[i].outbox,
         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -67,16 +68,16 @@ describe('Test match-bot service', () => {
 
     expect(outbox.orderedItems).not.toBeNull();
     expect(outbox.orderedItems[0]).toMatchObject({
-      'type': 'Announce',
+      type: 'Announce',
       actor: 'http://localhost:3000/actors/match-bot',
       object: {
-        'type': 'Create',
+        type: 'Create',
         object: {
           type: 'pair:Project',
           id: 'https://colibris.social/objects/douce-france-le-film'
         }
       },
-      to: [ actors[3].id, "as:Public" ]
+      to: [actors[3].id, 'as:Public']
     });
   });
 
@@ -95,16 +96,16 @@ describe('Test match-bot service', () => {
 
     expect(outbox.orderedItems).not.toBeNull();
     expect(outbox.orderedItems[0]).toMatchObject({
-      'type': 'Announce',
+      type: 'Announce',
       actor: 'http://localhost:3000/actors/match-bot',
       object: {
-        'type': 'Create',
+        type: 'Create',
         object: {
           type: 'pair:Project',
           id: 'https://colibris.social/objects/chantilly-en-transition'
         }
       },
-      to: [ actors[1].id, actors[3].id, "as:Public" ]
+      to: [actors[1].id, actors[3].id, 'as:Public']
     });
   });
 
@@ -136,13 +137,13 @@ describe('Test match-bot service', () => {
 
     expect(results.length).toBe(1);
     expect(results[0]).toMatchObject({
-      accepted: [ 'loic@test.com' ],
+      accepted: ['loic@test.com'],
       rejected: []
     });
 
-    for(let info of results) {
+    for (let info of results) {
       const previewUrl = mailer.getTestMessageUrl(info);
-      console.log('PREVIEW URL', previewUrl)
+      console.log('PREVIEW URL', previewUrl);
     }
 
     // Now queue is empty, we should not have any result here
@@ -160,13 +161,13 @@ describe('Test match-bot service', () => {
 
     expect(results.length).toBe(1);
     expect(results[0]).toMatchObject({
-      accepted: [ 'sebastien@test.com' ],
+      accepted: ['sebastien@test.com'],
       rejected: []
     });
 
-    for(let info of results) {
+    for (let info of results) {
       const previewUrl = mailer.getTestMessageUrl(info);
-      console.log('PREVIEW URL', previewUrl)
+      console.log('PREVIEW URL', previewUrl);
     }
   });
 });
