@@ -19,7 +19,7 @@ const PushNotificationsService = {
       adapter: this.schema.storage.devices,
       settings: {
         containerUri: urlJoin(this.schema.baseUri, 'devices'),
-        context: { '@vocab': 'http://semapps.org/ontology/devices#' }
+        context: { '@vocab': 'http://semapps.org/ns/' }
       }
     });
   },

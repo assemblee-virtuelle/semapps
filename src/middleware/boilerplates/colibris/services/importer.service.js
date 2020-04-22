@@ -121,7 +121,7 @@ module.exports = {
         updated: data.updated
       });
 
-      console.log(`Note "${data.name}" posted: ${activity['@id']}`);
+      console.log(`Note "${data.name}" posted: ${activity.id}`);
     },
     async importAll(ctx) {
       await this.actions.import({
