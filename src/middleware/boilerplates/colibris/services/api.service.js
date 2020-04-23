@@ -32,17 +32,16 @@ module.exports = {
         name: `${authData.field_first_name[0]} ${authData.field_last_name[0]}`
       }),
       findOrCreateProfile: async profileData => {
-        const actor = await this.broker.call('activitypub.actor.get', {
+        let actor = await this.broker.call('activitypub.actor.get', {
           id: profileData.slug
         });
-        if (actor) {
-          return actor;
-        } else {
-          return await this.broker.call('activitypub.actor.create', {
+        if (!actor) {
+          actor = await this.broker.call('activitypub.actor.create', {
             '@type': 'Person',
             ...profileData
           });
         }
+        return actor.id;
       }
     });
 
