@@ -1,9 +1,7 @@
-'use strict';
-
 const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
-const { MIME_TYPES, negotiateType, negotiateTypeMime } = require('@semapps/mime-types');
+const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -17,26 +15,28 @@ const TripleStoreService = {
       visibility: 'public',
       params: {
         resource: {
-          type: 'object'
+          type: "multi", rules: [
+            { type: "string" },
+            { type: "object" }
+          ]
+        },
+        contentType: {
+          type: 'string',
+          optional: true
         },
         webId: {
           type: 'string',
           optional: true
-        },
-        contentType: {
-          type: 'string'
         }
       },
       async handler(ctx) {
-        const { params } = ctx;
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const contentType = ctx.params.contentType;
-        const type = negotiateTypeMime(contentType);
+        const { resource, contentType, webId } = ctx.params;
+
         let rdf;
-        if (type !== MIME_TYPES.JSON) {
-          rdf = params.resource;
+        if (contentType !== MIME_TYPES.JSON) {
+          rdf = resource;
         } else {
-          rdf = await jsonld.toRDF(params.resource, {
+          rdf = await jsonld.toRDF(resource, {
             format: 'application/n-quads'
           });
         }
@@ -46,7 +46,7 @@ const TripleStoreService = {
           body: `INSERT DATA { ${rdf} }`,
           headers: {
             'Content-Type': 'application/sparql-update',
-            'X-SemappsUser': webId,
+            'X-SemappsUser': webId || ctx.meta.webId,
             Authorization: this.Authorization
           }
         });
@@ -121,27 +121,25 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const { params } = ctx;
-        const accept = ctx.params.accept;
-        const webId = ctx.params.webId || ctx.meta.webId;
-        const acceptNegociatedType = negotiateType(accept);
-        const acceptType = acceptNegociatedType.mime;
-        const fusekiAccept = acceptNegociatedType.fusekiMapping;
+        const { accept, webId, query } = ctx.params;
+        const acceptNegotiatedType = negotiateType(accept);
+        const acceptType = acceptNegotiatedType.mime;
+        const fusekiAccept = acceptNegotiatedType.fusekiMapping;
         const headers = {
           'Content-Type': 'application/sparql-query',
-          'X-SemappsUser': webId,
+          'X-SemappsUser': webId || ctx.meta.webId,
           Authorization: this.Authorization,
           Accept: fusekiAccept
         };
 
         const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
           method: 'POST',
-          body: params.query,
+          body: query,
           headers
         });
         if (!response.ok) throw new Error(response.statusText);
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
-        const verb = regex.exec(params.query)[1];
+        const verb = regex.exec(query)[1];
         switch (verb) {
           case 'ASK':
             if (acceptType === MIME_TYPES.JSON) {
@@ -201,8 +199,7 @@ const TripleStoreService = {
     this.sparqlJsonParser = new SparqlJsonParser();
     this.Authorization =
       'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
-  },
-  methods: {}
+  }
 };
 
 module.exports = {
