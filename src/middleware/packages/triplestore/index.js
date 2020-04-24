@@ -15,10 +15,8 @@ const TripleStoreService = {
       visibility: 'public',
       params: {
         resource: {
-          type: "multi", rules: [
-            { type: "string" },
-            { type: "object" }
-          ]
+          type: 'multi',
+          rules: [{ type: 'string' }, { type: 'object' }]
         },
         contentType: {
           type: 'string',

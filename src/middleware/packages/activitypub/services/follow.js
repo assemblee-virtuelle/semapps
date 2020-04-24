@@ -42,7 +42,7 @@ const FollowService = {
       const { activity } = ctx.params;
       const activityType = activity.type || activity['@type'];
 
-      switch(activityType) {
+      switch (activityType) {
         case ACTIVITY_TYPES.FOLLOW:
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: urlJoin(activity.object, 'followers'),

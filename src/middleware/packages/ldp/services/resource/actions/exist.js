@@ -12,4 +12,4 @@ module.exports = {
 
     return triplesNb > 0;
   }
-}
+};
