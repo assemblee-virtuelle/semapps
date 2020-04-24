@@ -62,7 +62,10 @@ export const ActionEdit = props => (
       </FormTab>
       <FormTab label="Liens">
         <JsonLdReferenceInput label="Tags" reference="Tag" source="tag">
-          <AutocompleteArrayInput optionText={record => record['pair:preferedLabel'] || record['semapps:label'] || 'Test'} fullWidth />
+          <AutocompleteArrayInput
+            optionText={record => record['pair:preferedLabel'] || record['semapps:label'] || 'Test'}
+            fullWidth
+          />
         </JsonLdReferenceInput>
         <JsonLdReferenceInput label="Soutenu par" reference="Actor" source="pair:involves">
           <AutocompleteArrayInput optionText={record => record.name} fullWidth />
