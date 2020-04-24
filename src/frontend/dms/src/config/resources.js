@@ -2,6 +2,9 @@ const resources = {
   Actor: {
     types: ['as:Person', 'as:Organization']
   },
+  Tag: {
+    types: ['pair:Thema', 'semapps:ProjectState']
+  },
   Activity: {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'activities'
   },
@@ -15,7 +18,7 @@ const resources = {
   },
   Theme: {
     types: ['pair:Thema'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'objects/themes'
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes'
   }
 };
 

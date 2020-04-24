@@ -39,5 +39,10 @@
     "prefix": "skos",
     "owl": "",
     "url": "http://www.w3.org/2004/02/skos/core#"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/"
   }
 ]

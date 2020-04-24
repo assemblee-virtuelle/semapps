@@ -61,8 +61,8 @@ export const ActionEdit = props => (
         <DateTimeInput source="updated" label="Mis à jour le" fullWidth />
       </FormTab>
       <FormTab label="Liens">
-        <JsonLdReferenceInput label="Tags" reference="Theme" source="tag">
-          <AutocompleteArrayInput optionText={record => record['pair:preferedLabel']} fullWidth />
+        <JsonLdReferenceInput label="Tags" reference="Tag" source="tag">
+          <AutocompleteArrayInput optionText={record => record['pair:preferedLabel'] || record['semapps:label'] || 'Test'} fullWidth />
         </JsonLdReferenceInput>
         <JsonLdReferenceInput label="Soutenu par" reference="Actor" source="pair:involves">
           <AutocompleteArrayInput optionText={record => record.name} fullWidth />
