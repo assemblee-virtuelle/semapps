@@ -14,12 +14,7 @@ const StatusService = {
       ldp: 'http://www.w3.org/ns/ldp#',
       semapps: 'http://semapps.org/ns/'
     },
-    values: [
-      'En réflexion',
-      'En cours',
-      'En sommeil',
-      'Abandonné'
-    ]
+    values: ['En réflexion', 'En cours', 'En sommeil', 'Abandonné']
   },
   async started() {
     for (let value of this.settings.values) {
@@ -33,7 +28,7 @@ const StatusService = {
           slug: slug,
           '@context': { '@vocab': 'http://semapps.org/ns/' },
           '@type': 'ProjectState',
-          'label': value
+          label: value
         });
       }
     }
