@@ -51,21 +51,36 @@ const CollectionService = {
      * @param item The resource to add to the collection
      */
     async attach(ctx) {
-      const collectionExist = ctx.call('activitypub.collection.exist', {
-        collectionUri: ctx.params.collectionUri
-      });
+      const { collectionUri, item } = ctx.params;
+      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+
+      const resourceExist = ctx.call('ldp.resource.exist', { resourceUri: itemUri });
+      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !');
+
+      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
 
-      const collection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        id: ctx.params.collectionUri,
-        items: typeof ctx.params.item === 'object' ? ctx.params.item.id || ctx.params.item['@id'] : ctx.params.item
-      };
-
       return await ctx.call('triplestore.insert', {
-        resource: collection,
-        accept: MIME_TYPES.JSON,
-        contentType: MIME_TYPES.JSON
+        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
+      });
+    },
+    /*
+     * Detach an object from a collection
+     * @param collectionUri The full URI of the collection
+     * @param item The resource to remove from the collection
+     */
+    async detach(ctx) {
+      const { collectionUri, item } = ctx.params;
+
+      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
+      if (!collectionExist) throw new Error('Cannot detach from a non-existing collection !');
+
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
+        `
       });
     },
     /*
