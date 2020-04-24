@@ -52,7 +52,8 @@ module.exports = {
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes')),
       ...(await this.broker.call('webhooks.getApiRoutes')),
-      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes')
+      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes'),
+      ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'status'), 'status')
     ].forEach(route => this.addRoute(route));
   },
   methods: {

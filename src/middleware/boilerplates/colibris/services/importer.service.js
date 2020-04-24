@@ -42,6 +42,9 @@ module.exports = {
 
       if (!groupSlug) throw new Error('Missing groupSlug argument');
 
+      const themes = data.tag.map(tag => urlJoin(this.settings.baseUri, 'themes', slugify(tag.name, { lower: true })));
+      const status = urlJoin(this.settings.baseUri, 'status', slugify(data.status, { lower: true }))
+
       await ctx.call('activitypub.actor.create', {
         slug: pascalCaseToHyphens(data.slug.substring(0, 36)),
         '@context': [
@@ -61,7 +64,7 @@ module.exports = {
         content: data.content,
         image: data.image,
         location: data.location,
-        tag: data.tag.map(tag => urlJoin(this.settings.baseUri, 'themes', slugify(tag.name, { lower: true }))),
+        tag: [...themes, status],
         url: data.url,
         published: data.published,
         updated: data.updated

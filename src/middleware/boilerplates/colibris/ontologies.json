@@ -18,5 +18,10 @@
     "prefix": "pair",
     "owl": "",
     "url": "http://virtual-assembly.org/ontologies/pair#"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/"
   }
 ]
