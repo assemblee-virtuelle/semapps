@@ -2,11 +2,17 @@
 title: TripleStore
 ---
 
-This service allows you to create a TripleStore service wich offer basic interface to interact with Jenna triplestore.
+This service allows you to interface with Jenna triplestore.
 
 ## Features
-
-
+* SPARQL Query
+* CRUD like opérations on triplestore :
+  * insert triples
+  * patch triples
+  * delete subject
+* basic utilities
+  * count predicate of subject
+  * drop all subject of dataset
 
 ## Dependencies
 
