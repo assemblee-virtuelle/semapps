@@ -1,4 +1,6 @@
-# Basic Container
+---
+title: Basic LDP Container
+---
 Ces Containers sont tres smple mais leur syntaxe impose de modifier l'ontologie métier si ils sont utilisé pour contenir la relation entre 2 ressource. et sont donc a éviter pour ce cas la. Il font par contre de parfait container "généraux" manipuler des ressources.
 
 ## un BasicContainer par classe

@@ -1,4 +1,6 @@
-# ACL implementation in Jena Fuseki
+---
+title: ACL implementation in Jena Fuseki
+---
 
 ## Initial permissions mechanism
 
@@ -22,5 +24,4 @@ To compile this class, please refer to [this README](../src/jena/permissions/REA
 
 For now the above java class is just accepting every request, without checking real ACLs.
 
-TODO : implement the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java. 
-
+TODO : implement the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.

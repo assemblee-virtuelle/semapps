@@ -15,14 +15,20 @@ This service allows you to create a TripleStore service wich offer basic interfa
 
 
 ## Install
-
 ```bash
 $ npm install @semapps/triplestore --save
 ```
 
 ## Usage
-
 ```js
+const { TripleStore } = require('@semapps/triplestore');
+
+module.exports = {
+  mixins: [TripleStore],
+  settings: {
+    usersContainer: 'http://localhost:3000/users/'
+  }
+};
 ```
 
 ### Creating actors on WebID creations
