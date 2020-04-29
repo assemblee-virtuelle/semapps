@@ -12,7 +12,7 @@ This service allows you to authentify users with an OIDC or CAS server.
 
 ## Dependencies
 
-- None
+- WebId
 
 ## Install
 
