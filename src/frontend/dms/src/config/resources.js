@@ -19,6 +19,14 @@ const resources = {
   Theme: {
     types: ['pair:Thema'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes'
+  },
+  Device: {
+    types: ['semapps:Device'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'push/devices'
+  },
+  Notification: {
+    types: ['semapps:PushNotification'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'push/notifications'
   }
 };
 

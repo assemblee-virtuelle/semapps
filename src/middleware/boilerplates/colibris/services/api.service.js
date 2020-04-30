@@ -20,7 +20,7 @@ module.exports = {
     routes: [...SparqlEndpointRoutes],
     defaultLdpAccept: 'text/turtle'
   },
-  dependencies: ['ldp', 'activitypub', 'webhooks'],
+  dependencies: ['ldp', 'activitypub', 'webhooks', 'push'],
   async started() {
     this.connector = new CasConnector({
       casUrl: CONFIG.CAS_URL,
@@ -52,6 +52,7 @@ module.exports = {
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes')),
       ...(await this.broker.call('webhooks.getApiRoutes')),
+      ...(await this.broker.call('push.getApiRoutes')),
       ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'themes'), 'themes'),
       ...getContainerRoutes(urlJoin(CONFIG.HOME_URL, 'status'), 'status')
     ].forEach(route => this.addRoute(route));

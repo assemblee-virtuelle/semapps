@@ -7,6 +7,8 @@ import { ActivityList, ActivityIcon } from './resources/activities';
 import { ActionList, ActionShow, ActionEdit, ActionIcon } from './resources/actions';
 import { NoteList, NoteEdit, NoteIcon } from './resources/notes';
 import { ThemeList, ThemeIcon } from './resources/themes';
+import { DeviceList, DeviceIcon } from './resources/devices';
+import { NotificationList, NotificationIcon } from './resources/notifications';
 import ontologies from './config/ontologies';
 import resources from './config/resources';
 
@@ -35,6 +37,8 @@ function App() {
       />
       <Resource name="Note" list={NoteList} edit={NoteEdit} icon={NoteIcon} options={{ label: 'Actualités' }} />
       <Resource name="Theme" list={ThemeList} icon={ThemeIcon} options={{ label: 'Thèmes' }} />
+      <Resource name="Device" list={DeviceList} icon={DeviceIcon} options={{ label: 'Appareils' }} />
+      <Resource name="Notification" list={NotificationList} icon={NotificationIcon} options={{ label: 'Notifications' }} />
       <Resource name="Tag" />
     </Admin>
   );

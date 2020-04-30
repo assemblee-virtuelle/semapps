@@ -11,7 +11,7 @@ module.exports = {
   mixins: [ImporterService],
   settings: {
     importsDir: path.resolve(__dirname, '../imports'),
-    allowedActions: ['createOrganization', 'createProject', 'createUser', 'followProject', 'postNews'],
+    allowedActions: ['createOrganization', 'createProject', 'createUser', 'addDevice', 'followProject', 'postNews'],
     // Custom settings
     baseUri: CONFIG.HOME_URL,
     usersContainer: urlJoin(CONFIG.HOME_URL, 'actors')
@@ -57,8 +57,12 @@ module.exports = {
         // PAIR
         'pair:label': data.name,
         'pair:description': data.content,
-        'pair:aboutPage': `https://colibris.cc/groupeslocaux/?${data.slug}/iframe&showActu=1`,
-        'pair:involves': urlJoin(this.settings.usersContainer, groupSlug),
+        'pair:aboutPage': {
+          '@id': `https://colibris.cc/groupeslocaux/?${data.slug}/iframe&showActu=1`
+        },
+        'pair:involves': {
+          '@id': urlJoin(this.settings.usersContainer, groupSlug)
+        },
         // ActivityStreams
         name: data.name,
         content: data.content,
@@ -71,6 +75,11 @@ module.exports = {
       });
 
       console.log(`Project ${data.name} created`);
+    },
+    async createLaFabriqueProject(ctx) {
+      // https://www.colibris-lafabrique.org/sites/default/files/projets/93796013_596931490908436_3146066610926649344_n.jpg
+      // styles/projet_large/public/
+      // https://www.colibris-lafabrique.org/sites/default/files/styles/projet_large/public/projets/93796013_596931490908436_3146066610926649344_n.jpg
     },
     async createUser(ctx) {
       const { data } = ctx.params;
@@ -91,6 +100,19 @@ module.exports = {
       });
 
       console.log(`Actor ${data.username} created`);
+    },
+    async addDevice(ctx) {
+      const { data } = ctx.params;
+
+      await ctx.call('push.device.create', {
+        '@context': { semapps: "http://semapps.org/ns/" },
+        '@type': 'semapps:Device',
+        'semapps:ownedBy': urlJoin(this.settings.usersContainer, data.username),
+        'semapps:pushToken': data.token,
+        'semapps:addedAt': new Date().toISOString()
+      });
+
+      console.log(`Device added for user ${data.username}`);
     },
     async followProject(ctx) {
       const { data } = ctx.params;
