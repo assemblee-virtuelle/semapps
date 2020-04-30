@@ -46,7 +46,7 @@ const PushService = {
             [`GET push/devices`]: 'push.device.find',
             [`GET push/devices/:id`]: 'push.device.get',
             [`GET push/notifications`]: 'push.notification.find',
-            [`GET push/notifications/:id`]: 'push.notification.get',
+            [`GET push/notifications/:id`]: 'push.notification.get'
           }
         }
       ];

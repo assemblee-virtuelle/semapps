@@ -55,7 +55,7 @@ const DeviceService = {
     async findUsersDevices(ctx) {
       let devices = [];
 
-      for( let userUri of ctx.params.users ) {
+      for (let userUri of ctx.params.users) {
         const container = await this.actions.find({
           query: {
             'semapps:ownedBy': userUri,
