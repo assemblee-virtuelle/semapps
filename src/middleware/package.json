@@ -13,5 +13,6 @@
     "lerna": "^3.19.0",
     "lerna-wizard": "^1.1.1",
     "prettier": "^1.19.1"
-  }
+  },
+  "dependencies": {}
 }
