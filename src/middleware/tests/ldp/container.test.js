@@ -39,7 +39,7 @@ afterAll(async () => {
   await broker.stop();
 });
 
-describe('Create container and post resource', () => {
+describe('LDP container tests', () => {
   let resourceUri;
 
   test('Ensure container created in LdpService settings exists', async () => {
@@ -224,5 +224,19 @@ describe('Create container and post resource', () => {
         }
       ]
     });
+  });
+
+  test('Clear container', async () => {
+    await broker.call('ldp.container.clear', {
+      containerUri: CONFIG.HOME_URL + 'resources'
+    });
+
+    // Container should now be empty
+    const container = await broker.call('ldp.container.get', {
+      containerUri: CONFIG.HOME_URL + 'resources',
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(container['ldp:contains']).toBeUndefined();
   });
 });

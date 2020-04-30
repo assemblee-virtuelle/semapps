@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
+const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
@@ -16,6 +17,7 @@ module.exports = {
   dependencies: ['triplestore'],
   actions: {
     attach: attachAction,
+    clear: clearAction,
     create: createAction,
     detach: detachAction,
     exist: existAction,
