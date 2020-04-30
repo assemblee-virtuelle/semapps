@@ -1,4 +1,4 @@
-const { PushService } = require('@semapps/push-notifications');
+const { PushService } = require('@semapps/push');
 const CONFIG = require('../config');
 
 module.exports = {
