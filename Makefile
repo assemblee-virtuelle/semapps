@@ -37,7 +37,7 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware frontend
+	$(DOCKER_COMPOSE) logs -f frontend fuseki
 
 log-prod:
 	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend mongo

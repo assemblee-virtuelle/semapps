@@ -12,7 +12,9 @@ const NotificationService = {
   },
   started() {
     this.expo = new Expo();
-    setInterval(this.actions.checkReceipts, 5000 /*5 * 60 * 1000*/);
+
+    // Check receipts every 5 minutes
+    setInterval(this.actions.checkReceipts, 5 * 60 * 1000);
   },
   actions: {
     async send(ctx) {
@@ -104,8 +106,6 @@ const NotificationService = {
 
                 await this.markAsError(notificationId, message);
               }
-
-              // TODO invalidate the device if an error is detected
             }
           } catch (error) {
             console.error(error);

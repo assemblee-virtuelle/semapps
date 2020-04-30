@@ -24,8 +24,6 @@ const DeviceService = {
         }
       });
 
-      console.log('device', device);
-
       if (!device['ldp:contains']) {
         device = await this.actions.create({
           '@type': 'semapps:Device',
@@ -35,21 +33,20 @@ const DeviceService = {
           'semapps:pushToken': pushToken,
           'semapps:addedAt': new Date().toISOString()
         });
+
+        if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
+          await ctx.call('push.notification.send', {
+            to: userUri,
+            ...this.settings.newDeviceNotification
+          });
+        }
       } else {
         // If there was an error message on the device, clear it
-        device = await this.actions.create({
+        device = await this.actions.update({
           '@id': device['ldp:contains'][0]['@id'],
           'semapps:name': name,
           'semapps:yearClass': yearClass,
           'semapps:errorMessage': null
-        });
-      }
-
-      // TODO remettre plus haut
-      if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
-        await ctx.call('push.notification.send', {
-          to: userUri,
-          ...this.settings.newDeviceNotification
         });
       }
 
