@@ -74,7 +74,9 @@ const NotificationService = {
       const notifications = await this.findByStatus('processed');
 
       if (notifications) {
-        let receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(notifications.map(notification => notification['semapps:receiptId']));
+        let receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
+          notifications.map(notification => notification['semapps:receiptId'])
+        );
 
         // Like sending notifications, there are different strategies you could use
         // to retrieve batches of receipts from the Expo service.
@@ -86,15 +88,17 @@ const NotificationService = {
             // notification and information about an error, if one occurred.
             for (const receiptId in receipts) {
               let { status, message, details } = receipts[receiptId];
-              const notificationId = notifications.find(notification => notification['semapps:receiptId'] === receiptId)['@id'];
+              const notificationId = notifications.find(
+                notification => notification['semapps:receiptId'] === receiptId
+              )['@id'];
 
-              if( status === 'ok') {
+              if (status === 'ok') {
                 await this.actions.update({
                   '@id': notificationId,
                   'semapps:status': 'checked',
                   'semapps:receiptStatus': status
                 });
-              } else if ( status === 'error' ) {
+              } else if (status === 'error') {
                 // Append the error code to the message for easier debug
                 if (details && details.error) {
                   // The error codes are listed in the Expo documentation:
