@@ -105,7 +105,7 @@ module.exports = {
       const { data } = ctx.params;
 
       await ctx.call('push.device.create', {
-        '@context': { semapps: "http://semapps.org/ns/" },
+        '@context': { semapps: 'http://semapps.org/ns/' },
         '@type': 'semapps:Device',
         'semapps:ownedBy': urlJoin(this.settings.usersContainer, data.username),
         'semapps:pushToken': data.token,

@@ -38,7 +38,12 @@ function App() {
       <Resource name="Note" list={NoteList} edit={NoteEdit} icon={NoteIcon} options={{ label: 'Actualités' }} />
       <Resource name="Theme" list={ThemeList} icon={ThemeIcon} options={{ label: 'Thèmes' }} />
       <Resource name="Device" list={DeviceList} icon={DeviceIcon} options={{ label: 'Appareils' }} />
-      <Resource name="Notification" list={NotificationList} icon={NotificationIcon} options={{ label: 'Notifications' }} />
+      <Resource
+        name="Notification"
+        list={NotificationList}
+        icon={NotificationIcon}
+        options={{ label: 'Notifications' }}
+      />
       <Resource name="Tag" />
     </Admin>
   );

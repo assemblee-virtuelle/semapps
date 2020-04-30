@@ -6,7 +6,7 @@ module.exports = {
   settings: {
     baseUri: CONFIG.HOME_URL,
     newDeviceNotification: {
-      message: "Bienvenue !",
+      message: 'Bienvenue !',
       data: {}
     }
   }

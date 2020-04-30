@@ -1,5 +1,5 @@
 import React from 'react';
-import {List, Datagrid, TextField, DateField, useAuthenticated, ReferenceField} from 'react-admin';
+import { List, Datagrid, TextField, DateField, useAuthenticated, ReferenceField } from 'react-admin';
 import Icon from '@material-ui/icons/PhonelinkRing';
 
 export const DeviceIcon = Icon;
