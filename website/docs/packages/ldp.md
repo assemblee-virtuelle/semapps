@@ -2,18 +2,19 @@
 title: LDP
 ---
 
-This service allows you to set up LDP Direct Containers Interface in which subject (with their predicats and objects) can be manipulated.
+This service allows you to setup LDP direct containers in which resources can be manipulated.
 
 ## Features
-* Container can manage multiple class subject
-
+* Handles triples, turtle and JSON-LD
+* Automatic creation of containers on server start
+* Full container management: create, attach resources, detach, clear, delete...
 
 ## Dependencies
-* tripleStore
+* TripleStoreService
 
 ## Sub-services
 * LdpContainerService
-* LdpresourceService
+* LdpResourceService
 
 ## Install
 
@@ -32,19 +33,18 @@ module.exports = {
     baseUrl: 'http://localhost:3000/',
     ontologies : [
       {
-        prefix: <myOntology1Prefix>,
-        url: <myOntology1RootUrl>
+        prefix: 'rdf',
+        url: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
       },
       {
-        prefix: <myOntology2Prefix>,
-        url: <myOntology2RootUrl>
+        prefix: 'ldp',
+        url: 'http://www.w3.org/ns/ldp#',
       },
-      {
-        prefix: <myOntology2Prefix>,
-        url: <myOntology3RootUrl>
-      },
+      ...
+    ],
+    containers: [
+      '/resources'
     ]
-    containers: [<Container1>,<Container2>]
   }
 };
 
@@ -67,25 +67,26 @@ module.exports = {
 }
 ```
 
-
-
 ## Settings
 
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `baseUrl`|`String` | **required**| root of url used to generate subject uri|
-| `ontologies`| array of `Object`|**required** | list of ontology used.|
-| `containers`| array of `String`| **required**| list of containers to set up. relativ url begining  whith `/`|
+| `baseUrl`|`String` | **required**| Base URL of the LDP server |
+| `ontologies`| `[Object]`|**required** | List of ontology used (see example above) |
+| `containers`| `[String]`| `/resources` | List of containers to set up, with their relative URL |
+| `defaultAccept`| `String`| `text/turtle` | Default `Accept` parameter used by all services |
 
 
 ## Actions
 
 The following service actions are available:
-### `ldp.resource.get`
-* get a subject by it uri
-* accept can by `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
 
-:::info Actions accessible through the API
+### `ldp.resource.get`
+* Get a resource by its URI
+* Accept triples, turtle or JSON-LD (see `@semApps/mime-types` package)
+
+:::info
+Action accessible through the API
 :::
 ```
 GET <serveur>/<container>/identifier
@@ -95,19 +96,20 @@ GET <serveur>/<container>/identifier
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `resourceUri` | `String`  | **required** | uri of getting subject |
-| `accept` | `string` | **required** | type of return |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
-| `queryDepth` | `Integer` | 0| Object uri resolution. Only embended resolution (not http uri)|
-| `jsonContext` | `Array` or `Object` `String` | 0| overide Context computed thanks to Ontology|
+| `accept` | `string` | **required** | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `string` | Logged user's webId | User doing the action |
+| `queryDepth` | `Integer` | 0 | Depth of resource resolution. Resolves only blank nodes, not objects with IDs. |
+| `jsonContext` | `Array`, `Object` or `String` |   | Compact the returned resource with this context. Only works with JSON-LD.  |
 
 ##### Return
-`String` or `Object` depending on accept
+Triples, Turtle or JSON-LD depending on Accept type.
 
 ### `ldp.resource.post`
-* create a subject
-* contentType can by `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
+* Create a resource
+* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
 
-:::info Actions accessible through the API
+:::info 
+Action accessible through the API
 :::
 ```
 POST <serveur>/<container>
@@ -116,163 +118,146 @@ POST <serveur>/<container>
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `resource` | `String` or `Object`  | **required** | resource to create |
-| `contentType` | `string` | **required** | type of resource |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
-| `containerUri` | `string` | **required** | uri of container where the resource will have to be create|
-| `slug` | `String` | null | specific id tu use instead automatic uuid|
+| `resource` | `String` or `Object`  | **required** | Resource to create |
+| `containerUri` | `string` | **required** | Container where the resource will be created |
+| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `string` | Logged user's webId  | User doing the action |
+| `slug` | `String` |  | Specific ID tu use for URI instead generated UUID |
 
 ##### Return
-`String` : uri of subject created
+`String` : URI of the created resource
 
 ### `ldp.resource.patch`
-* update an existing subject. If not exist, same as post
-* persisted triple with the same subject but differents predicate than resource still existing.
-* contentType can by `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
+* Partial update of an existing resource. Only the provided predicates will be replaced.
+* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
 
-:::info Actions accessible through the API
+:::info 
+Action accessible through the API
 :::
 ```
-PATCH <resourceUri>
 PATCH <serveur>/<container>/identifier
 ```
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `resource` | `String` or `Object`  | **required** | resource to create |
-| `contentType` | `string` | **required** | type of resource |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `resource` | `String` or `Object`  | **required** | Resource to update |
+| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `string` | Logged user's webId | User doing the action |
 
 ##### Return
-`String` : uri of subject patched
+`String` : URI of the updated resource
 
 ### `ldp.resource.put`
-* update an existing subject. If not exist, same as post
-* persisted triple with the same subject but differents predicate than resource are deleted.
-* contentType can by `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
+* Full update of an existing resource
+* If some predicates existed but are not provided, they will be deleted.
+* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
 
-:::info Actions accessible through the API
+:::info 
+Action accessible through the API
 :::
 ```
-PUT <resourceUri>
 PUT <serveur>/<container>/identifier
 ```
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `resource` | `String` or `Object`  | **required** | resource to create |
-| `contentType` | `string` | **required** | type of resource |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `resource` | `String`, `Object`  | **required** | Resource to update |
+| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `string` | Logged user's webId | User doing the action |
 
 ##### Return
-`String` : uri of subject put
+`String` : URI of the updated resource
 
 ### `ldp.resource.delete`
-* delete subject : all triples with this subject
+* Delete the whole resource and detach it from its container
 
 :::info
-Actions accessible through the API
+Action accessible through the API
 :::
 ```
-DELETE <resourceUri>
-DELETE <serveur>/<container>/identifier
+DELETE <serveur>/<container>/id
 ```
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `resourceUri` | `String`| **required** | resource uri to delete |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `resourceUri` | `String`| **required** | URI of resource to delete |
+| `webId` | `string` | Logged user's webId | User doing the action |
 
 ##### Return
-no return
-
-
+None
 
 ### `ldp.container.attach`
-* attach a subject to a containers
-
-:::info
-Action Not accessible through the API
-:::
-
+* Attach a resource to a container
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `containerUri` | `String`| **required** | uri of container in which resource will be attached |
-| `resourceUri` | `String` | **required**   |uri of resource to attach|
+| `containerUri` | `String`| **required** | URI of container to which the resource will be attached |
+| `resourceUri` | `String` | **required** | URI of resource to attach |
 
 ##### Return
-no return
+None
 
 ### `ldp.container.detach`
-* detach a subject to a containers
+* Detach a resource from a container
 
-:::info
-Action Not accessible through the API
-:::
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `containerUri` | `String`| **required** | uri of container in which resource will be detached |
-| `resourceUri` | `String` | **required**   |uri of resource to detach|
+| `containerUri` | `String`| **required** | URI of container to which the resource will be detached |
+| `resourceUri` | `String` | **required** | URI of resource to attach |
 
 ##### Return
-no return
+None
 
 ### `ldp.container.exist`
-* check container exists linked to an uri
+* Check if container exists
 
-:::info
-Action Not accessible through the API
-:::
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `containerUri` | `String`| **required** | uri container to check |
+| `containerUri` | `String`| **required** | URI of container to check |
 
 ##### Return
-no return
+`true` or `false`
 
 ### `ldp.container.create`
-* create a container linked to an uri
+* Create a new LDP container
 
-:::info
-Action Not accessible through the API
-:::
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `containerUri` | `String`| **required** | uri to link with new container |
+| `containerUri` | `String`| **required** | URI of the container to create |
 
 ##### Return
-no return
+None
 
 ### `ldp.container.get`
-* get all subject attached in to a container. This subject usually posted on this container.
+* Get all resources attached to a container
+* Use the LDP ontology of direct containers
 
-:::info Actions accessible through the API
+:::info
+Action accessible through the API
 :::
 ```
 GET <serveur>/<container>
 ```
-uri of container where the resource will have to be create
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `containerUri` | `String`  | **required** | uri of container containing subject |
-| `accept` | `string` | **required** | type of return |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `containerUri` | `String`  | **required** | URI of container |
+| `accept` | `string` | **required** | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
 | `query` | `Object` | null | return only triples which predicate is key and value is value of object parameter|
-| `queryDepth` | `Integer` | 0| Object uri resolution. Only embended resolution (not http uri)|
-| `jsonContext` | `Array` or `Object` `String` | null | overide Context computed thanks to Ontology|
+| `queryDepth` | `Integer` | 0 | Depth of resource resolution. Resolves only blank nodes, not objects with IDs. |
+| `jsonContext` | `Array`, `Object` or `String` |   | Compact the returned resource with this context. Only works with JSON-LD.  |
+| `webId` | `string` | Logged user's webId  | webId used to identify user doing action on tripleStore|
 
 ##### Return
-`String` or `Object` depending on accept
+Triples, Turtle or JSON-LD depending on Accept type
 
 ### `ldp.getApiRoutes`
 
