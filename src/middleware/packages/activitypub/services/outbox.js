@@ -1,14 +1,17 @@
+const urlJoin = require('url-join');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
+const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
-  async started() {
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
+  settings: {
+    actorsContainer: null
   },
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
+      const activityType = activity.type || activity['@type'];
 
       if (!username && !collectionUri) {
         throw new Error('Outbox post: a username or collectionUri must be specified');
@@ -23,19 +26,21 @@ const OutboxService = {
         return;
       }
 
-      if (Object.values(OBJECT_TYPES).includes(activity.type)) {
-        const object = await ctx.call('activitypub.object.create', activity);
-
+      if (Object.values(OBJECT_TYPES).includes(activityType)) {
+        let { to, '@id': id, ...object } = activity;
+        object = await ctx.call('activitypub.object.create', object);
         activity = {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: 'Create',
-          to: object.to,
+          '@context': object['@context'],
+          type: ACTIVITY_TYPES.CREATE,
+          to,
           actor: object.attributedTo,
-          object: object
+          object
         };
-      } else if (activity.type === ACTIVITY_TYPES.UPDATE) {
-        await ctx.call('activitypub.object.update', activity.object);
-      } else if (activity.type === ACTIVITY_TYPES.DELETE) {
+      } else if (activityType === ACTIVITY_TYPES.CREATE) {
+        activity.object = await ctx.call('activitypub.object.create', activity.object);
+      } else if (activityType === ACTIVITY_TYPES.UPDATE) {
+        activity.object = await ctx.call('activitypub.object.update', activity.object);
+      } else if (activityType === ACTIVITY_TYPES.DELETE) {
         await ctx.call('activitypub.object.remove', { id: activity.object });
       }
 
@@ -46,7 +51,7 @@ const OutboxService = {
       activity = await ctx.call('activitypub.activity.create', activity);
 
       // Attach the newly-created activity to the outbox
-      ctx.call('activitypub.collection.attach', {
+      await ctx.call('activitypub.collection.attach', {
         collectionUri: collectionUri || this.getOutboxUri(username),
         item: activity
       });
@@ -59,11 +64,16 @@ const OutboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getOutboxUri(ctx.params.username)
+        id: this.getOutboxUri(ctx.params.username),
+        dereferenceItems: true,
+        queryDepth: 3
       });
 
       if (collection) {
-        return collection;
+        return {
+          ...collection,
+          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
+        };
       } else {
         ctx.meta.$statusCode = 404;
       }
@@ -71,7 +81,7 @@ const OutboxService = {
   },
   methods: {
     getOutboxUri(username) {
-      return this.settings.actorsContainer + username + '/outbox';
+      return urlJoin(this.settings.actorsContainer, username, 'outbox');
     }
   }
 };

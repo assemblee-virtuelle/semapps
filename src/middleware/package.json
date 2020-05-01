@@ -1,13 +1,18 @@
 {
-  "name": "semapps",
+  "name": "semapps-middleware",
   "private": true,
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "version": "lerna version",
+    "wizard": "lerna-wizard",
+    "publish": "lerna publish from-package",
     "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'"
   },
   "devDependencies": {
     "lerna": "^3.19.0",
+    "lerna-wizard": "^1.1.1",
     "prettier": "^1.19.1"
-  }
+  },
+  "dependencies": {}
 }

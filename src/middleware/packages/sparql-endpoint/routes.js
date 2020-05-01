@@ -31,7 +31,8 @@ module.exports = [
     authentication: true,
     mergeParams: true,
     aliases: {
-      'GET /': 'sparqlEndpoint.query'
+      'GET /': 'sparqlEndpoint.query',
+      'POST /': 'sparqlEndpoint.query'
     },
     ...routeConfig
   }

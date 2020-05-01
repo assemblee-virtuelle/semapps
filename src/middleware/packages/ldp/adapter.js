@@ -1,23 +1,34 @@
+const urlJoin = require('url-join');
 const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 class TripleStoreAdapter {
-  constructor(ldpServiceName) {
-    this.ldpServiceName = ldpServiceName;
+  constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
+    this.resourceService = resourceService;
+    this.containerService = containerService;
   }
 
   init(broker, service) {
     this.broker = broker;
     this.service = service;
-
-    if (!this.service.schema.settings.containerUri) {
-      throw new ServiceSchemaError('Missing `containerUri` definition in settings of service!');
-    }
   }
 
-  connect() {
-    // TODO create standard container
-    return Promise.resolve();
+  async connect() {
+    if (!this.service.schema.settings.containerUri) {
+      throw new ServiceSchemaError(
+        'Missing `containerUri` definition in settings of service ' + this.service.schema.name
+      );
+    }
+
+    await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
+
+    const containerUri = this.service.schema.settings.containerUri;
+    const exists = await this.broker.call(this.containerService + '.exist', { containerUri });
+
+    if (!exists) {
+      console.log(`Container ${containerUri} doesn't exist, creating it...`);
+      await this.broker.call(this.containerService + '.create', { containerUri });
+    }
   }
 
   disconnect() {
@@ -36,9 +47,11 @@ class TripleStoreAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call(this.ldpServiceName + '.standardContainer', {
+    return this.broker.call(this.containerService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
-      context: this.service.schema.settings.context,
+      query: filters.query,
+      queryDepth: this.service.schema.settings.queryDepth,
+      jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
   }
@@ -54,18 +67,26 @@ class TripleStoreAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    return this.broker.call(this.ldpServiceName + '.get', { resourceUri: _id, accept: MIME_TYPES.JSON });
+    if (!_id.startsWith('http')) {
+      _id = urlJoin(this.service.schema.settings.containerUri, _id);
+    }
+    return this.broker.call(this.resourceService + '.get', {
+      resourceUri: _id,
+      queryDepth: this.service.schema.settings.queryDepth,
+      jsonContext: this.service.schema.settings.context,
+      accept: MIME_TYPES.JSON
+    });
   }
 
   /**
    * Find all entities by IDs
    */
   findByIds(ids) {
-    throw new Error('Method not implemented');
+    return Promise.all(ids.map(id => this.findById(id)));
   }
 
   /**
-   * Get count of filtered entites
+   * Get count of filtered entities
    *
    * Available filter props:
    *  - search
@@ -73,26 +94,32 @@ class TripleStoreAdapter {
    *  - query
    */
   count(filters = {}) {
-    throw new Error('Method not implemented');
+    return this.find(filters).then(result => result['ldp:contains'].length);
   }
 
   /**
    * Insert an entity
    */
   insert(entity) {
+    const { slug, ...resource } = entity;
+
     return this.broker
-      .call(this.ldpServiceName + '.post', {
+      .call(this.resourceService + '.post', {
         containerUri: this.service.schema.settings.containerUri,
-        resource: entity,
-        contentType: MIME_TYPES.JSON,
-        accept: MIME_TYPES.JSON
+        resource: {
+          '@context': this.service.schema.settings.context,
+          ...resource
+        },
+        slug,
+        contentType: MIME_TYPES.JSON
       })
-      .then(body => {
-        this.broker.call(this.ldpServiceName + '.attachToContainer', {
+      .then(resourceUri => {
+        this.broker.call(this.containerService + '.attach', {
           containerUri: this.service.schema.settings.containerUri,
-          objectUri: body['@id']
+          resourceUri
         });
-        return body;
+
+        return this.findById(resourceUri);
       });
   }
 
@@ -114,16 +141,23 @@ class TripleStoreAdapter {
    * Update an entity by ID
    */
   updateById(_id, update) {
-    const resource = update['$set'];
-    return this.broker.call(this.ldpServiceName + '.patch', {
-      resource: {
-        '@context': this.service.schema.settings.context,
-        '@id': _id,
-        ...resource
-      },
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
+    const { id, '@id': arobaseId, ...resource } = update['$set'];
+
+    // Check ID and transform it to URI if necessary
+    _id = _id || id || arobaseId;
+    if (!_id) throw new Error('An ID must be specified to update resources');
+    if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
+
+    return this.broker
+      .call(this.resourceService + '.patch', {
+        resource: {
+          '@context': this.service.schema.settings.context,
+          '@id': _id,
+          ...resource
+        },
+        contentType: MIME_TYPES.JSON
+      })
+      .then(resourceUri => this.findById(resourceUri));
   }
 
   /**
@@ -137,13 +171,19 @@ class TripleStoreAdapter {
    * Remove an entity by ID
    */
   removeById(_id) {
-    return this.broker.call(this.ldpServiceName + '.delete', {
-      resourceUri: _id
-    });
+    return this.broker
+      .call(this.resourceService + '.delete', {
+        resourceUri: _id
+      })
+      .then(() => {
+        // We must return the number of deleted resource
+        // Otherwise the DB adapter returns an error
+        return 1;
+      });
   }
 
   /**
-   * Clear all entities from DB
+   * Clear all entities from the container
    */
   clear() {
     throw new Error('Method not implemented');

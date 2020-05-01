@@ -19,21 +19,6 @@ services:
     environment:
       ADMIN_PASSWORD: "admin"
 
-  mongo:
-    image: mongo
-    container_name: mongo
-    restart: always
-    ports:
-      - "27017:27017"
-    expose:
-      - "27017"
-    networks:
-      - semapps
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: pass
-      MONGO_INITDB_DATABASE: semapps
-
   middleware:
     build:
       context: ./src/middleware
@@ -41,23 +26,25 @@ services:
     container_name: middleware
     restart: always
     depends_on:
-      - "fuseki"
+      - fuseki
     networks:
       - semapps
     ports:
       - "3000:3000"
     expose:
       - "3000"
-    command: npm run start --prefix ./boilerplates/runner
+    command: npm run start --prefix ./boilerplates/${MIDDLEWARE}
 
   frontend:
     build:
       context: ./src/frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
+      args:
+        - FRONTEND
     container_name: frontend
     restart: always
     depends_on:
-      - "middleware"
+      - middleware
     environment:
       - PORT=5000
     networks:
@@ -66,6 +53,31 @@ services:
       - "5000:5000"
     expose:
       - "5000"
+
+  nginx:
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    volumes:
+      - ./deploy/nginx:/etc/nginx/conf.d
+      - ./deploy/certbot/conf:/etc/letsencrypt
+      - ./deploy/certbot/www:/var/www/certbot
+    networks:
+      - semapps
+    ports:
+      - "80:80"
+      - "443:443"
+    expose:
+      - "80"
+      - "443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./deploy/certbot/conf:/etc/letsencrypt
+      - ./deploy/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
 volumes:
   rdf_data:

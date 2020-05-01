@@ -1,16 +1,16 @@
 {
   "name": "@semapps/webid",
-  "version": "1.0.0",
+  "version": "0.1.4",
   "description": "WebID service for SemApps",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp" :"^1.0.0",
-    "@semapps/triplestore" :"^1.0.0",
-    "@semapps/mime-types" :"^1.0.0"
+    "@semapps/ldp": "^0.1.4",
+    "@semapps/mime-types": "^0.1.4",
+    "@semapps/triplestore": "^0.1.4"
   },
-  "license": "Apache-2.0"
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
 }
