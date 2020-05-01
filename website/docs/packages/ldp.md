@@ -83,7 +83,7 @@ The following service actions are available:
 
 ### `ldp.resource.get`
 * Get a resource by its URI
-* Accept triples, turtle or JSON-LD (see `@semApps/mime-types` package)
+* Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 :::info
 Action accessible through the API
@@ -106,7 +106,7 @@ Triples, Turtle or JSON-LD depending on Accept type.
 
 ### `ldp.resource.post`
 * Create a resource
-* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
+* Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 :::info 
 Action accessible through the API
@@ -129,7 +129,7 @@ POST <serveur>/<container>
 
 ### `ldp.resource.patch`
 * Partial update of an existing resource. Only the provided predicates will be replaced.
-* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
+* Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 :::info 
 Action accessible through the API
@@ -151,7 +151,7 @@ PATCH <serveur>/<container>/identifier
 ### `ldp.resource.put`
 * Full update of an existing resource
 * If some predicates existed but are not provided, they will be deleted.
-* Content-type can be triples, turtle or JSON-LD (see `@semApps/mime-types` package)
+* Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 :::info 
 Action accessible through the API

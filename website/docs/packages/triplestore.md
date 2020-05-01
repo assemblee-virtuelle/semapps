@@ -2,23 +2,17 @@
 title: TripleStore
 ---
 
-This service allows you to interface with Jenna triplestore.
+This service allows you to interface with a [Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) triple store.
 
 ## Features
-* SPARQL Query
-* CRUD like opérations on triplestore :
-  * insert triples
-  * patch triples
-  * delete subject
+* Basic triple store operations
+  * Query
+  * Update
+  * Insert
+  * Delete
 * basic utilities
   * count predicate of subject
   * drop all subject of dataset
-
-## Dependencies
-* none
-
-## Sub-services
-
 
 ## Install
 ```bash
@@ -32,103 +26,100 @@ const { TripleStoreService } = require('@semapps/triplestore');
 module.exports = {
   mixins: [TripleStoreService],
   settings: {
-    sparqlEndpoint: http://fuseki:3030/,
-    mainDataset: <myDataset>
-    jenaUser: <myAdminUser>,
-    jenaPassword: <myAdminPassword>
+    sparqlEndpoint: 'http://localhost:3030/',
+    mainDataset: 'myDataSet',
+    jenaUser: 'admin',
+    jenaPassword: 'admin'
   }
 };
-
 ```
 
 ## Settings
 
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-|`sparqlEndpoint`|`String`|**required**|root url of fuseki|
-|`mainDataset`|`String`| **required**|fuseki's dataset used to persiste triples|
-|`jenaUser`|`String`|**required** |fuseki's admin login|
-|`jenaPassword`|`String`|**required**|fuseki's admin password|
-
+| `sparqlEndpoint`|`String`|**required** | Jena Fuseki's root URI |
+| `mainDataset`|`String`| **required** | Used dataset |
+| `jenaUser`| `String` | **required** | Jena Fuseki's admin login |
+| `jenaPassword` | `String` | **required** | Jena Fuseki's admin password |
 
 ## Actions
 
 The following service actions are available:
-### `query`
-* execute a SPARQL Query and return result in accept type provided
-* SELECT, CONSTRUCT, ASK supported
-* accept can by `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
+
+### `triplestore.query`
+* Execute a SPARQL Query and return result in accept type provided
+* SELECT, CONSTRUCT, ASK queries are supported
+* Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `query` | `String`  | null| SPARQL Query to execute |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
-| `accept` | `string` | **required** | type of return |
+| `query` | `String`  | null| SPARQL query to execute |
+| `accept` | `String` | **required** | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `String` | Logged user's webId | User doing the action |
 
 ##### Return
 `String` or `Object` depending on accept
 
-### `update`
-* execute SPARQL Update
-* DELETE, INSERT supported
-* https://www.w3.org/TR/sparql11-update/
+### `triplestore.update`
+* Execute a SPARQL update query
+* DELETE, INSERT queries supported (see [specifications](https://www.w3.org/TR/sparql11-update/))
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `query` | `String`  | null| SPARQL Update to execute |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `webId` | `string` | Logged user's webId | User doing the action |
 
 ##### Return
-no return
+None
 
-### `insert`
-* insert triples provided
-* triples provided can be `@SemApps/mime-types/constants.MIME_TYPES` (`application/ld+json`,`text/turtle`,`application/n-triples`)
+### `triplestore.insert`
+* Insert a list of triples
+* Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `resource` | `Object` or `String`  | null| triples tu insert  |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
-| `contentType` | `string` | text/turtle | type of resource |
+| `resource` | `Object`, `String` | **required** | Triples to insert  |
+| `contentType` | `String` | `text/turtle` | Type of data provided (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `String` | Logged user's webId | User doing the action |
 
 ##### Return
-no return
-
+None
 
 ### `delete`
-*  delete all triples with this subject
+*  Delete all triples associated with a subject
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `uri` | `String`  | null| subject of triples to delete |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `uri` | `String`  | **required** | Subject |
+| `webId` | `String` | Logged user's webId | User doing the action |
 
 ##### Return
-no return
+None
 
-### `countTripleOfSubject`
-*  count all triples with this subject
+### `triplestore.countTripleOfSubject`
+* Count all triples associated with a subject
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `uri` | `String`  | null| subject of triples to count |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `uri` | `String`  | **required** | Subject |
+| `webId` | `String` | Logged user's webId | User doing the action |
 
 ##### Return
-`Integer`
+`Integer` - Number of triples associated with the given subject
 
-### `dropAll`
-* delete all triple on dataset
+### `triplestore.dropAll`
+* Delete all triples on the dataset
 
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `webId` | `string` | The webId of the logged user  | webId used to identify user doing action on tripleStore|
+| `webId` | `String` | Logged user's webId | User doing the action |
 
 ##### Return
-no return
+None
