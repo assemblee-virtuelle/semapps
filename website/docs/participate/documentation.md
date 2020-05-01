@@ -27,7 +27,7 @@
 
 ## Proposer des sujets ou des améliorations en créant une "issue"**
 - Rendez-vous sur https://github.com/assemblee-virtuelle/semapps/issues
-- Détaillez précisément votre demande / proposition, mettez des liens si besoin pour clairifier au maximum.  
+- Détaillez précisément votre demande / proposition, mettez des liens si besoin pour clarifier au maximum votre intention.  
 - Renseignez le label "Documentation" à partir de l'onglet "Labels" du menu sur la droite de l'écran. 
 - Et discutons en !
 
