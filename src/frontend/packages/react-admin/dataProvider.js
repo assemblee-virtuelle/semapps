@@ -1,9 +1,14 @@
 import jsonld from 'jsonld';
 
-const getPrefixJSON = ontologies => {
+const getJsonContext = (ontologies, mainOntology) => {
   let pattern = {};
   ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-  return pattern;
+  if (mainOntology) {
+    delete pattern[mainOntology];
+    return [ontologies.find(ontology => ontology.prefix === mainOntology).context, pattern];
+  } else {
+    return pattern;
+  }
 };
 
 const getPrefixRdf = ontologies => {
@@ -33,6 +38,7 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
       ${searchRequest}
       ?s1 a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
+      FILTER( (isIRI(?s1)) ) .
       ?s1 ?p2 ?o2 .
     }
     # TODO try to make pagination work in SPARQL as this doesn't work.
@@ -41,7 +47,7 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
   `;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => ({
+const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainOntology }) => ({
   getList: async (resourceId, params) => {
     if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
@@ -57,7 +63,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
       if (!listProperty) throw new Error('Unknown list type');
 
       let returnData = json[listProperty].map(item => {
-        item.id = item['@id'];
+        item.id = item.id || item['@id'];
         return item;
       });
 
@@ -80,28 +86,32 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
         body
       });
 
-      const compactJson = await jsonld.compact(json, getPrefixJSON(ontologies));
+      const compactJson = await jsonld.compact(json, getJsonContext(ontologies, mainOntology));
 
-      if (!compactJson['@graph'] || compactJson['@graph'].length === 0) {
+      if (Object.keys(compactJson).length === 1) {
+        // If we have only the context, it means there is no match
         return { data: [], total: 0 };
+      } else if (!compactJson['@graph']) {
+        // If we have several fields but no @graph, there is a single match
+        return { data: [compactJson], total: 1 };
+      } else {
+        const returnData = compactJson['@graph']
+          .map(item => {
+            item.id = item.id || item['@id'];
+            return item;
+          })
+          .slice(
+            (params.pagination.page - 1) * params.pagination.perPage,
+            params.pagination.page * params.pagination.perPage
+          );
+
+        return { data: returnData, total: compactJson['@graph'].length };
       }
-
-      const returnData = compactJson['@graph']
-        .map(item => {
-          item.id = item['@id'];
-          return item;
-        })
-        .slice(
-          (params.pagination.page - 1) * params.pagination.perPage,
-          params.pagination.page * params.pagination.perPage
-        );
-
-      return { data: returnData, total: compactJson['@graph'].length };
     }
   },
   getOne: async (resourceId, params) => {
     let { json } = await httpClient(params.id);
-    json.id = json['@id'];
+    json.id = json.id || json['@id'];
     return { data: json };
   },
   getMany: async (resourceId, params) => {
@@ -111,7 +121,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
       id = typeof id === 'object' ? id['@id'] : id;
 
       let { json } = await httpClient(id);
-      json.id = json['@id'];
+      json.id = json.id || json['@id'];
       returnData.push(json);
     }
 
@@ -126,7 +136,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
     const { headers } = await httpClient(resources[resourceId].containerUri, {
       method: 'POST',
       body: JSON.stringify({
-        '@context': { ...getPrefixJSON(ontologies) },
+        '@context': getJsonContext(ontologies, mainOntology),
         '@type': resources[resourceId].types,
         ...params.data
       })
@@ -135,7 +145,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies }) => 
     // Retrieve newly-created resource
     const resourceUri = headers.get('Location');
     let { json } = await httpClient(resourceUri);
-    json.id = json['@id'];
+    json.id = json.id || json['@id'];
     return { data: json };
   },
   update: async (resourceId, params) => {

@@ -1,0 +1,16 @@
+{
+  "name": "@semapps/react-admin",
+  "version": "0.1.0",
+  "description": "React-Admin add-on for SemApps servers",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "final-form-calculate": "^1.3.1",
+    "jsonld": "^3.0.1",
+    "react": "^16.13.0",
+    "react-admin": "^3.2.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ReferenceArrayInput, TextInput } from 'react-admin';
+import { ReferenceArrayInput, TextInput, DateTimeInput as RaDateTimeInput } from 'react-admin';
 
-const selectLanguage = value => {
+const selectValue = value => {
   if (typeof value === 'object' && value['@value']) {
     return value['@value'];
   } else {
@@ -22,7 +22,7 @@ export const JsonLdReferenceInput = props => (
       // If a format prop was defined, apply it to the array
       if (props.format) value = props.format(value);
       // If the values are objects with @id field, turn it to a simple string
-      return value.map(v => (typeof v === 'object' ? v['@id'] : v));
+      return value.map(v => (typeof v === 'object' ? v.id || v['@id'] : v));
     }}
   />
 );
@@ -40,4 +40,18 @@ export const UriInput = props => (
   />
 );
 
-export const StringField = ({ source, record = {} }) => <span>{selectLanguage(record[source])}</span>;
+export const DateTimeInput = props => (
+  <RaDateTimeInput
+    {...props}
+    format={value => {
+      value = selectValue(value);
+      if (value) return value.replace(' ', 'T');
+    }}
+  />
+);
+
+export const DateField = props => {
+  return <span>{selectValue(props.record[props.source]).replace('T', ' ')}</span>;
+};
+
+export const StringField = ({ source, record = {} }) => <span>{selectValue(record[source])}</span>;
