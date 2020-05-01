@@ -1,5 +1,5 @@
 ---
-title: L'équipe SemApps
+title: The SemApps team
 ---
 
 - **Core developpers**
