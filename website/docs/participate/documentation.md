@@ -8,11 +8,11 @@
 
 # Ou trouver la documentation docusaurus
 - https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs
-  - On y trouve les **fichiers de documentation** (gouvernance, participer, documentation) sont dans website/docs 
+  - On y trouve les **fichiers de documentation** (gouvernance, participer, packages) sont dans website/docs 
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js
-  - On y trouve le **menu**, le **header** et le **footer**
+  - On y trouve le **menu** (navbar), le **header** (title et tagline) et le **footer**
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js
-  - On y trouve les textes et images de la page d'accueil
+  - On y trouve le contenu du corps de la page d'accueil et également le texte du bouton (Commencer)
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js
   - On y trouve les pages apparaissant dans la sidebar
   
@@ -45,7 +45,7 @@ NB : Lorsque que le fichier a été créé par un autre et en fonction du contex
 ## Créer une nouvelle page sur le docusaurus
 - Proposez une issue ; 
 Si l'initiative parait pertinente : 
-- Créez un fichier markdown à l'endroit souhaité. Celui-ci doit nécessairement commencer par :
+- Créez un fichier markdown à l'endroit souhaité, en n'oubliant pas de renseigner l'extention : ".md". Celui-ci doit nécessairement commencer par :
   ```
   ---
   title: [le-titre-de-votre-page]
