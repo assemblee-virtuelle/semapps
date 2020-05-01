@@ -33,12 +33,14 @@
 
 ## Modifier une page du docusaurus**
 Rendez-vous à l'endroit pertinent en vous référant au chapitre précédent. 
-- Si c'est une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page, puis "commitez" sur la branche __Master__. Décrivez votre modification à l'endroit réservé à cet effet. 
+- Si c'est une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page (edit file), puis "commitez" sur la branche __Master__. Décrivez votre modification à l'endroit réservé à cet effet. 
 - Si c'est une modification substantielle : 
   - effectuez la modification en éditant la page, 
   - "commitez" ensuite sur une nouvelle branche que vous pourrez nommer de manière explicite.
   - Renseignez un __Label__ et identifiez des __Reviewers__ qui seront invités à commenter / approuver / proposer des modifications à votre pull request. 
   - A l'issue de ce processus collectif, viendra le moment de __merger__ la pull request sur la branche __Master__
+  
+NB : Lorsque que le fichier a été créé par un autre et en fonction du contexte, vous pouvez soit éditer la page, soit cliquer sur les signes "+" à gauche du texte pour ajouter des commentaires ... 
 
 ## Créer une nouvelle page sur le docusaurus
 - Proposez une issue ; 
