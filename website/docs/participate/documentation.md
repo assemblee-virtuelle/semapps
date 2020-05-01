@@ -37,7 +37,7 @@ Rendez-vous à l'endroit pertinent en vous référant au paragraphe ci-dessus.
 - Créez un fichier markdown à l'endroit souhaité.Celui-ci doit nécessairement commencer par :
   ```
   ---
-  title: [le titre de votre page]
+  title: [le-titre-de-votre-page]
   ---
   ```
 - Commitez et faites un pull request sur une branche dédiée. 
