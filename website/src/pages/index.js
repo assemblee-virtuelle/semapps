@@ -8,29 +8,29 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Modular</>,
+    title: <>Trop facile !</>,
     imageUrl: 'img/undraw_docusaurus_mountain.svg',
     description: (
       <>
-        SemApps uses micro-services, so you can use just the right module you need. We plead for sobriety.
+        Nous utilisons les standards du web sémantique qui permettent à de multiples systèmes d’information de s’interconnecter.
       </>
     ),
   },
   {
-    title: <>Open Source & Standard</>,
+    title: <>Trop cool</>,
     imageUrl: 'img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        Our code is Apache 2.0 license. Please feel free to fork :)
+        SemApps intègre la spécification SOLID portée par Tim Berners Lee (inventeur du web), ainsi que le protocole ActivityPub.
       </>
     ),
   },
   {
-    title: <>Interoperable</>,
+    title: <>Trop... bien!</>,
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        We wish every platform build with SemApps could be linked to the others
+        Nous concevons SemApps sur la base des principes suivants : Interopérabilité - Modularité - Généricité - Adaptabilité - Scalabilité - Accessibilité - Convivialité
       </>
     ),
   },
