@@ -1,7 +1,7 @@
 module.exports = {
   tracing: {
     enabled: false,
-    exporter: "Console",
+    exporter: 'Console',
     events: true,
     stackTrace: true
   }
