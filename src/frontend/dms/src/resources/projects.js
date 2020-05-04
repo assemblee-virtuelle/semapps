@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Filter,
   List,
   Datagrid,
   Edit,
@@ -14,7 +13,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { JsonLdReferenceInput, UriInput } from '../semapps';
+import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 import SearchFilter from '../components/SearchFilter';
 
 export const ProjectIcon = SettingsIcon;
