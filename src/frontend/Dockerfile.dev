@@ -4,4 +4,4 @@ WORKDIR /app
 
 RUN apk add --update --no-cache git bash yarn nano
 
-CMD npm install && npm start
+RUN npm bootstrap
