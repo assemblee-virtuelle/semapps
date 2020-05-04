@@ -186,7 +186,9 @@ class TripleStoreAdapter {
    * Clear all entities from the container
    */
   clear() {
-    throw new Error('Method not implemented');
+    return this.broker.call(this.containerService + '.clear', {
+      containerUri: this.service.schema.settings.containerUri
+    });
   }
 
   /**
