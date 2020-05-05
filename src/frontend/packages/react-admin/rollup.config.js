@@ -8,18 +8,13 @@ export default {
   input: './src/index.js',
   output: [
     { format: 'cjs', file: './dist/index.cjs.js', sourcemap: false },
-    { format: 'es', file: './dist/index.es.js', sourcemap: false },
+    { format: 'es', file: './dist/index.es.js', sourcemap: false }
   ],
-  external: [
-    'react',
-    'react-admin',
-    'final-form-calculate',
-    'jsonld'
-  ],
+  external: ['react', 'react-admin', 'final-form-calculate', 'jsonld'],
   plugins: [
     replace({
       // Make sure React code is compiled in production mode
-      "process.env.NODE_ENV": JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
     babel({
       exclude: 'node_modules/**'
