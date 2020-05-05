@@ -2,7 +2,7 @@
 
 ## Commands
 
-### `npm run build`
+### `npm run pre-publish`
 
 Build the library in CommonJS and ES mode.
 This command should always be run before publishing.
