@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@semapps/react-admin": "0.1.0",
+    "@semapps/react-admin": "0.1.2",
     "jwt-decode": "^2.2.0",
     "ra-input-markdown": "^1.1.5",
     "react": "^16.13.0",
