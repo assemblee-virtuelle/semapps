@@ -12,15 +12,16 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import GroupIcon from '@material-ui/icons/Group';
-import { JsonLdReferenceInput, UriInput } from '../semapps';
+import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
+import SearchFilter from '../components/SearchFilter';
 
 export const OrganizationIcon = GroupIcon;
 
 export const OrganizationList = props => (
-  <List title="Organisations" {...props}>
-    <Datagrid>
+  <List title="Organisations" perPage={25} filters={<SearchFilter />} {...props}>
+    <Datagrid rowClick="edit">
       <TextField source="pairv1:preferedLabel" label="Nom" />
-      <EditButton basePath="/pairv1-Organization" />
+      <EditButton basePath="/Organization" />
     </Datagrid>
   </List>
 );
@@ -38,19 +39,19 @@ export const OrganizationEdit = props => (
       <UriInput source="pairv1:aboutPage" label="Site web" fullWidth />
       <TextInput source="pairv1:adress" label="Adresse" fullWidth />
       <TextInput source="pairv1:adressLine2" label="Adresse (suite)" fullWidth />
-      <JsonLdReferenceInput label="Responsables" reference="pairv1-Person" source="pairv1:hasResponsible">
+      <JsonLdReferenceInput label="Responsables" reference="Person" source="pairv1:hasResponsible">
         <AutocompleteArrayInput
           optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Membres" reference="pairv1-Person" source="pairv1:hasMember">
+      <JsonLdReferenceInput label="Membres" reference="Person" source="pairv1:hasMember">
         <AutocompleteArrayInput
           optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Partenaires" reference="pairv1-Organization" source="pairv1:isPartnerOf">
+      <JsonLdReferenceInput label="Partenaires" reference="Agent" source="pairv1:isPartnerOf">
         <AutocompleteArrayInput
           optionText={record =>
             (record && (record['pairv1:preferedLabel'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
@@ -58,7 +59,7 @@ export const OrganizationEdit = props => (
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Intérêts" reference="skos-Concept" source="pairv1:hasInterest">
+      <JsonLdReferenceInput label="Intérêts" reference="Concept" source="pairv1:hasInterest">
         <AutocompleteArrayInput
           optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
           fullWidth

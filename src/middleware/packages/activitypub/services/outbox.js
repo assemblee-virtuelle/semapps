@@ -1,11 +1,13 @@
+const urlJoin = require('url-join');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
+const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
   name: 'activitypub.outbox',
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
-  async started() {
-    this.settings.actorsContainer = await this.broker.call('activitypub.actor.getContainerUri');
+  settings: {
+    actorsContainer: null
   },
+  dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
@@ -25,17 +27,19 @@ const OutboxService = {
       }
 
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        const object = await ctx.call('activitypub.object.create', activity);
-
+        let { to, '@id': id, ...object } = activity;
+        object = await ctx.call('activitypub.object.create', object);
         activity = {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: 'Create',
-          to: activity.to,
-          actor: activity.attributedTo,
-          object: object
+          '@context': object['@context'],
+          type: ACTIVITY_TYPES.CREATE,
+          to,
+          actor: object.attributedTo,
+          object
         };
+      } else if (activityType === ACTIVITY_TYPES.CREATE) {
+        activity.object = await ctx.call('activitypub.object.create', activity.object);
       } else if (activityType === ACTIVITY_TYPES.UPDATE) {
-        await ctx.call('activitypub.object.update', activity.object);
+        activity.object = await ctx.call('activitypub.object.update', activity.object);
       } else if (activityType === ACTIVITY_TYPES.DELETE) {
         await ctx.call('activitypub.object.remove', { id: activity.object });
       }
@@ -44,10 +48,10 @@ const OutboxService = {
       // This will be used to order the ordered collections
       activity.published = new Date().toISOString();
 
-      await ctx.call('activitypub.activity.create', activity);
+      activity = await ctx.call('activitypub.activity.create', activity);
 
       // Attach the newly-created activity to the outbox
-      ctx.call('activitypub.collection.attach', {
+      await ctx.call('activitypub.collection.attach', {
         collectionUri: collectionUri || this.getOutboxUri(username),
         item: activity
       });
@@ -60,11 +64,16 @@ const OutboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: this.getOutboxUri(ctx.params.username)
+        id: this.getOutboxUri(ctx.params.username),
+        dereferenceItems: true,
+        queryDepth: 3
       });
 
       if (collection) {
-        return collection;
+        return {
+          ...collection,
+          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
+        };
       } else {
         ctx.meta.$statusCode = 404;
       }
@@ -72,7 +81,7 @@ const OutboxService = {
   },
   methods: {
     getOutboxUri(username) {
-      return this.settings.actorsContainer + username + '/outbox';
+      return urlJoin(this.settings.actorsContainer, username, 'outbox');
     }
   }
 };

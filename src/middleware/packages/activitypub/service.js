@@ -1,7 +1,8 @@
+const urlJoin = require('url-join');
+const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
-const MongoDbCollectionService = require('./services/collection/mongodb-collection');
-const TripleStoreCollectionService = require('./services/collection/triplestore-collection');
+const CollectionService = require('./services/collection');
 const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
@@ -11,61 +12,97 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    context: {
-      '@vocab': 'https://www.w3.org/ns/activitystreams#',
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    },
-    storage: {
-      collections: null,
-      activities: null,
-      actors: null,
-      objects: null
+    additionalContext: {},
+    containers: {
+      activities: '/activities',
+      actors: '/actors',
+      objects: '/objects'
     }
   },
-  created() {
-    this.broker.createService(
-      this.schema.storage.collections.constructor.name === 'TripleStoreAdapter'
-        ? TripleStoreCollectionService
-        : MongoDbCollectionService,
-      {
-        adapter: this.schema.storage.collections,
-        settings: {
-          context: this.schema.context
-        },
-        dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+  dependencies: ['ldp'],
+  async created() {
+    const context = this.settings.additionalContext
+      ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
+      : 'https://www.w3.org/ns/activitystreams';
+
+    await this.broker.createService(CollectionService, {
+      settings: {
+        context
       }
-    );
-
-    this.broker.createService(ActorService, {
-      adapter: this.schema.storage.actors,
-      settings: {
-        containerUri: this.schema.baseUri + 'users/',
-        context: this.schema.context
-      },
-      dependencies: this.schema.storage.actors.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
     });
 
-    this.broker.createService(ActivityService, {
-      adapter: this.schema.storage.activities,
+    await this.broker.createService(ActorService, {
       settings: {
-        containerUri: this.schema.baseUri + 'activities/',
-        context: this.schema.context
-      },
-      dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.actors),
+        context
+      }
     });
 
-    this.broker.createService(ObjectService, {
-      adapter: this.schema.storage.objects,
+    await this.broker.createService(ActivityService, {
       settings: {
-        containerUri: this.schema.baseUri + 'objects/',
-        context: this.schema.context
-      },
-      dependencies: this.schema.storage.objects.constructor.name === 'TripleStoreAdapter' ? ['ldp'] : [] // TODO set this in TripleStoreAdapter
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.activities),
+        context
+      }
     });
 
-    this.broker.createService(FollowService);
-    this.broker.createService(InboxService);
-    this.broker.createService(OutboxService);
+    await this.broker.createService(ObjectService, {
+      settings: {
+        containerUri: urlJoin(this.settings.baseUri, this.settings.containers.objects),
+        context
+      }
+    });
+
+    await this.broker.createService(FollowService, {
+      settings: {
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+
+    await this.broker.createService(InboxService, {
+      settings: {
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+
+    await this.broker.createService(OutboxService, {
+      settings: {
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+  },
+  actions: {
+    getApiRoutes() {
+      return [
+        ...getContainerRoutes(
+          urlJoin(this.settings.baseUri, this.settings.containers.activities),
+          'activitypub.activity'
+        ),
+        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.actors), 'activitypub.actor'),
+        ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
+        // Unsecured routes
+        {
+          bodyParsers: { json: true },
+          authorization: false,
+          authentication: true,
+          aliases: {
+            [`GET ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.list',
+            [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
+            [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
+            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing',
+            [`POST ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.post'
+          }
+        },
+        // Secured routes
+        {
+          bodyParsers: { json: true },
+          authorization: true,
+          authentication: false,
+          aliases: {
+            [`POST ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.post'
+          }
+        }
+      ];
+    }
   }
 };
 

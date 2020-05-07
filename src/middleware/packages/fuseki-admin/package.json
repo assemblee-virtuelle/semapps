@@ -1,14 +1,14 @@
 {
   "name": "@semapps/fuseki-admin",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "0.1.4",
+  "description": "Fuseki administration module for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
   "dependencies": {
     "node-fetch": "^2.6.0"
   },
-  "author": "",
-  "license": "Apache-2.0"
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
 }
