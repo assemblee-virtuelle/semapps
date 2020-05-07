@@ -16,7 +16,7 @@ const PushService = {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, '/push/devices'),
         context: {
-          semapps: 'http://semapps.org/ns/',
+          semapps: 'http://semapps.org/ns/core#',
           ldp: 'http://www.w3.org/ns/ldp#'
         },
         newDeviceNotification: this.settings.newDeviceNotification
@@ -27,7 +27,7 @@ const PushService = {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, '/push/notifications'),
         context: {
-          semapps: 'http://semapps.org/ns/',
+          semapps: 'http://semapps.org/ns/core#',
           ldp: 'http://www.w3.org/ns/ldp#'
         }
       }

@@ -11,7 +11,7 @@ const WebhooksService = {
     containerUri: null,
     usersContainer: null,
     allowedActions: [],
-    context: { '@vocab': 'http://semapps.org/ns/' }
+    context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
   async started() {
     this.settings.allowedActions.forEach(actionName => {
