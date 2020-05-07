@@ -18,7 +18,7 @@ title: The SemApps team
     - [Guillaume Rouyer](https://www.linkedin.com/in/guillaume-rouyer-paris/) : Project designer
         - _Expertises_ : Prospective, political philosophy, ecology & econnomics, complex systems, community management, 
     - [Gabriel Henry](https://www.linkedin.com/in/gabriel-henry-87915690/?originalSubdomain=fr) :
-        - _Expertises_ : Coaching, Innovation, project & community management, IT, social innovation, social economy, IT 
+        - _Expertises_ : Coaching, Innovation, project & community management, IT, social innovation, social economy, quality management 
     
 - **Technical advisors** 
     - [Thomas Francart](http://www.sparna.fr/qui-suis-je/) : Software architect & semantic web expert
