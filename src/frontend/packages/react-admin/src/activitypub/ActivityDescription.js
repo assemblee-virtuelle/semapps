@@ -15,7 +15,7 @@ const parseDescriptionFromActivity = activity => {
       };
     case 'Delete':
       return {
-        description: "A effacé un objet"
+        description: 'A effacé un objet'
       };
     case 'Follow':
       return {
@@ -44,10 +44,12 @@ const ActivityDescription = ({ record }) => {
     <span>
       {description}
       &nbsp;
-      {reference ? reference.value ? (
-        <Link to={`${reference.basePath}/${encodeURIComponent(reference.id)}`}>{reference.value}</Link>
-      ) : (
-        <ActivityDescriptionReference {...reference} />
+      {reference ? (
+        reference.value ? (
+          <Link to={`${reference.basePath}/${encodeURIComponent(reference.id)}`}>{reference.value}</Link>
+        ) : (
+          <ActivityDescriptionReference {...reference} />
+        )
       ) : null}
     </span>
   );
