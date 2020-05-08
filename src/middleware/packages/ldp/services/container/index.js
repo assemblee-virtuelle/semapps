@@ -1,6 +1,8 @@
 const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
+const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
+const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
 
@@ -15,7 +17,9 @@ module.exports = {
   dependencies: ['triplestore'],
   actions: {
     attach: attachAction,
+    clear: clearAction,
     create: createAction,
+    detach: detachAction,
     exist: existAction,
     // Actions accessible through the API
     api_get: getAction.api,

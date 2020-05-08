@@ -27,4 +27,4 @@ RUN cd /main/ && npm run bootstrap
 # Expose ports (for orchestrators and dynamic reverse proxies)
 EXPOSE 3000
 
-CMD [ "pm2-runtime", "./boilerplates/runner/index.js", "--name" ,"middleware"]
+CMD [ "pm2-runtime", "/main/boilerplates/runner/node_modules/.bin/moleculer-runner", "--name", "middleware", "--", "/main/boilerplates/runner/services" ]

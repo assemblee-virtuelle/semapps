@@ -33,12 +33,12 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
-        const query = `DELETE
+        await ctx.call('triplestore.update', {
+          query: `
+            DELETE
             WHERE
             { <${resourceUri}> ?p ?v }
-            `;
-        await ctx.call('triplestore.update', {
-          query,
+          `,
           webId
         });
       } else {

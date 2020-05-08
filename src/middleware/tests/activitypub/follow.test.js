@@ -14,7 +14,7 @@ afterAll(async () => {
 });
 
 describe('Posting to followers', () => {
-  let simon, sebastien;
+  let simon, sebastien, followActivity;
 
   test('Create actor directly', async () => {
     sebastien = await broker.call('activitypub.actor.create', {
@@ -35,8 +35,8 @@ describe('Posting to followers', () => {
     expect(simon.preferredUsername).toBe('simonLouvet');
   });
 
-  test('Post follow request', async () => {
-    let result = await broker.call('activitypub.outbox.post', {
+  test('Follow user', async () => {
+    followActivity = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
@@ -44,16 +44,16 @@ describe('Posting to followers', () => {
       object: simon.id
     });
 
-    // Wait for actor to be added to the followers collection
-    await broker.watchForEvent('activitypub.follow.added');
-
-    expect(result).toMatchObject({
+    expect(followActivity).toMatchObject({
       type: ACTIVITY_TYPES.FOLLOW,
       actor: sebastien.id,
       object: simon.id
     });
 
-    result = await broker.call('activitypub.follow.listFollowers', {
+    // Wait for actor to be added to the followers collection
+    await broker.watchForEvent('activitypub.follow.added');
+
+    const result = await broker.call('activitypub.follow.listFollowers', {
       username: simon.preferredUsername
     });
 
@@ -87,5 +87,33 @@ describe('Posting to followers', () => {
     });
 
     expect(result.orderedItems).toHaveLength(1);
+  });
+
+  test('Unfollow user', async () => {
+    let result = await broker.call('activitypub.outbox.post', {
+      username: sebastien.preferredUsername,
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      actor: sebastien.id,
+      type: ACTIVITY_TYPES.UNDO,
+      object: followActivity
+    });
+
+    // Wait for actor to be removed to the followers collection
+    await broker.watchForEvent('activitypub.follow.removed');
+
+    expect(result).toMatchObject({
+      type: ACTIVITY_TYPES.UNDO,
+      actor: sebastien.id,
+      object: {
+        type: ACTIVITY_TYPES.FOLLOW,
+        object: simon.id
+      }
+    });
+
+    result = await broker.call('activitypub.follow.listFollowers', {
+      username: simon.preferredUsername
+    });
+
+    expect(result.items).not.toContain(sebastien.id);
   });
 });

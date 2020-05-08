@@ -11,7 +11,7 @@ const WebhooksService = {
     containerUri: null,
     usersContainer: null,
     allowedActions: [],
-    context: { '@vocab': 'http://semapps.org/ns/' }
+    context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
   async started() {
     this.settings.allowedActions.forEach(actionName => {
@@ -27,6 +27,7 @@ const WebhooksService = {
         const webhook = await this.actions.get({ id: hash });
         return await this.actions[webhook.action]({ data, user: webhook.user });
       } catch (e) {
+        console.error(e);
         ctx.meta.$statusCode = 404;
       }
     },

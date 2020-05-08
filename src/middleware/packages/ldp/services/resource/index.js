@@ -3,6 +3,7 @@ const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
 const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
+const existAction = require('./actions/exist');
 const methods = require('./methods');
 
 module.exports = {
@@ -14,6 +15,8 @@ module.exports = {
   },
   dependencies: ['triplestore'],
   actions: {
+    exist: existAction,
+    // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,
     api_post: postAction.api,
