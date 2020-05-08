@@ -104,12 +104,12 @@ const CollectionService = {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a ?type ;
+            <${id}> a ?collectionType ;
               as:items ?s1 .
             ${constructQuery}
           }
           WHERE {
-            <${id}> a ?type .
+            <${id}> a as:Collection, ?collectionType .
             OPTIONAL { 
               <${id}> as:items ?s1 .
               ${whereQuery}
