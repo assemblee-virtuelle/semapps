@@ -142,8 +142,45 @@ const CollectionService = {
         return collection;
       }
     },
-    clear(ctx) {
-      // Do nothing. This is just to ensure tests don't break.
+    /*
+     * Empty the collection, deleting all items it contains.
+     * @param collectionUri The full URI of the collection
+     */
+    async clear(ctx) {
+      const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+      return await ctx.call('triplestore.update', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          DELETE {
+            ?s1 ?p1 ?o1 .
+          }
+          WHERE { 
+            FILTER(?container IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            ?container as:items ?s1 .
+            ?s1 ?p1 ?o1 .
+          } 
+        `
+      });
+    },
+    /*
+     * Delete the container and remove all links to the items.
+     * The items are not deleted, for this call the clear action.
+     * @param collectionUri The full URI of the collection
+     */
+    async remove(ctx) {
+      const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+      return await ctx.call('triplestore.update', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          DELETE {
+            ?s1 ?p1 ?o1 .
+          }
+          WHERE { 
+            FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            ?s1 ?p1 ?o1 .
+          }
+        `
+      });
     }
   },
   methods: {
