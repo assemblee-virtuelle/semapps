@@ -69,6 +69,7 @@ prettier:
 	npm run prettier --prefix ./src/middleware
 
 bootstrap:
+	npm run bootstrap --prefix ./src/frontend
 	npm run bootstrap --prefix ./src/middleware
 
 # For tests we currently only need fuseki

@@ -49,13 +49,14 @@ services:
     environment:
       - PORT=5000
     volumes:
-      - ./src/frontend/${FRONTEND}:/app
+      - ./src/frontend:/app/
     networks:
       - semapps
     ports:
       - "5000:5000"
     expose:
       - "5000"
+    command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./${FRONTEND}"
 
 volumes:
   rdf_data:
