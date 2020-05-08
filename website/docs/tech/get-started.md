@@ -38,14 +38,16 @@ Please start by creating a `localData` dataset. This is where your triples will 
 $ npm run dev
 ```
 
-Your instance of SemApps is available at http://localhost:3030
+Your instance of SemApps is available at http://localhost:3000
 
 ### Testing the LDP server
 
-Post an ActivityStreams Note to `/ldp/as:Note` LDP container:
+By default, the LDP service will create a LDP container in the `/resources path`.
+
+Post an ActivityStreams Note to this LDP container:
 
 ```
-POST /ldp/as:Note HTTP/1.1
+POST /resources HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
 Accept: */*
@@ -58,10 +60,10 @@ Content-Length: 97
 }
 ```
 
-Retrieve the `/ldp/as:Note` LDP container:
+Retrieve the `/resources` LDP container:
 
 ```
-GET /ldp/as:Note HTTP/1.1
+GET /resources HTTP/1.1
 Host: localhost:3000
 Accept: application/ld+json
 ```
@@ -74,14 +76,14 @@ You should get this result:
     "ldp": "http://www.w3.org/ns/ldp#",
     "as": "https://www.w3.org/ns/activitystreams#"
   },
-  "@id": "http://localhost:3000/ldp/as:Note",
+  "@id": "http://localhost:3000/resources",
   "@type": [
     "ldp:Container",
     "ldp:BasicContainer"
   ],
   "ldp:contains": [
     {
-      "@id": "http://localhost:3000/ldp/as:Note/db78b000",
+      "@id": "http://localhost:3000/resources/db78b000",
       "@type": "as:Note",
       "as:name": "Hello World"
     }
