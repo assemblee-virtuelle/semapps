@@ -64,7 +64,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': CONFIG.HOME_URL + 'objects',
-      '@type': 'ldp:BasicContainer'
+      '@type': [ 'ldp:Container', 'ldp:BasicContainer' ]
     });
   });
 
@@ -89,7 +89,7 @@ describe('LDP container tests', () => {
     ).resolves.toMatchObject({
       '@context': getPrefixJSON(ontologies),
       '@id': CONFIG.HOME_URL + 'resources',
-      '@type': 'ldp:BasicContainer',
+      '@type': [ 'ldp:Container', 'ldp:BasicContainer' ],
       'ldp:contains': [
         {
           '@id': resourceUri,
@@ -139,7 +139,7 @@ describe('LDP container tests', () => {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
       '@id': CONFIG.HOME_URL + 'resources',
-      '@type': 'http://www.w3.org/ns/ldp#BasicContainer',
+      '@type': [ 'http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer' ],
       'http://www.w3.org/ns/ldp#contains': [
         {
           '@id': resourceUri,
@@ -171,7 +171,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': CONFIG.HOME_URL + 'resources',
-      '@type': 'ldp:BasicContainer',
+      '@type': [ 'ldp:Container', 'ldp:BasicContainer' ],
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -193,7 +193,7 @@ describe('LDP container tests', () => {
       })
     ).resolves.toMatchObject({
       '@id': CONFIG.HOME_URL + 'resources',
-      '@type': 'ldp:BasicContainer',
+      '@type': [ 'ldp:Container', 'ldp:BasicContainer' ],
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
@@ -217,7 +217,7 @@ describe('LDP container tests', () => {
     ).resolves.toMatchObject({
       '@context': getPrefixJSON(ontologies),
       '@id': CONFIG.HOME_URL + 'resources',
-      '@type': 'ldp:BasicContainer',
+      '@type': [ 'ldp:Container', 'ldp:BasicContainer' ],
       'ldp:contains': [
         {
           'pair:label': 'My project 2'
