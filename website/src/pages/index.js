@@ -8,29 +8,29 @@ import styles from './styles.module.css';
 
 const features = [
   {
+    title: <>Standard & interoperable</>,
+    imageUrl: 'img/undraw_docusaurus_react.svg',
+    description: (
+      <>
+        Based on semantic web standards & the SOLID specification, Semapps gives the web its full potential.
+      </>
+    ),
+  },
+  {
+    title: <>Decentralized & federated</>,
+    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    description: (
+      <>
+        Allowing multiple platforms to be both self-contained and linked together, Semapps gives you back control.
+      </>
+    ),
+  },
+  {
     title: <>Modular</>,
     imageUrl: 'img/undraw_docusaurus_mountain.svg',
     description: (
       <>
-        SemApps uses micro-services, so you can use just the right module you need. We plead for sobriety.
-      </>
-    ),
-  },
-  {
-    title: <>Open Source & Standard</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
-    description: (
-      <>
-        Our code is Apache 2.0 license. Please feel free to fork :)
-      </>
-    ),
-  },
-  {
-    title: <>Interoperable</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
-    description: (
-      <>
-        We wish every platform build with SemApps could be linked to the others
+        Built on a micro-services architecture, SemApps ensures a high level of flexibility and scalability.
       </>
     ),
   },
