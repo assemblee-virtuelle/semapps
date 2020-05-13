@@ -13,7 +13,7 @@
     "rdf-parse": "^1.2.1",
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1",
-    "uuid": "^3.3.3"
+    "bson": "^4.0.4"
   },
   "publishConfig": {
     "access": "public"
