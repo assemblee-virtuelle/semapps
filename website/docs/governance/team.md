@@ -12,7 +12,7 @@ title: The SemApps team
         
 - **Scrum master**
     - [Pierre Bouvier](https://www.linkedin.com/in/bouviermullerp/) : Agile project manager
-        - _Expertises_ : Agility, lean management, semantic web & Linked Open Data
+        - _Expertises_ : Agility, lean management, software & community management.
 
 - **Product Owners** 
     - [Guillaume Rouyer](https://www.linkedin.com/in/guillaume-rouyer-paris/) : Project designer
