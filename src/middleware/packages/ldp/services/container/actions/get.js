@@ -53,13 +53,13 @@ module.exports = {
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
             <${containerUri}>
-              a ldp:BasicContainer ;
+              a ?containerType ;
               ldp:contains ?s1 .
             ?s1 ?p1 ?o1 .
             ${constructQuery}
           }
           WHERE {
-            <${containerUri}> a ldp:BasicContainer .
+            <${containerUri}> a ldp:Container, ?containerType .
             OPTIONAL { 
               <${containerUri}> ldp:contains ?s1 .
               ?s1 ?p1 ?o1 .
