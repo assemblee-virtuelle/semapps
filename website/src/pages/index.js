@@ -68,8 +68,8 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/doc1')}>
-              Commencer
+              to={useBaseUrl('docs/discover')}>
+              Discover
             </Link>
           </div>
         </div>
