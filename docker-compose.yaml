@@ -44,8 +44,8 @@ services:
         - FRONTEND
     container_name: frontend
     restart: always
-#    depends_on:
-#      - middleware
+    depends_on:
+      - middleware
     environment:
       - PORT=5000
     volumes:
