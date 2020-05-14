@@ -42,7 +42,7 @@ module.exports = {
           webId
         });
       } else {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+        throw new MoleculerError(`Not found ${resourceUri}`, 404, 'NOT_FOUND');
       }
     }
   }
