@@ -1,0 +1,48 @@
+{
+    "name": "sparql-builder",
+    "private": true,
+    "author": {
+        "name": "Martynas Jusevičius",
+        "email": "martynas@atomgraph.com",
+        "url": "https://github.com/AtomGraph"
+    },
+    "license": "Apache-2.0",
+    "version": "0.1.5",
+    "keywords": [
+        "sparql",
+        "rdf",
+        "query",
+        "builder",
+        "query-builder"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/AtomGraph/sparql-builder.git"
+    },
+    "bugs": {
+        "url": "https://github.com/AtomGraph/sparql-builder/issues"
+    },
+    "main": "./dist/node/SPARQLBuilder.js",
+    "types": "./dist/index.d.ts",
+    "typescript": {
+        "definition": "dist/index.d.ts"
+    },
+    "scripts": {
+        "build": "tsc --declaration",
+        "test": "mocha -r ts-node/register test/**/*.ts"
+    },
+    "dependencies": {
+        "@types/sparqljs": "^2.1.0",
+        "sparqljs": "^2.1.0"
+    },
+    "devDependencies": {
+        "chai": "4.1.x",
+        "mocha": "4.1.x",
+        "sparqljs": "^2.1.0",
+        "ts-loader": "^5.4.5",
+        "ts-node": "^8.3.0",
+        "typescript": "^3.5.3",
+        "webpack": "^4.36.1",
+        "webpack-cli": "^3.3.6"
+    }
+}
