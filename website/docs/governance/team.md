@@ -21,8 +21,8 @@ title: The SemApps team
         - _Expertises_ : project management, quality management, IT, business analysis, coaching, social innovation, social economy
     
 - **Technical advisors** 
-    - [Thomas Francart](http://www.sparna.fr/qui-suis-je/) : Software architect & semantic web expert
-        - _Expertises_ : RDF, OWL, triplestores, Sesame, SKOS,inferences, linked data, open data, inetroperablity. 
+    - [Thomas Francart](http://www.sparna.fr/qui-suis-je/) : Knowledge Graph and Semantic Web senior consultant
+        - _Expertises_ : RDF, OWL, SPARQL, SHACL / SKOS, FRBR, CIDOC-CRM, RiC-O / linked data, interoperability / Jena, RDF4J, GraphDB, Virtuoso / [SKOS Play](http://labs.sparna.fr/skos-play/), [SHACL Play](http://shacl-play.sparna.fr/) and [blog](http://blog.sparna.fr/) 
     - [Ruben Verborgh](https://ruben.verborgh.org/) : Software architect & semantic web researcher
         - _Expertises_ : SOLID (one of the main architects) RDF, OWL, triplestores, Sesame, SKOS,inferences, linked data, open data, inetroperablity. 
     - [Bernard Chabot](https://www.linkedin.com/in/chabotbernard/?originalSubdomain=fr) : Knowledge architect
