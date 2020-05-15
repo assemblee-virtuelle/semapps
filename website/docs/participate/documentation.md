@@ -1,56 +1,56 @@
 # Introduction 
-- Nous utilisons [docusaurus](https://docusaurus.io/) pour documenter le projet SemApps. Docusaurus permet de générer une documentation à partir de Github : 
-    - On bénéficie donc de l'environnement collaboratif github (édition markdown, versionning, commits, pull requests, reviews, merge etc.)
-    - On peut prévisualiser les changements
-    - On peut documenter le code et afficher la documentation sur le site vitrine.
-- Aujourd'hui le docusaurus de SemApps est hébergé sur http://doc.semapps.org/ ; 
-- Dans quelques jours il sera hébergé sur http://semapps.org/
+- We use [docusaurus](https://docusaurus.io/) to document the SemApps project. Docusaurus is used to generate documentation from Github : 
+    - We benefit from the collaborative environment github (markdown editing, versionning, commits, pull requests, reviews, merge etc.).
+    - You can preview the changes
+    - The code can be documented and displayed on the showcase site.
+- Today the SemApps docusaurus is hosted on http://doc.semapps.org/ ; In a few days it will be hosted on http://semapps.org/
 
-# Ou trouver la documentation docusaurus
+# Where to find docusaurus documentation
 - https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs
-  - On y trouve les **fichiers de documentation** (gouvernance, participer, packages) sont dans website/docs 
+  - You can find the **documentation files** (governance, participation, packages) are in website/docs 
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js
-  - On y trouve le **menu** (navbar), le **header** (title et tagline) et le **footer**
+  - You will find the **menu** (navbar), the **header** (title and tagline) and the **footer**.
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js
-  - On y trouve le contenu du corps de la page d'accueil et également le texte du bouton (Commencer)
+  - It contains the content of the body of the home page and also the text of the (Start) button.
 - https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js
-  - On y trouve les pages apparaissant dans les sidebars
+  - Here you can find the pages appearing in the sidebars
   
-# Comment contribuer à la documentation
+# How to contribute to the documentation
 
-## Schéma général
-- Tant qu'il n'y a pas eu de décision / consentement du cercle documentation : **On renseigne une issue**
-- Si le contenu de ce qu'on veut publier a obtenu l'aval du groupe documentation : 
-    - **On crée une pull request sur une branche dédiée.**  
-    - Tant qu'il est à l'état d'ébauche ou au stade de brouillon, **on ne demande pas de review**
-- Lorsque notre proposition de contribution nous semble aboutie, **on sollicite une review**.
+## General scheme
+- Until there is a decision/consent from the documentation circle: **Create an issue**
+- If the content of what you want to publish has been approved by the documentation group : 
+    - **Create a pull request on a dedicated branch.**  
+    - As long as it's in draft or draft form, **don't request a review**.
+- When our proposal for a contribution appears to be complete, **a review is requested**.
 
-## Proposer des sujets ou des améliorations en créant une "issue"**
-- Rendez-vous sur https://github.com/assemblee-virtuelle/semapps/issues
-- Détaillez précisément votre demande / proposition, mettez des liens si besoin pour clarifier au maximum votre intention.  
-- Renseignez le label "Documentation" à partir de l'onglet "Labels" du menu sur la droite de l'écran. 
-- Et discutons en !
+## Propose topics or improvements by creating an "issue"
+- Go to https://github.com/assemblee-virtuelle/semapps/issues
+- Detail your request/proposal, put links if necessary to clarify your intention as much as possible.  
+- Fill in the external / internal / technical documentation label from the "Labels" tab of the menu on the right-hand side of the screen. 
+- And let's discuss it!
 
-## Modifier une page du docusaurus**
-Rendez-vous à l'endroit pertinent en vous référant au chapitre précédent. 
-- Si c'est une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page (edit file), puis "commitez" sur la branche __Master__. Décrivez votre modification à l'endroit réservé à cet effet. 
-- Si c'est une modification substantielle : 
-  - effectuez la modification en éditant la page, 
-  - "commitez" ensuite sur une nouvelle branche que vous pourrez nommer de manière explicite.
-  - Renseignez un __Label__ et identifiez des __Reviewers__ qui seront invités à commenter / approuver / proposer des modifications à votre pull request. 
-  - A l'issue de ce processus collectif, viendra le moment de __merger__ la pull request sur la branche __Master__
+## Modify a page of the docusaurus
+Go to the relevant place by referring to the previous chapter. 
+- If it is a minor modification, a spelling mistake for example, make the change by editing the page (edit file), then "commit" to the __Master__ branch. Describe your change in the space provided. 
+- If it is a substantial change : 
+  - make the change by editing the page, 
+  - then "commit" to a new branch that you can explicitly name.
+  - Fill in a __Label__ and identify __Reviewers__ who will be invited to comment / approve / propose changes to your pull request. 
+  - At the end of this collective process, it will be time to __merger__ the pull request on the __Master__ branch.
 
-## Créer une nouvelle page sur le docusaurus
-- Proposez une issue ; 
-Si l'initiative parait pertinente : 
-- Créez un fichier markdown à l'endroit souhaité, en n'oubliant pas de renseigner l'extention : ".md". Celui-ci doit nécessairement commencer par :
+## Create a new page on the docusaurus
+- Propose an issue ; 
+
+If the initiative seems relevant: 
+- Create a markdown file in the desired location, remembering to fill in the extension: ".md". It must necessarily begin with :
   ```
   ---
-  title: [le titre de votre page]
+  title: [your page title]
   ---
   ```
 
-  NB : Le titre de la page peut avoir des espaces. En revanche, le nom du fichier .md qui ne doit pas avoir d'espaces, et être écrit en minuscule.
+  NB: The page title may have spaces. On the other hand, the name of the .md file must not have spaces, and must be written in lower case.
 
-- Commitez et faites un pull request sur une branche dédiée. 
-- Une fois validée par les reviewers que vous aurez identifié, mergez la pull request sur la branche master. 
+- Commit and make a pull request on a dedicated branch. 
+- Once the reviewers you've identified have validated it, merge the pull request on the master branch. 
