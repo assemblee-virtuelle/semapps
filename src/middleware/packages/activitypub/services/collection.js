@@ -54,10 +54,10 @@ const CollectionService = {
       const { collectionUri, item } = ctx.params;
       const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
 
-      const resourceExist = ctx.call('ldp.resource.exist', { resourceUri: itemUri });
-      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !');
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
+      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
 
-      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
 
       return await ctx.call('triplestore.insert', {
@@ -72,7 +72,7 @@ const CollectionService = {
     async detach(ctx) {
       const { collectionUri, item } = ctx.params;
 
-      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
+      const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection !');
 
       await ctx.call('triplestore.update', {
