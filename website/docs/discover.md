@@ -1,4 +1,4 @@
-SemApps is an open-source software project whose development is coordinated by the Virtual Assembly, a French-based non-profit organization bringing together about fifty developers and activists. 
+SemApps is an open-source software project whose development is coordinated by the Virtual Assembly (VA), a French-based non-profit organization bringing together about fifty developers and activists. 
 
 In a context of strong fragmentation of dynamics in the field of transition, VA aims to develop commons (digital tools, methodologies and projects) to promote the interconnection of transition movements.
 
