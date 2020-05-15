@@ -8,11 +8,11 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Standard & interoperable</>,
+    title: <>Standard & semantic</>,
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Based on semantic web standards & the SOLID specification, Semapps gives the web its full potential.
+        Based on semantic web standards & the SOLID specification, Semapps is built on the roots of the web and allows it to express its full potential.
       </>
     ),
   },
@@ -21,7 +21,7 @@ const features = [
     imageUrl: 'img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        Allowing multiple platforms to be both self-contained and linked together, Semapps gives you back control.
+        Allowing multiple platforms to be both self-hosted and linked together, Semapps gives you back control and allows you to leverage network effects.
       </>
     ),
   },
@@ -30,7 +30,7 @@ const features = [
     imageUrl: 'img/undraw_docusaurus_mountain.svg',
     description: (
       <>
-        Built on a micro-services architecture, SemApps ensures a high level of flexibility and scalability.
+        Built on a micro-services architecture, SemApps is fully customizable, it ensures a high level of flexibility, sobriety and scalability.
       </>
     ),
   },
