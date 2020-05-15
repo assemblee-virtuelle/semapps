@@ -10,3 +10,5 @@ SemApps is a collaborative, interoperable, generic and modular knowledge managem
 - Built on open standards, it enables the development of interoperable information systems. 
 - Designed on a modular architecture, it gives everyone the opportunity to build and customize platforms on demand.
 
+Its code is released under the Apache 2.0 free license. 
+
