@@ -12,7 +12,7 @@ const features = [
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Based on semantic web standards & the SOLID specification, Semapps is built on the roots of the web and allows it to express its full potential.
+        Based on semantic web standards & the SOLID specification, Semapps is built on the roots of the web and brings out its full potential.
       </>
     ),
   },
