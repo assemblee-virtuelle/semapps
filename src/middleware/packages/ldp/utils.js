@@ -1,4 +1,4 @@
-const uuid = require('uuid/v1');
+const ObjectID = require('bson').ObjectID;
 
 const buildBlankNodesQuery = depth => {
   let constructQuery = '',
@@ -19,9 +19,8 @@ const buildBlankNodesQuery = depth => {
   return [constructQuery, whereQuery];
 };
 
-const generateId = () => {
-  return uuid().substring(0, 8);
-};
+// Generate a MongoDB-like object ID
+const generateId = () => new ObjectID().toString();
 
 const getPrefixRdf = ontologies => {
   return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');

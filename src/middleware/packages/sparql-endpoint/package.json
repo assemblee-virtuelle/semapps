@@ -5,9 +5,9 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/triplestore": "^0.1.4",
-    "@semapps/mime-types": "^0.1.4",
-    "@semapps/middlwares": "^0.1.4",
+    "@semapps/triplestore": "^0.1.5",
+    "@semapps/mime-types": "^0.1.5",
+    "@semapps/middlwares": "^0.1.5",
     "moleculer": "^0.14.3"
   },
   "publishConfig": {
