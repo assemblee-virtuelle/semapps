@@ -148,10 +148,11 @@ const TripleStoreService = {
             }
             break;
           case 'SELECT':
-            const jsonResult = await response.json();
             if (acceptType === MIME_TYPES.JSON) {
+              const jsonResult = await response.json();
               return await this.sparqlJsonParser.parseJsonResults(jsonResult);
             } else {
+              const jsonResult = await response.text();
               return jsonResult;
             }
             break;
