@@ -1,4 +1,5 @@
 'use strict';
+const getRoutes = require('./getRoutes');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
@@ -12,8 +13,12 @@ const SparqlEndpointService = {
         query: query,
         accept: ctx.params.accept || ctx.meta.headers.accept
       });
+    },
+    getApiRoutes() {
+      return getRoutes();;
     }
   }
+
 };
 
 module.exports = SparqlEndpointService;

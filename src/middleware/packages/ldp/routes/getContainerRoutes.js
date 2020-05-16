@@ -4,7 +4,7 @@ const {
   negotiateAccept,
   parseJson,
   addContainerUriMiddleware
-} = require('./middlewares');
+} = require('@semapps/middlwares');
 
 function getContainerRoutes(containerUri, serviceName) {
   const commonRouteConfig = {

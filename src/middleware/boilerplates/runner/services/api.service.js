@@ -14,7 +14,7 @@ module.exports = {
       origin: '*',
       exposedHeaders: '*'
     },
-    routes: [...SparqlEndpointRoutes, ...WebIdRoutes]
+    routes: [ ...WebIdRoutes]
   },
   dependencies: ['ldp', 'activitypub'],
   async started() {
@@ -55,6 +55,7 @@ module.exports = {
     const routes = [
       this.connector.getRoute(),
       ...(await this.broker.call('ldp.getApiRoutes')),
+      ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes'))
     ];
     routes.forEach(route => this.addRoute(route));

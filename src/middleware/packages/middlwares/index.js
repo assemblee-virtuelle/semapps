@@ -1,16 +1,23 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 
-const parseBody = (req, res, next) => {
-  let data = '';
-  req.on('data', function(chunk) {
-    data += chunk;
+const parseBody= async (req, res, next) => {
+
+  const bodyPromise = new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', function(chunk) {
+      data += chunk;
+    });
+    req.on('end', function() {
+      resolve(data.length > 0 ? data : undefined);
+    });
   });
-  req.on('end', function() {
-    req.$params.body = data.length > 0 ? data : undefined;
-    next();
-  });
+  // const data =  await bodyPromise;
+  req.$ctx.meta.body = await bodyPromise;
+  next();
+
 };
+
 
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
@@ -50,11 +57,9 @@ const negotiateAccept = (req, res, next) => {
 
 const parseJson = (req, res, next) => {
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
-    const { body, ...otherParams } = req.$params;
-    req.$params = {
-      ...otherParams,
-      ...JSON.parse(body)
-    };
+    const body = JSON.parse(req.$ctx.meta.body);
+    req.$ctx.meta.body=body;
+    req.$params = {...body, ...req.$params};
   }
   next();
 };
