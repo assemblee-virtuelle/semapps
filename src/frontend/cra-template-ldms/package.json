@@ -1,0 +1,18 @@
+{
+  "name": "cra-template-ldms",
+  "version": "0.1.0",
+  "main": "template.json",
+  "keywords": [
+    "react",
+    "create-react-app",
+    "template",
+    "typescript"
+  ],
+  "files": [
+    "template",
+    "template.json"
+  ],
+  "engines": {
+    "node": ">=10"
+  }
+}
