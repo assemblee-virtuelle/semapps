@@ -7,7 +7,7 @@
   "dependencies": {
     "@semapps/triplestore": "^0.1.5",
     "@semapps/mime-types": "^0.1.5",
-    "@semapps/middlwares": "^0.1.5",
+    "@semapps/middlewares": "^0.1.5",
     "moleculer": "^0.14.3"
   },
   "publishConfig": {

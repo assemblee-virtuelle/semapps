@@ -4,7 +4,7 @@ const {
   negotiateAccept,
   parseJson,
   addContainerUriMiddleware
-} = require('@semapps/middlwares');
+} = require('@semapps/middlewares');
 
 function getRoutes() {
   const commonRouteConfig = {
@@ -17,7 +17,10 @@ function getRoutes() {
     }
   };
 
-  const middlewares = [parseBody, negotiateAccept];
+  const middlewares = [
+    parseBody,
+    negotiateAccept,
+  ];
 
   return [
     {
@@ -26,7 +29,7 @@ function getRoutes() {
       mergeParams: true,
       aliases: {
         'GET /': [...middlewares, 'sparqlEndpoint.query'],
-        'POST /': [...middlewares, 'sparqlEndpoint.query']
+        'POST /': [...middlewares,'sparqlEndpoint.query']
       },
       ...commonRouteConfig
     }
