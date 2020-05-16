@@ -1,8 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 
-const parseBody= async (req, res, next) => {
-
+const parseBody = async (req, res, next) => {
   const bodyPromise = new Promise((resolve, reject) => {
     let data = '';
     req.on('data', function(chunk) {
@@ -14,9 +13,7 @@ const parseBody= async (req, res, next) => {
   });
   req.$ctx.meta.body = await bodyPromise;
   next();
-
 };
-
 
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
@@ -25,24 +22,23 @@ const negotiateContentType = (req, res, next) => {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
       next();
     } catch (e) {
-      next(new MoleculerError(
-        'Content-Type not supported : ' + req.headers['content-type'],
-        400,
-        'CONTENT_TYPE_NOT_SUPPORTED'
-      ));
+      next(
+        new MoleculerError(
+          'Content-Type not supported : ' + req.headers['content-type'],
+          400,
+          'CONTENT_TYPE_NOT_SUPPORTED'
+        )
+      );
     }
   } else {
     if (req.$params.body) {
-      next(new MoleculerError(
-        'Content-Type has to be specified for a non-empty body ',
-        400,
-        'CONTENT_TYPE_NOT_SPECIFIED'
-      ))
-    }else{
+      next(
+        new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED')
+      );
+    } else {
       next();
     }
   }
-
 };
 
 const negotiateAccept = (req, res, next) => {
@@ -54,17 +50,16 @@ const negotiateAccept = (req, res, next) => {
     } catch (e) {
       next(new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED'));
     }
-  }else {
+  } else {
     next();
   }
-
 };
 
 const parseJson = (req, res, next) => {
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
     const body = JSON.parse(req.$ctx.meta.body);
-    req.$ctx.meta.body=body;
-    req.$params = {...body, ...req.$params};
+    req.$ctx.meta.body = body;
+    req.$params = { ...body, ...req.$params };
   }
   next();
 };

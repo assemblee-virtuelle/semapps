@@ -14,7 +14,7 @@ module.exports = {
     },
     routes: []
   },
-  dependencies: ['ldp', 'activitypub','webid','sparqlEndpoint'],
+  dependencies: ['ldp', 'activitypub', 'webid', 'sparqlEndpoint'],
   async started() {
     const findOrCreateProfile = async profileData => {
       return await this.broker.call('webid.create', profileData);

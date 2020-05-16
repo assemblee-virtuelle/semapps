@@ -9,7 +9,7 @@ const WebIdService = {
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
-    defaultAccept:'text/turtle'
+    defaultAccept: 'text/turtle'
   },
   actions: {
     /**
@@ -82,7 +82,7 @@ const WebIdService = {
       });
     },
     async list(ctx) {
-      const accept = ctx.meta.headers.accept || this.settings.defaultAccept
+      const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

@@ -10,20 +10,18 @@ function getRoutes() {
   const commonRouteConfig = {
     bodyParsers: {
       json: true
-    },
+    }
   };
 
-  const middlewares = [
-    negotiateAccept
-  ];
+  const middlewares = [negotiateAccept];
 
   return [
     {
       authorization: false,
       authentication: true,
       aliases: {
-        'GET users/:userId': [...middlewares,'webid.view'],
-        'GET usersss': [...middlewares,'webid.list']
+        'GET users/:userId': [...middlewares, 'webid.view'],
+        'GET usersss': [...middlewares, 'webid.list']
       },
       ...commonRouteConfig
     },
@@ -32,13 +30,12 @@ function getRoutes() {
       authorization: true,
       authentication: false,
       aliases: {
-        'GET me': [...middlewares,'webid.view'],
-        'PATCH me': [...middlewares,'webid.edit']
+        'GET me': [...middlewares, 'webid.view'],
+        'PATCH me': [...middlewares, 'webid.edit']
       },
       ...commonRouteConfig
     }
   ];
-
 }
 
 module.exports = getRoutes;

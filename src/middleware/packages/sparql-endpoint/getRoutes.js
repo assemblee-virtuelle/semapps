@@ -17,10 +17,7 @@ function getRoutes() {
     }
   };
 
-  const middlewares = [
-    parseBody,
-    negotiateAccept,
-  ];
+  const middlewares = [parseBody, negotiateAccept];
 
   return [
     {
@@ -29,7 +26,7 @@ function getRoutes() {
       mergeParams: true,
       aliases: {
         'GET /': [...middlewares, 'sparqlEndpoint.query'],
-        'POST /': [...middlewares,'sparqlEndpoint.query']
+        'POST /': [...middlewares, 'sparqlEndpoint.query']
       },
       ...commonRouteConfig
     }

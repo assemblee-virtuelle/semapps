@@ -1,6 +1,6 @@
 {
   "name": "@semapps/middlwares",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Express Middlware for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",

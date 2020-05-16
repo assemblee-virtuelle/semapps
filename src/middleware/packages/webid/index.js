@@ -1,3 +1,3 @@
 module.exports = {
-  WebIdService: require('./service'),
+  WebIdService: require('./service')
 };
