@@ -120,7 +120,6 @@ const TripleStoreService = {
       },
       async handler(ctx) {
         const { accept, webId, query } = ctx.params;
-        console.log('accept 2',accept);
         const acceptNegotiatedType = negotiateType(accept);
         const acceptType = acceptNegotiatedType.mime;
         const fusekiAccept = acceptNegotiatedType.fusekiMapping;

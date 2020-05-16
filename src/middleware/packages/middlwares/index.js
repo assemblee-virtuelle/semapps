@@ -12,7 +12,6 @@ const parseBody= async (req, res, next) => {
       resolve(data.length > 0 ? data : undefined);
     });
   });
-  // const data =  await bodyPromise;
   req.$ctx.meta.body = await bodyPromise;
   next();
 
@@ -24,23 +23,26 @@ const negotiateContentType = (req, res, next) => {
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
+      next();
     } catch (e) {
-      throw new MoleculerError(
+      next(new MoleculerError(
         'Content-Type not supported : ' + req.headers['content-type'],
         400,
         'CONTENT_TYPE_NOT_SUPPORTED'
-      );
+      ));
     }
   } else {
     if (req.$params.body) {
-      throw new MoleculerError(
+      next(new MoleculerError(
         'Content-Type has to be specified for a non-empty body ',
         400,
         'CONTENT_TYPE_NOT_SPECIFIED'
-      );
+      ))
+    }else{
+      next();
     }
   }
-  next();
+
 };
 
 const negotiateAccept = (req, res, next) => {
@@ -48,11 +50,14 @@ const negotiateAccept = (req, res, next) => {
   if (req.headers.accept !== undefined && req.headers.accept !== '*/*') {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
+      next();
     } catch (e) {
-      throw new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED');
+      next(new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED'));
     }
+  }else {
+    next();
   }
-  next();
+
 };
 
 const parseJson = (req, res, next) => {

@@ -7,7 +7,8 @@
   "dependencies": {
     "@semapps/ldp": "^0.1.4",
     "@semapps/mime-types": "^0.1.4",
-    "@semapps/triplestore": "^0.1.4"
+    "@semapps/triplestore": "^0.1.4",
+    "@semapps/middlwares":"^0.1.4"
   },
   "publishConfig": {
     "access": "public"

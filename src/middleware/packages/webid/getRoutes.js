@@ -4,36 +4,41 @@ const {
   negotiateAccept,
   parseJson,
   addContainerUriMiddleware
-} = require('./routes/middlewares');
+} = require('@semapps/middlwares');
 
 function getRoutes() {
   const commonRouteConfig = {
-    path: '/sparql',
-    // Disable the body parsers so that we can parse the body ourselves
-    // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: {
-      json: false,
-      urlencoded: false
-    }
+      json: true
+    },
   };
 
   const middlewares = [
-    parseBody,
-    negotiateAccept,
+    negotiateAccept
   ];
 
   return [
     {
       authorization: false,
       authentication: true,
-      mergeParams: true,
       aliases: {
-        'GET /': [...middlewares, 'sparqlEndpoint.query'],
-        'POST /': [...middlewares,'sparqlEndpoint.query']
+        'GET users/:userId': [...middlewares,'webid.view'],
+        'GET usersss': [...middlewares,'webid.list']
+      },
+      ...commonRouteConfig
+    },
+    // Secured routes
+    {
+      authorization: true,
+      authentication: false,
+      aliases: {
+        'GET me': [...middlewares,'webid.view'],
+        'PATCH me': [...middlewares,'webid.edit']
       },
       ...commonRouteConfig
     }
   ];
+
 }
 
 module.exports = getRoutes;
