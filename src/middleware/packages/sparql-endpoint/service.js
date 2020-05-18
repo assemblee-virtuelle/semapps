@@ -15,8 +15,8 @@ const SparqlEndpointService = {
         query: query,
         accept: accept
       });
-      if(ctx.meta.$responseType === undefined){
-          ctx.meta.$responseType=accept;
+      if (ctx.meta.$responseType === undefined) {
+        ctx.meta.$responseType = accept;
       }
       return response;
     },
