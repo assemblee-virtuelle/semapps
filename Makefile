@@ -37,7 +37,7 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware frontend
+	$(DOCKER_COMPOSE) logs -f middleware frontend fuseki
 
 log-prod:
 	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend
@@ -77,5 +77,4 @@ test:
 	$(DOCKER_COMPOSE_TEST) build
 	$(DOCKER_COMPOSE_TEST) up -d
 	npm run test --prefix ./src/middleware/tests/
-	$(DOCKER_COMPOSE_TEST) kill
-	$(DOCKER_COMPOSE_TEST) rm -fv
+	$(DOCKER_COMPOSE_TEST) down

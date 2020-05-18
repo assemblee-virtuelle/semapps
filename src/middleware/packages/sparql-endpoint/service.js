@@ -1,17 +1,27 @@
 'use strict';
+const getRoutes = require('./getRoutes');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
-  settings: {},
+  settings: {
+    defaultAccept: 'text/turtle'
+  },
   dependencies: ['triplestore'],
   actions: {
     async query(ctx) {
-      let query = ctx.params.query || ctx.meta.body;
-      ctx.meta.$responseType = ctx.params.accept || ctx.meta.headers.accept;
-      return await ctx.call('triplestore.query', {
+      let query = ctx.params.query || ctx.params.body;
+      const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+      const response = await ctx.call('triplestore.query', {
         query: query,
-        accept: ctx.params.accept || ctx.meta.headers.accept
+        accept: accept
       });
+      if (ctx.meta.$responseType === undefined) {
+        ctx.meta.$responseType = accept;
+      }
+      return response;
+    },
+    getApiRoutes() {
+      return getRoutes();
     }
   }
 };
