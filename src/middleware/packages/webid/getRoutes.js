@@ -21,7 +21,7 @@ function getRoutes() {
       authentication: true,
       aliases: {
         'GET users/:userId': [...middlewares, 'webid.view'],
-        'GET usersss': [...middlewares, 'webid.list']
+        'GET users': [...middlewares, 'webid.list']
       },
       ...commonRouteConfig
     },

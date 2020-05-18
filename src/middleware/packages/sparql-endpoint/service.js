@@ -9,13 +9,16 @@ const SparqlEndpointService = {
   dependencies: ['triplestore'],
   actions: {
     async query(ctx) {
-      let query = ctx.params.query || ctx.meta.body;
+      let query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
-      ctx.meta.$responseType = accept;
-      return await ctx.call('triplestore.query', {
+      const response = await ctx.call('triplestore.query', {
         query: query,
         accept: accept
       });
+      if(ctx.meta.$responseType === undefined){
+          ctx.meta.$responseType=accept;
+      }
+      return response;
     },
     getApiRoutes() {
       return getRoutes();

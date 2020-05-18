@@ -11,7 +11,7 @@ const parseBody = async (req, res, next) => {
       resolve(data.length > 0 ? data : undefined);
     });
   });
-  req.$ctx.meta.body = await bodyPromise;
+  req.$params.body = await bodyPromise;
   next();
 };
 
@@ -57,8 +57,7 @@ const negotiateAccept = (req, res, next) => {
 
 const parseJson = (req, res, next) => {
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
-    const body = JSON.parse(req.$ctx.meta.body);
-    req.$ctx.meta.body = body;
+    const body = JSON.parse(req.$params.body);
     req.$params = { ...body, ...req.$params };
   }
   next();

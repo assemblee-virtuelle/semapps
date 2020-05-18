@@ -136,6 +136,9 @@ const TripleStoreService = {
           headers
         });
         if (!response.ok) throw new Error(response.statusText);
+        // console.log(response.headers.get('content-type'));
+        ctx.meta.$responseType = response.headers.get('content-type');
+
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
         const verb = regex.exec(query)[1];
         switch (verb) {
