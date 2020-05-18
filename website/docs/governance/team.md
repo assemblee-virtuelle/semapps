@@ -17,7 +17,7 @@ title: The SemApps team
 - **Product Owners** 
     - [Guillaume Rouyer](https://www.linkedin.com/in/guillaume-rouyer-paris/) : Project designer
         - _Expertises_ : Prospective, political philosophy, ecology & econnomics, complex systems, community management, 
-    - [Gabriel Henry](https://www.linkedin.com/in/gabriel-henry-87915690/?originalSubdomain=fr) :
+    - [Gabriel Henry](https://www.linkedin.com/in/gabriel-henry-87915690/?originalSubdomain=fr) : Product owner
         - _Expertises_ : project management, quality management, IT, business analysis, coaching, social innovation, social economy
     
 - **Technical advisors** 
