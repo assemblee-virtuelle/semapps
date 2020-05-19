@@ -38,20 +38,27 @@ const FollowService = {
     }
   },
   events: {
-    async 'activitypub.outbox.posted'(ctx) {
+    async 'activitypub.inbox.received'(ctx) {
       const { activity } = ctx.params;
       const activityType = activity.type || activity['@type'];
 
       switch (activityType) {
         case ACTIVITY_TYPES.FOLLOW:
-          await this.broker.call('activitypub.collection.attach', {
-            collectionUri: urlJoin(activity.object, 'followers'),
-            item: activity.actor
-          });
-          await this.broker.call('activitypub.collection.attach', {
-            collectionUri: urlJoin(activity.actor, 'following'),
-            item: activity.object
-          });
+
+          if( this.isLocalActor(activity.actor) ) {
+            await this.broker.call('activitypub.collection.attach', {
+              collectionUri: urlJoin(activity.actor, 'following'),
+              item: activity.object
+            });
+          }
+
+          if( this.isLocalActor(activity.object) ) {
+            await this.broker.call('activitypub.collection.attach', {
+              collectionUri: urlJoin(activity.object, 'followers'),
+              item: activity.actor
+            });
+          }
+
           this.broker.emit('activitypub.follow.added', {
             follower: activity.actor,
             following: activity.object
@@ -62,14 +69,21 @@ const FollowService = {
           const objectType = activity.object.type || activity.object['@type'];
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
-            await this.broker.call('activitypub.collection.detach', {
-              collectionUri: urlJoin(followActivity.object, 'followers'),
-              item: followActivity.actor
-            });
-            await this.broker.call('activitypub.collection.detach', {
-              collectionUri: urlJoin(followActivity.actor, 'following'),
-              item: followActivity.object
-            });
+
+            if( this.isLocalActor(activity.object) ) {
+              await this.broker.call('activitypub.collection.detach', {
+                collectionUri: urlJoin(followActivity.object, 'followers'),
+                item: followActivity.actor
+              });
+            }
+
+            if( this.isLocalActor(activity.actor) ) {
+              await this.broker.call('activitypub.collection.detach', {
+                collectionUri: urlJoin(followActivity.actor, 'following'),
+                item: followActivity.object
+              });
+            }
+
             this.broker.emit('activitypub.follow.removed', {
               follower: followActivity.actor,
               following: followActivity.object
@@ -83,6 +97,11 @@ const FollowService = {
     },
     'activitypub.follow.removed'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
+    }
+  },
+  methods: {
+    isLocalActor(uri) {
+      return uri.startsWith(this.settings.actorsContainer);
     }
   }
 };

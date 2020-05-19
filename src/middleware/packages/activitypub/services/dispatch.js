@@ -2,12 +2,16 @@ const urlJoin = require('url-join');
 const { PUBLIC_URI } = require('../constants');
 const { defaultToArray } = require('../utils');
 
-const DispatcherService = {
-  name: 'activitypub.dispatcher',
+const DispatchService = {
+  name: 'activitypub.dispatch',
   settings: {
     actorsContainer: null
   },
   dependencies: ['activitypub.collection'],
+  started() {
+    // TODO check if we need to have at least one method for the service to work ?
+    console.log('test');
+  },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
@@ -60,7 +64,7 @@ const DispatcherService = {
       let output = [],
         recipients = defaultToArray(activity.to);
       for (const recipient of recipients) {
-        if (recipient === PUBLIC_URI) {
+        if (recipient === PUBLIC_URI || !recipient.startsWith('http')) {
           // Public URI. No need to add to inbox.
           continue;
         } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
@@ -77,4 +81,4 @@ const DispatcherService = {
   }
 };
 
-module.exports = DispatcherService;
+module.exports = DispatchService;

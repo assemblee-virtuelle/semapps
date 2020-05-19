@@ -3,7 +3,7 @@ const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');
-const DispatcherService = require('./services/dispatcher');
+const DispatchService = require('./services/dispatch');
 const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
@@ -71,7 +71,7 @@ const ActivityPubService = {
       }
     });
 
-    await this.broker.createService(DispatcherService, {
+    await this.broker.createService(DispatchService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }

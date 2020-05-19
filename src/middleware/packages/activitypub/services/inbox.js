@@ -1,12 +1,13 @@
 const urlJoin = require('url-join');
-const { objectCurrentToId } = require('../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
 const InboxService = {
   name: 'activitypub.inbox',
   settings: {
     actorsContainer: null
   },
-  dependencies: ['activitypub.collection'],
+  dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
@@ -27,7 +28,15 @@ const InboxService = {
       // TODO check JSON-LD signature
       // TODO check activity is valid
 
-      // Attach the newly-created activity to the inbox
+      // Save the remote activity in the local triple store
+      // TODO check conversion of object ID works fine
+      // TODO see if we could cache it elsewhere
+      await ctx.call('triplestore.insert', {
+        resource: objectIdToCurrent(activity),
+        contentType: MIME_TYPES.JSON
+      });
+
+      // Attach the activity to the inbox
       ctx.call('activitypub.collection.attach', {
         collectionUri: collectionUri || this.getInboxUri(username),
         item: activity
