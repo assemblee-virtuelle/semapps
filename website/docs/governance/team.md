@@ -11,7 +11,7 @@ title: The SemApps team
         - _Expertises_ : Java/J2EE, web-ACL, Moleculer.js, React.js
         
 - **Scrum master**
-    - [Pierre Bouvier](https://www.linkedin.com/in/bouviermullerp/) : Agile project manager
+    - [Pierre Bouvier-Muller](https://www.linkedin.com/in/bouviermullerp/) : Agile project manager
         - _Expertises_ : Agility, lean management, software & community management.
 
 - **Product Owners** 
