@@ -7,11 +7,10 @@
 
 module.exports = {
   docs: {
-    'Get started': ['tech/get-started'],
-    Packages: ['packages/triplestore','packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks'],
-    Others: ['others/ACL','others/basicLDP', 'others/conventions','others/PropertiesContainer'],
+    Guides: ['guides/ldp-server'],
+    Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
   },
-  gouvernance: {
-    Gouvernance: ['governance/team'],
+  governance: {
+    Governance: ['governance/team'],
   }
 };

@@ -1,8 +1,8 @@
 ---
-title: Get started with SemApps
+title: Create your first LDP server
 ---
 
-### Setup your LDP server
+### Setup a new Moleculer project
 
 First install the [moleculer-cli](https://github.com/moleculerjs/moleculer-cli) tool.
 
@@ -40,7 +40,7 @@ $ npm run dev
 
 Your instance of SemApps is available at http://localhost:3000
 
-### Testing the LDP server
+### Testing your LDP server
 
 By default, the LDP service will create a LDP container in the `/resources path`.
 
