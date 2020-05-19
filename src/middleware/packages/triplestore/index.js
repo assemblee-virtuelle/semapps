@@ -136,6 +136,9 @@ const TripleStoreService = {
           headers
         });
         if (!response.ok) throw new Error(response.statusText);
+        // console.log(response.headers.get('content-type'));
+        ctx.meta.$responseType = response.headers.get('content-type');
+
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
         const verb = regex.exec(query)[1];
         switch (verb) {
@@ -148,10 +151,11 @@ const TripleStoreService = {
             }
             break;
           case 'SELECT':
-            const jsonResult = await response.json();
             if (acceptType === MIME_TYPES.JSON) {
+              const jsonResult = await response.json();
               return await this.sparqlJsonParser.parseJsonResults(jsonResult);
             } else {
+              const jsonResult = await response.text();
               return jsonResult;
             }
             break;

@@ -1,6 +1,6 @@
 module.exports = {
   title: 'SemApps',
-  tagline: 'Favoriser la mise en réseau des acteurs grâce à la mise en synergie de leurs systèmes d’informations',
+  tagline: 'Fostering interconnections between communities by creating synergies between their platforms'
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
