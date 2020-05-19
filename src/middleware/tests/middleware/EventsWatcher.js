@@ -10,7 +10,8 @@
 const EventsWatcher = {
   localEvent(next, event) {
     return ctx => {
-      event.service.broker.latestEvent = ctx.eventName;
+      event.service.broker.latestEventName = ctx.eventName;
+      event.service.broker.latestEventParams = ctx.params;
       return next(ctx);
     };
   },
@@ -20,10 +21,10 @@ const EventsWatcher = {
     broker.watchForEvent = eventName => {
       return new Promise(resolve => {
         const timerId = setInterval(() => {
-          if (broker.latestEvent === eventName) {
-            broker.latestEvent = null;
+          if (broker.latestEventName === eventName) {
+            broker.latestEventName = null;
             clearInterval(timerId);
-            resolve();
+            resolve(broker.latestEventParams);
           }
         }, 100);
       });

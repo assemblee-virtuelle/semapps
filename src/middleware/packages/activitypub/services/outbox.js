@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
-const { objectCurrentToId } = require('../functions');
+const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -66,7 +66,7 @@ const OutboxService = {
       const collection = await ctx.call('activitypub.collection.get', {
         id: this.getOutboxUri(ctx.params.username),
         dereferenceItems: true,
-        expand: ['as:object']
+        queryDepth: 3
       });
 
       if (collection) {

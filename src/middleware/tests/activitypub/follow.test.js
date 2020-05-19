@@ -3,7 +3,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 
-jest.setTimeout(20000);
+jest.setTimeout(100000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
@@ -14,7 +14,7 @@ afterAll(async () => {
 });
 
 describe('Posting to followers', () => {
-  let simon, sebastien;
+  let simon, sebastien, followActivity;
 
   test('Create actor directly', async () => {
     sebastien = await broker.call('activitypub.actor.create', {
@@ -33,10 +33,10 @@ describe('Posting to followers', () => {
 
     expect(sebastien.preferredUsername).toBe('srosset81');
     expect(simon.preferredUsername).toBe('simonLouvet');
-  }, 20000);
+  });
 
-  test('Post follow request', async () => {
-    let result = await broker.call('activitypub.outbox.post', {
+  test('Follow user', async () => {
+    followActivity = await broker.call('activitypub.outbox.post', {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
@@ -44,21 +44,21 @@ describe('Posting to followers', () => {
       object: simon.id
     });
 
-    // Wait for actor to be added to the followers collection
-    await broker.watchForEvent('activitypub.follow.added');
-
-    expect(result).toMatchObject({
+    expect(followActivity).toMatchObject({
       type: ACTIVITY_TYPES.FOLLOW,
       actor: sebastien.id,
       object: simon.id
     });
 
-    result = await broker.call('activitypub.follow.listFollowers', {
+    // Wait for actor to be added to the followers collection
+    await broker.watchForEvent('activitypub.follow.added');
+
+    const result = await broker.call('activitypub.follow.listFollowers', {
       username: simon.preferredUsername
     });
 
     expect(result.items).toContain(sebastien.id);
-  }, 20000);
+  });
 
   test('Send message to followers', async () => {
     let result = await broker.call('activitypub.outbox.post', {
@@ -87,5 +87,33 @@ describe('Posting to followers', () => {
     });
 
     expect(result.orderedItems).toHaveLength(1);
+  });
+
+  test('Unfollow user', async () => {
+    let result = await broker.call('activitypub.outbox.post', {
+      username: sebastien.preferredUsername,
+      '@context': 'https://www.w3.org/ns/activitystreams',
+      actor: sebastien.id,
+      type: ACTIVITY_TYPES.UNDO,
+      object: followActivity
+    });
+
+    // Wait for actor to be removed to the followers collection
+    await broker.watchForEvent('activitypub.follow.removed');
+
+    expect(result).toMatchObject({
+      type: ACTIVITY_TYPES.UNDO,
+      actor: sebastien.id,
+      object: {
+        type: ACTIVITY_TYPES.FOLLOW,
+        object: simon.id
+      }
+    });
+
+    result = await broker.call('activitypub.follow.listFollowers', {
+      username: simon.preferredUsername
+    });
+
+    expect(result.items).not.toContain(sebastien.id);
   });
 });

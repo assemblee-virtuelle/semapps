@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "jsonld": "^3.0.1",
+    "@semapps/react-admin": "0.1.2",
     "jwt-decode": "^2.2.0",
     "ra-input-markdown": "^1.1.5",
     "react": "^16.13.0",
     "react-admin": "^3.2.4",
-    "react-dom": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
     "react-scripts": "3.4.0"
   },
   "scripts": {

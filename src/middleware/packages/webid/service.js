@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const getRoutes = require('./getRoutes');
 
 const WebIdService = {
   name: 'webid',
@@ -7,7 +8,8 @@ const WebIdService = {
     usersContainer: null,
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
-    }
+    },
+    defaultAccept: 'text/turtle'
   },
   actions: {
     /**
@@ -80,14 +82,29 @@ const WebIdService = {
       });
     },
     async list(ctx) {
-      return await ctx.call('ldp.resource.getByType', {
-        type: 'foaf:Person',
+      const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+      const request = `
+      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      CONSTRUCT {
+        ?s ?p ?o
+      }
+      WHERE{
+        ?s a foaf:Person;
+           ?p ?o.
+      }
+      `;
+      return await ctx.call('triplestore.query', {
+        query: request,
         webId: ctx.meta.webId,
-        accept: MIME_TYPES.JSON
+        accept: accept
       });
     },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
+    },
+    getApiRoutes(ctx) {
+      return getRoutes();
     }
   },
   methods: {

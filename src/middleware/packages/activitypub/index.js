@@ -4,6 +4,7 @@ module.exports = {
   ActivityPubService: require('./service'),
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
+  BotService: require('./mixins/bot'),
   CollectionService: require('./services/collection'),
   FollowService: require('./services/follow'),
   InboxService: require('./services/inbox'),

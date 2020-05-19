@@ -1,8 +1,6 @@
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 
-const { Routes: SparqlEndpointRoutes } = require('@semapps/sparql-endpoint');
-const { Routes: WebIdRoutes } = require('@semapps/webid');
 const { CasConnector, OidcConnector } = require('@semapps/connector');
 
 const CONFIG = require('../config');
@@ -14,9 +12,9 @@ module.exports = {
       origin: '*',
       exposedHeaders: '*'
     },
-    routes: [...SparqlEndpointRoutes, ...WebIdRoutes]
+    routes: []
   },
-  dependencies: ['ldp', 'activitypub'],
+  dependencies: ['ldp', 'activitypub', 'webid', 'sparqlEndpoint'],
   async started() {
     const findOrCreateProfile = async profileData => {
       return await this.broker.call('webid.create', profileData);
@@ -55,6 +53,8 @@ module.exports = {
     const routes = [
       this.connector.getRoute(),
       ...(await this.broker.call('ldp.getApiRoutes')),
+      ...(await this.broker.call('webid.getApiRoutes')),
+      ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes'))
     ];
     routes.forEach(route => this.addRoute(route));

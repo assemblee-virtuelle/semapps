@@ -1,6 +1,6 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON } = require('../../../utils');
+const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -24,44 +24,46 @@ module.exports = {
     params: {
       containerUri: { type: 'string' },
       accept: { type: 'string' },
-      expand: { type: 'array', optional: true },
+      query: { type: 'object', optional: true },
+      queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     async handler(ctx) {
-      const { accept, containerUri, expand, jsonContext } = ctx.params;
-      let constructOptions = '',
-        whereOptions = '';
+      const { accept, containerUri, query, queryDepth, jsonContext } = ctx.params;
+      let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
-      if (expand) {
-        constructOptions = `?rO ?srP ?srO .`;
-        whereOptions = `
-          OPTIONAL {
-            ?item ?propsToExpand ?rO .
-            FILTER(?propsToExpand IN (${expand.join(', ')})) .
-            # We don't want to expand URIs as it creates problems when compacting
-            FILTER(!(isIRI(?rO))) .
-            ?rO ?srP ?srO .
+      if (query) {
+        Object.keys(query).forEach((predicate, i) => {
+          if (query[predicate]) {
+            whereQuery += `
+              FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} "${
+              query[predicate]
+            }" } .
+            `;
+          } else {
+            whereQuery += `
+              FILTER NOT EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ?unwanted${i} } .
+            `;
           }
-        `;
+        });
       }
 
-      const result = await ctx.call('triplestore.query', {
+      let result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
             <${containerUri}>
-              a ldp:BasicContainer ;
-              ldp:contains ?rS .
-            ?rS ?rP ?rO .
-            ${constructOptions}
+              a ?containerType ;
+              ldp:contains ?s1 .
+            ?s1 ?p1 ?o1 .
+            ${constructQuery}
           }
           WHERE {
-            <${containerUri}>
-              a ldp:BasicContainer ;
-              ldp:contains ?rS .
+            <${containerUri}> a ldp:Container, ?containerType .
             OPTIONAL { 
-              ?rS ?rP ?rO . 
-              ${whereOptions}
+              <${containerUri}> ldp:contains ?s1 .
+              ?s1 ?p1 ?o1 .
+              ${whereQuery}
             }
           }
         `,
@@ -69,22 +71,27 @@ module.exports = {
       });
 
       if (accept === MIME_TYPES.JSON) {
-        const framedResult = await jsonld.frame(result, {
+        result = await jsonld.frame(result, {
           '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
           '@id': containerUri
         });
 
-        // Return the result without the @graph
-        return {
-          '@context': framedResult['@context'],
-          ...framedResult['@graph'][0],
-          'ldp:contains': Array.isArray(framedResult['@graph'][0]['ldp:contains'])
-            ? framedResult['@graph'][0]['ldp:contains']
-            : [framedResult['@graph'][0]['ldp:contains']]
+        // Remove the @graph
+        result = {
+          '@context': result['@context'],
+          ...result['@graph'][0]
         };
-      } else {
-        return result;
+
+        // If the ldp:contains is a single object, wrap it in an array
+        const ldpContainsKey = Object.keys(result).find(key =>
+          ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
+        );
+        if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
+          result[ldpContainsKey] = [result[ldpContainsKey]];
+        }
       }
+
+      return result;
     }
   }
 };

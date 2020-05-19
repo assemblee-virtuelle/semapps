@@ -12,7 +12,7 @@ import {
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import GroupIcon from '@material-ui/icons/Group';
-import { JsonLdReferenceInput, UriInput } from '../semapps';
+import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 import SearchFilter from '../components/SearchFilter';
 
 export const OrganizationIcon = GroupIcon;

@@ -7,13 +7,13 @@
 
 module.exports = {
   docs: {
-    Introduction: ['style-guide'],
-    Packages: ['packages/incoming-webhooks'],
+    Guides: ['guides/ldp-server'],
+    Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
   },
-  gouvernance: {
-    Gouvernance: ['governance/team'],
+  governance: {
+    Governance: ['governance/team'],
   },
   participate: {
-    Participer: ['participate/documentation']
+    Documentation: ['participate/documentation']
   }
 };
