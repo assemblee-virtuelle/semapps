@@ -9,11 +9,5 @@ module.exports = {
   docs: {
     Guides: ['guides/ldp-server'],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
-  },
-  governance: {
-    Governance: ['governance/team'],
-  },
-  participate: {
-    Documentation: ['participate/documentation']
   }
 };
