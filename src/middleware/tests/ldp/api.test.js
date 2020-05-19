@@ -43,9 +43,7 @@ beforeAll(async () => {
     },
     dependencies: ['ldp'],
     async started() {
-      let routes = [];
-      routes.push(...(await this.broker.call('ldp.getApiRoutes')));
-      routes.forEach(route => this.addRoute(route));
+      [...(await this.broker.call('ldp.getApiRoutes'))].forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -60,6 +58,9 @@ beforeAll(async () => {
 
   await broker.start();
   await broker.call('triplestore.dropAll');
+
+  // Restart broker after dropAll, so that the default container is recreated
+  await broker.start();
 
   expressMocked = supertest(app);
 });
@@ -124,6 +125,27 @@ describe('CRUD Project', () => {
       .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
+    expect(response.body['pair:label']).toBe('myLabel');
+  }, 20000);
+
+  test('Replace One Project', async () => {
+    const body = {
+      '@context': {
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+      },
+      description: 'myProjectUpdated'
+    };
+
+    await expressMocked
+      .put(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/json');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:description']).toBe('myProjectUpdated');
+    expect(response.body['pair:label']).toBeUndefined();
   }, 20000);
 
   test('Delete project', async () => {

@@ -1,10 +1,11 @@
 const {
+  parseHeader,
   parseBody,
   negotiateContentType,
   negotiateAccept,
   parseJson,
   addContainerUriMiddleware
-} = require('./middlewares');
+} = require('@semapps/middlewares');
 
 function getContainerRoutes(containerUri, serviceName) {
   const commonRouteConfig = {
@@ -18,6 +19,7 @@ function getContainerRoutes(containerUri, serviceName) {
   };
 
   const middlewares = [
+    parseHeader,
     parseBody,
     negotiateContentType,
     negotiateAccept,
@@ -32,6 +34,7 @@ function getContainerRoutes(containerUri, serviceName) {
         get: serviceName + '.get',
         post: serviceName + '.create',
         patch: serviceName + '.update',
+        put: serviceName + '.put',
         delete: serviceName + '.remove'
       }
     : {
@@ -39,6 +42,7 @@ function getContainerRoutes(containerUri, serviceName) {
         get: 'ldp.resource.api_get',
         post: 'ldp.resource.api_post',
         patch: 'ldp.resource.api_patch',
+        put: 'ldp.resource.api_put',
         delete: 'ldp.resource.api_delete'
       };
 
@@ -57,6 +61,7 @@ function getContainerRoutes(containerUri, serviceName) {
       authentication: false,
       aliases: {
         'POST /': [...middlewares, actions.post],
+        'PUT /:id': [...middlewares, actions.put],
         'PATCH /:id': [...middlewares, actions.patch],
         'DELETE /:id': [...middlewares, actions.delete]
       },

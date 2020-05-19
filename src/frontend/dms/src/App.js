@@ -1,6 +1,6 @@
 import React from 'react';
 import { Admin, Resource } from 'react-admin';
-import { dataProvider, authProvider, httpClient } from './semapps';
+import { dataProvider, authProvider, httpClient } from '@semapps/react-admin';
 import LogoutButton from './auth/LogoutButton';
 import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resources/projects';
 import { OrganizationList, OrganizationEdit, OrganizationCreate, OrganizationIcon } from './resources/organizations';

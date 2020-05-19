@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=(playground.semapps.org middleware.semapps.org)
+domains=(playground.semapps.org middleware.semapps.org fuseki.semapps.org)
 rsa_key_size=4096
 data_path="./deploy/certbot"
 email="info@parlepeuple.fr" # Adding a valid address is strongly recommended

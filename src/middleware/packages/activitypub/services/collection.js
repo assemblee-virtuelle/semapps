@@ -1,5 +1,6 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { buildBlankNodesQuery } = require('@semapps/ldp');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -50,65 +51,68 @@ const CollectionService = {
      * @param item The resource to add to the collection
      */
     async attach(ctx) {
-      const collectionExist = ctx.call('activitypub.collection.exist', {
-        collectionUri: ctx.params.collectionUri
-      });
+      const { collectionUri, item } = ctx.params;
+      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+
+      const resourceExist = ctx.call('ldp.resource.exist', { resourceUri: itemUri });
+      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !');
+
+      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
 
-      const collection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        id: ctx.params.collectionUri,
-        items: typeof ctx.params.item === 'object' ? ctx.params.item.id || ctx.params.item['@id'] : ctx.params.item
-      };
-
       return await ctx.call('triplestore.insert', {
-        resource: collection,
-        accept: MIME_TYPES.JSON,
-        contentType: MIME_TYPES.JSON
+        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
+      });
+    },
+    /*
+     * Detach an object from a collection
+     * @param collectionUri The full URI of the collection
+     * @param item The resource to remove from the collection
+     */
+    async detach(ctx) {
+      const { collectionUri, item } = ctx.params;
+
+      const collectionExist = ctx.call('activitypub.collection.exist', { collectionUri });
+      if (!collectionExist) throw new Error('Cannot detach from a non-existing collection !');
+
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
+        `
       });
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param id The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param expand Array of items' properties we want to expand
+     * @param queryDepth Number of blank nodes we want to dereference
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, expand } = ctx.params;
-      let constructOptions = '',
-        whereOptions = '';
+      const { id, dereferenceItems = false, queryDepth } = ctx.params;
+      let constructQuery = '',
+        whereQuery = '';
 
       if (dereferenceItems) {
-        constructOptions = `?item ?iP ?iO .`;
-        whereOptions = `?item ?iP ?iO .`;
-
-        if (expand) {
-          constructOptions += `?iO ?siP ?siO .`;
-          whereOptions += `
-          OPTIONAL {
-            ?item ?propsToExpand ?iO .
-            FILTER(?propsToExpand IN (${expand.join(', ')})) .
-            # We don't want to expand URIs as it creates problems when compacting
-            FILTER(!(isIRI(?iO))) .
-            ?iO ?siP ?siO .
-          }
-        `;
-        }
+        const [constructBnQuery, whereBnQuery] = buildBlankNodesQuery(queryDepth);
+        constructQuery = '?s1 ?p1 ?o1 .' + constructBnQuery;
+        whereQuery = '?s1 ?p1 ?o1 .' + whereBnQuery;
       }
 
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a ?type ;
-              as:items ?item .
-            ${constructOptions}
+            <${id}> a ?collectionType ;
+              as:items ?s1 .
+            ${constructQuery}
           }
           WHERE {
-            <${id}> a ?type .
+            <${id}> a as:Collection, ?collectionType .
             OPTIONAL { 
-              <${id}> as:items ?item .
-              ${whereOptions}
+              <${id}> as:items ?s1 .
+              ${whereQuery}
             }
           }
         `,
@@ -138,8 +142,45 @@ const CollectionService = {
         return collection;
       }
     },
-    clear(ctx) {
-      // Do nothing. This is just to ensure tests don't break.
+    /*
+     * Empty the collection, deleting all items it contains.
+     * @param collectionUri The full URI of the collection
+     */
+    async clear(ctx) {
+      const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+      return await ctx.call('triplestore.update', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          DELETE {
+            ?s1 ?p1 ?o1 .
+          }
+          WHERE { 
+            FILTER(?container IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            ?container as:items ?s1 .
+            ?s1 ?p1 ?o1 .
+          } 
+        `
+      });
+    },
+    /*
+     * Delete the container and remove all links to the items.
+     * The items are not deleted, for this call the clear action.
+     * @param collectionUri The full URI of the collection
+     */
+    async remove(ctx) {
+      const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
+      return await ctx.call('triplestore.update', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          DELETE {
+            ?s1 ?p1 ?o1 .
+          }
+          WHERE { 
+            FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            ?s1 ?p1 ?o1 .
+          }
+        `
+      });
     }
   },
   methods: {

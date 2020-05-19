@@ -8,17 +8,15 @@ module.exports = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    const containerExists = this.actions.exist({ containerUri });
+
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
+    if (!resourceExists) throw new Error('Cannot detach non-existing resource !');
+
+    const containerExists = await this.actions.exist({ containerUri });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container !');
 
     return await ctx.call('triplestore.insert', {
-      resource: {
-        '@context': 'http://www.w3.org/ns/ldp',
-        '@id': containerUri,
-        '@type': ['Container', 'BasicContainer'],
-        contains: resourceUri
-      },
-      contentType: MIME_TYPES.JSON
+      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`
     });
   }
 };

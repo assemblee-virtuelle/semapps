@@ -4,10 +4,11 @@ const { generateId } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, typeURL, ...resource } = ctx.params;
+    let { containerUri, ...resource } = ctx.params;
     try {
+
       const resourceUri = await ctx.call('ldp.resource.post', {
-        containerUri: containerUri || this.settings.baseUrl + typeURL,
+        containerUri: containerUri,
         slug: ctx.meta.headers.slug,
         resource,
         contentType: ctx.meta.headers['content-type'],
@@ -48,11 +49,18 @@ module.exports = {
     async handler(ctx) {
       const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
-      if (webId) ctx.meta.webId = webId;
-
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = resource['@id'] || `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
+      resource['@id'] = `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
       resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
+
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
+      if (!containerExist) {
+        throw new MoleculerError(
+          `Cannot create resource in non-existing container ${containerUri}`,
+          400,
+          'BAD_REQUEST'
+        );
+      }
 
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
@@ -60,12 +68,14 @@ module.exports = {
 
       await ctx.call('triplestore.insert', {
         resource,
-        contentType
+        contentType,
+        webId
       });
 
       await ctx.call('ldp.container.attach', {
         resourceUri: resource['@id'],
-        containerUri
+        containerUri,
+        webId
       });
 
       return resource['@id'];

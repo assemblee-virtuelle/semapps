@@ -7,6 +7,7 @@ const ObjectService = {
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null, // To be set by the user
+    queryDepth: 1,
     context: 'https://www.w3.org/ns/activitystreams'
   },
   actions: {
@@ -16,11 +17,10 @@ const ObjectService = {
 
       const tombstone = {
         '@context': this.settings.context,
-        '@id': ctx.params.id,
         type: 'Tombstone',
+        slug: ctx.params.id.match(new RegExp(`.*/(.*)`))[1],
         deleted: new Date().toISOString()
       };
-
       return await this._create(ctx, tombstone);
     }
   }

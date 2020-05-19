@@ -9,7 +9,7 @@ const ActorService = {
   dependencies: ['activitypub.collection'],
   settings: {
     containerUri: null, // To be set by the user
-    expand: ['as:location'],
+    queryDepth: 1,
     context: 'https://www.w3.org/ns/activitystreams'
   },
   actions: {
@@ -44,9 +44,17 @@ const ActorService = {
           return ctx.call('activitypub.actor.attachCollections', { actorUri: res.id });
         },
         function emitEvent(ctx, res) {
-          // TODO set this on the JsonLdStorageMixin
           this.broker.emit('actor.created', res);
           return res;
+        }
+      ],
+      remove: [
+        async function removeCollections(ctx, res) {
+          const actorUri = res['@id'];
+          await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/following' });
+          await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/followers' });
+          await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/inbox' });
+          await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/outbox' });
         }
       ]
     }
