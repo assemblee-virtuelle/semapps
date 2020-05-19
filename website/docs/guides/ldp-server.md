@@ -28,7 +28,7 @@ You need [docker](https://docs.docker.com/install/) and [docker-compose](https:/
 $ docker-compose up
 ```
 
-Jena Fuseki is now available at the URL http://localhost:3030
+Jena Fuseki is now available at the URL http://localhost:3030. By default the login is `admin` and the password is also `admin`.
 
 Please start by creating a `localData` dataset. This is where your triples will go.
 
