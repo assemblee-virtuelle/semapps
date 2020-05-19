@@ -15,6 +15,12 @@ const parseBody = async (req, res, next) => {
   next();
 };
 
+const parseHeader = async (req, res, next) => {
+  req.$ctx.meta.headers=req.headers||{};
+  next();
+};
+
+
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
@@ -43,7 +49,8 @@ const negotiateContentType = (req, res, next) => {
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  if (req.headers.accept !== undefined && req.headers.accept !== '*/*') {
+  if (req.headers.accept === '*/*') req.headers.accept = undefined
+  if (req.headers.accept !== undefined) {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
       next();
@@ -69,6 +76,7 @@ const addContainerUriMiddleware = containerUri => (req, res, next) => {
 };
 
 module.exports = {
+  parseHeader,
   parseBody,
   negotiateContentType,
   negotiateAccept,

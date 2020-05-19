@@ -1,4 +1,5 @@
 const {
+  parseHeader,
   parseBody,
   negotiateContentType,
   negotiateAccept,
@@ -18,6 +19,7 @@ function getContainerRoutes(containerUri, serviceName) {
   };
 
   const middlewares = [
+    parseHeader,
     parseBody,
     negotiateContentType,
     negotiateAccept,
