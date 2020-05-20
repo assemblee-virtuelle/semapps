@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  List,
-  Datagrid,
-  Edit,
-  Create,
-  SimpleForm,
-  TextField,
-  TextInput,
-  AutocompleteArrayInput
-} from 'react-admin';
+import { List, Datagrid, Edit, Create, SimpleForm, TextField, TextInput, AutocompleteArrayInput } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 import SearchFilter from '../components/SearchFilter';
 import { JsonLdReferenceInput } from '@semapps/react-admin';
@@ -30,13 +21,12 @@ const PersonTitle = ({ record }) => {
   return <span>Personne {record ? `"${record['foaf:firstName'] || record['foaf:familyName']}"` : ''}</span>;
 };
 
-
 export const PersonEdit = props => (
   <Edit title={<PersonTitle />} {...props}>
     <SimpleForm>
       <TextInput source="foaf:firstName" label="Prénom" fullWidth />
       <TextInput source="foaf:familyName" label="Nom de famille" fullWidth />
-      <JsonLdReferenceInput source="foaf:knows" label="Connait" reference="Person" >
+      <JsonLdReferenceInput source="foaf:knows" label="Connait" reference="Person">
         <AutocompleteArrayInput
           optionText={record => `${record['foaf:firstName']} ${record['foaf:familyName']}`}
           fullWidth
