@@ -10,6 +10,11 @@
     "url": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   },
   {
+    "prefix": "rdfs",
+    "owl": "",
+    "url": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  {
     "prefix": "ldp",
     "owl": "",
     "url": "http://www.w3.org/ns/ldp#"

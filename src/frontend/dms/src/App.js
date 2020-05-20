@@ -40,6 +40,7 @@ function App() {
       <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
       <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
       <Resource name="Agent" />
+      <Resource name="ProgrammingLanguage" />
     </Admin>
   );
 }
