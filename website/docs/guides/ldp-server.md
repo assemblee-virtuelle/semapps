@@ -2,27 +2,26 @@
 title: Create your first LDP server
 ---
 
-### Prerequisites
+## Setup a new Moleculer project
 
-docker
-docker-compose
-nodejs
-NPM
+You will need to have [NodeJS](https://nodejs.org/en/) installed on your computer.
 
-### Setup a new Moleculer project
+First install the [moleculer-cli](https://github.com/moleculerjs/moleculer-cli) tool globally.
 
-First install the [moleculer-cli](https://github.com/moleculerjs/moleculer-cli) tool.
+```bash
+npm install -g moleculer-cli
+```
 
 Then initialize a new project based on this template with this command:
 
 ```bash
-$ moleculer init assemblee-virtuelle/semapps-template-ldp my-project
+moleculer init assemblee-virtuelle/semapps-template-ldp my-project
 ```
 
 You can now go to the newly-created directory:
 
 ```bash
-$ cd my-project
+cd my-project
 ```
 
 ### Launch your local Jena Fuseki instance
@@ -32,7 +31,7 @@ Jena Fuseki is a semantic triple store. It is where your app's data will be stor
 You need [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/) installed on your machine.
 
 ```bash
-$ docker-compose up
+docker-compose up
 ```
 
 Jena Fuseki is now available at the URL http://localhost:3030. By default the login is `admin` and the password is also `admin`.
@@ -42,12 +41,12 @@ Please start by creating a `localData` dataset. This is where your triples will 
 ### Run Moleculer in dev mode
 
 ```bash
-$ npm run dev
+npm run dev
 ```
 
 Your instance of SemApps is available at http://localhost:3000
 
-### Testing your LDP server
+## Testing your LDP server
 
 By default, the LDP service will create a LDP container in the `/resources path`.
 
