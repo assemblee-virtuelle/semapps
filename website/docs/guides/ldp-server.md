@@ -2,6 +2,13 @@
 title: Create your first LDP server
 ---
 
+### Prerequisites
+
+docker
+docker-compose
+nodejs
+NPM
+
 ### Setup a new Moleculer project
 
 First install the [moleculer-cli](https://github.com/moleculerjs/moleculer-cli) tool.
