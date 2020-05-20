@@ -1,6 +1,6 @@
 {
   "name": "dms",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "private": true,
   "dependencies": {
     "@semapps/react-admin": "0.1.4",
