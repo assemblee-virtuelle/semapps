@@ -34,5 +34,6 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
-  }
+  },
+  "gitHead": "c578ad62168b4d839b8c3838e764da2c0c98921a"
 }
