@@ -7,7 +7,7 @@
 
 module.exports = {
   docs: {
-    Guides: ['guides/ldp-server'],
+    Guides: ['guides/ldp-server','guides/dms'],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
   }
 };
