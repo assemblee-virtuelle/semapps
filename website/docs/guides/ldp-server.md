@@ -18,6 +18,15 @@ Then initialize a new project based on this template with this command:
 moleculer init assemblee-virtuelle/semapps-template-ldp my-project
 ```
 
+(Could you precise this 3 options : ex I want to be able to write to the endpoint, but the default is read-only, so does it mean that i could not update that endpoint ? )
+
+
+? Do you need a local instance of Jena Fuseki (with Docker)? Yes
+? Do you need a read-only SPARQL endpoint? Yes
+Create 'semapps-server' folder...
+? Would you like to run 'npm install'? Yes
+
+
 You can now go to the newly-created directory:
 
 ```bash
