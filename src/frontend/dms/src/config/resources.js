@@ -37,7 +37,7 @@ const resources = {
     customFetch: query => {
       const url = new URL('https://dbpedia.org/sparql');
       url.searchParams.append('query', query);
-      url.searchParams.append('format', 'application/x-json+ld+ctx' );
+      url.searchParams.append('format', 'application/x-json+ld+ctx');
       return fetchUtils.fetchJson(url);
     }
   }

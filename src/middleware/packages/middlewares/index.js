@@ -16,7 +16,7 @@ const parseBody = async (req, res, next) => {
 };
 
 const parseHeader = async (req, res, next) => {
-  req.$ctx.meta.headers=req.headers||{};
+  req.$ctx.meta.headers = req.headers || {};
   next();
 };
 
@@ -48,7 +48,7 @@ const negotiateContentType = (req, res, next) => {
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  if (req.headers.accept === '*/*') req.headers.accept = undefined
+  if (req.headers.accept === '*/*') req.headers.accept = undefined;
   if (req.headers.accept !== undefined) {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
@@ -64,7 +64,7 @@ const negotiateAccept = (req, res, next) => {
 const parseJson = (req, res, next) => {
   if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
     const body = JSON.parse(req.$params.body);
-    req.$params = { ...body, ...req.$params,body:undefined };
+    req.$params = { ...body, ...req.$params, body: undefined };
   }
   next();
 };
