@@ -34,9 +34,12 @@ You need [docker](https://docs.docker.com/install/) and [docker-compose](https:/
 docker-compose up
 ```
 
-Jena Fuseki is now available at the URL http://localhost:3030. By default the login is `admin` and the password is also `admin`.
+Jena Fuseki is now available at the URL http://localhost:3030. 
 
-Please start by creating a `localData` dataset. This is where your triples will go.
+Please login - By default the login is `admin` and the password is also `admin`.
+
+Please start by create a new dataset and name it `localData` (case sensitive)
+Your triples will be stored there.
 
 ### Run Moleculer in dev mode
 
