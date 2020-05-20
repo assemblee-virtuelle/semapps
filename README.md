@@ -61,4 +61,4 @@ make prettier
 We welcome contributors from everywhere. Please contact us to join the team.
 
 - [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org)
-- [Conventions](docs/conventions.md)
+- [Conventions](docs/others/conventions.md)
