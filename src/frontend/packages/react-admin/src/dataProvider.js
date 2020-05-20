@@ -38,7 +38,7 @@ const computeSparqlQuery = ({ types, params: { query, pagination, sort, filter }
   }
   return `
     ${getPrefixRdf(ontologies)}
-    CONSTRUCT { 
+    CONSTRUCT {
       ?s1 ?p2 ?o2
     }
     WHERE {
@@ -100,6 +100,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
         return { data: [], total: 0 };
       } else if (!compactJson['@graph']) {
         // If we have several fields but no @graph, there is a single match
+        compactJson.id=compactJson['@id'];
         return { data: [compactJson], total: 1 };
       } else {
         const returnData = compactJson['@graph']
