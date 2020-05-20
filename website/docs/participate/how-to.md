@@ -1,3 +1,0 @@
----
-title: Comment participerons-nous ???
----

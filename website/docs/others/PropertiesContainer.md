@@ -1,4 +1,6 @@
-# Direct Container et Indirect Container
+---
+title: Direct Container / Indirect Container
+---
 
 Direct Container et Indirect Container sont lié à une ressource grace à ``ldp:membershipResource``. Cela permet de fournir un container au client pour qu'il puisse ajouter et supprimer une ressource2 lié à une ressource1 en une seul requete.
 Ils sont l'interface pour ajouter ou supprimers des ressources2 et les lier sémantiquement à la resource1 par la propriété ``ldp:hasMemberRelation`` (et ``ldp:isMemberOfRelation`` pour créer automatiquement la relation inverse sur la resource créee)

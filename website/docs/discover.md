@@ -1,3 +1,7 @@
+---
+title: About SemApps
+---
+
 SemApps is an open-source software project whose development is coordinated by the Virtual Assembly (VA), a French-based non-profit organization bringing together about fifty developers and activists. 
 
 In a context of strong fragmentation of dynamics in the field of transition, VA aims to develop commons (digital tools, methodologies and projects) to promote the interconnection of transition movements.
@@ -11,4 +15,3 @@ SemApps is a collaborative, interoperable, generic and modular knowledge managem
 - Designed on a modular architecture, it gives everyone the opportunity to build and customize platforms on demand.
 
 Its code is released under the Apache 2.0 free license. 
-
