@@ -30,10 +30,10 @@ const buildSparqlQuery = ({ types, params: { query, pagination, sort, filter }, 
       }
       `;
   }
-  if( query ) {
+  if (query) {
     Object.keys(query).forEach(predicate => {
       const value = query[predicate].startsWith('http') ? `<${query[predicate]}>` : query[predicate];
-      whereQuery += `?s1 ${predicate} ${value} .`
+      whereQuery += `?s1 ${predicate} ${value} .`;
     });
   }
   return `
@@ -58,7 +58,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
   getList: async (resourceId, params) => {
     if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-    if (params.id || params['@id'] || ( !resources[resourceId].types && resources[resourceId].containerUri )) {
+    if (params.id || params['@id'] || (!resources[resourceId].types && resources[resourceId].containerUri)) {
       /*
        * Query the container
        */
@@ -88,7 +88,11 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
        */
       const sparqlQuery = resources[resourceId].buildSparqlQuery
         ? resources[resourceId].buildSparqlQuery({ params, ontologies })
-        : buildSparqlQuery({ types: resources[resourceId].types, params: { ...params, query: resources[resourceId].query }, ontologies });
+        : buildSparqlQuery({
+            types: resources[resourceId].types,
+            params: { ...params, query: resources[resourceId].query },
+            ontologies
+          });
 
       const { json } = resources[resourceId].customFetch
         ? await resources[resourceId].customFetch(sparqlQuery)

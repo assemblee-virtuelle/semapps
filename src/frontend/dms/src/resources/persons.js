@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Datagrid, TextField, useAuthenticated } from 'react-admin';
 import Icon from '@material-ui/icons/Person';
 import SearchFilter from '../components/SearchFilter';
-import {JsonLdReferenceInput} from "@semapps/react-admin";
+import { JsonLdReferenceInput } from '@semapps/react-admin';
 
 export const PersonIcon = Icon;
 
