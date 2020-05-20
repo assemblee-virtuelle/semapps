@@ -20,7 +20,6 @@ const parseHeader = async (req, res, next) => {
   next();
 };
 
-
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
