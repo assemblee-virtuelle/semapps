@@ -1,6 +1,6 @@
 {
-  "name": "cra-template-dms",
-  "version": "0.1.0",
+  "name": "@semapps/cra-template-dms",
+  "version": "0.1.3",
   "main": "template.json",
   "keywords": [
     "react",
