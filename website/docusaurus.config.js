@@ -32,11 +32,11 @@ module.exports = {
           items: [
             {
               label: 'Create your LDP server',
-              to: 'guides/ldp-server',
+              to: 'docs/guides/ldp-server',
             },
             {
               label: 'Add a Data Management System',
-              to: 'guides/dms',
+              to: 'docs/guides/dms',
             }
           ],
         },
