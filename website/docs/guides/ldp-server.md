@@ -53,7 +53,7 @@ Your instance of SemApps is available at http://localhost:3000
 
 By default, the LDP service will create a LDP container in the `/resources path`.
 
-Post an ActivityStreams Note to this LDP container:
+Post an ActivityStreams Note to this LDP container with a tool like [Insomnia](https://insomnia.rest/) or [Postman](https://www.postman.com/downloads/).
 
 ```
 POST /resources HTTP/1.1
