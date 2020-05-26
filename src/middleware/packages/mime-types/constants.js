@@ -1,7 +1,12 @@
 const MIME_TYPES = {
   JSON: 'application/ld+json',
   TURTLE: 'text/turtle',
-  TRIPLE: 'application/n-triples'
+  TRIPLE: 'application/n-triples',
+  SPARQL_JSON: 'application/sparql-results+json',
+  SPARQL_XML: 'application/sparql-results+xml',
+  CSV: 'text/csv',
+  TSV: 'text/tab-separated-values',
+  RDF: 'application/rdf+xml'
 };
 
 const TYPES_REPO = [
@@ -15,13 +20,43 @@ const TYPES_REPO = [
     mime: MIME_TYPES.TURTLE,
     mimeFull: [MIME_TYPES.TURTLE, 'application/turtle'],
     N3Mapping: 'Turtle',
-    fusekiStoreMapping: 'application/n-quad'
+    fusekiStoreMapping: MIME_TYPES.TURTLE
   },
   {
     mime: MIME_TYPES.TRIPLE,
     mimeFull: [MIME_TYPES.TRIPLE],
     N3Mapping: 'N-Triples',
-    fusekiMapping: 'application/n-triples'
+    fusekiMapping: MIME_TYPES.TRIPLE
+  },
+  {
+    mime: MIME_TYPES.SPARQL_JSON,
+    mimeFull: [MIME_TYPES.SPARQL_JSON],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.SPARQL_JSON
+  },
+  {
+    mime: MIME_TYPES.SPARQL_XML,
+    mimeFull: [MIME_TYPES.SPARQL_XML],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.SPARQL_XML
+  },
+  {
+    mime: MIME_TYPES.CSV,
+    mimeFull: [MIME_TYPES.CSV],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.CSV
+  },
+  {
+    mime: MIME_TYPES.TSV,
+    mimeFull: [MIME_TYPES.TSV],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.TSV
+  },
+  {
+    mime: MIME_TYPES.RDF,
+    mimeFull: [MIME_TYPES.RDF],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.RDF
   }
 ];
 

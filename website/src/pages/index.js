@@ -8,29 +8,29 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Trop facile !</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
-    description: (
-      <>
-        Nous utilisons les standards du web sémantique qui permettent à de multiples systèmes d’information de s’interconnecter.
-      </>
-    ),
-  },
-  {
-    title: <>Trop cool</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
-    description: (
-      <>
-        SemApps intègre la spécification SOLID portée par Tim Berners Lee (inventeur du web), ainsi que le protocole ActivityPub.
-      </>
-    ),
-  },
-  {
-    title: <>Trop... bien!</>,
+    title: <>Standard & semantic</>,
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Nous concevons SemApps sur la base des principes suivants : Interopérabilité - Modularité - Généricité - Adaptabilité - Scalabilité - Accessibilité - Convivialité
+        Based on semantic web standards & the SOLID specification, Semapps is built on the roots of the web and brings out its full potential.
+      </>
+    ),
+  },
+  {
+    title: <>Decentralized & federated</>,
+    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    description: (
+      <>
+        Allowing multiple platforms to be both self-hosted and linked together, Semapps gives you back control and allows you to leverage network effects.
+      </>
+    ),
+  },
+  {
+    title: <>Modular</>,
+    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    description: (
+      <>
+        Built on a micro-services architecture, SemApps is fully customizable, it ensures a high level of flexibility, sobriety and scalability.
       </>
     ),
   },

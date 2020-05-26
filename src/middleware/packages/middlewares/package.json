@@ -1,0 +1,14 @@
+{
+  "name": "@semapps/middlewares",
+  "version": "0.1.9",
+  "description": "Express Middlewares for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "@semapps/mime-types": "^0.1.9",
+    "moleculer": "^0.14.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

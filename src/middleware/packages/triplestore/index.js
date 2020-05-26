@@ -39,7 +39,8 @@ const TripleStoreService = {
           });
         }
 
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+        const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
+        const response = await fetch(url, {
           method: 'POST',
           body: `INSERT DATA { ${rdf} }`,
           headers: {
@@ -49,7 +50,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
       }
     },
     countTriplesOfSubject: {
@@ -92,7 +93,9 @@ const TripleStoreService = {
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
         const query = ctx.params.query;
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+
+        const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
+        const response = await fetch(url, {
           method: 'POST',
           body: query,
           headers: {
@@ -101,7 +104,8 @@ const TripleStoreService = {
             Authorization: this.Authorization
           }
         });
-        if (!response.ok) throw new Error(response.statusText);
+
+        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
       }
     },
     query: {
@@ -130,12 +134,16 @@ const TripleStoreService = {
           Accept: fusekiAccept
         };
 
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/query', {
+        const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
+        const response = await fetch(url, {
           method: 'POST',
           body: query,
           headers
         });
-        if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+        // console.log(response.headers.get('content-type'));
+        ctx.meta.$responseType = response.headers.get('content-type');
+
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
         const verb = regex.exec(query)[1];
         switch (verb) {
@@ -148,10 +156,11 @@ const TripleStoreService = {
             }
             break;
           case 'SELECT':
-            const jsonResult = await response.json();
             if (acceptType === MIME_TYPES.JSON) {
+              const jsonResult = await response.json();
               return await this.sparqlJsonParser.parseJsonResults(jsonResult);
             } else {
+              const jsonResult = await response.text();
               return jsonResult;
             }
             break;
@@ -177,7 +186,9 @@ const TripleStoreService = {
       },
       async handler(ctx) {
         const webId = ctx.params.webId || ctx.meta.webId;
-        const response = await fetch(this.settings.sparqlEndpoint + this.settings.mainDataset + '/update', {
+
+        const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
+        const response = await fetch(url, {
           method: 'POST',
           body: 'update=DROP+ALL',
           headers: {
@@ -187,7 +198,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
 
         return response;
       }

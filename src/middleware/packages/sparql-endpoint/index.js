@@ -1,4 +1,3 @@
 module.exports = {
-  SparqlEndpointService: require('./service'),
-  Routes: require('./routes')
+  SparqlEndpointService: require('./service')
 };

@@ -7,6 +7,7 @@ const ObjectService = {
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null, // To be set by the user
+    queryDepth: 1,
     context: 'https://www.w3.org/ns/activitystreams'
   },
   actions: {

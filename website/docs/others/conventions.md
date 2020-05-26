@@ -1,4 +1,6 @@
-# Conventions
+---
+title: Coventions
+---
 
 ## Nommage
 

@@ -1,0 +1,25 @@
+{
+  "name": "@semapps/cra-template-dms",
+  "version": "0.1.4",
+  "description": "DMS REACT template for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "template.json",
+  "keywords": [
+    "react",
+    "create-react-app",
+    "template",
+    "typescript"
+  ],
+  "files": [
+    "template",
+    "template.json"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "gitHead": "cff9a7f2fe61728df8803a2772b1441dda549f76"
+}

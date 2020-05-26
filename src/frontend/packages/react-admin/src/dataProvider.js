@@ -15,10 +15,11 @@ const getPrefixRdf = ontologies => {
   return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
 
-const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, ontologies }) => {
-  let searchRequest = '';
+const computeSparqlQuery = ({ types, params: { query, pagination, sort, filter }, ontologies }) => {
+  let whereQuery = '';
+
   if (filter.q && filter.q.length > 0) {
-    searchRequest = `
+    whereQuery += `
       {
         SELECT ?s1
         WHERE {
@@ -29,13 +30,19 @@ const computeSparqlSearch = ({ types, params: { pagination, sort, filter }, onto
       }
       `;
   }
+  if( query ) {
+    Object.keys(query).forEach(predicate => {
+      const value = query[predicate].startsWith('http') ? `<${query[predicate]}>` : query[predicate];
+      whereQuery += `?s1 ${predicate} ${value} .`
+    });
+  }
   return `
     ${getPrefixRdf(ontologies)}
-    CONSTRUCT { 
+    CONSTRUCT {
       ?s1 ?p2 ?o2
     }
     WHERE {
-      ${searchRequest}
+      ${whereQuery}
       ?s1 a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
       FILTER( (isIRI(?s1)) ) .
@@ -79,11 +86,11 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
       /*
        * Do a SPARQL search
        */
-      const body = computeSparqlSearch({ types: resources[resourceId].types, params, ontologies });
+      const sparqlQuery = computeSparqlQuery({ types: resources[resourceId].types, params: { ...params, query: resources[resourceId].query }, ontologies });
 
       const { json } = await httpClient(sparqlEndpoint, {
         method: 'POST',
-        body
+        body: sparqlQuery
       });
 
       const compactJson = await jsonld.compact(json, getJsonContext(ontologies, mainOntology));
@@ -93,6 +100,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
         return { data: [], total: 0 };
       } else if (!compactJson['@graph']) {
         // If we have several fields but no @graph, there is a single match
+        compactJson.id=compactJson['@id'];
         return { data: [compactJson], total: 1 };
       } else {
         const returnData = compactJson['@graph']

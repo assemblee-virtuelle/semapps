@@ -1,7 +1,7 @@
 module.exports = {
   title: 'SemApps',
-  tagline: 'Favoriser la mise en réseau des acteurs grâce à la mise en synergie de leurs systèmes d’informations',
-  url: 'https://your-docusaurus-test-site.com',
+  tagline: 'Fostering interconnections between communities by creating synergies between their platforms',
+  url: 'https://semapps.org',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'assemblee-virtuelle', // Usually your GitHub org/user name.
@@ -14,10 +14,9 @@ module.exports = {
       //   src: 'img/logo.svg',
       // },
       links: [
-        {to: 'docs/governance/team', label: 'Gouvernance', position: 'left'},
-        {to: 'docs/participate/how-to', label: 'Participer', position: 'left'},
-        {to: 'docs/style-guide', label: 'Documentation', position: 'left'},
-        {to: 'blog', label: 'Blog', position: 'left'},
+        {to: 'docs/discover', label: 'About', position: 'left'},
+        {to: 'docs/governance/team', label: 'Team', position: 'left'},
+        {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',
@@ -29,50 +28,42 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Documentation',
           items: [
             {
-              label: 'Style Guide',
-              to: 'docs/doc1',
+              label: 'Create your LDP server',
+              to: 'docs/guides/ldp-server',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2',
-            },
+              label: 'Add a Data Management System',
+              to: 'docs/guides/dms',
+            }
           ],
         },
         {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: 'Riot',
+              href: 'https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org',
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
+              label: 'Contact',
+              href: 'https://www.virtual-assembly.org/contact/'
+            }
           ],
         },
         {
           title: 'Social',
           items: [
             {
-              label: 'Blog',
-              to: 'blog',
-            },
-            {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
+              href: 'https://github.com/assemblee-virtuelle/semapps',
+            }
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Assemblée Virtuelle`,
+      copyright: `Copyright © ${new Date().getFullYear()} Virtual Assembly`,
     },
   },
   presets: [
