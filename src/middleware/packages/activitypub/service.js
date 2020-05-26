@@ -26,52 +26,52 @@ const ActivityPubService = {
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
       : 'https://www.w3.org/ns/activitystreams';
 
-    await this.broker.createService(CollectionService, {
+    this.broker.createService(CollectionService, {
       settings: {
         context
       }
     });
 
-    await this.broker.createService(ActorService, {
+    this.broker.createService(ActorService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.actors),
         context
       }
     });
 
-    await this.broker.createService(ActivityService, {
+    this.broker.createService(ActivityService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.activities),
         context
       }
     });
 
-    await this.broker.createService(ObjectService, {
+    this.broker.createService(ObjectService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.objects),
         context
       }
     });
 
-    await this.broker.createService(FollowService, {
+    this.broker.createService(FollowService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
-    await this.broker.createService(InboxService, {
+    this.broker.createService(InboxService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
-    await this.broker.createService(OutboxService, {
+    this.broker.createService(OutboxService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
-    await this.broker.createService(DispatchService, {
+    this.broker.createService(DispatchService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
