@@ -6,7 +6,6 @@ module.exports = {
   api: async function api(ctx) {
     let { containerUri, ...resource } = ctx.params;
     try {
-
       const resourceUri = await ctx.call('ldp.resource.post', {
         containerUri: containerUri,
         slug: ctx.meta.headers.slug,

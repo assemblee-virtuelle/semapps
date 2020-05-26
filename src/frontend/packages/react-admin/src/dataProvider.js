@@ -30,10 +30,10 @@ const computeSparqlQuery = ({ types, params: { query, pagination, sort, filter }
       }
       `;
   }
-  if( query ) {
+  if (query) {
     Object.keys(query).forEach(predicate => {
       const value = query[predicate].startsWith('http') ? `<${query[predicate]}>` : query[predicate];
-      whereQuery += `?s1 ${predicate} ${value} .`
+      whereQuery += `?s1 ${predicate} ${value} .`;
     });
   }
   return `
@@ -86,7 +86,11 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
       /*
        * Do a SPARQL search
        */
-      const sparqlQuery = computeSparqlQuery({ types: resources[resourceId].types, params: { ...params, query: resources[resourceId].query }, ontologies });
+      const sparqlQuery = computeSparqlQuery({
+        types: resources[resourceId].types,
+        params: { ...params, query: resources[resourceId].query },
+        ontologies
+      });
 
       const { json } = await httpClient(sparqlEndpoint, {
         method: 'POST',
@@ -100,7 +104,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
         return { data: [], total: 0 };
       } else if (!compactJson['@graph']) {
         // If we have several fields but no @graph, there is a single match
-        compactJson.id=compactJson['@id'];
+        compactJson.id = compactJson['@id'];
         return { data: [compactJson], total: 1 };
       } else {
         const returnData = compactJson['@graph']
