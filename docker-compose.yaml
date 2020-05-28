@@ -18,45 +18,45 @@ services:
     environment:
       ADMIN_PASSWORD: "admin"
 
-#  middleware:
-#    build:
-#      context: ./src/middleware
-#      dockerfile: Dockerfile
-#    container_name: middleware
-#    restart: always
-#    depends_on:
-#      - fuseki
-#    volumes:
-#      - ./src/middleware:/main/
-#    networks:
-#      - semapps
-#    ports:
-#      - "3000:3000"
-#    expose:
-#      - "3000"
-#    command: ./boilerplates/${MIDDLEWARE}/entrypoint.sh
-#
-#  frontend:
-#    build:
-#      context: ./src/frontend
-#      dockerfile: Dockerfile.dev
-#      args:
-#        - FRONTEND
-#    container_name: frontend
-#    restart: always
-#    depends_on:
-#      - middleware
-#    environment:
-#      - PORT=5000
-#    volumes:
-#      - ./src/frontend:/app/
-#    networks:
-#      - semapps
-#    ports:
-#      - "5000:5000"
-#    expose:
-#      - "5000"
-#    command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./${FRONTEND}"
+  middleware:
+    build:
+      context: ./src/middleware
+      dockerfile: Dockerfile
+    container_name: middleware
+    restart: always
+    depends_on:
+      - fuseki
+    volumes:
+      - ./src/middleware:/main/
+    networks:
+      - semapps
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    command: ./boilerplates/${MIDDLEWARE}/entrypoint.sh
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile.dev
+      args:
+        - FRONTEND
+    container_name: frontend
+    restart: always
+    depends_on:
+      - middleware
+    environment:
+      - PORT=5000
+    volumes:
+      - ./src/frontend:/app/
+    networks:
+      - semapps
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./${FRONTEND}"
 
 volumes:
   rdf_data:
