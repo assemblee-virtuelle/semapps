@@ -50,7 +50,8 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+        if (!response.ok)
+          throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
       }
     },
     countTriplesOfSubject: {
@@ -105,7 +106,8 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+        if (!response.ok)
+          throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
       }
     },
     query: {
@@ -140,7 +142,8 @@ const TripleStoreService = {
           body: query,
           headers
         });
-        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+        if (!response.ok)
+          throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
         // console.log(response.headers.get('content-type'));
         ctx.meta.$responseType = response.headers.get('content-type');
 
@@ -198,7 +201,8 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok) throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+        if (!response.ok)
+          throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
 
         return response;
       }
