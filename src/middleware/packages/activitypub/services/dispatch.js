@@ -8,10 +8,6 @@ const DispatchService = {
     actorsContainer: null
   },
   dependencies: ['activitypub.collection'],
-  started() {
-    // TODO check if we need to have at least one method for the service to work ?
-    console.log('test');
-  },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
@@ -64,8 +60,9 @@ const DispatchService = {
       let output = [],
         recipients = defaultToArray(activity.to);
       for (const recipient of recipients) {
-        if (recipient === PUBLIC_URI || !recipient.startsWith('http')) {
+        if (recipient === PUBLIC_URI || recipient === 'as:Public' || recipient === 'Public') {
           // Public URI. No need to add to inbox.
+          // We accept all three representations https://www.w3.org/TR/activitypub/#public-addressing
           continue;
         } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
           // Followers list. Add the list of followers.
