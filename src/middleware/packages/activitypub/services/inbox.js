@@ -29,7 +29,6 @@ const InboxService = {
       // TODO check activity is valid
 
       // Save the remote activity in the local triple store
-      // TODO check conversion of object ID works fine
       // TODO see if we could cache it elsewhere
       await ctx.call('triplestore.insert', {
         resource: objectIdToCurrent(activity),
