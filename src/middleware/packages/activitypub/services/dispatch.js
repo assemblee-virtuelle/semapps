@@ -17,7 +17,7 @@ const DispatchService = {
         for (const recipientUri of recipients) {
           // TODO find inbox URI from the actor's profile
           const inboxUri = urlJoin(recipientUri, 'inbox');
-          if( this.isLocalActor(recipientUri) ) {
+          if (this.isLocalActor(recipientUri)) {
             // Attach activity to the inbox of the local actor
             await this.broker.call('activitypub.collection.attach', {
               collectionUri: inboxUri,
@@ -31,11 +31,11 @@ const DispatchService = {
               await fetch(inboxUri, {
                 method: 'POST',
                 headers: {
-                  'Content-Type': 'application/json',
+                  'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(activity)
               });
-            } catch(e) {
+            } catch (e) {
               console.error(e);
               console.log('Could not post activity to URI ' + inboxUri, activity);
             }

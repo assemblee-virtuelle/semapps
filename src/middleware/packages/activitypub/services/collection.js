@@ -55,7 +55,7 @@ const CollectionService = {
       const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
-      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
+      if (!resourceExist) throw new Error('Cannot attach a non-existing resource !');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
