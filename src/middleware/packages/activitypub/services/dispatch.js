@@ -1,13 +1,19 @@
 const urlJoin = require('url-join');
+const QueueService = require('moleculer-bull');
+const { setQueues } = require('bull-board');
 const { PUBLIC_URI } = require('../constants');
 const { defaultToArray } = require('../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
+  mixins: [QueueService('redis://localhost:6379')],
   settings: {
     actorsContainer: null
   },
   dependencies: ['activitypub.collection'],
+  started() {
+    setQueues(Object.values(this.$queues));
+  },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
@@ -24,21 +30,7 @@ const DispatchService = {
               item: activity
             });
           } else {
-            // Post activity to the inbox of the distant actor
-            try {
-              // TODO add Json-LD signature
-
-              await fetch(inboxUri, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(activity)
-              });
-            } catch (e) {
-              console.error(e);
-              console.log('Could not post activity to URI ' + inboxUri, activity);
-            }
+            this.createJob('remote.post', { inboxUri, activity });
           }
         }
 
@@ -74,6 +66,28 @@ const DispatchService = {
         }
       }
       return output;
+    }
+  },
+  queues: {
+    // Post activity to the inbox of the distant actor
+    async 'remote.post'(job) {
+      // TODO add Json-LD signature
+
+      await fetch(job.data.inboxUri, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(job.data.activity)
+      });
+
+      job.progress(100);
+
+      return({
+        done: true,
+        id: job.data.id,
+        worker: process.pid
+      })
     }
   }
 };

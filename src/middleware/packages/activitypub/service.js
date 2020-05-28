@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { getContainerRoutes } = require('@semapps/ldp');
+const { UI } = require('bull-board');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');
@@ -107,6 +108,10 @@ const ActivityPubService = {
           aliases: {
             [`POST ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.post'
           }
+        },
+        {
+          path: '/bull-board',
+          use: [UI]
         }
       ];
     }
