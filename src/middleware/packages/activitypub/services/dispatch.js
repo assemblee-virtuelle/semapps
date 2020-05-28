@@ -83,11 +83,11 @@ const DispatchService = {
 
       job.progress(100);
 
-      return({
+      return {
         done: true,
         id: job.data.id,
         worker: process.pid
-      })
+      };
     }
   }
 };
