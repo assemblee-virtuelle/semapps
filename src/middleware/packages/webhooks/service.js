@@ -26,7 +26,7 @@ const WebhooksService = {
       try {
         const webhook = await this.actions.get({ id: hash });
         if( this.createJob ) {
-          this.createJob('webhooks', { action: webhook.action, data, user: webhook.user });
+          this.createJob('webhooks', webhook.action, { data, user: webhook.user });
         } else {
           // If no queue service is defined, run webhook immediately
           return await this.actions[webhook.action]({ data, user: webhook.user });
@@ -78,16 +78,17 @@ const WebhooksService = {
     }
   },
   queues: {
-    async webhooks(job) {
-      const { action, ...data } = job.data;
+    webhooks: {
+      name: '*',
+      async process(job) {
+        const result = await this.actions[job.name](job.data);
 
-      const result = await this.actions[action](data);
+        job.progress(100);
 
-      job.progress(100);
-
-      return({
-        result
-      });
+        return ({
+          result
+        });
+      }
     }
   }
 };
