@@ -25,7 +25,7 @@ const WebhooksService = {
       const { hash, ...data } = ctx.params;
       try {
         const webhook = await this.actions.get({ id: hash });
-        if( this.createJob ) {
+        if (this.createJob) {
           this.createJob('webhooks', { action: webhook.action, data, user: webhook.user });
         } else {
           // If no queue service is defined, run webhook immediately
@@ -85,9 +85,9 @@ const WebhooksService = {
 
       job.progress(100);
 
-      return({
+      return {
         result
-      });
+      };
     }
   }
 };
