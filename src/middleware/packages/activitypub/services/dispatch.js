@@ -1,19 +1,13 @@
 const urlJoin = require('url-join');
-const QueueService = require('moleculer-bull');
-const { setQueues } = require('bull-board');
 const { PUBLIC_URI } = require('../constants');
 const { defaultToArray } = require('../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
-  mixins: [QueueService('redis://localhost:6379')],
   settings: {
     actorsContainer: null
   },
   dependencies: ['activitypub.collection'],
-  started() {
-    setQueues(Object.values(this.$queues));
-  },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
@@ -30,7 +24,13 @@ const DispatchService = {
               item: activity
             });
           } else {
-            this.createJob('remote.post', { inboxUri, activity });
+            // If the QueueService mixin is available, use it
+            if( this.createJob ) {
+              this.createJob('remotePost', { inboxUri, activity });
+            } else {
+              // Send directly
+              await this.remotePost(inboxUri, activity);
+            }
           }
         }
 
@@ -66,27 +66,32 @@ const DispatchService = {
         }
       }
       return output;
-    }
-  },
-  queues: {
-    // Post activity to the inbox of the distant actor
-    async 'remote.post'(job) {
+    },
+    async remotePost(inboxUri, activity) {
       // TODO add Json-LD signature
 
-      await fetch(job.data.inboxUri, {
+      // Post activity to the inbox of the remote actor
+      return await fetch(inboxUri, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(job.data.activity)
+        body: JSON.stringify(activity)
       });
+    }
+  },
+  queues: {
+    async remotePost(job) {
+      const response = await this.remotePost(job.data.inboxUri, job.data.activity);
 
       job.progress(100);
 
       return({
-        done: true,
-        id: job.data.id,
-        worker: process.pid
+        response: {
+          ok: response.ok,
+          status: response.status,
+          statusText: response.statusText
+        }
       })
     }
   }
