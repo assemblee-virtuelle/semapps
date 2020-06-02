@@ -20,7 +20,7 @@ const ActivityPubService = {
       actors: '/actors',
       objects: '/objects'
     },
-    queueServiceUrl: null,
+    queueServiceUrl: null
   },
   dependencies: ['ldp'],
   async created() {

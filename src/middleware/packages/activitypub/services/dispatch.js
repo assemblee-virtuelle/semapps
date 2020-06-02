@@ -25,7 +25,7 @@ const DispatchService = {
             });
           } else {
             // If the QueueService mixin is available, use it
-            if( this.createJob ) {
+            if (this.createJob) {
               this.createJob('remotePost', { inboxUri, activity });
             } else {
               // Send directly
@@ -86,13 +86,13 @@ const DispatchService = {
 
       job.progress(100);
 
-      return({
+      return {
         response: {
           ok: response.ok,
           status: response.status,
           statusText: response.statusText
         }
-      })
+      };
     }
   }
 };
