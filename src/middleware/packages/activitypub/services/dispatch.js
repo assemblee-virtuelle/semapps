@@ -58,6 +58,7 @@ const DispatchService = {
           continue;
         } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
           // Followers list. Add the list of followers.
+          // TODO improve detection of Collections
           const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
           if (collection && collection.items) output.push(...defaultToArray(collection.items));
         } else {
