@@ -6,27 +6,30 @@ const { getPrefixJSON, getPrefixRdf } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
-  async findUnusedUri(ctx, generatedId) {
-    let existingBeginning = await ctx.call('triplestore.query', {
+  async findAvailableUri(ctx, preferredUri) {
+    let resourcesStartingWithUri = await ctx.call('triplestore.query', {
       query: `
         ${getPrefixRdf(this.settings.ontologies)}
         SELECT distinct ?uri
         WHERE {
           ?uri ?predicate ?object.
-          FILTER regex(str(?uri), "^${generatedId}")
+          FILTER regex(str(?uri), "^${preferredUri}")
         }
       `,
       accept: MIME_TYPES.JSON
     });
     let counter = 0;
-    if (existingBeginning.length > 0) {
-      counter = 1;
-      existingBeginning = existingBeginning.map(r => r.uri.value);
-      while (existingBeginning.includes(generatedId.concat(counter))) {
-        counter++;
+    if (resourcesStartingWithUri.length > 0) {
+      // Parse the results
+      resourcesStartingWithUri = resourcesStartingWithUri.map(r => r.uri.value);
+      // If preferredUri is already used, start finding another available URI
+      if( resourcesStartingWithUri.includes(preferredUri) ) {
+        do {
+          counter++;
+        } while (resourcesStartingWithUri.includes(preferredUri + counter));
       }
     }
-    return generatedId.concat(counter > 0 ? counter.toString() : '');
+    return preferredUri + (counter > 0 ? counter : '');
   },
   async jsonldToTriples(jsonLdObject, outputContentType) {
     return new Promise((resolve, reject) => {
