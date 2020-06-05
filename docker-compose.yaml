@@ -58,9 +58,48 @@ services:
       - "5000"
     command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./${FRONTEND}"
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - semapps
+    command: ["redis-server", "--appendonly", "yes"]
+
+  bull-board:
+    build: ./deploy/bull-board
+    container_name: bull-board
+    ports:
+      - "3040:3040"
+    expose:
+      - "3040"
+    networks:
+      - semapps
+    environment:
+      REDIS_HOST: 'redis'
+      PORT: 3040
+
+  arena:
+    build: ./deploy/arena
+    container_name: arena
+    volumes:
+      - ./deploy/arena/config:/opt/arena/src/server/config
+    ports:
+      - "3050:4567"
+    networks:
+      - semapps
+    environment:
+      REDIS_HOST: 'redis'
+
 volumes:
   rdf_data:
   staging:
+  redis_data:
 networks:
   semapps:
     name: semapps_network

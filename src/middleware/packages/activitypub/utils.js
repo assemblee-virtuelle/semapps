@@ -28,7 +28,13 @@ const objectIdToCurrent = activityJson => {
   }
 };
 
+// Items or recipients may be string or array, so default to array for easier handling
+const defaultToArray = value => {
+  return !value ? undefined : Array.isArray(value) ? value : [value];
+};
+
 module.exports = {
   objectCurrentToId,
-  objectIdToCurrent
+  objectIdToCurrent,
+  defaultToArray
 };
