@@ -69,14 +69,14 @@ const FollowService = {
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
 
-            if (this.isLocalActor(activity.object)) {
+            if (this.isLocalActor(followActivity.object)) {
               await this.broker.call('activitypub.collection.detach', {
                 collectionUri: urlJoin(followActivity.object, 'followers'),
                 item: followActivity.actor
               });
             }
 
-            if (this.isLocalActor(activity.actor)) {
+            if (this.isLocalActor(followActivity.actor)) {
               await this.broker.call('activitypub.collection.detach', {
                 collectionUri: urlJoin(followActivity.actor, 'following'),
                 item: followActivity.object

@@ -25,7 +25,12 @@ const WebhooksService = {
       const { hash, ...data } = ctx.params;
       try {
         const webhook = await this.actions.get({ id: hash });
-        return await this.actions[webhook.action]({ data, user: webhook.user });
+        if (this.createJob) {
+          this.createJob('webhooks', webhook.action, { data, user: webhook.user });
+        } else {
+          // If no queue service is defined, run webhook immediately
+          return await this.actions[webhook.action]({ data, user: webhook.user });
+        }
       } catch (e) {
         console.error(e);
         ctx.meta.$statusCode = 404;
@@ -70,6 +75,20 @@ const WebhooksService = {
           }
         }
       ];
+    }
+  },
+  queues: {
+    webhooks: {
+      name: '*',
+      async process(job) {
+        const result = await this.actions[job.name](job.data);
+
+        job.progress(100);
+
+        return {
+          result
+        };
+      }
     }
   }
 };

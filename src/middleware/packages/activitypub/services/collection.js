@@ -59,7 +59,7 @@ const CollectionService = {
       // if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error('Cannot attach to a non-existing collection !');
+      if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
 
       return await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
@@ -74,7 +74,7 @@ const CollectionService = {
       const { collectionUri, item } = ctx.params;
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error('Cannot detach from a non-existing collection !');
+      if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
 
       await ctx.call('triplestore.update', {
         query: `

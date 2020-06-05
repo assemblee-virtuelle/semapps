@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const QueueService = require('moleculer-bull');
 const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
@@ -18,7 +19,8 @@ const ActivityPubService = {
       activities: '/activities',
       actors: '/actors',
       objects: '/objects'
-    }
+    },
+    queueServiceUrl: null
   },
   dependencies: ['ldp'],
   async created() {
@@ -72,6 +74,7 @@ const ActivityPubService = {
     });
 
     this.broker.createService(DispatchService, {
+      mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }

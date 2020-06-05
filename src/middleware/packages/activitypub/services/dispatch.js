@@ -24,20 +24,12 @@ const DispatchService = {
               item: activity
             });
           } else {
-            // Post activity to the inbox of the distant actor
-            try {
-              // TODO add Json-LD signature
-
-              await fetch(inboxUri, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(activity)
-              });
-            } catch (e) {
-              console.error(e);
-              console.log('Could not post activity to URI ' + inboxUri, activity);
+            // If the QueueService mixin is available, use it
+            if (this.createJob) {
+              this.createJob('remotePost', { inboxUri, activity });
+            } else {
+              // Send directly
+              await this.remotePost(inboxUri, activity);
             }
           }
         }
@@ -66,6 +58,7 @@ const DispatchService = {
           continue;
         } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
           // Followers list. Add the list of followers.
+          // TODO improve detection of Collections
           const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
           if (collection && collection.items) output.push(...defaultToArray(collection.items));
         } else {
@@ -74,6 +67,33 @@ const DispatchService = {
         }
       }
       return output;
+    },
+    async remotePost(inboxUri, activity) {
+      // TODO add Json-LD signature
+
+      // Post activity to the inbox of the remote actor
+      return await fetch(inboxUri, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(activity)
+      });
+    }
+  },
+  queues: {
+    async remotePost(job) {
+      const response = await this.remotePost(job.data.inboxUri, job.data.activity);
+
+      job.progress(100);
+
+      return {
+        response: {
+          ok: response.ok,
+          status: response.status,
+          statusText: response.statusText
+        }
+      };
     }
   }
 };

@@ -41,7 +41,8 @@ describe('Posting to followers', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
       type: ACTIVITY_TYPES.FOLLOW,
-      object: simon.id
+      object: simon.id,
+      to: [simon.id, sebastien.id + '/followers']
     });
 
     expect(followActivity).toMatchObject({
@@ -95,7 +96,8 @@ describe('Posting to followers', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
       type: ACTIVITY_TYPES.UNDO,
-      object: followActivity
+      object: followActivity,
+      to: [simon.id, sebastien.id + '/followers']
     });
 
     // Wait for actor to be removed to the followers collection

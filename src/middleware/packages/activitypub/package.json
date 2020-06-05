@@ -8,9 +8,11 @@
     "@semapps/ldp": "^0.1.9",
     "@semapps/mime-types": "^0.1.9",
     "@semapps/triplestore": "^0.1.9",
+    "bull-board": "^0.7.0",
     "jsonld": "^1.8.1",
     "moleculer": "^0.14.3",
     "moleculer-db": "^0.8.7",
+    "moleculer-bull": "^0.2.5",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
