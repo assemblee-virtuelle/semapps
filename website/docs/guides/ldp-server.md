@@ -18,6 +18,14 @@ Then initialize a new project based on this template with this command:
 moleculer init assemblee-virtuelle/semapps-template-ldp my-project
 ```
 
+Choose `yes` to all questions
+```
+? Do you need a local instance of Jena Fuseki (with Docker)? Yes
+? Do you need a read-only SPARQL endpoint? Yes
+Create 'semapps' folder...
+? Would you like to run 'npm install'? Yes
+```
+
 You can now go to the newly-created directory:
 
 ```bash
@@ -34,7 +42,7 @@ You need [docker](https://docs.docker.com/install/) and [docker-compose](https:/
 docker-compose up
 ```
 
-Jena Fuseki is now available at the URL http://localhost:3030. 
+Jena Fuseki is now available at the URL http://localhost:3030.
 
 Please login - By default the login is `admin` and the password is also `admin`.
 
