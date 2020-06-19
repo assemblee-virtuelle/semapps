@@ -23,7 +23,7 @@ module.exports = {
       // Parse the results
       resourcesStartingWithUri = resourcesStartingWithUri.map(r => r.uri.value);
       // If preferredUri is already used, start finding another available URI
-      if( resourcesStartingWithUri.includes(preferredUri) ) {
+      if (resourcesStartingWithUri.includes(preferredUri)) {
         do {
           counter++;
         } while (resourcesStartingWithUri.includes(preferredUri + counter));
