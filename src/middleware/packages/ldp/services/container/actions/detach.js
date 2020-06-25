@@ -8,7 +8,7 @@ module.exports = {
     const { containerUri, resourceUri } = ctx.params;
 
     const containerExists = await this.actions.exist({ containerUri });
-    if (!containerExists) throw new Error('Cannot detach from a non-existing container !');
+    if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.update', {
       query: `

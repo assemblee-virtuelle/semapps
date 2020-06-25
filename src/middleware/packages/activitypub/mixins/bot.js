@@ -41,12 +41,15 @@ const BotService = {
         name: actorSettings.name
       });
 
+      // Set actor URI before calling the actorCreated method
+      this.settings.actor.uri = actor.id;
+
       if (this.actorCreated) {
         this.actorCreated(actor);
       }
+    } else {
+      this.settings.actor.uri = actor.id;
     }
-
-    this.settings.actor.uri = actor.id;
   },
   events: {
     'activitypub.inbox.received'(params) {

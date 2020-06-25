@@ -5,12 +5,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: amondnet/now-deployment@v2
+      - uses: amondnet/vercel-action@v19.0.1+1
         with:
-          zeit-token: ${{ secrets.ZEIT_TOKEN }}
+          vercel-token: ${{ secrets.ZEIT_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }} # Optional
-          zeit-team-id: 'team_Lirf6L6BdNRARtO7mBp1uBct' # Optional
 #         now-args: '--prod' # Optional
-          now-org-id: 'team_Lirf6L6BdNRARtO7mBp1uBct'
-          now-project-id: 'QmaojiX3jHJAaqREDhmSeBm1omBWzg8YNDB923pQwtPCe1'
+          vercel-org-id: 'team_Lirf6L6BdNRARtO7mBp1uBct'
+          vercel-project-id: 'QmaojiX3jHJAaqREDhmSeBm1omBWzg8YNDB923pQwtPCe1'
           working-directory: ./website
+          scope: 'semapps'
