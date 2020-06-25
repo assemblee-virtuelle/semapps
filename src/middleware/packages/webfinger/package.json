@@ -1,0 +1,13 @@
+{
+  "name": "@semapps/webfinger",
+  "version": "0.1.12",
+  "description": "Incoming webhooks for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "url-join": "^4.0.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
