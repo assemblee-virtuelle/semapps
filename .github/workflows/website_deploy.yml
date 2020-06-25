@@ -13,3 +13,4 @@ jobs:
           vercel-org-id: 'team_Lirf6L6BdNRARtO7mBp1uBct'
           vercel-project-id: 'QmaojiX3jHJAaqREDhmSeBm1omBWzg8YNDB923pQwtPCe1'
           working-directory: ./website
+          scope: 'semapps'
