@@ -1,38 +1,15 @@
 # SemApps
 
-SemApps is an open source projet which aim to **ease data storage and filtering**.
-SemApps means Semantic Apps, thus storage and filtering are ontology driven
+SemApps is an open source project which aims to **ease data storage and filtering**.
 
-More information about the project http://semapps.org
+SemApps means Semantic Apps, thus storage and filtering are ontology driven.
 
-# Usage
+- [Homepage](https://semapps.org)
+- [About](https://semapps.org/docs/about)
+- [Team](https://semapps.org/docs/governance/team)
+- [Documentation](https://semapps.org/docs/guides/ldp-server)
+- [How to contribute](https://semapps.org/docs/contribute/code)
 
-## Prerequisites
-docker
-docker-compose
-[make](https://www.gnu.org/software/make/)
-
-## First time (mandatory to dev, not to deploy)
-```
-make init
-```
-## All dev commands
-### Build (not mandatory to start)
-```
-make build
-```
-### Start
-```
-make start
-```
-### Logs
-```
-make log
-```
-### Stop
-```
-make stop
-```
 ## production commands
 
 edit local env variables
@@ -50,15 +27,3 @@ make build-prod
 make start-prod
 
 ```
-
-## Cleanup code
-Please do this before every PR submission.
-```
-make prettier
-```
-
-# Contributing
-We welcome contributors from everywhere. Please contact us to join the team.
-
-- [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org)
-- [Conventions](website/docs/others/conventions.md)

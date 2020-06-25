@@ -14,9 +14,10 @@ module.exports = {
       //   src: 'img/logo.svg',
       // },
       links: [
-        {to: 'docs/discover', label: 'About', position: 'left'},
+        {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
+        {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',
