@@ -9,26 +9,25 @@ const WebfingerService = {
   actions: {
     async get(ctx) {
       const { resource } = ctx.params;
-      const usernameMatchRegex = new RegExp(`^acct:(\\w*)@${this.settings.domainName}$`)
+      const usernameMatchRegex = new RegExp(`^acct:(\\w*)@${this.settings.domainName}$`);
       const matches = resource.match(usernameMatchRegex);
-      if( matches ) {
+      if (matches) {
         const userName = matches[1];
         const userUri = urlJoin(this.settings.usersContainer, userName);
 
         // TODO check actor exists
 
-        return({
+        return {
           subject: resource,
-          aliases: [ userUri ],
+          aliases: [userUri],
           links: [
             {
-              rel: "self",
-              type: "application/activity+json",
+              rel: 'self',
+              type: 'application/activity+json',
               href: userUri
             }
           ]
-        })
-
+        };
       } else {
         // 404
       }
