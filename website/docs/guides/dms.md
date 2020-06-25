@@ -23,13 +23,13 @@ We provide a [custom template](https://create-react-app.dev/docs/custom-template
 To use it, run this command:
 
 ```bash
-npx create-react-app my-project --template @semapps/dms
+npx create-react-app my-dms --template @semapps/dms
 ```
 
 You can now go to the newly-created directory:
 
 ```bash
-cd my-project
+cd my-dms
 ```
 
 ### Launch the DMS
