@@ -1,12 +1,9 @@
 {
-  "name": "@semapps/webfinger",
+  "name": "@semapps/ld-signature",
   "version": "0.1.12",
-  "description": "Webfinger extension for SemApps",
+  "description": "Linked data signatures for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "dependencies": {
-    "url-join": "^4.0.1"
-  },
   "publishConfig": {
     "access": "public"
   }
