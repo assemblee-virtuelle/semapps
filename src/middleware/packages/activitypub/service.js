@@ -37,7 +37,9 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.actors),
-        context: Array.isArray(context) ? [...context, 'https://w3id.org/security/v1'] : [context, 'https://w3id.org/security/v1']
+        context: Array.isArray(context)
+          ? [...context, 'https://w3id.org/security/v1']
+          : [context, 'https://w3id.org/security/v1']
       }
     });
 
