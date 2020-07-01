@@ -4,8 +4,8 @@ const { generateKeyPair } = require('crypto');
 
 const getSlugFromUri = str => str.replace(/\/$/, '').replace(/.*\//, '');
 
-const LdSignatureService = {
-  name: 'ld-signature',
+const SignatureService = {
+  name: 'signature',
   settings: {
     actorsKeyPairsDir: null,
   },
@@ -39,4 +39,4 @@ const LdSignatureService = {
   }
 };
 
-module.exports = LdSignatureService;
+module.exports = SignatureService;
