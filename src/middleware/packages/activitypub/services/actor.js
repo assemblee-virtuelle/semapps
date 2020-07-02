@@ -6,7 +6,7 @@ const ActorService = {
   name: 'activitypub.actor',
   mixins: [DbService],
   adapter: new TripleStoreAdapter(),
-  dependencies: ['activitypub.collection', 'ld-signature'],
+  dependencies: ['activitypub.collection', 'signature'],
   settings: {
     containerUri: null, // To be set by the user
     queryDepth: 1,
@@ -38,7 +38,7 @@ const ActorService = {
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;
-      const publicKey = await ctx.call('ld-signature.generateActorKeyPair', { actorUri });
+      const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
 
       return await this._update(ctx, {
         '@id': actorUri,

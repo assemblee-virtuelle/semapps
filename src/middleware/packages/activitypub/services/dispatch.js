@@ -69,15 +69,22 @@ const DispatchService = {
       return output;
     },
     async remotePost(inboxUri, activity) {
-      // TODO add Json-LD signature
+      const body = JSON.stringify(activity);
+
+      const signatureHeaders = await this.broker.call('signature.getSignatureHeaders', {
+        url: inboxUri,
+        body,
+        actorUri: activity.actor
+      });
 
       // Post activity to the inbox of the remote actor
       return await fetch(inboxUri, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          ...signatureHeaders
         },
-        body: JSON.stringify(activity)
+        body
       });
     }
   },
@@ -85,7 +92,11 @@ const DispatchService = {
     async remotePost(job) {
       const response = await this.remotePost(job.data.inboxUri, job.data.activity);
 
-      job.progress(100);
+      if (!response.ok) {
+        job.moveToFailed({ message: 'Unable to send to remote host ' + job.data.inboxUri }, true);
+      } else {
+        job.progress(100);
+      }
 
       return {
         response: {

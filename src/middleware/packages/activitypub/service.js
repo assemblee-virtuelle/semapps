@@ -9,6 +9,7 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
+const { parseHeader, parseBody, negotiateContentType, parseJson } = require('@semapps/middlewares');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -84,6 +85,8 @@ const ActivityPubService = {
   },
   actions: {
     getApiRoutes() {
+      const middlewares = [parseHeader, parseBody, negotiateContentType, parseJson];
+
       return [
         ...getContainerRoutes(
           urlJoin(this.settings.baseUri, this.settings.containers.activities),
@@ -101,7 +104,7 @@ const ActivityPubService = {
             [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
             [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
             [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing',
-            [`POST ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.post'
+            [`POST ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.post']
           }
         },
         // Secured routes

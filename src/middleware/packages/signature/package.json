@@ -4,6 +4,9 @@
   "description": "Linked data signatures for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
+  "dependencies": {
+    "http-signature-header": "^1.3.1"
+  },
   "publishConfig": {
     "access": "public"
   }

@@ -4,11 +4,17 @@ const WebfingerService = {
   name: 'webfinger',
   settings: {
     usersContainer: null,
-    domainName: null
+    domainName: null // If not set, will be extracted from usersContainer
+  },
+  started() {
+    if (!this.settings.domainName) {
+      this.settings.domainName = new URL(this.settings.usersContainer).host;
+    }
   },
   actions: {
     async get(ctx) {
       const { resource } = ctx.params;
+
       const usernameMatchRegex = new RegExp(`^acct:(\\w*)@${this.settings.domainName}$`);
       const matches = resource.match(usernameMatchRegex);
       if (matches) {
