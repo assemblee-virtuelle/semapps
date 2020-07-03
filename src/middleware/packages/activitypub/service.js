@@ -85,7 +85,7 @@ const ActivityPubService = {
   },
   actions: {
     getApiRoutes() {
-      const middlewares = [parseHeader, parseBody, negotiateContentType, parseJson];
+      const middlewares = [parseHeader, parseBody, parseJson];
 
       return [
         ...getContainerRoutes(

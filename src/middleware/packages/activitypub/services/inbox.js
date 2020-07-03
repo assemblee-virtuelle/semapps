@@ -25,7 +25,21 @@ const InboxService = {
         return;
       }
 
-      // TODO check JSON-LD signature
+      const validDigest = await ctx.call('signature.verifyDigest', {
+        body: JSON.stringify(activity),
+        headers: ctx.meta.headers
+      });
+
+      const validSignature = await ctx.call('signature.verifyHttpSignature', {
+        url: collectionUri || this.getInboxUri(username),
+        headers: ctx.meta.headers
+      });
+
+      if (!validDigest || !validSignature) {
+        ctx.meta.$statusCode = 401;
+        return;
+      }
+
       // TODO check activity is valid
 
       // Save the remote activity in the local triple store
@@ -46,7 +60,7 @@ const InboxService = {
         recipients: [urlJoin(this.settings.actorsContainer, username)]
       });
 
-      return activity;
+      ctx.meta.$statusCode = 202;
     },
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';

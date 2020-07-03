@@ -71,7 +71,7 @@ const DispatchService = {
     async remotePost(inboxUri, activity) {
       const body = JSON.stringify(activity);
 
-      const signatureHeaders = await this.broker.call('signature.getSignatureHeaders', {
+      const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
         url: inboxUri,
         body,
         actorUri: activity.actor
