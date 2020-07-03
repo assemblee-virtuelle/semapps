@@ -16,6 +16,7 @@ module.exports = {
       links: [
         {to: 'docs/discover', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},
+        {to: 'docs/governance/organisation and role', label: 'Governance', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
