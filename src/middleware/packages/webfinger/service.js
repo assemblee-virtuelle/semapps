@@ -29,7 +29,7 @@ const WebfingerService = {
           actor = null;
         }
 
-        if( actor ) {
+        if (actor) {
           return {
             subject: resource,
             aliases: [userUri],
