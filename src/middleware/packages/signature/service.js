@@ -107,6 +107,7 @@ const SignatureService = {
           .digest('base64')
       );
     },
+    // TODO use cache mechanisms
     async getRemoteActorPublicKey(actorUrl) {
       const response = await fetch(actorUrl, { headers: { Accept: 'application/json' } });
       if (!response) return false;

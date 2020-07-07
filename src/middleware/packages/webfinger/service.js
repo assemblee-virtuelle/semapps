@@ -6,6 +6,7 @@ const WebfingerService = {
     usersContainer: null,
     domainName: null // If not set, will be extracted from usersContainer
   },
+  dependencies: ['activitypub.actor'],
   started() {
     if (!this.settings.domainName) {
       this.settings.domainName = new URL(this.settings.usersContainer).host;
@@ -21,21 +22,30 @@ const WebfingerService = {
         const userName = matches[1];
         const userUri = urlJoin(this.settings.usersContainer, userName);
 
-        // TODO check actor exists
+        let actor;
+        try {
+          actor = await ctx.call('activitypub.actor.get', { id: userUri });
+        } catch (e) {
+          actor = null;
+        }
 
-        return {
-          subject: resource,
-          aliases: [userUri],
-          links: [
-            {
-              rel: 'self',
-              type: 'application/activity+json',
-              href: userUri
-            }
-          ]
-        };
+        if( actor ) {
+          return {
+            subject: resource,
+            aliases: [userUri],
+            links: [
+              {
+                rel: 'self',
+                type: 'application/activity+json',
+                href: userUri
+              }
+            ]
+          };
+        } else {
+          ctx.meta.$statusCode = 404;
+        }
       } else {
-        // 404
+        ctx.meta.$statusCode = 404;
       }
     },
     getApiRoutes() {

@@ -9,7 +9,7 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
-const { parseHeader, parseBody, negotiateContentType, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseBody, parseJson } = require('@semapps/middlewares');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -85,6 +85,7 @@ const ActivityPubService = {
   },
   actions: {
     getApiRoutes() {
+      // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
       const middlewares = [parseHeader, parseBody, parseJson];
 
       return [
@@ -96,24 +97,22 @@ const ActivityPubService = {
         ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
         // Unsecured routes
         {
-          bodyParsers: { json: true },
           authorization: false,
           authentication: true,
           aliases: {
-            [`GET ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.list',
-            [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
-            [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
-            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing',
+            [`GET ${this.settings.containers.actors}/:username/outbox`]: [...middlewares, 'activitypub.outbox.list'],
+            [`GET ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.list'],
+            [`GET ${this.settings.containers.actors}/:username/followers`]: [...middlewares, 'activitypub.follow.listFollowers'],
+            [`GET ${this.settings.containers.actors}/:username/following`]: [...middlewares, 'activitypub.follow.listFollowing'],
             [`POST ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.post']
           }
         },
         // Secured routes
         {
-          bodyParsers: { json: true },
           authorization: true,
           authentication: false,
           aliases: {
-            [`POST ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.post'
+            [`POST ${this.settings.containers.actors}/:username/outbox`]: [...middlewares, 'activitypub.outbox.post']
           }
         }
       ];
