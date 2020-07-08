@@ -102,8 +102,14 @@ const ActivityPubService = {
           aliases: {
             [`GET ${this.settings.containers.actors}/:username/outbox`]: [...middlewares, 'activitypub.outbox.list'],
             [`GET ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.list'],
-            [`GET ${this.settings.containers.actors}/:username/followers`]: [...middlewares, 'activitypub.follow.listFollowers'],
-            [`GET ${this.settings.containers.actors}/:username/following`]: [...middlewares, 'activitypub.follow.listFollowing'],
+            [`GET ${this.settings.containers.actors}/:username/followers`]: [
+              ...middlewares,
+              'activitypub.follow.listFollowers'
+            ],
+            [`GET ${this.settings.containers.actors}/:username/following`]: [
+              ...middlewares,
+              'activitypub.follow.listFollowing'
+            ],
             [`POST ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.post']
           }
         },
