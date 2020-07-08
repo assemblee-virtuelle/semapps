@@ -50,6 +50,14 @@ module.exports = {
 }
 ```
 
+## Settings
+
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `usersContainer` | `String` | **required** | Container where the actors can be found
+| `domainName` | `String` |  | Domain name used for the user@domain webfinger identifier. If not set, the domain name will be guessed from the users' container.
+
+
 ## Discovering an user with Webfinger
 
 In the Webfinger protocol, users are identified by their username and the domain name where they are hosted: `username@domain`. This is similar to email addresses, except services like Mastodon add a `@` at the beginning.

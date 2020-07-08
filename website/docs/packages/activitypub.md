@@ -17,7 +17,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 ## Dependencies
 
-- LdpService
+- [LdpService](ldp.md)
+- [WebfingerService](webfinger.md)
+- [SignatureService](signature.md)
 
 ## Sub-services
 
