@@ -1,18 +1,29 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createHashHistory } from 'history';
-import { Admin, Resource } from 'react-admin';
+import { ConnectedRouter } from 'connected-react-router';
+import { Switch, Route } from 'react-router-dom';
+import { DataProviderContext, TranslationProvider, Resource } from 'react-admin';
+import defaultMessages from 'ra-language-english';
+import polyglotI18nProvider from 'ra-i18n-polyglot';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 import { dataProvider, authProvider, httpClient } from '@semapps/react-admin';
-import LogoutButton from './auth/LogoutButton';
+
 import { ProjectList, ProjectEdit, ProjectCreate, ProjectIcon } from './resources/projects';
-import { OrganizationList, OrganizationEdit, OrganizationCreate, OrganizationIcon } from './resources/organizations';
-import { PersonList, PersonIcon } from './resources/persons';
-import { ConceptList, ConceptIcon } from './resources/concepts';
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 import createStore from './createStore';
 
 const history = createHashHistory();
+const theme = createMuiTheme({
+  palette: {
+    type: 'light', // Switching the dark mode on is a single property value change.
+  },
+});
+const i18nProvider = polyglotI18nProvider(locale => {
+  return defaultMessages;
+});
 
 function App() {
   return (
@@ -23,37 +34,33 @@ function App() {
         history,
       })}
     >
-      <Admin
-        dataProvider={dataProvider({
-          sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
-          httpClient,
-          resources,
-          ontologies
-        })}
-        authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
-        history={history}
-        logoutButton={LogoutButton}
-      >
-        <Resource
-          name="Project"
-          list={ProjectList}
-          edit={ProjectEdit}
-          create={ProjectCreate}
-          icon={ProjectIcon}
-          options={{ label: 'Projets' }}
-        />
-        <Resource
-          name="Organization"
-          list={OrganizationList}
-          edit={OrganizationEdit}
-          create={OrganizationCreate}
-          icon={OrganizationIcon}
-          options={{ label: 'Organisations' }}
-        />
-        <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
-        <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
-        <Resource name="Agent" />
-      </Admin>
+      <DataProviderContext.Provider value={dataProvider({
+        sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
+        httpClient,
+        resources,
+        ontologies
+      })}>
+        <TranslationProvider
+          locale="en"
+          i18nProvider={i18nProvider}
+        >
+          <ThemeProvider theme={theme}>
+            <Resource name="Project" intent="registration" />
+            <Resource name="Organization" intent="registration" />
+            <Resource name="Person" intent="registration" />
+            <Resource name="Concept" intent="registration" />
+            <Resource name="Agent" intent="registration" />
+            <ConnectedRouter history={history}>
+            <Switch>
+              <Route exact path="/projects" render={(routeProps) => <ProjectList hasCreate resource="Project" basePath={routeProps.match.url} {...routeProps} />} />
+              <Route exact path="/projects/create" render={(routeProps) => <ProjectCreate resource="Project" basePath={routeProps.match.url} {...routeProps} />} />
+              <Route exact path="/projects/:id" render={(routeProps) => <ProjectEdit hasShow resource="Project" basePath={routeProps.match.url} id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
+              {/*<Route exact path="/projects/:id/show" render={(routeProps) => <PostShow hasEdit resource="posts" basePath={routeProps.match.url} id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />*/}
+            </Switch>
+            </ConnectedRouter>
+          </ThemeProvider>
+        </TranslationProvider>
+      </DataProviderContext.Provider>
     </Provider>
   );
 }
