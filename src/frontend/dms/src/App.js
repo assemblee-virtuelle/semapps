@@ -8,7 +8,7 @@ import defaultMessages from 'ra-language-english';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { dataProvider, authProvider, httpClient } from '@semapps/react-admin';
+import { dataProvider as createDataProvider, authProvider, httpClient } from '@semapps/react-admin';
 
 import { ProjectList, ProjectShow, ProjectEdit, ProjectCreate } from './resources/projects';
 import resources from './config/resources';
@@ -25,6 +25,12 @@ const theme = createMuiTheme({
 const i18nProvider = polyglotI18nProvider(locale => {
   return defaultMessages;
 });
+const dataProvider = createDataProvider({
+  sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
+  httpClient,
+  resources,
+  ontologies
+});
 
 function App() {
   return (
@@ -35,12 +41,7 @@ function App() {
         history,
       })}
     >
-      <DataProviderContext.Provider value={dataProvider({
-        sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
-        httpClient,
-        resources,
-        ontologies
-      })}>
+      <DataProviderContext.Provider value={dataProvider}>
         <TranslationProvider
           locale="en"
           i18nProvider={i18nProvider}
