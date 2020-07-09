@@ -3,12 +3,12 @@ import { Provider } from 'react-redux';
 import { createHashHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { Switch, Route } from 'react-router-dom';
-import { DataProviderContext, TranslationProvider, Resource } from 'react-admin';
+import { DataProviderContext, AuthContext, TranslationProvider, Resource } from 'react-admin';
 import defaultMessages from 'ra-language-english';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
-import { dataProvider as createDataProvider, authProvider, httpClient } from '@semapps/react-admin';
+import { dataProvider as createDataProvider, authProvider as createAuthProvider, httpClient } from '@semapps/react-admin';
 
 import { ProjectList, ProjectShow, ProjectEdit, ProjectCreate } from './resources/projects';
 import resources from './config/resources';
@@ -31,6 +31,7 @@ const dataProvider = createDataProvider({
   resources,
   ontologies
 });
+const authProvider = createAuthProvider(process.env.REACT_APP_MIDDLEWARE_URL);
 
 function App() {
   return (
@@ -41,30 +42,32 @@ function App() {
         history,
       })}
     >
-      <DataProviderContext.Provider value={dataProvider}>
-        <TranslationProvider
-          locale="en"
-          i18nProvider={i18nProvider}
-        >
-          <ThemeProvider theme={theme}>
-            <Resource name="Project" intent="registration" />
-            <Resource name="Organization" intent="registration" />
-            <Resource name="Person" intent="registration" />
-            <Resource name="Concept" intent="registration" />
-            <Resource name="Agent" intent="registration" />
-            <Layout>
-              <ConnectedRouter history={history}>
-                <Switch>
-                  <Route exact path="/projects" render={(routeProps) => <ProjectList hasShow hasCreate resource="Project" basePath="/projects" {...routeProps} />} />
-                  <Route exact path="/projects/create" render={(routeProps) => <ProjectCreate resource="Project" basePath="/projects" {...routeProps} />} />
-                  <Route exact path="/projects/:id" render={(routeProps) => <ProjectEdit hasShow resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
-                  <Route exact path="/projects/:id/show" render={(routeProps) => <ProjectShow hasEdit resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
-                </Switch>
-              </ConnectedRouter>
-            </Layout>
-          </ThemeProvider>
-        </TranslationProvider>
-      </DataProviderContext.Provider>
+      <AuthContext.Provider value={authProvider}>
+        <DataProviderContext.Provider value={dataProvider}>
+          <TranslationProvider
+            locale="en"
+            i18nProvider={i18nProvider}
+          >
+            <ThemeProvider theme={theme}>
+              <Resource name="Project" intent="registration" />
+              <Resource name="Organization" intent="registration" />
+              <Resource name="Person" intent="registration" />
+              <Resource name="Concept" intent="registration" />
+              <Resource name="Agent" intent="registration" />
+              <Layout>
+                <ConnectedRouter history={history}>
+                  <Switch>
+                    <Route exact path="/projects" render={(routeProps) => <ProjectList hasShow hasCreate resource="Project" basePath="/projects" {...routeProps} />} />
+                    <Route exact path="/projects/create" render={(routeProps) => <ProjectCreate resource="Project" basePath="/projects" {...routeProps} />} />
+                    <Route exact path="/projects/:id" render={(routeProps) => <ProjectEdit hasShow resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
+                    <Route exact path="/projects/:id/show" render={(routeProps) => <ProjectShow hasEdit resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
+                  </Switch>
+                </ConnectedRouter>
+              </Layout>
+            </ThemeProvider>
+          </TranslationProvider>
+        </DataProviderContext.Provider>
+      </AuthContext.Provider>
     </Provider>
   );
 }
