@@ -87,3 +87,8 @@ If the user exists locally, it will return a JSON like this:
   ]
 }
 ```
+
+## Additional resources about the protocol
+
+- https://www.packetizer.com/ws/webfinger/
+- https://tools.ietf.org/html/rfc7033
