@@ -90,5 +90,6 @@ If the user exists locally, it will return a JSON like this:
 
 ## Additional resources about the protocol
 
+- https://docs.joinmastodon.org/spec/webfinger/
 - https://www.packetizer.com/ws/webfinger/
 - https://tools.ietf.org/html/rfc7033
