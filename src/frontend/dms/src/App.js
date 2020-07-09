@@ -1,8 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { createHashHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { Switch, Route } from 'react-router-dom';
+import withContext from 'recompose/withContext';
 import { DataProviderContext, AuthContext, TranslationProvider, Resource } from 'react-admin';
 import defaultMessages from 'ra-language-english';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
@@ -72,4 +74,7 @@ function App() {
   );
 }
 
-export default App;
+export default withContext(
+  { authProvider: PropTypes.object },
+  () => ({ authProvider })
+)(App);

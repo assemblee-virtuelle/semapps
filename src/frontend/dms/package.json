@@ -5,6 +5,7 @@
   "dependencies": {
     "@semapps/react-admin": "0.1.4",
     "jwt-decode": "^2.2.0",
+    "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.5",
     "react-markdown": "^4.3.1",
     "react": "^16.13.1",
