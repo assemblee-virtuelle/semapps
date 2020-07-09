@@ -4,7 +4,6 @@ const { TripleStoreService } = require('@semapps/triplestore');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
-const { WebfingerService } = require('@semapps/webfinger');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
