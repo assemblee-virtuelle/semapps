@@ -8,6 +8,6 @@
 module.exports = {
   docs: {
     Guides: ['guides/ldp-server','guides/dms'],
-    Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
+    Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
   }
 };
