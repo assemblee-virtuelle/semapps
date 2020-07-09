@@ -3,15 +3,25 @@ import {
   List,
   Datagrid,
   Edit,
+  Show,
   Create,
   SimpleForm,
   TextField,
   EditButton,
+  ShowButton,
+  SingleFieldList,
+  SimpleShowLayout,
+  ChipField,
+  RichTextField,
   TextInput,
+  FunctionField,
   useAuthenticated,
-  AutocompleteArrayInput
+  AutocompleteArrayInput,
+  ReferenceArrayField
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
+import MarkDownField from '../components/MarkdownField';
+import { Grid, makeStyles } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 import SearchFilter from '../components/SearchFilter';
@@ -22,9 +32,10 @@ export const ProjectList = props => {
   useAuthenticated();
   return (
     <List title="Projets" perPage={25} filters={<SearchFilter />} {...props}>
-      <Datagrid rowClick="edit">
+      <Datagrid rowClick="show">
         <TextField source="pairv1:preferedLabel" label="Nom" />
-        <EditButton basePath="/Project" />
+        <ShowButton basePath="/projects" />
+        <EditButton basePath="/projects" />
       </Datagrid>
     </List>
   );
@@ -41,6 +52,7 @@ export const ProjectEdit = props => (
       <TextInput source="pairv1:comment" label="Commentaire" fullWidth />
       <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
       <UriInput source="pairv1:homePage" label="Site web" fullWidth />
+      <UriInput source="pairv1:image" label="Image" fullWidth />
       <TextInput source="pairv1:adress" label="Adresse" fullWidth />
       <JsonLdReferenceInput label="Géré par" reference="Agent" source="pairv1:isManagedBy">
         <AutocompleteArrayInput
@@ -78,3 +90,87 @@ export const ProjectCreate = props => (
     </SimpleForm>
   </Create>
 );
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    flexGrow: 1,
+  }
+}));
+
+const ColumnShowLayout = props => {
+  const {
+    basePath,
+    children,
+    record,
+    resource
+  } = props;
+
+  const classes = useStyles();
+  return (
+    <div className={classes.root}>
+      <Grid container spacing={3}>
+        {React.Children.map(children, column =>
+          column && React.isValidElement(column) ?
+            React.cloneElement(column, {
+              resource,
+              record,
+              basePath,
+            }) : null
+        )}
+      </Grid>
+    </div>
+  );
+};
+
+const Column = props => {
+  const {
+    basePath,
+    children,
+    record,
+    resource,
+    xs
+  } = props;
+
+  return (
+    <Grid item xs={xs}>
+      {React.Children.map(children, field =>
+        field && React.isValidElement(field) ?
+          React.cloneElement(field, {
+            resource,
+            record,
+            basePath,
+          }) : null
+      )}
+    </Grid>
+  );
+};
+
+const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
+  if( Array.isArray(record[source]) ) {
+    record[source] =  record[source].map(i => i['@id'] || i);
+  }
+  return(
+    <ReferenceArrayField record={record} source={source} {...otherProps} />
+  );
+}
+
+export const ProjectShow = props => {
+  return (
+    <Show {...props}>
+      <ColumnShowLayout>
+        <Column xs={9}>
+          <FunctionField render={record => <h1>{record['pairv1:preferedLabel']}</h1>} />
+          <MarkDownField source="pairv1:description" addLabel label="Adresse" />
+        </Column>
+        <Column xs={3}>
+          <TextField source="pairv1:adress" />
+          <JsonLdReferenceArrayField label="Géré par" reference="Agent" source="pairv1:isManagedBy">
+            <SingleFieldList>
+              <ChipField source="pairv1:preferedLabel" />
+            </SingleFieldList>
+          </JsonLdReferenceArrayField>
+        </Column>
+      </ColumnShowLayout>
+    </Show>
+  );
+};

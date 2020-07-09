@@ -6,9 +6,10 @@
     "@semapps/react-admin": "0.1.4",
     "jwt-decode": "^2.2.0",
     "ra-input-markdown": "^1.1.5",
-    "react": "^16.13.0",
-    "react-admin": "^3.2.4",
-    "react-dom": "^16.13.0"
+    "react-markdown": "^4.3.1",
+    "react": "^16.13.1",
+    "react-admin": "^3.7.0",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",

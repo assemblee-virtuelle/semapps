@@ -10,7 +10,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { dataProvider, authProvider, httpClient } from '@semapps/react-admin';
 
-import { ProjectList, ProjectEdit, ProjectCreate } from './resources/projects';
+import { ProjectList, ProjectShow, ProjectEdit, ProjectCreate } from './resources/projects';
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 import createStore from './createStore';
@@ -54,10 +54,10 @@ function App() {
             <Layout>
               <ConnectedRouter history={history}>
                 <Switch>
-                  <Route exact path="/projects" render={(routeProps) => <ProjectList hasCreate resource="Project" basePath={routeProps.match.url} {...routeProps} />} />
-                  <Route exact path="/projects/create" render={(routeProps) => <ProjectCreate resource="Project" basePath={routeProps.match.url} {...routeProps} />} />
-                  <Route exact path="/projects/:id" render={(routeProps) => <ProjectEdit hasShow resource="Project" basePath={routeProps.match.url} id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
-                  {/*<Route exact path="/projects/:id/show" render={(routeProps) => <PostShow hasEdit resource="posts" basePath={routeProps.match.url} id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />*/}
+                  <Route exact path="/projects" render={(routeProps) => <ProjectList hasShow hasCreate resource="Project" basePath="/projects" {...routeProps} />} />
+                  <Route exact path="/projects/create" render={(routeProps) => <ProjectCreate resource="Project" basePath="/projects" {...routeProps} />} />
+                  <Route exact path="/projects/:id" render={(routeProps) => <ProjectEdit hasShow resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
+                  <Route exact path="/projects/:id/show" render={(routeProps) => <ProjectShow hasEdit resource="Project" basePath="/projects" id={decodeURIComponent((routeProps.match).params.id)} {...routeProps} />} />
                 </Switch>
               </ConnectedRouter>
             </Layout>
