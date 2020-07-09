@@ -43,26 +43,47 @@ const FollowService = {
       const activityType = activity.type || activity['@type'];
 
       switch (activityType) {
-        case ACTIVITY_TYPES.FOLLOW:
-          if (this.isLocalActor(activity.actor)) {
-            await this.broker.call('activitypub.collection.attach', {
-              collectionUri: urlJoin(activity.actor, 'following'),
-              item: activity.object
-            });
-          }
+        case ACTIVITY_TYPES.FOLLOW: {
+          const { '@context': context, username, ...activityObject } = activity;
 
-          if (this.isLocalActor(activity.object)) {
-            await this.broker.call('activitypub.collection.attach', {
-              collectionUri: urlJoin(activity.object, 'followers'),
-              item: activity.actor
-            });
-          }
-
-          this.broker.emit('activitypub.follow.added', {
-            follower: activity.actor,
-            following: activity.object
+          await ctx.call('activitypub.outbox.post', {
+            collectionUri: urlJoin(activity.object, 'outbox'),
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: activity.object,
+            type: ACTIVITY_TYPES.ACCEPT,
+            object: activityObject,
+            to: activity.actor
           });
+
           break;
+        }
+
+        case ACTIVITY_TYPES.ACCEPT: {
+          const objectType = activity.object.type || activity.object['@type'];
+          if (objectType === ACTIVITY_TYPES.FOLLOW) {
+            const followActivity = activity.object;
+
+            if (this.isLocalActor(followActivity.actor)) {
+              await this.broker.call('activitypub.collection.attach', {
+                collectionUri: urlJoin(followActivity.actor, 'following'),
+                item: followActivity.object
+              });
+            }
+
+            if (this.isLocalActor(followActivity.object)) {
+              await this.broker.call('activitypub.collection.attach', {
+                collectionUri: urlJoin(followActivity.object, 'followers'),
+                item: followActivity.actor
+              });
+            }
+
+            this.broker.emit('activitypub.follow.added', {
+              follower: followActivity.actor,
+              following: followActivity.object
+            });
+          }
+          break;
+        }
 
         case ACTIVITY_TYPES.UNDO:
           const objectType = activity.object.type || activity.object['@type'];

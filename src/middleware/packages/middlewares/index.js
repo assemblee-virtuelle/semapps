@@ -62,9 +62,12 @@ const negotiateAccept = (req, res, next) => {
 };
 
 const parseJson = (req, res, next) => {
-  if (req.$ctx.meta.headers['content-type'] === MIME_TYPES.JSON) {
-    const body = JSON.parse(req.$params.body);
-    req.$params = { ...body, ...req.$params, body: undefined };
+  if (negotiateTypeMime(req.headers['content-type']) === MIME_TYPES.JSON) {
+    const { body, ...otherParams } = req.$params;
+    if (body) {
+      const json = JSON.parse(body);
+      req.$params = { ...json, ...otherParams };
+    }
   }
   next();
 };

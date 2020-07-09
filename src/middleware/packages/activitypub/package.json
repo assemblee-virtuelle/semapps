@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "^0.1.12",
+    "@semapps/middlewares": "^0.1.12",
     "@semapps/mime-types": "^0.1.12",
     "@semapps/triplestore": "^0.1.12",
     "bull-board": "^0.7.0",
