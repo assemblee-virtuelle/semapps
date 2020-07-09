@@ -54,11 +54,26 @@ describe('Posting to followers', () => {
     // Wait for actor to be added to the followers collection
     await broker.watchForEvent('activitypub.follow.added');
 
-    const result = await broker.call('activitypub.follow.listFollowers', {
+    let result = await broker.call('activitypub.follow.listFollowers', {
       username: simon.preferredUsername
     });
 
     expect(result.items).toContain(sebastien.id);
+
+    result = await broker.call('activitypub.inbox.list', {
+      username: sebastien.preferredUsername
+    });
+
+    expect(result.orderedItems).toHaveLength(1);
+
+    expect(result.orderedItems[0]).toMatchObject({
+      type: ACTIVITY_TYPES.ACCEPT,
+      actor: simon.id,
+      object: {
+        type: ACTIVITY_TYPES.FOLLOW,
+        object: simon.id
+      }
+    });
   });
 
   test('Send message to followers', async () => {
@@ -87,7 +102,7 @@ describe('Posting to followers', () => {
       username: sebastien.preferredUsername
     });
 
-    expect(result.orderedItems).toHaveLength(1);
+    expect(result.orderedItems).toHaveLength(2);
   });
 
   test('Unfollow user', async () => {

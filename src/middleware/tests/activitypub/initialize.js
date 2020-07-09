@@ -1,10 +1,17 @@
+const fse = require('fs-extra');
+const path = require('path');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService } = require('@semapps/activitypub');
+const { SignatureService } = require('@semapps/signature');
+const { WebfingerService } = require('@semapps/webfinger');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
 const initialize = broker => async () => {
+  // Remove all actors keys
+  await fse.emptyDir(path.resolve(__dirname, './actors'));
+
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -23,6 +30,11 @@ const initialize = broker => async () => {
     settings: {
       baseUri: CONFIG.HOME_URL,
       additionalContext: getPrefixJSON(ontologies)
+    }
+  });
+  broker.createService(SignatureService, {
+    settings: {
+      actorsKeyPairsDir: path.resolve(__dirname, './actors')
     }
   });
 
