@@ -1,5 +1,5 @@
 ---
-title: Add a Data Management System (DMS)
+title: Add a Data Management System
 ---
 
 ### Purpose
