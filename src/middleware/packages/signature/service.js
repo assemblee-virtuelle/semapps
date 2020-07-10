@@ -77,7 +77,7 @@ const SignatureService = {
     },
     async verifyDigest(ctx) {
       const { body, headers } = ctx.params;
-      return headers.digest ? this.buildDigest(body) !== headers.digest : true;
+      return headers.digest ? this.buildDigest(body) === headers.digest : true;
     },
     async verifyHttpSignature(ctx) {
       const { url, headers } = ctx.params;
