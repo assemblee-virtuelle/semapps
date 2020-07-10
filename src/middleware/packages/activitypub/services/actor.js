@@ -52,6 +52,15 @@ const ActorService = {
     }
   },
   hooks: {
+    before: {
+      create: [
+        function parseSlugFromHeader(ctx) {
+          if( ctx.meta.headers.slug ) {
+            ctx.params.slug = ctx.meta.headers.slug;
+          }
+        }
+      ]
+    },
     after: {
       create: [
         function generateKeyPair(ctx, res) {
