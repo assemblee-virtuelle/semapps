@@ -55,7 +55,7 @@ const ActorService = {
     before: {
       create: [
         function parseSlugFromHeader(ctx) {
-          if( ctx.meta.headers.slug ) {
+          if( ctx.meta && ctx.meta.headers && ctx.meta.headers.slug ) {
             ctx.params.slug = ctx.meta.headers.slug;
           }
         }
