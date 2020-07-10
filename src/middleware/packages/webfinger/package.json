@@ -1,6 +1,6 @@
 {
   "name": "@semapps/webfinger",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Webfinger extension for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
