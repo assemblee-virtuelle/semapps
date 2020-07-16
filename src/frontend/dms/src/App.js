@@ -5,7 +5,7 @@ import { createHashHistory } from 'history';
 import { ConnectedRouter } from 'connected-react-router';
 import { Switch, Route } from 'react-router-dom';
 import withContext from 'recompose/withContext';
-import { DataProviderContext, AuthContext, TranslationProvider, Resource } from 'react-admin';
+import { DataProviderContext, AuthContext, TranslationProvider, Resource, Notification } from 'react-admin';
 import defaultMessages from 'ra-language-english';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import { ThemeProvider } from '@material-ui/styles';
@@ -66,6 +66,7 @@ function App() {
                   </Switch>
                 </ConnectedRouter>
               </Layout>
+              <Notification />
             </ThemeProvider>
           </TranslationProvider>
         </DataProviderContext.Provider>
