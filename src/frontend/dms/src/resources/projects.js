@@ -24,6 +24,7 @@ import SearchFilter from '../components/SearchFilter';
 import ColumnShowLayout from '../components/ColumnShowLayout';
 import Column from '../components/Column';
 import { makeStyles } from '@material-ui/core';
+import Hero from "../components/Hero";
 
 export const ProjectIcon = SettingsIcon;
 
@@ -99,8 +100,7 @@ const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
 
 const useStyles = makeStyles(() => ({
   card: {
-    borderWidth: 0,
-    padding: 30
+    padding: 25
   },
   singleFieldList: {
     margin: 0
@@ -110,9 +110,13 @@ const useStyles = makeStyles(() => ({
 export const ProjectShow = props => {
   const classes = useStyles();
   return (
-    <Show title={<ProjectTitle />} classes={{ card: classes.card }} {...props}>
+    <Show classes={{ card: classes.card }} {...props}>
       <ColumnShowLayout>
         <Column xs={9}>
+          <Hero title={<ProjectTitle />}>
+            <TextField label="Adresse" source="pairv1:adress" />
+            <TextField label="Commentaire" source="pairv1:comment" />
+          </Hero>
           <MarkDownField source="pairv1:description" addLabel />
         </Column>
         <Column xs={3} showLabel>
@@ -120,7 +124,7 @@ export const ProjectShow = props => {
           <TextField label="Commentaire" source="pairv1:comment" />
           <JsonLdReferenceArrayField addLabel label="Géré par" reference="Agent" source="pairv1:isManagedBy">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
-              <ChipField source="pairv1:preferedLabel" />
+              <ChipField source="pairv1:preferedLabel" color="primary" />
             </SingleFieldList>
           </JsonLdReferenceArrayField>
         </Column>

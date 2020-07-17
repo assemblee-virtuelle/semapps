@@ -25,7 +25,18 @@ import Layout from './components/Layout';
 const history = createHashHistory();
 const theme = createMuiTheme({
   palette: {
-    grey: { main: '#e0e0e0' }
+    grey: { main: '#e0e0e0' },
+    primary: { main: '#61d2fe' }
+  },
+  overrides: {
+    RaChipField: {
+      chip: {
+        marginLeft: 0,
+        marginTop: 0,
+        marginRight: 8,
+        marginBottom: 8
+      }
+    }
   }
 });
 const i18nProvider = polyglotI18nProvider(locale => frenchMessages);

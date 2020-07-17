@@ -7,7 +7,8 @@ const useStyles = makeStyles(() => ({
     textAlign: 'right',
     borderBottom: '2px dashed grey',
     paddingBottom: 5,
-    marginBottom: 5
+    marginTop: 5,
+    marginBottom: 10
   }
 }));
 
