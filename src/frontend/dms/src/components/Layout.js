@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Box, Typography } from '@material-ui/core';
+import { Container, Box } from '@material-ui/core';
 
 const Layout = ({ children }) => (
   <>
@@ -9,6 +9,7 @@ const Layout = ({ children }) => (
           <img
             src={process.env.PUBLIC_URL + '/av-chantiers-collaboratifs.png'}
             style={{ maxHeight: 125, maxWidth: '100%' }}
+            alt="Chantiers collaboratifs"
           />
         </Box>
       </Container>
