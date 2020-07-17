@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import RightLabel from "./RightLabel";
+import RightLabel from './RightLabel';
 
 const Column = ({ basePath, children, record, resource, xs, showLabel }) => {
   return (

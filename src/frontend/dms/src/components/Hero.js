@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography, makeStyles } from '@material-ui/core';
-import DetailsList from "./DetailsList";
+import DetailsList from './DetailsList';
 
 const useStyles = makeStyles(() => ({
   root: {

@@ -19,7 +19,9 @@ const DetailsList = ({ basePath, children, record, resource }) => {
             {field.props.addLabel ? (
               <Grid container spacing={3} className={classes.line}>
                 <Grid item xs={3}>
-                  <Typography color="textSecondary" align="right" variant="body2">{field.props.label}</Typography>
+                  <Typography color="textSecondary" align="right" variant="body2">
+                    {field.props.label}
+                  </Typography>
                 </Grid>
                 <Grid item xs={9}>
                   <Typography variant="body2">
