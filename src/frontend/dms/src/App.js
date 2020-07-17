@@ -16,7 +16,7 @@ import {
   httpClient
 } from '@semapps/react-admin';
 
-import { ProjectList, ProjectShow, ProjectEdit, ProjectCreate } from './resources/projects';
+import { ProjectCreate, ProjectEdit, ProjectList, ProjectShow } from './resources/projects';
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 import createStore from './createStore';
