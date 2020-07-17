@@ -28,6 +28,11 @@ const theme = createMuiTheme({
     grey: { main: '#e0e0e0' },
     primary: { main: '#61d2fe' }
   },
+  typography: {
+    details: {
+      fontSize: 8
+    }
+  },
   overrides: {
     RaChipField: {
       chip: {

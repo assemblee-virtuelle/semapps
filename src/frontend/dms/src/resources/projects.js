@@ -116,13 +116,14 @@ export const ProjectShow = props => {
           <Hero title={<ProjectTitle />}>
             <TextField label="Adresse" source="pairv1:adress" />
             <TextField label="Commentaire" source="pairv1:comment" />
+            <TextField label="Adresse" source="pairv1:adress" />
           </Hero>
           <MarkDownField source="pairv1:description" addLabel />
         </Column>
         <Column xs={3} showLabel>
           <TextField label="Adresse" source="pairv1:adress" />
           <TextField label="Commentaire" source="pairv1:comment" />
-          <JsonLdReferenceArrayField addLabel label="Géré par" reference="Agent" source="pairv1:isManagedBy">
+          <JsonLdReferenceArrayField addLabel label="Les Partenaires" reference="Agent" source="pairv1:isManagedBy">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="pairv1:preferedLabel" color="primary" />
             </SingleFieldList>

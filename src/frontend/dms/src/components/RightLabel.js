@@ -5,9 +5,8 @@ const useStyles = makeStyles(() => ({
   rightLabel: {
     color: 'grey',
     textAlign: 'right',
-    borderBottom: '2px dashed grey',
-    paddingBottom: 5,
-    marginTop: 5,
+    borderBottom: '1px dashed #c0c0c0',
+    paddingBottom: 10,
     marginBottom: 10
   }
 }));
@@ -15,7 +14,7 @@ const useStyles = makeStyles(() => ({
 const RightLabel = ({ label, children, record, resource, basePath }) => {
   const classes = useStyles();
   return (
-    <Box mb={3}>
+    <Box mb={4} >
       <Box className={classes.rightLabel}>
         {label}
       </Box>

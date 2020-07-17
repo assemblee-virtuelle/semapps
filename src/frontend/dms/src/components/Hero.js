@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, Typography, makeStyles } from '@material-ui/core';
+import DetailsList from "./DetailsList";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -16,20 +17,14 @@ const Hero = ({ basePath, children, record, resource, title }) => {
           {React.cloneElement(title, { record })}
         </Typography>
       </Box>
-      <Grid container spacing={3}>
-        <Grid item xs={4}>
+      <Grid container spacing={5}>
+        <Grid item xs={5}>
           <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" />
         </Grid>
-        <Grid item xs={8}>
-          {React.Children.map(children, field =>
-            field && React.isValidElement(field)
-              ? React.cloneElement(field, {
-                resource,
-                record,
-                basePath
-              })
-              : null
-          )}
+        <Grid item xs={7}>
+          <DetailsList record={record} resource={resource} basePath={basePath}>
+            {children}
+          </DetailsList>
         </Grid>
       </Grid>
     </div>

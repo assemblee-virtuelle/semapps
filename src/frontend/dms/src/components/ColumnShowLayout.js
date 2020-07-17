@@ -13,7 +13,7 @@ const ColumnShowLayout = props => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Grid container spacing={3}>
+      <Grid container spacing={5}>
         {React.Children.map(children, column =>
           column && React.isValidElement(column)
             ? React.cloneElement(column, {
