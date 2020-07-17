@@ -10,21 +10,20 @@ import {
   EditButton,
   ShowButton,
   SingleFieldList,
-  SimpleShowLayout,
   ChipField,
-  RichTextField,
   TextInput,
-  FunctionField,
   useAuthenticated,
   AutocompleteArrayInput,
   ReferenceArrayField
 } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import MarkDownField from '../components/MarkdownField';
-import { Grid, makeStyles } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 import SearchFilter from '../components/SearchFilter';
+import ColumnShowLayout from '../components/ColumnShowLayout';
+import Column from '../components/Column';
+import { makeStyles } from '@material-ui/core';
 
 export const ProjectIcon = SettingsIcon;
 
@@ -42,7 +41,7 @@ export const ProjectList = props => {
 };
 
 const ProjectTitle = ({ record }) => {
-  return <span>Projet {record ? `"${record['pairv1:preferedLabel']}"` : ''}</span>;
+  return <span>{record ? record['pairv1:preferedLabel'] : ''}</span>;
 };
 
 export const ProjectEdit = props => (
@@ -91,81 +90,36 @@ export const ProjectCreate = props => (
   </Create>
 );
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
+const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
+  if (Array.isArray(record[source])) {
+    record[source] = record[source].map(i => i['@id'] || i);
+  }
+  return <ReferenceArrayField record={record} source={source} {...otherProps} />;
+};
+
+const useStyles = makeStyles(() => ({
+  card: {
+    borderWidth: 0,
+    padding: 30
+  },
+  singleFieldList: {
+    margin: 0
   }
 }));
 
-const ColumnShowLayout = props => {
-  const {
-    basePath,
-    children,
-    record,
-    resource
-  } = props;
-
+export const ProjectShow = props => {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        {React.Children.map(children, column =>
-          column && React.isValidElement(column) ?
-            React.cloneElement(column, {
-              resource,
-              record,
-              basePath,
-            }) : null
-        )}
-      </Grid>
-    </div>
-  );
-};
-
-const Column = props => {
-  const {
-    basePath,
-    children,
-    record,
-    resource,
-    xs
-  } = props;
-
-  return (
-    <Grid item xs={xs}>
-      {React.Children.map(children, field =>
-        field && React.isValidElement(field) ?
-          React.cloneElement(field, {
-            resource,
-            record,
-            basePath,
-          }) : null
-      )}
-    </Grid>
-  );
-};
-
-const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
-  if( Array.isArray(record[source]) ) {
-    record[source] =  record[source].map(i => i['@id'] || i);
-  }
-  return(
-    <ReferenceArrayField record={record} source={source} {...otherProps} />
-  );
-}
-
-export const ProjectShow = props => {
-  return (
-    <Show {...props}>
+    <Show title={<ProjectTitle />} classes={{ card: classes.card }} {...props}>
       <ColumnShowLayout>
         <Column xs={9}>
-          <FunctionField render={record => <h1>{record['pairv1:preferedLabel']}</h1>} />
-          <MarkDownField source="pairv1:description" addLabel label="Adresse" />
+          <MarkDownField source="pairv1:description" addLabel />
         </Column>
-        <Column xs={3}>
-          <TextField source="pairv1:adress" />
-          <JsonLdReferenceArrayField label="Géré par" reference="Agent" source="pairv1:isManagedBy">
-            <SingleFieldList>
+        <Column xs={3} showLabel>
+          <TextField label="Adresse" source="pairv1:adress" />
+          <TextField label="Commentaire" source="pairv1:comment" />
+          <JsonLdReferenceArrayField addLabel label="Géré par" reference="Agent" source="pairv1:isManagedBy">
+            <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="pairv1:preferedLabel" />
             </SingleFieldList>
           </JsonLdReferenceArrayField>

@@ -7,6 +7,7 @@
     "jwt-decode": "^2.2.0",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.5",
+    "ra-language-french": "^3.7.1",
     "react-markdown": "^4.3.1",
     "react": "^16.13.1",
     "react-admin": "^3.7.0",
