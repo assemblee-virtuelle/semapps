@@ -10,9 +10,13 @@ This service allows you to interface with a [Jena Fuseki](https://jena.apache.or
   * Update
   * Insert
   * Delete
-* basic utilities
-  * count predicate of subject
-  * drop all subject of dataset
+* Basic utilities
+  * Count number of triples of a subject
+  * Drop all triples in a dataset
+
+## Dependencies
+
+- None
 
 ## Install
 ```bash

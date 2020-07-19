@@ -42,6 +42,17 @@ const ObjectService = {
       };
       return await this._create(ctx, tombstone);
     }
+  },
+  hooks: {
+    before: {
+      create: [
+        function parseSlugFromHeader(ctx) {
+          if( ctx.meta && ctx.meta.headers && ctx.meta.headers.slug ) {
+            ctx.params.slug = ctx.meta.headers.slug;
+          }
+        }
+      ]
+    }
   }
 };
 

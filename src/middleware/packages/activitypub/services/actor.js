@@ -6,11 +6,11 @@ const ActorService = {
   name: 'activitypub.actor',
   mixins: [DbService],
   adapter: new TripleStoreAdapter(),
-  dependencies: ['activitypub.collection'],
+  dependencies: ['activitypub.collection', 'signature'],
   settings: {
     containerUri: null, // To be set by the user
     queryDepth: 1,
-    context: 'https://www.w3.org/ns/activitystreams'
+    context: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1']
   },
   actions: {
     async attachCollections(ctx) {
@@ -35,13 +35,39 @@ const ActorService = {
         inbox: urlJoin(actorUri, 'inbox'),
         outbox: urlJoin(actorUri, 'outbox')
       });
+    },
+    async generateKeyPair(ctx) {
+      const { actorUri } = ctx.params;
+      const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
+
+      return await this._update(ctx, {
+        '@id': actorUri,
+        publicKey: {
+          // TODO expand the key, even if it has an ID (currently only blank nodes are expanded)
+          // id: actorUri + '#main-key',
+          owner: actorUri,
+          publicKeyPem: publicKey
+        }
+      });
     }
   },
   hooks: {
+    before: {
+      create: [
+        function parseSlugFromHeader(ctx) {
+          if( ctx.meta && ctx.meta.headers && ctx.meta.headers.slug ) {
+            ctx.params.slug = ctx.meta.headers.slug;
+          }
+        }
+      ]
+    },
     after: {
       create: [
+        function generateKeyPair(ctx, res) {
+          return this.actions.generateKeyPair({ actorUri: res.id });
+        },
         function attachCollections(ctx, res) {
-          return ctx.call('activitypub.actor.attachCollections', { actorUri: res.id });
+          return this.actions.attachCollections({ actorUri: res.id });
         },
         function emitEvent(ctx, res) {
           this.broker.emit('actor.created', res);

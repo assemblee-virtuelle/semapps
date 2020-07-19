@@ -12,7 +12,7 @@ const MIME_TYPES = {
 const TYPES_REPO = [
   {
     mime: MIME_TYPES.JSON,
-    mimeFull: [MIME_TYPES.JSON, 'application/json'],
+    mimeFull: [MIME_TYPES.JSON, 'application/json', 'application/activity+json'],
     N3Mapping: '',
     fusekiMapping: 'application/ld+json, application/sparql-results+json'
   },
