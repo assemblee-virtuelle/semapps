@@ -30,7 +30,7 @@ const ProjectEdit = props => (
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Participants" reference="Agent" source="involves">
         <AutocompleteArrayInput
-          optionText={record => record ? `${record.firstName} ${record.lastName}` : 'Label manquant'}
+          optionText={record => (record ? `${record.firstName} ${record.lastName}` : 'Label manquant')}
           fullWidth
         />
       </JsonLdReferenceInput>
