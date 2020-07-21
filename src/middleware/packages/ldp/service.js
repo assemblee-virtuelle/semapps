@@ -9,17 +9,19 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: ['/resources'],
-    defaultAccept: 'text/turtle'
+    defaultAccept: 'text/turtle',
+    defaultJsonContext: null
   },
   async created() {
-    const { baseUrl, ontologies, containers, defaultAccept } = this.schema.settings;
+    const { baseUrl, ontologies, containers, defaultAccept, defaultJsonContext } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
         containers,
-        defaultAccept
+        defaultAccept,
+        defaultJsonContext
       }
     });
 
@@ -27,7 +29,8 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        defaultAccept
+        defaultAccept,
+        defaultJsonContext
       }
     });
   },
