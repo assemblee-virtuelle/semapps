@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 const ProjectTitle = ({ record }) => {
-  return <span>{record ? record['pairv1:preferedLabel'] : ''}</span>;
+  return <span>{record ? record.label : ''}</span>;
 };
 
 const ProjectShow = props => {
@@ -27,18 +27,17 @@ const ProjectShow = props => {
       <ColumnShowLayout>
         <Column xs={9}>
           <Hero title={<ProjectTitle />}>
-            <TextField label="Adresse" source="pairv1:adress" />
-            <TextField label="Commentaire" source="pairv1:comment" />
-            <TextField label="Adresse" source="pairv1:adress" />
+            <TextField label="Adresse" source="adress" />
+            <TextField label="Commentaire" source="comment" />
           </Hero>
-          <MarkDownField source="pairv1:description" addLabel />
+          <MarkDownField source="description" addLabel />
         </Column>
         <Column xs={3} showLabel>
-          <TextField label="Adresse" source="pairv1:adress" />
-          <TextField label="Commentaire" source="pairv1:comment" />
-          <JsonLdReferenceArrayField addLabel label="Les Partenaires" reference="Agent" source="pairv1:isManagedBy">
+          <TextField label="Adresse" source="adress" />
+          <TextField label="Commentaire" source="comment" />
+          <JsonLdReferenceArrayField addLabel label="Participants" reference="Agent" source="involves">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
-              <ChipField source="pairv1:preferedLabel" color="primary" />
+              <ChipField source="firstName" color="primary" />
             </SingleFieldList>
           </JsonLdReferenceArrayField>
         </Column>

@@ -6,7 +6,7 @@ const ProjectList = props => {
   return (
     <List perPage={25} filters={<SearchFilter />} {...props}>
       <Datagrid rowClick="show">
-        <TextField source="pairv1:preferedLabel" label="Nom" />
+        <TextField source="label" label="Nom" />
         <ShowButton basePath="/projects" />
         <EditButton basePath="/projects" />
       </Datagrid>

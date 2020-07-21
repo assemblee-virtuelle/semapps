@@ -49,7 +49,8 @@ const dataProvider = createDataProvider({
   sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
   httpClient,
   resources,
-  ontologies
+  ontologies,
+  mainOntology: 'pair'
 });
 const authProvider = createAuthProvider(process.env.REACT_APP_MIDDLEWARE_URL);
 

@@ -6,22 +6,21 @@ import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 const ProjectEdit = props => (
   <Edit {...props}>
     <SimpleForm>
-      <TextInput source="pairv1:preferedLabel" label="Nom" fullWidth />
-      <TextInput source="pairv1:comment" label="Commentaire" fullWidth />
-      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <UriInput source="pairv1:homePage" label="Site web" fullWidth />
-      <UriInput source="pairv1:image" label="Image" fullWidth />
-      <TextInput source="pairv1:adress" label="Adresse" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Agent" source="pairv1:isManagedBy">
+      <TextInput source="label" label="Nom" fullWidth />
+      <TextInput source="comment" label="Commentaire" fullWidth />
+      <MarkdownInput multiline source="description" label="Description" fullWidth />
+      <UriInput source="homePage" label="Site web" fullWidth />
+      <TextInput source="adress" label="Adresse" fullWidth />
+      <JsonLdReferenceInput label="Géré par" reference="Organization" source="managedBy">
         <AutocompleteArrayInput
           optionText={record => {
             // TODO improve the handling of the many possible cases
             if (!record) return 'Label manquant';
-            if (record['rdf:type'] === 'pairv1:Organization' || record['@type'] === 'pairv1:Organization') {
-              if (Array.isArray(record['pairv1:preferedLabel'])) {
-                return record['pairv1:preferedLabel'][0];
+            if (record['rdf:type'] === 'Organization' || record['@type'] === 'Organization') {
+              if (Array.isArray(record.label)) {
+                return record.label[0];
               } else {
-                return record['pairv1:preferedLabel'] || 'Label manquant';
+                return record.label || 'Label manquant';
               }
             }
             return `${record['foaf:givenName']} ${record['foaf:familyName']}` || 'Label manquant';
@@ -29,9 +28,9 @@ const ProjectEdit = props => (
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Intérêts" reference="Concept" source="pairv1:hasInterest">
+      <JsonLdReferenceInput label="Participants" reference="Agent" source="involves">
         <AutocompleteArrayInput
-          optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
+          optionText={record => record ? `${record.firstName} ${record.lastName}` : 'Label manquant'}
           fullWidth
         />
       </JsonLdReferenceInput>
