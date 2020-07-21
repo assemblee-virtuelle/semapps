@@ -72,7 +72,7 @@ module.exports = {
 
       if (accept === MIME_TYPES.JSON) {
         result = await jsonld.frame(result, {
-          '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+          '@context': jsonContext || this.settings.defaultJsonContext || getPrefixJSON(this.settings.ontologies),
           '@id': containerUri
         });
 

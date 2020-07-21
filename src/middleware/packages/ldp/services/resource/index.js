@@ -11,7 +11,8 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    defaultAccept: null
+    defaultAccept: null,
+    defaultJsonContext: null
   },
   dependencies: ['triplestore'],
   actions: {
