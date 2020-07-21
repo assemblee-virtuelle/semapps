@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "^0.1.15",
+    "@semapps/mime-types": "0.1.15",
     "moleculer": "^0.14.3"
   },
   "publishConfig": {
