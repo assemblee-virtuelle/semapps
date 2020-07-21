@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChipField, Show, SingleFieldList, TextField } from 'react-admin';
+import { ChipField, Show, SingleFieldList, TextField, UrlField } from 'react-admin';
 import { makeStyles } from '@material-ui/core';
 import ColumnShowLayout from '../../components/ColumnShowLayout';
 import Column from '../../components/Column';
@@ -27,14 +27,17 @@ const ProjectShow = props => {
       <ColumnShowLayout>
         <Column xs={9}>
           <Hero title={<ProjectTitle />}>
-            <TextField label="Adresse" source="adress" />
-            <TextField label="Commentaire" source="comment" />
+            <TextField label="Courte description" source="comment" />
+            <UrlField label="Site web" source="homePage" />
           </Hero>
           <MarkDownField source="description" addLabel />
         </Column>
         <Column xs={3} showLabel>
-          <TextField label="Adresse" source="adress" />
-          <TextField label="Commentaire" source="comment" />
+          <JsonLdReferenceArrayField addLabel label="Géré par" reference="Agent" source="managedBy">
+            <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
+              <ChipField source="label" color="primary" />
+            </SingleFieldList>
+          </JsonLdReferenceArrayField>
           <JsonLdReferenceArrayField addLabel label="Participants" reference="Agent" source="involves">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="firstName" color="primary" />

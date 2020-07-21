@@ -7,10 +7,9 @@ const ProjectEdit = props => (
   <Edit {...props}>
     <SimpleForm>
       <TextInput source="label" label="Nom" fullWidth />
-      <TextInput source="comment" label="Commentaire" fullWidth />
+      <TextInput source="comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="description" label="Description" fullWidth />
       <UriInput source="homePage" label="Site web" fullWidth />
-      <TextInput source="adress" label="Adresse" fullWidth />
       <JsonLdReferenceInput label="Géré par" reference="Organization" source="managedBy">
         <AutocompleteArrayInput
           optionText={record => {
