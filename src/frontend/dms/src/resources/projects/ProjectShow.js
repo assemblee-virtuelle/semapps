@@ -6,6 +6,8 @@ import Column from '../../components/Column';
 import Hero from '../../components/Hero';
 import MarkDownField from '../../components/MarkdownField';
 import UriArrayField from '../../components/UriArrayField';
+import UserIcon from "../../components/UserIcon";
+import GridList from "../../components/GridList";
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -38,10 +40,15 @@ const ProjectShow = props => {
               <ChipField source="label" color="primary" />
             </SingleFieldList>
           </UriArrayField>
+          <UriArrayField label="Responsables" reference="Agent" source="hasResponsible">
+            <GridList>
+              <UserIcon />
+            </GridList>
+          </UriArrayField>
           <UriArrayField label="Participants" reference="Agent" source="involves">
-            <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
-              <ChipField source="firstName" color="primary" />
-            </SingleFieldList>
+            <GridList>
+              <UserIcon />
+            </GridList>
           </UriArrayField>
         </Column>
       </ColumnShowLayout>
