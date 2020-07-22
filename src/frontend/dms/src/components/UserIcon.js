@@ -25,14 +25,12 @@ const UserIcon = ({ record, xs }) => {
   const fullName = record ? record.firstName + ' ' + record.lastName : '';
   return (
     <Grid item xs={xs}>
-      <Box  className={classes.parent}>
-        <img
-          src={process.env.PUBLIC_URL + '/unknown-user.png'}
-          style={{ width: '100%' }}
-          alt={fullName}
-        />
+      <Box className={classes.parent}>
+        <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />
         <Box bgcolor="primary.main" className={classes.child} borderRadius={7}>
-          <Typography align="center" className={classes.caption} noWrap>{fullName}</Typography>
+          <Typography align="center" className={classes.caption} noWrap>
+            {fullName}
+          </Typography>
         </Box>
       </Box>
     </Grid>

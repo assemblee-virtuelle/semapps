@@ -6,8 +6,8 @@ import Column from '../../components/Column';
 import Hero from '../../components/Hero';
 import MarkDownField from '../../components/MarkdownField';
 import UriArrayField from '../../components/UriArrayField';
-import UserIcon from "../../components/UserIcon";
-import GridList from "../../components/GridList";
+import UserIcon from '../../components/UserIcon';
+import GridList from '../../components/GridList';
 
 const useStyles = makeStyles(() => ({
   card: {
