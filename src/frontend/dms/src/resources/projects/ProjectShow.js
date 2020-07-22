@@ -5,7 +5,7 @@ import ColumnShowLayout from '../../components/ColumnShowLayout';
 import Column from '../../components/Column';
 import Hero from '../../components/Hero';
 import MarkDownField from '../../components/MarkdownField';
-import JsonLdReferenceArrayField from '../../components/JsonLdReferenceArrayField';
+import UriArrayField from '../../components/UriArrayField';
 
 const useStyles = makeStyles(() => ({
   card: {
@@ -33,16 +33,16 @@ const ProjectShow = props => {
           <MarkDownField source="description" addLabel />
         </Column>
         <Column xs={3} showLabel>
-          <JsonLdReferenceArrayField addLabel label="Géré par" reference="Agent" source="managedBy">
+          <UriArrayField label="Géré par" reference="Agent" source="managedBy">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="label" color="primary" />
             </SingleFieldList>
-          </JsonLdReferenceArrayField>
-          <JsonLdReferenceArrayField addLabel label="Participants" reference="Agent" source="involves">
+          </UriArrayField>
+          <UriArrayField label="Participants" reference="Agent" source="involves">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="firstName" color="primary" />
             </SingleFieldList>
-          </JsonLdReferenceArrayField>
+          </UriArrayField>
         </Column>
       </ColumnShowLayout>
     </Show>

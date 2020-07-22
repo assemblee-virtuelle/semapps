@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReferenceArrayField } from 'react-admin';
 
-const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
+const UriArrayField = ({ record, source, ...otherProps }) => {
   if (Array.isArray(record[source])) {
     record[source] = record[source].map(i => i['@id'] || i);
   } else {
@@ -10,4 +10,8 @@ const JsonLdReferenceArrayField = ({ record, source, ...otherProps }) => {
   return <ReferenceArrayField record={record} source={source} {...otherProps} />;
 };
 
-export default JsonLdReferenceArrayField;
+UriArrayField.defaultProps = {
+  addLabel: true
+};
+
+export default UriArrayField;
