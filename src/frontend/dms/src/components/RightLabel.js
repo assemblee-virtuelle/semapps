@@ -11,8 +11,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const RightLabel = ({ label, children, record, resource, basePath }) => {
+const RightLabel = ({ label, children, record, resource, source, basePath }) => {
   const classes = useStyles();
+  if( !record[source] ) return null;
   return (
     <Box mb={4}>
       <Box className={classes.rightLabel}>{label}</Box>

@@ -6,7 +6,6 @@ import { ReferenceArrayField } from 'react-admin';
 const UriArrayField = ({ record, source, referenceBasePath, basePath, ...otherProps }) => {
   if( record[source] ) {
     if (Array.isArray(record[source])) {
-      console.log('record[source]', record[source]);
       record[source] = record[source].map(i => i['@id'] || i);
     } else {
       record[source] = [record[source]];
