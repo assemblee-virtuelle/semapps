@@ -30,15 +30,19 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Documentation',
+          title: 'Guides',
           items: [
             {
-              label: 'Create your LDP server',
+              label: 'Create your first LDP server',
               to: 'docs/guides/ldp-server',
             },
             {
               label: 'Add a Data Management System',
               to: 'docs/guides/dms',
+            },
+            {
+              label: 'Create an ActivityPub server',
+              to: 'docs/guides/activitypub',
             }
           ],
         },

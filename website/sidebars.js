@@ -7,7 +7,7 @@
 
 module.exports = {
   docs: {
-    Guides: ['guides/ldp-server','guides/dms'],
+    Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
   },
   contribute: {
