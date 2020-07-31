@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChipField, Show, SingleFieldList, TextField, UrlField } from 'react-admin';
+import { Show, TextField, UrlField } from 'react-admin';
 import { makeStyles } from '@material-ui/core';
 import ColumnShowLayout from '../../components/ColumnShowLayout';
 import Column from '../../components/Column';
@@ -18,39 +18,24 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const ProjectTitle = ({ record }) => {
+const OrganizationTitle = ({ record }) => {
   return <span>{record ? record.label : ''}</span>;
 };
 
-const ProjectShow = props => {
+const OrganizationShow = props => {
   const classes = useStyles();
   return (
     <Show classes={{ card: classes.card }} {...props}>
       <ColumnShowLayout>
         <Column xs={9}>
-          <Hero title={<ProjectTitle />}>
+          <Hero title={<OrganizationTitle />}>
             <TextField label="Courte description" source="comment" />
             <UrlField label="Site web" source="homePage" />
           </Hero>
           <MarkDownField source="description" addLabel />
         </Column>
         <Column xs={3} showLabel>
-          <UriArrayField
-            label="Géré par"
-            reference="Organization"
-            source="managedBy"
-            referenceBasePath="/Organization"
-          >
-            <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
-              <ChipField source="label" color="primary" />
-            </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField label="Responsables" reference="Person" source="hasResponsible" referenceBasePath="/User">
-            <GridList xs={6} linkType="show">
-              <UserIcon />
-            </GridList>
-          </UriArrayField>
-          <UriArrayField label="Participants" reference="Person" source="involves" referenceBasePath="/User">
+          <UriArrayField label="Membres" reference="Person" source="hasMember" referenceBasePath="/User">
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>
@@ -61,4 +46,4 @@ const ProjectShow = props => {
   );
 };
 
-export default ProjectShow;
+export default OrganizationShow;
