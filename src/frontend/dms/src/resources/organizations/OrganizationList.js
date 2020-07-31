@@ -1,6 +1,6 @@
-import React from "react";
-import {Datagrid, EditButton, List, TextField} from "react-admin";
-import SearchFilter from "../../components/SearchFilter";
+import React from 'react';
+import { Datagrid, EditButton, List, TextField } from 'react-admin';
+import SearchFilter from '../../components/SearchFilter';
 
 export const OrganizationList = props => (
   <List title="Organisations" perPage={25} filters={<SearchFilter />} {...props}>
