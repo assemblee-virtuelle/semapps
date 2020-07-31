@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Box, makeStyles } from '@material-ui/core';
+import { Typography, Box, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   parent: {
@@ -16,29 +16,24 @@ const useStyles = makeStyles(() => ({
     paddingRight: 6
   },
   caption: {
+    color: 'black',
     fontSize: 13
   }
 }));
 
-const UserIcon = ({ record, xs }) => {
+const UserIcon = ({ record }) => {
   const classes = useStyles();
   const fullName = record ? record.firstName + ' ' + record.lastName : '';
   return (
-    <Grid item xs={xs}>
-      <Box className={classes.parent}>
-        <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />
-        <Box bgcolor="primary.main" className={classes.child} borderRadius={7}>
-          <Typography align="center" className={classes.caption} noWrap>
-            {fullName}
-          </Typography>
-        </Box>
+    <Box className={classes.parent}>
+      <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />
+      <Box bgcolor="primary.main" className={classes.child} borderRadius={7}>
+        <Typography align="center" className={classes.caption} noWrap>
+          {fullName}
+        </Typography>
       </Box>
-    </Grid>
+    </Box>
   );
-};
-
-UserIcon.defaultProps = {
-  xs: 6
 };
 
 export default UserIcon;
