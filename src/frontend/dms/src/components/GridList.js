@@ -15,25 +15,21 @@ const GridList = ({ children, xs, linkType }) => {
   const { ids, data, basePath } = useListContext();
   return (
     <Grid container spacing={3}>
-      {ids.map(id => {
-        const resourceLinkPath = linkToRecord(basePath, id, linkType);
-        return (
-          <Grid item xs={xs}>
-            <Link
-              key={id}
-              to={resourceLinkPath}
-              onClick={stopPropagation}
-            >
-              {React.cloneElement(React.Children.only(children), {
-                record: data[id],
-                basePath,
-                // Workaround to force ChipField to be clickable
-                onClick: handleClick,
-              })}
-            </Link>
-          </Grid>
-        );
-      })}
+      {ids.map(id => (
+        <Grid item xs={xs} key={id}>
+          <Link
+            to={linkToRecord(basePath, id, linkType)}
+            onClick={stopPropagation}
+          >
+            {React.cloneElement(React.Children.only(children), {
+              record: data[id],
+              basePath,
+              // Workaround to force ChipField to be clickable
+              onClick: handleClick,
+            })}
+          </Link>
+        </Grid>
+      ))}
     </Grid>
   );
 };
