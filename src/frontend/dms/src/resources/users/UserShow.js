@@ -1,5 +1,5 @@
 import React from 'react';
-import {ChipField, Show, SingleFieldList, TextField} from 'react-admin';
+import { ChipField, Show, SingleFieldList, TextField } from 'react-admin';
 import { makeStyles } from '@material-ui/core';
 import ColumnShowLayout from '../../components/ColumnShowLayout';
 import Column from '../../components/Column';
@@ -31,22 +31,12 @@ const UserShow = props => {
           </Hero>
         </Column>
         <Column xs={3} showLabel>
-          <UriArrayField
-            label="Membre"
-            reference="Organization"
-            source="memberOf"
-            referenceBasePath="/Organization"
-          >
+          <UriArrayField label="Membre" reference="Organization" source="memberOf" referenceBasePath="/Organization">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="label" color="primary" />
             </SingleFieldList>
           </UriArrayField>
-          <UriArrayField
-            label="Participe à"
-            reference="Project"
-            source="involvedIn"
-            referenceBasePath="/Project"
-          >
+          <UriArrayField label="Participe à" reference="Project" source="involvedIn" referenceBasePath="/Project">
             <SingleFieldList classes={{ root: classes.singleFieldList }} linkType="show">
               <ChipField source="label" color="primary" />
             </SingleFieldList>

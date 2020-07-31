@@ -43,7 +43,7 @@ const Layout = ({ children }) => (
     <Container maxWidth="lg">
       <Box mb={5}>{children}</Box>
     </Container>
-    <Notification/>
+    <Notification />
   </ThemeProvider>
 );
 

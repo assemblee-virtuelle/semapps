@@ -15,10 +15,7 @@ export const OrganizationEdit = props => (
       <MarkdownInput multiline source="description" label="Description" fullWidth />
       <UriInput source="homePage" label="Site web" fullWidth />
       <JsonLdReferenceInput label="Membres" reference="User" source="hasMember">
-        <AutocompleteArrayInput
-          optionText={record => record && `${record.firstName} ${record.lastName}`}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText={record => record && `${record.firstName} ${record.lastName}`} fullWidth />
       </JsonLdReferenceInput>
     </SimpleForm>
   </Edit>

@@ -27,14 +27,15 @@ const authProvider = createAuthProvider(process.env.REACT_APP_MIDDLEWARE_URL);
 
 function App() {
   return (
-    <Admin
-      authProvider={authProvider}
-      dataProvider={dataProvider}
-      i18nProvider={i18nProvider}
-      layout={Layout}
-    >
+    <Admin authProvider={authProvider} dataProvider={dataProvider} i18nProvider={i18nProvider} layout={Layout}>
       <Resource name="Project" list={ProjectList} show={ProjectShow} edit={ProjectEdit} create={ProjectCreate} />
-      <Resource name="Organization" list={OrganizationList} show={OrganizationShow} edit={OrganizationEdit} create={OrganizationCreate} />
+      <Resource
+        name="Organization"
+        list={OrganizationList}
+        show={OrganizationShow}
+        edit={OrganizationEdit}
+        create={OrganizationCreate}
+      />
       <Resource name="User" list={UserList} show={UserShow} edit={UserEdit} create={UserCreate} />
     </Admin>
   );

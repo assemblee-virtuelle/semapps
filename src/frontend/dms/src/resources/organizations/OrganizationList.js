@@ -1,5 +1,5 @@
 import React from 'react';
-import {Datagrid, EditButton, List, ShowButton, TextField} from 'react-admin';
+import { Datagrid, EditButton, List, ShowButton, TextField } from 'react-admin';
 import SearchFilter from '../../components/SearchFilter';
 
 export const OrganizationList = props => (

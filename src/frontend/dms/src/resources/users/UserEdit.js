@@ -12,16 +12,10 @@ export const UserEdit = props => (
       <TextInput source="firstName" label="Prénom" fullWidth />
       <TextInput source="lastName" label="Nom de famille" fullWidth />
       <JsonLdReferenceInput label="Participe à" reference="Project" source="involvedIn">
-        <AutocompleteArrayInput
-          optionText={record => record && record.label}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText={record => record && record.label} fullWidth />
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Membre" reference="Organization" source="memberOf">
-        <AutocompleteArrayInput
-          optionText={record => record && record.label}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText={record => record && record.label} fullWidth />
       </JsonLdReferenceInput>
     </SimpleForm>
   </Edit>
