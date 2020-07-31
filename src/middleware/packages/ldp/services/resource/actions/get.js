@@ -59,7 +59,7 @@ module.exports = {
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
           result = await jsonld.frame(result, {
-            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+            '@context': jsonContext || this.settings.defaultJsonContext || getPrefixJSON(this.settings.ontologies),
             '@id': resourceUri
           });
 
