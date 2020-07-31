@@ -19,16 +19,12 @@ const GridList = ({ children, xs, linkType }) => {
         const resourceLinkPath = linkToRecord(basePath, id, linkType);
         return (
           <Grid item xs={xs}>
-            <Link
-              key={id}
-              to={resourceLinkPath}
-              onClick={stopPropagation}
-            >
+            <Link key={id} to={resourceLinkPath} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 record: data[id],
                 basePath,
                 // Workaround to force ChipField to be clickable
-                onClick: handleClick,
+                onClick: handleClick
               })}
             </Link>
           </Grid>

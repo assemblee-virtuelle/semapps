@@ -9,7 +9,9 @@ const UriArrayField = ({ record, source, referenceBasePath, basePath, ...otherPr
   } else {
     record[source] = [record[source]];
   }
-  return <ReferenceArrayField record={record} source={source} basePath={referenceBasePath || basePath} {...otherProps} />;
+  return (
+    <ReferenceArrayField record={record} source={source} basePath={referenceBasePath || basePath} {...otherProps} />
+  );
 };
 
 UriArrayField.defaultProps = {
