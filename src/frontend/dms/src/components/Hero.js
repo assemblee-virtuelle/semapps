@@ -8,7 +8,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Hero = ({ basePath, children, record, resource, title }) => {
+const Hero = ({ basePath, children, record, resource, title, image }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -19,7 +19,7 @@ const Hero = ({ basePath, children, record, resource, title }) => {
       </Box>
       <Grid container spacing={5}>
         <Grid item xs={5}>
-          <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" alt="Assemblée Virtuelle" />
+          <img src={image || process.env.PUBLIC_URL + '/av.png'} width="100%" alt={title} />
         </Grid>
         <Grid item xs={7}>
           <DetailsList record={record} resource={resource} basePath={basePath}>

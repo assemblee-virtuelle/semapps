@@ -10,6 +10,7 @@ import {
 
 import { ProjectList, ProjectShow, ProjectCreate, ProjectEdit } from './resources/projects';
 import { OrganizationList, OrganizationShow, OrganizationCreate, OrganizationEdit } from './resources/organizations';
+import { UserList, UserShow, UserCreate, UserEdit } from './resources/users';
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 import Layout from './components/Layout';
@@ -34,8 +35,7 @@ function App() {
     >
       <Resource name="Project" list={ProjectList} show={ProjectShow} edit={ProjectEdit} create={ProjectCreate} />
       <Resource name="Organization" list={OrganizationList} show={OrganizationShow} edit={OrganizationEdit} create={OrganizationCreate} />
-      <Resource name="Person" />
-      <Resource name="Concept" />
+      <Resource name="User" list={UserList} show={UserShow} edit={UserEdit} create={UserCreate} />
     </Admin>
   );
 }

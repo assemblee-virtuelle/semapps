@@ -35,7 +35,7 @@ const OrganizationShow = props => {
           <MarkDownField source="description" addLabel />
         </Column>
         <Column xs={3} showLabel>
-          <UriArrayField label="Membres" reference="Person" source="hasMember" referenceBasePath="/User">
+          <UriArrayField label="Membres" reference="User" source="hasMember" referenceBasePath="/User">
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>

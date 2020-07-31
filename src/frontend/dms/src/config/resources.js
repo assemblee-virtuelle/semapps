@@ -7,7 +7,7 @@ const resources = {
     types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },
-  Person: {
+  User: {
     types: ['pair:Person'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },

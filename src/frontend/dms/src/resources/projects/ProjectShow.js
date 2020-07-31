@@ -45,12 +45,12 @@ const ProjectShow = props => {
               <ChipField source="label" color="primary" />
             </SingleFieldList>
           </UriArrayField>
-          <UriArrayField label="Responsables" reference="Person" source="hasResponsible" referenceBasePath="/User">
+          <UriArrayField label="Responsables" reference="User" source="hasResponsible" referenceBasePath="/User">
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>
           </UriArrayField>
-          <UriArrayField label="Participants" reference="Person" source="involves" referenceBasePath="/User">
+          <UriArrayField label="Participants" reference="User" source="involves" referenceBasePath="/User">
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>

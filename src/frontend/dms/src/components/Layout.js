@@ -1,6 +1,7 @@
 import React from 'react';
 import { Notification } from 'react-admin';
 import { Container, Box, ThemeProvider, createMuiTheme } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 const theme = createMuiTheme({
   palette: {
@@ -29,11 +30,13 @@ const Layout = ({ children }) => (
     <Box bgcolor="grey.main">
       <Container maxWidth="lg">
         <Box pb={3} pt={3}>
-          <img
-            src={process.env.PUBLIC_URL + '/av-chantiers-collaboratifs.png'}
-            style={{ maxHeight: 125, maxWidth: '100%' }}
-            alt="Chantiers collaboratifs"
-          />
+          <Link to="/Project">
+            <img
+              src={process.env.PUBLIC_URL + '/av-chantiers-collaboratifs.png'}
+              style={{ maxHeight: 125, maxWidth: '100%' }}
+              alt="Chantiers collaboratifs"
+            />
+          </Link>
         </Box>
       </Container>
     </Box>
