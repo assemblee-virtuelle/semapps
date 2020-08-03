@@ -1,4 +1,11 @@
-export { default as ProjectCreate } from './ProjectCreate';
-export { default as ProjectEdit } from './ProjectEdit';
-export { default as ProjectList } from './ProjectList';
-export { default as ProjectShow } from './ProjectShow';
+import ProjectCreate from "./ProjectCreate";
+import ProjectEdit from "./ProjectEdit";
+import ProjectList from "./ProjectList";
+import ProjectShow from "./ProjectShow";
+
+export default {
+  list: ProjectList,
+  show: ProjectShow,
+  create: ProjectCreate,
+  edit: ProjectEdit
+};

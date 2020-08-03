@@ -21,6 +21,17 @@ const theme = createMuiTheme({
         marginRight: 8,
         marginBottom: 8
       }
+    },
+    RaShow: {
+      card: {
+        padding: 25
+      }
+    },
+    RaSingleFieldList: {
+      root: {
+        marginTop: 0,
+        marginBottom: 0
+      }
     }
   }
 });

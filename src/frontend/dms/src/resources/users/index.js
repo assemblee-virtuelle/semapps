@@ -1,4 +1,11 @@
-export { default as UserCreate } from './UserCreate';
-export { default as UserEdit } from './UserEdit';
-export { default as UserList } from './UserList';
-export { default as UserShow } from './UserShow';
+import UserCreate from "./UserCreate";
+import UserEdit from "./UserEdit";
+import UserList from "./UserList";
+import UserShow from "./UserShow";
+
+export default {
+  list: UserList,
+  show: UserShow,
+  create: UserCreate,
+  edit: UserEdit
+};
