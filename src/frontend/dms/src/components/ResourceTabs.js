@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { getResources } from 'react-admin';
 import { Tabs, Tab } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router';
@@ -13,7 +13,7 @@ const ResourceTabs = () => {
 
   const resources = useSelector(getResources, shallowEqual);
 
-  return(
+  return (
     <Tabs
       value={currentResource}
       onChange={(_, value) => history.push('/' + value)}
@@ -21,7 +21,12 @@ const ResourceTabs = () => {
       textColor="primary"
     >
       {resources.map(resource => (
-        <Tab key={resource.name} icon={React.createElement(resource.icon)} label={resource.options.label} value={resource.name} />
+        <Tab
+          key={resource.name}
+          icon={React.createElement(resource.icon)}
+          label={resource.options.label}
+          value={resource.name}
+        />
       ))}
     </Tabs>
   );
