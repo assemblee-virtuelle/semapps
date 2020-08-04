@@ -23,7 +23,12 @@ const ProjectShow = props => (
         <MarkDownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Géré par" reference="Organization" source="pair:managedBy" referenceBasePath="/Organization">
+        <UriArrayField
+          label="Géré par"
+          reference="Organization"
+          source="pair:managedBy"
+          referenceBasePath="/Organization"
+        >
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
