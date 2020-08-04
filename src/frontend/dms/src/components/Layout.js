@@ -1,7 +1,7 @@
 import React from 'react';
 import { Notification } from 'react-admin';
-import { Container, Box, ThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Container, Box, ThemeProvider, createMuiTheme } from '@material-ui/core';
+import Header from './Header';
 
 const theme = createMuiTheme({
   palette: {
@@ -36,35 +36,10 @@ const theme = createMuiTheme({
   }
 });
 
-const useStyles = makeStyles(() => ({
-  header: {
-    position: 'relative',
-    height: 65,
-    marginBottom: 35
-  },
-  logo: {
-    position: 'absolute',
-    top: -15,
-    height: 110,
-    width: 110
-  }
-}));
-
 const Layout = ({ children }) => {
-  const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
-      <Box bgcolor="primary.main">
-        <Container maxWidth="lg" className={classes.header}>
-          <Link to="/Project">
-            <img
-              src={process.env.PUBLIC_URL + '/av.png'}
-              alt="Assemblée Virtuelle"
-              className={classes.logo}
-            />
-          </Link>
-        </Container>
-      </Box>
+      <Header/>
       <Container maxWidth="lg">
         <Box mb={5}>{children}</Box>
       </Container>
