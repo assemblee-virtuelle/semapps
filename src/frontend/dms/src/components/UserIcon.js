@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
 
 const UserIcon = ({ record }) => {
   const classes = useStyles();
-  const fullName = record ? record.firstName + ' ' + record.lastName : '';
+  const fullName = record ? record['pair:firstName'] + ' ' + record['pair:lastName'] : '';
   return (
     <Box className={classes.parent}>
       <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />

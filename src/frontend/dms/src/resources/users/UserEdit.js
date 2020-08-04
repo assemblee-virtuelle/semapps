@@ -9,13 +9,13 @@ const UserTitle = ({ record }) => {
 export const UserEdit = props => (
   <Edit title={<UserTitle />} {...props}>
     <SimpleForm>
-      <TextInput source="firstName" label="Prénom" fullWidth />
-      <TextInput source="lastName" label="Nom de famille" fullWidth />
-      <JsonLdReferenceInput label="Participe à" reference="Project" source="involvedIn">
-        <AutocompleteArrayInput optionText={record => record && record.label} fullWidth />
+      <TextInput source="pair:firstName" label="Prénom" fullWidth />
+      <TextInput source="pair:lastName" label="Nom de famille" fullWidth />
+      <JsonLdReferenceInput label="Participe à" reference="Project" source="pair:involvedIn">
+        <AutocompleteArrayInput optionText={record => record && record['pair:label']} fullWidth />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Membre" reference="Organization" source="memberOf">
-        <AutocompleteArrayInput optionText={record => record && record.label} fullWidth />
+      <JsonLdReferenceInput label="Membre" reference="Organization" source="pair:memberOf">
+        <AutocompleteArrayInput optionText={record => record && record['pair:label']} fullWidth />
       </JsonLdReferenceInput>
     </SimpleForm>
   </Edit>

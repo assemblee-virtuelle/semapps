@@ -6,36 +6,31 @@ import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
 const ProjectEdit = props => (
   <Edit {...props}>
     <SimpleForm>
-      <TextInput source="label" label="Nom" fullWidth />
-      <TextInput source="comment" label="Courte description" fullWidth />
-      <MarkdownInput multiline source="description" label="Description" fullWidth />
-      <UriInput source="homePage" label="Site web" fullWidth />
-      <JsonLdReferenceInput label="Géré par" reference="Organization" source="managedBy">
+      <TextInput source="pair:label" label="Nom" fullWidth />
+      <TextInput source="pair:comment" label="Courte description" fullWidth />
+      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
+      <UriInput source="pair:homePage" label="Site web" fullWidth />
+      <JsonLdReferenceInput label="Géré par" reference="Organization" source="pair:managedBy">
         <AutocompleteArrayInput
           optionText={record => {
-            // TODO improve the handling of the many possible cases
-            if (!record) return 'Label manquant';
-            if (record['rdf:type'] === 'Organization' || record['@type'] === 'Organization') {
-              if (Array.isArray(record.label)) {
-                return record.label[0];
-              } else {
-                return record.label || 'Label manquant';
-              }
+            if (Array.isArray(record['pair:label'])) {
+              return record['pair:label'][0];
+            } else {
+              return record['pair:label'] || 'Label manquant';
             }
-            return `${record['foaf:givenName']} ${record['foaf:familyName']}` || 'Label manquant';
           }}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Responsables" reference="User" source="hasResponsible">
+      <JsonLdReferenceInput label="Responsables" reference="User" source="pair:hasResponsible">
         <AutocompleteArrayInput
-          optionText={record => (record ? `${record.firstName} ${record.lastName}` : 'Label manquant')}
+          optionText={record => (record ? `${record['pair:firstName']} ${record['pair:lastName']}` : 'Label manquant')}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Participants" reference="User" source="involves">
+      <JsonLdReferenceInput label="Participants" reference="User" source="pair:involves">
         <AutocompleteArrayInput
-          optionText={record => (record ? `${record.firstName} ${record.lastName}` : 'Label manquant')}
+          optionText={record => (record ? `${record['pair:firstName']} ${record['pair:lastName']}` : 'Label manquant')}
           fullWidth
         />
       </JsonLdReferenceInput>

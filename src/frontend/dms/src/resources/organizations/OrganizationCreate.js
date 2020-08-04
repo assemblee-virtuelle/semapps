@@ -4,7 +4,7 @@ import { Create, SimpleForm, TextInput } from 'react-admin';
 const OrganizationCreate = props => (
   <Create title="Créer une organisation" {...props}>
     <SimpleForm>
-      <TextInput source="label" label="Nom" />
+      <TextInput source="pair:label" label="Nom" />
     </SimpleForm>
   </Create>
 );

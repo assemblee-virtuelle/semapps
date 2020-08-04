@@ -9,7 +9,7 @@ import UserIcon from '../../components/UserIcon';
 import GridList from '../../components/GridList';
 
 const OrganizationTitle = ({ record }) => {
-  return <span>{record ? record.label : ''}</span>;
+  return <span>{record ? record['pair:label'] : ''}</span>;
 };
 
 const OrganizationShow = props => (
@@ -17,13 +17,13 @@ const OrganizationShow = props => (
     <ColumnShowLayout>
       <Column xs={9}>
         <Hero title={<OrganizationTitle />}>
-          <TextField label="Courte description" source="comment" />
-          <UrlField label="Site web" source="homePage" />
+          <TextField label="Courte description" source="pair:comment" />
+          <UrlField label="Site web" source="pair:homePage" />
         </Hero>
-        <MarkDownField source="description" addLabel />
+        <MarkDownField source="pair:description" addLabel />
       </Column>
       <Column xs={3} showLabel>
-        <UriArrayField label="Membres" reference="User" source="hasMember" referenceBasePath="/User">
+        <UriArrayField label="Membres" reference="User" source="pair:hasMember" referenceBasePath="/User">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>

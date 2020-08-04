@@ -28,7 +28,7 @@
     "prefix": "pair",
     "owl": "",
     "url": "http://virtual-assembly.org/ontologies/pair#",
-    "context": "https://gist.githubusercontent.com/srosset81/cc330b63a213e6f68eb5e52d6ded4342/raw/1ca1cbf87027072503216df68892864757cb0db7/pair-ontology.json"
+    "context": "https://gist.githubusercontent.com/srosset81/cc330b63a213e6f68eb5e52d6ded4342/raw/7418e256c64685d44607f333e49489afb302a0b6/pair-ontology.json"
   },
   {
     "prefix": "pairv1",

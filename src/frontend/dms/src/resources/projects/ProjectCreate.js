@@ -6,9 +6,9 @@ import { UriInput } from '@semapps/react-admin';
 const ProjectCreate = props => (
   <Create {...props}>
     <SimpleForm>
-      <TextInput source="label" label="Nom" fullWidth />
-      <MarkdownInput multiline source="description" label="Description" fullWidth />
-      <UriInput source="homePage" label="Site web" fullWidth />
+      <TextInput source="pair:label" label="Nom" fullWidth />
+      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
+      <UriInput source="pair:homePage" label="Site web" fullWidth />
     </SimpleForm>
   </Create>
 );

@@ -9,7 +9,7 @@ import UserIcon from '../../components/UserIcon';
 import GridList from '../../components/GridList';
 
 const ProjectTitle = ({ record }) => {
-  return <span>{record ? record.label : ''}</span>;
+  return <span>{record ? record['pair:label'] : ''}</span>;
 };
 
 const ProjectShow = props => (
@@ -17,23 +17,23 @@ const ProjectShow = props => (
     <ColumnShowLayout>
       <Column xs={9}>
         <Hero title={<ProjectTitle />}>
-          <TextField label="Courte description" source="comment" />
-          <UrlField label="Site web" source="homePage" />
+          <TextField label="Courte description" source="pair:comment" />
+          <UrlField label="Site web" source="pair:homePage" />
         </Hero>
-        <MarkDownField source="description" addLabel />
+        <MarkDownField source="pair:description" addLabel />
       </Column>
       <Column xs={3} showLabel>
-        <UriArrayField label="Géré par" reference="Organization" source="managedBy" referenceBasePath="/Organization">
+        <UriArrayField label="Géré par" reference="Organization" source="pair:managedBy" referenceBasePath="/Organization">
           <SingleFieldList linkType="show">
-            <ChipField source="label" color="secondary" />
+            <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Responsables" reference="User" source="hasResponsible" referenceBasePath="/User">
+        <UriArrayField label="Responsables" reference="User" source="pair:hasResponsible" referenceBasePath="/User">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>
         </UriArrayField>
-        <UriArrayField label="Participants" reference="User" source="involves" referenceBasePath="/User">
+        <UriArrayField label="Participants" reference="User" source="pair:involves" referenceBasePath="/User">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>
