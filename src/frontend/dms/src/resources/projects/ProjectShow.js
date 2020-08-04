@@ -15,14 +15,14 @@ const ProjectTitle = ({ record }) => {
 const ProjectShow = props => (
   <Show {...props}>
     <ColumnShowLayout>
-      <Column xs={9}>
+      <Column xs={12} sm={9}>
         <Hero title={<ProjectTitle />}>
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
         </Hero>
         <MarkDownField source="pair:description" addLabel />
       </Column>
-      <Column xs={3} showLabel>
+      <Column xs={12} sm={3} showLabel>
         <UriArrayField label="Géré par" reference="Organization" source="pair:managedBy" referenceBasePath="/Organization">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />

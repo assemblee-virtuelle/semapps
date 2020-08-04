@@ -12,13 +12,13 @@ const UserTitle = ({ record }) => {
 const UserShow = props => (
   <Show {...props}>
     <ColumnShowLayout>
-      <Column xs={9}>
+      <Column xs={12} sm={9}>
         <Hero title={<UserTitle />} image={process.env.PUBLIC_URL + '/unknown-user.png'}>
           <TextField label="Prénom" source="pair:firstName" />
           <TextField label="Nom de famille" source="pair:lastName" />
         </Hero>
       </Column>
-      <Column xs={3} showLabel>
+      <Column xs={12} sm={3} showLabel>
         <UriArrayField label="Membre" reference="Organization" source="pair:memberOf" referenceBasePath="/Organization">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />

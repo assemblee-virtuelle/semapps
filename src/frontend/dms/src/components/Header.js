@@ -1,5 +1,5 @@
 import React from "react";
-import { Container, Box, Grid, makeStyles } from '@material-ui/core';
+import { Container, Box, Grid, Hidden, makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import SearchForm from './SearchForm';
 
@@ -31,11 +31,13 @@ const Header = () => {
               />
             </Link>
           </Grid>
-          <Grid item sm={6}>
-            <Box pt={2} display={{ xs: 'none', sm: 'block' }}>
-              <SearchForm />
-            </Box>
-          </Grid>
+          <Hidden xsDown>
+            <Grid item sm={6}>
+              <Box pt={2}>
+                <SearchForm />
+              </Box>
+            </Grid>
+          </Hidden>
         </Grid>
       </Container>
     </Box>

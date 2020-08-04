@@ -2,9 +2,9 @@ import React from 'react';
 import { Grid } from '@material-ui/core';
 import RightLabel from './RightLabel';
 
-const Column = ({ basePath, children, record, resource, xs, showLabel }) => {
+const Column = ({ basePath, children, record, resource, showLabel, ...otherProps }) => {
   return (
-    <Grid item xs={xs}>
+    <Grid item {...otherProps}>
       {React.Children.map(children, field =>
         field && React.isValidElement(field) ? (
           <div key={field.props.source}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Notification } from 'react-admin';
-import { Container, Box, ThemeProvider, createMuiTheme } from '@material-ui/core';
+import { Container, Box, ThemeProvider, createMuiTheme, useMediaQuery } from '@material-ui/core';
 import Header from './Header';
 import ScrollToTop from "./ScrollToTop";
 
@@ -40,13 +40,15 @@ const theme = createMuiTheme({
 });
 
 const Layout = ({ children }) => {
+  const xs = useMediaQuery(theme.breakpoints.down('xs'));
   return (
     <ThemeProvider theme={theme}>
       <ScrollToTop />
       <Header />
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" disableGutters={xs}>
         <Box mb={5}>{children}</Box>
       </Container>
+      {/* Required for react-admin optimistic update */}
       <Notification />
     </ThemeProvider>
   );
