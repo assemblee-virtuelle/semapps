@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, SimpleList } from 'react-admin';
-import ResourceTabs from "../../components/ResourceTabs";
+import ResourceTabs from '../../components/ResourceTabs';
 
 const ProjectList = props => (
   <List title="Projets" perPage={25} {...props}>

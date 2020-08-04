@@ -2,7 +2,7 @@ import React from 'react';
 import { Notification } from 'react-admin';
 import { Container, Box, ThemeProvider, createMuiTheme, useMediaQuery } from '@material-ui/core';
 import Header from './Header';
-import ScrollToTop from "./ScrollToTop";
+import ScrollToTop from './ScrollToTop';
 
 const theme = createMuiTheme({
   palette: {
@@ -52,6 +52,6 @@ const Layout = ({ children }) => {
       <Notification />
     </ThemeProvider>
   );
-}
+};
 
 export default Layout;
