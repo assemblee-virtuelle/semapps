@@ -33,14 +33,14 @@ const SearchForm = () => {
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={1}>
-            <Grid item xs={5} bgColor="secondary.main">
+            <Grid item xs={5}>
               <Field name="filter" component={FilterText} placeholder="Rechercher..." fullWidth />
             </Grid>
             <Grid item xs={5}>
               <Field name="type" component={TypeSelect} fullWidth />
             </Grid>
             <Grid item xs={2}>
-              <Button variant="outlined" color="grey" type="submit">
+              <Button variant="outlined" type="submit">
                 Hop !
               </Button>
             </Grid>
