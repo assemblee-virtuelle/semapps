@@ -21,12 +21,12 @@ const UserShow = props => (
       <Column xs={3} showLabel>
         <UriArrayField label="Membre" reference="Organization" source="memberOf" referenceBasePath="/Organization">
           <SingleFieldList linkType="show">
-            <ChipField source="label" color="primary" />
+            <ChipField source="label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
         <UriArrayField label="Participe à" reference="Project" source="involvedIn" referenceBasePath="/Project">
           <SingleFieldList linkType="show">
-            <ChipField source="label" color="primary" />
+            <ChipField source="label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
       </Column>

@@ -27,7 +27,7 @@ const UserIcon = ({ record }) => {
   return (
     <Box className={classes.parent}>
       <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />
-      <Box bgcolor="primary.main" className={classes.child} borderRadius={7}>
+      <Box bgcolor="secondary.main" className={classes.child} borderRadius={7}>
         <Typography align="center" className={classes.caption} noWrap>
           {fullName}
         </Typography>

@@ -25,7 +25,7 @@ const ProjectShow = props => (
       <Column xs={3} showLabel>
         <UriArrayField label="Géré par" reference="Organization" source="managedBy" referenceBasePath="/Organization">
           <SingleFieldList linkType="show">
-            <ChipField source="label" color="primary" />
+            <ChipField source="label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
         <UriArrayField label="Responsables" reference="User" source="hasResponsible" referenceBasePath="/User">

@@ -32,7 +32,7 @@ const SearchForm = () => {
       initialValues={{ type: 'Organization' }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={1}>
+          <Grid container spacing={2}>
             <Grid item xs={5}>
               <Field name="filter" component={FilterText} placeholder="Rechercher..." fullWidth />
             </Grid>
