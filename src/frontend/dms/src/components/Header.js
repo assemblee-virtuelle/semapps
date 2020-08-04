@@ -22,7 +22,7 @@ const Header = () => {
     <Box bgcolor="primary.main">
       <Container maxWidth="lg" className={classes.header}>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={6}>
             <Link to="/Organization">
               <img
                 src={process.env.PUBLIC_URL + '/av.png'}
@@ -31,12 +31,11 @@ const Header = () => {
               />
             </Link>
           </Grid>
-          <Grid item xs={6}>
-            <Box p={2}>
-            <SearchForm />
+          <Grid item sm={6}>
+            <Box pt={2} display={{ xs: 'none', sm: 'block' }}>
+              <SearchForm />
             </Box>
           </Grid>
-          <Grid item xs={3}/>
         </Grid>
       </Container>
     </Box>

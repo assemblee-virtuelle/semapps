@@ -44,7 +44,7 @@ const SearchForm = () => {
               <Field name="type" component={TypeSelect} fullWidth />
             </Grid>
             <Grid item xs={2}>
-              <Button variant="outlined" type="submit">
+              <Button variant="outlined" type="submit" fullWidth>
                 Hop !
               </Button>
             </Grid>
