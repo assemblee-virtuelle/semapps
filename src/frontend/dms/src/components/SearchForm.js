@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Select, MenuItem, TextField, Button } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 const FilterText = ({ input, ...otherProps }) => (
   <TextField {...input} {...otherProps} />
@@ -18,6 +18,10 @@ const TypeSelect = ({ input, ...otherProps }) => (
 const SearchForm = () => {
   const history = useHistory();
 
+  const location = useLocation();
+  const matches = location.pathname.match(/^\/([^/]+)/);
+  const currentType = matches ? matches[1] : 'Organization';
+
   const onSubmit = ({ filter, type }) => {
     if( filter ) {
       history.push(`/${type}?filter=${encodeURIComponent(`{"q": "${filter}"}`)}`);
@@ -29,7 +33,7 @@ const SearchForm = () => {
   return(
     <Form
       onSubmit={onSubmit}
-      initialValues={{ type: 'Organization' }}
+      initialValues={{ type: currentType }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
