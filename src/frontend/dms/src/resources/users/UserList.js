@@ -1,14 +1,18 @@
 import React from 'react';
-import {  List, SimpleList } from 'react-admin';
+import { List, SimpleList } from 'react-admin';
+import ResourceTabs from "../../components/ResourceTabs";
 
-export const UserList = props => (
+const UserList = props => (
   <List title="Utilisateurs" perPage={25} {...props}>
-    <SimpleList
-      primaryText={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
-      secondaryText={record => record['pair:comment']}
-      leftAvatar={() => <img src={process.env.PUBLIC_URL + '/unknown-user.png'} width="100%" alt="Assemblée virtuelle" />}
-      linkType="show"
-    />
+    <>
+      <ResourceTabs />
+      <SimpleList
+        primaryText={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
+        secondaryText={record => record['pair:comment']}
+        leftAvatar={() => <img src={process.env.PUBLIC_URL + '/unknown-user.png'} width="100%" alt="Assemblée virtuelle" />}
+        linkType="show"
+      />
+    </>
   </List>
 );
 
