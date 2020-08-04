@@ -1,17 +1,25 @@
 import React from 'react';
-import { Grid, Select, MenuItem, TextField, Button } from '@material-ui/core';
+import { getResources } from "react-admin";
+import { Grid, Select, MenuItem, TextField, Button, ListItemIcon } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { useHistory, useLocation } from 'react-router-dom';
+import { shallowEqual, useSelector } from 'react-redux';
 
 const FilterText = ({ input, ...otherProps }) => <TextField {...input} {...otherProps} />;
 
-const TypeSelect = ({ input, ...otherProps }) => (
-  <Select {...input} {...otherProps}>
-    <MenuItem value="Organization">Organisations</MenuItem>
-    <MenuItem value="Project">Projets</MenuItem>
-    <MenuItem value="User">Personnes</MenuItem>
-  </Select>
-);
+const TypeSelect = ({ input, ...otherProps }) => {
+  const resources = useSelector(getResources, shallowEqual);
+  return (
+    <Select {...input} {...otherProps}>
+      {resources.map(resource => (
+        <MenuItem value={resource.name}>
+          <ListItemIcon>{React.createElement(resource.icon)}</ListItemIcon>
+          {resource.options.label}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+}
 
 const SearchForm = () => {
   const history = useHistory();
