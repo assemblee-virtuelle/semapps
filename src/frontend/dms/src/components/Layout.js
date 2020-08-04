@@ -57,11 +57,7 @@ const Layout = ({ children }) => {
       <Box bgcolor="primary.main">
         <Container maxWidth="lg" className={classes.header}>
           <Link to="/Project">
-            <img
-              src={process.env.PUBLIC_URL + '/av.png'}
-              alt="Assemblée Virtuelle"
-              className={classes.logo}
-            />
+            <img src={process.env.PUBLIC_URL + '/av.png'} alt="Assemblée Virtuelle" className={classes.logo} />
           </Link>
         </Container>
       </Box>
@@ -71,6 +67,6 @@ const Layout = ({ children }) => {
       <Notification />
     </ThemeProvider>
   );
-}
+};
 
 export default Layout;
