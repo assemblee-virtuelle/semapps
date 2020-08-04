@@ -1,5 +1,5 @@
 import React from 'react';
-import { getResources } from "react-admin";
+import { getResources } from 'react-admin';
 import { Grid, Select, MenuItem, TextField, Button, ListItemIcon } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -19,7 +19,7 @@ const TypeSelect = ({ input, ...otherProps }) => {
       ))}
     </Select>
   );
-}
+};
 
 const SearchForm = () => {
   const history = useHistory();
