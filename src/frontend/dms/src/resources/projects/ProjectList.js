@@ -1,15 +1,15 @@
 import React from 'react';
-import { Datagrid, EditButton, List, ShowButton, TextField } from 'react-admin';
-import SearchFilter from '../../components/SearchFilter';
+import { List, SimpleList } from 'react-admin';
 
 const ProjectList = props => {
   return (
-    <List perPage={25} filters={<SearchFilter />} {...props}>
-      <Datagrid rowClick="show">
-        <TextField source="label" label="Nom" />
-        <ShowButton basePath="/Project" />
-        <EditButton basePath="/Project" />
-      </Datagrid>
+    <List title="Projets" perPage={25} {...props}>
+      <SimpleList
+        primaryText={record => record.label}
+        secondaryText={record => record.comment}
+        leftAvatar={() => <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" alt="Assemblée virtuelle" />}
+        linkType="show"
+      />
     </List>
   );
 };

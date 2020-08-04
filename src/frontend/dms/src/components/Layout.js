@@ -2,11 +2,14 @@ import React from 'react';
 import { Notification } from 'react-admin';
 import { Container, Box, ThemeProvider, createMuiTheme } from '@material-ui/core';
 import Header from './Header';
+import ScrollToTop from "./ScrollToTop";
 
 const theme = createMuiTheme({
   palette: {
+    primary: { main: '#28ccfb' },
+    secondary: { main: '#ff4351' },
     grey: { main: '#e0e0e0' },
-    primary: { main: '#28ccfb' }
+    lightGrey: { main: '#e0e0e0' }
   },
   typography: {
     details: {
@@ -39,7 +42,8 @@ const theme = createMuiTheme({
 const Layout = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
-      <Header/>
+      <ScrollToTop />
+      <Header />
       <Container maxWidth="lg">
         <Box mb={5}>{children}</Box>
       </Container>

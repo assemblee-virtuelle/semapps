@@ -1,12 +1,12 @@
 import React from "react";
-import { Container, Box, makeStyles } from '@material-ui/core';
+import { Container, Box, Grid, makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import SearchForm from './SearchForm';
 
 const useStyles = makeStyles(() => ({
   header: {
     position: 'relative',
-    height: 65,
-    marginBottom: 35
+    height: 65
   },
   logo: {
     position: 'absolute',
@@ -21,13 +21,23 @@ const Header = () => {
   return(
     <Box bgcolor="primary.main">
       <Container maxWidth="lg" className={classes.header}>
-        <Link to="/Project">
-          <img
-            src={process.env.PUBLIC_URL + '/av.png'}
-            alt="Assemblée Virtuelle"
-            className={classes.logo}
-          />
-        </Link>
+        <Grid container>
+          <Grid item xs={3}>
+            <Link to="/Organization">
+              <img
+                src={process.env.PUBLIC_URL + '/av.png'}
+                alt="Assemblée Virtuelle"
+                className={classes.logo}
+              />
+            </Link>
+          </Grid>
+          <Grid item xs={6}>
+            <Box p={2}>
+            <SearchForm />
+            </Box>
+          </Grid>
+          <Grid item xs={3}/>
+        </Grid>
       </Container>
     </Box>
   );

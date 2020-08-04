@@ -1,14 +1,14 @@
 import React from 'react';
-import { Datagrid, EditButton, List, ShowButton, TextField } from 'react-admin';
-import SearchFilter from '../../components/SearchFilter';
+import { List, SimpleList } from 'react-admin';
 
 export const OrganizationList = props => (
-  <List title="Organisations" perPage={25} filters={<SearchFilter />} {...props}>
-    <Datagrid rowClick="show">
-      <TextField source="label" label="Nom" />
-      <ShowButton basePath="/Organization" />
-      <EditButton basePath="/Organization" />
-    </Datagrid>
+  <List title="Organisations" perPage={25} {...props}>
+    <SimpleList
+      primaryText={record => record.label}
+      secondaryText={record => record.comment}
+      leftAvatar={() => <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" alt="Assemblée virtuelle" />}
+      linkType="show"
+    />
   </List>
 );
 
