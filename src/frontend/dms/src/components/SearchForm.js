@@ -1,5 +1,5 @@
 import React from 'react';
-import { getResources } from "react-admin";
+import { getResources } from 'react-admin';
 import { Grid, Select, MenuItem, TextField, Button } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -11,14 +11,16 @@ const TypeSelect = ({ input, ...otherProps }) => {
   const resources = useSelector(getResources, shallowEqual);
   return (
     <Select {...input} {...otherProps}>
-      {resources.filter(resource => resource.hasList).map(resource => (
-        <MenuItem value={resource.name} key={resource.name}>
-          {resource.options.label}
-        </MenuItem>
-      ))}
+      {resources
+        .filter(resource => resource.hasList)
+        .map(resource => (
+          <MenuItem value={resource.name} key={resource.name}>
+            {resource.options.label}
+          </MenuItem>
+        ))}
     </Select>
   );
-}
+};
 
 const SearchForm = () => {
   const history = useHistory();
