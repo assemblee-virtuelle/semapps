@@ -16,7 +16,7 @@ import users from './resources/users';
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';
-import Layout from './components/Layout';
+import { Layout, theme } from './archipelago-layout';
 
 const i18nProvider = polyglotI18nProvider(locale => frenchMessages);
 const dataProvider = createDataProvider({
@@ -30,7 +30,7 @@ const authProvider = createAuthProvider(process.env.REACT_APP_MIDDLEWARE_URL);
 
 function App() {
   return (
-    <Admin authProvider={authProvider} dataProvider={dataProvider} i18nProvider={i18nProvider} layout={Layout}>
+    <Admin authProvider={authProvider} dataProvider={dataProvider} i18nProvider={i18nProvider} layout={Layout} theme={theme}>
       <Resource name="Organization" {...organizations} />
       <Resource name="Project" {...projects} />
       <Resource name="User" {...users} />

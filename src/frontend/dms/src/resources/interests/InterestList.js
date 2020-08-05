@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, SimpleList } from 'react-admin';
-import ResourceTabs from '../../components/ResourceTabs';
+import { ResourceTabs } from '../../archipelago-layout';
 
 const InterestList = props => (
   <List title="Compétences" perPage={25} {...props}>

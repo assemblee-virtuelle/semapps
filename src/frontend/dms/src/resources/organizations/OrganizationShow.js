@@ -1,12 +1,8 @@
 import React from 'react';
 import { Show, TextField, UrlField } from 'react-admin';
-import ColumnShowLayout from '../../components/ColumnShowLayout';
-import Column from '../../components/Column';
-import Hero from '../../components/Hero';
+import { Column, ColumnShowLayout, Hero, UserIcon, GridList } from '../../archipelago-layout';
 import MarkDownField from '../../components/MarkdownField';
 import UriArrayField from '../../components/UriArrayField';
-import UserIcon from '../../components/UserIcon';
-import GridList from '../../components/GridList';
 
 const OrganizationTitle = ({ record }) => {
   return <span>{record ? record['pair:label'] : ''}</span>;

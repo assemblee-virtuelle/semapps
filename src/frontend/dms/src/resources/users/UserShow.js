@@ -1,8 +1,6 @@
 import React from 'react';
 import { ChipField, Show, SingleFieldList, TextField } from 'react-admin';
-import ColumnShowLayout from '../../components/ColumnShowLayout';
-import Column from '../../components/Column';
-import Hero from '../../components/Hero';
+import { Column, ColumnShowLayout, Hero } from '../../archipelago-layout';
 import UriArrayField from '../../components/UriArrayField';
 
 const UserTitle = ({ record }) => {
