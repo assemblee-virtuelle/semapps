@@ -46,7 +46,7 @@ const theme = createMuiTheme({
         borderColor: '#e0e0e0',
         borderWidth: 1
       }
-    },
+    }
     // MuiTab: {
     //   labelIcon: {
     //     minHeight: 0,
