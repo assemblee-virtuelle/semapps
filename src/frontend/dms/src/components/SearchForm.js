@@ -1,6 +1,6 @@
 import React from 'react';
 import { getResources } from "react-admin";
-import { Grid, Select, MenuItem, TextField, Button, ListItemIcon } from '@material-ui/core';
+import { Grid, Select, MenuItem, TextField, Button } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { useHistory, useLocation } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
@@ -11,9 +11,8 @@ const TypeSelect = ({ input, ...otherProps }) => {
   const resources = useSelector(getResources, shallowEqual);
   return (
     <Select {...input} {...otherProps}>
-      {resources.map(resource => (
-        <MenuItem value={resource.name}>
-          <ListItemIcon>{React.createElement(resource.icon)}</ListItemIcon>
+      {resources.filter(resource => resource.hasList).map(resource => (
+        <MenuItem value={resource.name} key={resource.name}>
           {resource.options.label}
         </MenuItem>
       ))}

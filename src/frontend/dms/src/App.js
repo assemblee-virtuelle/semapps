@@ -8,9 +8,12 @@ import {
   httpClient
 } from '@semapps/react-admin';
 
+import interests from './resources/interests';
 import projects from './resources/projects';
 import organizations from './resources/organizations';
+import skills from './resources/skills';
 import users from './resources/users';
+
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 import Layout from './components/Layout';
@@ -31,6 +34,8 @@ function App() {
       <Resource name="Organization" {...organizations} />
       <Resource name="Project" {...projects} />
       <Resource name="User" {...users} />
+      <Resource name="Skill" {...skills} />
+      <Resource name="Interest" {...interests} />
     </Admin>
   );
 }

@@ -17,6 +17,12 @@ export const UserEdit = props => (
       <JsonLdReferenceInput label="Membre" reference="Organization" source="pair:memberOf">
         <AutocompleteArrayInput optionText={record => record && record['pair:label']} fullWidth />
       </JsonLdReferenceInput>
+      <JsonLdReferenceInput label="Compétences" reference="Skill" source="pair:offers">
+        <AutocompleteArrayInput optionText={record => record && record['pair:label']} fullWidth />
+      </JsonLdReferenceInput>
+      <JsonLdReferenceInput label="Intérêts" reference="Interest" source="pair:hasInterest">
+        <AutocompleteArrayInput optionText={record => record && record['pair:label']} fullWidth />
+      </JsonLdReferenceInput>
     </SimpleForm>
   </Edit>
 );

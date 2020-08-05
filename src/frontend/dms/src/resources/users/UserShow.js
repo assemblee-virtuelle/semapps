@@ -19,13 +19,23 @@ const UserShow = props => (
         </Hero>
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Membre" reference="Organization" source="pair:memberOf" referenceBasePath="/Organization">
+        <UriArrayField label="Membre" reference="Organization" source="pair:memberOf">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Participe à" reference="Project" source="pair:involvedIn" referenceBasePath="/Project">
+        <UriArrayField label="Participe à" reference="Project" source="pair:involvedIn">
           <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField label="Compétences" reference="Skill" source="pair:offers">
+          <SingleFieldList linkType={false}>
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField label="Intérêts" reference="Interest" source="pair:hasInterest">
+          <SingleFieldList linkType={false}>
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>

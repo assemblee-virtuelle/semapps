@@ -20,7 +20,7 @@ const ResourceTabs = () => {
       indicatorColor="primary"
       textColor="primary"
     >
-      {resources.map(resource => (
+      {resources.filter(resource => resource.hasList).map(resource => (
         <Tab
           key={resource.name}
           icon={React.createElement(resource.icon)}
