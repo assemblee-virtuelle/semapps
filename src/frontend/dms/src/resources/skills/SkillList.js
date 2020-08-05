@@ -8,9 +8,7 @@ const SkillList = props => (
       <ResourceTabs />
       <SimpleList
         primaryText={record => record['pair:label']}
-        leftAvatar={() => (
-          <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" alt="Assemblée virtuelle" />
-        )}
+        leftAvatar={() => <img src={process.env.PUBLIC_URL + '/av.png'} width="100%" alt="Assemblée virtuelle" />}
         linkType="edit"
       />
     </>
