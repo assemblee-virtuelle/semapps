@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChipField, Show, SingleFieldList, TextField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero } from '../../archipelago-layout';
+import { Column, ColumnShowLayout, Hero, ShowActions } from '../../archipelago-layout';
 import UriArrayField from '../../components/UriArrayField';
 
 const UserTitle = ({ record }) => {
@@ -8,7 +8,7 @@ const UserTitle = ({ record }) => {
 };
 
 const UserShow = props => (
-  <Show {...props}>
+  <Show actions={<ShowActions />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<UserTitle />} image={process.env.PUBLIC_URL + '/unknown-user.png'}>

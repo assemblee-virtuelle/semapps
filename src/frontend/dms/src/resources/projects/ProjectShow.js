@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChipField, Show, SingleFieldList, TextField, UrlField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, UserIcon, GridList } from '../../archipelago-layout';
+import { Column, ColumnShowLayout, Hero, UserIcon, GridList, ShowActions } from '../../archipelago-layout';
 import MarkDownField from '../../components/MarkdownField';
 import UriArrayField from '../../components/UriArrayField';
 
@@ -9,7 +9,7 @@ const ProjectTitle = ({ record }) => {
 };
 
 const ProjectShow = props => (
-  <Show {...props}>
+  <Show actions={<ShowActions />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<ProjectTitle />}>

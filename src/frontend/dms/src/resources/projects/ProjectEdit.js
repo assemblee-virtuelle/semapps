@@ -2,9 +2,10 @@ import React from 'react';
 import { AutocompleteArrayInput, Edit, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
+import { EditActions } from '../../archipelago-layout';
 
 const ProjectEdit = props => (
-  <Edit {...props}>
+  <Edit actions={<EditActions />} {...props}>
     <SimpleForm>
       <TextInput source="pair:label" label="Nom" fullWidth />
       <TextInput source="pair:comment" label="Courte description" fullWidth />

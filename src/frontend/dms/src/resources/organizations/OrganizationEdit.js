@@ -2,13 +2,14 @@ import React from 'react';
 import { AutocompleteArrayInput, Edit, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { JsonLdReferenceInput, UriInput } from '@semapps/react-admin';
+import { EditActions } from '../../archipelago-layout';
 
 const OrganizationTitle = ({ record }) => {
   return <span>Organisation {record ? `"${record['label']}"` : ''}</span>;
 };
 
 export const OrganizationEdit = props => (
-  <Edit title={<OrganizationTitle />} {...props}>
+  <Edit title={<OrganizationTitle />} actions={<EditActions />} {...props}>
     <SimpleForm>
       <TextInput source="pair:label" label="Nom" />
       <TextInput source="pair:comment" label="Courte description" fullWidth />

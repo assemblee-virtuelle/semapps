@@ -1,13 +1,14 @@
 import React from 'react';
 import { AutocompleteArrayInput, Edit, SimpleForm, TextInput } from 'react-admin';
 import { JsonLdReferenceInput } from '@semapps/react-admin';
+import { EditActions } from "../../archipelago-layout";
 
 const UserTitle = ({ record }) => {
   return <span>Utilisateur {record ? `"${record['label']}"` : ''}</span>;
 };
 
 export const UserEdit = props => (
-  <Edit title={<UserTitle />} {...props}>
+  <Edit actions={<EditActions />} title={<UserTitle />} {...props}>
     <SimpleForm>
       <TextInput source="pair:firstName" label="Prénom" fullWidth />
       <TextInput source="pair:lastName" label="Nom de famille" fullWidth />

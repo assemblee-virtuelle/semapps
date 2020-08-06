@@ -47,15 +47,16 @@ const theme = createMuiTheme({
         borderWidth: 1
       }
     },
-    // MuiTab: {
-    //   labelIcon: {
-    //     minHeight: 0,
-    //   },
-    //   wrapper: {
-    //     alignItems: null,
-    //     flexDirection: null
-    //   }
-    // }
+    MuiTab: {
+      labelIcon: {
+        paddingTop: 0
+        // minHeight: 0
+      }
+      // wrapper: {
+      //   alignItems: null,
+      //   flexDirection: null
+      // }
+    }
   }
 });
 

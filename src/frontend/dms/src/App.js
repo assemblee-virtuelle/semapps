@@ -4,7 +4,6 @@ import frenchMessages from 'ra-language-french';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import {
   dataProvider as createDataProvider,
-  authProvider as createAuthProvider,
   httpClient
 } from '@semapps/react-admin';
 
@@ -26,11 +25,10 @@ const dataProvider = createDataProvider({
   ontologies,
   mainOntology: 'pair'
 });
-const authProvider = createAuthProvider(process.env.REACT_APP_MIDDLEWARE_URL);
 
 function App() {
   return (
-    <Admin authProvider={authProvider} dataProvider={dataProvider} i18nProvider={i18nProvider} layout={Layout} theme={theme}>
+    <Admin dataProvider={dataProvider} i18nProvider={i18nProvider} layout={Layout} theme={theme}>
       <Resource name="Organization" {...organizations} />
       <Resource name="Project" {...projects} />
       <Resource name="User" {...users} />
