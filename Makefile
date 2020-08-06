@@ -37,7 +37,7 @@ docker-restart:
 	$(DOCKER_COMPOSE) up -d --force-recreate
 
 log:
-	$(DOCKER_COMPOSE) logs -f middleware frontend fuseki
+	$(DOCKER_COMPOSE) logs -f middleware frontend fuseki redis arena bull-board
 
 log-prod:
 	$(DOCKER_COMPOSE_PROD) logs -f middleware fuseki frontend

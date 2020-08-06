@@ -17,7 +17,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 ## Dependencies
 
-- LdpService
+- [LdpService](ldp.md)
+- [WebfingerService](webfinger.md)
+- [SignatureService](signature.md)
 
 ## Sub-services
 
@@ -56,7 +58,7 @@ module.exports = {
 };
 ```
 
-Optionally, you can configure the API routes with moleculer-web:
+### Configure the API routes
 
 ```js
 const { ApiGatewayService } = require('moleculer-web');
@@ -73,7 +75,14 @@ module.exports = {
 }
 ```
 
-### Creating actors on WebID creations
+### Queue federation POSTs
+
+If you want to make sure no data is lost when trying to POST to remote ActivityPub servers, you can set the `queueServiceUrl` settings. 
+
+The [Bull](https://github.com/OptimalBits/bull) task manager will queue the task and you will be able to retry it if it fails.
+
+
+### Create actors on WebID creations
 
 This is done automatically when a `webid.created` event is detected.
 
@@ -85,6 +94,7 @@ This is done automatically when a `webid.created` event is detected.
 | `baseUri` | `String` | **required** | Base URI of your web server |
 | `containers` | `Object` |  | Path of the containers for the `activities`, `actors` and `objects`.
 | `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.
+| `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.
 
 
 ## Actions

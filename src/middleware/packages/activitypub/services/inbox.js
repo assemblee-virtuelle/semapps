@@ -1,13 +1,13 @@
 const urlJoin = require('url-join');
-const { PUBLIC_URI } = require('../constants');
-const { objectCurrentToId } = require('../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
 const InboxService = {
   name: 'activitypub.inbox',
   settings: {
     actorsContainer: null
   },
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
+  dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;
@@ -25,10 +25,31 @@ const InboxService = {
         return;
       }
 
-      // TODO check JSON-LD signature
-      // TODO check object is valid
+      const validDigest = await ctx.call('signature.verifyDigest', {
+        body: JSON.stringify(activity),
+        headers: ctx.meta.headers
+      });
 
-      // Attach the newly-created activity to the inbox
+      const validSignature = await ctx.call('signature.verifyHttpSignature', {
+        url: collectionUri || this.getInboxUri(username),
+        headers: ctx.meta.headers
+      });
+
+      if (!validDigest || !validSignature) {
+        ctx.meta.$statusCode = 401;
+        return;
+      }
+
+      // TODO check activity is valid
+
+      // Save the remote activity in the local triple store
+      // TODO see if we could cache it elsewhere
+      await ctx.call('triplestore.insert', {
+        resource: objectIdToCurrent(activity),
+        contentType: MIME_TYPES.JSON
+      });
+
+      // Attach the activity to the inbox
       ctx.call('activitypub.collection.attach', {
         collectionUri: collectionUri || this.getInboxUri(username),
         item: activity
@@ -39,7 +60,7 @@ const InboxService = {
         recipients: [urlJoin(this.settings.actorsContainer, username)]
       });
 
-      return activity;
+      ctx.meta.$statusCode = 202;
     },
     async list(ctx) {
       ctx.meta.$responseType = 'application/ld+json';
@@ -60,57 +81,9 @@ const InboxService = {
       }
     }
   },
-  events: {
-    async 'activitypub.outbox.posted'(ctx) {
-      const { activity } = ctx.params;
-
-      if (activity.to) {
-        const recipients = await this.getAllRecipients(activity);
-        for (const recipient of recipients) {
-          // Attach the activity to the inbox of the recipient
-          await this.broker.call('activitypub.collection.attach', {
-            collectionUri: urlJoin(recipient, 'inbox'),
-            item: activity
-          });
-        }
-        this.broker.emit('activitypub.inbox.received', { activity, recipients });
-      }
-    },
-    'activitypub.inbox.received'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
-    }
-  },
   methods: {
     getInboxUri(username) {
       return urlJoin(this.settings.actorsContainer, username, 'inbox');
-    },
-    getFollowersUri(actorUri) {
-      return urlJoin(actorUri, 'followers');
-    },
-    isLocalUri(uri) {
-      return uri.startsWith(this.settings.actorsContainer);
-    },
-    defaultToArray(value) {
-      // Items or recipients may be string or array, so default to array for easier handling
-      return !value ? undefined : Array.isArray(value) ? value : [value];
-    },
-    async getAllRecipients(activity) {
-      let output = [],
-        recipients = this.defaultToArray(activity.to);
-      for (const recipient of recipients) {
-        if (recipient === PUBLIC_URI) {
-          // Public URI. No need to add to inbox.
-          continue;
-        } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
-          // Followers list. Add the list of followers.
-          const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
-          if (collection && collection.items) output.push(...this.defaultToArray(collection.items));
-        } else {
-          // Simple actor URI
-          output.push(recipient);
-        }
-      }
-      return output.filter(this.isLocalUri);
     }
   }
 };

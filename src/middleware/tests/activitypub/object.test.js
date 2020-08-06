@@ -68,6 +68,7 @@ describe('Create/Update/Delete objects', () => {
       username: sebastien.preferredUsername,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.UPDATE,
+      actor: sebastien.id,
       object: {
         id: objectUri,
         name: 'Mon premier bel article'
@@ -81,6 +82,7 @@ describe('Create/Update/Delete objects', () => {
     });
     expect(result.orderedItems[0]).toMatchObject({
       type: ACTIVITY_TYPES.UPDATE,
+      actor: sebastien.id,
       object: {
         id: objectUri,
         type: OBJECT_TYPES.ARTICLE,

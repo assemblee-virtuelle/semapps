@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { generateId } = require('../../../utils');
 
@@ -6,7 +7,6 @@ module.exports = {
   api: async function api(ctx) {
     let { containerUri, ...resource } = ctx.params;
     try {
-
       const resourceUri = await ctx.call('ldp.resource.post', {
         containerUri: containerUri,
         slug: ctx.meta.headers.slug,
@@ -50,8 +50,8 @@ module.exports = {
       const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = `${containerUri.replace(/\/$/, '')}/${slug || generateId()}`;
-      resource['@id'] = await this.findUnusedUri(ctx, resource['@id']);
+      resource['@id'] = urlJoin(containerUri, slug || generateId());
+      resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
       if (!containerExist) {

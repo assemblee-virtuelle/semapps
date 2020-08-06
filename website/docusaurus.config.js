@@ -14,9 +14,11 @@ module.exports = {
       //   src: 'img/logo.svg',
       // },
       links: [
-        {to: 'docs/discover', label: 'About', position: 'left'},
+        {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},
+        {to: 'docs/governance/organisation and role', label: 'Governance', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
+        {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',
@@ -28,15 +30,19 @@ module.exports = {
       style: 'dark',
       links: [
         {
-          title: 'Documentation',
+          title: 'Guides',
           items: [
             {
-              label: 'Create your LDP server',
-              to: 'guides/ldp-server',
+              label: 'Create your first LDP server',
+              to: 'docs/guides/ldp-server',
             },
             {
               label: 'Add a Data Management System',
-              to: 'guides/dms',
+              to: 'docs/guides/dms',
+            },
+            {
+              label: 'Create an ActivityPub server',
+              to: 'docs/guides/activitypub',
             }
           ],
         },

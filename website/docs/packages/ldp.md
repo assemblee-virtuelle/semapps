@@ -10,7 +10,7 @@ This service allows you to setup LDP direct containers in which resources can be
 * Full container management: create, attach resources, detach, clear, delete...
 
 ## Dependencies
-* TripleStoreService
+* [TripleStoreService](triplestore.md)
 
 ## Sub-services
 * LdpContainerService

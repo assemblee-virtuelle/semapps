@@ -7,7 +7,7 @@ const OutboxService = {
   settings: {
     actorsContainer: null
   },
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
+  dependencies: ['activitypub.activity', 'activitypub.object', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, collectionUri, ...activity } = ctx.params;

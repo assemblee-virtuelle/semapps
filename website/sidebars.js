@@ -7,7 +7,11 @@
 
 module.exports = {
   docs: {
-    Guides: ['guides/ldp-server','guides/dms'],
-    Packages: ['packages/triplestore', 'packages/ldp', 'packages/webid', 'packages/connector','packages/activitypub', 'packages/importer', 'packages/webhooks']
+    Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
+    Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
+  },
+  contribute: {
+    'SemApps core': ['contribute/code','contribute/coding-conventions'],
+    Documentation: ['contribute/documentation','contribute/style-guide']
   }
 };

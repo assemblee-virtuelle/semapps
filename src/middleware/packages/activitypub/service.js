@@ -1,12 +1,15 @@
 const urlJoin = require('url-join');
+const QueueService = require('moleculer-bull');
 const { getContainerRoutes } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');
+const DispatchService = require('./services/dispatch');
 const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
+const { parseHeader, parseBody, parseJson } = require('@semapps/middlewares');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -17,7 +20,8 @@ const ActivityPubService = {
       activities: '/activities',
       actors: '/actors',
       objects: '/objects'
-    }
+    },
+    queueServiceUrl: null
   },
   dependencies: ['ldp'],
   async created() {
@@ -25,46 +29,55 @@ const ActivityPubService = {
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
       : 'https://www.w3.org/ns/activitystreams';
 
-    await this.broker.createService(CollectionService, {
+    this.broker.createService(CollectionService, {
       settings: {
         context
       }
     });
 
-    await this.broker.createService(ActorService, {
+    this.broker.createService(ActorService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.actors),
-        context
+        context: Array.isArray(context)
+          ? [...context, 'https://w3id.org/security/v1']
+          : [context, 'https://w3id.org/security/v1']
       }
     });
 
-    await this.broker.createService(ActivityService, {
+    this.broker.createService(ActivityService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.activities),
         context
       }
     });
 
-    await this.broker.createService(ObjectService, {
+    this.broker.createService(ObjectService, {
       settings: {
         containerUri: urlJoin(this.settings.baseUri, this.settings.containers.objects),
         context
       }
     });
 
-    await this.broker.createService(FollowService, {
+    this.broker.createService(FollowService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
-    await this.broker.createService(InboxService, {
+    this.broker.createService(InboxService, {
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
     });
 
-    await this.broker.createService(OutboxService, {
+    this.broker.createService(OutboxService, {
+      settings: {
+        actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
+      }
+    });
+
+    this.broker.createService(DispatchService, {
+      mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
         actorsContainer: urlJoin(this.settings.baseUri, this.settings.containers.actors)
       }
@@ -72,6 +85,9 @@ const ActivityPubService = {
   },
   actions: {
     getApiRoutes() {
+      // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
+      const middlewares = [parseHeader, parseBody, parseJson];
+
       return [
         ...getContainerRoutes(
           urlJoin(this.settings.baseUri, this.settings.containers.activities),
@@ -81,24 +97,28 @@ const ActivityPubService = {
         ...getContainerRoutes(urlJoin(this.settings.baseUri, this.settings.containers.objects), 'activitypub.object'),
         // Unsecured routes
         {
-          bodyParsers: { json: true },
           authorization: false,
           authentication: true,
           aliases: {
-            [`GET ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.list',
-            [`GET ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.list',
-            [`GET ${this.settings.containers.actors}/:username/followers`]: 'activitypub.follow.listFollowers',
-            [`GET ${this.settings.containers.actors}/:username/following`]: 'activitypub.follow.listFollowing',
-            [`POST ${this.settings.containers.actors}/:username/inbox`]: 'activitypub.inbox.post'
+            [`GET ${this.settings.containers.actors}/:username/outbox`]: [...middlewares, 'activitypub.outbox.list'],
+            [`GET ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.list'],
+            [`GET ${this.settings.containers.actors}/:username/followers`]: [
+              ...middlewares,
+              'activitypub.follow.listFollowers'
+            ],
+            [`GET ${this.settings.containers.actors}/:username/following`]: [
+              ...middlewares,
+              'activitypub.follow.listFollowing'
+            ],
+            [`POST ${this.settings.containers.actors}/:username/inbox`]: [...middlewares, 'activitypub.inbox.post']
           }
         },
         // Secured routes
         {
-          bodyParsers: { json: true },
           authorization: true,
           authentication: false,
           aliases: {
-            [`POST ${this.settings.containers.actors}/:username/outbox`]: 'activitypub.outbox.post'
+            [`POST ${this.settings.containers.actors}/:username/outbox`]: [...middlewares, 'activitypub.outbox.post']
           }
         }
       ];

@@ -18,12 +18,12 @@ Then initialize a new project based on this template with this command:
 moleculer init assemblee-virtuelle/semapps-template-ldp my-project
 ```
 
-(Could you precise this 3 options : ex I want to be able to write to the endpoint, but the default is read-only, so does it mean that i could not update that endpoint ? )
 
-
+Choose `yes` to all questions
+```
 ? Do you need a local instance of Jena Fuseki (with Docker)? Yes
 ? Do you need a read-only SPARQL endpoint? Yes
-Create 'semapps-server' folder...
+Create 'semapps' folder...
 ? Would you like to run 'npm install'? Yes
 
 
@@ -43,7 +43,7 @@ You need [docker](https://docs.docker.com/install/) and [docker-compose](https:/
 docker-compose up
 ```
 
-Jena Fuseki is now available at the URL http://localhost:3030. 
+Jena Fuseki is now available at the URL http://localhost:3030.
 
 Please login - By default the login is `admin` and the password is also `admin`.
 
@@ -60,9 +60,9 @@ Your instance of SemApps is available at http://localhost:3000
 
 ## Testing your LDP server
 
-By default, the LDP service will create a LDP container in the `/resources path`.
+By default, the LDP service will create a LDP container in the `/resources` path.
 
-Post an ActivityStreams Note to this LDP container:
+Post an ActivityStreams Note to this LDP container with a tool like [Insomnia](https://insomnia.rest/), [Postman](https://www.postman.com/downloads/) or the [RESTClient add-on for Firefox](https://addons.mozilla.org/fr/firefox/addon/restclient/).
 
 ```
 POST /resources HTTP/1.1
