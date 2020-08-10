@@ -1,6 +1,6 @@
 import React from 'react';
 import { Edit, SimpleForm, TextInput } from 'react-admin';
-import { EditActions } from "../../archipelago-layout";
+import { EditActions } from '../../archipelago-layout';
 
 export const InterestEdit = props => (
   <Edit actions={<EditActions />} {...props}>

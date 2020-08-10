@@ -1,7 +1,7 @@
 import React from 'react';
 import { AutocompleteArrayInput, Edit, SimpleForm, TextInput } from 'react-admin';
 import { JsonLdReferenceInput } from '@semapps/react-admin';
-import { EditActions } from "../../archipelago-layout";
+import { EditActions } from '../../archipelago-layout';
 
 const UserTitle = ({ record }) => {
   return <span>Utilisateur {record ? `"${record['label']}"` : ''}</span>;

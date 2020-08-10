@@ -2,10 +2,7 @@ import React from 'react';
 import { Admin, Resource } from 'react-admin';
 import frenchMessages from 'ra-language-french';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
-import {
-  dataProvider as createDataProvider,
-  httpClient
-} from '@semapps/react-admin';
+import { dataProvider as createDataProvider, httpClient } from '@semapps/react-admin';
 
 import interests from './resources/interests';
 import projects from './resources/projects';
