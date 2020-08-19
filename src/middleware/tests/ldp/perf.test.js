@@ -1,12 +1,6 @@
-const {
-  ServiceBroker
-} = require('moleculer');
-const {
-  LdpService
-} = require('@semapps/ldp');
-const {
-  TripleStoreService
-} = require('@semapps/triplestore');
+const { ServiceBroker } = require('moleculer');
+const { LdpService } = require('@semapps/ldp');
+const { TripleStoreService } = require('@semapps/triplestore');
 const express = require('express');
 const supertest = require('supertest');
 const ApiGatewayService = require('moleculer-web');
@@ -80,7 +74,7 @@ describe('consistency during API call', () => {
   const containerUrl = '/resources';
 
   test('Create 100 projects in parallel', async () => {
-    const createPromise = function(){
+    const createPromise = function() {
       return new Promise(async (resolve, reject) => {
         const postResponse = await expressMocked
           .post(containerUrl)
@@ -97,16 +91,15 @@ describe('consistency during API call', () => {
         let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
         resolve(location);
       });
-    }
+    };
 
     // let locations = [];
     let promises = [];
     for (var i = 0; i < 10; i++) {
       console.log('create', i);
-      promises.push(createPromise())
+      promises.push(createPromise());
     }
     const locations = await Promise.all(promises);
     console.log('locations', locations);
-
   }, 20000);
 });

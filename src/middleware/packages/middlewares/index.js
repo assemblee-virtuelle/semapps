@@ -28,7 +28,7 @@ const negotiateContentType = (req, res, next) => {
       next();
     } catch (e) {
       req.$ctx.meta.headers['content-type-raw'] = req.headers['content-type'];
-      req.$ctx.meta.headers['content-type']=undefined;
+      req.$ctx.meta.headers['content-type'] = undefined;
       next();
       // next(
       //   new MoleculerError(

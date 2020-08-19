@@ -8,7 +8,7 @@ module.exports = {
     let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
-      if(ctx.meta.headers['content-type']){
+      if (ctx.meta.headers['content-type']) {
         resourceUri = await ctx.call('ldp.resource.post', {
           containerUri: containerUri,
           slug: ctx.meta.headers.slug,
@@ -16,10 +16,9 @@ module.exports = {
           contentType: ctx.meta.headers['content-type'],
           accept: MIME_TYPES.JSON
         });
-      }else if(!ctx.meta.headers['content-type'] && ctx.meta.headers['content-type-raw']){
+      } else if (!ctx.meta.headers['content-type'] && ctx.meta.headers['content-type-raw']) {
         console.log('BINARY');
       }
-
 
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
