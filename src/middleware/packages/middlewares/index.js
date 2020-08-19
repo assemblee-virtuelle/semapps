@@ -27,13 +27,16 @@ const negotiateContentType = (req, res, next) => {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
       next();
     } catch (e) {
-      next(
-        new MoleculerError(
-          'Content-Type not supported : ' + req.headers['content-type'],
-          400,
-          'CONTENT_TYPE_NOT_SUPPORTED'
-        )
-      );
+      req.$ctx.meta.headers['content-type-raw'] = req.headers['content-type'];
+      req.$ctx.meta.headers['content-type']=undefined;
+      next();
+      // next(
+      //   new MoleculerError(
+      //     'Content-Type not supported : ' + req.headers['content-type'],
+      //     400,
+      //     'CONTENT_TYPE_NOT_SUPPORTED'
+      //   )
+      // );
     }
   } else {
     if (req.$params.body) {

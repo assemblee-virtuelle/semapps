@@ -46,6 +46,8 @@ function getContainerRoutes(containerUri, serviceName) {
         delete: 'ldp.resource.api_delete'
       };
 
+console.log('actions',new URL(containerUri).pathname,actions);
+
   return [
     {
       authorization: false,

@@ -7,13 +7,19 @@ module.exports = {
   api: async function api(ctx) {
     let { containerUri, ...resource } = ctx.params;
     try {
-      const resourceUri = await ctx.call('ldp.resource.post', {
-        containerUri: containerUri,
-        slug: ctx.meta.headers.slug,
-        resource,
-        contentType: ctx.meta.headers['content-type'],
-        accept: MIME_TYPES.JSON
-      });
+      let resourceUri;
+      if(ctx.meta.headers['content-type']){
+        resourceUri = await ctx.call('ldp.resource.post', {
+          containerUri: containerUri,
+          slug: ctx.meta.headers.slug,
+          resource,
+          contentType: ctx.meta.headers['content-type'],
+          accept: MIME_TYPES.JSON
+        });
+      }else if(!ctx.meta.headers['content-type'] && ctx.meta.headers['content-type-raw']){
+        console.log('BINARY');
+      }
+
 
       ctx.meta.$statusCode = 201;
       ctx.meta.$responseHeaders = {
@@ -47,6 +53,7 @@ module.exports = {
       }
     },
     async handler(ctx) {
+      console.log('PUTTTAIN');
       const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
       // Generate ID and make sure it doesn't exist already
