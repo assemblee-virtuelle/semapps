@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
+const createSlug = require('speakingurl');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { generateId } = require('../../../utils');
 
@@ -50,7 +51,7 @@ module.exports = {
       const { resource, containerUri, slug, contentType, webId } = ctx.params;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = urlJoin(containerUri, slug || generateId());
+      resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
