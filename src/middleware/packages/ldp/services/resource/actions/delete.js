@@ -39,7 +39,7 @@ module.exports = {
 
       await ctx.call('ldp.container.detach', {
         containerUri: getContainerFromUri(resourceUri),
-        resourceUri,
+        resourceUri
       });
 
       await ctx.call('triplestore.update', {
