@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -33,6 +34,11 @@ module.exports = {
       });
 
       if (triplesNb > 0) {
+        await ctx.call('ldp.container.detach', {
+          containerUri: getContainerFromUri(resourceUri),
+          resourceUri,
+        });
+
         await ctx.call('triplestore.update', {
           query: `
             DELETE

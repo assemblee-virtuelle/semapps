@@ -1,10 +1,12 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { getContainerFromUri, getSlugFromUri } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //PUT have to stay in same container and @id can't be different
+    // PUT have to stay in same container and @id can't be different
+    // TODO generate an error instead of overwriting the ID
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
@@ -33,11 +35,7 @@ module.exports = {
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType, webId } = ctx.params;
-      const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
-      const effetivContainerUri = matches[1];
-      const slug = matches[2];
-
+      const { resource, contentType, webId } = ctx.params;
       const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resource['@id']
       });
@@ -45,12 +43,13 @@ module.exports = {
         await ctx.call('ldp.resource.delete', {
           resourceUri: resource['@id']
         });
+
         await ctx.call('ldp.resource.post', {
           resource,
           contentType,
           webId,
-          containerUri: effetivContainerUri,
-          slug
+          containerUri: getContainerFromUri(resource['@id']),
+          slug: getSlugFromUri(resource['@id'])
         });
 
         return resource['@id'];

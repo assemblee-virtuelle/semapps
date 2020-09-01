@@ -4,7 +4,8 @@ module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //PATCH have to stay in same container and @id can't be different
+    // PATCH have to stay in same container and @id can't be different
+    // TODO generate an error instead of overwriting the ID
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
