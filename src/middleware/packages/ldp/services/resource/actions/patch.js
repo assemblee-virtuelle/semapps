@@ -1,4 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
@@ -41,28 +41,41 @@ module.exports = {
     async handler(ctx) {
       const { resource, contentType, webId } = ctx.params;
 
-      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resource['@id']
+      // Save the current data, to be able to send it through the event
+      // If the resource does not exist, it will throw a 404 error
+      const oldData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
       });
 
-      if (triplesNb > 0) {
-        const query = await this.buildDeleteQueryFromResource(resource);
+      const query = await this.buildDeleteQueryFromResource(resource);
+      await ctx.call('triplestore.update', {
+        query,
+        webId
+      });
 
-        await ctx.call('triplestore.update', {
-          query,
-          webId
-        });
+      await ctx.call('triplestore.insert', {
+        resource,
+        contentType,
+        webId
+      });
 
-        await ctx.call('triplestore.insert', {
-          resource,
-          contentType,
-          webId
-        });
+      // Get the new data, with the same formatting as the old data
+      const newData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
+      });
 
-        return resource['@id'];
-      } else {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
-      }
+      ctx.emit('ldp.resource.updated', {
+        resourceUri: resource['@id'],
+        oldData,
+        newData,
+        webId
+      });
+
+      return resource['@id'];
     }
   }
 };

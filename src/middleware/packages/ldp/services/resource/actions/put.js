@@ -1,5 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
-const { getContainerFromUri, getSlugFromUri } = require('../../../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
@@ -36,26 +35,47 @@ module.exports = {
     },
     async handler(ctx) {
       const { resource, contentType, webId } = ctx.params;
-      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resource['@id']
+
+      // Save the current data, to be able to send it through the event
+      // If the resource does not exist, it will throw a 404 error
+      const oldData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
       });
-      if (triplesNb > 0) {
-        await ctx.call('ldp.resource.delete', {
-          resourceUri: resource['@id']
-        });
 
-        await ctx.call('ldp.resource.post', {
-          resource,
-          contentType,
-          webId,
-          containerUri: getContainerFromUri(resource['@id']),
-          slug: getSlugFromUri(resource['@id'])
-        });
+      // First delete the resource
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${resource['@id']}> ?p ?v }
+        `,
+        webId
+      });
 
-        return resource['@id'];
-      } else {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
-      }
+      // ... then insert back all the data
+      await ctx.call('triplestore.insert', {
+        resource,
+        contentType,
+        webId
+      });
+
+      // Get the new data, with the same formatting as the old data
+      const newData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
+      });
+
+      ctx.emit('ldp.resource.updated', {
+        resourceUri: resource['@id'],
+        oldData,
+        newData,
+        webId
+      });
+
+      return resource['@id'];
     }
   }
 };
