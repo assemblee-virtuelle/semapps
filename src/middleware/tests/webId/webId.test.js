@@ -48,7 +48,7 @@ describe('WebId user creation', () => {
   test('Create user and get WebId', async () => {
     const profileData = {
       email: 'my.mail@example.org',
-      nick: 'myNick',
+      nick: 'my-nick',
       name: 'jon',
       familyName: 'do',
       homepage: 'http://example.org/myPage'
