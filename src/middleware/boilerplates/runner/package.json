@@ -12,6 +12,7 @@
     "@semapps/activitypub": "^0.1.17",
     "@semapps/connector": "^0.1.17",
     "@semapps/fuseki-admin": "^0.1.17",
+    "@semapps/inference": "^0.1.17",
     "@semapps/ldp": "^0.1.17",
     "@semapps/sparql-endpoint": "^0.1.17",
     "@semapps/triplestore": "^0.1.17",
