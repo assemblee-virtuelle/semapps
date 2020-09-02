@@ -20,12 +20,12 @@ module.exports = {
       const inverseRelations = {};
 
       this.settings.ontologies.forEach(ontology => {
-        if( ontology.owl ) {
+        if (ontology.owl) {
           const stream = request(ontology.owl);
           parser.parse(stream, (err, quad) => {
-            if( err ) throw err;
-            if( quad ) {
-              if( quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf' ) {
+            if (err) throw err;
+            if (quad) {
+              if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
                 inverseRelations[quad.object.id] = quad.subject.id;
                 inverseRelations[quad.subject.id] = quad.object.id;
               }
@@ -42,15 +42,13 @@ module.exports = {
       let inverseTriples = [];
 
       Object.keys(resource).forEach(property => {
-        if( this.inverseRelations[property] ) {
+        if (this.inverseRelations[property]) {
           resource[property].forEach(uri => {
             // Filter out remote URLs as we can't add them to the local dataset
-            if( uri['@id'].startsWith(this.settings.baseUrl) ) {
-              inverseTriples.push(triple(
-                namedNode(uri['@id']),
-                namedNode(this.inverseRelations[property]),
-                namedNode(resource['@id'])
-              ));
+            if (uri['@id'].startsWith(this.settings.baseUrl)) {
+              inverseTriples.push(
+                triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id']))
+              );
             }
           });
         }
@@ -59,19 +57,21 @@ module.exports = {
       return inverseTriples;
     },
     triplesToString(triples) {
-      return triples.map(triple => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`).join('\n');
+      return triples
+        .map(triple => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
+        .join('\n');
     },
     generateInsertQuery(triples) {
-      return(`INSERT DATA { ${this.triplesToString(triples)} }`);
+      return `INSERT DATA { ${this.triplesToString(triples)} }`;
     },
     generateDeleteQuery(triples) {
-      return(`DELETE WHERE { ${this.triplesToString(triples)} }`);
+      return `DELETE WHERE { ${this.triplesToString(triples)} }`;
     },
     async filterMissingResources(ctx, triples) {
       let existingTriples = [];
-      for( let triple of triples ) {
+      for (let triple of triples) {
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: triple.subject.id });
-        if( resourceExist ) existingTriples.push(triple);
+        if (resourceExist) existingTriples.push(triple);
       }
       return existingTriples;
     }
@@ -86,7 +86,8 @@ module.exports = {
       // Avoid adding inverse link to non-existent resources
       triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
 
-      if( triplesToAdd.length > 0 ) await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
+      if (triplesToAdd.length > 0)
+        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData, webId } = ctx.params;
@@ -94,7 +95,8 @@ module.exports = {
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
-      if( triplesToRemove.length > 0 ) await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
+      if (triplesToRemove.length > 0)
+        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData, webId } = ctx.params;
@@ -111,8 +113,10 @@ module.exports = {
       // Avoid adding inverse link to non-existent resources
       triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
 
-      if( triplesToRemove.length > 0 ) await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
-      if( triplesToAdd.length > 0 ) await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
+      if (triplesToRemove.length > 0)
+        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
+      if (triplesToAdd.length > 0)
+        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
     }
   }
-}
+};
