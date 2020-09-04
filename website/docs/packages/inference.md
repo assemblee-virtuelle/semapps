@@ -8,7 +8,7 @@ This service allows you to automatically generate inferences when resources are 
 
 - Extract the inverse relations from provided OWL files
 - Automatically generate inverse links on create/update/delete operations
-- Add the new triples directly to the triple store
+- Add or remove the triples directly to the triple store, in a single query
 - More inference types are planned in the future
 
 ## Dependencies
@@ -49,3 +49,9 @@ module.exports = {
 | -------- | ---- | ------- | ----------- |
 | `baseUrl`|`String` | **required**| Base URL of the LDP server |
 | `ontologies`| `[Object]`|**required** | List of ontology used (see example above) |
+
+## Notes
+
+- Before adding a reverse link, the service checks that the linked resource exists.
+
+- Naturally, the reverse links are not added when the linked resources is on another server.
