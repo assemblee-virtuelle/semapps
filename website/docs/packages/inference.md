@@ -28,7 +28,7 @@ const { InferenceService } = require('@semapps/inference');
 const path = require('path');
 
 module.exports = {
-  mixins: [ImporterService],
+  mixins: [InferenceService],
   settings: {
     baseUrl: "http://localhost:3000/",
     ontologies : [
