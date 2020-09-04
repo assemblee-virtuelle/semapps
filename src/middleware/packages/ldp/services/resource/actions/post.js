@@ -79,6 +79,19 @@ module.exports = {
         webId
       });
 
+      // Get the standard-formatted data to send with event
+      const newData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
+      });
+
+      ctx.emit('ldp.resource.created', {
+        resourceUri: resource['@id'],
+        newData,
+        webId
+      });
+
       return resource['@id'];
     }
   }

@@ -1,4 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
@@ -29,27 +29,33 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri, webId } = ctx.params;
 
-      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resourceUri
+      // Save the current data, to be able to send it through the event
+      // If the resource does not exist, it will throw a 404 error
+      const oldData = await ctx.call('ldp.resource.get', {
+        resourceUri,
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
       });
 
-      if (triplesNb > 0) {
-        await ctx.call('ldp.container.detach', {
-          containerUri: getContainerFromUri(resourceUri),
-          resourceUri
-        });
+      await ctx.call('ldp.container.detach', {
+        containerUri: getContainerFromUri(resourceUri),
+        resourceUri
+      });
 
-        await ctx.call('triplestore.update', {
-          query: `
-            DELETE
-            WHERE
-            { <${resourceUri}> ?p ?v }
-          `,
-          webId
-        });
-      } else {
-        throw new MoleculerError(`Not found ${resourceUri}`, 404, 'NOT_FOUND');
-      }
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${resourceUri}> ?p ?v }
+        `,
+        webId
+      });
+
+      ctx.emit('ldp.resource.deleted', {
+        resourceUri,
+        oldData,
+        webId
+      });
     }
   }
 };
