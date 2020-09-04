@@ -57,7 +57,6 @@ module.exports = {
     return new Promise((resolve, reject) => {
       let deleteSPARQL = '';
       let counter = 0;
-      let query;
       const text = typeof resource === 'string' || resource instanceof String ? resource : JSON.stringify(resource);
       const textStream = streamifyString(text);
       rdfParser
@@ -71,7 +70,7 @@ module.exports = {
           );
           counter++;
         })
-        .on('error', error => console.error(error))
+        .on('error', error => reject(error))
         .on('end', () => {
           resolve(deleteSPARQL);
         });
