@@ -50,8 +50,7 @@ const FusekiAdminService = {
     }
 
     this.headers = {
-      Authorization:
-        'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
+      Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
     };
   },
   actions: {
@@ -67,13 +66,10 @@ const FusekiAdminService = {
       const exist = await this.actions.datasetExist({ dataset });
       if (!exist) {
         console.warn(`Data ${dataset} doesn't exist. Creating it...`);
-        const response = await fetch(
-          this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset,
-          {
-            method: 'POST',
-            headers: this.headers
-          }
-        );
+        const response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
+          method: 'POST',
+          headers: this.headers
+        });
         if (response.status === 200) {
           console.log(`Dataset ${dataset} created`);
         } else {
