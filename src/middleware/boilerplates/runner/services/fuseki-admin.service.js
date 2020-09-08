@@ -9,7 +9,7 @@ module.exports = {
     jenaPassword: CONFIG.JENA_PASSWORD
   },
   async started() {
-    await this.actions.initDataset({
+    await this.actions.createDataset({
       dataset: CONFIG.MAIN_DATASET
     });
   }
