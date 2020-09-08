@@ -4,9 +4,9 @@ const CONFIG = require('../config');
 module.exports = {
   mixins: [FusekiAdminService],
   settings: {
-    sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-    jenaUser: CONFIG.JENA_USER,
-    jenaPassword: CONFIG.JENA_PASSWORD
+    url: CONFIG.SPARQL_ENDPOINT,
+    user: CONFIG.JENA_USER,
+    password: CONFIG.JENA_PASSWORD
   },
   async started() {
     await this.actions.createDataset({
