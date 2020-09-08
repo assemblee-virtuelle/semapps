@@ -113,9 +113,9 @@ const FusekiAdminService = {
     uploadToRemoteServer() {
       return new Promise((resolve, reject) => {
         console.log('Upload started with command: ' + this.rsync.command());
-        this.rsync.execute((error, code) => {
+        this.rsync.execute(error => {
           if (error) {
-            reject(code);
+            reject(error);
           } else {
             console.log('Upload finished !');
             resolve();
