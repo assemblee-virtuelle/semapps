@@ -17,5 +17,10 @@ module.exports = {
         { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }
       `
     });
+
+    ctx.emit('ldp.container.detached', {
+      containerUri,
+      resourceUri
+    });
   }
 };

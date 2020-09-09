@@ -80,11 +80,15 @@ module.exports = {
       });
 
       // Get the standard-formatted data to send with event
-      const newData = await ctx.call('ldp.resource.get', {
-        resourceUri: resource['@id'],
-        accept: MIME_TYPES.JSON,
-        queryDepth: 1
-      });
+      const newData = await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: resource['@id'],
+          accept: MIME_TYPES.JSON,
+          queryDepth: 1
+        },
+        { meta: { $cache: false }}
+      );
 
       ctx.emit('ldp.resource.created', {
         resourceUri: resource['@id'],
