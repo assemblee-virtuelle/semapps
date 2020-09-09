@@ -4,7 +4,7 @@ module.exports = {
   name: 'ldp.cache-cleaner',
   actions: {
     async cleanResource(ctx) {
-      if( this.broker.cacher ) {
+      if (this.broker.cacher) {
         const { resourceUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
 
@@ -15,7 +15,7 @@ module.exports = {
       }
     },
     async cleanContainer(ctx) {
-      if( this.broker.cacher ) {
+      if (this.broker.cacher) {
         const { containerUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
       }

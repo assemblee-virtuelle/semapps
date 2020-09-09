@@ -70,7 +70,7 @@ module.exports = {
     // Since the inverse links are added or removed directly in the triple store,
     // we need to invalidate manually the cache of the affected resources
     cleanResourcesCache(ctx, triples) {
-      if( this.broker.cacher ) {
+      if (this.broker.cacher) {
         for (let triple of triples) {
           const resourceUri = triple.subject.id;
           ctx.call('ldp.cache-cleaner.cleanResource', { resourceUri });

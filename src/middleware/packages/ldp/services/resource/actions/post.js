@@ -87,7 +87,7 @@ module.exports = {
           accept: MIME_TYPES.JSON,
           queryDepth: 1
         },
-        { meta: { $cache: false }}
+        { meta: { $cache: false } }
       );
 
       ctx.emit('ldp.resource.created', {

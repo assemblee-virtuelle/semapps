@@ -36,7 +36,7 @@ module.exports = {
     });
 
     // Only create this service if a cacher is defined
-    if( this.broker.cacher ) {
+    if (this.broker.cacher) {
       await this.broker.createService(LdpCacheCleanerService);
     }
   },
