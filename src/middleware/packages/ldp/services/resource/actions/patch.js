@@ -62,11 +62,15 @@ module.exports = {
       });
 
       // Get the new data, with the same formatting as the old data
-      const newData = await ctx.call('ldp.resource.get', {
-        resourceUri: resource['@id'],
-        accept: MIME_TYPES.JSON,
-        queryDepth: 1
-      });
+      const newData = await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: resource['@id'],
+          accept: MIME_TYPES.JSON,
+          queryDepth: 1
+        },
+        { meta: { $cache: false } }
+      );
 
       ctx.emit('ldp.resource.updated', {
         resourceUri: resource['@id'],

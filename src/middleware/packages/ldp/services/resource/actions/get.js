@@ -30,6 +30,9 @@ module.exports = {
       queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
+    cache: {
+      keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
+    },
     async handler(ctx) {
       const { resourceUri, accept, webId, queryDepth, jsonContext } = ctx.params;
 
