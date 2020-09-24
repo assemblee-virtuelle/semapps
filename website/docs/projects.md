@@ -6,6 +6,7 @@
 ### La Fabrique des colibris
 **La Fabrique des Colibiris** is a French non-profit organization which works with ecological projects's holders. They bring their network and expertise to support the projects' development.
 
+#### Use case
 Users can suscribe to a notification system to be informed by email when new projects are available online, based on their location or interests.
 https://alertes.colibris-lafabrique.org
 
@@ -28,7 +29,7 @@ http://datafoodconsortium.org/fr/
 *They are not yet live, but their projects are on-going.*
 
 
-### Les chemins de la transition
+### Les Chemins de la Transition
 **Les CdlT** is a French non profit organization creating a nomad and distributed university of profession that care about changing systems.
 
 The organisation has a central national administrative comitee that coordinate the territorial activities. Each territoire host its own plateform, with a specific design, graphism and each territoire shares its data with the others.
