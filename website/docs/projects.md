@@ -4,12 +4,12 @@
 *They are live with SemApps, discover.*
 
 ### La Fabrique des colibris
-**La Fabrique des colibiris** is a french non profit organisation which work with ecological project's holder. They bring their network and expertise to support the project development.
+**La Fabrique des Colibiris** is a French non-profit organization which works with ecological projects's holders. They bring their network and expertise to support the projects' development.
 
-The users can suscribe to a notification system for which they choose some parameters before suscribing.
+Users can suscribe to a notification system to be informed by email when new projects are available online, based on their location or interests.
 https://alertes.colibris-lafabrique.org
 
-The notification system uses a SemApps bot. [to be completed by Seb]
+The notification system uses an [ActivityPub bot based on SemApps](https://github.com/reconnexion/activitypub-mailer), which listens to La Fabrique's activities.
 
 ### Data Food Consortium
 **DFC** is a consortium between  short food circuit actors. They all uses an application to handle their logicistics (stocks, shipping) without common standard. They can't operate natively with each others.
@@ -25,12 +25,12 @@ DFC uses [to be completed by Simon]
 
 
 ### Les chemins de la transition
-**Les CdlT** is a french non profit organisation creating a nomad and distributed university of profession that care about changing systems.
+**Les CdlT** is a French non profit organization creating a nomad and distributed university of profession that care about changing systems.
 
 The organisation has a central national administrative comitee that coordinate the territorial activities. Each territoire host its own plateform, with a specific design, graphism and each territoire shares its data with the others.
 
 ### Université de Technologie de Troyes
-**UTT** is a french engineering school giving courses and lectures about complex system, semantic web, distributed network. They use SemApps as a proof of concept and test system to design application for energy grid.
+**UTT** is a French engineering school giving courses and lectures about complex system, semantic web, distributed network. They use SemApps as a proof of concept and test system to design application for energy grid.
 
 ### Passerelle Normandie
 **Passerelle Normandie** is a project from [La coop des territoires](https://www.lacoop.co/) which is a lab to imagine, design and build tomorrow's territory. Passerelle Normandie hosts event and an application to accompany people willing to move from a city to Normandie (rural territory.
