@@ -10,13 +10,12 @@ module.exports = {
     navbar: {
       title: 'SemApps',
       // logo: {
-      //   alt: 'My Site Logo',
+      //   alt: 'SemApps',
       //   src: 'img/logo.svg',
       // },
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
-        {to: 'docs/governance/team', label: 'Team', position: 'left'},
-        {to: 'docs/governance/organisation and role', label: 'Governance', position: 'left'},
+        {to: 'docs/about/team', label: 'Team', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {
