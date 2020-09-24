@@ -7,7 +7,7 @@
 
 module.exports = {
   about: {
-    About: ['about/organisation and role','about/projects']
+    About: ['about/organisation-and-role','about/projects']
   }
   docs: {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
