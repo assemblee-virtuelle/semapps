@@ -6,6 +6,9 @@
  */
 
 module.exports = {
+  about: {
+    About: ['about/organisation and role','about/projects']
+  }
   docs: {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/inference', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
