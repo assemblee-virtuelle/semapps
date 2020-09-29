@@ -66,9 +66,9 @@ Cette approche résolument ouverte devrait permettre à l'avenir de proposer d'a
 
 #### Meetup Interopérabilité
 
-- Contexte
-- Slides disponibles ici
-- Vidéos si dispos
+Suite à la résidence SemApps en Juin à El Capitan, l'Assemblée Virtuelle et Startin'blox ont affiché leur ambition coopérer de façon plus rapprochée. Cela à donner lieu à la co-organisation d'[un Meet Up le 15 Septembre aux Grands Voisins](https://www.facebook.com/events/609531263097830/). Nous avons eu d'excellent retours, de nouvelles rencontres et même de nouveaux contributeurs ! Même si les participants étaient peu nombreux, ils ont tous saisi le message que nous voulions transmettre. Nous savons de mieux en mieux faire de la médiation sur nos sujets !
+Un grands merci à tous les intervenants et les contributeurs bénévoles (Une équipe incroyable <3) de l'evenement !
+Nous publierons prochainement les slides et les videos de l'evenement sur notre chaîne youtube!
 
 #### Le vidéos du meetup de juin sont disponibles !
 
@@ -87,8 +87,21 @@ A noter aussi que, pendant ce sprint, un petit bot de synchronisation a été d�
 
 #### Startin'Blox
 
-Demander à Alice ?
+Au début de l'été, [Startin'blox](https://startinblox.com/) a lancé la version bêta de [Hubl](https://hubl.world/), un outil pour les organisations composé un chat, un annuaire de profil, un répertoire de mission et un tableau de bord, le tout Solid compatible. 25 communautés sont en train de tester Hubl dont une grande partie du réseau Happy Dev et beaucoup d'autres devraient suivre courant Octobre. L'outil évolue rapidement, tous les jeudi, une mise à jour à lieu en fonction des retours des utilisateurs. On communiquera désormais toutes les évolutions sur [notre compte twitter](https://twitter.com/StartinBlox).
+
+Pour tester Hubl, rdv sur [l'instance communautaire de SiB](community.startinblox.com) ou fais toi inviter sur [l'instance de l'Assemblée Virtuelle](https://virtual-assembly.hubl.world/). Tous tes retours sont les bienvenus sur le channel "#Make Hubl Better" :) Depuis l'evenement du 15 Septembre aux Grands Voisins, nous avons un channel dédié à la coopération entre les deux structures : "Av x SIB". Rejoins-nous!
+
+Autre info, si tu galères à expliquer le principe de Solid, Philippe Honigman et Alice Poggioli ont fait [un article de vulgarisation](https://blog.orgtech.fr/un-avenir-solid/). N'hésite pas à faire tourner!
 
 #### SOLID / Inrupt
 
-Demander à Alice ou reprendre la newsletter "This Month in SOLID" https://solidproject.org/newsletter
+Depuis Avril, la communauté Solid organise [des evenements](https://www.eventbrite.com/o/solid-project-30026804546) en visio tous les début de mois. Les évenements commencent avec une présentation des mises à jour de la roadmap par Tim Berners Lee, suivis de présentations de différentes initiatives de la communauté. Le 3 Septembre, Alex y a présenté Hubl. Si tu veux toi aussi présenter tes créations tu peux proposer ton intervention par mail à info@solidproject.org.
+
+Mi-Aout, Inrupt annonce la sortie de la version Bêta de son [server solid](https://inrupt.com/products/enterprise-solid-server).
+
+Voici deux groupes de travail où il serait bien d'avoir des représentant de notre écosystème dans la communauté Solid : 
+* [Le panel Interoperability toute les mardis à 16h](https://github.com/solid/data-interoperability-panel)
+* [Le panel Authorization tous les mercredis à 16h](https://github.com/solid/authorization-panel)
+Si tu es intéréssé pour faire ce relais, tiens nous au courant ! 
+
+Si tu veux partager des infos concernant l'écosystème Solid, il existe un channel dédié sur Hubl "Solid Watch" :)
