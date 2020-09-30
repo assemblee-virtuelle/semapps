@@ -70,9 +70,10 @@ Suite à la résidence SemApps en Juin à El Capitan, l'Assemblée Virtuelle et 
 Un grands merci à tous les intervenants et les contributeurs bénévoles (Une équipe incroyable <3) de l'evenement !
 Nous publierons prochainement les slides et les videos de l'evenement sur notre chaîne youtube!
 
-#### Le vidéos du meetup de juin sont disponibles !
+#### Publication de plusieurs vidéos de présentation de SemApps !
 
-- Liens
+ - Vous trouverez les vidéos du meetup du 20 mai dernier sur [la chaine Youtube de l'Assemblée Virtuelle](https://www.youtube.com/channel/UCg7sYh_Y8cHFT4s82K4SVmA/), avec sous-titres anglais en option.
+ - Nous venons de publier  également [la vidéo d'une présentation que nous avons réalisé à l'UTT](https://youtu.be/wjQSKP4DWmM) autour de SemApps et des architectures pair à pair. 
 
 
 ## Et dans l'écosystème...
@@ -81,9 +82,11 @@ Nous publierons prochainement les slides et les videos de l'evenement sur notre 
 
 Une quinzaine de contributeurs de [YesWiki](https://yeswiki.net) se sont retrouvés près d'Avignon en fin septembre et une des nouveautés qui est sortie de cette rencontre est un système d'API qui permet de facilement ajouter, éditer ou supprimer des données via de simples appels HTTP.
 
-YesWiki était déjà compatible web sémantique, avec la possibilité de sortir les données en JSON-LD. Avec cette nouvelle avancée, YesWiki devient un serveur LDP à part entière, ainsi que le montre cette interface SemApps qui utilise un YesWiki comme base de donnée.
+YesWiki était déjà compatible web sémantique, avec la possibilité de sortir les données en JSON-LD. Avec cette nouvelle avancée, YesWiki devient un serveur LDP à part entière, ainsi que le montre cette interface SemApps qui utilise un YesWiki comme base de donnée.  
 
 A noter aussi que, pendant ce sprint, un petit bot de synchronisation a été développé, qui permet d'écouter un acteur ActivityPub (par exemple Mastodon) et de reposter les données reçues sur un YesWiki. Ce bot est basé sur SemApps et son code source est disponible [ici](https://github.com/reconnexion/yeswiki-synchronizer).
+
+Merci à Sébastien Rosset pour ces 2 avancées majeures !
 
 #### Startin'Blox
 
