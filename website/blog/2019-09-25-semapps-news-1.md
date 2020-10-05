@@ -20,7 +20,7 @@ Cette newsletter-là vous rend compte des nouveautés depuis cet été.
 
 Nous avons effectué un travail au niveau de l'interface en [React-Admin](https://marmelab.com/react-admin/) pour qu'elle ressemble à celle de la version 1 de SemApps et offre plus de convivialité 
 
-Grâce à la grande souplesse et modularité de React-Admin, ce chantier a vite avancé et vous pouvez le voir sur ce nouveau site d'Assemblée Virtuelle qui a pour vocation de cartographier les projets, acteurs, idées et ressources proches d'Assemblée Virtuelle.
+Grâce à la grande souplesse et modularité de React-Admin, ce chantier a vite avancé et vous pouvez le voir sur [ce nouveau site d'Assemblée Virtuelle](https://archipel.assemblee-virtuelle.org) qui a pour vocation de cartographier les projets, acteurs, idées et ressources proches d'Assemblée Virtuelle.
 
 #### Cache LDP
 
@@ -82,7 +82,7 @@ Nous publierons prochainement les slides et les videos de l'evenement sur notre 
 
 Une quinzaine de contributeurs de [YesWiki](https://yeswiki.net) se sont retrouvés près d'Avignon en fin septembre et une des nouveautés qui est sortie de cette rencontre est un système d'API qui permet de facilement ajouter, éditer ou supprimer des données via de simples appels HTTP.
 
-YesWiki était déjà compatible web sémantique, avec la possibilité de sortir les données en JSON-LD. Avec cette nouvelle avancée, YesWiki devient un serveur LDP à part entière, ainsi que le montre cette interface SemApps qui utilise un YesWiki comme base de donnée.  
+YesWiki était déjà compatible web sémantique, avec la possibilité de sortir les données en JSON-LD. Avec cette nouvelle avancée, YesWiki devient un serveur LDP à part entière. Nous espérons pouvoir montrer un exemple prochainement, lorsque la nouvelle version de YesWiki sera sortie.  
 
 A noter aussi que, pendant ce sprint, un petit bot de synchronisation a été développé, qui permet d'écouter un acteur ActivityPub (par exemple Mastodon) et de reposter les données reçues sur un YesWiki. Ce bot est basé sur SemApps et son code source est disponible [ici](https://github.com/reconnexion/yeswiki-synchronizer).
 
