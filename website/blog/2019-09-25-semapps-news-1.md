@@ -92,7 +92,7 @@ Merci à Sébastien Rosset pour ces 2 avancées majeures !
 
 Au début de l'été, [Startin'blox](https://startinblox.com/) a lancé la version bêta de [Hubl](https://hubl.world/), un outil pour les organisations composé un chat, un annuaire de profil, un répertoire de mission et un tableau de bord, le tout Solid compatible. 25 communautés sont en train de tester Hubl dont une grande partie du réseau Happy Dev et beaucoup d'autres devraient suivre courant Octobre. L'outil évolue rapidement, tous les jeudi, une mise à jour à lieu en fonction des retours des utilisateurs. On communiquera désormais toutes les évolutions sur [notre compte twitter](https://twitter.com/StartinBlox).
 
-Pour tester Hubl, rdv sur [l'instance communautaire de SiB](community.startinblox.com) ou fais toi inviter sur [l'instance de l'Assemblée Virtuelle](https://virtual-assembly.hubl.world/). Tous tes retours sont les bienvenus sur le channel "#Make Hubl Better" :) Depuis l'evenement du 15 Septembre aux Grands Voisins, nous avons un channel dédié à la coopération entre les deux structures : "Av x SIB". Rejoins-nous!
+Pour tester Hubl, rdv sur [l'instance communautaire de SiB](https://community.startinblox.com) ou fais toi inviter sur [l'instance de l'Assemblée Virtuelle](https://virtual-assembly.hubl.world/). Tous tes retours sont les bienvenus sur le channel "#Make Hubl Better" :) Depuis l'evenement du 15 Septembre aux Grands Voisins, nous avons un channel dédié à la coopération entre les deux structures : "Av x SIB". Rejoins-nous!
 
 Autre info, si tu galères à expliquer le principe de Solid, Philippe Honigman et Alice Poggioli ont fait [un article de vulgarisation](https://blog.orgtech.fr/un-avenir-solid/). N'hésite pas à faire tourner!
 
