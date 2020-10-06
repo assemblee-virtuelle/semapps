@@ -73,7 +73,7 @@ Nous publierons prochainement les slides et les videos de l'evenement sur notre 
 #### Publication de plusieurs vidéos de présentation de SemApps !
 
  - Vous trouverez les vidéos du meetup du 20 mai dernier sur [la chaine Youtube de l'Assemblée Virtuelle](https://www.youtube.com/channel/UCg7sYh_Y8cHFT4s82K4SVmA/), avec sous-titres anglais en option.
- - Nous venons de publier  également [la vidéo d'une présentation que nous avons réalisé à l'UTT](https://youtu.be/wjQSKP4DWmM) autour de SemApps et des architectures pair à pair. 
+ - Nous venons de publier  également [la vidéo d'une présentation que nous avons réalisé à l'UTT](https://youtu.be/wjQSKP4DWmM) autour de SemApps et des architectures pair à pair. Voici [un document](https://pad.lescommuns.org/IRs8_6lIS_iucxqiPSXwNA?both) permettant de résumer ces interventions, ainsi que le [Power-point](https://docs.google.com/presentation/d/1lVUx4URcKkV1Z3G4EticbH1uCV_NwtVBlYo5cvqUOOc/edit?usp=sharing) sur lequel se sont appuyés Guillaume et Sébastien. 
 
 
 ## Et dans l'écosystème...
