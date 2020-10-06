@@ -18,13 +18,13 @@ Cette newsletter-là vous rend compte des nouveautés depuis cet été.
 
 #### Amélioration de l'interface
 
-Nous avons effectué un travail au niveau de l'interface en [React-Admin](https://marmelab.com/react-admin/) pour qu'elle ressemble à celle de la version 1 de SemApps et offre plus de convivialité 
+Nous avons effectué un travail au niveau de l'interface en [React-Admin](https://marmelab.com/react-admin/) pour qu'elle ressemble à celle de la version 1 de SemApps et offre plus de convivialité
 
 Grâce à la grande souplesse et modularité de React-Admin, ce chantier a vite avancé et vous pouvez le voir sur [ce nouveau site d'Assemblée Virtuelle](https://archipel.assemblee-virtuelle.org) qui a pour vocation de cartographier les projets, acteurs, idées et ressources proches d'Assemblée Virtuelle.
 
 #### Cache LDP
 
-Le service LDP de SemApps gère maintenant le cache des ressources et containers LDP. Dès qu'une ressource est appelée, le résultat est mis en cache et la seconde fois où elle est demandée, le résultat en cache sera servi sans avoir besoin de faire la requête SPARQL nécessaire pour aller 
+Le service LDP de SemApps gère maintenant le cache des ressources et containers LDP. Dès qu'une ressource est appelée, le résultat est mis en cache et la seconde fois où elle est demandée, le résultat en cache sera servi sans avoir besoin de faire la requête SPARQL nécessaire pour aller chercher l'information dans le Triple Store (Fuseky).
 
 #### Signature ActivityPub
 
@@ -59,8 +59,13 @@ Cette approche résolument ouverte devrait permettre à l'avenir de proposer d'a
 
 #### Data Food Consortium migre vers SemApps
 
-- Demander à Simon ?
+Data Food Consortium avait prévu des le début de se baser sur un serveur sémantique pour stoker les informations confiées (à l'initiative des propriétaires de ces données : producteur, intermédiaire...) par les différentes plateformes de circuit court (catalogue, stock, logistique, offre commerciale..).
 
+Semapps a permis de migrer d'un base MongoDB à une base sémantique en utilisant les interface SPARQL et LDP. Cette migration a mis en évidence toute la rigueur nécessaire pour une cohérence sémantique, technique et ontologique dans ce projet assez complexe par nature (authentification OIDC entre plateformes, annuaire de rapprochement plutôt que référentiel d'identité...). Les Données sont exploitables par des api métiers riches fournies par le serveur métier qui a été adapté pour communiquer avec Semapps et travailler en sémantque. L'interface Web du prototype n'a donc pas eu besoin d'être refondue (grâce aux api métiers) même si quelques adaptations ont été nécessaires pour lire les données en json-ld
+
+Des api atomiques LDP et des recherches SPARQL sont maintenant possible pour tous les usages futurs.
+
+Semapps à donc permis d'atteindre la phase 2 technologiques de DFC sans attendre que un autre serveur Solid capable de faire des requêtes SPARQL complexes soit opérationnel.
 
 ## Evénements
 
@@ -73,7 +78,7 @@ Nous publierons prochainement les slides et les videos de l'evenement sur notre 
 #### Publication de plusieurs vidéos de présentation de SemApps !
 
  - Vous trouverez les vidéos du meetup du 20 mai dernier sur [la chaine Youtube de l'Assemblée Virtuelle](https://www.youtube.com/channel/UCg7sYh_Y8cHFT4s82K4SVmA/), avec sous-titres anglais en option.
- - Nous venons de publier  également [la vidéo d'une présentation que nous avons réalisé à l'UTT](https://youtu.be/wjQSKP4DWmM) autour de SemApps et des architectures pair à pair. Voici [un document](https://pad.lescommuns.org/IRs8_6lIS_iucxqiPSXwNA?both) permettant de résumer ces interventions, ainsi que le [Power-point](https://docs.google.com/presentation/d/1lVUx4URcKkV1Z3G4EticbH1uCV_NwtVBlYo5cvqUOOc/edit?usp=sharing) sur lequel se sont appuyés Guillaume et Sébastien. 
+ - Nous venons de publier  également [la vidéo d'une présentation que nous avons réalisé à l'UTT](https://youtu.be/wjQSKP4DWmM) autour de SemApps et des architectures pair à pair. Voici [un document](https://pad.lescommuns.org/IRs8_6lIS_iucxqiPSXwNA?both) permettant de résumer ces interventions, ainsi que le [Power-point](https://docs.google.com/presentation/d/1lVUx4URcKkV1Z3G4EticbH1uCV_NwtVBlYo5cvqUOOc/edit?usp=sharing) sur lequel se sont appuyés Guillaume et Sébastien.
 
 
 ## Et dans l'écosystème...
@@ -102,9 +107,9 @@ Depuis Avril, la communauté Solid organise [des evenements](https://www.eventbr
 
 Mi-Aout, Inrupt annonce la sortie de la version Bêta de son [server solid](https://inrupt.com/products/enterprise-solid-server).
 
-Voici deux groupes de travail où il serait bien d'avoir des représentant de notre écosystème dans la communauté Solid : 
+Voici deux groupes de travail où il serait bien d'avoir des représentant de notre écosystème dans la communauté Solid :
 * [Le panel Interoperability toute les mardis à 16h](https://github.com/solid/data-interoperability-panel)
 * [Le panel Authorization tous les mercredis à 16h](https://github.com/solid/authorization-panel)
-Si tu es intéréssé pour faire ce relais, tiens nous au courant ! 
+Si tu es intéréssé pour faire ce relais, tiens nous au courant !
 
 Si tu veux partager des infos concernant l'écosystème Solid, il existe un channel dédié sur Hubl "Solid Watch" :)
