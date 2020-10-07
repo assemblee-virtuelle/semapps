@@ -16,7 +16,7 @@ const WebfingerService = {
     async get(ctx) {
       const { resource } = ctx.params;
 
-      const usernameMatchRegex = new RegExp(`^acct:(\\w*)@${this.settings.domainName}$`);
+      const usernameMatchRegex = new RegExp(`^acct:([\\w-_.]*)@${this.settings.domainName}$`);
       const matches = resource.match(usernameMatchRegex);
       if (matches) {
         const userName = matches[1];
@@ -46,6 +46,21 @@ const WebfingerService = {
         }
       } else {
         ctx.meta.$statusCode = 404;
+      }
+    },
+    async getRemoteUri(ctx) {
+      const { account } = ctx.params;
+      const domainName = account.split('@').pop();
+      const webfingerUrl = `https://${domainName}/.well-known/webfinger?resource=acct:${account}`;
+
+      const response = await fetch(webfingerUrl);
+
+      if( response.ok ) {
+        const json = await response.json();
+        const link = json.links.find(l => l.type === 'application/activity+json');
+        if( link ) {
+          return link.href;
+        }
       }
     },
     getApiRoutes() {
