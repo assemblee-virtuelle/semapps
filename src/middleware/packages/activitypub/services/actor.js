@@ -55,7 +55,7 @@ const ActorService = {
       for( let actor of container['ldp:contains'] ) {
         if( !actor.publicKey ) {
           await this.actions.generateKeyPair({ actorUri: actor.id });
-          console.log('Generated missing key for actor ' + actor.preferredUsername);
+          console.log('Generated missing key for actor ' + actor.id);
         }
       }
     }
