@@ -8,7 +8,7 @@ author_image_url: https://www.virtual-assembly.org/wp-content/uploads/2017/05/cr
 tags: [semapps]
 ---
 
-Bienvenue dans cette première newsletter de SemApps qui a pour vocation de vous permettre d'être tenu au courant facilement de nos avancées. Elle a pour vocation d'être éditée de manière régulière, tous les 2-3 mois.
+Bienvenue dans cette première newsletter de SemApps, ayant pour vocation de vous tenir au courant de nos avancées, de manière synthétique et accessible. L'équipe SemApps prévoit de l'éditer de manière régulière, tous les 2-3 mois.
 
 Cette newsletter-là vous rend compte des nouveautés depuis cet été.
 
