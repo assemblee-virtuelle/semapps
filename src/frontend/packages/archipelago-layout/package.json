@@ -1,6 +1,6 @@
 {
   "name": "@semapps/archipelago-layout",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "React-Admin layout for semantic cartography",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -30,9 +30,9 @@
     "rollup": "^2.7.6",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-json": "^4.0.0"
+    "rollup-plugin-terser": "^5.3.0"
   }
 }

@@ -1,10 +1,10 @@
 {
   "name": "archipelago",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.1.4",
-    "@semapps/archipelago-layout": "0.1.4",
+    "@semapps/archipelago-layout": "0.1.5",
+    "@semapps/semantic-data-provider": "0.1.5",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
     "ra-language-french": "^3.9.2",
