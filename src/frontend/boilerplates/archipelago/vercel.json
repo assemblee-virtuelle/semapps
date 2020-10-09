@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "build": {
+    "env": {
+      "REACT_APP_MIDDLEWARE_URL": "https://data.virtual-assembly.org/"
+    }
+  },
+  "public": true
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@semapps/semantic-data-provider",
+  "version": "0.1.4",
+  "description": "React-Admin data provider for LDP servers",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "pre-publish": "rollup --config",
+    "dev": "rollup --watch --config"
+  },
+  "dependencies": {
+    "jsonld": "^3.0.1"
+  },
+  "peerDependencies": {
+    "react": "^16.13.0",
+    "react-admin": "^3.9.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "rollup": "^2.7.6",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0"
+  }
+}

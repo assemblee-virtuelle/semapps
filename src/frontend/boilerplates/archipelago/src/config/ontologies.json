@@ -1,0 +1,43 @@
+[
+  {
+    "prefix": "as",
+    "owl": "",
+    "url": "https://www.w3.org/ns/activitystreams#"
+  },
+  {
+    "prefix": "rdf",
+    "owl": "",
+    "url": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  {
+    "prefix": "ldp",
+    "owl": "",
+    "url": "http://www.w3.org/ns/ldp#"
+  },
+  {
+    "prefix": "schema",
+    "owl": "",
+    "url": "http://schema.org/"
+  },
+  {
+    "prefix": "foaf",
+    "owl": "",
+    "url": "http://xmlns.com/foaf/0.1/"
+  },
+  {
+    "prefix": "pair",
+    "owl": "",
+    "url": "http://virtual-assembly.org/ontologies/pair#",
+    "context": "https://gist.githubusercontent.com/srosset81/cc330b63a213e6f68eb5e52d6ded4342/raw/7418e256c64685d44607f333e49489afb302a0b6/pair-ontology.json"
+  },
+  {
+    "prefix": "pairv1",
+    "owl": "",
+    "url": "http://virtual-assembly.org/pair#"
+  },
+  {
+    "prefix": "skos",
+    "owl": "",
+    "url": "http://www.w3.org/2004/02/skos/core#"
+  }
+]

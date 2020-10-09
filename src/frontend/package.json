@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "version": "lerna version --force-publish='*'",
+    "version": "lerna version --force-publish='*' --exact",
     "publish": "lerna run pre-publish && lerna publish from-package",
     "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'"
   },
