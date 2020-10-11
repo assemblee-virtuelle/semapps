@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
+const createSlug = require('speakingurl');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { generateId } = require('../../../utils');
 const path = require('path');
@@ -89,7 +90,7 @@ module.exports = {
       const { resource, containerUri, slug, contentType, webId,fileStream } = ctx.params;
       console.log('SLUG',slug);
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = urlJoin(containerUri, slug || generateId());
+      resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
       if(fileStream){
         const filename = resource['@id'].replace(containerUri+'/','');
@@ -130,6 +131,7 @@ module.exports = {
         webId
       });
 
+<<<<<<< HEAD
       if(fileStream){
         try {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
@@ -137,6 +139,24 @@ module.exports = {
           throw new MoleculerError(e, 500, 'Server Error');
         }
       }
+=======
+      // Get the standard-formatted data to send with event
+      const newData = await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: resource['@id'],
+          accept: MIME_TYPES.JSON,
+          queryDepth: 1
+        },
+        { meta: { $cache: false } }
+      );
+
+      ctx.emit('ldp.resource.created', {
+        resourceUri: resource['@id'],
+        newData,
+        webId
+      });
+>>>>>>> master
 
       return resource['@id'];
     }

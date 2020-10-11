@@ -25,14 +25,14 @@ describe('Posting to followers', () => {
     });
 
     simon = await broker.call('activitypub.actor.create', {
-      slug: 'simonLouvet',
+      slug: 'simonlouvet',
       '@context': 'https://www.w3.org/ns/activitystreams',
-      preferredUsername: 'simonLouvet',
+      preferredUsername: 'simonlouvet',
       name: 'Simon Louvet'
     });
 
     expect(sebastien.preferredUsername).toBe('srosset81');
-    expect(simon.preferredUsername).toBe('simonLouvet');
+    expect(simon.preferredUsername).toBe('simonlouvet');
   });
 
   test('Follow user', async () => {

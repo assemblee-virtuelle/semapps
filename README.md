@@ -7,5 +7,6 @@ SemApps means Semantic Apps, thus storage and filtering are ontology driven.
 - [Homepage](https://semapps.org)
 - [About](https://semapps.org/docs/about)
 - [Team](https://semapps.org/docs/governance/team)
+- [Governance](https://semapps.org/docs/governance/organisation%20and%20role)
 - [Documentation](https://semapps.org/docs/guides/ldp-server)
 - [How to contribute](https://semapps.org/docs/contribute/code)

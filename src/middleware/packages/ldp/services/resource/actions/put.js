@@ -1,10 +1,11 @@
-const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
 
-    //PUT have to stay in same container and @id can't be different
+    // PUT have to stay in same container and @id can't be different
+    // TODO generate an error instead of overwriting the ID
     resource['@id'] = `${containerUri}/${id}`;
 
     try {
@@ -33,30 +34,52 @@ module.exports = {
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, accept, contentType, webId } = ctx.params;
-      const matches = resource['@id'].match(new RegExp(`(.*)/(.*)`));
-      const effetivContainerUri = matches[1];
-      const slug = matches[2];
+      const { resource, contentType, webId } = ctx.params;
 
-      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resource['@id']
+      // Save the current data, to be able to send it through the event
+      // If the resource does not exist, it will throw a 404 error
+      const oldData = await ctx.call('ldp.resource.get', {
+        resourceUri: resource['@id'],
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1
       });
-      if (triplesNb > 0) {
-        await ctx.call('ldp.resource.delete', {
-          resourceUri: resource['@id']
-        });
-        await ctx.call('ldp.resource.post', {
-          resource,
-          contentType,
-          webId,
-          containerUri: effetivContainerUri,
-          slug
-        });
 
-        return resource['@id'];
-      } else {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
-      }
+      // First delete the resource
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${resource['@id']}> ?p ?v }
+        `,
+        webId
+      });
+
+      // ... then insert back all the data
+      await ctx.call('triplestore.insert', {
+        resource,
+        contentType,
+        webId
+      });
+
+      // Get the new data, with the same formatting as the old data
+      const newData = await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: resource['@id'],
+          accept: MIME_TYPES.JSON,
+          queryDepth: 1
+        },
+        { meta: { $cache: false } }
+      );
+
+      ctx.emit('ldp.resource.updated', {
+        resourceUri: resource['@id'],
+        oldData,
+        newData,
+        webId
+      });
+
+      return resource['@id'];
     }
   }
 };

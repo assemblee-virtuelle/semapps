@@ -13,7 +13,7 @@ module.exports = {
       //   alt: 'My Site Logo',
       //   src: 'img/logo.svg',
       // },
-      links: [
+      items: [
         {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},
         {to: 'docs/governance/organisation and role', label: 'Governance', position: 'left'},

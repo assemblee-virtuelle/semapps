@@ -31,14 +31,15 @@ module.exports = {
       queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
+    cache: {
+      keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
+    },
     async handler(ctx) {
       const { resourceUri, accept, webId, queryDepth, jsonContext } = ctx.params;
 
-      const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resourceUri
-      });
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
-      if (triplesNb > 0) {
+      if (resourceExist) {
         const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
         let result = await ctx.call('triplestore.query', {

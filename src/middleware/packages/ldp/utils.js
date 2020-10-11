@@ -32,9 +32,15 @@ const getPrefixJSON = ontologies => {
   return pattern;
 };
 
+const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+
+const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+
 module.exports = {
   buildBlankNodesQuery,
   generateId,
   getPrefixRdf,
-  getPrefixJSON
+  getPrefixJSON,
+  getSlugFromUri,
+  getContainerFromUri
 };
