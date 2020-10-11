@@ -21,7 +21,6 @@ module.exports = {
           accept: MIME_TYPES.JSON
         });
       } else {
-        // console.log('BINARY');
         if(ctx.params.files){
           let file;
           if(ctx.params.files.length>1){
@@ -47,13 +46,13 @@ module.exports = {
             fileStream : file.readableStream
           });
         }
-        ctx.meta.$responseHeaders = {
-          Location: resourceUri,
-          Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-          'Content-Length': 0
-        };
-        ctx.meta.$statusCode = 201;
       }
+      ctx.meta.$responseHeaders = {
+        Location: resourceUri,
+        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+        'Content-Length': 0
+      };
+      ctx.meta.$statusCode = 201;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
