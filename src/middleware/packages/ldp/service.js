@@ -39,7 +39,7 @@ module.exports = {
       let routes = [];
       // Associate all containers in settings with the LDP service
       for (let containerPath of this.settings.containers) {
-        routes.push(...getContainerRoutes(urlJoin(this.settings.baseUrl, containerPath)));
+        routes.push(...getContainerRoutes(urlJoin(this.settings.baseUrl, containerPath),undefined,containerPath));
       }
       return routes;
     }

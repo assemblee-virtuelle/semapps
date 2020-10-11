@@ -15,6 +15,11 @@
     "url": "http://www.w3.org/ns/ldp#"
   },
   {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "https://semapps.org/ontology#"
+  },
+  {
     "prefix": "schema",
     "owl": "",
     "url": "http://schema.org/"

@@ -1,19 +1,12 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
+const Busboy = require('busboy');
+const inspect = require('util').inspect;
 
-const parseBody = async (req, res, next) => {
-  const bodyPromise = new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', function(chunk) {
-      data += chunk;
-    });
-    req.on('end', function() {
-      resolve(data.length > 0 ? data : undefined);
-    });
-  });
-  req.$params.body = await bodyPromise;
-  next();
-};
+const path = require('path');
+const fs = require('fs');
+const Stream = require('stream');
+var streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
   req.$ctx.meta.headers = req.headers || {};
@@ -21,14 +14,18 @@ const parseHeader = async (req, res, next) => {
 };
 
 const negotiateContentType = (req, res, next) => {
+
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
+  // console.log('negotiateContentType',req.headers['content-type']);
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
+      // console.log('negotiateContentType OK',req.$ctx.meta.headers['content-type']);
       next();
     } catch (e) {
-      req.$ctx.meta.headers['content-type-raw'] = req.headers['content-type'];
-      req.$ctx.meta.headers['content-type'] = undefined;
+      // console.log('negotiateContentType KO');
+      // req.$ctx.meta.headers['content-type-raw'] = req.headers['content-type'];
+      // req.$ctx.meta.headers['content-type'] = undefined;
       next();
       // next(
       //   new MoleculerError(
@@ -64,27 +61,107 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
+const parseSparql = async (req, res, next) => {
+  if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'].includes('sparql')) {
+    const bodyPromise = new Promise((resolve, reject) => {
+      let data = '';
+      req.on('data', function(chunk) {
+        data += chunk;
+      });
+      req.on('end', function() {
+        resolve(data.length > 0 ? data : undefined);
+      });
+    });
+    req.$params.parser='sparql'
+    req.$params.body = await bodyPromise;
+  }
+  next();
+};
+
 const parseJson = (req, res, next) => {
-  if (negotiateTypeMime(req.headers['content-type']) === MIME_TYPES.JSON) {
+
+  if (!req.$params.parse && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
     const { body, ...otherParams } = req.$params;
     if (body) {
       const json = JSON.parse(body);
       req.$params = { ...json, ...otherParams };
     }
+    req.$params.parser='json'
   }
   next();
 };
 
-const addContainerUriMiddleware = containerUri => (req, res, next) => {
+const parseFile = (req, res, next) => {
+  if (!req.$params.parse){
+    if (req.headers['content-type'].includes('multipart/form-data')){
+      var busboy = new Busboy({ headers: req.headers });
+      let files = [];
+      let fields = []
+      busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+        console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
+
+        const readableStream = new streams.ReadableStream();
+        file.on('data', (data)=>{
+          console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
+          console.log(data.toString());
+          readableStream.push(data)
+
+        });
+        file.on('end', ()=>{
+          console.log('File [' + fieldname + '] Finished');
+
+        });
+        files.push ({
+          fieldname,
+          readableStream,
+          filename,
+          encoding,
+          mimetype
+        })
+      });
+      busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+        console.log('Field [' + fieldname + ']: value: ' + inspect(val));
+        fields.push({
+          key : fieldname,
+          value : inspect(val)
+        })
+      });
+      busboy.on('finish', function() {
+        console.log('Done parsing form!');
+        req.$params.files=files;
+        req.$params.multipartFields = fields;
+        next();
+      });
+      req.$params.parser='file';
+      req.pipe(busboy);
+    }else{
+      const readableStream = new streams.ReadableStream();
+      // req.pipe(readableStream);
+      let files=[{
+        readableStream:req,
+        mimetype:req.headers['content-type']
+      }]
+      req.$params.files=files;
+      req.$params.parser='file';
+      next();
+    }
+  }
+  // console.log(req.headers['content-type']);
+};
+
+
+const addContainerUriMiddleware = (containerUri,containerPath) => (req, res, next) => {
   req.$params.containerUri = containerUri;
+  req.$params.containerPath =containerPath
   next();
 };
 
 module.exports = {
   parseHeader,
-  parseBody,
+  parseSparql,
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseFile,
   addContainerUriMiddleware
 };

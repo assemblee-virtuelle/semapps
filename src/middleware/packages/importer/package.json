@@ -7,5 +7,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
+  "dependencies": {
+    "busboy": "^0.3.1"
+  }
 }

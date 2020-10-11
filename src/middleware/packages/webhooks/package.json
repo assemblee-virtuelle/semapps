@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "0.1.16",
+    "busboy": "^0.3.1",
     "moleculer": "^0.14.3",
     "moleculer-db": "^0.8.7",
     "url-join": "^4.0.1"

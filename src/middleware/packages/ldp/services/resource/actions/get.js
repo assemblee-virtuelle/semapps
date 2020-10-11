@@ -2,6 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
@@ -13,7 +14,7 @@ module.exports = {
         resourceUri,
         accept
       });
-      ctx.meta.$responseType = accept;
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return body;
     } catch (e) {
       console.error(e);
@@ -69,8 +70,17 @@ module.exports = {
             ...result['@graph'][0]
           };
         }
+        if(result['@type']==='semapps:file'){
+          stream = fs.readFileSync(result['semapps:localpath']);
+          ctx.meta.$responseType = result['semapps:mimetype'];
+          ctx.meta.$responseHeaders = {
+              "Content-Disposition": `attachment; filename="${result['semapps:filename']}"`
+          };
+          return stream;
+        }else {
+          return result;
+        }
 
-        return result;
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

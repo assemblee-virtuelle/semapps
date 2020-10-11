@@ -18,6 +18,7 @@
     "@semapps/sparql-endpoint": "0.1.16",
     "@semapps/triplestore": "0.1.16",
     "@semapps/webid": "0.1.16",
+    "busboy": "^0.3.1",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",

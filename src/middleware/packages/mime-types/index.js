@@ -13,6 +13,9 @@ const negotiateType = function(incomingType) {
       accept: negotiatorType
     }
   });
+  // console.log('negotiatorType',negotiatorType);
+  // console.log('availableMediaTypes',availableMediaTypes);
+
   const rawNegotiatedAccept = negotiator.mediaType(availableMediaTypes);
   if (rawNegotiatedAccept !== undefined) {
     return TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegotiatedAccept))[0];

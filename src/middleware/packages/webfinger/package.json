@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "busboy": "^0.3.1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

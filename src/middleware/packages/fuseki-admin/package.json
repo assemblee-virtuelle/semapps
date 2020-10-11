@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "busboy": "^0.3.1",
     "node-fetch": "^2.6.0"
   },
   "publishConfig": {
