@@ -9,6 +9,7 @@ const Stream = require('stream');
 var streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
+  console.log('req.$params FIRST',req.$params);
   req.$ctx.meta.headers = req.headers || {};
   next();
 };
@@ -61,6 +62,18 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
+const bodyRawPromise = (req)=>{
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', function(chunk) {
+      data += chunk;
+    });
+    req.on('end', function() {
+      resolve(data.length > 0 ? data : undefined);
+    });
+  });
+};
+
 const parseSparql = async (req, res, next) => {
   if (!req.$params.parser &&
       (
@@ -68,28 +81,24 @@ const parseSparql = async (req, res, next) => {
         req.headers['content-type'] && req.headers['content-type'].includes('sparql')
       )
     ) {
-    const bodyPromise = new Promise((resolve, reject) => {
-      let data = '';
-      req.on('data', function(chunk) {
-        data += chunk;
-      });
-      req.on('end', function() {
-        resolve(data.length > 0 ? data : undefined);
-      });
-    });
     req.$params.parser='sparql'
-    req.$params.body = await bodyPromise;
+    req.$params.body = await bodyRawPromise(req);
   }
   next();
 };
 
-const parseJson = (req, res, next) => {
-
-  if (!req.$params.parse && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
-    const { body, ...otherParams } = req.$params;
+const parseJson = async (req, res, next) => {
+  console.log('ALLLLLO');
+  console.log('req',req.$params.parser,req.headers);
+  if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
+    console.log('JSON');
+    console.log('req.$params',req.$params);
+    // const { body, ...otherParams } = req.$params;
+    const body = await bodyRawPromise(req);
+    console.log('body',body);
     if (body) {
       const json = JSON.parse(body);
-      req.$params = { ...json, ...otherParams };
+      req.$params = { ...json, ...req.$params };
     }
     req.$params.parser='json'
   }
@@ -97,7 +106,7 @@ const parseJson = (req, res, next) => {
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$params.parse){
+  if (!req.$params.parser){
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')){
       var busboy = new Busboy({ headers: req.headers });
       let files = [];
@@ -150,6 +159,8 @@ const parseFile = (req, res, next) => {
       req.$params.parser='file';
       next();
     }
+  }else{
+    next();
   }
   // console.log(req.headers['content-type']);
 };

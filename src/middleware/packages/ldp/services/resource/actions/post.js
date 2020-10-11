@@ -85,7 +85,7 @@ module.exports = {
     async handler(ctx) {
 
       const { resource, containerUri, slug, contentType, webId,fileStream } = ctx.params;
-      console.log('SLUG',slug);
+            console.log('resource',resource);
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
@@ -104,6 +104,7 @@ module.exports = {
       }
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
+
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,
@@ -111,6 +112,7 @@ module.exports = {
           'BAD_REQUEST'
         );
       }
+
 
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
@@ -128,7 +130,7 @@ module.exports = {
         webId
       });
 
-      if(fileStream){
+      if(fileStream!=undefined){
         try {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
         } catch (e) {

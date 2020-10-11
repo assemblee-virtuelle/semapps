@@ -2,7 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
+    const { containerUri,containerPath,parser, id, ...resource } = ctx.params;
 
     //PUT have to stay in same container and @id can't be different
     resource['@id'] = `${containerUri}/${id}`;
