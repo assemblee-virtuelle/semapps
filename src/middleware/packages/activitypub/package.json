@@ -10,7 +10,6 @@
     "@semapps/mime-types": "0.1.19",
     "@semapps/triplestore": "0.1.19",
     "bull-board": "^0.7.0",
-    "busboy": "^0.3.1",
     "jsonld": "^1.8.1",
     "moleculer": "^0.14.3",
     "moleculer-bull": "^0.2.5",

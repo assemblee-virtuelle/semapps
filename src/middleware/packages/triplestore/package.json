@@ -5,12 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-<<<<<<< HEAD
-    "@semapps/mime-types": "0.1.16",
-    "busboy": "^0.3.1",
-=======
     "@semapps/mime-types": "0.1.19",
->>>>>>> master
     "jsonld": "^1.8.1",
     "negotiator": "^0.6.2",
     "node-fetch": "^2.6.0",

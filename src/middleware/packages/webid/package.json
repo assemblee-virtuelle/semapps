@@ -5,18 +5,10 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-<<<<<<< HEAD
-    "@semapps/ldp": "0.1.16",
-    "@semapps/middlewares": "0.1.16",
-    "@semapps/mime-types": "0.1.16",
-    "@semapps/triplestore": "0.1.16",
-    "busboy": "^0.3.1"
-=======
     "@semapps/ldp": "0.1.19",
     "@semapps/middlewares": "0.1.19",
     "@semapps/mime-types": "0.1.19",
     "@semapps/triplestore": "0.1.19"
->>>>>>> master
   },
   "publishConfig": {
     "access": "public"

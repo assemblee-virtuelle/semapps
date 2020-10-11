@@ -1,9 +1,10 @@
 const {
-  parseBody,
+  parseHeader,
   negotiateContentType,
   negotiateAccept,
+  parseSparql,
   parseJson,
-  addContainerUriMiddleware
+  parseFile,
 } = require('@semapps/middlewares');
 
 function getRoutes() {
@@ -17,7 +18,7 @@ function getRoutes() {
     }
   };
 
-  const middlewares = [parseBody, negotiateAccept];
+  const middlewares = [parseSparql, negotiateAccept];
 
   return [
     {

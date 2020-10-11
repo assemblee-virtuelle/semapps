@@ -62,7 +62,12 @@ const negotiateAccept = (req, res, next) => {
 };
 
 const parseSparql = async (req, res, next) => {
-  if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'].includes('sparql')) {
+  if (!req.$params.parser &&
+      (
+        req.originalUrl.includes('/sparql')||
+        req.headers['content-type'] && req.headers['content-type'].includes('sparql')
+      )
+    ) {
     const bodyPromise = new Promise((resolve, reject) => {
       let data = '';
       req.on('data', function(chunk) {
@@ -93,7 +98,7 @@ const parseJson = (req, res, next) => {
 
 const parseFile = (req, res, next) => {
   if (!req.$params.parse){
-    if (req.headers['content-type'].includes('multipart/form-data')){
+    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')){
       var busboy = new Busboy({ headers: req.headers });
       let files = [];
       let fields = []

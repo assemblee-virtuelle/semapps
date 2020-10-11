@@ -5,13 +5,9 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-<<<<<<< HEAD
-    "@semapps/mime-types": "0.1.16",
+    "@semapps/mime-types": "0.1.19",
     "busboy": "^0.3.1",
     "memory-streams": "^0.1.3",
-=======
-    "@semapps/mime-types": "0.1.19",
->>>>>>> master
     "moleculer": "^0.14.3"
   },
   "publishConfig": {

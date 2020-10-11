@@ -33,7 +33,6 @@
     },
     "dependencies": {
         "@types/sparqljs": "^2.1.0",
-        "busboy": "^0.3.1",
         "sparqljs": "^2.1.0"
     },
     "devDependencies": {

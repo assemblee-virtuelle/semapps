@@ -12,8 +12,6 @@ module.exports = {
     let { containerUri,containerPath,parser, ...resource } = ctx.params;
     try {
       let resourceUri;
-      console.log('params',ctx.params);
-      console.log('meta',ctx.meta);
       if (parser!=='file') {
         resourceUri = await ctx.call('ldp.resource.post', {
           containerUri: containerUri,
@@ -114,7 +112,7 @@ module.exports = {
           'BAD_REQUEST'
         );
       }
-      console.log('resource',resource);
+
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
@@ -131,7 +129,6 @@ module.exports = {
         webId
       });
 
-<<<<<<< HEAD
       if(fileStream){
         try {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
@@ -139,14 +136,14 @@ module.exports = {
           throw new MoleculerError(e, 500, 'Server Error');
         }
       }
-=======
-      // Get the standard-formatted data to send with event
+
       const newData = await ctx.call(
         'ldp.resource.get',
         {
           resourceUri: resource['@id'],
           accept: MIME_TYPES.JSON,
-          queryDepth: 1
+          queryDepth: 1,
+          forceSemantic:true
         },
         { meta: { $cache: false } }
       );
@@ -156,7 +153,6 @@ module.exports = {
         newData,
         webId
       });
->>>>>>> master
 
       return resource['@id'];
     }
