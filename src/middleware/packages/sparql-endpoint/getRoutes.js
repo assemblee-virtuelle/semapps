@@ -4,7 +4,7 @@ const {
   negotiateAccept,
   parseSparql,
   parseJson,
-  parseFile,
+  parseFile
 } = require('@semapps/middlewares');
 
 function getRoutes() {

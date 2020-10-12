@@ -6,13 +6,12 @@ const { generateId } = require('../../../utils');
 const path = require('path');
 const fs = require('fs');
 
-
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri,containerPath,parser, ...resource } = ctx.params;
+    let { containerUri, containerPath, parser, ...resource } = ctx.params;
     try {
       let resourceUri;
-      if (parser!=='file') {
+      if (parser !== 'file') {
         resourceUri = await ctx.call('ldp.resource.post', {
           containerUri: containerUri,
           slug: ctx.meta.headers.slug,
@@ -21,29 +20,29 @@ module.exports = {
           accept: MIME_TYPES.JSON
         });
       } else {
-        if(ctx.params.files){
+        if (ctx.params.files) {
           let file;
-          if(ctx.params.files.length>1){
+          if (ctx.params.files.length > 1) {
             throw new MoleculerError(`Multiple file upload not supported`, 400, 'BAD_REQUEST');
-          }else {
-            file = ctx.params.files[0]
+          } else {
+            file = ctx.params.files[0];
           }
           resourceUri = await ctx.call('ldp.resource.post', {
             containerUri: containerUri,
-            slug: file.filename||ctx.meta.headers.slug,
-            resource :{
-              '@context':{
-                semapps : 'https://semapps.org/ontology#'
+            slug: file.filename || ctx.meta.headers.slug,
+            resource: {
+              '@context': {
+                semapps: 'https://semapps.org/ontology#'
               },
-              '@type':'semapps:file',
-              'semapps:filename':file.filename,
-              'semapps:encoding':file.encoding,
-              'semapps:mimetype':file.mimetype,
-              'semapps:fieldname':file.fieldname
+              '@type': 'semapps:file',
+              'semapps:filename': file.filename,
+              'semapps:encoding': file.encoding,
+              'semapps:mimetype': file.mimetype,
+              'semapps:fieldname': file.fieldname
             },
-            contentType:MIME_TYPES.JSON,
+            contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
-            fileStream : file.readableStream
+            fileStream: file.readableStream
           });
         }
       }
@@ -83,21 +82,20 @@ module.exports = {
       }
     },
     async handler(ctx) {
-
-      const { resource, containerUri, slug, contentType, webId,fileStream } = ctx.params;
-            console.log('resource',resource);
+      const { resource, containerUri, slug, contentType, webId, fileStream } = ctx.params;
+      console.log('resource', resource);
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
-      if(fileStream){
-        const filename = resource['@id'].replace(containerUri+'/','');
+      if (fileStream) {
+        const filename = resource['@id'].replace(containerUri + '/', '');
         const regex = /.*\/\/[^\/]*(\/.*)/gm;
-        const containerPath= regex.exec(containerUri)[1];
-        const dir=path.join('./uploads'+containerPath);
-        const saveTo = path.join(dir,'/', filename);
-        if (!fs.existsSync(dir)){
+        const containerPath = regex.exec(containerUri)[1];
+        const dir = path.join('./uploads' + containerPath);
+        const saveTo = path.join(dir, '/', filename);
+        if (!fs.existsSync(dir)) {
           process.umask(0);
-          fs.mkdirSync(dir,{ recursive: true ,mode:parseInt('0777', 8)});
+          fs.mkdirSync(dir, { recursive: true, mode: parseInt('0777', 8) });
         }
         resource['semapps:localpath'] = saveTo;
         resource['semapps:filename'] = filename;
@@ -112,7 +110,6 @@ module.exports = {
           'BAD_REQUEST'
         );
       }
-
 
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
@@ -130,7 +127,7 @@ module.exports = {
         webId
       });
 
-      if(fileStream!=undefined){
+      if (fileStream != undefined) {
         try {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
         } catch (e) {
@@ -144,7 +141,7 @@ module.exports = {
           resourceUri: resource['@id'],
           accept: MIME_TYPES.JSON,
           queryDepth: 1,
-          forceSemantic:true
+          forceSemantic: true
         },
         { meta: { $cache: false } }
       );
