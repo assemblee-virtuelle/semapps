@@ -49,6 +49,15 @@ const ActorService = {
           publicKeyPem: publicKey
         }
       });
+    },
+    async generateMissingKeyPairs(ctx) {
+      const container = await this._find(ctx, {});
+      for( let actor of container['ldp:contains'] ) {
+        if( !actor.publicKey ) {
+          await this.actions.generateKeyPair({ actorUri: actor.id });
+          console.log('Generated missing key for actor ' + actor.id);
+        }
+      }
     }
   },
   hooks: {

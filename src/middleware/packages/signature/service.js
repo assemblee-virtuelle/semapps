@@ -70,7 +70,8 @@ const SignatureService = {
       headers.Signature = createAuthzHeader({
         includeHeaders,
         keyId: actorUri,
-        signature: signatureHash
+        signature: signatureHash,
+        algorithm: 'rsa-sha256'
       }).substr('Signature '.length);
 
       return headers;
