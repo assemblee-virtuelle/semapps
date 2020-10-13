@@ -24,7 +24,7 @@ function App() {
         httpClient,
         resources,
         ontologies,
-        mainOntology: 'pair'
+        jsonContext: window.location.origin + '/context.json',
       })}
       i18nProvider={polyglotI18nProvider(() => frenchMessages)}
       layout={Layout}
