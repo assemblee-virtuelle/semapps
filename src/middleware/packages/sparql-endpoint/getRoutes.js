@@ -2,9 +2,7 @@ const {
   parseHeader,
   negotiateContentType,
   negotiateAccept,
-  parseSparql,
-  parseJson,
-  parseFile
+  parseSparql
 } = require('@semapps/middlewares');
 
 function getRoutes() {

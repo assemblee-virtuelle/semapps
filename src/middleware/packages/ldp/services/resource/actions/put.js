@@ -6,6 +6,7 @@ module.exports = {
     const { containerUri, containerPath, parser, id, ...resource } = ctx.params;
 
     //PUT have to stay in same container and @id can't be different
+    // TODO generate an error instead of overwriting the ID
     resource['@id'] = `${containerUri}/${id}`;
     if (parser === 'file') {
       throw new MoleculerError(`non RDF Ressource PUT not supported`, 400, 'BAD_REQUEST');
