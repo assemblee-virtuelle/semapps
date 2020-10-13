@@ -11,7 +11,6 @@ const SparqlEndpointService = {
     async query(ctx) {
       let query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
-      console.log('XXXXXXXXXXXXXXXXX SparqlEndpointService');
       const response = await ctx.call('triplestore.query', {
         query: query,
         accept: accept

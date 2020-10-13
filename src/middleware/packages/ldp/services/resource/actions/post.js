@@ -85,7 +85,7 @@ module.exports = {
     async handler(ctx) {
 
       const { resource, containerUri, slug, contentType, webId,fileStream } = ctx.params;
-            console.log('resource',resource);
+
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);

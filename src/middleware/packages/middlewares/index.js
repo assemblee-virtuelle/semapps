@@ -2,7 +2,6 @@ const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
-
 const path = require('path');
 const fs = require('fs');
 const Stream = require('stream');
@@ -21,20 +20,9 @@ const negotiateContentType = (req, res, next) => {
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
-      // console.log('negotiateContentType OK',req.$ctx.meta.headers['content-type']);
       next();
     } catch (e) {
-      // console.log('negotiateContentType KO');
-      // req.$ctx.meta.headers['content-type-raw'] = req.headers['content-type'];
-      // req.$ctx.meta.headers['content-type'] = undefined;
       next();
-      // next(
-      //   new MoleculerError(
-      //     'Content-Type not supported : ' + req.headers['content-type'],
-      //     400,
-      //     'CONTENT_TYPE_NOT_SUPPORTED'
-      //   )
-      // );
     }
   } else {
     if (req.$params.body) {
@@ -88,14 +76,8 @@ const parseSparql = async (req, res, next) => {
 };
 
 const parseJson = async (req, res, next) => {
-  console.log('ALLLLLO');
-  console.log('req',req.$params.parser,req.headers);
   if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
-    console.log('JSON');
-    console.log('req.$params',req.$params);
-    // const { body, ...otherParams } = req.$params;
     const body = await bodyRawPromise(req);
-    console.log('body',body);
     if (body) {
       const json = JSON.parse(body);
       req.$params = { ...json, ...req.$params };
@@ -162,7 +144,6 @@ const parseFile = (req, res, next) => {
   }else{
     next();
   }
-  // console.log(req.headers['content-type']);
 };
 
 
