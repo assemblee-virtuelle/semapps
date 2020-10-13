@@ -37,7 +37,7 @@ module.exports = {
         resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1,
-        forceSemantic:true
+        forceSemantic: true
       });
 
       await ctx.call('ldp.container.detach', {
@@ -54,7 +54,7 @@ module.exports = {
         webId
       });
 
-      if(oldData['@type']==='semapps:file'){
+      if (oldData['@type'] === 'semapps:file') {
         fs.unlinkSync(oldData['semapps:localpath']);
       }
 

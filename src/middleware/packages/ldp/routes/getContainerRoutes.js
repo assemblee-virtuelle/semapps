@@ -8,7 +8,7 @@ const {
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-function getContainerRoutes(containerUri, serviceName,containerPath) {
+function getContainerRoutes(containerUri, serviceName, containerPath) {
   const commonRouteConfig = {
     path: new URL(containerUri).pathname,
     // Disable the body parsers so that we can parse the body ourselves
@@ -26,7 +26,7 @@ function getContainerRoutes(containerUri, serviceName,containerPath) {
     parseSparql,
     parseJson,
     parseFile,
-    addContainerUriMiddleware(containerUri,containerPath)
+    addContainerUriMiddleware(containerUri, containerPath)
   ];
 
   // If no serviceName is specified, map routes to the LDP container/resource service
@@ -56,8 +56,7 @@ function getContainerRoutes(containerUri, serviceName,containerPath) {
       authentication: true,
       aliases: {
         'GET /': [...middlewares, actions.list],
-        'GET /:id': [...middlewares, actions.get],
-
+        'GET /:id': [...middlewares, actions.get]
       },
       ...commonRouteConfig
     },

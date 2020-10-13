@@ -3,11 +3,11 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri,containerPath,parser, id, ...resource } = ctx.params;
+    const { containerUri, containerPath, parser, id, ...resource } = ctx.params;
 
     //PUT have to stay in same container and @id can't be different
     resource['@id'] = `${containerUri}/${id}`;
-    if (parser==='file') {
+    if (parser === 'file') {
       throw new MoleculerError(`non RDF Ressource PUT not supported`, 400, 'BAD_REQUEST');
     }
 

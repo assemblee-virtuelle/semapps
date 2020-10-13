@@ -2,19 +2,18 @@ const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
+
 const path = require('path');
 const fs = require('fs');
 const Stream = require('stream');
 var streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
-  console.log('req.$params FIRST',req.$params);
   req.$ctx.meta.headers = req.headers || {};
   next();
 };
 
 const negotiateContentType = (req, res, next) => {
-
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   // console.log('negotiateContentType',req.headers['content-type']);
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
@@ -50,7 +49,7 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const bodyRawPromise = (req)=>{
+const bodyRawPromise = req => {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', function(chunk) {
@@ -63,13 +62,12 @@ const bodyRawPromise = (req)=>{
 };
 
 const parseSparql = async (req, res, next) => {
-  if (!req.$params.parser &&
-      (
-        req.originalUrl.includes('/sparql')||
-        req.headers['content-type'] && req.headers['content-type'].includes('sparql')
-      )
-    ) {
-    req.$params.parser='sparql'
+  if (
+    !req.$params.parser &&
+    (req.originalUrl.includes('/sparql') ||
+      (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
+  ) {
+    req.$params.parser = 'sparql';
     req.$params.body = await bodyRawPromise(req);
   }
   next();
@@ -82,74 +80,69 @@ const parseJson = async (req, res, next) => {
       const json = JSON.parse(body);
       req.$params = { ...json, ...req.$params };
     }
-    req.$params.parser='json'
+    req.$params.parser = 'json';
   }
   next();
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$params.parser){
-    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')){
+  if (!req.$params.parser) {
+    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       var busboy = new Busboy({ headers: req.headers });
       let files = [];
-      let fields = []
+      let fields = [];
       busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-        console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
-
         const readableStream = new streams.ReadableStream();
-        file.on('data', (data)=>{
-          console.log('File [' + fieldname + '] got ' + data.length + ' bytes');
-          console.log(data.toString());
-          readableStream.push(data)
-
+        file.on('data', data => {
+          readableStream.push(data);
         });
-        file.on('end', ()=>{
+        file.on('end', () => {
           console.log('File [' + fieldname + '] Finished');
-
         });
-        files.push ({
+        files.push({
           fieldname,
           readableStream,
           filename,
           encoding,
           mimetype
-        })
+        });
       });
       busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
         console.log('Field [' + fieldname + ']: value: ' + inspect(val));
         fields.push({
-          key : fieldname,
-          value : inspect(val)
-        })
+          key: fieldname,
+          value: inspect(val)
+        });
       });
       busboy.on('finish', function() {
         console.log('Done parsing form!');
-        req.$params.files=files;
+        req.$params.files = files;
         req.$params.multipartFields = fields;
         next();
       });
-      req.$params.parser='file';
+      req.$params.parser = 'file';
       req.pipe(busboy);
-    }else{
+    } else {
       const readableStream = new streams.ReadableStream();
       // req.pipe(readableStream);
-      let files=[{
-        readableStream:req,
-        mimetype:req.headers['content-type']
-      }]
-      req.$params.files=files;
-      req.$params.parser='file';
+      let files = [
+        {
+          readableStream: req,
+          mimetype: req.headers['content-type']
+        }
+      ];
+      req.$params.files = files;
+      req.$params.parser = 'file';
       next();
     }
-  }else{
+  } else {
     next();
   }
 };
 
-
-const addContainerUriMiddleware = (containerUri,containerPath) => (req, res, next) => {
+const addContainerUriMiddleware = (containerUri, containerPath) => (req, res, next) => {
   req.$params.containerUri = containerUri;
-  req.$params.containerPath =containerPath
+  req.$params.containerPath = containerPath;
   next();
 };
 

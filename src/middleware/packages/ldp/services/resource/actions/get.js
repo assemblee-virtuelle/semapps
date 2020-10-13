@@ -29,14 +29,18 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
       queryDepth: { type: 'number', default: 0 },
-      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true },
-      forceSemantic : { type: 'boolean', optional: true },
+      jsonContext: {
+        type: 'multi',
+        rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+        optional: true
+      },
+      forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
       keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, accept, webId, queryDepth, jsonContext ,forceSemantic} = ctx.params;
+      const { resourceUri, accept, webId, queryDepth, jsonContext, forceSemantic } = ctx.params;
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
@@ -73,17 +77,16 @@ module.exports = {
           };
         }
 
-        if(!forceSemantic && result['@type']==='semapps:file'){
+        if (!forceSemantic && result['@type'] === 'semapps:file') {
           stream = fs.readFileSync(result['semapps:localpath']);
           ctx.meta.$responseType = result['semapps:mimetype'];
           ctx.meta.$responseHeaders = {
-              "Content-Disposition": `attachment; filename="${result['semapps:filename']}"`
+            'Content-Disposition': `attachment; filename="${result['semapps:filename']}"`
           };
           return stream;
-        }else {
+        } else {
           return result;
         }
-
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }
