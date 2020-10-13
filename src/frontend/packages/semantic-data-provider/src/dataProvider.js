@@ -1,18 +1,13 @@
 import jsonld from 'jsonld';
 import buildSparqlQuery from './buildSparqlQuery';
 
-const getJsonContext = (ontologies, mainOntology) => {
+const buildJsonContext = ontologies => {
   let pattern = {};
   ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
-  if (mainOntology) {
-    delete pattern[mainOntology];
-    return [ontologies.find(ontology => ontology.prefix === mainOntology).context, pattern];
-  } else {
-    return pattern;
-  }
+  return pattern;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainOntology }) => ({
+const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext }) => ({
   getList: async (resourceId, params) => {
     if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
@@ -55,14 +50,15 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
         body: sparqlQuery
       });
 
-      const compactJson = await jsonld.compact(json, getJsonContext(ontologies, mainOntology));
+      const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
 
       if (Object.keys(compactJson).length === 1) {
         // If we have only the context, it means there is no match
         return { data: [], total: 0 };
       } else if (!compactJson['@graph']) {
         // If we have several fields but no @graph, there is a single match
-        compactJson.id = compactJson['@id'];
+        compactJson.id = compactJson.id || compactJson['@id'];
+        console.log('compactJson', compactJson);
         return { data: [compactJson], total: 1 };
       } else {
         const returnData = compactJson['@graph']
@@ -136,7 +132,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, mainO
       method: 'POST',
       headers,
       body: JSON.stringify({
-        '@context': getJsonContext(ontologies, mainOntology),
+        '@context': jsonContext || buildJsonContext(ontologies),
         '@type': types,
         ...params.data
       })
