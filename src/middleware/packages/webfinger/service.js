@@ -55,10 +55,10 @@ const WebfingerService = {
 
       const response = await fetch(webfingerUrl);
 
-      if( response.ok ) {
+      if (response.ok) {
         const json = await response.json();
         const link = json.links.find(l => l.type === 'application/activity+json');
-        if( link ) {
+        if (link) {
           return link.href;
         }
       }
