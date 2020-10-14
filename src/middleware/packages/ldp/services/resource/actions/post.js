@@ -87,6 +87,7 @@ module.exports = {
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
+
       if (fileStream) {
         const filename = resource['@id'].replace(containerUri + '/', '');
         const regex = /.*\/\/[^\/]*(\/.*)/gm;
