@@ -8,7 +8,7 @@ const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, containerPath, parser, ...resource } = ctx.params;
+    let { containerUri, parser, ...resource } = ctx.params;
     try {
       let resourceUri;
       if (parser !== 'file') {
@@ -32,13 +32,11 @@ module.exports = {
             slug: file.filename || ctx.meta.headers.slug,
             resource: {
               '@context': {
-                semapps: 'https://semapps.org/ontology#'
+                semapps: 'http://semapps.org/ns/core#'
               },
-              '@type': 'semapps:file',
-              'semapps:filename': file.filename,
+              '@type': 'semapps:File',
               'semapps:encoding': file.encoding,
-              'semapps:mimetype': file.mimetype,
-              'semapps:fieldname': file.fieldname
+              'semapps:mimetype': file.mimetype
             },
             contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
@@ -87,19 +85,7 @@ module.exports = {
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
-      if (fileStream) {
-        const filename = resource['@id'].replace(containerUri + '/', '');
-        const regex = /.*\/\/[^\/]*(\/.*)/gm;
-        const containerPath = regex.exec(containerUri)[1];
-        const dir = path.join('./uploads' + containerPath);
-        const saveTo = path.join(dir, '/', filename);
-        if (!fs.existsSync(dir)) {
-          process.umask(0);
-          fs.mkdirSync(dir, { recursive: true, mode: parseInt('0777', 8) });
-        }
-        resource['semapps:localpath'] = saveTo;
-        resource['semapps:filename'] = filename;
-      }
+
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
 
@@ -115,6 +101,28 @@ module.exports = {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
 
+
+      if (fileStream) {
+        const filename = resource['@id'].replace(containerUri + '/', '');
+        const regex = /.*\/\/[^\/]*(\/.*)/gm;
+        const containerPath = regex.exec(containerUri)[1];
+        const dir = path.join('./uploads' + containerPath);
+        const saveTo = path.join(dir, '/', filename);
+        if (!fs.existsSync(dir)) {
+          process.umask(0);
+          fs.mkdirSync(dir, { recursive: true, mode: parseInt('0777', 8) });
+        }
+        resource['semapps:localpath'] = saveTo;
+        resource['semapps:Filename'] = filename;
+      }
+      if (fileStream != undefined) {
+        try {
+          fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
+        } catch (e) {
+          throw new MoleculerError(e, 500, 'Server Error');
+        }
+      }
+
       await ctx.call('triplestore.insert', {
         resource,
         contentType,
@@ -127,13 +135,7 @@ module.exports = {
         webId
       });
 
-      if (fileStream != undefined) {
-        try {
-          fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
-        } catch (e) {
-          throw new MoleculerError(e, 500, 'Server Error');
-        }
-      }
+
 
       const newData = await ctx.call(
         'ldp.resource.get',

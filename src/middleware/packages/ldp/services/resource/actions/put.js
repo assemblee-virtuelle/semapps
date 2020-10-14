@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, containerPath, parser, id, ...resource } = ctx.params;
+    const { containerUri, parser, id, ...resource } = ctx.params;
 
     //PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID

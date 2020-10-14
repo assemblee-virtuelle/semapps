@@ -17,7 +17,7 @@
   {
     "prefix": "semapps",
     "owl": "",
-    "url": "https://semapps.org/ontology#"
+    "url": "http://semapps.org/ns/core#"
   },
   {
     "prefix": "schema",

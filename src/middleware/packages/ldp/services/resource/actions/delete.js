@@ -54,7 +54,7 @@ module.exports = {
         webId
       });
 
-      if (oldData['@type'] === 'semapps:file') {
+      if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localpath']);
       }
 

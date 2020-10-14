@@ -140,9 +140,8 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const addContainerUriMiddleware = (containerUri, containerPath) => (req, res, next) => {
+const addContainerUriMiddleware = (containerUri) => (req, res, next) => {
   req.$params.containerUri = containerUri;
-  req.$params.containerPath = containerPath;
   next();
 };
 
