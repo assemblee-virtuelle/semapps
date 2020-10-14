@@ -5,6 +5,7 @@
   "dependencies": {
     "@semapps/archipelago-layout": "0.1.6",
     "@semapps/semantic-data-provider": "0.1.6",
+    "jwt-decode": "^3.0.0",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
     "ra-language-french": "^3.9.2",

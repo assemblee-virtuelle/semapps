@@ -5,6 +5,8 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 import { Layout, theme } from '@semapps/archipelago-layout';
+import LogoutButton from './auth-provider/LogoutButton';
+import authProvider from './auth-provider/authProvider';
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';
@@ -19,6 +21,7 @@ import users from './resources/users';
 function App() {
   return (
     <Admin
+      authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
       dataProvider={dataProvider({
         sparqlEndpoint: process.env.REACT_APP_MIDDLEWARE_URL + 'sparql',
         httpClient,
@@ -29,6 +32,7 @@ function App() {
       i18nProvider={polyglotI18nProvider(() => frenchMessages)}
       layout={Layout}
       theme={theme}
+      logoutButton={LogoutButton}
     >
       <Resource name="Organization" {...organizations} />
       <Resource name="Project" {...projects} />
