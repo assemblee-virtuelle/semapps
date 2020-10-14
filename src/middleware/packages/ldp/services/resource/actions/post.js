@@ -86,7 +86,6 @@ module.exports = {
       resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr' }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
-
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
 
       if (!containerExist) {
@@ -100,7 +99,6 @@ module.exports = {
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
-
 
       if (fileStream) {
         const filename = resource['@id'].replace(containerUri + '/', '');
@@ -134,8 +132,6 @@ module.exports = {
         containerUri,
         webId
       });
-
-
 
       const newData = await ctx.call(
         'ldp.resource.get',
