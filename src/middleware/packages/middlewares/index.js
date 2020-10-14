@@ -2,11 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
 const inspect = require('util').inspect;
-
-const path = require('path');
-const fs = require('fs');
-const Stream = require('stream');
-var streams = require('memory-streams');
+const streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
   req.$ctx.meta.headers = req.headers || {};
@@ -15,7 +11,6 @@ const parseHeader = async (req, res, next) => {
 
 const negotiateContentType = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  // console.log('negotiateContentType',req.headers['content-type']);
   if (req.headers['content-type'] !== undefined && req.method !== 'DELETE') {
     try {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
@@ -88,10 +83,10 @@ const parseJson = async (req, res, next) => {
 const parseFile = (req, res, next) => {
   if (!req.$params.parser) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
-      var busboy = new Busboy({ headers: req.headers });
+      const busboy = new Busboy({ headers: req.headers });
       let files = [];
       let fields = [];
-      busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         const readableStream = new streams.ReadableStream();
         file.on('data', data => {
           readableStream.push(data);
@@ -107,14 +102,14 @@ const parseFile = (req, res, next) => {
           mimetype
         });
       });
-      busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+      busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
         console.log('Field [' + fieldname + ']: value: ' + inspect(val));
         fields.push({
           key: fieldname,
           value: inspect(val)
         });
       });
-      busboy.on('finish', function() {
+      busboy.on('finish', () => {
         console.log('Done parsing form!');
         req.$params.files = files;
         req.$params.multipartFields = fields;
@@ -123,9 +118,7 @@ const parseFile = (req, res, next) => {
       req.$params.parser = 'file';
       req.pipe(busboy);
     } else {
-      const readableStream = new streams.ReadableStream();
-      // req.pipe(readableStream);
-      let files = [
+      const files = [
         {
           readableStream: req,
           mimetype: req.headers['content-type']

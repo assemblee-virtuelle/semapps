@@ -80,9 +80,6 @@ module.exports = {
         if (!forceSemantic && result['@type'] === 'semapps:File') {
           stream = fs.readFileSync(result['semapps:localpath']);
           ctx.meta.$responseType = result['semapps:mimetype'];
-          ctx.meta.$responseHeaders = {
-            'Content-Disposition': `attachment; filename="${result['semapps:Filename']}"`
-          };
           return stream;
         } else {
           return result;
