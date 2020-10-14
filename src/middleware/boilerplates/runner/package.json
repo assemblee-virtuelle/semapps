@@ -14,6 +14,7 @@
     "@semapps/fuseki-admin": "0.1.22",
     "@semapps/inference": "0.1.22",
     "@semapps/ldp": "0.1.22",
+    "@semapps/signature": "0.1.22",
     "@semapps/sparql-endpoint": "0.1.22",
     "@semapps/triplestore": "0.1.22",
     "@semapps/webid": "0.1.22",
