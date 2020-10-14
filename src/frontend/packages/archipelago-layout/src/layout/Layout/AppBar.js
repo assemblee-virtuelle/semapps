@@ -52,7 +52,7 @@ const AppBar = ({ userMenu, logout }) => {
 };
 
 AppBar.defaultProps = {
-  userMenu: <UserMenu />,
+  userMenu: <UserMenu />
 };
 
 export default AppBar;

@@ -36,20 +36,23 @@ const UserMenu = props => {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'right'
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'right'
         }}
         open={open}
         onClose={handleClose}
       >
         {Children.map(children, menuItem =>
           isValidElement(menuItem)
-            ? cloneElement<any>(menuItem, {
-            onClick: handleClose,
-          })
+            ? cloneElement <
+              any >
+              (menuItem,
+              {
+                onClick: handleClose
+              })
             : null
         )}
         {logout}
@@ -62,12 +65,12 @@ UserMenu.propTypes = {
   children: PropTypes.node,
   label: PropTypes.string.isRequired,
   logout: PropTypes.element,
-  icon: PropTypes.node,
+  icon: PropTypes.node
 };
 
 UserMenu.defaultProps = {
   label: 'ra.auth.user_menu',
-  icon: <AccountCircle />,
+  icon: <AccountCircle />
 };
 
 export default UserMenu;

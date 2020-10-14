@@ -25,7 +25,7 @@ const authProvider = middlewareUri => ({
   getIdentity: () => {
     console.log('getIdentity');
     return { id: 'sdcsd', fullName: 'Sébastien', avatar: '' };
-  },
+  }
 });
 
 export default authProvider;

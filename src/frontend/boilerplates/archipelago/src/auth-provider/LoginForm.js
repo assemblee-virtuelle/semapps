@@ -10,11 +10,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const styles = ({ spacing }) =>
   createStyles({
     button: {
-      width: '100%',
+      width: '100%'
     },
     icon: {
-      marginRight: spacing.unit,
-    },
+      marginRight: spacing.unit
+    }
   });
 
 const LoginForm = ({ classes, userLogin }) => {
@@ -48,22 +48,16 @@ const LoginForm = ({ classes, userLogin }) => {
           onClick={handleLogin}
           disabled={loading}
         >
-          {loading && (
-            <CircularProgress
-              className={classes.icon}
-              size={18}
-              thickness={2}
-            />
-          )}
+          {loading && <CircularProgress className={classes.icon} size={18} thickness={2} />}
           Login With Google
         </Button>
       </CardActions>
     </div>
   );
-}
+};
 
 const mapDispatchToProps = {
-  userLogin: userLoginAction,
-}
+  userLogin: userLoginAction
+};
 
 export default connect(undefined, mapDispatchToProps)(withStyles(styles)(LoginForm));
