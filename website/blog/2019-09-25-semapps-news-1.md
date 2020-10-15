@@ -37,6 +37,9 @@ Il est maintenant possible de déployer en quelques minutes un serveur ActivityP
 
 #### Jérémy Dufraisse nous a rejoint
 
+Passionné et débutant en développement de sites internet, Jérémy découvre l'équipe SemApps avec l'intention de s'impliquer davantage, en particuliers sur le développement du code SemApps.
+Membre du cercle-cœur des Colibris Lorient, il participe actuellement à la plateforme version 0 des Chemins de la Transition, projet de l'écosystème SemApps.
+
 #### Travail sur la gouvernance
 
 - Définition de rôles
