@@ -52,7 +52,7 @@ const SearchForm = () => {
             </Grid>
             <Grid item xs={2}>
               <Button variant="outlined" type="submit" fullWidth>
-                Hop !
+                Hop
               </Button>
             </Grid>
           </Grid>

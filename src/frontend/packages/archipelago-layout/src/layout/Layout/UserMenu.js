@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Children, cloneElement, isValidElement, useState } from 'react';
+import { useAuthState, useGetIdentity, MenuItemLink, useTranslate } from 'react-admin';
 import PropTypes from 'prop-types';
-import { useTranslate } from 'ra-core';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
+import { Box, Button, Menu, MenuItem } from '@material-ui/core';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
-const UserMenu = props => {
+const UserMenu = ({ children, label, icon, logout }) => {
+  // const { loading, authenticated } = useAuthState();
+  const { identity } = useGetIdentity();
   const [anchorEl, setAnchorEl] = useState(null);
   const translate = useTranslate();
 
-  const { children, label, icon, logout } = props;
   if (!logout && !children) return null;
   const open = Boolean(anchorEl);
 
@@ -19,18 +19,10 @@ const UserMenu = props => {
   const handleClose = () => setAnchorEl(null);
 
   return (
-    <div>
-      <Tooltip title={label && translate(label, { _: label })}>
-        <IconButton
-          aria-label={label && translate(label, { _: label })}
-          aria-owns={open ? 'menu-appbar' : null}
-          aria-haspopup={true}
-          color="inherit"
-          onClick={handleMenu}
-        >
-          {icon}
-        </IconButton>
-      </Tooltip>
+    <Box spacing={2}>
+      <Button variant="outlined" onClick={handleMenu} endIcon={<ArrowDropDownIcon />}>
+        {identity ? identity.name : 'Anonyme'}
+      </Button>
       <Menu
         id="menu-appbar"
         anchorEl={anchorEl}
@@ -45,19 +37,12 @@ const UserMenu = props => {
         open={open}
         onClose={handleClose}
       >
-        {Children.map(children, menuItem =>
-          isValidElement(menuItem)
-            ? cloneElement <
-              any >
-              (menuItem,
-              {
-                onClick: handleClose
-              })
-            : null
-        )}
-        {logout}
+        {identity ?
+          logout
+        : <MenuItemLink to="/login" onClick={handleClose}>Se connecter</MenuItemLink>
+        }
       </Menu>
-    </div>
+    </Box>
   );
 };
 

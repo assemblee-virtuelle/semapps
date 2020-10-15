@@ -43,7 +43,9 @@ const AppBar = ({ userMenu, logout }) => {
             </Grid>
           </Hidden>
           <Grid item sm={3} align="right">
-            {React.cloneElement(userMenu, { logout })}
+            <Box pt={2}>
+              {React.cloneElement(userMenu, { logout })}
+            </Box>
           </Grid>
         </Grid>
       </Container>

@@ -1,63 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { userLogin as userLoginAction } from 'react-admin';
+import React, { useState } from 'react';
+import { useLogin } from 'react-admin';
 
-import { withStyles, createStyles } from '@material-ui/core/styles';
-import CardActions from '@material-ui/core/CardActions';
-import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+import { Button, Avatar, CardActions } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-const styles = ({ spacing }) =>
-  createStyles({
-    button: {
-      width: '100%'
-    },
-    icon: {
-      marginRight: spacing.unit
-    }
-  });
+const useStyles = makeStyles(theme => ({
+  button: {
+    width: '100%'
+  },
+  icon: {
+    width: 24,
+    height: 24
+  }
+}));
 
-const LoginForm = ({ classes, userLogin }) => {
+const LoginForm = () => {
+  const classes = useStyles();
+  const login = useLogin();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const { searchParams } = new URL(window.location.href);
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-
-    // If code is present, we came back from the provider
-    if (code && state) {
-      setLoading(true);
-      userLogin({ code, state });
-    }
-  }, [userLogin]);
-
-  const handleLogin = () => {
-    setLoading(true);
-    userLogin(); // Do not provide code, just trigger the redirection
-  };
+  const url = new URL(window.location);
+  if (url.searchParams.has('token')) {
+    localStorage.setItem('token', url.searchParams.get('token'));
+    url.searchParams.delete('token');
+    window.location.href = url.toString();
+  }
 
   return (
     <div>
       <CardActions>
         <Button
           className={classes.button}
-          variant="raised"
+          variant="outlined"
           type="submit"
-          color="primary"
-          onClick={handleLogin}
+          onClick={login}
           disabled={loading}
+          startIcon={<Avatar src="/lescommuns.jpg" className={classes.icon}  />}
         >
-          {loading && <CircularProgress className={classes.icon} size={18} thickness={2} />}
-          Login With Google
+          {loading && <CircularProgress size={18} thickness={2} />}
+          Les Communs
         </Button>
       </CardActions>
     </div>
   );
 };
 
-const mapDispatchToProps = {
-  userLogin: userLoginAction
-};
-
-export default connect(undefined, mapDispatchToProps)(withStyles(styles)(LoginForm));
+export default LoginForm;

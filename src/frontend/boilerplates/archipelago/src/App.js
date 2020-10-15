@@ -5,6 +5,7 @@ import polyglotI18nProvider from 'ra-i18n-polyglot';
 
 import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 import { Layout, theme } from '@semapps/archipelago-layout';
+import LoginPage from './auth-provider/LoginPage';
 import LogoutButton from './auth-provider/LogoutButton';
 import authProvider from './auth-provider/authProvider';
 
@@ -32,6 +33,7 @@ function App() {
       i18nProvider={polyglotI18nProvider(() => frenchMessages)}
       layout={Layout}
       theme={theme}
+      loginPage={LoginPage}
       logoutButton={LogoutButton}
     >
       <Resource name="Organization" {...organizations} />
