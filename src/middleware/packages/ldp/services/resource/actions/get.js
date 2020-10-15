@@ -78,8 +78,8 @@ module.exports = {
         }
 
         if (!forceSemantic && result['@type'] === 'semapps:File') {
-          stream = fs.readFileSync(result['semapps:localpath']);
-          ctx.meta.$responseType = result['semapps:mimetype'];
+          stream = fs.readFileSync(result['semapps:localPath']);
+          ctx.meta.$responseType = result['semapps:mimeType'];
           return stream;
         } else {
           return result;

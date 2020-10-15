@@ -36,7 +36,7 @@ module.exports = {
               },
               '@type': 'semapps:File',
               'semapps:encoding': file.encoding,
-              'semapps:mimetype': file.mimetype
+              'semapps:mimeType': file.mimetype
             },
             contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
@@ -110,12 +110,11 @@ module.exports = {
           process.umask(0);
           fs.mkdirSync(dir, { recursive: true, mode: parseInt('0777', 8) });
         }
-        resource['semapps:localpath'] = saveTo;
-        resource['semapps:Filename'] = filename;
-      }
-      if (fileStream != undefined) {
+        resource['semapps:localPath'] = saveTo;
+        resource['semapps:fileName'] = filename;
+
         try {
-          fileStream.pipe(fs.createWriteStream(resource['semapps:localpath']));
+          fileStream.pipe(fs.createWriteStream(resource['semapps:localPath']));
         } catch (e) {
           throw new MoleculerError(e, 500, 'Server Error');
         }

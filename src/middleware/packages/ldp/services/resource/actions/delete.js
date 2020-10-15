@@ -55,7 +55,7 @@ module.exports = {
       });
 
       if (oldData['@type'] === 'semapps:File') {
-        fs.unlinkSync(oldData['semapps:localpath']);
+        fs.unlinkSync(oldData['semapps:localPath']);
       }
 
       ctx.emit('ldp.resource.deleted', {
