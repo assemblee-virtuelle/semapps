@@ -1,0 +1,43 @@
+{
+  "name": "archipelago",
+  "version": "0.1.6",
+  "private": true,
+  "dependencies": {
+    "@semapps/archipelago-layout": "0.1.6",
+    "@semapps/semantic-data-provider": "0.1.6",
+    "prop-types": "^15.7.2",
+    "ra-input-markdown": "^1.1.7",
+    "ra-language-french": "^3.9.2",
+    "react": "^16.13.1",
+    "react-admin": "^3.9.2",
+    "react-dom": "^16.13.1"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "react-scripts": "3.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "bootstrap": "lerna bootstrap"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

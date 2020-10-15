@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/react-admin",
+  "name": "@semapps/archipelago-layout",
   "version": "0.1.6",
-  "description": "React-Admin extension for SemApps servers",
+  "description": "React-Admin layout for semantic cartography",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "main": "dist/index.cjs.js",
@@ -14,12 +14,11 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
-    "final-form-calculate": "^1.3.1",
-    "jsonld": "^3.0.1"
+    "react-markdown": "^4.3.1"
   },
   "peerDependencies": {
     "react": "^16.13.0",
-    "react-admin": "^3.2.4"
+    "react-admin": "^3.9.2"
   },
   "publishConfig": {
     "access": "public"
@@ -31,9 +30,9 @@
     "rollup": "^2.7.6",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
-  },
-  "gitHead": "c578ad62168b4d839b8c3838e764da2c0c98921a"
+  }
 }
