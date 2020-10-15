@@ -36,7 +36,7 @@ const LoginForm = () => {
           type="submit"
           onClick={login}
           disabled={loading}
-          startIcon={<Avatar src="/lescommuns.jpg" className={classes.icon}  />}
+          startIcon={<Avatar src="/lescommuns.jpg" className={classes.icon} />}
         >
           {loading && <CircularProgress size={18} thickness={2} />}
           Les Communs

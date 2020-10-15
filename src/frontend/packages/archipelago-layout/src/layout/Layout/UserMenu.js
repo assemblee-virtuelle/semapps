@@ -37,10 +37,13 @@ const UserMenu = ({ children, label, icon, logout }) => {
         open={open}
         onClose={handleClose}
       >
-        {identity ?
+        {identity ? (
           logout
-        : <MenuItemLink to="/login" onClick={handleClose}>Se connecter</MenuItemLink>
-        }
+        ) : (
+          <MenuItemLink to="/login" onClick={handleClose}>
+            Se connecter
+          </MenuItemLink>
+        )}
       </Menu>
     </Box>
   );
