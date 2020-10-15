@@ -2,6 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
@@ -13,7 +14,7 @@ module.exports = {
         resourceUri,
         accept
       });
-      ctx.meta.$responseType = accept;
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return body;
     } catch (e) {
       console.error(e);
@@ -28,13 +29,18 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
       queryDepth: { type: 'number', default: 0 },
-      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+      jsonContext: {
+        type: 'multi',
+        rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+        optional: true
+      },
+      forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
       keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, accept, webId, queryDepth, jsonContext } = ctx.params;
+      const { resourceUri, accept, webId, queryDepth, jsonContext, forceSemantic } = ctx.params;
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
@@ -71,7 +77,13 @@ module.exports = {
           };
         }
 
-        return result;
+        if (!forceSemantic && result['@type'] === 'semapps:File') {
+          stream = fs.readFileSync(result['semapps:localPath']);
+          ctx.meta.$responseType = result['semapps:mimeType'];
+          return stream;
+        } else {
+          return result;
+        }
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

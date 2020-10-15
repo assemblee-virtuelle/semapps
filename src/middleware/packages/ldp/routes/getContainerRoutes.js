@@ -1,9 +1,10 @@
 const {
   parseHeader,
-  parseBody,
+  parseSparql,
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseFile,
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
@@ -20,10 +21,11 @@ function getContainerRoutes(containerUri, serviceName) {
 
   const middlewares = [
     parseHeader,
-    parseBody,
     negotiateContentType,
     negotiateAccept,
+    parseSparql,
     parseJson,
+    parseFile,
     addContainerUriMiddleware(containerUri)
   ];
 
