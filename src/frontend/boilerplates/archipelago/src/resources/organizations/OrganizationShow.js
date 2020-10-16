@@ -11,7 +11,7 @@ const OrganizationShow = props => (
   <Show {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<OrganizationTitle />}>
+        <Hero title={<OrganizationTitle />} image="image">
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
         </Hero>
