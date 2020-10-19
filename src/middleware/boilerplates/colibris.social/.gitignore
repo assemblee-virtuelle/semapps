@@ -1,6 +1,0 @@
-.env.local
-.env.*.local
-/jwt/*.key
-/jwt/*.key.pub
-/imports/*.json
-/imports/*.csv
