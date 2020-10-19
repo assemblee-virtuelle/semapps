@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "as": "https://www.w3.org/ns/activitystreams#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "ldp": "http://www.w3.org/ns/ldp#",
+      "pair": "http://virtual-assembly.org/ontologies/pair#",
+      "semapps": "http://semapps.org/ns/core#"
+    }
+  ],
+  "id": "http://localhost:3000/activities/5ebea9a5c08492f20bf53d0f",
+  "type": "Create",
+  "actor": "http://localhost:3000/actors/lafabrique",
+  "object": {
+    "id": "http://localhost:3000/objects/chateau-darvieu",
+    "type": "pair:Project",
+    "pair:aboutPage": "https://www.colibris-lafabrique.org/les-projets/chateau-darvieu",
+    "pair:description": "Château d'Arvieu, laboratoire rural de la transition écologique et sociale",
+    "pair:interestOf": [
+      "http://localhost:3000/themes/habitat",
+      "http://localhost:3000/themes/oasis",
+      "http://localhost:3000/themes/education"
+    ],
+    "pair:involves": {
+      "id": "http://localhost:3000/actors/lafabrique"
+    },
+    "pair:label": "Château d'Arvieu",
+    "image": {
+      "type": "Image",
+      "url": "https://www.colibris-lafabrique.org/sites/default/files/styles/projet_large/public/projets/chateau_arvieu.jpg"
+    },
+    "location": {
+      "type": "Place",
+      "latitude": "44.190063",
+      "longitude": "2.6605852",
+      "name": "ARVIEU"
+    }
+  },
+  "published": "2020-05-15T14:39:33.397Z",
+  "to": "http://localhost:3000/actors/lafabrique/followers"
+}

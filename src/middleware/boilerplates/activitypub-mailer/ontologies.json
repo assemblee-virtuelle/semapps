@@ -1,0 +1,27 @@
+[
+  {
+    "prefix": "as",
+    "owl": "",
+    "url": "https://www.w3.org/ns/activitystreams#"
+  },
+  {
+    "prefix": "rdf",
+    "owl": "",
+    "url": "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  },
+  {
+    "prefix": "ldp",
+    "owl": "",
+    "url": "http://www.w3.org/ns/ldp#"
+  },
+  {
+    "prefix": "pair",
+    "owl": "",
+    "url": "http://virtual-assembly.org/ontologies/pair#"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/core#"
+  }
+]

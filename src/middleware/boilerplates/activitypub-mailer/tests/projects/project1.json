@@ -1,0 +1,43 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "as": "https://www.w3.org/ns/activitystreams#",
+      "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+      "ldp": "http://www.w3.org/ns/ldp#",
+      "pair": "http://virtual-assembly.org/ontologies/pair#",
+      "semapps": "http://semapps.org/ns/core#"
+    }
+  ],
+  "id": "http://localhost:3000/activities/5ebea90ac08492f20bf53cf7",
+  "type": "Create",
+  "actor": "http://localhost:3000/actors/lafabrique",
+  "object": {
+    "id": "http://localhost:3000/objects/mongrenier",
+    "type": "pair:Project",
+    "pair:aboutPage": "https://www.colibris-lafabrique.org/les-projets/mongrenier",
+    "pair:description": "A la recherche de nouveaux habitants, pour nous aider à façonner joyeusement notre nouvel espace de vie !",
+    "pair:interestOf": [
+      "http://localhost:3000/themes/oasis",
+      "http://localhost:3000/themes/habitat",
+      "http://localhost:3000/themes/culture",
+      "http://localhost:3000/themes/arts"
+    ],
+    "pair:involves": {
+      "id": "http://localhost:3000/actors/lafabrique"
+    },
+    "pair:label": "Mongrenier",
+    "image": {
+      "type": "Image",
+      "url": "https://www.colibris-lafabrique.org/sites/default/files/styles/projet_large/public/projets/img_5711_1.jpg"
+    },
+    "location": {
+      "type": "Place",
+      "latitude": "43.141212",
+      "longitude": "2.184907",
+      "name": "Villarzel du razes"
+    }
+  },
+  "published": "2020-05-15T14:36:58.974Z",
+  "to": "http://localhost:3000/actors/lafabrique/followers"
+}

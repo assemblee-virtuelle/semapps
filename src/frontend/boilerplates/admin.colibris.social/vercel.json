@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "build": {
+    "env": {
+      "REACT_APP_MIDDLEWARE_URL": "https://colibris.social/",
+      "REACT_APP_MAILER_URL": "https://alertes.colibris-lafabrique.org/"
+    }
+  },
+  "public": true
+}

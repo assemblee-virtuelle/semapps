@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "pair": "http://virtual-assembly.org/ontologies/pair#",
+      "semapps": "http://semapps.org/ns/core#"
+    }
+  ],
+  "type": "Person",
+  "pair:e-mail": "sebastien@test.com",
+  "pair:hasInterest": [
+    "http://localhost:3000/themes/education",
+    "http://localhost:3000/themes/energie"
+  ],
+  "location": {
+    "type": "Place",
+    "name": "ARVIEU",
+    "latitude": "44.190063",
+    "longitude": "2.6605852",
+    "radius": 25000.0
+  },
+  "semapps:mailFrequency": "weekly"
+}
