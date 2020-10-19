@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Grid, Typography, makeStyles } from '@material-ui/core';
 import DetailsList from './DetailsList';
+import MainImage from './MainImage';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -8,7 +9,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Hero = ({ basePath, children, record, resource, title, image }) => {
+const Hero = ({ basePath, children, record, resource, title, image, defaultImage }) => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -19,7 +20,7 @@ const Hero = ({ basePath, children, record, resource, title, image }) => {
       </Box>
       <Grid container spacing={5}>
         <Grid item xs={12} sm={5}>
-          <img src={image || process.env.PUBLIC_URL + '/logo192.png'} width="100%" alt={title} />
+          <MainImage record={record} source={image} defaultImage={defaultImage} title={title} />
         </Grid>
         <Grid item xs={12} sm={7}>
           <DetailsList record={record} resource={resource} basePath={basePath}>
@@ -29,6 +30,10 @@ const Hero = ({ basePath, children, record, resource, title, image }) => {
       </Grid>
     </div>
   );
+};
+
+Hero.defaultProps = {
+  defaultImage: process.env.PUBLIC_URL + '/logo192.png'
 };
 
 export default Hero;
