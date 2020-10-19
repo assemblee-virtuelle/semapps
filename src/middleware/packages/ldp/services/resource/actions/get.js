@@ -10,12 +10,11 @@ module.exports = {
     const resourceUri = `${containerUri}/${id}`;
     const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
-      const body = await ctx.call('ldp.resource.get', {
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      return await ctx.call('ldp.resource.get', {
         resourceUri,
         accept
       });
-      ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return body;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -77,10 +76,10 @@ module.exports = {
           };
         }
 
-        if (!forceSemantic && result['@type'] === 'semapps:File') {
-          stream = fs.readFileSync(result['semapps:localPath']);
+        if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
+          // Overwrite response type set by the api action
           ctx.meta.$responseType = result['semapps:mimeType'];
-          return stream;
+          return fs.readFileSync(result['semapps:localPath']);
         } else {
           return result;
         }

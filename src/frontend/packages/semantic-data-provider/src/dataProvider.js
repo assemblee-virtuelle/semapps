@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import buildSparqlQuery from './buildSparqlQuery';
+const createSlug = require('speakingurl');
 
 const buildJsonContext = ontologies => {
   let pattern = {};
@@ -9,6 +10,16 @@ const buildJsonContext = ontologies => {
 
 const isFile = o => o && o.rawFile && o.rawFile instanceof File;
 
+const getSlugWithExtension = fileName => {
+  let fileExtension = '';
+  let splitFileName = fileName.split('.');
+  if( splitFileName.length > 1 ) {
+    fileExtension = splitFileName.pop();
+    fileName = splitFileName.join('.');
+  }
+  return createSlug(fileName, { lang: 'fr' }) + '.' + fileExtension;
+};
+
 const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri }) => {
   const uploadFile = async rawFile => {
     if (!uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
@@ -17,7 +28,10 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       method: 'POST',
       body: rawFile,
       headers: new Headers({
-        Slug: rawFile.name,
+        // We must sluggify the file name, because we can't use non-ASCII characters in the header
+        // However we keep the extension apart (if it exists) so that it is not replaced with a -
+        // TODO let the middleware guess the extension based on the content type
+        Slug: getSlugWithExtension(rawFile.name),
         'Content-Type': rawFile.type
       })
     });
@@ -132,6 +146,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
     getOne: async (resourceId, params) => {
       let { json } = await httpClient(params.id);
       json.id = json.id || json['@id'];
+      // TODO compact only if remote context is different from local context
       const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
       return { data: compactJson };
     },

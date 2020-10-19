@@ -14,7 +14,8 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
-    "jsonld": "^3.0.1"
+    "jsonld": "^3.0.1",
+    "speakingurl": "^14.0.1"
   },
   "peerDependencies": {
     "react": "^16.13.0",
