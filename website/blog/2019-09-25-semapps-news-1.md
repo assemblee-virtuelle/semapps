@@ -35,21 +35,28 @@ Il est maintenant possible de déployer en quelques minutes un serveur ActivityP
 
 ## Avancées humaines
 
-#### Jérémy Dufraisse nous a rejoint
+#### Jérémy Dufraisse nous a rejoints
 
 Passionné et débutant en développement de sites internet, Jérémy découvre l'équipe SemApps avec l'intention de s'impliquer davantage, en particuliers sur le développement du code SemApps.
 Membre du cercle-cœur des Colibris Lorient, il participe actuellement à la plateforme version 0 des Chemins de la Transition, projet de l'écosystème SemApps.
 
 #### Travail sur la gouvernance
 
-- Définition de rôles
-- Election sans candidat
-- Gouvernance agile: mise à jour régulière des rôles
+En prenant le temps de mettre en œuvre les principes de l’élection sans candidat, nous avons pu, d’une part, définir les rôles nécessaires au plus près des besoins effectifs et, d’autre part, pourvoir les rôles au mieux des compétences révélées.
+
+Parmi les 13 rôles définis, les suivants méritent particulièrement d’être mis en avant :
+- Rôle Inclusion / Accueil / Embarquement - Gabriel HENRY : gabriel.henry@lilo.org
+- Rôle Partenaires techniques / Interopérabilité - Simon LOUVET
+- Rôle Communication externe - Pierre BUVIER-MULLER
+- Rôle Infoculteur (communication interne, secrétariat, capitalisation...) - Guillaume ROUYER
+- Rôle Coordination avec l’Assemblée Virtuelle - Gabriel HENRY
+
+Grâce à une gouvernance agile, ces rôles bénéficeront d'une revue régulière pour permettre tout réajustement utile.
+
 
 #### Travail sur la pérennité économique
 
-- Importance
-- Projet de SCIC
+Nous avons porté une attention particulière au rôle Pérennité économique pour permettre notamment à nos contributeurs de se sentir justement rétribués. Nous nous orientons vers une autodétermination de nos rétributions respectives.
 
 
 ## Usages
