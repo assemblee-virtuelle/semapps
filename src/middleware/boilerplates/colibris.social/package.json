@@ -1,0 +1,36 @@
+{
+  "name": "colibris.social",
+  "private": true,
+  "version": "0.1.25",
+  "description": "Colibris ActivityPub server",
+  "author": "Reconnexion",
+  "license": "Apache-2.0",
+  "scripts": {
+    "dev": "moleculer-runner --repl --hot services",
+    "start": "moleculer-runner --instances=max services"
+  },
+  "dependencies": {
+    "@semapps/activitypub": "0.1.25",
+    "@semapps/connector": "0.1.25",
+    "@semapps/importer": "0.1.25",
+    "@semapps/inference": "0.1.25",
+    "@semapps/ldp": "0.1.25",
+    "@semapps/mime-types": "0.1.25",
+    "@semapps/push": "0.1.25",
+    "@semapps/signature": "0.1.25",
+    "@semapps/sparql-endpoint": "0.1.25",
+    "@semapps/triplestore": "0.1.25",
+    "@semapps/webfinger": "0.1.25",
+    "@semapps/webhooks": "0.1.25",
+    "@sentry/node": "^5.16.1",
+    "@sentry/utils": "^5.16.1",
+    "dotenv-flow": "^3.1.0",
+    "moleculer": "^0.14.7",
+    "moleculer-bull": "^0.2.5",
+    "moleculer-db": "^0.8.7",
+    "moleculer-repl": "^0.6.4",
+    "moleculer-web": "^0.9.1",
+    "slugify": "^1.4.0",
+    "url-join": "^4.0.1"
+  }
+}
