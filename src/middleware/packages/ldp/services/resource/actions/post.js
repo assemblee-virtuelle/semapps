@@ -83,7 +83,7 @@ module.exports = {
       const { resource, containerUri, slug, contentType, webId, fileStream } = ctx.params;
 
       // Generate ID and make sure it doesn't exist already
-      resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr', custom: ['.'] }) : generateId());
+      resource['@id'] = urlJoin(containerUri, slug ? createSlug(slug, { lang: 'fr', custom: {'.': '.'} }) : generateId());
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri });
