@@ -25,7 +25,7 @@ You will need to install:
 Then you can do:
 
 ```
-git clone git@github.com:assemblee-virtuelle/semapps.git
+git clone https://github.com/assemblee-virtuelle/semapps.git
 cd semapps
 make init
 make build
