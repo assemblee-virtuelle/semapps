@@ -3,6 +3,6 @@
   "packages": [
     "boilerplates/**",
     "packages/*",
-    "templates/*"
+    "templates/**"
   ]
 }
