@@ -35,7 +35,7 @@ It is now possible to deploy in a few minutes an ActivityPub server based on Sem
 #### Jérémy Dufraisse has joined us
 
 New to web development and passionate about it, Jeremy joins the SemApps team, aiming to get more involved, especially in programming this software's code. 
-Member of the Colibris core team in Lorient, he's already working on The Paths of Transition's platform,  
+Member of the Colibris core team in Lorient, he's already working on The Paths of Transition's platform v.0, one of SemApps ecosystem's projects.
 
 #### Work on governance
 
