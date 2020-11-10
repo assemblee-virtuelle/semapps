@@ -12,7 +12,6 @@ import ontologies from './config/ontologies';
 import users from './resources/users';
 
 function App() {
-
   return (
     <Admin
       dataProvider={dataProvider({
@@ -27,12 +26,9 @@ function App() {
       layout={Layout}
       theme={theme}
     >
-
       <Resource name="User" {...users} />
-
     </Admin>
   );
-
 }
 
 export default App;

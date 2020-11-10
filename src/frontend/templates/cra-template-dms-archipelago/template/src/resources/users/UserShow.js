@@ -43,7 +43,6 @@ const UserIcon = ({ record }) => {
   );
 };
 
-
 const UserShow = props => (
   <Show {...props}>
     <ColumnShowLayout>

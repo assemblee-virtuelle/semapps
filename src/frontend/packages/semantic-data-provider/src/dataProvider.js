@@ -13,7 +13,7 @@ const isFile = o => o && o.rawFile && o.rawFile instanceof File;
 const getSlugWithExtension = fileName => {
   let fileExtension = '';
   let splitFileName = fileName.split('.');
-  if( splitFileName.length > 1 ) {
+  if (splitFileName.length > 1) {
     fileExtension = splitFileName.pop();
     fileName = splitFileName.join('.');
   }
