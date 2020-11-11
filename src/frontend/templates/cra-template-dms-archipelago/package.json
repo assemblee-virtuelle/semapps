@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/cra-template-dms",
+  "name": "@semapps/cra-template-dms-archipelago",
   "version": "0.1.8",
-  "description": "DMS REACT template for SemApps",
+  "description": "DMS + ARchipelago REACT template for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "publishConfig": {
@@ -11,8 +11,7 @@
   "keywords": [
     "react",
     "create-react-app",
-    "template",
-    "typescript"
+    "template"
   ],
   "files": [
     "template",
@@ -20,6 +19,5 @@
   ],
   "engines": {
     "node": ">=10"
-  },
-  "gitHead": "cff9a7f2fe61728df8803a2772b1441dda549f76"
+  }
 }
