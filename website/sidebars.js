@@ -7,7 +7,7 @@
 
 module.exports = {
   docs: {
-    Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
+    Guides: ['guides/ldp-server','guides/dms','guides/activitypub','guides/your-semapps-project'],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/inference', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
   },
   contribute: {
