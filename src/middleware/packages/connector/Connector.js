@@ -2,12 +2,21 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
 const E = require('moleculer-web').Errors;
+const fs = require('fs');
 
 class Connector {
   constructor(passportId, settings) {
     this.passport = passport;
     this.passportId = passportId;
-    this.settings = settings;
+    this.settings = {
+      privateKey: fs.readFileSync(settings.privateKeyPath),
+      publicKey: fs.readFileSync(settings.publicKeyPath),
+      sessionSecret: settings.sessionSecret || 's€m@pps',
+      selectProfileData: settings.selectProfileData,
+      findOrCreateProfile: settings.findOrCreateProfile,
+      redirectUri: settings.redirectUri,
+      ...settings
+    };
   }
   async verifyToken(token) {
     try {
@@ -19,7 +28,7 @@ class Connector {
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
-    req.session.redirectUrl = req.query.redirectUrl || req.headers.referer || req.session.redirectUrl;
+    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer;
     next();
   }
   findOrCreateProfile(req, res, next) {
@@ -88,7 +97,6 @@ class Connector {
     }
   }
   async getWebId(ctx) {
-    // By default, get the webId from the token payload
     return ctx.meta.tokenPayload.webId;
   }
   getRoute() {
