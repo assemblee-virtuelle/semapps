@@ -31,7 +31,7 @@ function App() {
         jsonContext: process.env.REACT_APP_MIDDLEWARE_URL + 'context.json',
         uploadsContainerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'files'
       })}
-      i18nProvider={polyglotI18nProvider(() => frenchMessages)}
+      i18nProvider={polyglotI18nProvider(() => frenchMessages, 'fr')}
       layout={Layout}
       theme={theme}
       loginPage={LoginPage}
