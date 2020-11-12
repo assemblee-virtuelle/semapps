@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useLogin, useNotify, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Card, CardActions } from "@material-ui/core";
+import { Avatar, Button, Card, CardActions } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 
 const useStyles = makeStyles(theme => ({
@@ -15,20 +15,19 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundImage:
-      'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
+    backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)'
   },
   card: {
     minWidth: 300,
-    marginTop: '6em',
+    marginTop: '6em'
   },
   lockIconAvatar: {
     margin: '1em',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   lockIcon: {
-    backgroundColor: theme.palette.secondary[500],
+    backgroundColor: theme.palette.secondary[500]
   },
   button: {
     width: '100%'
@@ -47,7 +46,7 @@ const LoginPage = ({ theme, history, location }) => {
   const searchParams = new URLSearchParams(location.search);
   if (searchParams.has('token')) {
     localStorage.setItem('token', searchParams.get('token'));
-    notify('Vous êtes maintenant connecté', 'info')
+    notify('Vous êtes maintenant connecté', 'info');
     history.push('/');
   }
 
