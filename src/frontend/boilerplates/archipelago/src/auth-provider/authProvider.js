@@ -22,7 +22,7 @@ const authProvider = middlewareUri => ({
   getPermissions: params => Promise.resolve(),
   getIdentity: () => {
     const token = localStorage.getItem('token');
-    if( token ) {
+    if (token) {
       return jwtDecode(token);
     }
   }
