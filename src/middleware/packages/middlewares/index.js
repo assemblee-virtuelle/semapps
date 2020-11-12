@@ -1,19 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
-
-const parseBody = async (req, res, next) => {
-  const bodyPromise = new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', function(chunk) {
-      data += chunk;
-    });
-    req.on('end', function() {
-      resolve(data.length > 0 ? data : undefined);
-    });
-  });
-  req.$params.body = await bodyPromise;
-  next();
-};
+const Busboy = require('busboy');
+const inspect = require('util').inspect;
+const streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
   req.$ctx.meta.headers = req.headers || {};
@@ -27,13 +16,7 @@ const negotiateContentType = (req, res, next) => {
       req.$ctx.meta.headers['content-type'] = negotiateTypeMime(req.headers['content-type']);
       next();
     } catch (e) {
-      next(
-        new MoleculerError(
-          'Content-Type not supported : ' + req.headers['content-type'],
-          400,
-          'CONTENT_TYPE_NOT_SUPPORTED'
-        )
-      );
+      next();
     }
   } else {
     if (req.$params.body) {
@@ -61,15 +44,93 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const parseJson = (req, res, next) => {
-  if (negotiateTypeMime(req.headers['content-type']) === MIME_TYPES.JSON) {
-    const { body, ...otherParams } = req.$params;
-    if (body) {
-      const json = JSON.parse(body);
-      req.$params = { ...json, ...otherParams };
-    }
+const bodyRawPromise = req => {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', function(chunk) {
+      data += chunk;
+    });
+    req.on('end', function() {
+      resolve(data.length > 0 ? data : undefined);
+    });
+  });
+};
+
+const parseSparql = async (req, res, next) => {
+  if (
+    !req.$params.parser &&
+    (req.originalUrl.includes('/sparql') ||
+      (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
+  ) {
+    req.$params.parser = 'sparql';
+    req.$params.body = await bodyRawPromise(req);
   }
   next();
+};
+
+const parseJson = async (req, res, next) => {
+  if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
+    const body = await bodyRawPromise(req);
+    if (body) {
+      const json = JSON.parse(body);
+      req.$params = { ...json, ...req.$params };
+    }
+    req.$params.parser = 'json';
+  }
+  next();
+};
+
+const parseFile = (req, res, next) => {
+  if (!req.$params.parser) {
+    if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
+      const busboy = new Busboy({ headers: req.headers });
+      let files = [];
+      let fields = [];
+      busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+        const readableStream = new streams.ReadableStream();
+        file.on('data', data => {
+          readableStream.push(data);
+        });
+        file.on('end', () => {
+          console.log('File [' + fieldname + '] Finished');
+        });
+        files.push({
+          fieldname,
+          readableStream,
+          filename,
+          encoding,
+          mimetype
+        });
+      });
+      busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
+        console.log('Field [' + fieldname + ']: value: ' + inspect(val));
+        fields.push({
+          key: fieldname,
+          value: inspect(val)
+        });
+      });
+      busboy.on('finish', () => {
+        console.log('Done parsing form!');
+        req.$params.files = files;
+        req.$params.multipartFields = fields;
+        next();
+      });
+      req.$params.parser = 'file';
+      req.pipe(busboy);
+    } else {
+      const files = [
+        {
+          readableStream: req,
+          mimetype: req.headers['content-type']
+        }
+      ];
+      req.$params.files = files;
+      req.$params.parser = 'file';
+      next();
+    }
+  } else {
+    next();
+  }
 };
 
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
@@ -79,9 +140,10 @@ const addContainerUriMiddleware = containerUri => (req, res, next) => {
 
 module.exports = {
   parseHeader,
-  parseBody,
+  parseSparql,
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseFile,
   addContainerUriMiddleware
 };

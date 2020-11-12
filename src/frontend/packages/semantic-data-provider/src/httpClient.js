@@ -6,8 +6,8 @@ const httpClient = (url, options = {}) => {
   switch (options.method) {
     case 'POST':
     case 'PATCH':
-      options.headers.set('Accept', 'application/ld+json');
-      options.headers.set('Content-Type', 'application/ld+json');
+      if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
+      if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;
 
     case 'DELETE':
@@ -15,7 +15,7 @@ const httpClient = (url, options = {}) => {
 
     case 'GET':
     default:
-      options.headers.set('Accept', 'application/ld+json');
+      if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       break;
   }
 

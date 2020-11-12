@@ -2,6 +2,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
@@ -9,12 +10,11 @@ module.exports = {
     const resourceUri = `${containerUri}/${id}`;
     const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
     try {
-      const body = await ctx.call('ldp.resource.get', {
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      return await ctx.call('ldp.resource.get', {
         resourceUri,
         accept
       });
-      ctx.meta.$responseType = accept;
-      return body;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -28,13 +28,18 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
       queryDepth: { type: 'number', default: 0 },
-      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+      jsonContext: {
+        type: 'multi',
+        rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+        optional: true
+      },
+      forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
       keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, accept, webId, queryDepth, jsonContext } = ctx.params;
+      const { resourceUri, accept, webId, queryDepth, jsonContext, forceSemantic } = ctx.params;
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
@@ -71,7 +76,13 @@ module.exports = {
           };
         }
 
-        return result;
+        if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
+          // Overwrite response type set by the api action
+          ctx.meta.$responseType = result['semapps:mimeType'];
+          return fs.readFileSync(result['semapps:localPath']);
+        } else {
+          return result;
+        }
       } else {
         throw new MoleculerError('Not found', 404, 'NOT_FOUND');
       }

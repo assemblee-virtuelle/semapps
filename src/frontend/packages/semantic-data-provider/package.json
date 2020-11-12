@@ -1,6 +1,6 @@
 {
   "name": "@semapps/semantic-data-provider",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -14,7 +14,8 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
-    "jsonld": "^3.0.1"
+    "jsonld": "^3.0.1",
+    "speakingurl": "^14.0.1"
   },
   "peerDependencies": {
     "react": "^16.13.0",

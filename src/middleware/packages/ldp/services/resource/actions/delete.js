@@ -1,5 +1,7 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getContainerFromUri } = require('../../../utils');
+const { MoleculerError } = require('moleculer').Errors;
+const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
@@ -34,7 +36,8 @@ module.exports = {
       const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1
+        queryDepth: 1,
+        forceSemantic: true
       });
 
       await ctx.call('ldp.container.detach', {
@@ -50,6 +53,10 @@ module.exports = {
         `,
         webId
       });
+
+      if (oldData['@type'] === 'semapps:File') {
+        fs.unlinkSync(oldData['semapps:localPath']);
+      }
 
       ctx.emit('ldp.resource.deleted', {
         resourceUri,
