@@ -1,16 +1,13 @@
-import * as React from 'react';
-import { Children, cloneElement, isValidElement, useState } from 'react';
-import { useAuthState, useGetIdentity, MenuItemLink, useTranslate } from 'react-admin';
+import React, { useState } from 'react';
+import { useGetIdentity, MenuItemLink } from 'react-admin';
 import PropTypes from 'prop-types';
 import { Box, Button, Menu, MenuItem } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
 const UserMenu = ({ children, label, icon, logout }) => {
-  // const { loading, authenticated } = useAuthState();
   const { identity } = useGetIdentity();
   const [anchorEl, setAnchorEl] = useState(null);
-  const translate = useTranslate();
 
   if (!logout && !children) return null;
   const open = Boolean(anchorEl);
@@ -21,7 +18,7 @@ const UserMenu = ({ children, label, icon, logout }) => {
   return (
     <Box spacing={2}>
       <Button variant="outlined" onClick={handleMenu} endIcon={<ArrowDropDownIcon />}>
-        {identity ? identity.name : 'Anonyme'}
+        {identity && identity.fullName ? identity.fullName : 'Anonyme'}
       </Button>
       <Menu
         id="menu-appbar"
@@ -37,12 +34,10 @@ const UserMenu = ({ children, label, icon, logout }) => {
         open={open}
         onClose={handleClose}
       >
-        {identity ? (
+        {identity && identity.id !== '' ? (
           logout
         ) : (
-          <MenuItemLink to="/login" onClick={handleClose}>
-            Se connecter
-          </MenuItemLink>
+          <MenuItemLink to="/login" primaryText="Se connecter" onClick={handleClose} />
         )}
       </Menu>
     </Box>

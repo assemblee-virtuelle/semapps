@@ -31,7 +31,7 @@ const AppBar = ({ userMenu, logout }) => {
       <Container maxWidth="lg" className={classes.header}>
         <Grid container>
           <Grid item xs={12} sm={3}>
-            <Link to="/Organization">
+            <Link to="/">
               <img src={process.env.PUBLIC_URL + '/logo192.png'} alt="SemApps" className={classes.logo} />
             </Link>
           </Grid>
