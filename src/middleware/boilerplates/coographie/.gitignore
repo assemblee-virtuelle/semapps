@@ -2,3 +2,4 @@
 .env.*.local
 /jwt/*.key
 /jwt/*.key.pub
+/uploads
