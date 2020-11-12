@@ -13,7 +13,7 @@ const isFile = o => o && o.rawFile && o.rawFile instanceof File;
 const getSlugWithExtension = fileName => {
   let fileExtension = '';
   let splitFileName = fileName.split('.');
-  if( splitFileName.length > 1 ) {
+  if (splitFileName.length > 1) {
     fileExtension = splitFileName.pop();
     fileName = splitFileName.join('.');
   }
@@ -207,14 +207,17 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
     update: async (resourceId, params) => {
       // Upload files, if there are any
       params.data = await uploadAllFiles(params.data);
-
       await httpClient(params.id, {
         method: 'PUT',
-        body: JSON.stringify(params.data)
+        body: JSON.stringify({
+          '@context': jsonContext || buildJsonContext(ontologies),
+          ...params.data
+        })
       });
 
       return { data: params.data };
     },
+
     updateMany: (resourceId, params) => {
       throw new Error('updateMany is not implemented yet');
     },

@@ -1,5 +1,5 @@
 ---
-title: SemApps role and organisation
+title: SemApps organisation and roles
 ---
 
 Our team's organisation is inspired by sociocracy and shared governance.
@@ -48,14 +48,14 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 
 ### Responsibilities
 - Have sufficient communication supports
-- Garden the website (without the technical documentation)
-- Maintain a watch on news, events in which we can participate
-- Coordinate with the AV to organize events, meetup, etc.
+- Garden the website (except for the technical documentation)
+- Watch on news, events in which we can participate
+- Coordinate with Virtual Assembly to organize events, meetup, etc.
+- Ensure a newsletter is sent at least every 3 months
 
 *This role is energized by Pierre*
 
 ## DevX
-
 ### Purpose
 - Ensure developers empowerment
 
@@ -68,7 +68,6 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 *This role is energized by Sébastien*
 
 ## Code quality
-
 ### Purpose
 - Make sure SemApps has as few bugs as possible, is as fast and sober as possible, and match the specifications.
 
