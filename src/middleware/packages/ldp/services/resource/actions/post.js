@@ -17,7 +17,8 @@ module.exports = {
           slug: ctx.meta.headers.slug,
           resource,
           contentType: ctx.meta.headers['content-type'],
-          accept: MIME_TYPES.JSON
+          accept: MIME_TYPES.JSON,
+          webId: ctx.meta.webId
         });
       } else {
         if (ctx.params.files) {
@@ -40,6 +41,7 @@ module.exports = {
             },
             contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
+            webId: ctx.meta.webId,
             fileStream: file.readableStream
           });
         }

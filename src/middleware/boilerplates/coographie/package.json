@@ -16,6 +16,7 @@
     "@semapps/fuseki-admin": "0.1.25",
     "@semapps/inference": "0.1.25",
     "@semapps/ldp": "0.1.25",
+    "@semapps/mime-types": "0.1.25",
     "@semapps/sparql-endpoint": "0.1.25",
     "@semapps/triplestore": "0.1.25",
     "@semapps/webid": "0.1.25",

@@ -11,7 +11,8 @@ module.exports = {
     try {
       await ctx.call('ldp.resource.patch', {
         resource,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
+        webId: ctx.meta.webId
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {

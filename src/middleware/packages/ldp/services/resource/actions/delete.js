@@ -9,7 +9,8 @@ module.exports = {
       const { typeURL, id, containerUri } = ctx.params;
       const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
       await ctx.call('ldp.resource.delete', {
-        resourceUri
+        resourceUri,
+        webId: ctx.meta.webId
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {

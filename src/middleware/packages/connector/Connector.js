@@ -35,7 +35,7 @@ class Connector {
     // Select profile data amongst all the data returned by the connector
     const profileData = this.settings.selectProfileData(req.user);
     this.settings.findOrCreateProfile(profileData).then(webId => {
-      // Keep the webId as we may need it for the token generation
+      // Keep the webId as we will need it for the token generation
       req.user.webId = webId;
       next();
     });

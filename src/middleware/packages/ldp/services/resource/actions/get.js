@@ -13,7 +13,8 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
         resourceUri,
-        accept
+        accept,
+        webId: ctx.meta.webId
       });
     } catch (e) {
       console.error(e);
