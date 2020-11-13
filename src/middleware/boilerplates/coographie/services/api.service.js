@@ -47,7 +47,7 @@ module.exports = {
           email: profileData.email
         });
 
-        if( !webId ) {
+        if (!webId) {
           webId = await this.broker.call('webid.create', profileData);
 
           // Adds PAIR data
