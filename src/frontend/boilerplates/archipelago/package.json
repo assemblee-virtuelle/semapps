@@ -8,9 +8,9 @@
     "jwt-decode": "^3.0.0",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
-    "ra-language-french": "^3.10.0",
+    "ra-language-french": "3.9.2",
     "react": "^16.13.1",
-    "react-admin": "^3.10.0",
+    "react-admin": "3.9.2",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
