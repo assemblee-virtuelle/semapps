@@ -21,6 +21,6 @@ const Layout = ({ appBar, logout, theme, children }) => {
 
 Layout.defaultProps = {
   appBar: <AppBar />
-}
+};
 
 export default Layout;
