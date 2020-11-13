@@ -1,5 +1,6 @@
 // General layout
 export { default as Layout } from './layout/Layout/Layout';
+export { default as AppBar } from './layout/Layout/AppBar';
 export { default as theme } from './layout/theme';
 
 // Create page

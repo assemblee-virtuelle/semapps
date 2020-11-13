@@ -9,7 +9,7 @@ const LogoutButton = forwardRef((props, ref) => {
   return (
     <MenuItem onClick={() => logout()} ref={ref}>
       <ExitIcon />
-      &nbsp; Se déconnecter
+      &nbsp;&nbsp; Se déconnecter
     </MenuItem>
   );
 });

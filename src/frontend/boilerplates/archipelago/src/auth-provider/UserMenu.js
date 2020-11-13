@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useGetIdentity, MenuItemLink } from 'react-admin';
 import PropTypes from 'prop-types';
-import { Box, Button, Menu, MenuItem } from '@material-ui/core';
+import { Box, Button, Menu } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import EditIcon from '@material-ui/icons/Edit';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-const UserMenu = ({ children, label, icon, logout }) => {
+const UserMenu = ({ logout, children }) => {
   const { identity } = useGetIdentity();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [ anchorEl, setAnchorEl ] = useState(null);
 
   if (!logout && !children) return null;
   const open = Boolean(anchorEl);
@@ -35,7 +36,11 @@ const UserMenu = ({ children, label, icon, logout }) => {
         onClose={handleClose}
       >
         {identity && identity.id !== '' ? (
-          logout
+          <>
+            <MenuItemLink to={`/User/${encodeURIComponent(identity.id)}/show`} primaryText="Voir son profil" leftIcon={<AccountCircleIcon />} onClick={handleClose} />
+            <MenuItemLink to={`/User/${encodeURIComponent(identity.id)}/edit`} primaryText="Editer son profil" leftIcon={<EditIcon />} onClick={handleClose} />
+            {logout}
+          </>
         ) : (
           <MenuItemLink to="/login" primaryText="Se connecter" onClick={handleClose} />
         )}
@@ -46,14 +51,7 @@ const UserMenu = ({ children, label, icon, logout }) => {
 
 UserMenu.propTypes = {
   children: PropTypes.node,
-  label: PropTypes.string.isRequired,
-  logout: PropTypes.element,
-  icon: PropTypes.node
-};
-
-UserMenu.defaultProps = {
-  label: 'ra.auth.user_menu',
-  icon: <AccountCircle />
+  logout: PropTypes.element
 };
 
 export default UserMenu;

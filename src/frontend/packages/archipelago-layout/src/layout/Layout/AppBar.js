@@ -1,8 +1,6 @@
 import React from 'react';
-
 import { Container, Box, Grid, Hidden, makeStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import UserMenu from './UserMenu';
 import SearchForm from './SearchForm';
 
 const useStyles = makeStyles(theme => ({
@@ -30,7 +28,7 @@ const AppBar = ({ userMenu, logout }) => {
     <Box bgcolor="primary.main">
       <Container maxWidth="lg" className={classes.header}>
         <Grid container>
-          <Grid item xs={12} sm={3}>
+          <Grid item xs={12} sm={userMenu ? 3 : 6}>
             <Link to="/">
               <img src={process.env.PUBLIC_URL + '/logo192.png'} alt="SemApps" className={classes.logo} />
             </Link>
@@ -42,17 +40,15 @@ const AppBar = ({ userMenu, logout }) => {
               </Box>
             </Grid>
           </Hidden>
-          <Grid item sm={3} align="right">
-            <Box pt={2}>{React.cloneElement(userMenu, { logout })}</Box>
-          </Grid>
+          {userMenu && (
+            <Grid item sm={3} align="right">
+              <Box pt={2}>{React.cloneElement(userMenu, { logout })}</Box>
+            </Grid>
+          )}
         </Grid>
       </Container>
     </Box>
   );
-};
-
-AppBar.defaultProps = {
-  userMenu: <UserMenu />
 };
 
 export default AppBar;
