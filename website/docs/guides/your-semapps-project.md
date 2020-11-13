@@ -256,14 +256,117 @@ toutes ces étapes sont inclues dans l'init qui contient également l'étape d'i
 make init
 ```
 ### semmapps core link (debog and contributing)
-Votre projet repose sur des composants publiées sur npmjs. Ces composants sont importés lors de l'appl à "npm install". Ces composant sont optimisé pour le déploiement et peuvent est optimisé ce qui complique leur débogage en cas de besoin. Si vous voulez deboguer, experimenter, intervenir, contribuer les composants noyaux de semapps, vous devez établir un lien entre votre projet et le code source des composants.
+Votre projet repose sur des composants semapps publiées sur npmjs. Ces composants sont importés lors de l'appel à "npm install". Ces composant sont optimisés pour le déploiement ce qui peut compliquer leur débogage en cas de besoin. Si vous voulez deboguer, experimenter, intervenir, contribuer sur les composants noyaux de semapps, vous devez établir un lien entre votre projet et le code source des composants.
 - cloner le repository de semapps dans le même reprtoire que vous avez créer votre projet
 ```bash
 git clone
 ```
 #### link and run
 ##### without docker
+npm is used in this chapiter but yarn is à more efficient alternativ.
+###### client
+- link client packages
+```bash
+cd /semapps/src/frontend/packages/archipelago-layout
+npm link
+cd /semapps/src/frontend/packages/other-package
+npm link
+cd /yourproject/client
+npm link @semapps/archipelago-layout
+npm link @semapps/other-package
+
+```
+- rollup client packages. Avant de lancer le projet client il est nécessaire de compiler le code source des composant react à chaque modification pour produire le repertoir dist  
+```bash
+cd /semapps/src/frontend/packages/archipelago-layout
+npm run dev
+cd /semapps/src/frontend/packages/semantic-data-provider
+npm run dev
+```
+- unlink client package. Si vous voulez revenir au packages publiées sur npmjs
+```bash
+cd /semapps/src/frontend/packages/archipelago-layout
+npm unlink
+cd /semapps/src/frontend/packages/other-package
+npm unlink
+cd /yourproject/client
+npm unlink @semapps/archipelago-layout --no-save
+npm unlink @semapps/other-package --no-save
+npm install
+```
+
+###### server
+
+- link server packages
+```bash
+cd /semapps/src/middleware/packages/ldp
+npm link
+cd /semapps/src/middleware/packages/other-package
+npm link
+cd /yourproject/server
+npm link @semapps/ldp
+npm link @semapps/other-package
+```
+- unlink server package. Si vous voulez revenir au packages publiées sur npmjs
+```bash
+cd /semapps/src/middleware/packages/ldp
+npm unlink
+cd /semapps/src/frontend/packages/other-package
+npm unlink
+cd /yourproject/server
+npm unlink @semapps/ldp --no-save
+npm unlink @semapps/other-package --no-save
+npm install
+```
 ##### docker-compose
+- nous vous conseillons de créer un autre fichier comme dock-compose.dev.yml. le fichier docker-compose proposé dans le chapitre ci dessus contient déjà un volume vers les codes source de votre application. Il est necessaire d'y rajouter le code source du noyau semapps.
+```
+middleware:
+  volumes:
+    - ./server/:/server/app
+    - ./../semapps:/semapps
+frontend:
+  volumes:
+    - ./client:/client/app
+    - ./../semapps:/semapps
+```
+- pour faciliter les links, nous vous conseillons de créer un fichier Makefile dans les répertoires /client et server/avec des instructions comparables au chapitre "without docker" ci dessus et qui dispose de l'instruction link. cela vous permettra également d’activer les link et unlink facilment exemple.
+```
+install :
+	npm install --force
+
+rollup :
+	npm run dev --prefix $(SEMAPPS_PATH)/src/frontend/packages/archipelago-layout &
+	npm run dev --prefix $(SEMAPPS_PATH)/src/frontend/packages/other-package
+
+link:
+	cd ./../../semapps/src/frontend/packages/archipelago-layout && yarn link
+	yarn link @semapps/archipelago-layout
+	cd ./../../semapps/src/frontend/packages/other-package && yarn link
+	yarn link @semapps/other-package
+
+unlink:
+	yarn unlink @semapps/archipelago-layout --no-save
+	cd ./../../semapps/src/frontend/packages/archipelago-layout && yarn unlink
+	yarn unlink @semapps/other-package--no-save
+	cd ./../../semapps/src/frontend/packages/other-package && yarn unlink
+	make install
+```
+- nous vous conseillons de créer un autre fichier comme docker-compose.dev.yml. Le fichier docker-compose proposé dans le chapitre ci dessus contient déjà un volume vers les codes source de votre application. Il est necessaire d'y rajouter le code source du noyau semapps. Il est également necessaire d'appeler les commandes présentes dans le fichier Makefile ci dessus.
+```
+middleware:
+  volumes:
+    - ./server/:/server/app
+    - ./../semapps:/semapps
+  command: bash -c "make install && make link && npm start"
+frontend:
+  volumes:
+    - ./client:/client/app
+    - ./../semapps:/semapps
+  command: bash -c "make rollup & make install && make link && npm start"
+```
+
+
 #### contributing
 #### semapps-workbench
 vous devez cloner le reprtoire semapps manuellement comme indiqué ci dessous
