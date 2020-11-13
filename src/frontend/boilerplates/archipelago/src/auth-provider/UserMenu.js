@@ -8,7 +8,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 const UserMenu = ({ logout, children }) => {
   const { identity } = useGetIdentity();
-  const [ anchorEl, setAnchorEl ] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   if (!logout && !children) return null;
   const open = Boolean(anchorEl);
@@ -37,8 +37,18 @@ const UserMenu = ({ logout, children }) => {
       >
         {identity && identity.id !== '' ? (
           <>
-            <MenuItemLink to={`/User/${encodeURIComponent(identity.id)}/show`} primaryText="Voir son profil" leftIcon={<AccountCircleIcon />} onClick={handleClose} />
-            <MenuItemLink to={`/User/${encodeURIComponent(identity.id)}/edit`} primaryText="Editer son profil" leftIcon={<EditIcon />} onClick={handleClose} />
+            <MenuItemLink
+              to={`/User/${encodeURIComponent(identity.id)}/show`}
+              primaryText="Voir son profil"
+              leftIcon={<AccountCircleIcon />}
+              onClick={handleClose}
+            />
+            <MenuItemLink
+              to={`/User/${encodeURIComponent(identity.id)}/edit`}
+              primaryText="Editer son profil"
+              leftIcon={<EditIcon />}
+              onClick={handleClose}
+            />
             {logout}
           </>
         ) : (

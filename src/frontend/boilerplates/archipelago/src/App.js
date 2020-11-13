@@ -20,9 +20,7 @@ import organizations from './resources/organizations';
 import skills from './resources/skills';
 import users from './resources/users';
 
-const LayoutWithUserMenu = props => (
-  <Layout appBar={<AppBar userMenu={<UserMenu />}/>} {...props} />
-);
+const LayoutWithUserMenu = props => <Layout appBar={<AppBar userMenu={<UserMenu />} />} {...props} />;
 
 const App = () => (
   <Admin
