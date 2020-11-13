@@ -3,12 +3,9 @@ import { Admin, Resource } from 'react-admin';
 import frenchMessages from 'ra-language-french';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
-import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
-import LoginPage from './auth-provider/LoginPage';
-import LogoutButton from './auth-provider/LogoutButton';
-import authProvider from './auth-provider/authProvider';
-import UserMenu from './auth-provider/UserMenu';
+import { authProvider, LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
+import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useGetIdentity, MenuItemLink } from 'react-admin';
-import PropTypes from 'prop-types';
 import { Box, Button, Menu } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import EditIcon from '@material-ui/icons/Edit';
@@ -57,11 +56,6 @@ const UserMenu = ({ logout, children }) => {
       </Menu>
     </Box>
   );
-};
-
-UserMenu.propTypes = {
-  children: PropTypes.node,
-  logout: PropTypes.element
 };
 
 export default UserMenu;

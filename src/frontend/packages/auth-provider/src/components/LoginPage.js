@@ -10,12 +10,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
-    height: '1px',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)'
+    backgroundColor: theme.palette.primary[500]
   },
   card: {
     minWidth: 300,
