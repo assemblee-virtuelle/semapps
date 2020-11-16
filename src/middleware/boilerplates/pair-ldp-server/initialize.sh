@@ -2,7 +2,9 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-cd ${CURRENT_DIR}/jwt || exit
+mkdir cd ${CURRENT_DIR}
+
+cd ${CURRENT_DIR}/jwt
 
 if [ ! -f "jwtRS256.key" ]; then
   ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key -P ""
