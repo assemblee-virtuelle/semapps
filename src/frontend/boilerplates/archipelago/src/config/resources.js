@@ -11,7 +11,7 @@ const resources = {
   },
   User: {
     types: ['pair:Person'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'persons',
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'users',
     slugField: ['pair:firstName', 'pair:lastName']
   },
   Skill: {
@@ -21,7 +21,7 @@ const resources = {
   },
   Interest: {
     types: ['pair:Thema'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themas',
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes',
     slugField: 'pair:label'
   },
   Event: {

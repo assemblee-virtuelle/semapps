@@ -8,7 +8,7 @@ module.exports = {
   settings: {
     baseUrl: CONFIG.HOME_URL,
     ontologies,
-    containers: ['/organizations', '/projects', '/events', '/users', '/themas', '/skills', '/files'],
+    containers: ['/organizations', '/projects', '/events', '/users', '/themes', '/skills', '/files'],
     defaultJsonContext: urlJoin(CONFIG.HOME_URL, 'context.json')
   }
 };
