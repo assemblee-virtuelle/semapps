@@ -22,14 +22,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Header = () => {
+const AppBar = ({ userMenu, logout }) => {
   const classes = useStyles();
   return (
     <Box bgcolor="primary.main">
       <Container maxWidth="lg" className={classes.header}>
         <Grid container>
-          <Grid item xs={12} sm={6}>
-            <Link to="/Organization">
+          <Grid item xs={12} sm={userMenu ? 3 : 6}>
+            <Link to="/">
               <img src={process.env.PUBLIC_URL + '/logo192.png'} alt="SemApps" className={classes.logo} />
             </Link>
           </Grid>
@@ -40,10 +40,15 @@ const Header = () => {
               </Box>
             </Grid>
           </Hidden>
+          {userMenu && (
+            <Grid item sm={3} align="right">
+              <Box pt={2}>{React.cloneElement(userMenu, { logout })}</Box>
+            </Grid>
+          )}
         </Grid>
       </Container>
     </Box>
   );
 };
 
-export default Header;
+export default AppBar;

@@ -10,6 +10,11 @@ const TripleStoreService = {
     jenaUser: null,
     jenaPassword: null
   },
+  started() {
+    this.sparqlJsonParser = new SparqlJsonParser();
+    this.Authorization =
+      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
+  },
   actions: {
     insert: {
       visibility: 'public',
@@ -128,12 +133,11 @@ const TripleStoreService = {
         const { accept, webId, query } = ctx.params;
         const acceptNegotiatedType = negotiateType(accept);
         const acceptType = acceptNegotiatedType.mime;
-        const fusekiAccept = acceptNegotiatedType.fusekiMapping;
         const headers = {
           'Content-Type': 'application/sparql-query',
           'X-SemappsUser': webId || ctx.meta.webId,
           Authorization: this.Authorization,
-          Accept: fusekiAccept
+          Accept: acceptNegotiatedType.fusekiMapping
         };
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
@@ -163,8 +167,7 @@ const TripleStoreService = {
               const jsonResult = await response.json();
               return await this.sparqlJsonParser.parseJsonResults(jsonResult);
             } else {
-              const jsonResult = await response.text();
-              return jsonResult;
+              return await response.text();
             }
             break;
           case 'CONSTRUCT':
@@ -207,11 +210,6 @@ const TripleStoreService = {
         return response;
       }
     }
-  },
-  started() {
-    this.sparqlJsonParser = new SparqlJsonParser();
-    this.Authorization =
-      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   }
 };
 

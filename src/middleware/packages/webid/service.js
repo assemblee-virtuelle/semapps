@@ -21,7 +21,7 @@ const WebIdService = {
       if (!email) throw new Error('Unable to create profile, email parameter is missing');
       if (!nick) nick = email.split('@')[0].toLowerCase();
       // Check if an user already exist with this email address
-      let webId = await this.findUserByEmail(ctx, email);
+      let webId = await this.actions.findByEmail({ email });
       // If no user exist, create one
       if (!webId) {
         const userData = {
@@ -100,6 +100,24 @@ const WebIdService = {
         accept: accept
       });
     },
+    async findByEmail(ctx) {
+      const { email } = ctx.params;
+
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          SELECT ?webId
+          WHERE {
+            ?webId rdf:type foaf:Person ;
+                   foaf:email "${email}" .
+          }
+        `,
+        accept: MIME_TYPES.JSON
+      });
+
+      return results.length > 0 ? results[0].webId.value : null;
+    },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
     },
@@ -118,25 +136,9 @@ const WebIdService = {
           return ctx.meta.tokenPayload.webId;
         } else {
           // Find the webId by the user's email address
-          return this.findUserByEmail(ctx, ctx.meta.tokenPayload.email);
+          return this.actions.findByEmail({ email: ctx.meta.tokenPayload.email });
         }
       }
-    },
-    async findUserByEmail(ctx, email) {
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          SELECT ?webId
-          WHERE {
-            ?webId rdf:type foaf:Person ;
-                   foaf:email "${email}" .
-          }
-        `,
-        accept: MIME_TYPES.JSON
-      });
-
-      return results.length > 0 ? results[0].webId.value : null;
     }
   }
 };
