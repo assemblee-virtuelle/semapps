@@ -2,7 +2,7 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-mkdir cd ${CURRENT_DIR}
+mkdir ${CURRENT_DIR}
 
 cd ${CURRENT_DIR}/jwt
 
