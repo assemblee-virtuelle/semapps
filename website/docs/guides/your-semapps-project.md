@@ -27,11 +27,11 @@ Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
 - npm ou yarn
 
 ### Very short Launch
-there is a way to launch a project very quickly : semapps-workbench https://github.com/assemblee-virtuelle/semapps-workbench
+there is a way to launch a project very quickly : [semapps-workbench](https://github.com/assemblee-virtuelle/semapps-workbench)
 It is only a tool that simplifies the different manipulations that will be seen in this guide.
 
 to start a poject
-* fork semapps-workbench git repository : this is your directory for your project
+* fork [semapps-workbench](https://github.com/assemblee-virtuelle/semapps-workbench) git repository : this is your directory for your project
 * clone new repository on your local environment
 * initialise & server server + initialise an DMS/archipelago client + set up containers infrastructure
 ```bash
@@ -50,7 +50,7 @@ make start-dev
 make log-dev
 make stop-dev
 ```
-* If you are on a production server that benefits from DNS redirection; start on a production server (more information in "production environment" chapiter) + show logs of containers.
+* If you are on a production server that benefits from DNS redirection, start on a production server (more information in "production environment" chapiter) + show logs of containers.
 ```bash  
 make start-prod
 make log-prod
@@ -481,4 +481,4 @@ make log-prod
 make stop-prod
 ```
 ### developpment tool
-- [facultatif] set up a Makefile at the root to trigger executions more easily. exemples at [Makefile](https://github.com/assemblee-virtuelle/semapps-workbench/blob/main/Makefile) of semapps-workbench
+- [optional] set up a Makefile at the root to trigger executions more easily. exemples at [Makefile](https://github.com/assemblee-virtuelle/semapps-workbench/blob/main/Makefile) of semapps-workbench
