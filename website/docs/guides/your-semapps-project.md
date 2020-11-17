@@ -44,7 +44,7 @@ make log
 make stop
 ```
 
-* OU start using semapps kernel sources (more information in "use semapps kernel source" chapiter) + show logs of containers
+* OR start using semapps kernel sources (more information in "use semapps kernel source" chapiter) + show logs of containers
 ```bash  
 make start-dev
 make log-dev
