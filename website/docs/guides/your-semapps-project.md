@@ -6,52 +6,55 @@ title:  initialiser, configurer et déployer votre application semapps
 
 ### Purpose
 
- initialiser, configurer et déployer votre application semapps
+initialize, configure and deploy your semapps application
 
-- configuration des variables d’environnement
-- configuration des ontologies, du contexte, des ressource
-- projet industrialisé (container + docker-compose)
-- branchement au code source du noyau semapps pour débogage et pouvoir contribuer
-- déploiement sur un environnement de production (https, config variables d'env)
+- configuration of environment variables
+- configuration of ontologies, context, resources, etc.
+- industrialized project (container + docker-compose)
+- connection to the source code of the semapps kernel for debugging and to be able to contribute
+- deployment on a production environment (https, variable env configuration)
 
 ### Prerequisites
 
-Si vous voulez utiliser des containers
+If you want to use containers
 - docker-compose & docker
 
-Si vous ne souhaitez pas utiliser docker-compose
+If you don't want to use containers
 - [NodeJS](https://nodejs.org/en/)
 
-Dans la réalité d'un projet, il est invariablement nececessaire de disposer de plusieurs outils
+Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
 - Make
 - npm ou yarn
 
 ### Very short Launch
-il existe un moyen de lancer tres rapidement un projet : semapps-workbench https://github.com/assemblee-virtuelle/semapps-workbench
-Ce n'est qu'un outil qui facilite les differentes manipuation qui seront vu dans ce guides
+there is a way to launch a project very quickly : semapps-workbench https://github.com/assemblee-virtuelle/semapps-workbench
+It is only a tool that simplifies the different manipulations that will be seen in this guide.
 
-pour démarer un projet
-* forker le repo git semapps-workbench : cela va être votre repo pour votre projet
-* cloner le repo forké sur votre environnement locale
-* initialiser un server semapps + initialiser une interface DMS/archipelago + mettre en place l'infrastructure docker
+to start a poject
+* fork semapps-workbench git repository : this is your directory for your project
+* clone new repository on your local environment
+* initialise & server server + initialise an DMS/archipelago client + set up containers infrastructure
 ```bash
 make init
 ```
-* démarrer le projet complet (resultat sur localhost:5000) + voir les log des éléments de la stack
+* start the full project (client at localhost:5000) + show logs of containers
 ```bash
 make start
 make log
+make stop
 ```
 
-* OU demarrer le projet en se servant du code semapps local (voir chapitre branchement au code source de semapps) + voir les log des éléments de la stack
+* OU start using semapps kernel sources (more information in "use semapps kernel source" chapiter) + show logs of containers
 ```bash  
 make start-dev
 make log-dev
+make stop-dev
 ```
-* Si vous etes sur un serveur de production qui bénéficie d'une redirection DNS; démarrer sur un serveur de production  (voir chapitre environnement de production) + voir les log des éléments de la stack
+* If you are on a production server that benefits from DNS redirection; start on a production server (more information in "production environment" chapiter) + show logs of containers.
 ```bash  
 make start-prod
 make log-prod
+make stop-prod
 ```
 
 ### init a Project
@@ -73,7 +76,7 @@ cd client
 npm start
 ```
 ##### environnement configuration
-tant que docker n'est pas utilisé, les variables d'encironnment se configurent à travers les ficher .env sur le client et sur le serveur
+As long as docker is not used, environment variables are configured through the .env files on the client and on the server
 - client
   - REACT_APP_MIDDLEWARE_URL
     - usage : url du server. le client va utiliser les apis de ce serveur
@@ -98,9 +101,9 @@ tant que docker n'est pas utilisé, les variables d'encironnment se configurent 
 ##### application configuration
 - client
   - /config/ontologies.json
-    - usage : la liste des ontologies utilisée par le client. doit être identique au serveur. Voir /ontologies sur le serveur ci dessous
+    - usage : the list of ontologies used by the client. must be identical to the server. See /ontologies.json on the server below
   - /config/ressources.json
-    - usage les ressources avec lesquel vont travailler le client
+    - the resources (container+class) used by the client
     ```javascript  
     [
       RessourceName: {
@@ -121,11 +124,11 @@ tant que docker n'est pas utilisé, les variables d'encironnment se configurent 
     ]
     ```
   - /resources
-    - usage : repertoire qui contient les "ecrans" des ressources à afficher/modifier. ces écrans sont à importer dasn App.js. voir REACT-Admin
+    - usage : directory which contains the "screens" of the resources to display/modify. These screens are to be imported from App.js. See REACT-Admin.
 
 - server
   - /ontologies.json
-    - usage : la liste des ontologies utilisée (doit être identique au client)
+    - usage : list of used ontologies (must be identical to the client)
     ```javascript  
     [
       {
@@ -137,16 +140,16 @@ tant que docker n'est pas utilisé, les variables d'encironnment se configurent 
     ```
 
 ##### semapps-workbench
-cette phase est réalisé par make init sur semapps-workbench mais cette commande fait également la phase de container ci dessous
+this step is done by make init on semapps-workbench but this command also does the container step below
 ```bash  
 make init
 ```
 
 ### container
 #### Docker
-vous pouvez vous passer de docker pour déployer des serveur semapps mais cela permet de s'assurer de l'equivalence d'environnment d'execution entre le developpement et la production.
-- serveur
-  - créer un fichier Dockerfile.dev sur /serveur
+you don't need to use a docker to deploy semapps servers but it allows you to make sure that the development environnement and production environnement are the same.
+- server
+  - create a Dockerfile.dev five at /serveur
   ```
   FROM node:13.14-alpine
   WORKDIR /server/app
@@ -154,7 +157,7 @@ vous pouvez vous passer de docker pour déployer des serveur semapps mais cela p
   CMD npm install && npm start
 
   ```
-  - vous pouvez lancer le container docker tel quel mais nous vous conseillons de passer par docker-compose. voir chapitre suivant. Si vous lancer le container tel quel il faudra rajouter plusieurs instruction comme la CMD pour lancer le serveur NodeJs et l'ouverture des port ainsi que déclarer les volumes et le mapping de port au lancement du container.
+  - you can launch the docker container as is but we advise you to use docker-compose. More information at "Docker-compose" chapiter. If you launch the container as is you need to add several instructions such as CMD to launch the NodeJs server and port opening and declare volumes and port mapping when launching the container.
 
 - client
   - créer un fichier Dockerfile sur /client
@@ -164,11 +167,11 @@ vous pouvez vous passer de docker pour déployer des serveur semapps mais cela p
   RUN apk add --update --no-cache git bash yarn nano autoconf libtool automake alpine-sdk
   CMD npm install && npm start
   ```
-  - vous pouvez lancer le container docker tel quel mais nous vous conseillons de passer par docker-compose. voir chapitre suivant. Si vous lancer le container tel quel il faudra rajouter plusieurs instruction comme la CMD pour lancer le serveur NodeJs et l'ouverture des port ainsi que déclarer les volumes et le mapping de port au lancement du container.
+  - you can launch the docker container as is but we advise you to use docker-compose.  More information at "Docker-compose" chapiter. If you launch the container as is you need to add several instructions such as CMD to launch the NodeJs server and port opening and declare volumes and port mapping when launching the container.
 
-#### Docker-Compose
-centraliser la configuration de l'environnement et de la pile technique grâce à docker-compose
-- créer un fichier docker-compose.yaml à la racine du projet
+#### Docker-compose
+Centralize the configuration of the environment and the technical stack thanks to docker-compose
+- create a docker-compose-.yaml file at the root of the project and replace "workbench" by the name of your project.
 ```
 version: '3.5'
 services:
@@ -231,35 +234,36 @@ networks:
     name: semapps_network
 ```
 - explications
-  - fuseki, middleware, frontend sont les 3 container lancés. fuseki reprends la configuration du docker-compose.yml qui est présent sur le repetoir /server
-  - build : pointage vers les ficher Dockerfile précédemment créé
-  - container_name : [facultatif]  permet de mieux identifier les container dans le cas d'un envirnnment de ravail complexe avec plusieurs autre projet en cours d’exécution sur des container. vous pouvez remplacer workbench par le nom de votre projet
-  - volumes :  permet d'établir un lien entre le contenu des répertoires de développement du poste de travail et un repertoire du container. node_modules est volontairement recopié avec le reste du projet ais il n'est pas necessaire de faire npm install en cas d'écolution du package.json car il est réalisé à chaque démarrage des container (voir command)
-  - environment : déclaration des variables d'environnement. Elles écrasent les variables définies dans le fichier .env. Si vous utilisez docker-compose, vous n'avez plus besoin des fichier .env.
-  - networks : [facultatif] permet de nommer le réseau dans lequel les container peuvent communiquer enssemble. si'il n'est pas précisé docker-compose va créer un réseau par defaut. déclarer un reseau permet de faire communiquer plusieurs stqck docker-compose enssemble ce qui n'est pas possible si docker-compose créé un ressau par defaut pour chaque stack
-  - ports : mapping entre le port interne du container et le port externe accessible depuis le poste de travaille
-  - expose : ouvertur du port interne du containers
-  - command : commande à éxecuter lors du démarrage du container.
-- lancer la stack de containers
+  - fuseki, middleware, frontend are the 3 containers launched. fuseki reuses the configuration of the docker-compose.yml which is present on the /server repo.
+  - build : point to previously created Dockerfile files
+  - container_name : [optional] allows to better identify containers in case of a complex working environment with several other projects running on containers. You can replace workbench by the name of your project.
+  - volumes : allows to establish a link between the content of the development directories of the workstation and a directory of the container. node_modules is voluntarily copied with the rest of the project but it is not necessary to make npm install in case of evolution of package.json because it is made at each start of the containers (see command).
+  - environment : declaration of environment variables. That overwrite the variables defined in the .env file. If you use docker-composer, you no longer need the .env files.
+  - networks : [optional] allows to name the network in which the containers can communicate together. If it is not specified docker-composes will create a default network. Declaring a network allows to several stack docker-composes to communicate together which is not possible if docker-composes creates a default network for each stack.
+  - ports : matching between the internal port of the container and the external port accessible from the workstation.
+  - expose : opening of the internal port of the containers
+  - command : command to be executed when the container is started.
+- start containers stack
 ```bash
 docker-compose up
 ```
-- lancer la stack de containers en daemon
+- start containers stack in daemon mode
 ```bash
 docker-compose up -d
 docker-compose logs middleware frontend fuseki
 docker-compose down
 ```
 #### semapps-workbench
-toutes ces étapes sont inclues dans l'init qui contient également l'étape d'initialisation du projet
+all these steps are included in the init command, which also contains the project initialization step.
 ```bash  
 make init
 ```
-### semmapps core link (debog and contributing)
-Votre projet repose sur des composants semapps publiées sur npmjs. Ces composants sont importés lors de l'appel à "npm install". Ces composant sont optimisés pour le déploiement ce qui peut compliquer leur débogage en cas de besoin. Si vous voulez deboguer, experimenter, intervenir, contribuer sur les composants noyaux de semapps, vous devez établir un lien entre votre projet et le code source des composants.
-- cloner le repository de semapps dans le même reprtoire que vous avez créer votre projet
+### use semapps kernel source (debog and contributing)
+Your project is based on semapps components published on npmjs. These components are imported when calling "npm install". These components are optimized for deployment which can complicate their debugging if needed. If you want to debug, experiment or contribute on the core components of semapps, you must establish a link between your project and the source code of the components.
+
+- clone semapps repository into your project's parent directory
 ```bash
-git clone
+git clone git@github.com:assemblee-virtuelle/semapps.git
 ```
 #### link and run
 ##### without docker
@@ -276,14 +280,14 @@ npm link @semapps/archipelago-layout
 npm link @semapps/other-package
 
 ```
-- rollup client packages. Avant de lancer le projet client il est nécessaire de compiler le code source des composant react à chaque modification pour produire le repertoir dist  
+- rollup client packages. Before starting the client project it is necessary to compile the source code of the components when this code is updated to compile the dist directory.  
 ```bash
 cd /semapps/src/frontend/packages/archipelago-layout
 npm run dev
 cd /semapps/src/frontend/packages/semantic-data-provider
 npm run dev
 ```
-- unlink client package. Si vous voulez revenir au packages publiées sur npmjs
+- unlink client package. If you want to go back to the packages published on npmjs
 ```bash
 cd /semapps/src/frontend/packages/archipelago-layout
 npm unlink
@@ -318,8 +322,9 @@ npm unlink @semapps/ldp --no-save
 npm unlink @semapps/other-package --no-save
 npm install
 ```
-##### docker-compose
-- nous vous conseillons de créer un autre fichier comme dock-compose.dev.yml. le fichier docker-compose proposé dans le chapitre ci dessus contient déjà un volume vers les codes source de votre application. Il est necessaire d'y rajouter le code source du noyau semapps.
+##### with docker
+###### volumes
+- we advise you to create another file like docker-compose.dev.yml. The docker-compose file proposed in the chapter above already contains a volume to the source codes of your application. You have to add the source code of the semapps kernel.
 ```
 middleware:
   volumes:
@@ -330,8 +335,12 @@ frontend:
     - ./client:/client/app
     - ./../semapps:/semapps
 ```
-- pour faciliter les links, nous vous conseillons de créer un fichier Makefile dans les répertoires /client et server/avec des instructions comparables au chapitre "without docker" ci dessus et qui dispose de l'instruction link. cela vous permettra également d’activer les link et unlink facilment exemple.
+###### make link
+- to make links easier, we advise you to create a Makefile in the directories /client and server/ with instructions comparable to the chapter "link and run / without docker" above and which has the instruction link. this will also allow you to activate the link and unlink easily.
+####### client
 ```
+SEMAPPS_PATH=./../../semapps
+
 install :
 	npm install --force
 
@@ -340,19 +349,41 @@ rollup :
 	npm run dev --prefix $(SEMAPPS_PATH)/src/frontend/packages/other-package
 
 link:
-	cd ./../../semapps/src/frontend/packages/archipelago-layout && yarn link
+	cd $(SEMAPPS_PATH)/src/frontend/packages/archipelago-layout && yarn link
 	yarn link @semapps/archipelago-layout
-	cd ./../../semapps/src/frontend/packages/other-package && yarn link
+	cd $(SEMAPPS_PATH)/src/frontend/packages/other-package && yarn link
 	yarn link @semapps/other-package
 
 unlink:
 	yarn unlink @semapps/archipelago-layout --no-save
-	cd ./../../semapps/src/frontend/packages/archipelago-layout && yarn unlink
+	cd $(SEMAPPS_PATH)/src/frontend/packages/archipelago-layout && yarn unlink
 	yarn unlink @semapps/other-package--no-save
-	cd ./../../semapps/src/frontend/packages/other-package && yarn unlink
+	cd $(SEMAPPS_PATH)/src/frontend/packages/other-package && yarn unlink
 	make install
 ```
-- nous vous conseillons de créer un autre fichier comme docker-compose.dev.yml. Le fichier docker-compose proposé dans le chapitre ci dessus contient déjà un volume vers les codes source de votre application. Il est necessaire d'y rajouter le code source du noyau semapps. Il est également necessaire d'appeler les commandes présentes dans le fichier Makefile ci dessus.
+####### server
+```
+SEMAPPS_PATH=./../../semapps
+
+install :
+	npm install --force
+
+link:
+	cd $(SEMAPPS_PATH)/src/middleware/packages/ldp && yarn link
+	yarn link @semapps/ldp
+	cd $(SEMAPPS_PATH)/src/middleware/packages/other-package && yarn link
+	yarn link @semapps/other-package
+
+unlink:
+	yarn unlink @semapps/ldp --no-save
+	cd $(SEMAPPS_PATH)/src/middleware/packages/ldp && yarn unlink
+	yarn unlink @semapps/other-package--no-save
+	cd $(SEMAPPS_PATH)/src/middleware/packages/other-package && yarn unlink
+	make install
+```
+###### command
+Le fichier Makefile va être intégré dans les fichier qui seront inclue dans les volumes de container. Il est nécessaire d'appeler ce commandes avant de démarrer les serveurs NodeJs pour que l’édition du code source de semmapps soit pris en compte par les container en cours d’exécution.
+The Makefile file will be integrated whith others files in the container thanks to volumes. It is necessary to call command above before starting the NodeJs servers so that the edition of the semmapps source code impact the running containers.
 ```
 middleware:
   volumes:
@@ -365,28 +396,89 @@ frontend:
     - ./../semapps:/semapps
   command: bash -c "make rollup & make install && make link && npm start"
 ```
-
-
 #### contributing
+Thanks to the link you can find a bug or improve semapps with a new feature. To do so, [follow the guide](https://semapps.org/docs/contribute/code).
 #### semapps-workbench
-vous devez cloner le reprtoire semapps manuellement comme indiqué ci dessous
-- execution mnauelle si vou n'utiliser pas docker
+You have to clone the semapps directory manually as shown above
+##### without docker
   - npm
-  ```
+  ```bash
   make link
   ```
   - yarn
-  ```
+  ```bash
   make link-yarn
   ```
-en passant par docker-compose
+##### with docker
+```bash
+make start
+make log
+make stop
+```
 
-### production deployement
+### production environment
 #### difference whith developpment environnement
 ##### server
-##### app
-#### https
-#### semapps-workbench
+SEMAPPS_HOME_URL environment variable have to considere accessible external url. ex : https://yourdomain/middleware/ or https://middleware.yourdomain/
 
+##### client
+REACT_APP_MIDDLEWARE_URL environment variable have to considere accessible external url of server and is usally same as  SEMAPPS_HOME_URL.  
+Dockerfile have to include serve install and run it on dockerfile CMD or docker-compose command
+- Dockerfile.prod
+```bash
+npm install -g serve
+CMD serve -s build -l 5000
+```
+- docker-compose.prod
+```
+middleware:
+  command: bash -c "npm install && serve -s build -l 5000"
+```
+#### https
+most of production configuration have to include https. We recommend you to set up traefik in docker compose.
+```
+traefik:
+  image: "traefik:v2.3"
+  container_name: "traefik-workbench"
+  networks:
+    - semapps
+  command:
+    # - "--log.level=DEBUG"
+    - "--api.insecure=true"
+    - "--providers.docker=true"
+    - "--providers.docker.exposedbydefault=false"
+    - "--entrypoints.web.address=:80"
+    - "--entrypoints.websecure.address=:443"
+    - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+    - "--certificatesresolvers.myresolver.acme.email=yourmail"
+    - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+  ports:
+    - "80:80"
+    - "443:443"
+    - "8080:8080"
+  volumes:
+    - "./letsencrypt:/letsencrypt"
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+middleware:
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.middleware.rule=Host(`yourdomain`) && PathPrefix(`/middleware/`)"
+    - "traefik.http.routers.middleware.entrypoints=websecure"
+    - "traefik.http.routers.middleware.tls.certresolver=myresolver"
+
+frontend:
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.frontend.rule=Host(`yourdomain`)"
+    - "traefik.http.routers.frontend.entrypoints=websecure"
+    - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+```
+#### semapps-workbench
+update docker-compose.prod replacing yourdomain by your real domain.
+```bash
+make start-prod
+make log-prod
+make stop-prod
+```
 ### developpment tool
-- [facultatif] mettre en place un fichier Makefile à la racine pour déclencher plus facilement les executions
+- [facultatif] set up a Makefile at the root to trigger executions more easily. exemples at [Makefile](https://github.com/assemblee-virtuelle/semapps-workbench/blob/main/Makefile) of semapps-workbench
