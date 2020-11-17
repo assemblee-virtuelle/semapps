@@ -17,7 +17,7 @@ initialize, configure and deploy your semapps application
 ### Prerequisites
 
 If you want to use containers
-- docker-compose & docker
+- [docker-compose](https://docs.docker.com/compose/) & [docker](https://docs.docker.com/engine/)
 
 If you don't want to use containers
 - [NodeJS](https://nodejs.org/en/)
