@@ -10,9 +10,9 @@ initialize, configure and deploy your semapps application
 
 - configuration of environment variables
 - configuration of ontologies, context, resources, etc.
-- industrialized project (container + docker-compose)
+- docker + docker-compose
 - connection to the source code of the semapps kernel for debugging and to be able to contribute
-- deployment on a production environment (https, variable env configuration)
+- deployment on a production environment (https, environment configuration)
 
 ### Prerequisites
 
