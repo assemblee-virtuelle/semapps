@@ -114,5 +114,11 @@ Here are two working groups where it would be nice to have representatives from 
 * [The Authorization panel](https://github.com/solid/authorization-panel) every Wednesday at 4PM.
 If you want to share information about the Solid ecosystem, there is a dedicated channel on Hubl "Solid Watch" :)
 
+#### Virtual Assembly's donation campaign 
+
+The Virtual Assembly's organization mainly relies on volunteering. In order to maintain its sustainability, its research and development activities as well as its independance, the VA count on your donations. The more you contribute regularly, the more our association strengthens economically. In this way, we encourage you to choose monthly donations rather than ponctual ones. In any case, we will be gratefull to benefit from your help :)
+
+* I would like to take a [membership]()
+* I would like to make a [donation](https://www.virtual-assembly.org/faire-un-don/)
 
 
