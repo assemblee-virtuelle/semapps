@@ -1,13 +1,11 @@
-const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { buildBlankNodesQuery } = require('@semapps/ldp');
 
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
     context: 'https://www.w3.org/ns/activitystreams'
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'ldp'],
   actions: {
     /*
      * Create a persisted collection
@@ -91,56 +89,67 @@ const CollectionService = {
      * @param queryDepth Number of blank nodes we want to dereference
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth } = ctx.params;
-      let constructQuery = '',
-        whereQuery = '';
-
-      if (dereferenceItems) {
-        const [constructBnQuery, whereBnQuery] = buildBlankNodesQuery(queryDepth);
-        constructQuery = '?s1 ?p1 ?o1 .' + constructBnQuery;
-        whereQuery = '?s1 ?p1 ?o1 .' + whereBnQuery;
-      }
+      const { id, dereferenceItems = false, queryDepth, page, numPerPage } = ctx.params;
 
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a ?collectionType ;
-              as:items ?s1 .
-            ${constructQuery}
+            <${id}> a as:Collection, ?collectionType .
+            <${id}> as:items ?itemUri .
           }
           WHERE {
             <${id}> a as:Collection, ?collectionType .
-            OPTIONAL { 
-              <${id}> as:items ?s1 .
-              ${whereQuery}
-            }
+            OPTIONAL { <${id}> as:items ?itemUri . }
           }
         `,
         accept: MIME_TYPES.JSON
       });
 
-      result = await jsonld.frame(result, {
-        '@context': this.settings.context,
-        '@id': id
-      });
-
-      if (result['@graph'].length === 0) {
-        ctx.meta.$statusCode = 404;
+      if( !result.items || result.items.length === 0 ) {
+        return null;
       } else {
-        let { items, ...collection } = result['@graph'][0];
-        items = !items ? [] : Array.isArray(items) ? items : [items];
+        const numPages = Math.ceil(result.items.length / numPerPage);
 
-        const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
+        if( !page ) {
+          return {
+            '@context': 'https://www.w3.org/ns/activitystreams', // TODO improve context handling
+            '@id': id,
+            '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+            first: id + '?page=1',
+            last: id + '?page=' + numPages,
+            totalItems: result.items.length
+          };
+        } else {
+          const start = (page-1) * numPerPage;
+          const selectedItemsUris = result.items.slice(start, start+numPerPage);
 
-        collection = {
-          '@context': result['@context'],
-          ...collection,
-          [itemsProp]: items,
-          totalItems: items.length
-        };
+          let selectedItems = [];
+          const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
-        return collection;
+          if (dereferenceItems) {
+            for (let itemUri of selectedItemsUris) {
+              selectedItems.push(await ctx.call('ldp.resource.get', {
+                resourceUri: itemUri,
+                accept: MIME_TYPES.JSON,
+                queryDepth
+              }));
+            }
+          } else {
+            selectedItems = selectedItemsUris;
+          }
+
+          return {
+            '@context': selectedItems[0]['@context'],
+            'id': id + '?page=' + page,
+            'type': this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
+            'partOf': id,
+            'prev': page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
+            'next': page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            [itemsProp]: selectedItems.map(({ '@context': context, ...item }) => item),
+            totalItems: result.items.length
+          };
+        }
       }
     },
     /*
@@ -187,8 +196,8 @@ const CollectionService = {
   methods: {
     isOrderedCollection(collection) {
       return (
-        collection.type === 'OrderedCollection' ||
-        (Array.isArray(collection.type) && collection.type.includes('OrderedCollection'))
+        collection['@type'] === 'as:OrderedCollection' ||
+        (Array.isArray(collection['@type']) && collection['@type'].includes('as:OrderedCollection'))
       );
     }
   }

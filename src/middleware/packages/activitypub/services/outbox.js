@@ -65,15 +65,14 @@ const OutboxService = {
 
       const collection = await ctx.call('activitypub.collection.get', {
         id: this.getOutboxUri(ctx.params.username),
+        page: ctx.params.page,
+        numPerPage: 10,
         dereferenceItems: true,
-        queryDepth: 3
+        queryDepth: 3,
       });
 
       if (collection) {
-        return {
-          ...collection,
-          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
-        };
+        return collection;
       } else {
         ctx.meta.$statusCode = 404;
       }
