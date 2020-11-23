@@ -106,12 +106,12 @@ const CollectionService = {
         accept: MIME_TYPES.JSON
       });
 
-      if( !result.items || result.items.length === 0 ) {
+      if (!result.items || result.items.length === 0) {
         return null;
       } else {
         const numPages = Math.ceil(result.items.length / numPerPage);
 
-        if( !page ) {
+        if (!page) {
           return {
             '@context': 'https://www.w3.org/ns/activitystreams', // TODO improve context handling
             '@id': id,
@@ -121,19 +121,21 @@ const CollectionService = {
             totalItems: result.items.length
           };
         } else {
-          const start = (page-1) * numPerPage;
-          const selectedItemsUris = result.items.slice(start, start+numPerPage);
+          const start = (page - 1) * numPerPage;
+          const selectedItemsUris = result.items.slice(start, start + numPerPage);
 
           let selectedItems = [];
           const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
           if (dereferenceItems) {
             for (let itemUri of selectedItemsUris) {
-              selectedItems.push(await ctx.call('ldp.resource.get', {
-                resourceUri: itemUri,
-                accept: MIME_TYPES.JSON,
-                queryDepth
-              }));
+              selectedItems.push(
+                await ctx.call('ldp.resource.get', {
+                  resourceUri: itemUri,
+                  accept: MIME_TYPES.JSON,
+                  queryDepth
+                })
+              );
             }
           } else {
             selectedItems = selectedItemsUris;
@@ -141,11 +143,11 @@ const CollectionService = {
 
           return {
             '@context': selectedItems[0]['@context'],
-            'id': id + '?page=' + page,
-            'type': this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
-            'partOf': id,
-            'prev': page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
-            'next': page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            id: id + '?page=' + page,
+            type: this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
+            partOf: id,
+            prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
+            next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems.map(({ '@context': context, ...item }) => item),
             totalItems: result.items.length
           };

@@ -68,7 +68,7 @@ const OutboxService = {
         page: ctx.params.page,
         numPerPage: 10,
         dereferenceItems: true,
-        queryDepth: 3,
+        queryDepth: 3
       });
 
       if (collection) {
