@@ -5,7 +5,8 @@ const { objectCurrentToId } = require('../utils');
 const OutboxService = {
   name: 'activitypub.outbox',
   settings: {
-    actorsContainer: null
+    actorsContainer: null,
+    itemsPerPage: 10
   },
   dependencies: ['activitypub.activity', 'activitypub.object', 'activitypub.collection'],
   actions: {
@@ -66,12 +67,13 @@ const OutboxService = {
       const collection = await ctx.call('activitypub.collection.get', {
         id: this.getOutboxUri(ctx.params.username),
         page: ctx.params.page,
-        numPerPage: 10,
+        itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
         queryDepth: 3,
       });
 
       if (collection) {
+        collection.orderedItems = collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
         return collection;
       } else {
         ctx.meta.$statusCode = 404;

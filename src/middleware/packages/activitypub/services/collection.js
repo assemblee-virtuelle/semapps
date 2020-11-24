@@ -87,9 +87,11 @@ const CollectionService = {
      * @param id The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
      * @param queryDepth Number of blank nodes we want to dereference
+     * @param page Page number. If none are defined, display the collection.
+     * @param itemsPerPage Number of items to show per page
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth, page, numPerPage } = ctx.params;
+      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage } = ctx.params;
 
       let result = await ctx.call('triplestore.query', {
         query: `
@@ -106,47 +108,64 @@ const CollectionService = {
         accept: MIME_TYPES.JSON
       });
 
-      if( !result.items || result.items.length === 0 ) {
+      const numPages = !itemsPerPage ? 1 : result.items ? Math.ceil(result.items.length / itemsPerPage) : 0;
+
+      if( !result['@id'] || (page && page > numPages) ) {
+        // No persisted collection found or the collection page does not exist
         return null;
+      } else if( itemsPerPage && !page ) {
+        // Pagination is enabled but no page is selected, return the collection
+        return {
+          '@context': this.settings.context,
+          '@id': id,
+          '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+          first: numPages > 0 ? id + '?page=1' : undefined,
+          last: numPages > 0 ? id + '?page=' + numPages : undefined,
+          totalItems: result.items ? result.items.length : 0
+        };
       } else {
-        const numPages = Math.ceil(result.items.length / numPerPage);
+        let selectedItemsUris = result.items, selectedItems = [];
+        const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
-        if( !page ) {
-          return {
-            '@context': 'https://www.w3.org/ns/activitystreams', // TODO improve context handling
-            '@id': id,
-            '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
-            first: id + '?page=1',
-            last: id + '?page=' + numPages,
-            totalItems: result.items.length
-          };
-        } else {
-          const start = (page-1) * numPerPage;
-          const selectedItemsUris = result.items.slice(start, start+numPerPage);
+        // If pagination is enabled, return a slice of the items
+        if( itemsPerPage ) {
+          const start = (page-1) * itemsPerPage;
+          selectedItemsUris = result.items.slice(start, start+itemsPerPage);
+        }
 
-          let selectedItems = [];
-          const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
-
-          if (dereferenceItems) {
-            for (let itemUri of selectedItemsUris) {
-              selectedItems.push(await ctx.call('ldp.resource.get', {
-                resourceUri: itemUri,
-                accept: MIME_TYPES.JSON,
-                queryDepth
-              }));
-            }
-          } else {
-            selectedItems = selectedItemsUris;
+        if (dereferenceItems) {
+          for (let itemUri of selectedItemsUris) {
+            selectedItems.push(await ctx.call('ldp.resource.get', {
+              resourceUri: itemUri,
+              accept: MIME_TYPES.JSON,
+              queryDepth
+            }));
           }
 
+          // Remove the @context from all items
+          selectedItems = selectedItems.map(({'@context': context, ...item}) => item);
+        } else {
+          selectedItems = selectedItemsUris;
+        }
+
+        if( itemsPerPage ) {
           return {
-            '@context': selectedItems[0]['@context'],
+            '@context': this.settings.context,
             'id': id + '?page=' + page,
             'type': this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
             'partOf': id,
             'prev': page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
             'next': page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
-            [itemsProp]: selectedItems.map(({ '@context': context, ...item }) => item),
+            [itemsProp]: selectedItems,
+            totalItems: result.items.length
+          };
+        } else {
+          // No pagination, return the collection
+          return {
+            '@context': this.settings.context,
+            'id': id,
+            'type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+            [itemsProp]: selectedItems,
             totalItems: result.items.length
           };
         }
