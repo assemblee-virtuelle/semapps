@@ -8,6 +8,11 @@ class Connector {
   constructor(passportId, settings) {
     this.passport = passport;
     this.passportId = passportId;
+
+    if (!fs.existsSync(settings.privateKeyPath) || !fs.existsSync(settings.publicKeyPath)) {
+      throw new Error('Public or private JWT key not found. Did you generate them ?');
+    }
+
     this.settings = {
       privateKey: fs.readFileSync(settings.privateKeyPath),
       publicKey: fs.readFileSync(settings.publicKeyPath),
