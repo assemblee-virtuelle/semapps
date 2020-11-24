@@ -110,10 +110,10 @@ const CollectionService = {
 
       const numPages = !itemsPerPage ? 1 : result.items ? Math.ceil(result.items.length / itemsPerPage) : 0;
 
-      if( !result['@id'] || (page && page > numPages) ) {
+      if (!result['@id'] || (page && page > numPages)) {
         // No persisted collection found or the collection page does not exist
         return null;
-      } else if( itemsPerPage && !page ) {
+      } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
         return {
           '@context': this.settings.context,
@@ -124,38 +124,41 @@ const CollectionService = {
           totalItems: result.items ? result.items.length : 0
         };
       } else {
-        let selectedItemsUris = result.items, selectedItems = [];
+        let selectedItemsUris = result.items,
+          selectedItems = [];
         const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
-        if( itemsPerPage ) {
-          const start = (page-1) * itemsPerPage;
-          selectedItemsUris = result.items.slice(start, start+itemsPerPage);
+        if (itemsPerPage) {
+          const start = (page - 1) * itemsPerPage;
+          selectedItemsUris = result.items.slice(start, start + itemsPerPage);
         }
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(await ctx.call('ldp.resource.get', {
-              resourceUri: itemUri,
-              accept: MIME_TYPES.JSON,
-              queryDepth
-            }));
+            selectedItems.push(
+              await ctx.call('ldp.resource.get', {
+                resourceUri: itemUri,
+                accept: MIME_TYPES.JSON,
+                queryDepth
+              })
+            );
           }
 
           // Remove the @context from all items
-          selectedItems = selectedItems.map(({'@context': context, ...item}) => item);
+          selectedItems = selectedItems.map(({ '@context': context, ...item }) => item);
         } else {
           selectedItems = selectedItemsUris;
         }
 
-        if( itemsPerPage ) {
+        if (itemsPerPage) {
           return {
             '@context': this.settings.context,
-            'id': id + '?page=' + page,
-            'type': this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
-            'partOf': id,
-            'prev': page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
-            'next': page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            id: id + '?page=' + page,
+            type: this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
+            partOf: id,
+            prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
+            next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems,
             totalItems: result.items.length
           };
@@ -163,8 +166,8 @@ const CollectionService = {
           // No pagination, return the collection
           return {
             '@context': this.settings.context,
-            'id': id,
-            'type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+            id: id,
+            type: this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
             [itemsProp]: selectedItems,
             totalItems: result.items.length
           };

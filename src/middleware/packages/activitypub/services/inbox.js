@@ -75,7 +75,8 @@ const InboxService = {
       });
 
       if (collection) {
-        collection.orderedItems = collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
+        collection.orderedItems =
+          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
         return collection;
       } else {
         ctx.meta.$statusCode = 404;
