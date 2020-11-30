@@ -18,7 +18,7 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
-      if (!nick && email){
+      if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
       }
 
@@ -29,9 +29,7 @@ const WebIdService = {
         familyName,
         homepage
       };
-      let type =
-
-      webId = await ctx.call('ldp.resource.post', {
+      let type = (webId = await ctx.call('ldp.resource.post', {
         resource: {
           '@context': {
             '@vocab': 'http://xmlns.com/foaf/0.1/'
@@ -42,7 +40,7 @@ const WebIdService = {
         slug: nick,
         containerUri: this.settings.usersContainer,
         contentType: MIME_TYPES.JSON
-      });
+      }));
 
       let newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
@@ -52,7 +50,6 @@ const WebIdService = {
       });
 
       ctx.emit('webid.created', newPerson);
-
 
       return webId;
     },
@@ -102,11 +99,10 @@ const WebIdService = {
     },
 
     async findByEmail(ctx) {
-      return await ctx.call('webid.findByFoafEmail',ctx.params)
+      return await ctx.call('webid.findByFoafEmail', ctx.params);
     },
 
     async findByFoafEmail(ctx) {
-      console.log("SEMAPPS findByFoafEmail",ctx.params);
       const { email } = ctx.params;
       const results = await ctx.call('triplestore.query', {
         query: `
@@ -120,7 +116,6 @@ const WebIdService = {
         `,
         accept: MIME_TYPES.JSON
       });
-      console.log("SEMAPPS findByFoafEmail",results);
 
       return results.length > 0 ? results[0].webId.value : null;
     },
@@ -141,7 +136,9 @@ const WebIdService = {
       } else if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
         return ctx.meta.webId || ctx.meta.tokenPayload.webId;
       } else {
-        throw new Error('webid.getWebId have to be call whith ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId')
+        throw new Error(
+          'webid.getWebId have to be call whith ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
+        );
       }
     }
   }
