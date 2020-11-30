@@ -10,7 +10,7 @@ assignees: ''
 **les composant concernés**
 Lister les composants (service moleculer, package npm, documentation...) 
 
-**Décrire a problématique**
+**Décrire la problématique**
 Décrire ce qui ne convient pas le code actuel
 
 **Décrivez de l'évolution technique**
