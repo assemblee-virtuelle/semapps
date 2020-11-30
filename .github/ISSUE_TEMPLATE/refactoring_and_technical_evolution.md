@@ -13,5 +13,5 @@ Lister les composants (service moleculer, package npm, documentation...)
 **Décrire la problématique**
 Décrire ce qui ne convient pas le code actuel
 
-**Décrivez de l'évolution technique**
+**Décrire l'évolution technique**
 Decrire l'evolution technique proposé et pourquoi cela améliorerai le projet
