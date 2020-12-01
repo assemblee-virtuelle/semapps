@@ -10,7 +10,7 @@ jobs:
   prettier:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
 
       - name: Install NPM packages
         run: make install
@@ -18,7 +18,7 @@ jobs:
       - name: Run prettier
         run: make prettier
 
-      - uses: stefanzweifel/git-auto-commit-action@v2.1.0
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Automatic prettier
           branch: ${{ github.head_ref }}
