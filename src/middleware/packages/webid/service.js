@@ -18,41 +18,38 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
-      if (!email) throw new Error('Unable to create profile, email parameter is missing');
-      if (!nick) nick = email.split('@')[0].toLowerCase();
-      // Check if an user already exist with this email address
-      let webId = await this.actions.findByEmail({ email });
-      // If no user exist, create one
-      if (!webId) {
-        const userData = {
-          nick,
-          email,
-          name,
-          familyName,
-          homepage
-        };
-        webId = await ctx.call('ldp.resource.post', {
-          resource: {
-            '@context': {
-              '@vocab': 'http://xmlns.com/foaf/0.1/'
-            },
-            '@type': 'Person',
-            ...userData
-          },
-          slug: nick,
-          containerUri: this.settings.usersContainer,
-          contentType: MIME_TYPES.JSON
-        });
-
-        let newPerson = await ctx.call('ldp.resource.get', {
-          resourceUri: webId,
-          accept: MIME_TYPES.JSON,
-          jsonContext: this.settings.context,
-          webId
-        });
-
-        ctx.emit('webid.created', newPerson);
+      if (!nick && email) {
+        nick = email.split('@')[0].toLowerCase();
       }
+
+      const userData = {
+        nick,
+        email,
+        name,
+        familyName,
+        homepage
+      };
+      let type = (webId = await ctx.call('ldp.resource.post', {
+        resource: {
+          '@context': {
+            '@vocab': 'http://xmlns.com/foaf/0.1/'
+          },
+          '@type': 'Person',
+          ...userData
+        },
+        slug: nick,
+        containerUri: this.settings.usersContainer,
+        contentType: MIME_TYPES.JSON
+      }));
+
+      let newPerson = await ctx.call('ldp.resource.get', {
+        resourceUri: webId,
+        accept: MIME_TYPES.JSON,
+        jsonContext: this.settings.context,
+        webId
+      });
+
+      ctx.emit('webid.created', newPerson);
 
       return webId;
     },
@@ -81,17 +78,17 @@ const WebIdService = {
         accept: MIME_TYPES.JSON
       });
     },
+
     async list(ctx) {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
-      PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-      PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX ldp: <http://www.w3.org/ns/ldp#>
       CONSTRUCT {
-        ?s ?p ?o
+        ?webId ?p ?o
       }
       WHERE{
-        ?s a foaf:Person;
-           ?p ?o.
+        <${this.settings.usersContainer}> ldp:contains ?webId .
+        ?webId ?p ?o.
       }
       `;
       return await ctx.call('triplestore.query', {
@@ -100,27 +97,29 @@ const WebIdService = {
         accept: accept
       });
     },
+
     async findByEmail(ctx) {
       const { email } = ctx.params;
-
       const results = await ctx.call('triplestore.query', {
         query: `
-          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          SELECT ?webId
-          WHERE {
-            ?webId rdf:type foaf:Person ;
-                   foaf:email "${email}" .
-          }
+        PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        SELECT ?webId ?o
+        WHERE {
+          <${this.settings.usersContainer}> ldp:contains ?webId .
+          ?webId foaf:email '${email}' .
+        }
         `,
         accept: MIME_TYPES.JSON
       });
 
       return results.length > 0 ? results[0].webId.value : null;
     },
+
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
     },
+
     getApiRoutes(ctx) {
       return getRoutes();
     }
@@ -130,14 +129,12 @@ const WebIdService = {
       if (ctx.params.userId) {
         // If an userId is specified, use it to find the webId
         return this.settings.usersContainer + ctx.params.userId;
+      } else if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
+        return ctx.meta.webId || ctx.meta.tokenPayload.webId;
       } else {
-        if (ctx.meta.tokenPayload.webId) {
-          // If the webId is in the token
-          return ctx.meta.tokenPayload.webId;
-        } else {
-          // Find the webId by the user's email address
-          return this.actions.findByEmail({ email: ctx.meta.tokenPayload.email });
-        }
+        throw new Error(
+          'webid.getWebId have to be call whith ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
+        );
       }
     }
   }

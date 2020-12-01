@@ -18,7 +18,28 @@ module.exports = {
   dependencies: ['ldp', 'activitypub', 'webid', 'sparqlEndpoint'],
   async started() {
     const findOrCreateProfile = async profileData => {
-      return await this.broker.call('webid.create', profileData);
+      let webId = await this.broker.call('webid.findByEmail', {
+        email: profileData.email
+      });
+
+      if (!webId) {
+        webId = await this.broker.call('webid.create', profileData);
+
+        // Adds PAIR data
+        await this.broker.call('ldp.resource.patch', {
+          resource: {
+            '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
+            '@id': webId,
+            '@type': ['pair:Person', 'foaf:Person'],
+            'pair:firstName': profileData.name,
+            'pair:lastName': profileData.familyName,
+            'pair:e-mail': profileData.email
+          },
+          contentType: MIME_TYPES.JSON
+        });
+      }
+
+      return webId;
     };
 
     const privateKeyPath = path.resolve(__dirname, '../jwt/jwtRS256.key');

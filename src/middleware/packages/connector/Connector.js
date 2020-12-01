@@ -38,6 +38,7 @@ class Connector {
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
+    // req.user provide by Passport strategy
     const profileData = this.settings.selectProfileData(req.user);
     this.settings.findOrCreateProfile(profileData).then(webId => {
       // Keep the webId as we will need it for the token generation
@@ -46,7 +47,7 @@ class Connector {
     });
   }
   generateToken(req, res, next) {
-    // If token is already provided by the connector, skip this step
+    // If token is already provided by the connector, skip this step. OIDC and CAS not provide Token
     if (!req.user.token) {
       const profileData = this.settings.selectProfileData(req.user);
       const payload = { webId: req.user.webId, ...profileData };
@@ -59,6 +60,7 @@ class Connector {
     next();
   }
   globalLogout(req, res, next) {
+    //have to be implemented in extended class
     next();
   }
   redirectToFront(req, res) {
