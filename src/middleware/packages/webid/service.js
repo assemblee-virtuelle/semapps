@@ -99,10 +99,6 @@ const WebIdService = {
     },
 
     async findByEmail(ctx) {
-      return await ctx.call('webid.findByFoafEmail', ctx.params);
-    },
-
-    async findByFoafEmail(ctx) {
       const { email } = ctx.params;
       const results = await ctx.call('triplestore.query', {
         query: `
