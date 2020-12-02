@@ -13,11 +13,16 @@ class OidcConnector extends Connector {
   }
   async initialize() {
     this.issuer = await Issuer.discover(this.settings.issuer);
-    const client = new this.issuer.Client({
+    let config={
       client_id: this.settings.clientId,
       client_secret: this.settings.clientSecret,
-      redirect_uri: this.settings.redirectUri
-    });
+      redirect_uri: this.settings.redirectUri,
+      token_endpoint_auth_method : 'none'
+    }
+    if(!config.client_secret){
+      config.token_endpoint_auth_method='none'
+    }
+    const client = new this.issuer.Client(config);
     const params = {
       // ... any authorization params override client properties
       // client_id defaults to client.client_id
@@ -34,6 +39,7 @@ class OidcConnector extends Connector {
           params
         },
         (tokenset, userinfo, done) => {
+          console.log('XXXXXXXX OIDC login : ',tokenset,userinfo);
           done(null, userinfo);
         }
       )
