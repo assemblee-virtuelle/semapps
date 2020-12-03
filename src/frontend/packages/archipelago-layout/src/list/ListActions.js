@@ -20,7 +20,7 @@ const ListActions = ({
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const resources = useSelector(getResources, shallowEqual);
-  const currentResource = resources.filter(r=>r.name==resource)[0] ;
+  const currentResource = resources.filter(r => r.name == resource)[0];
   return (
     <TopToolbar>
       {bulkActions &&
@@ -39,9 +39,7 @@ const ListActions = ({
           filterValues,
           context: 'button'
         })}
-      {currentResource.hasCreate &&
-        <CreateButton basePath={basePath} />
-      }
+      {currentResource.hasCreate && <CreateButton basePath={basePath} />}
       {!xs && (
         <ExportButton
           disabled={total === 0}
