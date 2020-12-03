@@ -2,7 +2,7 @@
 name: Chantier
 about: Les chantiers regroupent plusieurs issues et concernent une grosse fonctionnalité
   à développer sur plusieurs sprints.
-title: "[Chantier] Titre du chantier"
+title: ''
 labels: chantier
 assignees: ''
 
