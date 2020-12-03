@@ -39,7 +39,6 @@ class OidcConnector extends Connector {
           params
         },
         (tokenset, userinfo, done) => {
-          console.log('XXXXXXXX OIDC login : ', tokenset, userinfo);
           done(null, userinfo);
         }
       )
