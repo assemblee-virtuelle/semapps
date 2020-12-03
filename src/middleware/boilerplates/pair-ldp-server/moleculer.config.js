@@ -7,12 +7,8 @@ module.exports = {
     type: 'Redis',
     options: {
       prefix: 'action',
-      ttl: 86400, // Time-to-live of one hour
-      redis: {
-        host: CONFIG.REDIS_HOST,
-        port: CONFIG.REDIS_PORT,
-        db: CONFIG.REDIS_DB
-      }
+      ttl: 2592000, // Keep in cache for one month
+      redis: CONFIG.REDIS_CACHE_URL
     }
   }
 };
