@@ -35,5 +35,5 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
   },
-  "gitHead": "c578ad62168b4d839b8c3838e764da2c0c98921a"
+  "gitHead": "cff2300b2570a5131151bedeb19cc4637ffac583"
 }
