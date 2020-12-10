@@ -2,7 +2,7 @@ import React from 'react';
 import { AutocompleteArrayInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { UriArrayInput } from "@semapps/semantic-data-provider";
+import { UriArrayInput } from '@semapps/semantic-data-provider';
 
 export const ThemeEdit = props => (
   <Edit {...props}>
@@ -11,11 +11,7 @@ export const ThemeEdit = props => (
       <TextInput source="pair:comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
       <UriArrayInput label="Sujets" reference="Subject" source="pair:topicOf">
-        <AutocompleteArrayInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </UriArrayInput>
     </SimpleForm>
   </Edit>

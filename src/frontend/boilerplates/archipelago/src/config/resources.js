@@ -1,6 +1,6 @@
 const resources = {
   Subject: {
-    types: ['pair:Project', 'pair:Organization', 'pair:Person', 'pair:Event'],
+    types: ['pair:Project', 'pair:Organization', 'pair:Person', 'pair:Event']
   },
   Project: {
     types: ['pair:Project'],
