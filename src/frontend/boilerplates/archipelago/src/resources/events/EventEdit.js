@@ -16,11 +16,7 @@ const EventEdit = props => (
         <AutocompleteArrayInput shouldRenderSuggestions={value => value.length > 1} optionText="pair:label" fullWidth />
       </UriArrayInput>
       <UriArrayInput label="Tags" reference="Theme" source="pair:hasTopic">
-        <AutocompleteArrayInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </UriArrayInput>
     </SimpleForm>
   </Edit>
