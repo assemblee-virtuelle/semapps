@@ -11,6 +11,6 @@ export default {
   edit: OrganizationTypeEdit,
   icon: HomeWorkIcon,
   options: {
-    label: 'Types d\'orga.'
+    label: "Types d'orga."
   }
 };

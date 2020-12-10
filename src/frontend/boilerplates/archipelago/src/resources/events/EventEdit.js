@@ -1,8 +1,8 @@
 import React from 'react';
-import {SimpleForm, TextInput, DateTimeInput, ReferenceInput, AutocompleteInput} from 'react-admin';
+import { SimpleForm, TextInput, DateTimeInput, ReferenceInput, AutocompleteInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import {OrganizationsInput, ThemesInput} from "../../inputs";
+import { OrganizationsInput, ThemesInput } from '../../inputs';
 
 const EventEdit = props => (
   <Edit {...props}>
@@ -13,11 +13,7 @@ const EventEdit = props => (
       <DateTimeInput source="pair:startDate" label="Date de début" fullWidth />
       <DateTimeInput source="pair:endDate" label="Date de fin" fullWidth />
       <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
-        <AutocompleteInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </ReferenceInput>
       <OrganizationsInput label="Participe" source="pair:involves" />
       <ThemesInput label="Tags" source="pair:hasTopic" />
