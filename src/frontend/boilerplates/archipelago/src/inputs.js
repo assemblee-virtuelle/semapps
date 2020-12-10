@@ -1,6 +1,6 @@
-import React from "react";
-import { UriArrayInput } from "@semapps/semantic-data-provider";
-import { AutocompleteArrayInput } from "react-admin";
+import React from 'react';
+import { UriArrayInput } from '@semapps/semantic-data-provider';
+import { AutocompleteArrayInput } from 'react-admin';
 
 export const OrganizationsInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Organization" source={source}>

@@ -1,8 +1,8 @@
 import React from 'react';
-import {AutocompleteInput, ReferenceInput, SimpleForm, TextInput} from 'react-admin';
+import { AutocompleteInput, ReferenceInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { OrganizationsInput, EventsInput, ThemesInput, OrganizationTypesInput } from "../../inputs";
+import { OrganizationsInput, EventsInput, ThemesInput, OrganizationTypesInput } from '../../inputs';
 
 export const OrganizationEdit = props => (
   <Edit {...props}>
@@ -11,11 +11,7 @@ export const OrganizationEdit = props => (
       <TextInput source="pair:comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
       <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
-        <AutocompleteInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </ReferenceInput>
       <OrganizationTypesInput label="Type d'organisation" source="pair:hasSubjectType" />
       <OrganizationsInput label="Filiales" source="pair:hasPart" />
