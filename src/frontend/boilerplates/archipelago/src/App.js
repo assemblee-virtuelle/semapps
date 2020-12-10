@@ -3,11 +3,12 @@ import { Admin, Resource } from 'react-admin';
 import frenchMessages from 'ra-language-french';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
-import { Layout, theme } from '@semapps/archipelago-layout';
+import { Layout } from '@semapps/archipelago-layout';
 import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';
+import theme from './config/theme';
 
 import events from './resources/events';
 import themes from './resources/themes';
