@@ -14,13 +14,8 @@ const resources = {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'users',
     slugField: ['pair:firstName', 'pair:lastName']
   },
-  Skill: {
-    types: ['pair:Skill'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'skills',
-    slugField: 'pair:label'
-  },
-  Interest: {
-    types: ['pair:Thema'],
+  Theme: {
+    types: ['pair:Theme'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes',
     slugField: 'pair:label'
   },

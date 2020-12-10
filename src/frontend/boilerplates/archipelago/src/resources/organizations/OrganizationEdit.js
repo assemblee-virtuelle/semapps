@@ -1,8 +1,18 @@
 import React from 'react';
-import { AutocompleteArrayInput, SimpleForm, TextInput, ImageInput } from 'react-admin';
+import { AutocompleteArrayInput, SimpleForm, TextInput, ReferenceInput, AutocompleteInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { UriArrayInput, ImageField } from '@semapps/semantic-data-provider';
+import { UriArrayInput } from '@semapps/semantic-data-provider';
+
+const OrganizationsArrayInput = ({ label, source }) => (
+  <UriArrayInput label={label} reference="Organization" source={source}>
+    <AutocompleteArrayInput
+      optionText="pair:label"
+      shouldRenderSuggestions={value => value.length > 1}
+      fullWidth
+    />
+  </UriArrayInput>
+);
 
 export const OrganizationEdit = props => (
   <Edit {...props}>
@@ -10,13 +20,21 @@ export const OrganizationEdit = props => (
       <TextInput source="pair:label" label="Nom" />
       <TextInput source="pair:comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" fullWidth />
-      <ImageInput source="image" label="Logo" accept="image/*">
-        <ImageField source="src" />
-      </ImageInput>
-      <UriArrayInput label="Membres" reference="User" source="pair:hasMember">
+      <OrganizationsArrayInput label="Filiales" source="pair:hasPart" />
+      <OrganizationsArrayInput label="Filiale de" source="pair:partOf" />
+      <OrganizationsArrayInput label="Partenaires" source="pair:partnerOf" />
+      <OrganizationsArrayInput label="Connait" source="pair:follows" />
+      <OrganizationsArrayInput label="Connu par" source="pair:hasFollower" />
+      <UriArrayInput label="Participe à" reference="Event" source="pair:involvedIn">
         <AutocompleteArrayInput
-          optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
+          optionText="pair:label"
+          shouldRenderSuggestions={value => value.length > 1}
+          fullWidth
+        />
+      </UriArrayInput>
+      <UriArrayInput label="Tags" reference="Theme" source="pair:hasTopic">
+        <AutocompleteArrayInput
+          optionText="pair:label"
           shouldRenderSuggestions={value => value.length > 1}
           fullWidth
         />
