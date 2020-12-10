@@ -12,6 +12,7 @@ import ontologies from './config/ontologies';
 import events from './resources/events';
 import themes from './resources/themes';
 import organizations from './resources/organizations';
+import organizationTypes from './resources/organization-types';
 
 const App = () => (
   <Admin
@@ -28,6 +29,7 @@ const App = () => (
     theme={theme}
   >
     <Resource name="Organization" {...organizations} />
+    <Resource name="OrganizationType" {...organizationTypes} />
     <Resource name="Event" {...events} />
     <Resource name="Theme" {...themes} />
     <Resource name="Subject" />

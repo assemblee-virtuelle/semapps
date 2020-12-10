@@ -1,6 +1,6 @@
 import React from 'react';
-import { ChipField, SingleFieldList, TextField, UrlField, ReferenceField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { ChipField, SingleFieldList, TextField, ReferenceField } from 'react-admin';
+import { Column, ColumnShowLayout, Hero, Show, MarkdownField, SeparatedFieldList } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 
 const OrganizationTitle = ({ record }) => {
@@ -16,6 +16,11 @@ const OrganizationShow = props => (
           <ReferenceField label="Filiale de" source="pair:partOf" reference="Organization" linkType="show">
             <TextField source="pair:label" />
           </ReferenceField>
+          <UriArrayField label="Type d'organisation" source="pair:hasSubjectType" reference="OrganizationType" linkType="show">
+            <SeparatedFieldList linkType="show">
+              <TextField source="pair:label" />
+            </SeparatedFieldList>
+          </UriArrayField>
         </Hero>
         <MarkdownField source="pair:description" addLabel />
       </Column>

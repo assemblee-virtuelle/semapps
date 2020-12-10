@@ -12,6 +12,11 @@ const resources = {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organizations',
     slugField: 'pair:label'
   },
+  OrganizationType: {
+    types: ['pair:OrganizationType'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organization-types',
+    slugField: 'pair:label'
+  },
   User: {
     types: ['pair:Person'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'users',
