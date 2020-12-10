@@ -1,4 +1,7 @@
 const resources = {
+  Subject: {
+    types: ['pair:Project', 'pair:Organization', 'pair:Person', 'pair:Event'],
+  },
   Project: {
     types: ['pair:Project'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'projects',
