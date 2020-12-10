@@ -1,7 +1,8 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, DateField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, Show, MarkdownField, SeparatedFieldList } from '@semapps/archipelago-layout';
+import { Column, ColumnShowLayout, Hero, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
+import { SeparatedFieldList } from '../../fields';
 
 const EventTitle = ({ record }) => {
   return <span>{record ? record['pair:label'] : ''}</span>;
