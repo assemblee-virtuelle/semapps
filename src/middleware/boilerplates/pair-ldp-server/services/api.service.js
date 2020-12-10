@@ -75,7 +75,7 @@ module.exports = {
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('sparqlEndpoint.getApiRoutes'))
     ].forEach(route => this.addRoute(route));
-  },
+  }
   // methods: {
   //   authenticate(ctx, route, req, res) {
   //     return this.connector.authenticate(ctx, route, req, res);
