@@ -17,7 +17,12 @@ const EventShow = props => (
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Organisations" filter={{ '@type': 'pair:Organization' }} reference="Organization" source="pair:topicOf">
+        <UriArrayField
+          label="Organisations"
+          filter={{ '@type': 'pair:Organization' }}
+          reference="Organization"
+          source="pair:topicOf"
+        >
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>

@@ -6,11 +6,7 @@ import { UriArrayInput } from '@semapps/semantic-data-provider';
 
 const OrganizationsArrayInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Organization" source={source}>
-    <AutocompleteArrayInput
-      optionText="pair:label"
-      shouldRenderSuggestions={value => value.length > 1}
-      fullWidth
-    />
+    <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
   </UriArrayInput>
 );
 
@@ -26,18 +22,10 @@ export const OrganizationEdit = props => (
       <OrganizationsArrayInput label="Connait" source="pair:follows" />
       <OrganizationsArrayInput label="Connu par" source="pair:hasFollower" />
       <UriArrayInput label="Participe à" reference="Event" source="pair:involvedIn">
-        <AutocompleteArrayInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </UriArrayInput>
       <UriArrayInput label="Tags" reference="Theme" source="pair:hasTopic">
-        <AutocompleteArrayInput
-          optionText="pair:label"
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
+        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </UriArrayInput>
     </SimpleForm>
   </Edit>
