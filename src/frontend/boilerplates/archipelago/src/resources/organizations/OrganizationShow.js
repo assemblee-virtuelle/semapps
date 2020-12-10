@@ -16,7 +16,12 @@ const OrganizationShow = props => (
           <ReferenceField label="Filiale de" source="pair:partOf" reference="Organization" linkType="show">
             <TextField source="pair:label" />
           </ReferenceField>
-          <UriArrayField label="Type d'organisation" source="pair:hasSubjectType" reference="OrganizationType" linkType="show">
+          <UriArrayField
+            label="Type d'organisation"
+            source="pair:hasSubjectType"
+            reference="OrganizationType"
+            linkType="show"
+          >
             <SeparatedFieldList linkType="show">
               <TextField source="pair:label" />
             </SeparatedFieldList>
