@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexWrap: 'wrap'
   },
-  link: {},
+  link: {}
 }));
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -22,14 +22,7 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const SeparatedListField = props => {
-  const {
-    classes: classesOverride,
-    className,
-    children,
-    linkType = 'edit',
-    separator = ',',
-    ...rest
-  } = props;
+  const { classes: classesOverride, className, children, linkType = 'edit', separator = ',', ...rest } = props;
   const { ids, data, loaded, resource, basePath } = useListContext(props);
 
   const classes = useStyles(props);
@@ -39,32 +32,23 @@ const SeparatedListField = props => {
   }
 
   return (
-    <div
-      className={classnames(classes.root, className)}
-      {...sanitizeListRestProps(rest)}
-    >
+    <div className={classnames(classes.root, className)} {...sanitizeListRestProps(rest)}>
       {ids.map((id, i) => {
-        const resourceLinkPath = !linkType
-          ? false
-          : linkToRecord(basePath, id, linkType);
+        const resourceLinkPath = !linkType ? false : linkToRecord(basePath, id, linkType);
 
         if (resourceLinkPath) {
           return (
             <span key={id}>
-              <Link
-                classes={classes.link}
-                to={resourceLinkPath}
-                onClick={stopPropagation}
-              >
+              <Link classes={classes.link} to={resourceLinkPath} onClick={stopPropagation}>
                 {cloneElement(Children.only(children), {
                   record: data[id],
                   resource,
                   basePath,
                   // Workaround to force ChipField to be clickable
-                  onClick: handleClick,
+                  onClick: handleClick
                 })}
               </Link>
-              {i < (ids.length-1) && separator + '\u00A0'}
+              {i < ids.length - 1 && separator + '\u00A0'}
             </span>
           );
         }
@@ -73,11 +57,11 @@ const SeparatedListField = props => {
           key: id,
           record: data[id],
           resource,
-          basePath,
+          basePath
         });
       })}
     </div>
   );
-}
+};
 
 export default SeparatedListField;
