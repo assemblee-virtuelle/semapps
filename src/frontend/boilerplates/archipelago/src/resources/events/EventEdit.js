@@ -1,8 +1,8 @@
 import React from 'react';
-import { AutocompleteArrayInput, SimpleForm, TextInput, DateTimeInput } from 'react-admin';
+import {SimpleForm, TextInput, DateTimeInput, ReferenceInput, AutocompleteInput} from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { UriArrayInput } from '@semapps/semantic-data-provider';
+import {OrganizationsInput, ThemesInput} from "../../inputs";
 
 const EventEdit = props => (
   <Edit {...props}>
@@ -12,12 +12,15 @@ const EventEdit = props => (
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
       <DateTimeInput source="pair:startDate" label="Date de début" fullWidth />
       <DateTimeInput source="pair:endDate" label="Date de fin" fullWidth />
-      <UriArrayInput label="Participe" reference="Organization" source="pair:involves">
-        <AutocompleteArrayInput shouldRenderSuggestions={value => value.length > 1} optionText="pair:label" fullWidth />
-      </UriArrayInput>
-      <UriArrayInput label="Tags" reference="Theme" source="pair:hasTopic">
-        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
-      </UriArrayInput>
+      <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
+        <AutocompleteInput
+          optionText="pair:label"
+          shouldRenderSuggestions={value => value.length > 1}
+          fullWidth
+        />
+      </ReferenceInput>
+      <OrganizationsInput label="Participe" source="pair:involves" />
+      <ThemesInput label="Tags" source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );

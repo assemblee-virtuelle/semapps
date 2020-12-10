@@ -13,6 +13,7 @@ import events from './resources/events';
 import themes from './resources/themes';
 import organizations from './resources/organizations';
 import organizationTypes from './resources/organization-types';
+import places from './resources/places';
 
 const App = () => (
   <Admin
@@ -31,6 +32,7 @@ const App = () => (
     <Resource name="Organization" {...organizations} />
     <Resource name="OrganizationType" {...organizationTypes} />
     <Resource name="Event" {...events} />
+    <Resource name="Place" {...places} />
     <Resource name="Theme" {...themes} />
     <Resource name="Subject" />
   </Admin>

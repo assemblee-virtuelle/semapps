@@ -27,6 +27,11 @@ const resources = {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes',
     slugField: 'pair:label'
   },
+  Place: {
+    types: ['pair:Place'],
+    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'places',
+    slugField: 'pair:label'
+  },
   Event: {
     types: ['pair:Event'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'events',

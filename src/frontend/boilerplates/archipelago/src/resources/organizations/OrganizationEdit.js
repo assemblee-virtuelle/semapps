@@ -1,14 +1,8 @@
 import React from 'react';
-import { AutocompleteArrayInput, SimpleForm, TextInput } from 'react-admin';
+import {AutocompleteInput, ReferenceInput, SimpleForm, TextInput} from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { UriArrayInput } from '@semapps/semantic-data-provider';
-
-const OrganizationsArrayInput = ({ label, source }) => (
-  <UriArrayInput label={label} reference="Organization" source={source}>
-    <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
-  </UriArrayInput>
-);
+import { OrganizationsInput, EventsInput, ThemesInput, OrganizationTypesInput } from "../../inputs";
 
 export const OrganizationEdit = props => (
   <Edit {...props}>
@@ -16,20 +10,21 @@ export const OrganizationEdit = props => (
       <TextInput source="pair:label" label="Nom" />
       <TextInput source="pair:comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <UriArrayInput label="Type d'organisation" reference="OrganizationType" source="pair:hasSubjectType">
-        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
-      </UriArrayInput>
-      <OrganizationsArrayInput label="Filiales" source="pair:hasPart" />
-      <OrganizationsArrayInput label="Filiale de" source="pair:partOf" />
-      <OrganizationsArrayInput label="Partenaires" source="pair:partnerOf" />
-      <OrganizationsArrayInput label="Connait" source="pair:follows" />
-      <OrganizationsArrayInput label="Connu par" source="pair:hasFollower" />
-      <UriArrayInput label="Participe à" reference="Event" source="pair:involvedIn">
-        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
-      </UriArrayInput>
-      <UriArrayInput label="Tags" reference="Theme" source="pair:hasTopic">
-        <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
-      </UriArrayInput>
+      <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
+        <AutocompleteInput
+          optionText="pair:label"
+          shouldRenderSuggestions={value => value.length > 1}
+          fullWidth
+        />
+      </ReferenceInput>
+      <OrganizationTypesInput label="Type d'organisation" source="pair:hasSubjectType" />
+      <OrganizationsInput label="Filiales" source="pair:hasPart" />
+      <OrganizationsInput label="Maison-mère" source="pair:partOf" />
+      <OrganizationsInput label="Partenaires" source="pair:partnerOf" />
+      <OrganizationsInput label="Connait" source="pair:follows" />
+      <OrganizationsInput label="Connu par" source="pair:hasFollower" />
+      <EventsInput label="Participe à" source="pair:involvedIn" />
+      <ThemesInput label="Tags à" source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );
