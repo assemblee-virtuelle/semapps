@@ -25,6 +25,7 @@ Choose `yes` to all questions
 Create 'semapps' folder...
 ? Would you like to run 'npm install'? Yes
 ```
+`read-only SPARQL endpoint` install sparql service. If you don't install it, you onlny install ldp service.
 
 You can now go to the newly-created directory:
 

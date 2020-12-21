@@ -1,12 +1,10 @@
 ---
-title:  initialiser, configurer et déployer votre application semapps
+title:  main
 ---
 
+## Purpose
 
-
-### Purpose
-
-initialize, configure and deploy your semapps application
+init, configure, debug, contribute, deploy your semapps application
 
 - configuration of environment variables
 - configuration of ontologies, context, resources, etc.
@@ -14,7 +12,7 @@ initialize, configure and deploy your semapps application
 - connection to the source code of the semapps kernel for debugging and to be able to contribute
 - deployment on a production environment (https, environment configuration)
 
-### Prerequisites
+## Prerequisites
 
 If you want to use containers
 - [docker-compose](https://docs.docker.com/compose/) & [docker](https://docs.docker.com/engine/)
@@ -26,7 +24,7 @@ Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
 - Make
 - npm ou yarn
 
-### summary
+## summary
 
 
 
@@ -35,7 +33,7 @@ Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
     <th>&nbsp;</th>
     <th>what is it ?</th>
     <th><div>minimal&nbsp;stack</div><div>+simple</div><div>-automate</div></th>
-    <th><div>make&nbsp;+&nbsp;docker</div><div>-simple</div><div>+automate</div></th>
+    <th><div>docker&nbsp;stack</div><div>-simple</div><div>+automate</div></th>
     <th><div>semapps&nbsp;workbench</div><div>+simple</div><div>+automate</div></th>
   </tr>
   <tr>
@@ -43,28 +41,25 @@ Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
     <td>&nbsp;</td>
     <td><a>lien</a></td>
     <td><a>lien</a></td>
-    <td><a>lien</a></td>
+    <td rowspan="4"><a>lien</a></td>
   </tr>
   <tr>
     <td>init a Project</td>
-    <td><a>lien</a></td>
-    <td><a>lien</a></td>
-    <td><a>lien</a></td>
-    <td><a>lien</a></td>
+    <td><a href="./init_main">lien</a></td>
+    <td><a href="./init_minimal">lien</a></td>
+    <td><a href="./init_docker">lien</a></td>
   </tr>
   <tr>
     <td> use semapps kernel source</td>
     <td><a>lien</a></td>
     <td><a>lien</a></td>
     <td><a>lien</a></td>
-    <td><a>lien</a></td>
   </tr>
   <tr>
-  <td>production environment</td>
-  <td><a>lien</a></td>
-  <td><a>lien</a></td>
-  <td><a>lien</a></td>
-  <td><a>lien</a></td>
+    <td>production environment</td>
+    <td><a>lien</a></td>
+    <td><a>lien</a></td>
+    <td><a>lien</a></td>
   </tr>
 </table>
 

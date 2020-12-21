@@ -1,5 +1,5 @@
 ---
-title:  initialiser, configurer et déployer votre application semapps
+title: init & configure your project in make + docker stack
 ---
 
 
@@ -68,6 +68,14 @@ Dans un vrai projet, il est toujours nécessaire de disposer de plusieurs outils
   </tr>
 </table>
 
+<ul>
+<li>
+one
+</li>
+<li>
+one
+</li>
+</ul>
 ### Very short Launch
 there is a way to launch a project very quickly : [semapps-workbench](https://github.com/assemblee-virtuelle/semapps-workbench)
 It is only a tool that simplifies the different manipulations that will be seen in this guide.
