@@ -16,12 +16,12 @@ const EventShow = props => (
           <TextField label="Courte description" source="pair:comment" />
           <DateField label="Date de début" source="pair:startDate" showTime />
           <DateField label="Date de fin" source="pair:endDate" showTime />
-          <UriArrayField label="Région" reference="Place" source="pair:hostedIn">
+          <UriArrayField label="Lieu" reference="Place" source="pair:hostedIn">
             <SeparatedFieldList linkType="show">
               <TextField source="pair:label" />
             </SeparatedFieldList>
           </UriArrayField>
-          <UriArrayField label="Tags" reference="Theme" source="pair:hasTopic">
+          <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
             <SeparatedFieldList linkType="show">
               <TextField source="pair:label" />
             </SeparatedFieldList>

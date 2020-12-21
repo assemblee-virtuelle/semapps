@@ -12,11 +12,11 @@ const EventEdit = props => (
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
       <DateTimeInput source="pair:startDate" label="Date de début" fullWidth />
       <DateTimeInput source="pair:endDate" label="Date de fin" fullWidth />
-      <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
+      <ReferenceInput label="Lieu" reference="Place" source="pair:hostedIn" fullWidth>
         <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </ReferenceInput>
       <OrganizationsInput label="Participe" source="pair:involves" />
-      <ThemesInput label="Tags" source="pair:hasTopic" />
+      <ThemesInput label="Thèmes" source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );

@@ -10,7 +10,7 @@ export const OrganizationEdit = props => (
       <TextInput source="pair:label" label="Nom" />
       <TextInput source="pair:comment" label="Courte description" fullWidth />
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <ReferenceInput label="Région" reference="Place" source="pair:hostedIn" fullWidth>
+      <ReferenceInput label="Lieu" reference="Place" source="pair:hostedIn" fullWidth>
         <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
       </ReferenceInput>
       <OrganizationTypesInput label="Type d'organisation" source="pair:hasSubjectType" />
@@ -20,7 +20,7 @@ export const OrganizationEdit = props => (
       <OrganizationsInput label="Connait" source="pair:follows" />
       <OrganizationsInput label="Connu par" source="pair:hasFollower" />
       <EventsInput label="Participe à" source="pair:involvedIn" />
-      <ThemesInput label="Tags à" source="pair:hasTopic" />
+      <ThemesInput label="Thèmes à" source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );

@@ -14,7 +14,7 @@ const OrganizationShow = props => (
       <Column xs={12} sm={9}>
         <Hero title={<OrganizationTitle />}>
           <TextField label="Courte description" source="pair:comment" />
-          <UriArrayField label="Région" reference="Place" source="pair:hostedIn">
+          <UriArrayField label="Lieu" reference="Place" source="pair:hostedIn">
             <SeparatedFieldList linkType="show">
               <TextField source="pair:label" />
             </SeparatedFieldList>
@@ -29,7 +29,7 @@ const OrganizationShow = props => (
               <TextField source="pair:label" />
             </SeparatedFieldList>
           </UriArrayField>
-          <UriArrayField label="Tags" reference="Theme" source="pair:hasTopic">
+          <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
             <SeparatedFieldList linkType="show">
               <TextField source="pair:label" />
             </SeparatedFieldList>

@@ -11,6 +11,6 @@ export default {
   edit: ThemeEdit,
   icon: LocalOfferIcon,
   options: {
-    label: 'Tags'
+    label: 'Thèmes'
   }
 };

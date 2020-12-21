@@ -11,6 +11,6 @@ export default {
   edit: PlaceEdit,
   icon: PlaceIcon,
   options: {
-    label: 'Régions'
+    label: 'Lieux'
   }
 };
