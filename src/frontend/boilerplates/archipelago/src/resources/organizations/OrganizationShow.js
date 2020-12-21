@@ -43,6 +43,11 @@ const OrganizationShow = props => (
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
+        <UriArrayField label="Documents" reference="Document" source="pair:documentedBy">
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
       </Column>
     </ColumnShowLayout>
   </Show>

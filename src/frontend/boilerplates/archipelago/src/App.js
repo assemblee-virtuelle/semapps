@@ -10,6 +10,7 @@ import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 import resources from './config/resources';
 import ontologies from './config/ontologies';
 
+import documents from './resources/documents';
 import events from './resources/events';
 import themes from './resources/themes';
 import projects from './resources/projects';
@@ -40,8 +41,10 @@ const App = () => (
     <Resource name="Project" {...projects} />
     <Resource name="Event" {...events} />
     <Resource name="User" {...users} />
+    <Resource name="Document" {...documents} />
     <Resource name="Skill" {...skills} />
     <Resource name="Theme" {...themes} />
+    <Resource name="Folder" />
     <Resource name="Activity" />
     <Resource name="Actor" />
     <Resource name="Subject" />

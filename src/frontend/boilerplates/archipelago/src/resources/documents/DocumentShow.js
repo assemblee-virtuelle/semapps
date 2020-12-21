@@ -1,19 +1,18 @@
 import React from 'react';
-import { ChipField, SingleFieldList, TextField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, Show, MarkdownField, GridList, UserIcon } from '@semapps/archipelago-layout';
+import { SingleFieldList, ChipField } from 'react-admin';
+import { Column, ColumnShowLayout, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
+import { Typography } from '@material-ui/core';
 
-const ThemeTitle = ({ record }) => {
-  return <span>{record ? record['pair:label'] : ''}</span>;
+const DocumentTitle = ({ record }) => {
+  return <Typography variant="h3" color="primary" paragraph>{record ? record['pair:label'] : ''}</Typography>;
 };
 
-const ThemeShow = props => (
+const EventShow = props => (
   <Show {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<ThemeTitle />}>
-          <TextField label="Courte description" source="pair:comment" />
-        </Hero>
+        <DocumentTitle />
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
@@ -21,13 +20,13 @@ const ThemeShow = props => (
           label="Organisations"
           filter={{ '@type': 'pair:Organization' }}
           reference="Organization"
-          source="pair:topicOf"
+          source="pair:documents"
         >
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Evénements" filter={{ '@type': 'pair:Event' }} reference="Event" source="pair:topicOf">
+        <UriArrayField label="Projets" filter={{ '@type': 'pair:Project' }} reference="Project" source="pair:documents">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
@@ -37,4 +36,4 @@ const ThemeShow = props => (
   </Show>
 );
 
-export default ThemeShow;
+export default EventShow;

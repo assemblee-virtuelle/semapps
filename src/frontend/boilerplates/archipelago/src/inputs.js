@@ -42,6 +42,12 @@ export const ActivitiesInput = ({ label, source }) => (
   </UriArrayInput>
 );
 
+export const DocumentsInput = ({ label, source }) => (
+  <UriArrayInput label={label} reference="Document" source={source}>
+    <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
+  </UriArrayInput>
+);
+
 export const EventsInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Event" source={source}>
     <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />

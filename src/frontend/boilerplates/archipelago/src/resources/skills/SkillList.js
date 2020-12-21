@@ -1,11 +1,12 @@
 import React from 'react';
 import { List, SimpleList } from '@semapps/archipelago-layout';
+import PanToolIcon from "@material-ui/icons/PanTool";
 
 const SkillList = props => (
   <List {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
-      leftAvatar={() => <img src={process.env.PUBLIC_URL + '/logo192.png'} width="100%" alt="SemApps" />}
+      leftIcon={() => <PanToolIcon />}
     />
   </List>
 );

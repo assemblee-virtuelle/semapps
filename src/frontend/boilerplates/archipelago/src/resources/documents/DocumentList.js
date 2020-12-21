@@ -1,15 +1,15 @@
 import React from 'react';
 import { List, SimpleList } from '@semapps/archipelago-layout';
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import DescriptionIcon from '@material-ui/icons/Description';
 
-const ThemeList = props => (
+const DocumentList = props => (
   <List {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
-      leftIcon={() => <LocalOfferIcon />}
+      leftIcon={() => <DescriptionIcon />}
       linkType="show"
     />
   </List>
 );
 
-export default ThemeList;
+export default DocumentList;

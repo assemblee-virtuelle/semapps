@@ -2,7 +2,7 @@ import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import {ActorsInput } from "../../inputs";
+import {ActorsInput, DocumentsInput} from "../../inputs";
 
 const ProjectEdit = props => (
   <Edit {...props}>
@@ -12,6 +12,7 @@ const ProjectEdit = props => (
       <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
       <TextInput source="pair:homePage" label="Site web" fullWidth />
       <ActorsInput label="Participe" source="pair:involves" />
+      <DocumentsInput label="Documents" source="pair:documentedBy" />
     </SimpleForm>
   </Edit>
 );
