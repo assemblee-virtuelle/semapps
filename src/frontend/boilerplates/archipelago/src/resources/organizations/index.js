@@ -1,15 +1,15 @@
-import OrganizationCreate from './OrganizationCreate';
+import PairResourceCreate from '../PairResourceCreate';
 import OrganizationEdit from './OrganizationEdit';
 import OrganizationList from './OrganizationList';
 import OrganizationShow from './OrganizationShow';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import HomeIcon from '@material-ui/icons/Home';
 
 export default {
   list: OrganizationList,
   show: OrganizationShow,
-  create: OrganizationCreate,
+  create: PairResourceCreate,
   edit: OrganizationEdit,
-  icon: AccountBalanceIcon,
+  icon: HomeIcon,
   options: {
     label: 'Organisations'
   }

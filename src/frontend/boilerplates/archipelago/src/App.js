@@ -11,7 +11,7 @@ import resources from './config/resources';
 import ontologies from './config/ontologies';
 
 import events from './resources/events';
-import interests from './resources/interests';
+import themes from './resources/themes';
 import projects from './resources/projects';
 import organizations from './resources/organizations';
 import skills from './resources/skills';
@@ -41,7 +41,10 @@ const App = () => (
     <Resource name="Event" {...events} />
     <Resource name="User" {...users} />
     <Resource name="Skill" {...skills} />
-    <Resource name="Interest" {...interests} />
+    <Resource name="Theme" {...themes} />
+    <Resource name="Activity" />
+    <Resource name="Actor" />
+    <Resource name="Subject" />
   </Admin>
 );
 

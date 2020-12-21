@@ -18,20 +18,20 @@ const ProjectShow = props => (
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Géré par" reference="Organization" source="pair:managedBy">
+        <UriArrayField label="Organisations" reference="Organization" filter={{ '@type': 'pair:Organization' }} source="pair:involves">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Responsables" reference="User" source="pair:hasResponsible">
+        <UriArrayField label="Personnes" reference="User" filter={{ '@type': 'pair:Person' }} source="pair:involves">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>
         </UriArrayField>
-        <UriArrayField label="Participants" reference="User" source="pair:involves">
-          <GridList xs={6} linkType="show">
-            <UserIcon />
-          </GridList>
+        <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
+          <SingleFieldList linkType={false}>
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
         </UriArrayField>
       </Column>
     </ColumnShowLayout>

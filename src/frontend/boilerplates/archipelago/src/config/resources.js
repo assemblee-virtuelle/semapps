@@ -19,8 +19,8 @@ const resources = {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'skills',
     slugField: 'pair:label'
   },
-  Interest: {
-    types: ['pair:Thema'],
+  Theme: {
+    types: ['pair:Theme'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'themes',
     slugField: 'pair:label'
   },
@@ -28,7 +28,17 @@ const resources = {
     types: ['pair:Event'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'events',
     slugField: 'pair:label'
-  }
+  },
+  // General classes
+  Actor: {
+    types: ['pair:Organization', 'pair:Person']
+  },
+  Activity: {
+    types: ['pair:Project', 'pair:Event']
+  },
+  Subject: {
+    types: ['pair:Project', 'pair:Organization', 'pair:Person', 'pair:Event']
+  },
 };
 
 export default resources;
