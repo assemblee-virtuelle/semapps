@@ -3,9 +3,13 @@ import { Admin, Resource } from 'react-admin';
 import frenchMessages from 'ra-language-french';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 
-import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
+import { AppBar } from '@semapps/archipelago-layout';
 import { authProvider, LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
+
+import Layout from "./layout/Layout";
+import theme from "./layout/theme";
+import Home from "./pages/Home/Home";
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';
@@ -32,10 +36,11 @@ const App = () => (
       uploadsContainerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'files'
     })}
     i18nProvider={polyglotI18nProvider(() => frenchMessages, 'fr')}
-    layout={LayoutWithUserMenu}
+    layout={Layout}
     theme={theme}
     loginPage={LoginPage}
     logoutButton={LogoutButton}
+    dashboard={Home}
   >
     <Resource name="Organization" {...organizations} />
     <Resource name="Project" {...projects} />
