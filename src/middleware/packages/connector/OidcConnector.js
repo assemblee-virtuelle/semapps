@@ -16,8 +16,7 @@ class OidcConnector extends Connector {
     let config = {
       client_id: this.settings.clientId,
       client_secret: this.settings.clientSecret,
-      redirect_uri: this.settings.redirectUri,
-      token_endpoint_auth_method: 'none'
+      redirect_uri: this.settings.redirectUri
     };
     if (!config.client_secret) {
       config.token_endpoint_auth_method = 'none';
