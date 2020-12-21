@@ -14,115 +14,220 @@
     "semapps": "http://semapps.org/ns/core#",
     "oasis": "http://cooperative-oasis.org/ns/core#",
 
-    "pair:affiliatedBy": {
+    "pair:about": {
+      "@type": "@id"
+    },
+    "pair:activityOfInvolvement": {
+      "@type": "@id"
+    },
+    "pair:actorOfInvolvement": {
+      "@type": "@id"
+    },
+    "pair:actorOfMembership": {
       "@type": "@id"
     },
     "pair:affiliates": {
       "@type": "@id"
     },
-    "pair:brainstormedBy": {
+    "pair:affiliatedBy": {
       "@type": "@id"
     },
-    "pair:brainstorms": {
+    "pair:agentResourceProperty": {
+      "@type": "@id"
+    },
+    "pair:aimedBy": {
+      "@type": "@id"
+    },
+    "pair:aims": {
+      "@type": "@id"
+    },
+    "pair:allowedBy": {
+      "@type": "@id"
+    },
+    "pair:allows": {
+      "@type": "@id"
+    },
+    "pair:assignedTo": {
+      "@type": "@id"
+    },
+    "pair:assigneeOf": {
+      "@type": "@id"
+    },
+    "pair:associationProperties": {
+      "@type": "@id"
+    },
+    "pair:branchOf": {
+      "@type": "@id"
+    },
+    "pair:topicOf": {
+      "@type": "@id"
+    },
+    "pair:challengeOf": {
+      "@type": "@id"
+    },
+    "pair:concernedBy": {
+      "@type": "@id"
+    },
+    "pair:concerns": {
+      "@type": "@id"
+    },
+    "pair:basedOn": {
       "@type": "@id"
     },
     "pair:concretizedBy": {
       "@type": "@id"
     },
-    "pair:concretizes": {
+    "pair:hasFollower": {
       "@type": "@id"
     },
-    "pair:deliveredBy": {
+    "pair:follows": {
       "@type": "@id"
     },
-    "pair:delivers": {
+    "pair:consumedBy": {
       "@type": "@id"
     },
-    "pair:documentedBy": {
+    "pair:consumes": {
+      "@type": "@id"
+    },
+    "pair:containedIn": {
+      "@type": "@id"
+    },
+    "pair:contains": {
+      "@type": "@id"
+    },
+    "pair:cooperatesWith": {
       "@type": "@id"
     },
     "pair:documents": {
       "@type": "@id"
     },
-    "pair:employedBy": {
+    "pair:documentedBy": {
       "@type": "@id"
     },
-    "pair:employs": {
+    "pair:domainOf": {
       "@type": "@id"
     },
-    "pair:entityConceptProperties": {
+    "pair:producedBy": {
+      "@type": "@id"
+    },
+    "pair:operates": {
+      "@type": "@id"
+    },
+    "pair:operatedBy": {
+      "@type": "@id"
+    },
+    "pair:extendedBy": {
+      "@type": "@id"
+    },
+    "pair:extends": {
+      "@type": "@id"
+    },
+    "pair:hasActivityField": {
+      "@type": "@id"
+    },
+    "pair:hasBranch": {
+      "@type": "@id"
+    },
+    "pair:hasChallenge": {
       "@type": "@id"
     },
     "pair:hasConceptType": {
       "@type": "@id"
     },
-    "pair:hasInterest": {
+    "pair:hasDomain": {
       "@type": "@id"
     },
-    "pair:hasMember": {
+    "pair:hasInspired": {
       "@type": "@id"
     },
     "pair:hasObjectType": {
       "@type": "@id"
     },
+    "pair:hasOrigin": {
+      "@type": "@id"
+    },
     "pair:hasPart": {
       "@type": "@id"
     },
-    "pair:hasResponsible": {
+    "pair:hasSector": {
+      "@type": "@id"
+    },
+    "pair:hasSkill": {
+      "@type": "@id"
+    },
+    "pair:hasStatus": {
+      "@type": "@id"
+    },
+    "pair:hasSubactivity": {
       "@type": "@id"
     },
     "pair:hasSubjectType": {
       "@type": "@id"
     },
-    "pair:hasType": {
+    "pair:hosts": {
       "@type": "@id"
     },
     "pair:hostedIn": {
       "@type": "@id"
     },
-    "pair:hosts": {
+    "pair:brainstorms": {
       "@type": "@id"
     },
-    "pair:interObjectProperty": {
-      "@type": "@id"
-    },
-    "pair:interSubjectProperty": {
-      "@type": "@id"
-    },
-    "pair:interestOf": {
-      "@type": "@id"
-    },
-    "pair:involvedIn": {
+    "pair:brainstormedBy": {
       "@type": "@id"
     },
     "pair:involves": {
       "@type": "@id"
     },
-    "pair:knowedBy": {
+    "pair:involvedIn": {
       "@type": "@id"
     },
-    "pair:knows": {
+    "pair:inspiredBy": {
       "@type": "@id"
     },
-    "pair:localizedBy": {
+    "pair:intendedBy": {
       "@type": "@id"
     },
-    "pair:localizes": {
+    "pair:intends": {
       "@type": "@id"
     },
-    "pair:managedBy": {
+    "pair:interExtentionalSubjectProperty": {
       "@type": "@id"
     },
-    "pair:manages": {
+    "pair:interObjectProperty": {
       "@type": "@id"
     },
-    "pair:memberOf": {
+    "pair:involvementActivity": {
       "@type": "@id"
     },
-    "pair:neededBy": {
+    "pair:involvementActor": {
+      "@type": "@id"
+    },
+    "pair:involvementRole": {
+      "@type": "@id"
+    },
+    "pair:membershipActor": {
+      "@type": "@id"
+    },
+    "pair:membershipOrganization": {
+      "@type": "@id"
+    },
+    "pair:membershipRole": {
+      "@type": "@id"
+    },
+    "pair:mobilizes": {
+      "@type": "@id"
+    },
+    "pair:moblizedBy": {
+      "@type": "@id"
+    },
+    "pair:nourishes": {
       "@type": "@id"
     },
     "pair:needs": {
+      "@type": "@id"
+    },
+    "pair:neededBy": {
       "@type": "@id"
     },
     "pair:objectSubjectProperty": {
@@ -131,13 +236,10 @@
     "pair:offeredBy": {
       "@type": "@id"
     },
-    "pair:offers": {
+    "pair:organizationOfMembership": {
       "@type": "@id"
     },
-    "pair:operatedBy": {
-      "@type": "@id"
-    },
-    "pair:operates": {
+    "pair:originOf": {
       "@type": "@id"
     },
     "pair:partOf": {
@@ -146,19 +248,43 @@
     "pair:partnerOf": {
       "@type": "@id"
     },
-    "pair:references": {
+    "pair:produces": {
       "@type": "@id"
     },
-    "pair:referencesBy": {
-      "@type": "@id"
-    },
-    "pair:representedBy": {
+    "pair:offers": {
       "@type": "@id"
     },
     "pair:represents": {
       "@type": "@id"
     },
-    "pair:responsibleOf": {
+    "pair:representedBy": {
+      "@type": "@id"
+    },
+    "pair:referencedBy": {
+      "@type": "@id"
+    },
+    "pair:references": {
+      "@type": "@id"
+    },
+    "pair:sectorOf": {
+      "@type": "@id"
+    },
+    "pair:solvedBy": {
+      "@type": "@id"
+    },
+    "pair:solves": {
+      "@type": "@id"
+    },
+    "pair:subactivityOf": {
+      "@type": "@id"
+    },
+    "pair:subjectConceptProperties": {
+      "@type": "@id"
+    },
+    "pair:supportedBy": {
+      "@type": "@id"
+    },
+    "pair:supports": {
       "@type": "@id"
     },
     "pair:typeOf": {
@@ -173,22 +299,27 @@
     "pair:typeOfSubject": {
       "@type": "@id"
     },
-
-
-    "pair:aboutPage": {
+    "pair:usedBy": {
       "@type": "@id"
+    },
+    "pair:uses": {
+      "@type": "@id"
+    },
+    "pair:hasTopic": {
+      "@type": "@id"
+    },
+    "pair:hasType": {
+      "@type": "@id"
+    },
+
+    "pair:startDate": {
+      "@type": "xsd:dateTime"
     },
     "pair:endDate": {
       "@type": "xsd:dateTime"
     },
-    "pair:homePage": {
-      "@type": "@id"
-    },
-    "pair:startDate": {
+    "pair:dueDate": {
       "@type": "xsd:dateTime"
-    },
-    "pair:webPage": {
-      "@type": "@id"
     },
 
     "Accept": "as:Accept",
