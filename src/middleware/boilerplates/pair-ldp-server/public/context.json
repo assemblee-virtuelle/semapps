@@ -312,16 +312,6 @@
       "@type": "@id"
     },
 
-    "pair:startDate": {
-      "@type": "xsd:dateTime"
-    },
-    "pair:endDate": {
-      "@type": "xsd:dateTime"
-    },
-    "pair:dueDate": {
-      "@type": "xsd:dateTime"
-    },
-
     "Accept": "as:Accept",
     "Activity": "as:Activity",
     "IntransitiveActivity": "as:IntransitiveActivity",
