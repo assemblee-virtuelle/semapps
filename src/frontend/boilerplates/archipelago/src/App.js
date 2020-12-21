@@ -7,9 +7,9 @@ import { AppBar } from '@semapps/archipelago-layout';
 import { authProvider, LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 import { dataProvider, httpClient } from '@semapps/semantic-data-provider';
 
-import Layout from "./layout/Layout";
-import theme from "./layout/theme";
-import Home from "./pages/Home/Home";
+import Layout from './layout/Layout';
+import theme from './layout/theme';
+import Home from './pages/Home/Home';
 
 import resources from './config/resources';
 import ontologies from './config/ontologies';

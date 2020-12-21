@@ -8,16 +8,16 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     margin: 0,
     marginTop: 25,
-    "& li": {
+    '& li': {
       display: 'block',
       float: 'left',
       paddingRight: 7,
-      "&::after": {
+      '&::after': {
         paddingLeft: 7,
         content: "' | '"
       },
-      "&:last-child": {
-        "&::after": {
+      '&:last-child': {
+        '&::after': {
           content: "''"
         }
       }
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 
 const FooterInfo = ({ children }) => {
   const classes = useStyles();
-  return(
+  return (
     <ul className={classes.list}>
       {React.Children.map(children, child => (
         <li>{child}</li>
