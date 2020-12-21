@@ -1,8 +1,9 @@
 import React from 'react';
-import { AutocompleteArrayInput, SimpleForm, TextInput, ImageInput } from 'react-admin';
+import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { UriArrayInput, ImageField } from '@semapps/semantic-data-provider';
+import { ImageField } from '@semapps/semantic-data-provider';
+import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../inputs';
 
 export const OrganizationEdit = props => (
   <Edit {...props}>
@@ -14,13 +15,11 @@ export const OrganizationEdit = props => (
       <ImageInput source="image" label="Logo" accept="image/*">
         <ImageField source="src" />
       </ImageInput>
-      <UriArrayInput label="Membres" reference="User" source="pair:hasMember">
-        <AutocompleteArrayInput
-          optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
-          shouldRenderSuggestions={value => value.length > 1}
-          fullWidth
-        />
-      </UriArrayInput>
+      <UsersInput label="Membres" source="pair:affiliates" />
+      <OrganizationsInput label="Partenaires" source="pair:partnerOf" />
+      <EventsInput label="Participe à" source="pair:involvedIn" />
+      <ThemesInput label="Thèmes" source="pair:hasTopic" />
+      <DocumentsInput label="Documents" source="pair:documentedBy" />
     </SimpleForm>
   </Edit>
 );
