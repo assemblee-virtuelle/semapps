@@ -1,6 +1,6 @@
 {
   "name": "@semapps/cra-template-dms-archipelago",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "description": "DMS + ARchipelago REACT template for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -19,5 +19,6 @@
   ],
   "engines": {
     "node": ">=10"
-  }
+  },
+  "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
 }

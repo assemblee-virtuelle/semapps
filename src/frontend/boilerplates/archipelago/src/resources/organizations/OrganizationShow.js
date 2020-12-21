@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, UrlField } from 'react-admin';
+import { TextField, UrlField, ChipField, SingleFieldList } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 
@@ -18,10 +18,40 @@ const OrganizationShow = props => (
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Membres" reference="User" source="pair:hasMember" referenceBasePath="/User">
+        <UriArrayField label="Membres" reference="User" source="pair:affiliates">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>
+        </UriArrayField>
+        <UriArrayField label="Partenaires" reference="Organization" source="pair:partnerOf">
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField
+          label="Projets"
+          reference="Project"
+          filter={{ '@type': 'pair:Project' }}
+          source="pair:involvedIn"
+        >
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField label="Evénements" reference="Event" filter={{ '@type': 'pair:Event' }} source="pair:involvedIn">
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
+        </UriArrayField>
+        <UriArrayField label="Documents" reference="Document" source="pair:documentedBy">
+          <SingleFieldList linkType="show">
+            <ChipField source="pair:label" color="secondary" />
+          </SingleFieldList>
         </UriArrayField>
       </Column>
     </ColumnShowLayout>

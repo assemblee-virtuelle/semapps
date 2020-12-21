@@ -1,13 +1,11 @@
-const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { buildBlankNodesQuery } = require('@semapps/ldp');
 
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
     context: 'https://www.w3.org/ns/activitystreams'
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'ldp'],
   actions: {
     /*
      * Create a persisted collection
@@ -89,58 +87,91 @@ const CollectionService = {
      * @param id The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
      * @param queryDepth Number of blank nodes we want to dereference
+     * @param page Page number. If none are defined, display the collection.
+     * @param itemsPerPage Number of items to show per page
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth } = ctx.params;
-      let constructQuery = '',
-        whereQuery = '';
-
-      if (dereferenceItems) {
-        const [constructBnQuery, whereBnQuery] = buildBlankNodesQuery(queryDepth);
-        constructQuery = '?s1 ?p1 ?o1 .' + constructBnQuery;
-        whereQuery = '?s1 ?p1 ?o1 .' + whereBnQuery;
-      }
+      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage } = ctx.params;
 
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a ?collectionType ;
-              as:items ?s1 .
-            ${constructQuery}
+            <${id}> a as:Collection, ?collectionType .
+            <${id}> as:items ?itemUri .
           }
           WHERE {
             <${id}> a as:Collection, ?collectionType .
-            OPTIONAL { 
-              <${id}> as:items ?s1 .
-              ${whereQuery}
-            }
+            OPTIONAL { <${id}> as:items ?itemUri . }
           }
         `,
         accept: MIME_TYPES.JSON
       });
 
-      result = await jsonld.frame(result, {
-        '@context': this.settings.context,
-        '@id': id
-      });
+      const numPages = !itemsPerPage ? 1 : result.items ? Math.ceil(result.items.length / itemsPerPage) : 0;
 
-      if (result['@graph'].length === 0) {
-        ctx.meta.$statusCode = 404;
-      } else {
-        let { items, ...collection } = result['@graph'][0];
-        items = !items ? [] : Array.isArray(items) ? items : [items];
-
-        const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
-
-        collection = {
-          '@context': result['@context'],
-          ...collection,
-          [itemsProp]: items,
-          totalItems: items.length
+      if (!result['@id'] || (page && page > numPages)) {
+        // No persisted collection found or the collection page does not exist
+        return null;
+      } else if (itemsPerPage && !page) {
+        // Pagination is enabled but no page is selected, return the collection
+        return {
+          '@context': this.settings.context,
+          '@id': id,
+          '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+          first: numPages > 0 ? id + '?page=1' : undefined,
+          last: numPages > 0 ? id + '?page=' + numPages : undefined,
+          totalItems: result.items ? result.items.length : 0
         };
+      } else {
+        let selectedItemsUris = result.items,
+          selectedItems = [];
+        const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
-        return collection;
+        // If pagination is enabled, return a slice of the items
+        if (itemsPerPage) {
+          const start = (page - 1) * itemsPerPage;
+          selectedItemsUris = result.items.slice(start, start + itemsPerPage);
+        }
+
+        if (dereferenceItems) {
+          for (let itemUri of selectedItemsUris) {
+            selectedItems.push(
+              await ctx.call('ldp.resource.get', {
+                resourceUri: itemUri,
+                accept: MIME_TYPES.JSON,
+                queryDepth
+              })
+            );
+          }
+
+          // Remove the @context from all items
+          selectedItems = selectedItems.map(({ '@context': context, ...item }) => item);
+        } else {
+          selectedItems = selectedItemsUris;
+        }
+
+        if (itemsPerPage) {
+          return {
+            '@context': this.settings.context,
+            id: id + '?page=' + page,
+            type: this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
+            partOf: id,
+            prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
+            next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            [itemsProp]: selectedItems,
+            totalItems: result.items.length
+          };
+        } else {
+          // No pagination, return the collection
+          return {
+            '@context': this.settings.context,
+            id: id,
+            type: this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+            [itemsProp]: selectedItems,
+            totalItems: result.items.length
+          };
+        }
       }
     },
     /*
@@ -187,8 +218,8 @@ const CollectionService = {
   methods: {
     isOrderedCollection(collection) {
       return (
-        collection.type === 'OrderedCollection' ||
-        (Array.isArray(collection.type) && collection.type.includes('OrderedCollection'))
+        collection['@type'] === 'as:OrderedCollection' ||
+        (Array.isArray(collection['@type']) && collection['@type'].includes('as:OrderedCollection'))
       );
     }
   }

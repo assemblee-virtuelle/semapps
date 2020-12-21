@@ -18,8 +18,19 @@ module.exports = {
   dependencies: ['ldp', 'activitypub', 'webid', 'sparqlEndpoint'],
   async started() {
     const findOrCreateProfile = async profileData => {
-      return await this.broker.call('webid.create', profileData);
+      let webId = await this.broker.call('webid.findByEmail', {
+        email: profileData.email
+      });
+
+      if (!webId) {
+        webId = await this.broker.call('webid.create', profileData);
+      }
+
+      return webId;
     };
+
+    const privateKeyPath = path.resolve(__dirname, '../jwt/jwtRS256.key');
+    const publicKeyPath = path.resolve(__dirname, '../jwt/jwtRS256.key.pub');
 
     this.connector =
       CONFIG.CONNECT_TYPE === 'OIDC'
@@ -27,8 +38,9 @@ module.exports = {
             issuer: CONFIG.OIDC_ISSUER,
             clientId: CONFIG.OIDC_CLIENT_ID,
             clientSecret: CONFIG.OIDC_CLIENT_SECRET,
-            publicKey: CONFIG.OIDC_PUBLIC_KEY,
             redirectUri: CONFIG.HOME_URL + 'auth',
+            privateKeyPath,
+            publicKeyPath,
             selectProfileData: authData => ({
               email: authData.email,
               name: authData.given_name,
@@ -38,8 +50,8 @@ module.exports = {
           })
         : new CasConnector({
             casUrl: CONFIG.CAS_URL,
-            privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
-            publicKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key.pub'),
+            privateKeyPath,
+            publicKeyPath,
             selectProfileData: authData => ({
               nick: authData.displayName,
               email: authData.mail[0],

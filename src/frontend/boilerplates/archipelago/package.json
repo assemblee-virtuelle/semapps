@@ -1,15 +1,16 @@
 {
   "name": "archipelago",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "private": true,
   "dependencies": {
-    "@semapps/archipelago-layout": "0.1.8",
-    "@semapps/semantic-data-provider": "0.1.8",
+    "@semapps/archipelago-layout": "0.1.11",
+    "@semapps/auth-provider": "0.1.11",
+    "@semapps/semantic-data-provider": "0.1.11",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
-    "ra-language-french": "^3.9.2",
+    "ra-language-french": "3.11.0",
     "react": "^16.13.1",
-    "react-admin": "^3.9.2",
+    "react-admin": "3.11.0",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
