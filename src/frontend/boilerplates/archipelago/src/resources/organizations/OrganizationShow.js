@@ -28,7 +28,12 @@ const OrganizationShow = props => (
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Projets" reference="Project" filter={{ '@type': 'pair:Project' }} source="pair:involvedIn">
+        <UriArrayField
+          label="Projets"
+          reference="Project"
+          filter={{ '@type': 'pair:Project' }}
+          source="pair:involvedIn"
+        >
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>

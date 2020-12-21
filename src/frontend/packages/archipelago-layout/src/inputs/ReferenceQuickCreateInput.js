@@ -64,19 +64,10 @@ const ReferenceQuickCreateInput = ({ label, reference, source, children }) => {
           render={({ handleSubmitWithRedirect, pristine, saving }) => (
             <>
               <DialogContent>
-                <TextInput
-                  label="Titre"
-                  source="pair:label"
-                  validate={required()}
-                  fullWidth
-                />
+                <TextInput label="Titre" source="pair:label" validate={required()} fullWidth />
               </DialogContent>
               <DialogActions>
-                <Button
-                  label="ra.action.cancel"
-                  onClick={() => setShowDialog(false)}
-                  disabled={loading}
-                >
+                <Button label="ra.action.cancel" onClick={() => setShowDialog(false)} disabled={loading}>
                   <IconCancel />
                 </Button>
                 <SaveButton

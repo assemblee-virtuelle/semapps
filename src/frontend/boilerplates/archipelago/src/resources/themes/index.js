@@ -1,7 +1,7 @@
 import PairResourceCreate from '../PairResourceCreate';
 import ThemeEdit from './ThemeEdit';
 import ThemeList from './ThemeList';
-import ThemeShow from "./ThemeShow";
+import ThemeShow from './ThemeShow';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
 export default {

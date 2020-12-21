@@ -2,7 +2,7 @@ import React from 'react';
 import { SelectInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit, ReferenceQuickCreateInput } from '@semapps/archipelago-layout';
-import { SubjectsInput } from "../../inputs";
+import { SubjectsInput } from '../../inputs';
 
 export const DocumentEdit = props => (
   <Edit {...props}>

@@ -1,20 +1,23 @@
 import React from 'react';
 import { UriArrayInput } from '@semapps/semantic-data-provider';
 import { AutocompleteArrayInput } from 'react-admin';
-import resources from "./config/resources";
+import resources from './config/resources';
 
 const selectOptionTextByType = resource => {
-  if( resource ) {
+  if (resource) {
     const matchingResourceKey = Object.keys(resources).find(resourceKey => {
-      if( resources[resourceKey].types.length === 1 ) {
-        if( resources[resourceKey].types[0] === resource['@type'] || Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].types[0]) ) {
+      if (resources[resourceKey].types.length === 1) {
+        if (
+          resources[resourceKey].types[0] === resource['@type'] ||
+          (Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].types[0]))
+        ) {
           return true;
         }
       }
       return false;
     });
 
-    if( Array.isArray(resources[matchingResourceKey].slugField) ) {
+    if (Array.isArray(resources[matchingResourceKey].slugField)) {
       return resources[matchingResourceKey].slugField.map(field => resource[field]).join(' ');
     } else {
       return resource[resources[matchingResourceKey].slugField];
@@ -22,7 +25,7 @@ const selectOptionTextByType = resource => {
   } else {
     return null;
   }
-}
+};
 
 export const OrganizationsInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Organization" source={source}>
@@ -32,7 +35,11 @@ export const OrganizationsInput = ({ label, source }) => (
 
 export const ActorsInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Actor" source={source}>
-    <AutocompleteArrayInput optionText={selectOptionTextByType} shouldRenderSuggestions={value => value.length > 1} fullWidth />
+    <AutocompleteArrayInput
+      optionText={selectOptionTextByType}
+      shouldRenderSuggestions={value => value.length > 1}
+      fullWidth
+    />
   </UriArrayInput>
 );
 
@@ -78,6 +85,10 @@ export const UsersInput = ({ label, source }) => (
 
 export const SubjectsInput = ({ label, source }) => (
   <UriArrayInput label={label} reference="Subject" source={source}>
-    <AutocompleteArrayInput optionText={selectOptionTextByType} shouldRenderSuggestions={value => value.length > 1} fullWidth />
+    <AutocompleteArrayInput
+      optionText={selectOptionTextByType}
+      shouldRenderSuggestions={value => value.length > 1}
+      fullWidth
+    />
   </UriArrayInput>
 );

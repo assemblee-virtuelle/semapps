@@ -83,7 +83,7 @@ module.exports = {
             // TODO put this in the API action
             ctx.meta.$responseType = result['semapps:mimeType'];
             return fs.readFileSync(result['semapps:localPath']);
-          } catch(e) {
+          } catch (e) {
             throw new MoleculerError('Not found', 404, 'NOT_FOUND');
           }
         } else {

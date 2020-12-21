@@ -48,7 +48,7 @@ const resources = {
   },
   Subject: {
     types: ['pair:Project', 'pair:Organization', 'pair:Person', 'pair:Event']
-  },
+  }
 };
 
 export default resources;

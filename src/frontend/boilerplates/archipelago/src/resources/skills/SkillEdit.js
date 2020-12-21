@@ -1,7 +1,7 @@
 import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
-import {UsersInput} from "../../inputs";
+import { UsersInput } from '../../inputs';
 
 export const SkillEdit = props => (
   <Edit {...props}>

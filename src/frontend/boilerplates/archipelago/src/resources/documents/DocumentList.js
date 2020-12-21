@@ -4,11 +4,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 
 const DocumentList = props => (
   <List {...props}>
-    <SimpleList
-      primaryText={record => record['pair:label']}
-      leftIcon={() => <DescriptionIcon />}
-      linkType="show"
-    />
+    <SimpleList primaryText={record => record['pair:label']} leftIcon={() => <DescriptionIcon />} linkType="show" />
   </List>
 );
 

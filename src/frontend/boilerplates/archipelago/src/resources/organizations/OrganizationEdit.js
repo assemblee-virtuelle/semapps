@@ -3,7 +3,7 @@ import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField } from '@semapps/semantic-data-provider';
-import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from "../../inputs";
+import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../inputs';
 
 export const OrganizationEdit = props => (
   <Edit {...props}>

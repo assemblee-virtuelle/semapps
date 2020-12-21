@@ -5,7 +5,11 @@ import { UriArrayField } from '@semapps/semantic-data-provider';
 import { Typography } from '@material-ui/core';
 
 const DocumentTitle = ({ record }) => {
-  return <Typography variant="h3" color="primary" paragraph>{record ? record['pair:label'] : ''}</Typography>;
+  return (
+    <Typography variant="h3" color="primary" paragraph>
+      {record ? record['pair:label'] : ''}
+    </Typography>
+  );
 };
 
 const EventShow = props => (

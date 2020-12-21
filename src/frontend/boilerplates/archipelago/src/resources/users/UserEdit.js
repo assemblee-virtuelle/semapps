@@ -1,8 +1,8 @@
 import React from 'react';
-import {ImageInput, SimpleForm, TextInput} from 'react-admin';
+import { ImageInput, SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActivitiesInput, OrganizationsInput, SkillsInput, ThemesInput } from "../../inputs";
-import {ImageField} from "@semapps/semantic-data-provider";
+import { ActivitiesInput, OrganizationsInput, SkillsInput, ThemesInput } from '../../inputs';
+import { ImageField } from '@semapps/semantic-data-provider';
 
 export const UserEdit = props => (
   <Edit {...props}>

@@ -18,7 +18,12 @@ const ProjectShow = props => (
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Organisations" reference="Organization" filter={{ '@type': 'pair:Organization' }} source="pair:involves">
+        <UriArrayField
+          label="Organisations"
+          reference="Organization"
+          filter={{ '@type': 'pair:Organization' }}
+          source="pair:involves"
+        >
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
