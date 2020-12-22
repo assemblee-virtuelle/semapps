@@ -3,7 +3,7 @@ import { SingleFieldList, ChipField } from 'react-admin';
 import { Typography } from '@material-ui/core';
 import { Column, ColumnShowLayout, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import DocumentTitle from "./DocumentTitle";
+import DocumentTitle from './DocumentTitle';
 
 const EventShow = props => (
   <Show title={<DocumentTitle />} {...props}>

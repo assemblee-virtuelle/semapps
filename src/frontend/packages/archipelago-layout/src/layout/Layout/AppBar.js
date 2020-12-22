@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Box, Grid, Hidden, makeStyles, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import SearchForm from './SearchForm';
-import ResourceTabs from "../../list/ResourceTabs";
+import ResourceTabs from '../../list/ResourceTabs';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     top: 100,
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    overflow: 'hidden',
+    overflow: 'hidden'
   }
 }));
 
@@ -45,13 +45,7 @@ const AppBar = ({ userMenu, logout }) => {
             </Box>
           </Grid>
         </Grid>
-        <Typography
-          variant="h4"
-          color="primary"
-          className={classes.title}
-          id="react-admin-title"
-          component="h1"
-        />
+        <Typography variant="h4" color="primary" className={classes.title} id="react-admin-title" component="h1" />
       </Container>
     </Box>
   );

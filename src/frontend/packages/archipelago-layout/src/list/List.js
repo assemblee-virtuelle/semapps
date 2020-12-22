@@ -23,11 +23,9 @@ const List = ({ children, ...otherProps }) => {
       classes={{ content: classes.content }}
       {...otherProps}
     >
-      <>
-        {children}
-      </>
+      <>{children}</>
     </RaList>
   );
-}
+};
 
 export default List;

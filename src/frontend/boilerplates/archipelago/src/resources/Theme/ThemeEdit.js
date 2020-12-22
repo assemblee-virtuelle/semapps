@@ -2,7 +2,7 @@ import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
 import { SubjectsInput } from '../../inputs';
-import ThemeTitle from "./ThemeTitle";
+import ThemeTitle from './ThemeTitle';
 
 export const ThemeEdit = props => (
   <Edit title={<ThemeTitle />} {...props}>
