@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslate, getFieldLabelTranslationArgs } from 'react-admin';
 import { Box, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
@@ -13,10 +14,21 @@ const useStyles = makeStyles(() => ({
 
 const RightLabel = ({ label, children, record, resource, source, basePath }) => {
   const classes = useStyles();
+  const translate = useTranslate();
+
   if (!record[source]) return null;
+
   return (
     <Box mb={4}>
-      <Box className={classes.rightLabel}>{label}</Box>
+      <Box className={classes.rightLabel}>
+        {translate(
+          ...getFieldLabelTranslationArgs({
+            label,
+            resource,
+            source
+          })
+        )}
+      </Box>
       <Box m={0}>
         {React.cloneElement(children, {
           record,

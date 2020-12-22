@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslate, getFieldLabelTranslationArgs } from 'react-admin';
 import { Box, Grid, Typography, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
@@ -11,6 +12,8 @@ const useStyles = makeStyles(() => ({
 
 const DetailsList = ({ basePath, children, record, resource }) => {
   const classes = useStyles();
+  const translate = useTranslate();
+
   return (
     <Box>
       {React.Children.map(children, field =>
@@ -20,7 +23,13 @@ const DetailsList = ({ basePath, children, record, resource }) => {
               <Grid container spacing={3} className={classes.line}>
                 <Grid item xs={3}>
                   <Typography color="textSecondary" align="right" variant="body2">
-                    {field.props.label}
+                    {translate(
+                      ...getFieldLabelTranslationArgs({
+                        label: field.props.label,
+                        resource,
+                        source: field.props.source
+                      })
+                    )}
                   </Typography>
                 </Grid>
                 <Grid item xs={9}>
