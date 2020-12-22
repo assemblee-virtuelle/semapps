@@ -14,7 +14,8 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
-    "react-markdown": "^4.3.1"
+    "react-markdown": "^4.3.1",
+    "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
     "react": "^16.13.0",
