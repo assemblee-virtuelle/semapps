@@ -32,8 +32,7 @@ export default {
         'pair:endDate': 'Date de fin',
         'pair:involves': 'Participants',
         'pair:hasTopic': 'Thèmes'
-      },
+      }
     }
   }
-
 };

@@ -28,13 +28,13 @@ export default {
         'pair:comment': 'Courte description',
         'pair:description': 'Description',
         'pair:homePage': 'Site web',
-        'image': 'Logo',
+        image: 'Logo',
         'pair:affiliates': 'Membres',
         'pair:partnerOf': 'Partenaires',
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
         'pair:documentedBy': 'Documents'
-      },
+      }
     }
   }
 };

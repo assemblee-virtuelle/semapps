@@ -6,7 +6,7 @@ export default {
   },
   translations: {
     fr: {
-      name: 'Dossier |||| Dossiers',
+      name: 'Dossier |||| Dossiers'
     }
   }
-}
+};

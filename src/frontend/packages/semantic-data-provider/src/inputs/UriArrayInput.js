@@ -21,6 +21,6 @@ const UriArrayInput = props => {
       }}
     />
   );
-}
+};
 
 export default UriArrayInput;

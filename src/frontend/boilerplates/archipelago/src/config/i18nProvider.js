@@ -1,6 +1,6 @@
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import frenchMessages from 'ra-language-french';
-import * as resources from "../resources";
+import * as resources from '../resources';
 
 const getMessages = lang => ({
   ...frenchMessages,

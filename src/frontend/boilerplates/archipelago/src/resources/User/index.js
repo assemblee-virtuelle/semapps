@@ -26,7 +26,7 @@ export default {
       fields: {
         'pair:firstName': 'Prénom',
         'pair:lastName': 'Nom de famille',
-        'image': 'Photo',
+        image: 'Photo',
         'pair:involvedIn': 'Participe à',
         'pair:affiliatedBy': 'Organisations',
         'pair:offers': 'Compétences',

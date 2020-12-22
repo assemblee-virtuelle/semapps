@@ -27,7 +27,7 @@ const DetailsList = ({ basePath, children, record, resource }) => {
                       ...getFieldLabelTranslationArgs({
                         label: field.props.label,
                         resource,
-                        source: field.props.source,
+                        source: field.props.source
                       })
                     )}
                   </Typography>

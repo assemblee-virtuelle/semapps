@@ -3,8 +3,8 @@ import { Admin, Resource } from 'react-admin';
 import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
 import { authProvider, LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 
-import i18nProvider from "./config/i18nProvider";
-import dataProvider from "./config/dataProvider";
+import i18nProvider from './config/i18nProvider';
+import dataProvider from './config/dataProvider';
 import * as resources from './resources';
 
 const LayoutWithUserMenu = props => <Layout appBar={<AppBar userMenu={<UserMenu />} />} {...props} />;

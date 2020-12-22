@@ -4,7 +4,7 @@ export default {
   },
   translations: {
     fr: {
-      name: 'Sujet |||| Sujets',
+      name: 'Sujet |||| Sujets'
     }
   }
-}
+};

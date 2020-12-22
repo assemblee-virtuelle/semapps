@@ -25,7 +25,7 @@ const RightLabel = ({ label, children, record, resource, source, basePath }) => 
           ...getFieldLabelTranslationArgs({
             label,
             resource,
-            source,
+            source
           })
         )}
       </Box>
