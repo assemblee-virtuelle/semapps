@@ -8,18 +8,18 @@ import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInpu
 export const OrganizationEdit = props => (
   <Edit {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:label" label="Nom" />
-      <TextInput source="pair:comment" label="Courte description" fullWidth />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" fullWidth />
-      <ImageInput source="image" label="Logo" accept="image/*">
+      <TextInput source="pair:label" />
+      <TextInput source="pair:comment" fullWidth />
+      <MarkdownInput multiline source="pair:description" fullWidth />
+      <TextInput source="pair:homePage" fullWidth />
+      <ImageInput source="image" accept="image/*">
         <ImageField source="src" />
       </ImageInput>
-      <UsersInput label="Membres" source="pair:affiliates" />
-      <OrganizationsInput label="Partenaires" source="pair:partnerOf" />
-      <EventsInput label="Participe à" source="pair:involvedIn" />
-      <ThemesInput label="Thèmes" source="pair:hasTopic" />
-      <DocumentsInput label="Documents" source="pair:documentedBy" />
+      <UsersInput source="pair:affiliates" />
+      <OrganizationsInput source="pair:partnerOf" />
+      <EventsInput source="pair:involvedIn" />
+      <ThemesInput source="pair:hasTopic" />
+      <DocumentsInput source="pair:documentedBy" />
     </SimpleForm>
   </Edit>
 );

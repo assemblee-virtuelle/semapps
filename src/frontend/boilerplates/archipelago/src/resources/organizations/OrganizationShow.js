@@ -12,18 +12,18 @@ const OrganizationShow = props => (
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<OrganizationTitle />} image="image">
-          <TextField label="Courte description" source="pair:comment" />
-          <UrlField label="Site web" source="pair:homePage" />
+          <TextField source="pair:comment" />
+          <UrlField source="pair:homePage" />
         </Hero>
         <MarkdownField source="pair:description" addLabel />
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Membres" reference="User" source="pair:affiliates">
+        <UriArrayField reference="User" source="pair:affiliates">
           <GridList xs={6} linkType="show">
             <UserIcon />
           </GridList>
         </UriArrayField>
-        <UriArrayField label="Partenaires" reference="Organization" source="pair:partnerOf">
+        <UriArrayField reference="Organization" source="pair:partnerOf">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
@@ -43,12 +43,12 @@ const OrganizationShow = props => (
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
+        <UriArrayField reference="Theme" source="pair:hasTopic">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Documents" reference="Document" source="pair:documentedBy">
+        <UriArrayField reference="Document" source="pair:documentedBy">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
