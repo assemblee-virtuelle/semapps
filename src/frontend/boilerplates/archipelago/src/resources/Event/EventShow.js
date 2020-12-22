@@ -2,16 +2,13 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, Show, MarkdownField, GridList, UserIcon } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-
-const EventTitle = ({ record }) => {
-  return <span>{record ? record['pair:label'] : ''}</span>;
-};
+import EventTitle from "./EventTitle";
 
 const EventShow = props => (
-  <Show {...props}>
+  <Show title={<EventTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<EventTitle />}>
+        <Hero>
           <TextField source="pair:comment" />
           <DateField source="pair:startDate" showTime />
           <DateField source="pair:endDate" showTime />

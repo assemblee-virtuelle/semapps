@@ -2,16 +2,13 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-
-const ThemeTitle = ({ record }) => {
-  return <span>{record ? record['pair:label'] : ''}</span>;
-};
+import ThemeTitle from "./ThemeTitle";
 
 const ThemeShow = props => (
-  <Show {...props}>
+  <Show title={<ThemeTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<ThemeTitle />}>
+        <Hero>
           <TextField source="pair:comment" />
         </Hero>
         <MarkdownField source="pair:description" />

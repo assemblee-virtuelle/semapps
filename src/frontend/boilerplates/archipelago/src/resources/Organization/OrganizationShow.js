@@ -2,16 +2,13 @@ import React from 'react';
 import { TextField, UrlField, ChipField, SingleFieldList } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-
-const OrganizationTitle = ({ record }) => {
-  return <span>{record ? record['pair:label'] : ''}</span>;
-};
+import OrganizationTitle from "./OrganizationTitle";
 
 const OrganizationShow = props => (
-  <Show {...props}>
+  <Show title={<OrganizationTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<OrganizationTitle />} image="image">
+        <Hero image="image">
           <TextField source="pair:comment" />
           <UrlField source="pair:homePage" />
         </Hero>

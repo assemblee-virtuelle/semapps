@@ -2,16 +2,13 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, Show } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-
-const UserTitle = ({ record }) => {
-  return <span>{record ? `${record['pair:firstName']} ${record['pair:lastName']}` : ''}</span>;
-};
+import UserTitle from "./UserTitle";
 
 const UserShow = props => (
-  <Show {...props}>
+  <Show title={<UserTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero title={<UserTitle />} image="image">
+        <Hero image="image">
           <TextField source="pair:firstName" />
           <TextField source="pair:lastName" />
         </Hero>

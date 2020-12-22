@@ -1,22 +1,15 @@
 import React from 'react';
 import { SingleFieldList, ChipField } from 'react-admin';
+import { Typography } from '@material-ui/core';
 import { Column, ColumnShowLayout, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import { Typography } from '@material-ui/core';
-
-const DocumentTitle = ({ record }) => {
-  return (
-    <Typography variant="h3" color="primary" paragraph>
-      {record ? record['pair:label'] : ''}
-    </Typography>
-  );
-};
+import DocumentTitle from "./DocumentTitle";
 
 const EventShow = props => (
-  <Show {...props}>
+  <Show title={<DocumentTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <DocumentTitle />
+        <Typography variant="h3" color="primary" component="h1" id="react-admin-title" />
         <MarkdownField source="pair:description" />
       </Column>
       <Column xs={12} sm={3} showLabel>
