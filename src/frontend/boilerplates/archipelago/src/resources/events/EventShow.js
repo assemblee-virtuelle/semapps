@@ -12,10 +12,10 @@ const EventShow = props => (
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<EventTitle />}>
-          <TextField label="Courte description" source="pair:comment" />
-          <DateField label="Date de début" source="pair:startDate" showTime />
-          <DateField label="Date de fin" source="pair:endDate" showTime />
-          <UrlField label="Site web" source="pair:aboutPage" />
+          <TextField source="pair:comment" />
+          <DateField source="pair:startDate" showTime />
+          <DateField source="pair:endDate" showTime />
+          <UrlField source="pair:aboutPage" />
         </Hero>
         <MarkdownField source="pair:description" addLabel />
       </Column>
@@ -35,7 +35,7 @@ const EventShow = props => (
             <UserIcon />
           </GridList>
         </UriArrayField>
-        <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
+        <UriArrayField reference="Theme" source="pair:hasTopic">
           <SingleFieldList linkType={false}>
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>

@@ -33,12 +33,12 @@ const ProjectShow = props => (
             <UserIcon />
           </GridList>
         </UriArrayField>
-        <UriArrayField label="Thèmes" reference="Theme" source="pair:hasTopic">
+        <UriArrayField reference="Theme" source="pair:hasTopic">
           <SingleFieldList linkType={false}>
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Documents" reference="Document" source="pair:documentedBy">
+        <UriArrayField reference="Document" source="pair:documentedBy">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>

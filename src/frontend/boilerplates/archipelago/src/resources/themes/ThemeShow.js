@@ -12,7 +12,7 @@ const ThemeShow = props => (
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<ThemeTitle />}>
-          <TextField label="Courte description" source="pair:comment" />
+          <TextField source="pair:comment" />
         </Hero>
         <MarkdownField source="pair:description" addLabel />
       </Column>

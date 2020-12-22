@@ -7,12 +7,12 @@ import { ActorsInput, DocumentsInput } from '../../inputs';
 const ProjectEdit = props => (
   <Edit {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:label" label="Nom" fullWidth />
-      <TextInput source="pair:comment" label="Courte description" fullWidth />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:homePage" label="Site web" fullWidth />
-      <ActorsInput label="Participe" source="pair:involves" />
-      <DocumentsInput label="Documents" source="pair:documentedBy" />
+      <TextInput source="pair:label" fullWidth />
+      <TextInput source="pair:comment" fullWidth />
+      <MarkdownInput multiline source="pair:description" fullWidth />
+      <TextInput source="pair:homePage" fullWidth />
+      <ActorsInput source="pair:involves" />
+      <DocumentsInput source="pair:documentedBy" />
     </SimpleForm>
   </Edit>
 );

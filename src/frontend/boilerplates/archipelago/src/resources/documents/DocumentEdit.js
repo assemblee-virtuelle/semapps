@@ -9,10 +9,10 @@ export const DocumentEdit = props => (
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
-      <ReferenceQuickCreateInput label="Dossier" reference="Folder" source="pair:containedIn">
+      <ReferenceQuickCreateInput reference="Folder" source="pair:containedIn">
         <SelectInput optionText="pair:label" />
       </ReferenceQuickCreateInput>
-      <SubjectsInput label="Sujet" source="pair:documents" />
+      <SubjectsInput source="pair:documents" />
     </SimpleForm>
   </Edit>
 );

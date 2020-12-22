@@ -12,12 +12,12 @@ const UserShow = props => (
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero title={<UserTitle />} image="image">
-          <TextField label="Prénom" source="pair:firstName" />
-          <TextField label="Nom de famille" source="pair:lastName" />
+          <TextField source="pair:firstName" />
+          <TextField source="pair:lastName" />
         </Hero>
       </Column>
       <Column xs={12} sm={3} showLabel>
-        <UriArrayField label="Organisations" reference="Organization" source="pair:affiliatedBy">
+        <UriArrayField reference="Organization" source="pair:affiliatedBy">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
@@ -37,12 +37,12 @@ const UserShow = props => (
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Intérêts" reference="Theme" source="pair:hasTopic">
+        <UriArrayField reference="Theme" source="pair:hasTopic">
           <SingleFieldList>
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Compétences" reference="Skill" source="pair:offers">
+        <UriArrayField reference="Skill" source="pair:offers">
           <SingleFieldList linkType={false}>
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>

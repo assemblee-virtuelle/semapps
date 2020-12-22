@@ -6,8 +6,8 @@ import { SubjectsInput } from '../../inputs';
 export const ThemeEdit = props => (
   <Edit {...props}>
     <SimpleForm>
-      <TextInput source="pair:label" label="Titre" fullWidth />
-      <SubjectsInput label="Sujets" source="pair:topicOf" />
+      <TextInput source="pair:label" fullWidth />
+      <SubjectsInput source="pair:topicOf" />
     </SimpleForm>
   </Edit>
 );

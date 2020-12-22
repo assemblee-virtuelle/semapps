@@ -7,15 +7,15 @@ import { ImageField } from '@semapps/semantic-data-provider';
 export const UserEdit = props => (
   <Edit {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:firstName" label="Prénom" fullWidth />
-      <TextInput source="pair:lastName" label="Nom de famille" fullWidth />
-      <ImageInput source="image" label="Photo" accept="image/*">
+      <TextInput source="pair:firstName" fullWidth />
+      <TextInput source="pair:lastName" fullWidth />
+      <ImageInput source="image" accept="image/*">
         <ImageField source="src" />
       </ImageInput>
-      <ActivitiesInput label="Participe à" source="pair:involvedIn" />
-      <OrganizationsInput label="Organisations" source="pair:affiliatedBy" />
-      <SkillsInput label="Compétences" source="pair:offers" />
-      <ThemesInput label="Intérêts" source="pair:hasTopic" />
+      <ActivitiesInput source="pair:involvedIn" />
+      <OrganizationsInput source="pair:affiliatedBy" />
+      <SkillsInput source="pair:offers" />
+      <ThemesInput source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );

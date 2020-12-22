@@ -7,14 +7,14 @@ import { ActorsInput, ThemesInput } from '../../inputs';
 const EventEdit = props => (
   <Edit {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:label" label="Nom" fullWidth />
-      <TextInput source="pair:comment" label="Courte description" fullWidth />
-      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
-      <TextInput source="pair:aboutPage" label="Site web" fullWidth />
-      <DateTimeInput source="pair:startDate" label="Date de début" fullWidth />
-      <DateTimeInput source="pair:endDate" label="Date de fin" fullWidth />
-      <ActorsInput label="Participe" source="pair:involves" />
-      <ThemesInput label="Thèmes" source="pair:hasTopic" />
+      <TextInput source="pair:label" fullWidth />
+      <TextInput source="pair:comment" fullWidth />
+      <MarkdownInput multiline source="pair:description" fullWidth />
+      <TextInput source="pair:aboutPage" fullWidth />
+      <DateTimeInput source="pair:startDate" fullWidth />
+      <DateTimeInput source="pair:endDate" fullWidth />
+      <ActorsInput source="pair:involves" />
+      <ThemesInput source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );

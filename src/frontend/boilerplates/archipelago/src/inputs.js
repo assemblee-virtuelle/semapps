@@ -1,14 +1,14 @@
 import React from 'react';
 import { UriArrayInput } from '@semapps/semantic-data-provider';
 import { AutocompleteArrayInput } from 'react-admin';
-import resources from './config/resources';
+import * as resources from './resources';
 
 const selectOptionTextByType = resource => {
   if (resource) {
     const matchingResourceKey = Object.keys(resources).find(resourceKey => {
-      if (resources[resourceKey].types.length === 1) {
+      if (resources[resourceKey].dataModel.types.length === 1) {
         if (
-          resources[resourceKey].types[0] === resource['@type'] ||
+          resources[resourceKey].dataModel.types[0] === resource['@type'] ||
           (Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].types[0]))
         ) {
           return true;
@@ -17,10 +17,10 @@ const selectOptionTextByType = resource => {
       return false;
     });
 
-    if (Array.isArray(resources[matchingResourceKey].slugField)) {
-      return resources[matchingResourceKey].slugField.map(field => resource[field]).join(' ');
+    if (Array.isArray(resources[matchingResourceKey].dataModel.slugField)) {
+      return resources[matchingResourceKey].dataModel.slugField.map(field => resource[field]).join(' ');
     } else {
-      return resource[resources[matchingResourceKey].slugField];
+      return resource[resources[matchingResourceKey].dataModel.slugField];
     }
   } else {
     return null;
