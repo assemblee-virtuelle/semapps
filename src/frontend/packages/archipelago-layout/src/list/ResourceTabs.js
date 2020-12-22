@@ -7,6 +7,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 const useStyles = makeStyles(theme => ({
   tab: {
     minWidth: 55
+  },
+  flexContainer: {
+    display: 'block'
   }
 }));
 
@@ -28,8 +31,8 @@ const ResourceTabs = () => {
       value={currentResource}
       onChange={(_, value) => history.push('/' + value)}
       indicatorColor="primary"
-      textColor="primary"
-      scrollButtons="auto"
+      textColor="black"
+      classes={{ flexContainer: classes.flexContainer }}
     >
       {resources
         .filter(resource => resource.hasList)
