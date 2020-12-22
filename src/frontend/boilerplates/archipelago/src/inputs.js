@@ -9,7 +9,7 @@ const selectOptionTextByType = resource => {
       if (resources[resourceKey].dataModel.types.length === 1) {
         if (
           resources[resourceKey].dataModel.types[0] === resource['@type'] ||
-          (Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].types[0]))
+          (Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].dataModel.types[0]))
         ) {
           return true;
         }

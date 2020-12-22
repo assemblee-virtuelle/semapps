@@ -15,7 +15,7 @@ const ProjectShow = props => (
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
         </Hero>
-        <MarkdownField source="pair:description" addLabel />
+        <MarkdownField source="pair:description" />
       </Column>
       <Column xs={12} sm={3} showLabel>
         <UriArrayField

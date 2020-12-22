@@ -17,7 +17,7 @@ const EventShow = props => (
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <DocumentTitle />
-        <MarkdownField source="pair:description" addLabel />
+        <MarkdownField source="pair:description" />
       </Column>
       <Column xs={12} sm={3} showLabel>
         <UriArrayField

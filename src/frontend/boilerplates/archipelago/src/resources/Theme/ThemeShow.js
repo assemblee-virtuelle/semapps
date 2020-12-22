@@ -14,7 +14,7 @@ const ThemeShow = props => (
         <Hero title={<ThemeTitle />}>
           <TextField source="pair:comment" />
         </Hero>
-        <MarkdownField source="pair:description" addLabel />
+        <MarkdownField source="pair:description" />
       </Column>
       <Column xs={12} sm={3} showLabel>
         <UriArrayField

@@ -15,7 +15,7 @@ const OrganizationShow = props => (
           <TextField source="pair:comment" />
           <UrlField source="pair:homePage" />
         </Hero>
-        <MarkdownField source="pair:description" addLabel />
+        <MarkdownField source="pair:description" />
       </Column>
       <Column xs={12} sm={3} showLabel>
         <UriArrayField reference="User" source="pair:affiliates">

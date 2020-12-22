@@ -3,7 +3,11 @@ import { Typography, Box, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(() => ({
   parent: {
-    position: 'relative'
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    borderRadius: '50%'
   },
   child: {
     position: 'absolute',
@@ -26,7 +30,7 @@ const UserIcon = ({ record }) => {
   const fullName = record ? record['pair:firstName'] + ' ' + record['pair:lastName'] : '';
   return (
     <Box className={classes.parent}>
-      <img src={process.env.PUBLIC_URL + '/unknown-user.png'} style={{ width: '100%' }} alt={fullName} />
+      <img src={record && record['image'] || process.env.PUBLIC_URL + '/unknown-user.png'} className={classes.image} alt={fullName} />
       <Box bgcolor="secondary.main" className={classes.child} borderRadius={7}>
         <Typography align="center" className={classes.caption} noWrap>
           {fullName}
