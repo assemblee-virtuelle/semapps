@@ -11,7 +11,9 @@ module.exports = {
     ontologies: [],
     containers: ['/resources'],
     defaultAccept: 'text/turtle',
-    defaultJsonContext: null
+    defaultJsonContext: null,
+    allowAnonymousEdit: false,
+    allowAnonymousDelete: false
   },
   async created() {
     const { baseUrl, ontologies, containers, defaultAccept, defaultJsonContext } = this.schema.settings;
@@ -45,7 +47,7 @@ module.exports = {
       let routes = [];
       // Associate all containers in settings with the LDP service
       for (let containerPath of this.settings.containers) {
-        routes.push(...getContainerRoutes(urlJoin(this.settings.baseUrl, containerPath)));
+        routes.push(...getContainerRoutes(urlJoin(this.settings.baseUrl, containerPath), null, this.settings.allowAnonymousEdit, this.settings.allowAnonymousDelete));
       }
       return routes;
     }
