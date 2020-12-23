@@ -18,13 +18,15 @@ const ProjectList = props => {
         content={record => (
           <>
             <Typography variant="subtitle1">{record['pair:label']}</Typography>
-            <Typography variant="body2" color="textSecondary" component="p">{record['pair:comment']}</Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {record['pair:comment']}
+            </Typography>
           </>
         )}
         linkType="show"
       />
     </List>
   );
-}
+};
 
 export default ProjectList;

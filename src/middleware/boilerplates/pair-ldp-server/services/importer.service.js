@@ -17,10 +17,7 @@ module.exports = {
   mixins: [ImporterService],
   settings: {
     importsDir: path.resolve(__dirname, '../imports'),
-    allowedActions: [
-      'createProject',
-      'createTheme'
-    ]
+    allowedActions: ['createProject', 'createTheme']
   },
   dependencies: ['ldp'],
   actions: {
@@ -29,11 +26,11 @@ module.exports = {
 
       await ctx.call('ldp.resource.post', {
         resource: {
-          '@context':{
-             pair: 'http://virtual-assembly.org/ontologies/pair#'
-           },
+          '@context': {
+            pair: 'http://virtual-assembly.org/ontologies/pair#'
+          },
           '@type': 'pair:Theme',
-          'pair:label': themeName,
+          'pair:label': themeName
         },
         slug: slugify(themeName, { lower: true }),
         containerUri: urlJoin(CONFIG.HOME_URL, 'themes'),
@@ -45,8 +42,8 @@ module.exports = {
     async createProject(ctx) {
       const { data } = ctx.params;
 
-      const themes = data.tag.map(tag => urlJoin(CONFIG.HOME_URL, 'themes', slugify(tag.name, {lower: true})));
-      const status = urlJoin(CONFIG.HOME_URL, 'status', slugify(data.status, {lower: true}));
+      const themes = data.tag.map(tag => urlJoin(CONFIG.HOME_URL, 'themes', slugify(tag.name, { lower: true })));
+      const status = urlJoin(CONFIG.HOME_URL, 'status', slugify(data.status, { lower: true }));
 
       await ctx.call('ldp.resource.post', {
         resource: {
