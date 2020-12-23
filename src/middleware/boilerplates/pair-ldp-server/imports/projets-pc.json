@@ -1,0 +1,815 @@
+[
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "AtelierDeReparationParticipatif",
+    "@type": "Project",
+    "username": "AtelierDeReparationParticipatif",
+    "name": "Atelier de Réparation Participatif",
+    "content": "Petit bricolage, couture<h2>Moyens</h2>action bénévole ouverte à tout le monde\ntous les deuxièmes samedis du mois<h2>Besoins</h2>recherche réparateurs(-rices) et couturièr(es)",
+    "location": {
+      "@type": "Place",
+      "name": "19 Rue du Professeur Ramon",
+      "latitude": 49.3023554,
+      "longitude": 2.6011634
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Économie"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/AtelierDeReparationParticipatif_flyer-repair-cafe-2-sem-2019-1-.jpg",
+    "published": "2018-02-19 12:39:40",
+    "updated": "2020-02-03 16:29:31"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "BalDesColibris",
+    "@type": "Project",
+    "username": "BalDesColibris",
+    "name": "Bal des Colibris",
+    "content": "L'idée d'un bal des Colibris est d'allier la convivialité d'un [[http://folk-lab.fr/le-bal-folk/quest-ce-que-le-bal-folk/ bal folk]] avec les valeurs de partage qui sont celles du mouvement Colibris. Cela permet de décloisonner des milieux, afin de faire se rencontrer des amateurs de danse folk avec des personnes concernées par l'avenir de la société.\nUn bal des Colibris a eu lieu à plusieurs reprises à Versailles. L'idée serait de faire la même chose dans la région creilloise, en mettant peut-être plus en avant ce que fait le mouvement Colibris dans la région.<h2>Moyens</h2>Trouvé deux profs de danse folk à Senlis qui seraient prêt à donner une initiation aux bals folk.\nGabriel de Compiègne peut trouver une sono...\nPlusieurs pistes sont étudiées pour des groupes.<h2>Besoins</h2>Il manque une salle:\n- Pouvant contenir 100 personnes\n- Avec un sol où il n'est pas trop difficile de danser (idéalement parquet, en tout cas éviter le béton ou l'herbe)\n- Si possible accessible en transports communs\n- Gratuite ou au moins pas trop chère",
+    "location": {
+      "@type": "Place",
+      "name": "Chantilly - Compiègne",
+      "latitude": 49.1917139,
+      "longitude": 2.4639132
+    },
+    "status": "En réflexion",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/BalDesColibris_baldescolibris_vignette_testaction_d701388-2000x1200.jpg",
+    "published": "2019-08-23 18:30:15",
+    "updated": "2019-11-26 16:02:54"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CompostageCleEnMain",
+    "@type": "Project",
+    "username": "CompostageCleEnMain",
+    "name": "Compostage clé en main ",
+    "content": "Proposer un service de compostage clé en main à partir de composteurs innovants en priorité à  destination du secteur de la restauration collective privée.<h2>Moyens</h2>L'installation du prototype au Séson à Nogent sur Oise a été refusée par la société d'exploitation du Sarcus (BGE). Nous recherchons un autre lieu.<h2>Besoins</h2>Recherche un restaurant pour accueillir le prototype.",
+    "location": {
+      "@type": "Place",
+      "name": "Sud de l'Oise",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En sommeil",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2018-02-19 21:35:02",
+    "updated": "2019-03-08 15:38:49"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ConstruireUneMaisonDeLaPaix",
+    "@type": "Project",
+    "username": "ConstruireUneMaisonDeLaPaix",
+    "name": "Créer une maison de la Paix",
+    "content": "Apprendre à  désamorcer la violence dûe à  l'ignorance, la précarité,  l'isolement, l'exclusion, en proposant: \n- Un lieu d'accueil économiques et  social\n- Une bibliothèque médiathèque.\n- Des ateliers de soutien scolaire, d'alphabétisation et des activités artistiques et artisanales. \n- Un lieu de silence \n- Un apprentissage serein du débat<h2>Moyens</h2>Création de l'association loi 1901 \"Bâtir la Paix\"\nContacts avec la mairie de Compiègne pour obtenir un lieu<h2>Besoins</h2>Diffusion du projet",
+    "location": {
+      "@type": "Place",
+      "name": "Bassin Creillois",
+      "latitude": 49.265295401617145,
+      "longitude": 2.472455029532461
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/ConstruireUneMaisonDeLaPaix_image-maisons-de-la-paix-1.png",
+    "url": "https://www.maisonsdelapaix.fr",
+    "published": "2019-06-11 15:27:24",
+    "updated": "2019-11-25 12:49:19"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreationDUnEspacePotagerALaCommunauteD",
+    "@type": "Project",
+    "username": "CreationDUnEspacePotagerALaCommunauteD",
+    "name": "Créer un espace potager à la Communauté Emmaüs d'Erquery",
+    "content": "Faire évoluer le jardin potager en permaculture. \nAméliorer la qualité des menus de la communauté via la production de nos légumes\nEn faire un lieu de partage et de sensibilisation à la philosophie de la permaculture\nVendre une partie de la récolte à la clientèle<h2>Moyens</h2>Installation de serres\nformation à la permaculture\ninstallation d'un stand de vente et d'informations\nconstruction d'une géode pour accueillir des manifestations\nInstallation d'une ruche<h2>Besoins</h2>Organiser un Week end de la permaculture : soirée thématique le vendredi 18 MAI à 18H30 sur al philosophie de la permaculture avec Christophe BICHON en intervenant.\nJOURNEE PERMACDULTURE le SAMEDI 19 MAI : ateliers palettes, troc aux plantes, stands associatifs, producteurs locaux.  ",
+    "location": {
+      "@type": "Place",
+      "name": "Communauté Emmaüs (Erquery)",
+      "latitude": 49.409825,
+      "longitude": 2.4571125
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2017-11-12 15:42:22",
+    "updated": "2018-02-20 13:25:15"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreationUnCarreDePlantesAromatiquesSurUn",
+    "@type": "Project",
+    "username": "CreationUnCarreDePlantesAromatiquesSurUn",
+    "name": "Développer un carré de plantes aromatiques sur la pelouse d'immeubles du quartier Lefébure",
+    "content": "développer l'autonomie des habitants et les responsabiliser face à la consommation de produits courants tel que persil, menthe, thym et leur permettre d'imaginer un espace personnel de création en jardinerie<h2>Moyens</h2>- se mettre en lien avec la municipalité pour les moyens techniques : terre et jardinières, puis laboure de plate-bandes et utilisation de produits sains\n- information auprès des habitants par l'intermédiaire de bénéficiaires de l'épicerie sociale\n\n<h2>Besoins</h2>- besoin de plans de salades, tomates, fraisiers....\n- de bonne terre / compost\n- de bénévoles intéressés par l'action\n",
+    "location": {
+      "@type": "Place",
+      "name": "Chantilly",
+      "latitude": 49.1939579,
+      "longitude": 2.4632567
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2018-03-25 10:38:33",
+    "updated": "2019-02-15 16:25:10"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreerUnCercleActif",
+    "@type": "Project",
+    "username": "CreerUnCercleActif",
+    "name": "Créer un cercle actif",
+    "content": "La création d'un Cercle Actif, intermédiaire entre le groupe local et le Cercle Coeur, donne la possibilité de participer de manière plus active au sein du groupe local, sans forcément devoir s'engager dans le Cercle Cœur.\nIl y aura la possibilité de participer à des réunions du Cercle Cœur, de contribuer à l'organisation des évènements, d'apporter des idées ou de l'aide concrète... Tout cela de façon libre par rapport à sa propre disponibilité, ses envies et ses compétences !<h2>Besoins</h2>Vous ! :-)",
+    "location": {
+      "@type": "Place",
+      "name": "Région de Creil",
+      "latitude": 49.26421999734763,
+      "longitude": 2.4774688450636133
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/CreerUnCercleActif_animal-avian-beak-bird-349758.jpg",
+    "published": "2019-11-24 19:07:35",
+    "updated": "2019-12-02 16:27:22"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreerUnCercleCoeurGroupeLocal",
+    "@type": "Project",
+    "username": "CreerUnCercleCoeurGroupeLocal",
+    "name": "Faire vivre le cercle coeur du Groupe Local 60 Pays Creillois",
+    "content": "Etre relais local de l'association Colibris sur le territoire du \"Pays Creilois\"\nIncarner la mission de Colibris : Inspirer, Relier et Soutenir les citoyen.nes\nDonner une dynamique de vie, un rythme, au Groupe Local<h2>Moyens</h2>Inclure de nouvelles personnes dans le cercle Coeur pour assurer son renouvellement au fil du temps.\nVeiller à ce que l'activité du Groupe Local soit en cohérence avec l'Ethique du colibri et les autres documents de référence de l'association\nOrganiser des événements locaux pour réunir différents types de public et faciliter la mise en liens\nAssurer la communication du Groupe Local par le biais de l'adresse courriel et du wiki\nDiffuser la Frise des actions des citoyen.nes ayant témoigné de leurs actions lors des réunions trimestrielles<h2>Besoins</h2>- Assurer le renouvellement progressif des membres du cercle coeur en incluant de nouvelles personnes\n- Trouver des salles pour organiser les réunions trimestrielles (capacité de 100 personnes, gratuite) **> merci de nous contacter pour cela à l'adresse courriel payscreillois(at)colibris-lemouvement.org ou de contacter l'un des membres du cercle coeur**",
+    "location": {
+      "@type": "Place",
+      "name": "De Clermont Ã  Chantilly, de Pont-Sainte-Maxence Ã  Mouy",
+      "latitude": 49.301509010801645,
+      "longitude": 2.492523193359375
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "published": "2019-03-07 22:29:46",
+    "updated": "2019-06-27 13:27:33"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreerUnReseauDeColibrisSurLeCompiegnois",
+    "@type": "Project",
+    "username": "CreerUnReseauDeColibrisSurLeCompiegnois",
+    "name": "Créer un réseau de colibris sur le Compiégnois",
+    "content": "Nous sommes des porteurs d’actions et des associations du territoire Compiégnois œuvrant pour une société plus respectueuse de l’humain et de la nature. \nNous sommes inspirés par le Mouvement Colibris qui prend appui sur la charte pour la Terre et l'Humanisme et sur l’Ethique du Colibri. Nous partageons les piliers de sa mission – Inspirer, relier et soutenir – sans lien officiel avec lui. \nNous restons ouverts cependant à la création d’un Groupe Local Colibris tout en favorisant la coopération inter-associative et la co-construction du réseau par ces participants. <h2>Moyens</h2>Groupe de coordination ouvert",
+    "location": {
+      "@type": "Place",
+      "name": "Compiègne",
+      "latitude": 49.4179497,
+      "longitude": 2.8263171
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/CreerUnReseauDeColibrisSurLeCompiegnois_logo-rcc.jpg",
+    "published": "2018-09-24 20:50:01",
+    "updated": "2019-04-20 04:16:46"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "CreerUneFermeMaraichereEnPermacultureLie",
+    "@type": "Project",
+    "username": "CreerUneFermeMaraichereEnPermacultureLie",
+    "name": "Créer une ferme maraîchère en permaculture, lieu d'insertion professionnelle, sur le bassin creillois",
+    "content": "Promouvoir la permaculture à travers la création d’une nouvelle ferme maraîchère dans le secteur Sud Oise\nCréer des emplois durables et favoriser le retour à l'emploi de personnes en difficulté \nMettre en œuvre des activités dans le respect de la personne et de l'environnement, notamment au niveau des modes de culture, du choix des légumes et des fruits cultivés, des déplacements générés par le personnel et par la distribution des produit\nFavoriser l’utilisation d’outils informatiques libres de droit\nCréer du lien social dans le voisinage étendu de la ferme\nAméliorer la santé des habitants <h2>Moyens</h2>Création le  2 02 2018 d'une Association :\n«Pour une Nouvelle Ferme en Permaculture dans le Sud Oise»  \nSiège social : 7 rue Chateaubriand 60180 Nogent sur Oise<h2>Besoins</h2>Des Terres à cultiver\nDu bâti\nUn Chef de culture formé et expérimenté en Permaculture\nUn Animateur-Formateur en Insertion sociale et professionnelle\nDes bénévoles pour les chantiers et actions à venir\nDes moyens financiers",
+    "location": {
+      "@type": "Place",
+      "name": "Bassin creillois",
+      "latitude": 49.28348390950993,
+      "longitude": 2.4506378173828125
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2017-07-11 14:24:18",
+    "updated": "2018-02-04 16:18:01"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "EpicerieSolidaireAssociative",
+    "@type": "Project",
+    "username": "EpicerieSolidaireAssociative",
+    "name": "Supermarché Coopératif et Participatif",
+    "content": "- Permettre au plus grand nombre, malgré des ressources financières qui diminuent, d'accéder Ã  des produits de qualité, de saison, issus de l'agriculture locale, bio et raisonnée\n- Éduquer et sensibiliser à un mode de vie raisonnée et éco-responsable\n- Créer de la mixité sociale grâce au local où il sera possible également d'échanger et de discuter\n- Faire un lieu de vente permanent pour les agriculteurs\n- Faciliter l'accès aux produits locaux pour les bénéficiaires\n- Transformer et réutiliser les produits non vendus périssables<h2>Moyens</h2>- Créer le réseau « agriculteurs »\n- Trouver un local dans le périmètre du bassin creillois\n- Communiquer pour développer les potentiels coopérateurs sur le bassin creillois et les environs\n- Démarcher les communautés de commune (expertises de compétences, financements, partenariat)\n- Trouver des fonds d'investissements<h2>Besoins</h2>- Humains : compétences juridiques / financières / fiscales / graphiste-webdesigner / commercial-vendeur\n- Matériel : supports rayons, étagères, tapis roulant, caisse...\n- Réflexions sur le statut de l'épicerie : SCOP, SCIC ou association",
+    "location": {
+      "@type": "Place",
+      "name": "Creil et alentours",
+      "latitude": 49.26640436550239,
+      "longitude": 2.4604225158691406
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/EpicerieSolidaireAssociative_52313776_843594462641634_1353871943371063296_n.png",
+    "published": "2018-09-19 19:06:17",
+    "updated": "2019-04-06 20:40:17"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "FaireComprendreLesEffetsDesOndesMobileWi",
+    "@type": "Project",
+    "username": "FaireComprendreLesEffetsDesOndesMobileWi",
+    "name": "Faire comprendre les effets des ondes mobile/wifi sur le vivant",
+    "content": "Faire comprendre les effets des ondes mobile/wifi sur le vivant",
+    "location": {
+      "@type": "Place",
+      "name": "Région de Creil",
+      "latitude": 49.2607914,
+      "longitude": 2.4733771
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Énergie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Habitat"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/FaireComprendreLesEffetsDesOndesMobileWi_ondes-electromagnetiques-loi-jpg-1058915-jpg_985046_660x281.jpg",
+    "published": "2019-11-25 13:01:52",
+    "updated": "2019-11-26 17:08:30"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "FaireVivreDesCerclesDeParoleDansUnZome",
+    "@type": "Project",
+    "username": "FaireVivreDesCerclesDeParoleDansUnZome",
+    "name": "Faire vivre des cercles de parole dans un zome",
+    "content": "Claire dispose d'un zome qu'elle peut mettre à disposition pour organiser des événements dans un cadre naturel et intime. Plusieurs cercles de parole y ont été organisé, mais pour que la dynamique prenne, il faudrait qu'un petit groupe commence à se réunir là, en parlant des thèmes qui leur tient à coeur.",
+    "location": {
+      "@type": "Place",
+      "name": "Pont-Sainte-Maxence",
+      "latitude": 49.3098712,
+      "longitude": 2.6028188
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/FaireVivreDesCerclesDeParoleDansUnZome_capture-decran-de-2019-11-25-12-46-32.png",
+    "published": "2019-11-25 12:48:16",
+    "updated": "2019-11-26 17:05:45"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "FamillesADechetsPositifs",
+    "@type": "Project",
+    "username": "FamillesADechetsPositifs",
+    "name": "Familles à déchets positifs",
+    "content": "Se réunir de temps en temps pour échanger autour des déchets, de nos trucs et astuces pour les réduire.\nMutualiser nos moyens pour éviter le gaspillage et réduire notre impact de société en matière de déchets.\nS'organiser entre familles qui ont un composteur et celles qui n'en ont pas.<h2>Besoins</h2>Trouver d'autres personnes / familles avec et sans composteur pour se réunir une première fois.",
+    "location": {
+      "@type": "Place",
+      "name": "Région de Creil",
+      "latitude": 49.2607914,
+      "longitude": 2.4733771
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Énergie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Habitat"
+      }
+    ],
+    "published": "2019-11-25 13:07:39",
+    "updated": "2019-12-14 08:30:35"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "HabitatParticipatifDansLeBassinCreillois",
+    "@type": "Project",
+    "username": "HabitatParticipatifDansLeBassinCreillois",
+    "name": "Habitat participatif dans le bassin creillois",
+    "content": "Construire un habitat participatif dans le bassin creillois<h2>Moyens</h2>- Création de l'association CREMONNOVI\n- Etablissement d'une charte\n- Participation à des évènements publics : forum des associations,...\n- Visites d'habitat participatif.<h2>Besoins</h2>- Recherche d'un foncier sur Nogent-sur-Oise,\n- Élargissement du groupe futurs habitants",
+    "location": {
+      "@type": "Place",
+      "name": "Nogent-sur-Oise",
+      "latitude": 49.278875814976544,
+      "longitude": 2.465000727097504
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Énergie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Habitat"
+      }
+    ],
+    "published": "2018-04-25 10:33:47",
+    "updated": "2019-03-13 21:56:15"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "HeterraAssociationDePromotionDeLInoovati",
+    "@type": "Project",
+    "username": "HeterraAssociationDePromotionDeLInoovati",
+    "name": "Association Heterra : promotion de l'innovation en matériaux et recyclage",
+    "content": "L'objectif est d'utiliser les compétences de plusieurs personnes de l'association, pour **promouvoir et mettre en relation des acteurs impliqués dans la ré-utilisation de déchets ou l'utilisation de matériaux éco-innovants**, pour augmenter les chances de réussite de différents projets avec un impact environnemental positif.<h2>Moyens</h2>**Expertise et connaissances en matériaux et chimie**, mise à la disposition des acteurs identifiés pour aider à trouver des débouchés ou des nouvelles idées de développement (contacts déjà lancés : utilisation innovante d'une plant invasive, de textiles à base d'orties, de mégots de cigarettes recyclés, de dépollution des sols par les plantes, extension du concept de lampe à gravité...).<h2>Besoins</h2>Création à venir, recherche de partenaires ",
+    "location": {
+      "@type": "Place",
+      "name": "137 rue du Bois d'Agnetz",
+      "latitude": 49.2635045,
+      "longitude": 2.4737043
+    },
+    "status": "En réflexion",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Économie"
+      }
+    ],
+    "published": "2018-02-24 10:56:31",
+    "updated": "2019-03-21 09:39:51"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "InstallerDesBacsDePlantesAromatiquesDevan",
+    "@type": "Project",
+    "username": "InstallerDesBacsDePlantesAromatiquesDevan",
+    "name": "Installer des bacs de plantes aromatiques devant chez soi avec des bacs en palettes recyclés",
+    "content": "**Sensibiliser au partage et créer du lien avec ses voisin.e.s**, autour de soi, sur le principe des incroyables comestibles à partir de bacs fait en palettes recyclées.\n**Créer un réseau** sur le pays creillois en mutualisant nos expériences. \n**Donner envie de participer à de nouvelles personnes** hors colibris et monde de la transition.<h2>Moyens</h2>**Matériel :**\nBacs volontairement fabriqués à partir de palettes en bois recyclées. \nAu départ, en lien avec les compagnons Emmaüs d'Erquery par-rapport au savoir faire qu'ils ont voulu à un moment développer sur ce créneau.\nAu final, bacs réalisés par le voisin d'en face de Cyrille à Neuilly-sous-Clermont. Il développait ses propres savoirs-faire sans que cela ne se sache vraiment.\n**Lien sociétal :**\nAffichage, et sens du message affiché > fiche pratique en cours de réalisation.<h2>Besoins</h2>Pas de besoin matériel, juste envie d'essaimer et de partager nos expériences.",
+    "location": {
+      "@type": "Place",
+      "name": "Partout",
+      "latitude": 49.35476206964823,
+      "longitude": 2.4042892456054688
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/InstallerDesBacsDePlantesAromatiquesDevan_unadjustednonraw_thumb_7f8.jpg",
+    "published": "2018-11-13 14:49:48",
+    "updated": "2019-05-28 08:36:32"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "JardinPartage2",
+    "@type": "Project",
+    "username": "JardinPartage2",
+    "name": "Jardin partagé à Gouvieux",
+    "content": "Expérimentations en permaculture: nous jardinons ensemble pour tous\nActions collectives\nLieu de partage\nÉvénements festifs <h2>Moyens</h2>prÃªt d'un terrain par un particulier. une charte, collectif en gouvernance partage, reunions mensuelles, communication par whatsapp essentiellement, mails en complement\nune cagnotte pour les depenses incompressibles. do it your self \" le plus possible, recuperation de materiaux. <h2>Besoins</h2> outils de jardinage, bidons pour recuperer l'eau de pluie",
+    "location": {
+      "@type": "Place",
+      "name": "Gouvieux",
+      "latitude": 49.1902,
+      "longitude": 2.41521
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2018-06-23 17:07:14",
+    "updated": "2019-02-17 23:27:40"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "JardinsPartagesEnAgroecologie",
+    "@type": "Project",
+    "username": "JardinsPartagesEnAgroecologie",
+    "name": "Jardins partagés à  Nogent-sur-Oise",
+    "content": "Favoriser la pratique du jardinage, respectueux des personnes et de l'environnement, en milieu urbain\nCréer du lien social entre les habitants de pratiques et cultures différentes<h2>Moyens</h2>Prêt d'un terrain de 1200m2 par un habitants du quartier\nMise en commun des outils et matériaux nécessaires pour cette activité\nPartage des semis et plans\nTravaux communs un fois par mois (1er samedi ) pour l'entretien et les aménagements collectifs<h2>Besoins</h2>Nous avons 2 ou 3 parcelles pour accueillir de nouveaux jardiniers ",
+    "location": {
+      "@type": "Place",
+      "name": "Rue Jean JAURES",
+      "latitude": 49.2775001,
+      "longitude": 2.4663799
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2018-01-08 09:41:46",
+    "updated": "2018-12-20 10:09:07"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "LancerUnGroupeChantillyEnTransition",
+    "@type": "Project",
+    "username": "LancerUnGroupeChantillyEnTransition",
+    "name": "Lancer un groupe Chantilly en Transition",
+    "content": "Lancer un groupe Chantilly en Transition",
+    "location": {
+      "@type": "Place",
+      "name": "Chantilly",
+      "latitude": 49.1923042,
+      "longitude": 2.46575
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/LancerUnGroupeChantillyEnTransition_ee7c8edcde009957457b5a5064e62b65-1522063146.jpg",
+    "published": "2019-11-25 13:31:20",
+    "updated": "2019-11-26 17:04:40"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "LectureDeRue",
+    "@type": "Project",
+    "username": "LectureDeRue",
+    "name": "Lecture de rue ",
+    "content": "Lire des albums en plein air aux  des enfants au cœur de la citédu Plateau Rouher de Creil.\nCréer des liens de confiance avec les enfants (et leurs parents) faire de la médiation autour du livre et faire connaitre la bibliothèque de quartier.\n<h2>Moyens</h2>Les lectures se déroulent en plein air tous les mercredis hors vacances scolaires, à  partir du 28 avril 2016 de 15 h 45 à  17 h. En hiver, ou par mauvais temps elles se poursuivent dans le hall de la Maison Creilloise des Associations.\nCette action s'inspire des bibliothèques de rue développées par ATD quart monde, qui proposent des rendez vous hebdomadaires au cœur des cités.",
+    "location": {
+      "@type": "Place",
+      "name": "Plateau Rouher de Creil",
+      "latitude": 49.25077560316286,
+      "longitude": 2.469305992126465
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "published": "2018-07-04 11:33:34",
+    "updated": "2019-03-08 15:45:00"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "LesExplorateursEcoleAlterntiveEtNaturelle",
+    "@type": "Project",
+    "username": "LesExplorateursEcoleAlterntiveEtNaturelle",
+    "name": "Les Explorateurs, école alternative et nature",
+    "content": "Création d'une école alternative et nature, pour les enfants de 3 à 11 ans.\nDeux classes prévues, l'une pour les 3-6 ans en pédagogie Montessori et l'autre pour les 6-11 ans en pédagogie Freinet.\nActivités pour les enfants avec un jardin en permaculture, des animaux, un accompagnement en techniques de respiration (Rebirth) et zoothérapie, avec une forte implication des parents demandée (association des parents d'élèves).\nOuverture visée 09/2018 avec 30 à 45 enfants.<h2>Moyens</h2>Trois enseignantes formées en pédagogie Freinet et une (pour le moment) formée en pédagogie Montessori pour les 3-6 ans.\nMatériel Montessori déjà largement disponible.\nMais il manque le local.<h2>Besoins</h2>Recherche un local sur le Clermontois, en location ou en achat (mini 200m² avec accessibilité et jardin)",
+    "location": {
+      "@type": "Place",
+      "name": "Clermontois",
+      "latitude": 49.3817829,
+      "longitude": 2.4079115
+    },
+    "status": "En sommeil",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Éducation"
+      }
+    ],
+    "published": "2018-02-24 11:06:58",
+    "updated": "2019-03-21 09:38:51"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "MonterDesPropositionsCitoyennesAProposerA",
+    "@type": "Project",
+    "username": "MonterDesPropositionsCitoyennesAProposerA",
+    "name": "Monter des propositions citoyennes à proposer à sa commune avec des outils participatifs",
+    "content": "Monter des propositions citoyennes à proposer à sa commune avec des outils participatifs",
+    "location": {
+      "@type": "Place",
+      "name": "Région de Creil",
+      "latitude": 49.2607914,
+      "longitude": 2.4733771
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "published": "2019-11-25 13:26:49",
+    "updated": "2019-11-26 17:06:02"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ProjetEcopastoralismeDeLAssociationLArb",
+    "@type": "Project",
+    "username": "ProjetEcopastoralismeDeLAssociationLArb",
+    "name": "Projet \"Ecopastoralisme\" de l'association l'Arbre à Poule",
+    "content": "Tout d'abord, l'action du pâturage permet un excellent entretien des espaces verts de la collectivité (collège, commune) et ce de manière écologique. Le Département La population locale bénéficiera des effets de ces pratiques: comme technique alternative à l'utilisation de produits phytosanitaires (nocifs pour la santé humaine tout comme pour la biodiversité), la réduction de la consommation d'énergies fossiles et de l'impact sonore en comparaison avec l'entretien mécanique (tondeuse/débroussailleuse), la fertilisation naturelle des espaces verts par les animaux.<h2>Besoins</h2>C’est la dernière étape de Mon projet pour la planète. Du 12 avril au 11 mai 2018, tous les citoyens sont invités à participer, en votant pour leurs initiatives préférées parmi les 419 projets éligibles.\nNous avons besoin de vos votes citoyens pour que ce projet puisse se réaliser! Nous vous demandons simplement de cliquer sur le lien et de voter pour notre projet !\nMerci",
+    "location": {
+      "@type": "Place",
+      "name": "Ferme de l'Arbre à Poule",
+      "latitude": 49.2891,
+      "longitude": 2.49405
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "url": "https://www.monprojetpourlaplanete.gouv.fr/projects/plan-climat/collect/depot-des-projets/proposals/l-ecopastoralisme-sur-un-territoire-urbanise",
+    "published": "2018-04-18 16:10:15",
+    "updated": "2019-06-06 12:48:06"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ReconnexioN",
+    "@type": "Project",
+    "username": "ReconnexioN",
+    "name": "Reconnexion",
+    "content": "Créer des ponts entre les citoyens et entre les organisations, avec l'objectif qu’émergent des actions collectives qui contribuent à la transition vers une société plus respectueuse de l'humain et de la nature.<h2>Moyens</h2>- Ouverture des données de sites et wikis du mouvement Colibris\n- Mise en place d'une application mobile pour certains groupes locaux Colibris, avec en perspective lointaine une application Colibris nationale.\n- Animer des \"laboratoires vivants\" sur certains territoires pilotes, dont le Pays Creillois<h2>Besoins</h2>Le travail de Reconnexion se fait autant au niveau humain que technologique. Quels que soient vos compétences, si vous avez un intérêt pour la raison d'être de Reconnexion, vous êtes les bienvenu(e)s !",
+    "location": {
+      "@type": "Place",
+      "name": "Région de Creil",
+      "latitude": 49.2607914,
+      "longitude": 2.4733771
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/ReconnexioN_logo.png",
+    "url": "https://reconnexion.app",
+    "published": "2019-11-25 13:24:20",
+    "updated": "2019-11-26 19:22:06"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ReseauCitoyensSolidaires",
+    "@type": "Project",
+    "username": "ReseauCitoyensSolidaires",
+    "name": "Réseau Citoyens Solidaires",
+    "content": "Mutualiser les moyens humains pour mettre à l'abri les mineurs non accompagnés<h2>Moyens</h2>réunion mensuelle à la communauté Emmaus d'Erquery : mutualiser les moyens pour aider les mineurs non accompagnés mais également de façon plus globale pour un meilleur accueil des migrants dans notre département via différentes actions : interpellations pouvoirs publics, fédération d'un réseau...",
+    "location": {
+      "@type": "Place",
+      "name": "OISE",
+      "latitude": 49.409825,
+      "longitude": 2.4571125
+    },
+    "status": "En sommeil",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "published": "2018-02-20 13:17:10",
+    "updated": "2019-05-26 10:45:48"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "SpectaCTeur",
+    "@type": "Project",
+    "username": "SpectaCTeur",
+    "name": "Spect'acteur",
+    "content": "Faire connaitre, faire découvrir.<h2>Besoins</h2>Entrer en contact avec des partenaires susceptibles de trouver des intervenants",
+    "location": {
+      "@type": "Place",
+      "name": "Cinémas de Chantilly et alentours",
+      "latitude": 49.191366407373614,
+      "longitude": 2.4642205238342285
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "image": "https://colibris.cc/groupeslocaux/files/SpectaCTeur_spectacteur.jpg",
+    "published": "2018-12-20 12:38:30",
+    "updated": "2019-04-06 20:39:33"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "TrouverEtCommanderDesProduitsBiosAupresD",
+    "@type": "Project",
+    "username": "TrouverEtCommanderDesProduitsBiosAupresD",
+    "name": "Trouver et commander des produits bios auprès des producteurs locaux",
+    "content": "Entreprise sociale et écologique initiée il y a  2 ans visant à  faciliter la création de liens et d'échanges entre les producteurs qui pratiquent une agriculture écologique et les consommateurs locaux.\n\nCela grâce au site internet : https://www.producteursalacarte.fr\n\nEn renseignant un lieu, on découvre les producteurs les plus proches, on peut ainsi selon les informations indiquées, découvrir les produits proposés et passer commande en ligne en sélectionnant le jour et l'heure de l'échange en fonction des modalités du vendeur.<h2>Moyens</h2>Plusieurs moyens de mise en oeuvre de l'action sont en cours :\n\n- Inviter les producteurs à découvrir et se familiariser avec le service.\n- S'entourer de partenaires pour renforcer la crédibilité et la communication autour du projet.\n- Développer un service de commandes groupées en cours.\n- Créer un blog associé à PALC sur des thèmes divers tels que la cuisine, l'agriculture écologique, la santé, l'environnement, etc. \n- Rechercher des personnes souhaitant intégrer l'aventure en travaillant au service de PALC contre des parts dans le capital de la société<h2>Besoins</h2>- Recherche de personnes souhaitant intégrer l'aventure en travaillant au service de PALC contre des parts dans le capital de la SAS.\n\n- Recherche d'adresses de producteurs pratiquant une agriculture écologique pour faciliter le travail de présentation du service PALC à ces derniers.",
+    "location": {
+      "@type": "Place",
+      "name": "France entière",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "url": "https://www.producteursalacarte.fr",
+    "published": "2018-12-12 21:25:05",
+    "updated": "2019-03-08 15:43:32"
+  }
+]

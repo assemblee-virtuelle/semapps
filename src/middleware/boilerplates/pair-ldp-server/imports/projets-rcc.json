@@ -1,0 +1,377 @@
+[
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ActionCommunicationGrandPublic",
+    "@type": "Project",
+    "username": "ActionCommunicationGrandPublic",
+    "name": "Action communication grand public",
+    "content": "Salut à tous.tes!!!!\nLe dimanche après-midi sera l'occasion de diffuser les bonnes pratiques de l'écologie et de l'économie solidaire.<h2>Moyens</h2>Tables, chaises, grilles d'expo, le tout à l'intérieur du cinéma, au chaud ;)<h2>Besoins</h2>De vous, pour parler, transmettre, convaincre, recruter ! ",
+    "location": {
+      "@type": "Place",
+      "name": "Place jacques tati",
+      "latitude": 49.4032174,
+      "longitude": 2.7778701
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Éducation"
+      }
+    ],
+    "published": "2020-02-29",
+    "updated": "2020-01-29"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ConstruireUnComposteurMaison",
+    "@type": "Project",
+    "username": "ConstruireUnComposteurMaison",
+    "name": "Construire un composteur maison",
+    "content": "L'objectif est d'essaimer des composteurs partagés que ce soit chez les particuliers, les associations, les entreprises.\nÉchanger ses compétences sur le compostage et le bricolage pour se construire des composteurs maison en palette de bois.\nActivité prévue en Octobre-Novembre.\n<h2>Moyens</h2>Un lieu est déjà possible proche de la gare de Compiègne pour organiser cet atelier. A valider.<h2>Besoins</h2>Palettes, matériel de bricolage, grillage métallique de récupération, personnes formées au compostage",
+    "location": {
+      "@type": "Place",
+      "name": "Compiègne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Énergie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Habitat"
+      }
+    ],
+    "published": "",
+    "updated": ""
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "FacilitatioN",
+    "@type": "Project",
+    "username": "FacilitatioN",
+    "name": "Facilitation",
+    "content": "Partager des pratiques, des ressources et de la réflexion au profit de la mission du RCC et de la montée en compétences des participants.<h2>Moyens</h2>Sujets proposés :\n- maîtrise des intentions, du cadre et du processus \n- émergence d'actions et de synergies \n- pédagogie autour des outils de l'intelligence collective\n- évolution des objectifs de l'action<h2>Besoins</h2>Communiquer au plus grand nombre des participants ",
+    "location": {
+      "@type": "Place",
+      "name": "Le Compiégnois",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "published": "2019-09-05",
+    "updated": "2019-09-16"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "FairePousserUneFermeBioPaysanneSurLeCom",
+    "@type": "Project",
+    "username": "FairePousserUneFermeBioPaysanneSurLeCom",
+    "name": "Faire pousser une ferme bio paysanne",
+    "content": "Faire pousser une ferme bio paysanne sur le Compiégnois avec Terre de Liens, pour avoir accès à une alimentation bio paysanne LOCAL<h2>Moyens</h2>Prochaine réunion le jeudi 3 octobre 2019 à 20h à Compiègne \n(appeler Bruno Meyer au 06.14.62.04.27 pour participer à cette réunion et peut-être rejoindre le groupe local Terre de Liens du Compiégnois)\nD'autres réunions physiques peuvent être programmées ou des échanges téléphoniques peuvent être réalisés pour faire connaître l'action<h2>Besoins</h2>Tout le monde peut contribuer à sa façon, \"ça peut être simple comme un coup de fil\".\nAppeler les référents pour étudier comment vous pouvez contribuer selon votre temps, votre motivation, etc",
+    "location": {
+      "@type": "Place",
+      "name": "Compiégnois",
+      "latitude": 49.4232218,
+      "longitude": 2.83025458609332
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Agriculture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Alimentation"
+      }
+    ],
+    "published": "2019-09-05",
+    "updated": "2019-09-20"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "GroupeDeCoordination",
+    "@type": "Project",
+    "username": "GroupeDeCoordination",
+    "name": "Groupe de coordination",
+    "content": "Assurer la coordination du Réseau des Colibris du Compiégnois.\nCe groupe constitue l’instance suprême de gouvernance du RCC sachant qu’il s’agit d’une gouvernance ouverte et distribuée (voir, à venir, la charte du Réseau des Colibris du Compiégnois). <h2>Moyens</h2>Des réunions (2 réunions entre  2 soirées plénières).\nUne ouverture à tous les participants du Réseau des Colibris du Compiégnois.\nLe Groupe de coordination accueille les volontaires à ses réunions. La première fois en tant qu’invité et, au bout de 2 fois, le Groupe de coordination propose en son sein leur intégration.<h2>Besoins</h2>La contribution des participants (à intégrer continuellement).\nRédaction de la charte.\nDéfinir des rôles",
+    "location": {
+      "@type": "Place",
+      "name": "Compiègne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Démocratie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Gouvernance"
+      }
+    ],
+    "published": "",
+    "updated": "2019-05-10"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "OperationForetPropreTousConcernes",
+    "@type": "Project",
+    "username": "OperationForetPropreTousConcernes",
+    "name": "Opération forêt propre - Tous concernés",
+    "content": "Il s'agit d'organiser une opération où tous les acteurs possibles seraient impliqués solidairement. \nLes porteurs d'initiatives citoyennes, les associations, les collectivités territoriales, les coureurs, les marcheurs, tous les utilisateurs de la forêt à sensibliser pour le ramassage des déchets sauvages",
+    "location": {
+      "@type": "Place",
+      "name": "Compiègne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En réflexion",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "published": "",
+    "updated": ""
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "OrganiserUneActiviteDeSensibilisationTriD",
+    "@type": "Project",
+    "username": "OrganiserUneActiviteDeSensibilisationTriD",
+    "name": "Organiser une activité de sensibilisation tri/déchets",
+    "content": "Suite à des questions de commerçants sur la gestion des déchets, on souhaite rassembler les forces pour organiser une activité de sensibilisation au tri des déchets et la communication sur la gestion des déchets en aval.\nL'atelier serait animé par le SMDO qui s'occupe de la gestion des déchets.<h2>Moyens</h2>J'ai déjà contacté le SMDO qui est très favorable à une telle action.\nJe suis en train de contacter l'association des commerçants pour savoir s'ils sont toujours intéressés.\nA voir comment organiser cet atelier, dans quel buts pour chaque partie.<h2>Besoins</h2>Salle pour l'animation, contact auprès de commerçants de la ville",
+    "location": {
+      "@type": "Place",
+      "name": "Compiègne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Énergie"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Habitat"
+      }
+    ],
+    "published": "2019-09-13",
+    "updated": ""
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "ProjetDeRelanceDeLaccorderieDeCompiegne",
+    "@type": "Project",
+    "username": "ProjetDeRelanceDeLaccorderieDeCompiegne",
+    "name": "Projet de relance de l'Accorderie de Compiègne",
+    "content": "Association d'échange de services et de coopération citoyens. Le concept novateur repose sur des échanges sur la base du  \"temps\", une heure de bricolage s'échange contre une heure de cours d'Anglais etc...\nPar le biais des échanges mixtes et intergénérationnels, l'Accorderie soutien la transmission de connaissances, la création de lien social sur le territoire, lutte contre l'isolement et donne confiance en ses dons propres. <h2>Moyens</h2>Dans un premier temps, il s'agit de se rassembler pour imaginer à quoi ressemblerait l'accorderie sur Compiègne, s'inspirer de la création et du fonctionnement des accorderies du réseau. Les étapes suivantes concerneront le choix et l'acquisition d'un local qui sera un lieu de rencontre et d'échange accessible à tous.",
+    "location": {
+      "@type": "Place",
+      "name": "Le Compiégnois",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "published": "2019-05-14",
+    "updated": "2019-11-21"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "SalonDeLaTransition",
+    "@type": "Project",
+    "username": "SalonDeLaTransition",
+    "name": "Salon de la transition",
+    "content": "Organiser un salon de la transition sur le territoire du Compiégnois avec les acteurs associatifs concernés",
+    "location": {
+      "@type": "Place",
+      "name": "Compiégne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En réflexion",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "published": "",
+    "updated": ""
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "SoireeCineEchangeMensuelles",
+    "@type": "Project",
+    "username": "SoireeCineEchangeMensuelles",
+    "name": "Soirée ciné-échange mensuelles",
+    "content": "L'idée\nRegarder ensemble des films inspirants et pouvoir en discuter le premier jeudi de chaque mois (modification à partir d'octobre 2019 possible, à discuter le 03/10/2019 : entre lundi / mardi et jeudi).\nPour recevoir les infos directement par mail : inscrivez-vous ici https://pad.colibris-outilslibres.org/p/Fiches-actions-RCC (ligne 109 a peut près).\n\nLe principe\nAvoir l'autorisation de diffuser les-dit films<h2>Moyens</h2>Organisation\nUn apéro-dinatoir participatif (18h30 - 19h30) suivit du film (19h30) et d'échanges par la suite autour d'une tisane (ou d'une bière), apportez de quoi faire!\nChacun apporte à manger, ses couverts, verres ou mugs, assiettes...\nChacun peut proposer un film : les films sont décidés d'un mois sur l'autre avec les participants",
+    "location": {
+      "@type": "Place",
+      "name": "10 rue du four St Jacques",
+      "latitude": 49.3950467,
+      "longitude": 2.7971468
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Révolution intérieure"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Santé"
+      }
+    ],
+    "url": "https://colibris-wiki.org/Pangkor/wakka.php?wiki=ProjectionFilm",
+    "published": "2019-02-07",
+    "updated": "2019-09-20"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "SolidacteurS",
+    "@type": "Project",
+    "username": "SolidacteurS",
+    "name": "Solid'Acteurs",
+    "content": "Créer une association visant à contribuer à l'inclusion sociale des publics les plus fragilisés, notamment via l'emploi et l'accès aux droits de citoyenneté. \nFavoriser les synergies territoriales en faveur de la solidarité et la citoyenneté.<h2>Moyens</h2>Prochaine réunion (point de situation) le 16/09/19 à 19h00",
+    "location": {
+      "@type": "Place",
+      "name": "Le Compiégnois",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En réflexion",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "url": "https://www.dropbox.com/s/11m8yagybw4fk28/Plaquette%20de%20pr%C3%A9sentation%20Solid%27Acteurs%20%28en%20cours%29%20v4.pdf?dl=0",
+    "published": "",
+    "updated": "2005-09-19"
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "TravauxALAlchimieBesoinDUnCoupDeMain",
+    "@type": "Project",
+    "username": "TravauxALAlchimieBesoinDUnCoupDeMain",
+    "name": "Travaux à l'Alchimie",
+    "content": "L'Alchimie est un lieu de partage destiné à  créer du lien et faire bouger le mentalités dans la bienveillance.\nIl y a aura une petite restauration végétarienne, du coworking, des expositions, des ciné-débats, des conférences, des ateliers de bien-être...\nToutes vos idées sont les bienvenues.<h2>Moyens</h2>Actuellement nous ne sommes pas assez nombreux pour que cela nous donne l'énergie suffisante et il nous manque des compétences. Nous souhaiterions donc réunir des personnes motivées pour venir travailler dans une bonne ambiance.<h2>Besoins</h2>Beaucoup de travaux à faire : nettoyage, grattage de parquet, enduit et peinture dans un premier temps.\nAssez rapidement nous aurions besoin d'un électricien, d'un plombier et d'un maçon.\nNous devons également poser du parquet.",
+    "location": {
+      "@type": "Place",
+      "name": "25 rue de la 8ème Division",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Culture"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Social"
+      }
+    ],
+    "url": "https://lalchimie-compiegne.fr",
+    "published": "",
+    "updated": ""
+  },
+  {
+    "@context": "https://www.w3.org/ns/activitystreams",
+    "slug": "UtilisationDesHuilesEssentielles",
+    "@type": "Project",
+    "username": "UtilisationDesHuilesEssentielles",
+    "name": "Initiation à l'aromathérapie",
+    "content": "4 soirées évolutives dans l'année pour connaître les modes d'utilisations et contres-indications des huiles essentielles.\nUne 10ène d'huiles essentielles seront étudiées dans le but de confectionner sa trousse aroma.\nDes ateliers pratiques seront proposés pour aider à s'approprier les gestes.\n<h2>Moyens</h2>Présentation PPT, ateliers pratiques<h2>Besoins</h2>Matériel par personne pour l'année :\n-1 flacon d'huile d'amande douce (100 ml)\n-1 flacon dispersant (50 ml)\n-3 roll on\n-alcool pharmaceutique 70°\n-6 huiles essentielles choisies au 1er atelier",
+    "location": {
+      "@type": "Place",
+      "name": "Local de l'asssociation Pangkor : rue du four St Jacques, Compiegne",
+      "latitude": null,
+      "longitude": null
+    },
+    "status": "En cours",
+    "tag": [
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Révolution intérieure"
+      },
+      {
+        "@context": "https://www.w3.org/ns/activitystreams",
+        "@type": "Topic",
+        "name": "Santé"
+      }
+    ],
+    "published": "2019-09-16T00:00:00+00:00",
+    "updated": "2019-10-03"
+  }
+]

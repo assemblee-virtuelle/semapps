@@ -16,6 +16,7 @@
     "@semapps/fuseki-admin": "0.1.31",
     "@semapps/inference": "0.1.31",
     "@semapps/ldp": "0.1.31",
+    "@semapps/importer": "0.1.31",
     "@semapps/mime-types": "0.1.31",
     "@semapps/sparql-endpoint": "0.1.31",
     "@semapps/triplestore": "0.1.31",
@@ -25,6 +26,7 @@
     "moleculer": "^0.14.4",
     "moleculer-repl": "^0.6.3",
     "moleculer-web": "^0.9.1",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "slugify": "^1.4.6"
   }
 }

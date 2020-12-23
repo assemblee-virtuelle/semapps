@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useQueryWithStore, Loading, Error, Link } from 'react-admin';
+import { useQueryWithStore, Loading, Error, Link, Title } from 'react-admin';
 import { MarkdownField } from '@semapps/archipelago-layout';
 import FooterInfo from './FooterInfo';
 
@@ -17,7 +17,7 @@ const Document = ({ id }) => {
 
   return (
     <>
-      <h1 style={{ marginTop: 0 }}>{data ? data['pair:label'] : ''}</h1>
+      <Title title={data ? data['pair:label'] : ''} />
       <MarkdownField record={data} resource="Document" source="pair:description" />
       <FooterInfo>
         Dernière modification le 23 décembre 2020
