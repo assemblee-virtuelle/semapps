@@ -1,9 +1,10 @@
 import React from 'react';
-import { SimpleForm, TextInput } from 'react-admin';
+import {ImageInput, SimpleForm, TextInput} from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActorsInput, DocumentsInput } from '../../inputs';
+import { ActorsInput, DocumentsInput, ThemesInput } from '../../inputs';
 import ProjectTitle from './ProjectTitle';
+import {ImageField} from "@semapps/semantic-data-provider";
 
 const ProjectEdit = props => (
   <Edit title={<ProjectTitle />} {...props}>
@@ -12,8 +13,12 @@ const ProjectEdit = props => (
       <TextInput source="pair:comment" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
       <TextInput source="pair:homePage" fullWidth />
+      <ImageInput source="image" accept="image/*">
+        <ImageField source="src" />
+      </ImageInput>
       <ActorsInput source="pair:involves" />
       <DocumentsInput source="pair:documentedBy" />
+      <ThemesInput source="pair:hasTopic" />
     </SimpleForm>
   </Edit>
 );
