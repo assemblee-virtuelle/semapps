@@ -2,7 +2,7 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import ThemeTitle from "./ThemeTitle";
+import ThemeTitle from './ThemeTitle';
 
 const ThemeShow = props => (
   <Show title={<ThemeTitle />} {...props}>

@@ -3,7 +3,7 @@ import { SelectInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit, ReferenceQuickCreateInput } from '@semapps/archipelago-layout';
 import { SubjectsInput } from '../../inputs';
-import DocumentTitle from "./DocumentTitle";
+import DocumentTitle from './DocumentTitle';
 
 export const DocumentEdit = props => (
   <Edit title={<DocumentTitle />} {...props}>

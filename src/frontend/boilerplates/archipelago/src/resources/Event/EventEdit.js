@@ -3,10 +3,10 @@ import { SimpleForm, TextInput, DateTimeInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ActorsInput, ThemesInput } from '../../inputs';
-import EventTitle from "./EventTitle";
+import EventTitle from './EventTitle';
 
 const EventEdit = props => (
-  <Edit title={<EventTitle />}{...props}>
+  <Edit title={<EventTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <TextInput source="pair:comment" fullWidth />

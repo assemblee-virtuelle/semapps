@@ -16,6 +16,7 @@ export { default as List } from './list/List';
 export { default as ResourceTabs } from './list/ResourceTabs';
 export { default as SimpleList } from './list/SimpleList';
 export { default as MasonryList } from './list/MasonryList';
+export { default as ReferenceFilter } from './list/ReferenceFilter';
 
 // Show page
 export { default as Column } from './show/Column/Column';
