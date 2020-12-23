@@ -19,6 +19,8 @@ module.exports = {
       '/folders',
       '/files'
     ],
-    defaultJsonContext: urlJoin(CONFIG.HOME_URL, 'context.json')
+    defaultJsonContext: urlJoin(CONFIG.HOME_URL, 'context.json'),
+    allowAnonymousEdit: true,
+    allowAnonymousDelete: true
   }
 };
