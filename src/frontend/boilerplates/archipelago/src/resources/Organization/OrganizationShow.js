@@ -2,7 +2,7 @@ import React from 'react';
 import { TextField, UrlField, ChipField, SingleFieldList } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import OrganizationTitle from "./OrganizationTitle";
+import OrganizationTitle from './OrganizationTitle';
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>

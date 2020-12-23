@@ -2,7 +2,7 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import ProjectTitle from "./ProjectTitle";
+import ProjectTitle from './ProjectTitle';
 
 const ProjectShow = props => (
   <Show title={<ProjectTitle />} {...props}>

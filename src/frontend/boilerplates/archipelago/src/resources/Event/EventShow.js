@@ -2,7 +2,7 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, Show, MarkdownField, GridList, UserIcon } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
-import EventTitle from "./EventTitle";
+import EventTitle from './EventTitle';
 
 const EventShow = props => (
   <Show title={<EventTitle />} {...props}>

@@ -144,13 +144,15 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       }
 
       // Apply filter to results
-      if( Object.keys(params.filter).length > 0 ) {
-        return ({
-          data: result.data.filter(resource => Object.entries(params.filter).some(([k, v]) =>
-            Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-          )),
+      if (Object.keys(params.filter).length > 0) {
+        return {
+          data: result.data.filter(resource =>
+            Object.entries(params.filter).some(([k, v]) =>
+              Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+            )
+          ),
           total: result.total
-        })
+        };
       } else {
         return result;
       }
