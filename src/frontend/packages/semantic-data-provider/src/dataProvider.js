@@ -67,6 +67,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   return {
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
+      let result = {};
 
       if (params.id || params['@id'] || !resources[resourceId].types) {
         /*
@@ -91,7 +92,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           );
         }
 
-        return { data: returnData, total: json[listProperty].length };
+        result = { data: returnData, total: json[listProperty].length };
       } else {
         /*
          * Do a SPARQL search
@@ -111,11 +112,11 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
-          return { data: [], total: 0 };
+          result = { data: [], total: 0 };
         } else if (!compactJson['@graph']) {
           // If we have several fields but no @graph, there is a single match
           compactJson.id = compactJson.id || compactJson['@id'];
-          return { data: [compactJson], total: 1 };
+          result = { data: [compactJson], total: 1 };
         } else {
           const returnData = compactJson['@graph']
             .map(item => {
@@ -138,8 +139,22 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
               params.pagination.page * params.pagination.perPage
             );
 
-          return { data: returnData, total: compactJson['@graph'].length };
+          result = { data: returnData, total: compactJson['@graph'].length };
         }
+      }
+
+      // Apply filter to results
+      if (Object.keys(params.filter).length > 0) {
+        return {
+          data: result.data.filter(resource =>
+            Object.entries(params.filter).some(([k, v]) =>
+              Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+            )
+          ),
+          total: result.total
+        };
+      } else {
+        return result;
       }
     },
     getOne: async (resourceId, params) => {
