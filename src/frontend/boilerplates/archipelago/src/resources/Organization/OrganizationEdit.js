@@ -4,7 +4,7 @@ import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField } from '@semapps/semantic-data-provider';
 import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../inputs';
-import OrganizationTitle from "./OrganizationTitle";
+import OrganizationTitle from './OrganizationTitle';
 
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>

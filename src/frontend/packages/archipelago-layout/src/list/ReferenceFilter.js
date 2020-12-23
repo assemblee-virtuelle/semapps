@@ -15,24 +15,17 @@ import { shallowEqual, useSelector } from 'react-redux';
  * );
  */
 const ReferenceFilter = ({ reference, source, limit, label, icon }) => {
-  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, {},  {});
+  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, {}, {});
   const resources = useSelector(getResources, shallowEqual);
   const currentResource = resources.filter(r => r?.name === reference)[0];
   return (
-    <FilterList
-      label={label || currentResource.options.label}
-      icon={icon || React.createElement(currentResource.icon)}
-    >
+    <FilterList label={label || currentResource.options.label} icon={icon || React.createElement(currentResource.icon)}>
       {ids.map(id => (
-        <FilterListItem
-          key={id}
-          label={data[id]['pair:label']}
-          value={{ [source]: id }}
-        />
+        <FilterListItem key={id} label={data[id]['pair:label']} value={{ [source]: id }} />
       ))}
     </FilterList>
   );
-}
+};
 
 ReferenceFilter.defaultProps = {
   limit: 20

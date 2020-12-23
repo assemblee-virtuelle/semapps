@@ -3,10 +3,10 @@ import { ImageInput, SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
 import { ActivitiesInput, OrganizationsInput, SkillsInput, ThemesInput } from '../../inputs';
 import { ImageField } from '@semapps/semantic-data-provider';
-import UserTitle from "./UserTitle";
+import UserTitle from './UserTitle';
 
 export const UserEdit = props => (
-  <Edit title={<UserTitle />}{...props}>
+  <Edit title={<UserTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:firstName" fullWidth />
       <TextInput source="pair:lastName" fullWidth />
