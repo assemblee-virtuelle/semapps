@@ -60,7 +60,7 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
     },
     {
       authorization: !allowAnonymousEdit,
-      authentication: allowAnonymousEdit,
+      authentication: !!allowAnonymousEdit,
       aliases: {
         'POST /': [...middlewares, actions.post],
         'PUT /:id': [...middlewares, actions.put],
@@ -70,7 +70,7 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
     },
     {
       authorization: !allowAnonymousDelete,
-      authentication: allowAnonymousDelete,
+      authentication: !!allowAnonymousDelete,
       aliases: {
         'DELETE /:id': [...middlewares, actions.delete]
       },
