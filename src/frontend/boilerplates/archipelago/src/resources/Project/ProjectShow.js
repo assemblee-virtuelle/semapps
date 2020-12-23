@@ -8,7 +8,7 @@ const ProjectShow = props => (
   <Show title={<ProjectTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
-        <Hero>
+        <Hero image="image">
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
         </Hero>
