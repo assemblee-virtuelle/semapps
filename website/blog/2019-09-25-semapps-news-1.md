@@ -1,7 +1,7 @@
 ---
 slug: semapps-news-1
 title: SemApps News N°1
-author: Sébastien Rosset & Gabriel Henry
+author: Sébastien Rosset, Gabriel Henry & Valentine Mathieu
 author_title: SemApps Core Team
 author_url: https://semapps.org
 author_image_url: https://www.virtual-assembly.org/wp-content/uploads/2017/05/cropped-ms-icon-60x60.png
@@ -18,13 +18,13 @@ The newsletter below reports on the latest developments since this summer.
 
 We have done some work on the [React-Admin interface](https://marmelab.com/react-admin/) to make it look like the first version of SemApps, and to offer more user-friendliness.
 
-Thanks to the great flexibility and modularity of React-Admin, this project has progressed quickly. You can see it on [this new Virtual Assembly website](https://archipel.assemblee-virtuelle.org) which aims at mapping projects, actors, ideas and resources related to the Virtual Assembly.
+Thanks to the great flexibility and modularity of React-Admin, this project has progressed quickly. You can see it on [this new Virtual Assembly website](https://archipel.assemblee-virtuelle.org) (available in french) which aims at mapping projects, actors, ideas and resources related to the Virtual Assembly.
 
 #### LDP cache
 
-SemApps LDP service is now able to manage the cache of LDP resources and containers. As soon as a resource is called, the result is cached and the second time it is requested, the cached result will be served without the need to make the SPARQL request necessary to fetch the information from the Triple Store (Fuseky).
+SemApps LDP service is now able to manage the cache of LDP resources and containers. As soon as a resource is called, the result is cached and the second time it is requested, the cached result will be served without the need to make the SPARQL request necessary to fetch the information from the triple store (Jena Fuseki).
 
-#### Signature ActivityPub
+#### ActivityPub Signature
 
 The implementation in SemApps of the ActivityPub protocol is now complete with the implementation of HTTP signatures, which authenticates the issuer of ActivityPub activities.
 
@@ -34,15 +34,15 @@ It is now possible to deploy in a few minutes an ActivityPub server based on Sem
 
 #### Jérémy Dufraisse has joined us
 
-New to web development and passionate about it, Jeremy joins the SemApps team, aiming to get more involved, especially in programming this software's code. 
-Member of the Colibris core team in Lorient, he's already working on The Paths of Transition's platform v.0, one of SemApps ecosystem's projects.
+New to web development and passionate about cooperation in all domains, Jeremy joins the SemApps team, aiming to get more involved, especially in programming this software's code. 
+Member of the Colibris core team in Lorient, he's already working on the first version of the Paths of Transition's platform, one of SemApps ecosystem's projects.
 
 #### Work on governance
 
-By implementing the principles of election by consent, SemApps team was not only able to define several roles, regarding to the effective needs of its organization, but also to fill the roles according to the competencies that were identified.
+By implementing the principles of "election by consent", the SemApps team was not only able to define several roles, regarding to the effective needs of its organization, but also to fill the roles according to the competencies that were identified.
 
 Among the 13 roles that came out, the following ones deserve a particular attention : 
-* Onboarding / Inclusion / Welcoming role - Gabriel HENRY : gabriel.henry@lilo.org
+* Onboarding / Inclusion / Welcoming role - Gabriel HENRY
 * Technical partnership / Interoperability role : Simon LOUVET
 * Communication role : Pierre BOUVIER-MULLER
 * Information gardening/Informational heritage role : Guillaume ROUYER
@@ -56,27 +56,25 @@ We have paid particular attention to the role of economic sustainability to enab
 
 ## Uses
 
-#### Launch of the mailer La Fabrique des Colibris
+#### Launch of the mailer for La Fabrique des Colibris
 
-La Fabrique des Colibris called upon *Reconnexion to develop a [small tool  ](https://alertes.colibris-lafabrique.org/) that allows users to be notified of new projects by email, depending on their location and interests. When a new project is published on the platform, it is sent to an instance of SemApps. An ActivityPub activity is then generated, and then sent to the mailer.
+La Fabrique des Colibris called upon Reconnexion to develop a [small tool](https://alertes.colibris-lafabrique.org/) that allows users to be notified of new projects by email, depending on their location and interests. When a new project is published on the platform, it is sent to an instance of SemApps. An ActivityPub activity is then generated, and then sent to the mailer.
 
-This resolutely open approach should allow in the future to provide other ways to be kept up to date with the latest news from the Fabrique. Other projects with the Colibris movement are already in the pipeline...
+This resolutely open approach should allow in the future to provide other ways to be kept up to date with the latest news from La Fabrique. Other projects with the Colibris movement are already in the pipeline...
 
 #### Data Food Consortium migrates to SemApps
 
-Data Food Consortium had planned from the beginning to rely on a semantic server to store the information entrusted (at the initiative of the owners of this data : producer, intermediary ...) by the various platforms of short circuit (catalog, stock, logistics, commercial offer ...).
+Data Food Consortium had planned from the beginning to rely on a semantic server to store the information entrusted (at the initiative of the owners of this data: producer, intermediary...) by the various platforms of short circuit (catalog, stock, logistics, commercial offer...).
 
-Semapps allowed to migrate from a MongoDB base to a semantic base using SPARQL and LDP interfaces. This migration highlighted all the rigor necessary for a semantic, technical and ontological consistency in this project, considered as quite complex by nature (OIDC authentication between platforms, matching directory rather than identity repository ...). The Data is mineable by rich business api provided by the business server which has been adapted to communicate with Semapps and work in a semantic way. The prototype's Web interface did not need to be redesigned (thanks to the business APIs) even if some adjustments were necessary to read the data in json-ld.
+SemApps allowed to migrate from a MongoDB database to a semantic database using SPARQL and LDP interfaces. This migration highlighted all the rigor necessary for a semantic, technical and ontological consistency in this project, considered as quite complex by nature (OIDC authentication between platforms, matching directory rather than identity repository...). The data is mineable by a rich business APIs provided by the server which has been adapted to communicate with SemApps. The prototype's web interface did not need to be redesigned (thanks to the business APIs) even if some adjustments were necessary to read the data in JSON-LD.
 
-LDP atomic api and SPARQL researches are now possible for all future uses.
-
-Semapps has therefore helped to reach phase 2 CFD technology without waiting for another Solid server capable of making complex SPARQL queries to be operational.
+SemApps has therefore helped to reach phase 2 CFD technology without waiting for another Solid server capable of making complex SPARQL queries to be operational.
 
 ## Events
 
 #### Meetup Interoperability
 
-Following the SemApps residency in El Capitan during June, the Virtual Assembly and Startin'blox showed their ambition to cooperate more closely. This resulted in the co-organization of [a Meet Up on September 15th at Les Grands Voisins](https://www.facebook.com/events/609531263097830/). We had excellent feedbacks, met new people and even new contributors ! Even if there were only a few participants, they all grasped the message we wanted to convey. We know how to mediate better and better on our subjects ! A big thank you to all the interveners and volunteer contributors (an incredible team <3) present at the event ! We will soon publish the slides and videos of the event on our youtube channel !
+Following the SemApps residency in El Capitan during June, the Virtual Assembly and Startin'blox showed their ambition to cooperate more closely. This resulted in the co-organization of [a meetup on September 15th at Les Grands Voisins](https://www.facebook.com/events/609531263097830/). We had excellent feedbacks, met new people and even new contributors ! Even if there were not so many participants, they all grasped the message we wanted to convey. We know how to mediate better and better on our subjects ! A big thank you to all the interveners and volunteer contributors (an incredible team <3) present at the event !
 
 #### Publication of several SemApps presentation videos!
 You will find the May 20th meeting videos on [the Virtual Assembly's Youtube channel](https://www.youtube.com/channel/UCg7sYh_Y8cHFT4s82K4SVmA/), with English subtitles in option.
@@ -86,7 +84,7 @@ We have also just published [the video](https://youtu.be/wjQSKP4DWmM) of a prese
 
 #### YesWiki becomes LDP compatible
 
-About fifteen [YesWiki](https://yeswiki.net) contributors met near Avignon at the end of September, and one of the new features that came out of this meeting is an API system that allows you to easily add, edit or delete data via simple HTTP calls.
+About fifteen [YesWiki](https://yeswiki.net) contributors met near Avignon this autumn, and one of the new features that came out of this meeting is an API system that allows you to easily add, edit or delete data via simple HTTP calls.
 
 YesWiki was already semantic web compatible, with the ability to output data in JSON-LD. With this new breakthrough, YesWiki becomes a full-fledged LDP server. We hope to be able to show an example soon, when the new version of YesWiki is released.
 
@@ -116,7 +114,7 @@ If you want to share information about the Solid ecosystem, there is a dedicated
 
 #### Virtual Assembly's donation campaign 
 
-The Virtual Assembly's organization mainly relies on volunteering. In order to maintain its sustainability, its research and development activities as well as its independance, the VA count on your donations. The more you contribute regularly, the more our association strengthens economically. In this way, we encourage you to choose monthly donations rather than ponctual ones. In any case, we will be gratefull to benefit from your help :)
+The Virtual Assembly's organization mainly relies on volunteering. In order to maintain its sustainability, its research and development activities as well as its independance, we count on your donations. The more you contribute regularly, the more our association strengthens economically. In this way, we encourage you to choose monthly donations rather than ponctual ones. In any case, we will be gratefull to benefit from your help :)
 
 * I would like to make a [regular donation](https://www.virtual-assembly.org/faire-un-don/)
 * I would like to make a [one-time donation](https://www.virtual-assembly.org/faire-un-don/)
