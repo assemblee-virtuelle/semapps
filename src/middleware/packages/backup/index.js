@@ -1,4 +1,4 @@
-const { resolve } = require('path');
+const { join: pathJoin } = require('path');
 const Rsync = require('rsync');
 const { CronJob } = require('cron');
 
@@ -74,7 +74,7 @@ const BackupService = {
         .flags('arv')
         .set('e', `sshpass -p "${remoteServer.password}" ssh -o StrictHostKeyChecking=no`)
         .source(path)
-        .destination(`${remoteServer.user}@${remoteServer.host}:${resolve(remoteServer.path, subDir)}`);
+        .destination(`${remoteServer.user}@${remoteServer.host}:${pathJoin(remoteServer.path, subDir)}`);
 
       return new Promise((resolve, reject) => {
         console.log('Rsync started with command: ' + rsync.command());
