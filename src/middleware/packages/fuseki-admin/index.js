@@ -1,6 +1,4 @@
 const fetch = require('node-fetch');
-const Rsync = require('rsync');
-const { CronJob } = require('cron');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -9,46 +7,9 @@ const FusekiAdminService = {
   settings: {
     url: null,
     user: null,
-    password: null,
-    backups: {
-      localServer: {
-        path: null
-      },
-      remoteServer: {
-        user: null,
-        password: null,
-        host: null,
-        path: null
-      },
-      // Required for automated backups
-      cronJob: {
-        time: null,
-        timeZone: 'Europe/Paris',
-        dataset: null
-      }
-    }
+    password: null
   },
   started() {
-    const { localServer, remoteServer, cronJob } = this.settings.backups;
-
-    // Setup rsync to remote server
-    this.rsync = new Rsync()
-      .flags('arv')
-      .set('e', `sshpass -p "${remoteServer.password}" ssh -o StrictHostKeyChecking=no`)
-      .source(localServer.path)
-      .destination(`${remoteServer.user}@${remoteServer.host}:${remoteServer.path}`);
-
-    // Setup cron job, if necessary
-    if (cronJob.time) {
-      this.cronJob = new CronJob(
-        cronJob.time,
-        () => this.actions.backupDataset({ dataset: cronJob.dataset }),
-        null,
-        true,
-        cronJob.timeZone
-      );
-    }
-
     this.headers = {
       Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
     };
@@ -88,13 +49,10 @@ const FusekiAdminService = {
 
       // Wait for backup to complete
       const { taskId } = await response.json();
-      await this.waitForTaskCompletion(taskId);
-
-      await this.uploadToRemoteServer();
-    }
-  },
-  methods: {
-    async waitForTaskCompletion(taskId) {
+      await this.actions.waitForTaskCompletion({ taskId });
+    },
+    async waitForTaskCompletion(ctx) {
+      const { taskId } = ctx.params;
       let task;
 
       do {
@@ -109,19 +67,6 @@ const FusekiAdminService = {
 
         task = await response.json();
       } while (!task.finished);
-    },
-    uploadToRemoteServer() {
-      return new Promise((resolve, reject) => {
-        console.log('Upload started with command: ' + this.rsync.command());
-        this.rsync.execute(error => {
-          if (error) {
-            reject(error);
-          } else {
-            console.log('Upload finished !');
-            resolve();
-          }
-        });
-      });
     }
   }
 };

@@ -5,9 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "cron": "^1.8.2",
-    "node-fetch": "^2.6.0",
-    "rsync": "^0.6.1"
+    "node-fetch": "^2.6.0"
   },
   "publishConfig": {
     "access": "public"
