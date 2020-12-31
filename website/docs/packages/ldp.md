@@ -15,6 +15,7 @@ This service allows you to setup LDP direct containers in which resources can be
 ## Sub-services
 * LdpContainerService
 * LdpResourceService
+* CacheCleanerService
 
 ## Install
 
