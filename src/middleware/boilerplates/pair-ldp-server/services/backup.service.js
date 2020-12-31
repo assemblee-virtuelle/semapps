@@ -18,8 +18,7 @@ module.exports = {
     },
     cronJob: {
       time: '0 0 4 * * *', // Every night at 4am
-      timeZone: 'Europe/Paris',
-      dataset: CONFIG.MAIN_DATASET
+      timeZone: 'Europe/Paris'
     }
   }
 };

@@ -55,8 +55,7 @@ module.exports = {
     // Required only if you want to do automatic backups
     cronJob: {
       time: '0 0 4 * * *', // Every night at 4am
-      timeZone: 'Europe/Paris',
-      dataset: 'localData'
+      timeZone: 'Europe/Paris'
     }
   }
 };
@@ -70,19 +69,13 @@ module.exports = {
 | `remoteServer`| `[Object]`|  | Informations to connect to the remote server (see above) |
 | `cronJob`| `[Object]`|  | Informations for the automatic backups (see above) |
 
-
 ## Actions
 
 The following service actions are available:
 
-### `backupDataset`
+### `backupDatasets`
 
-Generate a backup of the given dataset, and rsync it with the remote server.
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `dataset` | `String`  | **required** | Name of the dataset |
+Generate a compressed backup of all the existing datasets (through [Fuseki protocol](https://jena.apache.org/documentation/fuseki2/fuseki-server-protocol.html)), and rsync them with the remote server.
 
 ### `backupUploads`
 
@@ -90,7 +83,7 @@ Rsync the uploaded files directory with the remote server.
 
 ### `syncWithRemoteServer`
 
-Generate a compressed backup of all the triples in the dataset (through [Fuseki protocol](https://jena.apache.org/documentation/fuseki2/fuseki-server-protocol.html)), and upload them via rsync to the remote server defined in the settings.
+Rsync the given path in the local server with the remote server.
 
 ##### Parameters
 | Property | Type | Default | Description |

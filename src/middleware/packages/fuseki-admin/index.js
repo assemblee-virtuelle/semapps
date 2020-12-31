@@ -22,6 +22,18 @@ const FusekiAdminService = {
       });
       return response.status === 200;
     },
+    async listAllDatasets(ctx) {
+      const response = await fetch(this.settings.url + '$/datasets', {
+        headers: this.headers
+      });
+
+      if( response.ok ) {
+        const json = await response.json();
+        return json.datasets.map(dataset => dataset['ds.name'].substring(1));
+      } else {
+        return [];
+      }
+    },
     async createDataset(ctx) {
       const { dataset } = ctx.params;
       const exist = await this.actions.datasetExist({ dataset });
@@ -60,13 +72,13 @@ const FusekiAdminService = {
 
         const response = await fetch(this.settings.url + '$/tasks/' + taskId, {
           method: 'GET',
-          headers: {
-            Authorization: this.Authorization
-          }
+          headers: this.headers
         });
 
-        task = await response.json();
-      } while (!task.finished);
+        if( response.ok ) {
+          task = await response.json();
+        }
+      } while (!task || !task.finished);
     }
   }
 };

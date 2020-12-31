@@ -60,6 +60,13 @@ Check if a dataset already exists.
 ##### Return
 True if the dataset exists
 
+### `listAllDatasets`
+
+Return a list of all existing datasets in the Fuseki instance.
+
+##### Return
+An array with the names of all existing datasets.
+
 ### `createDataset`
 
 Create a dataset if it doesn't already exist.
