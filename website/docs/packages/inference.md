@@ -25,7 +25,6 @@ $ npm install @semapps/inference --save
 
 ```js
 const { InferenceService } = require('@semapps/inference');
-const path = require('path');
 
 module.exports = {
   mixins: [InferenceService],

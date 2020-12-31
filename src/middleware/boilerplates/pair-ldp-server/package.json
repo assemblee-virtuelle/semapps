@@ -12,6 +12,7 @@
     "start": "moleculer-runner --instances=max services"
   },
   "dependencies": {
+    "@semapps/backup": "0.1.31",
     "@semapps/connector": "0.1.31",
     "@semapps/fuseki-admin": "0.1.31",
     "@semapps/inference": "0.1.31",

@@ -1,49 +1,73 @@
-'use strict';
-
 const fetch = require('node-fetch');
+
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const FusekiAdminService = {
   name: 'fuseki-admin',
   settings: {
-    sparqlEndpoint: null,
-    jenaUser: null,
-    jenaPassword: null
-  },
-  actions: {
-    async initDataset(ctx) {
-      let response = await fetch(this.settings.sparqlEndpoint + '$/datasets/' + ctx.params.dataset, {
-        method: 'GET',
-        headers: {
-          Authorization: this.Authorization
-        }
-      });
-      if (response.status === 404) {
-        console.warn(`Data ${ctx.params.dataset} doesn't exist. Creating...`);
-        let response2 = await fetch(
-          this.settings.sparqlEndpoint + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + ctx.params.dataset,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: this.Authorization
-            }
-          }
-        );
-        if (response2.status === 200) {
-          console.log(`Dataset ${ctx.params.dataset} created`);
-        } else {
-          console.warn(`Problem creating dataset ${ctx.params.dataset}`);
-        }
-      } else if (response.status === 200) {
-        // Dataset exist, do nothing...
-      } else {
-        throw new Error(`Problem initializing dataset ${ctx.params.dataset}`);
-      }
-      return;
-    }
+    url: null,
+    user: null,
+    password: null
   },
   started() {
-    this.Authorization =
-      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
+    this.headers = {
+      Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
+    };
+  },
+  actions: {
+    async datasetExist(ctx) {
+      const { dataset } = ctx.params;
+      const response = await fetch(this.settings.url + '$/datasets/' + dataset, {
+        headers: this.headers
+      });
+      return response.status === 200;
+    },
+    async createDataset(ctx) {
+      const { dataset } = ctx.params;
+      const exist = await this.actions.datasetExist({ dataset });
+      if (!exist) {
+        console.warn(`Data ${dataset} doesn't exist. Creating it...`);
+        const response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
+          method: 'POST',
+          headers: this.headers
+        });
+        if (response.status === 200) {
+          console.log(`Dataset ${dataset} created`);
+        } else {
+          throw new Error(`Error when creating dataset ${dataset}`);
+        }
+      }
+    },
+    async backupDataset(ctx) {
+      const { dataset } = ctx.params;
+
+      // Ask Fuseki to backup the given dataset
+      let response = await fetch(this.settings.url + '$/backup/' + dataset, {
+        method: 'POST',
+        headers: this.headers
+      });
+
+      // Wait for backup to complete
+      const { taskId } = await response.json();
+      await this.actions.waitForTaskCompletion({ taskId });
+    },
+    async waitForTaskCompletion(ctx) {
+      const { taskId } = ctx.params;
+      let task;
+
+      do {
+        await delay(1000);
+
+        const response = await fetch(this.settings.url + '$/tasks/' + taskId, {
+          method: 'GET',
+          headers: {
+            Authorization: this.Authorization
+          }
+        });
+
+        task = await response.json();
+      } while (!task.finished);
+    }
   }
 };
 
