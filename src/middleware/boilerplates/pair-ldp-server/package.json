@@ -1,6 +1,6 @@
 {
   "name": "coographie-server",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "private": true,
   "description": "SemApps-based semantic application",
   "keywords": [
@@ -12,15 +12,15 @@
     "start": "moleculer-runner --instances=max services"
   },
   "dependencies": {
-    "@semapps/backup": "0.1.32",
-    "@semapps/connector": "0.1.32",
-    "@semapps/fuseki-admin": "0.1.32",
-    "@semapps/inference": "0.1.32",
-    "@semapps/ldp": "0.1.32",
-    "@semapps/mime-types": "0.1.32",
-    "@semapps/sparql-endpoint": "0.1.32",
-    "@semapps/triplestore": "0.1.32",
-    "@semapps/webid": "0.1.32",
+    "@semapps/backup": "0.1.33",
+    "@semapps/connector": "0.1.33",
+    "@semapps/fuseki-admin": "0.1.33",
+    "@semapps/inference": "0.1.33",
+    "@semapps/ldp": "0.1.33",
+    "@semapps/mime-types": "0.1.33",
+    "@semapps/sparql-endpoint": "0.1.33",
+    "@semapps/triplestore": "0.1.33",
+    "@semapps/webid": "0.1.33",
     "dotenv-flow": "^3.2.0",
     "ioredis": "^4.17.3",
     "moleculer": "^0.14.4",
