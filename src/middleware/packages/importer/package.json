@@ -1,9 +1,12 @@
 {
   "name": "@semapps/importer",
-  "version": "0.1.18",
+  "version": "0.1.31",
   "description": "Mass importer for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
+  "dependencies": {
+    "moleculer": "^0.14.3"
+  },
   "publishConfig": {
     "access": "public"
   },

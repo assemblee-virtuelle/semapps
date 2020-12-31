@@ -1,14 +1,14 @@
 {
   "name": "@semapps/webid",
-  "version": "0.1.18",
+  "version": "0.1.31",
   "description": "WebID service for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.1.18",
-    "@semapps/middlewares": "0.1.18",
-    "@semapps/mime-types": "0.1.18",
-    "@semapps/triplestore": "0.1.18"
+    "@semapps/ldp": "0.1.31",
+    "@semapps/middlewares": "0.1.31",
+    "@semapps/mime-types": "0.1.31",
+    "@semapps/triplestore": "0.1.31"
   },
   "publishConfig": {
     "access": "public"

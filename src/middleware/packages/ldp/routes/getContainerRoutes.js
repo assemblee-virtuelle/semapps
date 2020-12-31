@@ -1,13 +1,14 @@
 const {
   parseHeader,
-  parseBody,
+  parseSparql,
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseFile,
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-function getContainerRoutes(containerUri, serviceName) {
+function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allowAnonymousDelete) {
   const commonRouteConfig = {
     path: new URL(containerUri).pathname,
     // Disable the body parsers so that we can parse the body ourselves
@@ -20,10 +21,11 @@ function getContainerRoutes(containerUri, serviceName) {
 
   const middlewares = [
     parseHeader,
-    parseBody,
     negotiateContentType,
     negotiateAccept,
+    parseSparql,
     parseJson,
+    parseFile,
     addContainerUriMiddleware(containerUri)
   ];
 
@@ -57,12 +59,19 @@ function getContainerRoutes(containerUri, serviceName) {
       ...commonRouteConfig
     },
     {
-      authorization: true,
-      authentication: false,
+      authorization: !allowAnonymousEdit,
+      authentication: !!allowAnonymousEdit,
       aliases: {
         'POST /': [...middlewares, actions.post],
         'PUT /:id': [...middlewares, actions.put],
-        'PATCH /:id': [...middlewares, actions.patch],
+        'PATCH /:id': [...middlewares, actions.patch]
+      },
+      ...commonRouteConfig
+    },
+    {
+      authorization: !allowAnonymousDelete,
+      authentication: !!allowAnonymousDelete,
+      aliases: {
         'DELETE /:id': [...middlewares, actions.delete]
       },
       ...commonRouteConfig

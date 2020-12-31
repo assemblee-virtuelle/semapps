@@ -2,12 +2,26 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const session = require('express-session');
 const E = require('moleculer-web').Errors;
+const fs = require('fs');
 
 class Connector {
   constructor(passportId, settings) {
     this.passport = passport;
     this.passportId = passportId;
-    this.settings = settings;
+
+    if (!fs.existsSync(settings.privateKeyPath) || !fs.existsSync(settings.publicKeyPath)) {
+      throw new Error('Public or private JWT key not found. Did you generate them ?');
+    }
+
+    this.settings = {
+      privateKey: fs.readFileSync(settings.privateKeyPath),
+      publicKey: fs.readFileSync(settings.publicKeyPath),
+      sessionSecret: settings.sessionSecret || 's€m@pps',
+      selectProfileData: settings.selectProfileData,
+      findOrCreateProfile: settings.findOrCreateProfile,
+      redirectUri: settings.redirectUri,
+      ...settings
+    };
   }
   async verifyToken(token) {
     try {
@@ -19,20 +33,21 @@ class Connector {
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
-    req.session.redirectUrl = req.query.redirectUrl || req.headers.referer || req.session.redirectUrl;
+    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer;
     next();
   }
   findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
+    // req.user provide by Passport strategy
     const profileData = this.settings.selectProfileData(req.user);
     this.settings.findOrCreateProfile(profileData).then(webId => {
-      // Keep the webId as we may need it for the token generation
+      // Keep the webId as we will need it for the token generation
       req.user.webId = webId;
       next();
     });
   }
   generateToken(req, res, next) {
-    // If token is already provided by the connector, skip this step
+    // If token is already provided by the connector, skip this step. OIDC and CAS not provide Token
     if (!req.user.token) {
       const profileData = this.settings.selectProfileData(req.user);
       const payload = { webId: req.user.webId, ...profileData };
@@ -45,6 +60,7 @@ class Connector {
     next();
   }
   globalLogout(req, res, next) {
+    //have to be implemented in extended class
     next();
   }
   redirectToFront(req, res) {
@@ -88,7 +104,6 @@ class Connector {
     }
   }
   async getWebId(ctx) {
-    // By default, get the webId from the token payload
     return ctx.meta.tokenPayload.webId;
   }
   getRoute() {

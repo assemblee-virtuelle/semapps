@@ -1,6 +1,6 @@
 {
   "name": "@semapps/react-admin",
-  "version": "0.1.4",
+  "version": "0.1.13",
   "description": "React-Admin extension for SemApps servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -35,5 +35,5 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
   },
-  "gitHead": "c578ad62168b4d839b8c3838e764da2c0c98921a"
+  "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
 }

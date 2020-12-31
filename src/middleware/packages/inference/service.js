@@ -28,6 +28,12 @@ module.exports = {
               if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
                 inverseRelations[quad.object.id] = quad.subject.id;
                 inverseRelations[quad.subject.id] = quad.object.id;
+              } else if (
+                quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+                quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
+              ) {
+                // SymmetricProperty implies an inverse relation with the same properties
+                inverseRelations[quad.subject.id] = quad.subject.id;
               }
             } else {
               console.log(`Found ${Object.keys(inverseRelations).length} inverse relations in ${ontology.owl}`);
@@ -67,6 +73,16 @@ module.exports = {
     generateDeleteQuery(triples) {
       return `DELETE WHERE { ${this.triplesToString(triples)} }`;
     },
+    // Since the inverse links are added or removed directly in the triple store,
+    // we need to invalidate manually the cache of the affected resources
+    cleanResourcesCache(ctx, triples) {
+      if (this.broker.cacher) {
+        for (let triple of triples) {
+          const resourceUri = triple.subject.id;
+          ctx.call('ldp.cache-cleaner.cleanResource', { resourceUri });
+        }
+      }
+    },
     async filterMissingResources(ctx, triples) {
       let existingTriples = [];
       for (let triple of triples) {
@@ -74,6 +90,10 @@ module.exports = {
         if (resourceExist) existingTriples.push(triple);
       }
       return existingTriples;
+    },
+    // Exclude from triples1 the triples which also exist in triples2
+    getTriplesDifference(triples1, triples2) {
+      return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
     }
   },
   events: {
@@ -86,8 +106,10 @@ module.exports = {
       // Avoid adding inverse link to non-existent resources
       triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
 
-      if (triplesToAdd.length > 0)
+      if (triplesToAdd.length > 0) {
         await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
+        this.cleanResourcesCache(ctx, triplesToAdd);
+      }
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData, webId } = ctx.params;
@@ -95,8 +117,10 @@ module.exports = {
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
-      if (triplesToRemove.length > 0)
+      if (triplesToRemove.length > 0) {
         await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
+        this.cleanResourcesCache(ctx, triplesToRemove);
+      }
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData, webId } = ctx.params;
@@ -106,17 +130,22 @@ module.exports = {
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
       let triplesToAdd = this.generateInverseTriples(newData[0]);
 
-      // TODO Filter out triples which are removed and added
-      // This will allow to identify resources which are really updated
-      // See https://graphy.link/memory.dataset.fast#method_difference
+      // Filter out triples which are removed and added at the same time
+      let filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
+      let filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
 
       // Avoid adding inverse link to non-existent resources
-      triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
+      filteredTriplesToAdd = await this.filterMissingResources(ctx, filteredTriplesToAdd);
 
-      if (triplesToRemove.length > 0)
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
-      if (triplesToAdd.length > 0)
-        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
+      if (filteredTriplesToRemove.length > 0) {
+        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(filteredTriplesToRemove), webId });
+        this.cleanResourcesCache(ctx, filteredTriplesToRemove);
+      }
+
+      if (filteredTriplesToAdd.length > 0) {
+        await ctx.call('triplestore.update', { query: this.generateInsertQuery(filteredTriplesToAdd), webId });
+        this.cleanResourcesCache(ctx, filteredTriplesToAdd);
+      }
     }
   }
 };

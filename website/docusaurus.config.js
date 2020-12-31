@@ -16,9 +16,10 @@ module.exports = {
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},
-        {to: 'docs/governance/organisation and role', label: 'Governance', position: 'left'},
+        {to: 'docs/governance/organisation-and-roles', label: 'Governance', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
+        {to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',

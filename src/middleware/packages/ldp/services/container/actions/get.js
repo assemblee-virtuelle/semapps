@@ -28,6 +28,9 @@ module.exports = {
       queryDepth: { type: 'number', default: 0 },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
+    cache: {
+      keys: ['containerUri', 'accept', 'queryDepth', 'query', 'jsonContext']
+    },
     async handler(ctx) {
       const { accept, containerUri, query, queryDepth, jsonContext } = ctx.params;
       let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
