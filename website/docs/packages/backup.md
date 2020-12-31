@@ -20,10 +20,10 @@ This service allows you to backup the triples in a given dataset, as well as the
 $ npm install @semapps/backup --save
 ```
 
-You will need to have `rsync` and `sshpass` installed on your server.
+You will need to have `rsync`, `sshpass` and `openssh` installed on your server.
 
 ```bash
-$ sudo apt-get install rsync sshpass
+$ sudo apt-get install rsync sshpass openssh
 ```
 
 You will also need to add the remote server domain as a known host, otherwise sshpass may fail:
