@@ -3,13 +3,13 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, parser, id, ...resource } = ctx.params;
+    const { containerUri, id, ...resource } = ctx.params;
 
-    //PUT have to stay in same container and @id can't be different
+    // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = `${containerUri}/${id}`;
-    if (parser === 'file') {
-      throw new MoleculerError(`non RDF Ressource PUT not supported`, 400, 'BAD_REQUEST');
+    if (ctx.meta.parser === 'file') {
+      throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
     }
 
     try {
@@ -40,11 +40,12 @@ module.exports = {
     },
     async handler(ctx) {
       const { resource, contentType, webId } = ctx.params;
+      const resourceUri = resource.id || resource['@id'];
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       const oldData = await ctx.call('ldp.resource.get', {
-        resourceUri: resource['@id'],
+        resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1
       });
@@ -54,7 +55,7 @@ module.exports = {
         query: `
           DELETE
           WHERE
-          { <${resource['@id']}> ?p ?v }
+          { <${resourceUri}> ?p ?v }
         `,
         webId
       });
@@ -70,7 +71,7 @@ module.exports = {
       const newData = await ctx.call(
         'ldp.resource.get',
         {
-          resourceUri: resource['@id'],
+          resourceUri,
           accept: MIME_TYPES.JSON,
           queryDepth: 1
         },
@@ -78,13 +79,13 @@ module.exports = {
       );
 
       ctx.emit('ldp.resource.updated', {
-        resourceUri: resource['@id'],
+        resourceUri,
         oldData,
         newData,
         webId
       });
 
-      return resource['@id'];
+      return resourceUri;
     }
   }
 };

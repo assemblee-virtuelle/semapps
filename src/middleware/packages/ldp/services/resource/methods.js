@@ -1,4 +1,5 @@
 const rdfParser = require('rdf-parse').default;
+const urlJoin = require('url-join');
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 const { negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
@@ -75,5 +76,12 @@ module.exports = {
           resolve(deleteSPARQL);
         });
     });
+  },
+  getContainerOptions(uri) {
+    return (
+      this.settings.containers.find(
+        container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
+      ) || {}
+    );
   }
 };

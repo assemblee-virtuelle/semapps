@@ -11,6 +11,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
+    containers: ['/resources'],
     defaultAccept: null,
     defaultJsonContext: null
   },

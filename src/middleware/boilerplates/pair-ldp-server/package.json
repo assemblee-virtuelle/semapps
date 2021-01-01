@@ -12,14 +12,17 @@
     "start": "moleculer-runner --instances=max services"
   },
   "dependencies": {
+    "@semapps/activitypub": "0.1.34",
     "@semapps/backup": "0.1.34",
     "@semapps/connector": "0.1.34",
     "@semapps/fuseki-admin": "0.1.34",
     "@semapps/inference": "0.1.34",
     "@semapps/ldp": "0.1.34",
     "@semapps/mime-types": "0.1.34",
+    "@semapps/signature": "0.1.34",
     "@semapps/sparql-endpoint": "0.1.34",
     "@semapps/triplestore": "0.1.34",
+    "@semapps/webfinger": "0.1.34",
     "@semapps/webid": "0.1.34",
     "dotenv-flow": "^3.2.0",
     "ioredis": "^4.17.3",

@@ -27,7 +27,7 @@ const FusekiAdminService = {
         headers: this.headers
       });
 
-      if( response.ok ) {
+      if (response.ok) {
         const json = await response.json();
         return json.datasets.map(dataset => dataset['ds.name'].substring(1));
       } else {
@@ -75,7 +75,7 @@ const FusekiAdminService = {
           headers: this.headers
         });
 
-        if( response.ok ) {
+        if (response.ok) {
           task = await response.json();
         }
       } while (!task || !task.finished);

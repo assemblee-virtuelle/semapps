@@ -32,6 +32,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
+        containers,
         defaultAccept,
         defaultJsonContext
       }
@@ -46,7 +47,8 @@ module.exports = {
     getApiRoutes() {
       let routes = [];
       // Associate all containers in settings with the LDP service
-      for (let containerPath of this.settings.containers) {
+      for (let container of this.settings.containers) {
+        const containerPath = typeof container === 'string' ? container : container.path;
         routes.push(
           ...getContainerRoutes(
             urlJoin(this.settings.baseUrl, containerPath),

@@ -5,20 +5,22 @@ const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 const InboxService = {
   name: 'activitypub.inbox',
   settings: {
-    actorsContainer: null,
-    numPerPage: 10
+    itemsPerPage: 10
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
-      let { username, collectionUri, ...activity } = ctx.params;
+      let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
+      const actorUri = urlJoin(actorContainerUri, username);
 
       if (!username && !collectionUri) {
-        throw new Error('Inbox post: a username or collectionUri must be specified');
+        throw new Error('A username or collectionUri must be specified');
       }
 
+      collectionUri = collectionUri || urlJoin(actorUri, 'inbox');
+
       const collectionExists = await ctx.call('activitypub.collection.exist', {
-        collectionUri: collectionUri || this.getInboxUri(username)
+        collectionUri: collectionUri
       });
 
       if (!collectionExists) {
@@ -32,7 +34,7 @@ const InboxService = {
       });
 
       const validSignature = await ctx.call('signature.verifyHttpSignature', {
-        url: collectionUri || this.getInboxUri(username),
+        url: collectionUri,
         headers: ctx.meta.headers
       });
 
@@ -52,23 +54,29 @@ const InboxService = {
 
       // Attach the activity to the inbox
       ctx.call('activitypub.collection.attach', {
-        collectionUri: collectionUri || this.getInboxUri(username),
+        collectionUri,
         item: activity
       });
 
       ctx.emit('activitypub.inbox.received', {
         activity,
-        recipients: [urlJoin(this.settings.actorsContainer, username)]
+        recipients: [actorUri]
       });
 
       ctx.meta.$statusCode = 202;
     },
     async list(ctx) {
+      let { username, containerUri: actorContainerUri, collectionUri, page } = ctx.params;
+
+      if (!username && !collectionUri) {
+        throw new Error('A username or collectionUri must be specified');
+      }
+
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: ctx.params.collectionUri || this.getInboxUri(ctx.params.username),
-        page: ctx.params.page,
+        id: collectionUri || urlJoin(actorContainerUri, username, 'inbox'),
+        page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
         queryDepth: 3
@@ -81,11 +89,6 @@ const InboxService = {
       } else {
         ctx.meta.$statusCode = 404;
       }
-    }
-  },
-  methods: {
-    getInboxUri(username) {
-      return urlJoin(this.settings.actorsContainer, username, 'inbox');
     }
   }
 };

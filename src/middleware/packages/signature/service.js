@@ -13,7 +13,7 @@ const SignatureService = {
     actorsKeyPairsDir: null
   },
   actions: {
-    async generateActorKeyPair(ctx) {
+    generateActorKeyPair(ctx) {
       return new Promise((resolve, reject) => {
         const { actorUri } = ctx.params;
         const actorId = getSlugFromUri(actorUri);
@@ -46,6 +46,13 @@ const SignatureService = {
           }
         );
       });
+    },
+    async deleteActorKeyPair(ctx) {
+      const { actorUri } = ctx.params;
+      const actorId = getSlugFromUri(actorUri);
+
+      await fs.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
+      await fs.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
     },
     async generateSignatureHeaders(ctx) {
       const { url, body, actorUri } = ctx.params;

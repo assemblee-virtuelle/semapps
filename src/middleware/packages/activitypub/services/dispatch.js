@@ -5,7 +5,7 @@ const { defaultToArray } = require('../utils');
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
-    actorsContainer: null
+    baseUri: null
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -46,7 +46,7 @@ const DispatchService = {
       return urlJoin(actorUri, 'followers');
     },
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.actorsContainer);
+      return uri.startsWith(this.settings.baseUri);
     },
     async getAllRecipients(activity) {
       let output = [],

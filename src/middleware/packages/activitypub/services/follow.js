@@ -4,15 +4,17 @@ const { ACTIVITY_TYPES } = require('../constants');
 const FollowService = {
   name: 'activitypub.follow',
   settings: {
-    actorsContainer: null
+    baseUri: null
   },
   dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
+      let { username, containerUri } = ctx.params;
+
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'followers'),
+        id: urlJoin(containerUri, username, 'followers'),
         dereferenceItems: false
       });
 
@@ -23,10 +25,12 @@ const FollowService = {
       }
     },
     async listFollowing(ctx) {
+      let { username, containerUri } = ctx.params;
+
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'following'),
+        id: urlJoin(containerUri, username, 'following'),
         dereferenceItems: false
       });
 
@@ -121,7 +125,7 @@ const FollowService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.actorsContainer);
+      return uri.startsWith(this.settings.baseUri);
     }
   }
 };

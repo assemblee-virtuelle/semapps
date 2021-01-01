@@ -160,7 +160,7 @@ const CollectionService = {
             prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
             next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems,
-            totalItems: result.items.length
+            totalItems: result.items ? result.items.length : 0
           };
         } else {
           // No pagination, return the collection
@@ -169,7 +169,7 @@ const CollectionService = {
             id: id,
             type: this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
             [itemsProp]: selectedItems,
-            totalItems: result.items.length
+            totalItems: result.items ? result.items.length : 0
           };
         }
       }

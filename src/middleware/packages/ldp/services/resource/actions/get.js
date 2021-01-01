@@ -28,7 +28,7 @@ module.exports = {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       accept: { type: 'string' },
-      queryDepth: { type: 'number', default: 0 },
+      queryDepth: { type: 'number', optional: true },
       jsonContext: {
         type: 'multi',
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -41,11 +41,12 @@ module.exports = {
     },
     async handler(ctx) {
       const { resourceUri, accept, webId, queryDepth, jsonContext, forceSemantic } = ctx.params;
+      const containerOptions = this.getContainerOptions(resourceUri);
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
       if (resourceExist) {
-        const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
+        const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth || containerOptions.queryDepth || 0);
 
         let result = await ctx.call('triplestore.query', {
           query: `
