@@ -49,7 +49,7 @@ const BackupService = {
 
       // Generate new backup of all datasets
       const datasets = await ctx.call('fuseki-admin.listAllDatasets');
-      for(const dataset of datasets) {
+      for (const dataset of datasets) {
         await ctx.call('fuseki-admin.backupDataset', { dataset });
       }
 
