@@ -59,12 +59,12 @@ Your instance of SemApps is available at http://localhost:3000
 
 ## Testing your LDP server
 
-By default, the LDP service will create a LDP container in the `/resources` path.
+By default, the LDP service will create a LDP container in the `/persons` path.
 
 Post an ActivityStreams Note to this LDP container with a tool like [Insomnia](https://insomnia.rest/), [Postman](https://www.postman.com/downloads/) or the [RESTClient add-on for Firefox](https://addons.mozilla.org/fr/firefox/addon/restclient/).
 
 ```
-POST /resources HTTP/1.1
+POST /persons HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
 Accept: */*
@@ -72,15 +72,15 @@ Content-Length: 97
 
 {
  "@context": "https://www.w3.org/ns/activitystreams",
- "type": "Note",
- "name": "Hello World"
+  "type": "Person",
+  "name": "Guillaume Cousin"
 }
 ```
 
-Retrieve the `/resources` LDP container:
+Retrieve the `/persons` LDP container:
 
 ```
-GET /resources HTTP/1.1
+GET /persons HTTP/1.1
 Host: localhost:3000
 Accept: application/ld+json
 ```
@@ -93,16 +93,16 @@ You should get this result:
     "ldp": "http://www.w3.org/ns/ldp#",
     "as": "https://www.w3.org/ns/activitystreams#"
   },
-  "@id": "http://localhost:3000/resources",
+  "@id": "http://localhost:3000/persons",
   "@type": [
     "ldp:Container",
     "ldp:BasicContainer"
   ],
   "ldp:contains": [
     {
-      "@id": "http://localhost:3000/resources/db78b000",
-      "@type": "as:Note",
-      "as:name": "Hello World"
+      "@id": "http://localhost:3000/persons/db78b000",
+       "type": "Person",
+       "name": "Guillaume Cousin"
     }
   ]
 }
