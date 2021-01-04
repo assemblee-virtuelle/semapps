@@ -50,7 +50,7 @@ describe('Posting to followers', () => {
       inbox: sebastienUri + '/inbox',
       outbox: sebastienUri + '/outbox',
       followers: sebastienUri + '/followers',
-      following: sebastienUri + '/following',
+      following: sebastienUri + '/following'
     });
 
     simon = await broker.call('ldp.resource.get', {

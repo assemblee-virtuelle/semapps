@@ -126,7 +126,8 @@ const CollectionService = {
         };
       } else {
         const allItems = defaultToArray(result.items);
-        let selectedItemsUris = allItems, selectedItems = [];
+        let selectedItemsUris = allItems,
+          selectedItems = [];
         const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
