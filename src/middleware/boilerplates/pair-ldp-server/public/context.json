@@ -16,6 +16,9 @@
     "semapps": "http://semapps.org/ns/core#",
     "oasis": "http://cooperative-oasis.org/ns/core#",
 
+    "id": "@id",
+    "type": "@type",
+
     "pair:about": {
       "@type": "@id"
     },

@@ -51,12 +51,6 @@ module.exports = {
         queryDepth: 1
       });
 
-      const query = await this.buildDeleteQueryFromResource(resource);
-      await ctx.call('triplestore.update', {
-        query,
-        webId
-      });
-
       // Adds a default context, if it is missing
       if (contentType === MIME_TYPES.JSON) {
         resource = {
@@ -64,6 +58,12 @@ module.exports = {
           ...resource
         };
       }
+
+      const query = await this.buildDeleteQueryFromResource(resource);
+      await ctx.call('triplestore.update', {
+        query,
+        webId
+      });
 
       await ctx.call('triplestore.insert', {
         resource,
