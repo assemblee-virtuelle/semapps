@@ -138,9 +138,11 @@ describe('Create/Update/Delete objects', () => {
     });
 
     // Check the object has been deleted
-    await expect(broker.call('ldp.resource.get', {
-      resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
-    })).rejects.toThrow('Not found');
+    await expect(
+      broker.call('ldp.resource.get', {
+        resourceUri: objectUri,
+        accept: MIME_TYPES.JSON
+      })
+    ).rejects.toThrow('Not found');
   });
 });
