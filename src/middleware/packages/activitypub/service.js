@@ -19,7 +19,11 @@ const ActivityPubService = {
     baseUri: null,
     additionalContext: {},
     containers: [],
-    selectActorData: resource => ({ '@type': ACTOR_TYPES.PERSON, name: undefined, preferredUsername: getSlugFromUri(resource.id || resource['@id']) }),
+    selectActorData: resource => ({
+      '@type': ACTOR_TYPES.PERSON,
+      name: undefined,
+      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
+    }),
     queueServiceUrl: null
   },
   dependencies: ['ldp'],

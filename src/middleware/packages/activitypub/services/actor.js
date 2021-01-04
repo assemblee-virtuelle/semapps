@@ -20,7 +20,9 @@ const ActorService = {
       const { actorUri, userData } = ctx.params;
       const { '@type': type, name, preferredUsername } = this.settings.selectActorData(userData);
 
-      const userTypes = Array.isArray(userData.type || userData['@type']) ? userData.type || userData['@type'] : [userData.type || userData['@type']];
+      const userTypes = Array.isArray(userData.type || userData['@type'])
+        ? userData.type || userData['@type']
+        : [userData.type || userData['@type']];
 
       await ctx.call('ldp.resource.patch', {
         resource: {
