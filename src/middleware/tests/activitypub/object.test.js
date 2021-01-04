@@ -1,7 +1,9 @@
 const { ServiceBroker } = require('moleculer');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
+const CONFIG = require('../config');
 
 jest.setTimeout(100000);
 
@@ -17,19 +19,25 @@ describe('Create/Update/Delete objects', () => {
   let sebastien, objectUri;
 
   test('Create actor', async () => {
-    sebastien = await broker.call('activitypub.actor.create', {
-      slug: 'srosset81',
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      preferredUsername: 'srosset81',
-      name: 'Sébastien Rosset'
+    const sebastienUri = await broker.call('webid.create', {
+      nick: 'srosset81',
+      name: 'Sébastien',
+      familyName: 'Rosset'
     });
 
-    expect(sebastien.preferredUsername).toBe('srosset81');
+    await broker.watchForEvent('activitypub.actor.created');
+
+    sebastien = await broker.call('ldp.resource.get', {
+      resourceUri: sebastienUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
   });
 
   test('Create object', async () => {
     await broker.call('activitypub.outbox.post', {
-      username: sebastien.preferredUsername,
+      collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.ARTICLE,
       name: 'Mon premier article',
@@ -40,7 +48,8 @@ describe('Create/Update/Delete objects', () => {
 
     // Check the activity is on the user's outbox
     let result = await broker.call('activitypub.outbox.list', {
-      username: sebastien.preferredUsername
+      collectionUri: sebastien.outbox,
+      page: 1
     });
     expect(result.orderedItems[0]).toMatchObject({
       type: ACTIVITY_TYPES.CREATE,
@@ -58,14 +67,17 @@ describe('Create/Update/Delete objects', () => {
     objectUri = result.orderedItems[0].object.id;
 
     // Check the object has been created
-    const object = await broker.call('activitypub.object.get', { id: objectUri });
+    const object = await broker.call('ldp.resource.get', {
+      resourceUri: objectUri,
+      accept: MIME_TYPES.JSON
+    });
     expect(object).toHaveProperty('type', OBJECT_TYPES.ARTICLE);
     expect(object).toHaveProperty('id', objectUri);
   });
 
   test('Update object', async () => {
     await broker.call('activitypub.outbox.post', {
-      username: sebastien.preferredUsername,
+      collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.UPDATE,
       actor: sebastien.id,
@@ -78,7 +90,8 @@ describe('Create/Update/Delete objects', () => {
 
     // Check activity is on the user's outbox
     let result = await broker.call('activitypub.outbox.list', {
-      username: sebastien.preferredUsername
+      collectionUri: sebastien.outbox,
+      page: 1
     });
     expect(result.orderedItems[0]).toMatchObject({
       type: ACTIVITY_TYPES.UPDATE,
@@ -94,7 +107,10 @@ describe('Create/Update/Delete objects', () => {
     expect(result.orderedItems[0].object).not.toHaveProperty('current');
 
     // Check the object has been updated
-    const object = await broker.call('activitypub.object.get', { id: objectUri });
+    const object = await broker.call('ldp.resource.get', {
+      resourceUri: objectUri,
+      accept: MIME_TYPES.JSON
+    });
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
@@ -105,7 +121,7 @@ describe('Create/Update/Delete objects', () => {
 
   test('Delete object', async () => {
     await broker.call('activitypub.outbox.post', {
-      username: sebastien.preferredUsername,
+      collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.DELETE,
       object: objectUri
@@ -113,16 +129,18 @@ describe('Create/Update/Delete objects', () => {
 
     // Check activity is on the user's outbox
     let result = await broker.call('activitypub.outbox.list', {
-      username: sebastien.preferredUsername
+      collectionUri: sebastien.outbox,
+      page: 1
     });
     expect(result.orderedItems[0]).toMatchObject({
       type: ACTIVITY_TYPES.DELETE,
       object: objectUri
     });
 
-    // Check the object has been replaced by a Tombstone
-    const object = await broker.call('activitypub.object.get', { id: objectUri });
-    expect(object).toHaveProperty('type', OBJECT_TYPES.TOMBSTONE);
-    expect(object).toHaveProperty('deleted');
+    // Check the object has been deleted
+    await expect(broker.call('ldp.resource.get', {
+      resourceUri: objectUri,
+      accept: MIME_TYPES.JSON
+    })).rejects.toThrow('Not found');
   });
 });
