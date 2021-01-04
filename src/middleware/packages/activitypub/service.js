@@ -19,7 +19,7 @@ const ActivityPubService = {
     baseUri: null,
     additionalContext: {},
     containers: [],
-    selectActorData: resource => ({ name: undefined, preferredUsername: getSlugFromUri(resource['@id']) }),
+    selectActorData: resource => ({ '@type': ACTOR_TYPES.PERSON, name: undefined, preferredUsername: getSlugFromUri(resource.id || resource['@id']) }),
     queueServiceUrl: null
   },
   dependencies: ['ldp'],
@@ -30,7 +30,7 @@ const ActivityPubService = {
 
     // Load default containers if none are defined
     // We can't set the defaults in the parameter directly, as Moleculer merge objects
-    if (!this.settings.containers) {
+    if (this.settings.containers.length === 0) {
       this.settings.containers = defaultContainers;
     }
 

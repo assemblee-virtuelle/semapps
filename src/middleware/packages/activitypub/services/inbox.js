@@ -13,8 +13,8 @@ const InboxService = {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
       const actorUri = urlJoin(actorContainerUri, username);
 
-      if (!username && !collectionUri) {
-        throw new Error('A username or collectionUri must be specified');
+      if ((!username || !actorContainerUri) && !collectionUri) {
+        throw new Error('A username/containerUri or collectionUri must be specified');
       }
 
       collectionUri = collectionUri || urlJoin(actorUri, 'inbox');

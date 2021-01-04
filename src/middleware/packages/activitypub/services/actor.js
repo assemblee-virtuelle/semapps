@@ -12,7 +12,7 @@ const ActorService = {
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
-      preferredUsername: getSlugFromUri(resource['@id'])
+      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
     })
   },
   actions: {
@@ -20,7 +20,7 @@ const ActorService = {
       const { actorUri, userData } = ctx.params;
       const { '@type': type, name, preferredUsername } = this.settings.selectActorData(userData);
 
-      const userTypes = Array.isArray(userData['@type']) ? userData['@type'] : [userData['@type']];
+      const userTypes = Array.isArray(userData.type || userData['@type']) ? userData.type || userData['@type'] : [userData.type || userData['@type']];
 
       await ctx.call('ldp.resource.patch', {
         resource: {
@@ -113,7 +113,7 @@ const ActorService = {
         await this.actions.appendActorData({ actorUri: resourceUri, userData: newData });
         await this.actions.attachCollections({ actorUri: resourceUri });
         await this.actions.generateKeyPair({ actorUri: resourceUri });
-        ctx.emit('actor.created', newData);
+        ctx.emit('activitypub.actor.created', newData);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -125,7 +125,7 @@ const ActorService = {
         await this.actions.deleteKeyPair({ actorUri: resourceUri });
       }
     },
-    'actor.created'() {
+    'activitypub.actor.created'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }
   }

@@ -38,7 +38,7 @@ const ObjectService = {
 
           objectUri = await ctx.call('ldp.resource.post', {
             containerUri,
-            slug: ctx.meta.headers.slug,
+            slug: ctx.meta.headers && ctx.meta.headers.slug,
             resource: activity.object,
             contentType: MIME_TYPES.JSON
           });

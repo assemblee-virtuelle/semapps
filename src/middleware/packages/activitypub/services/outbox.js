@@ -11,8 +11,8 @@ const OutboxService = {
     async post(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
 
-      if (!username && !collectionUri) {
-        throw new Error('Outbox post: a username or collectionUri must be specified');
+      if ((!username || !actorContainerUri) && !collectionUri) {
+        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
       }
 
       collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'outbox');
