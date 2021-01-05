@@ -5,7 +5,7 @@ const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const { accept } = { ...await ctx.call('ldp.getContainerOptions', { uri: containerUri }), ...ctx.meta.headers };
+    const { accept } = { ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.container.get', {
@@ -32,7 +32,10 @@ module.exports = {
     },
     async handler(ctx) {
       const { containerUri, query } = ctx.params;
-      const { accept, queryDepth, jsonContext } = { ...await ctx.call('ldp.getContainerOptions', { uri: containerUri }), ...ctx.params };
+      const { accept, queryDepth, jsonContext } = {
+        ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })),
+        ...ctx.params
+      };
       let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
       if (query) {
