@@ -5,14 +5,13 @@ const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+    const { accept } = { ...await ctx.call('ldp.getContainerOptions', { uri: containerUri }), ...ctx.meta.headers };
     try {
-      const body = await ctx.call('ldp.container.get', {
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      return await ctx.call('ldp.container.get', {
         containerUri,
         accept
       });
-      ctx.meta.$responseType = accept;
-      return body;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -22,17 +21,18 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      containerUri: { type: 'string' },
-      accept: { type: 'string' },
+      containerUri: { type: 'string', optional: true },
+      accept: { type: 'string', optional: true },
       query: { type: 'object', optional: true },
-      queryDepth: { type: 'number', default: 0 },
+      queryDepth: { type: 'number', optional: true },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
       keys: ['containerUri', 'accept', 'queryDepth', 'query', 'jsonContext']
     },
     async handler(ctx) {
-      const { accept, containerUri, query, queryDepth, jsonContext } = ctx.params;
+      const { containerUri, query } = ctx.params;
+      const { accept, queryDepth, jsonContext } = { ...await ctx.call('ldp.getContainerOptions', { uri: containerUri }), ...ctx.params };
       let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
       if (query) {
@@ -75,7 +75,7 @@ module.exports = {
 
       if (accept === MIME_TYPES.JSON) {
         result = await jsonld.frame(result, {
-          '@context': jsonContext || this.settings.defaultJsonContext || getPrefixJSON(this.settings.ontologies),
+          '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
           '@id': containerUri
         });
 

@@ -10,8 +10,10 @@ module.exports = {
     baseUrl: CONFIG.HOME_URL,
     ontologies,
     containers,
-    defaultJsonContext: urlJoin(CONFIG.HOME_URL, 'context.json'),
-    allowAnonymousEdit: true,
-    allowAnonymousDelete: true
+    defaultContainerOptions: {
+      jsonContext: urlJoin(CONFIG.HOME_URL, 'context.json'),
+      allowAnonymousEdit: true,
+      allowAnonymousDelete: true
+    }
   }
 };

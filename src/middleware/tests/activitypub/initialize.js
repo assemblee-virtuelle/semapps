@@ -25,7 +25,9 @@ const initialize = broker => async () => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers,
-      defaultJsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
+      defaultContainerOptions: {
+        jsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
+      }
     }
   });
   broker.createService(ActivityPubService, {

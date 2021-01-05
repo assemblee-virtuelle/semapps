@@ -76,12 +76,5 @@ module.exports = {
           resolve(deleteSPARQL);
         });
     });
-  },
-  getContainerOptions(uri) {
-    return (
-      this.settings.containers.find(
-        container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
-      ) || {}
-    );
   }
 };

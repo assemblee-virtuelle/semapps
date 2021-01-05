@@ -44,8 +44,17 @@ module.exports = {
       ...
     ],
     containers: [
-      '/resources'
-    ]
+      {
+        path: '/resources'
+      }
+    ],
+    defaultContainerOptions: {
+      accept: 'text/turtle',
+      jsonContext: null,
+      queryDepth: 0,
+      allowAnonymousEdit: false,
+      allowAnonymousDelete: false
+    }
   }
 };
 
@@ -74,8 +83,8 @@ module.exports = {
 | -------- | ---- | ------- | ----------- |
 | `baseUrl`|`String` | **required**| Base URL of the LDP server |
 | `ontologies`| `[Object]`|**required** | List of ontology used (see example above) |
-| `containers`| `[String]`| `/resources` | List of containers to set up, with their relative URL |
-| `defaultAccept`| `String`| `text/turtle` | Default `Accept` parameter used by all services |
+| `containers`| `[Object]`| **required** | List of containers to set up, with their options |
+| `defaultContainerOptions`| `[Object]`| see above | Default options for all containers |
 
 
 ## Actions

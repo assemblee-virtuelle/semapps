@@ -11,11 +11,9 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['/resources'],
-    defaultAccept: null,
-    defaultJsonContext: null
+    containers: []
   },
-  dependencies: ['triplestore'],
+  dependencies: ['ldp', 'triplestore'],
   actions: {
     attach: attachAction,
     clear: clearAction,
