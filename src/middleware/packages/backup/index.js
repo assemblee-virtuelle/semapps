@@ -26,13 +26,7 @@ const BackupService = {
     const { cronJob, remoteServer } = this.settings;
 
     if (cronJob.time && remoteServer.host) {
-      this.cronJob = new CronJob(
-        cronJob.time,
-        this.actions.backupAll,
-        null,
-        true,
-        cronJob.timeZone
-      );
+      this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
   },
   actions: {
