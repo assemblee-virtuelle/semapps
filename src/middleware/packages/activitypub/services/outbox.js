@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const { MoleculerError } = require('moleculer').Errors;
 const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
@@ -10,21 +11,23 @@ const OutboxService = {
   actions: {
     async post(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
+      const actorUri = urlJoin(actorContainerUri, username);
 
       if ((!username || !actorContainerUri) && !collectionUri) {
         throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
       }
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'outbox');
+      collectionUri = collectionUri || urlJoin(actorUri, 'outbox');
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
-
       if (!collectionExists) {
-        ctx.meta.$statusCode = 404;
-        return;
+        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
       }
 
-      // TODO check that logged user is posting to his own outbox
+      // Check that logged user is posting to his own outbox
+      if( actorUri !== ctx.meta.webId ) {
+        throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+      }
 
       // Process object create, update or delete
       // and return an activity with the object ID
@@ -38,7 +41,7 @@ const OutboxService = {
 
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
-        collectionUri: collectionUri,
+        collectionUri,
         item: activity
       });
 
@@ -68,7 +71,7 @@ const OutboxService = {
           collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
         return collection;
       } else {
-        ctx.meta.$statusCode = 404;
+        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
       }
     }
   }

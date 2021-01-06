@@ -101,8 +101,7 @@ const ActivityPubService = {
       const actorsContainersPath = this.getContainersByType(Object.values(ACTOR_TYPES));
 
       actorsContainersPath.map(actorContainer => {
-        // TODO secure again the first alias
-        unsecuredAliases[`POST ${actorContainer}/:username/outbox`] = [
+        securedAliases[`POST ${actorContainer}/:username/outbox`] = [
           ...middlewares,
           addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
           'activitypub.outbox.post'
