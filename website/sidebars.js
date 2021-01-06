@@ -8,7 +8,7 @@
 
 module.exports = {
   docs: {
-    Guides: ['guides/ldp-server','guides/dms','guides/activitypub', {'your project':['guides/your_project/main','guides/your_project/init_main','guides/your_project/init_minimal','guides/your_project/init_docker','guides/your_project/workbench']}],
+    Guides: ['guides/ldp-server','guides/dms','guides/activitypub', {'your project':['guides/your_project/main','guides/your_project/init_main','guides/your_project/init_minimal','guides/your_project/init_docker','guides/your_project/workbench','guides/your_project/kernel_main','guides/your_project/kernel_minimal','guides/your_project/kernel_docker','guides/your_project/minimal','guides/your_project/docker','guides/your_project/production_main','guides/your_project/production_minimal','guides/your_project/production_docker']}],
     Packages: ['packages/triplestore', 'packages/ldp', 'packages/activitypub', 'packages/signature', 'packages/connector', 'packages/webid', 'packages/inference', 'packages/importer', 'packages/webfinger', 'packages/webhooks']
   },
   contribute: {

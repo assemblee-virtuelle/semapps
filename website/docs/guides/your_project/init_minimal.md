@@ -3,19 +3,16 @@ title:  init & configure your project in minimal stack
 ---
 
 
-
 ## Purpose
 
 initialize and configure your semapps application without docker
-
-- configuration of environment variables
-- configuration of ontologies, context, resources, etc.
 
 ## Prerequisites
 
 - [NodeJS](https://nodejs.org/en/)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 - you can une [nvm](https://github.com/nvm-sh/nvm) to manage NodeJs and npm version
+- [git](https://fr.wikipedia.org/wiki/Git)
 
 ## create semantic data base, server and interfaces
 clone a git repo or make a directory and open it.
@@ -38,7 +35,7 @@ if you don't have fuseki server but you want install it without docker, we recom
 environment variables are written in .env file and you can change connection to fuseki server.
 
 ### fuseky not ever installed but docker-compose installed
-youn don't have fuseky server and you want to install it and you have docker-compose ever installed and you are ok to use docker-compose to run fuseki.
+you don't have fuseky server and you want to install it and you have docker-compose ever installed and you are ok to use docker-compose to run fuseki.
 ```bash
 ? Do you need a local instance of Jena Fuseki (with Docker)? Yes
 ```
@@ -46,8 +43,10 @@ youn don't have fuseky server and you want to install it and you have docker-com
 cd server
 docker-compose up #start fuseki + jenna
 ```
-### run semapps middleware / server
+## run semapps middleware / server
 ```bash
 cd server
 npm run dev
 ```
+## configure your application
+You can configure [server](./init_main#server-configuration) and [interface](./init_main#interface-configuration) to implement your needs. You could change [environment](./init_main#environnement-configuration).

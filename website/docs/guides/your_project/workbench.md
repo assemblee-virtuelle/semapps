@@ -34,7 +34,7 @@ make start
 make log
 make stop
 ```
-## debug or contribute to kernel
+## use semapps kernel source
 * You have to clone the semapps directory manually next to your project directory.
 * start using semapps kernel sources (more information in "use semapps kernel source" chapiter) + show logs of containers
 ```bash  
@@ -42,6 +42,7 @@ make start-dev
 make log-dev
 make stop-dev
 ```
+
 ## start in production server
 * change docker-compose.prod environement variable to match production environement
 * If you are on a production server that benefits from domain (DNS redirection) you can activate https. Update docker-compose.prod replacing yourdomain by your real domain.

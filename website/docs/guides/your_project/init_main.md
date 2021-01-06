@@ -14,36 +14,41 @@ initialize and configure your semapps application
 - configure environment variables
 - configure ontologies, context, resources, etc.
 
-## summary
+## navigation
 
 <table>
   <tr>
     <th>&nbsp;</th>
-    <th><div>minimal&nbsp;stack</div><div>+simple</div><div>-automate</div></th>
-    <th><div>make&nbsp;+&nbsp;docker</div><div>-simple</div><div>+automate</div></th>
-    <th><div>semapps&nbsp;workbench</div><div>+simple</div><div>+automate</div></th>
+    <th><a href="./minimal"><div>minimal&nbsp;stack</div><div>+simple</div><div>-automate</div></a></th>
+    <th><a href="./docker"><div>docker&nbsp;stack</div><div>-simple</div><div>+automate</div></a></th>
+    <th><a href="./workbench"><div>semapps&nbsp;workbench</div><div>+simple</div><div>+automate</div></a></th>
   </tr>
   <tr>
     <td>init a Project</td>
-    <td><a>lien</a></td>
-    <td><a>lien</a></td>
-    <td><a>lien</a></td>
+    <td><a href="./init_minimal">lien</a></td>
+    <td><a href="./init_docker">lien</a></td>
+    <td><a href="./workbench">lien</a></td>
   </tr>
 </table>
+
+## general
+
+To init your own project we recommand to create a dedicate git repository (github ou gitlab for example).
+You can build your semapps project from scratch and implement all stack with your own project code but we recomand to use tools provided by SemApps team to init it.
 
 ## create semantic data base, server and interfaces
 SemApps architecture is based on three layers
 - **Triplestore / DB** : fuseki + jena
 - **Middleware / server** : nodejs and moleculer micro-services
-- **Interface / client** : you can develop in technology tou want but SemApps provide components tu easy build REACT-admin application ou application based on redux.
+- **Interface / client** : you can develop in technology you want but SemApps provide components tu easy build REACT-admin application ou application based on redux.
 
 Interface layer depend on Middleware layer. Middleware Layer depend on Triplestore layer.
 
-[create your application in minimal stack](./init_minimal#create)
+[create your application in minimal stack](./init_minimal)
 
-[create your application in docker stack](./init_docker#create)
+[create your application in docker stack](./init_docker)
 
-[create your application in semapps workbench stack](./init_docker#create)
+[create your application in semapps workbench stack](./workbench)
 
 ## environnement configuration
 
