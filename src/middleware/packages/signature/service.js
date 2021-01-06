@@ -13,10 +13,30 @@ const SignatureService = {
     actorsKeyPairsDir: null
   },
   actions: {
-    generateActorKeyPair(ctx) {
+    async getActorPublicKey(ctx) {
+      const { actorUri } = ctx.params;
+      const actorId = getSlugFromUri(actorUri);
+      const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
+
+      try {
+        return await fs.promises.readFile(publicKeyPath);
+      } catch(e) {
+        return null;
+      }
+    },
+    async generateActorKeyPair(ctx) {
+      const { actorUri } = ctx.params;
+
+      const publicKey = await this.actions.getActorPublicKey({ actorUri });
+      if( publicKey ) {
+        console.log(`Key for ${actorUri} already exists, skipping...`);
+        return publicKey;
+      }
+
       return new Promise((resolve, reject) => {
-        const { actorUri } = ctx.params;
         const actorId = getSlugFromUri(actorUri);
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key');
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
 
         generateKeyPair(
           'rsa',
@@ -33,12 +53,8 @@ const SignatureService = {
           },
           (err, publicKey, privateKey) => {
             if (!err) {
-              fs.writeFile(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'), privateKey, err =>
-                reject(err)
-              );
-              fs.writeFile(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'), publicKey, err =>
-                reject(err)
-              );
+              fs.writeFile(privateKeyPath, privateKey, err => reject(err));
+              fs.writeFile(publicKeyPath, publicKey, err => reject(err));
               resolve(publicKey);
             } else {
               reject(err);
