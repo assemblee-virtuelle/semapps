@@ -49,22 +49,16 @@ module.exports = {
       for (let container of this.settings.containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
         const { allowAnonymousEdit, allowAnonymousDelete } = this.actions.getContainerOptions({ uri: containerUri });
-        routes.push(
-          ...getContainerRoutes(
-            containerUri,
-            null,
-            allowAnonymousEdit,
-            allowAnonymousDelete
-          )
-        );
+        routes.push(...getContainerRoutes(containerUri, null, allowAnonymousEdit, allowAnonymousDelete));
       }
       return routes;
     },
     getContainerOptions(ctx) {
       const { uri } = ctx.params;
-      const containerOptions = this.settings.containers.find(
-        container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
-      ) || {};
+      const containerOptions =
+        this.settings.containers.find(
+          container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
+        ) || {};
       return { ...this.settings.defaultContainerOptions, ...containerOptions };
     }
   }
