@@ -25,7 +25,7 @@ const OutboxService = {
       }
 
       // Check that logged user is posting to his own outbox
-      if (actorUri !== ctx.meta.webId) {
+      if (ctx.meta.webId && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
       }
 
