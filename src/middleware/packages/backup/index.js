@@ -7,7 +7,7 @@ const BackupService = {
   settings: {
     localServer: {
       fusekiBackupsPath: null,
-      uploadsPath: null
+      otherDirsPaths: {}
     },
     remoteServer: {
       user: null,
@@ -28,10 +28,7 @@ const BackupService = {
     if (cronJob.time && remoteServer.host) {
       this.cronJob = new CronJob(
         cronJob.time,
-        async () => {
-          await this.actions.backupDatasets();
-          await this.actions.backupUploads();
-        },
+        this.actions.backupAll,
         null,
         true,
         cronJob.timeZone
@@ -39,6 +36,10 @@ const BackupService = {
     }
   },
   actions: {
+    async backupAll(ctx) {
+      await this.actions.backupDatasets();
+      await this.actions.backupOtherDirs();
+    },
     async backupDatasets(ctx) {
       const { fusekiBackupsPath } = this.settings.localServer;
 
@@ -55,15 +56,17 @@ const BackupService = {
 
       await this.actions.syncWithRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' });
     },
-    async backupUploads(ctx) {
-      const { uploadsPath } = this.settings.localServer;
+    async backupOtherDirs(ctx) {
+      const { otherDirsPaths } = this.settings.localServer;
 
-      if (!uploadsPath) {
-        console.log('No uploadsPath defined, skipping backup...');
+      if (!otherDirsPaths) {
+        console.log('No otherDirPaths defined, skipping backup...');
         return;
       }
 
-      await this.actions.syncWithRemoteServer({ path: uploadsPath, subDir: 'uploads' });
+      for (const [key, path] of Object.entries(otherDirsPaths)) {
+        await this.actions.syncWithRemoteServer({ path, subDir: key });
+      }
     },
     syncWithRemoteServer(ctx) {
       const { path, subDir } = ctx.params;
