@@ -70,7 +70,7 @@ const SignatureService = {
       try {
         await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
         await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
-      } catch(e) {
+      } catch (e) {
         console.log(`Could not delete key pair for actor ${actorId}`);
       }
     },
