@@ -18,7 +18,8 @@ const ActorService = {
   actions: {
     async appendActorData(ctx) {
       const { actorUri, userData } = ctx.params;
-      const { '@type': type, name, preferredUsername } = this.settings.selectActorData(userData);
+      const actorData = this.settings.selectActorData(userData);
+      const { '@type': type, name, preferredUsername } = actorData;
 
       const userTypes = Array.isArray(userData.type || userData['@type'])
         ? userData.type || userData['@type']

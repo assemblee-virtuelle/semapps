@@ -11,24 +11,25 @@ module.exports = {
     additionalContext: getPrefixJSON(ontologies),
     containers,
     selectActorData: resource => {
-      const types = Array.isArray(resource['@type']) ? resource['@type'] : [resource['@type']];
-      if (types.includes('foaf:Person')) {
+      let resourceId = resource.id || resource['@id'], resourceTypes = resource.type || resource['@type'];
+      resourceTypes = Array.isArray(resourceTypes) ? resourceTypes : [resourceTypes];
+      if (resourceTypes.includes('foaf:Person')) {
         return {
           '@type': ACTOR_TYPES.PERSON,
           name: resource['foaf:name'] + ' ' + resource['foaf:familyName'],
-          preferredUsername: getSlugFromUri(resource['@id'])
+          preferredUsername: getSlugFromUri(resourceId)
         };
-      } else if (types.includes('pair:Organization')) {
+      } else if (resourceTypes.includes('pair:Organization')) {
         return {
           '@type': ACTOR_TYPES.ORGANIZATION,
           name: resource['pair:label'],
-          preferredUsername: getSlugFromUri(resource['@id'])
+          preferredUsername: getSlugFromUri(resourceId)
         };
-      } else if (types.includes('pair:Project')) {
+      } else if (resourceTypes.includes('pair:Project')) {
         return {
           '@type': ACTOR_TYPES.GROUP,
           name: resource['pair:label'],
-          preferredUsername: getSlugFromUri(resource['@id'])
+          preferredUsername: getSlugFromUri(resourceId)
         };
       }
     }

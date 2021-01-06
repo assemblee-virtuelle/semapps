@@ -8,7 +8,8 @@ module.exports = [
   },
   {
     path: '/projects',
-    acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP]
+    acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
+    queryDepth: 1
   },
   {
     path: '/events',
@@ -16,7 +17,8 @@ module.exports = [
   },
   {
     path: '/users',
-    acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON]
+    acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
+    queryDepth: 1
   },
   {
     path: '/themes',

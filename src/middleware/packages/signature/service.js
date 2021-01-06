@@ -67,8 +67,12 @@ const SignatureService = {
       const { actorUri } = ctx.params;
       const actorId = getSlugFromUri(actorUri);
 
-      await fs.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
-      await fs.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
+      try {
+        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
+        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
+      } catch(e) {
+        console.log(`Could not delete key pair for actor ${actorId}`);
+      }
     },
     async generateSignatureHeaders(ctx) {
       const { url, body, actorUri } = ctx.params;
