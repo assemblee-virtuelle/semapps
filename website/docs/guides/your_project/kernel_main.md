@@ -24,7 +24,7 @@ usage :
   </tr>
   <tr>
     <td>use semapps kernel source</td>
-    <td><a href="./kernal_minimal">lien</a></td>
+    <td><a href="./kernel_minimal">lien</a></td>
     <td><a href="./kernel_docker">lien</a></td>
     <td><a href="./workbench">lien</a></td>
   </tr>

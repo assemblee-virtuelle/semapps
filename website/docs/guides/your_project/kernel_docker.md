@@ -65,7 +65,7 @@ unlink:
 ```
 ## run in docker-compose
 
-We advise you to create another file like docker-compose.dev.yml and copy docker-compose.yml content provided in [init & configure your project in docker stack](./init_kernel). Previous file already contains a volume to the source codes of your application. You have to add the source code of the semapps kernel.
+We advise you to create another file like docker-compose.dev.yml and copy docker-compose.yml content provided in [init & configure your project in docker stack](./docker). Previous file already contains a volume to the source codes of your application. You have to add the source code of the semapps kernel.
 
 ```
 middleware:
