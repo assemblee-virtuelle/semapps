@@ -28,6 +28,12 @@ module.exports = {
               if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
                 inverseRelations[quad.object.id] = quad.subject.id;
                 inverseRelations[quad.subject.id] = quad.object.id;
+              } else if (
+                quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+                quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
+              ) {
+                // SymmetricProperty implies an inverse relation with the same properties
+                inverseRelations[quad.subject.id] = quad.subject.id;
               }
             } else {
               console.log(`Found ${Object.keys(inverseRelations).length} inverse relations in ${ontology.owl}`);

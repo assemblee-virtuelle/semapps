@@ -1,6 +1,6 @@
 {
   "name": "@semapps/semantic-data-provider",
-  "version": "0.1.8",
+  "version": "0.1.11",
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "react": "^16.13.0",
-    "react-admin": "^3.9.2"
+    "react-admin": "3.9.2"
   },
   "publishConfig": {
     "access": "public"
@@ -34,5 +34,6 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
-  }
+  },
+  "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
 }

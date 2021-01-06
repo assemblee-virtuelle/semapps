@@ -1,15 +1,15 @@
 import React from 'react';
 import { Notification } from 'react-admin';
 import { Container, Box, useMediaQuery, ThemeProvider } from '@material-ui/core';
-import Header from './Header';
+import AppBar from './AppBar';
 import ScrollToTop from './ScrollToTop';
 
-const Layout = ({ children, theme }) => {
+const Layout = ({ appBar, logout, theme, children }) => {
   const xs = useMediaQuery(theme.breakpoints.down('xs'));
   return (
     <ThemeProvider theme={theme}>
       <ScrollToTop />
-      <Header />
+      {React.cloneElement(appBar, { logout })}
       <Container maxWidth="lg" disableGutters={xs}>
         <Box mb={{ xs: 0, sm: 5 }}>{children}</Box>
       </Container>
@@ -17,6 +17,10 @@ const Layout = ({ children, theme }) => {
       <Notification />
     </ThemeProvider>
   );
+};
+
+Layout.defaultProps = {
+  appBar: <AppBar />
 };
 
 export default Layout;

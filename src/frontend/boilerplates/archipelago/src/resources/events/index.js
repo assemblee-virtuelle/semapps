@@ -1,4 +1,4 @@
-import EventCreate from './EventCreate';
+import PairResourceCreate from '../PairResourceCreate';
 import EventEdit from './EventEdit';
 import EventList from './EventList';
 import EventShow from './EventShow';
@@ -7,7 +7,7 @@ import EventIcon from '@material-ui/icons/Event';
 export default {
   list: EventList,
   show: EventShow,
-  create: EventCreate,
+  create: PairResourceCreate,
   edit: EventEdit,
   icon: EventIcon,
   options: {

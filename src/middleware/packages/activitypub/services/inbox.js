@@ -5,7 +5,8 @@ const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 const InboxService = {
   name: 'activitypub.inbox',
   settings: {
-    actorsContainer: null
+    actorsContainer: null,
+    numPerPage: 10
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
@@ -67,15 +68,16 @@ const InboxService = {
 
       const collection = await ctx.call('activitypub.collection.get', {
         id: ctx.params.collectionUri || this.getInboxUri(ctx.params.username),
+        page: ctx.params.page,
+        itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
         queryDepth: 3
       });
 
       if (collection) {
-        return {
-          ...collection,
-          orderedItems: collection.orderedItems.map(activityJson => objectCurrentToId(activityJson))
-        };
+        collection.orderedItems =
+          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
+        return collection;
       } else {
         ctx.meta.$statusCode = 404;
       }

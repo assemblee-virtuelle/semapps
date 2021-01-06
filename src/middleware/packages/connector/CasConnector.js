@@ -4,15 +4,10 @@ const Connector = require('./Connector');
 
 class CasConnector extends Connector {
   constructor(settings) {
-    const privateKey = fs.readFileSync(settings.privateKeyPath);
-    const publicKey = fs.readFileSync(settings.publicKeyPath);
+    const { casUrl, ...otherSettings } = settings;
     super('cas', {
-      casUrl: settings.casUrl,
-      privateKey,
-      publicKey,
-      sessionSecret: settings.sessionSecret || 's€m@pps',
-      selectProfileData: settings.selectProfileData,
-      findOrCreateProfile: settings.findOrCreateProfile
+      casUrl,
+      ...otherSettings
     });
   }
   async initialize() {

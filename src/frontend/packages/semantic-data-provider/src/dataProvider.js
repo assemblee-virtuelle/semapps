@@ -115,7 +115,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         } else if (!compactJson['@graph']) {
           // If we have several fields but no @graph, there is a single match
           compactJson.id = compactJson.id || compactJson['@id'];
-          console.log('compactJson', compactJson);
           return { data: [compactJson], total: 1 };
         } else {
           const returnData = compactJson['@graph']

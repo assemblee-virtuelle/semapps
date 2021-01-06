@@ -1,10 +1,4 @@
-const {
-  parseBody,
-  negotiateContentType,
-  negotiateAccept,
-  parseJson,
-  addContainerUriMiddleware
-} = require('@semapps/middlewares');
+const { negotiateAccept } = require('@semapps/middlewares');
 
 function getRoutes() {
   const commonRouteConfig = {

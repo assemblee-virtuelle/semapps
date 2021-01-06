@@ -13,7 +13,8 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
         resourceUri,
-        accept
+        accept,
+        webId: ctx.meta.webId
       });
     } catch (e) {
       console.error(e);
@@ -77,9 +78,14 @@ module.exports = {
         }
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
-          // Overwrite response type set by the api action
-          ctx.meta.$responseType = result['semapps:mimeType'];
-          return fs.readFileSync(result['semapps:localPath']);
+          try {
+            // Overwrite response type set by the api action
+            // TODO put this in the API action
+            ctx.meta.$responseType = result['semapps:mimeType'];
+            return fs.readFileSync(result['semapps:localPath']);
+          } catch (e) {
+            throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+          }
         } else {
           return result;
         }
