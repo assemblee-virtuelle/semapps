@@ -10,7 +10,7 @@ module.exports = {
       otherDirsPaths: {
         actors: path.resolve(__dirname, '../actors'),
         jwt: path.resolve(__dirname, '../jwt'),
-        uploads: path.resolve(__dirname, '../uploads'),
+        uploads: path.resolve(__dirname, '../uploads')
       }
     },
     // Rsync
