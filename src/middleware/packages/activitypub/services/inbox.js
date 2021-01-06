@@ -11,13 +11,13 @@ const InboxService = {
   actions: {
     async post(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
-      const actorUri = urlJoin(actorContainerUri, username);
 
       if ((!username || !actorContainerUri) && !collectionUri) {
         throw new Error('A username/containerUri or collectionUri must be specified');
       }
 
-      collectionUri = collectionUri || urlJoin(actorUri, 'inbox');
+      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'inbox');
+      const actorUri = collectionUri.replace('/inbox', '');
 
       const collectionExists = await ctx.call('activitypub.collection.exist', {
         collectionUri: collectionUri

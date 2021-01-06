@@ -11,13 +11,13 @@ const OutboxService = {
   actions: {
     async post(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
-      const actorUri = urlJoin(actorContainerUri, username);
 
       if ((!username || !actorContainerUri) && !collectionUri) {
         throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
       }
 
-      collectionUri = collectionUri || urlJoin(actorUri, 'outbox');
+      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'outbox');
+      const actorUri = collectionUri.replace('/outbox', '');
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
