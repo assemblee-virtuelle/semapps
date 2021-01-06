@@ -20,7 +20,7 @@ const SignatureService = {
 
       try {
         return await fs.promises.readFile(publicKeyPath);
-      } catch(e) {
+      } catch (e) {
         return null;
       }
     },
@@ -28,7 +28,7 @@ const SignatureService = {
       const { actorUri } = ctx.params;
 
       const publicKey = await this.actions.getActorPublicKey({ actorUri });
-      if( publicKey ) {
+      if (publicKey) {
         console.log(`Key for ${actorUri} already exists, skipping...`);
         return publicKey;
       }
