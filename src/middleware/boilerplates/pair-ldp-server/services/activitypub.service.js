@@ -11,7 +11,8 @@ module.exports = {
     additionalContext: getPrefixJSON(ontologies),
     containers,
     selectActorData: resource => {
-      let resourceId = resource.id || resource['@id'], resourceTypes = resource.type || resource['@type'];
+      let resourceId = resource.id || resource['@id'],
+        resourceTypes = resource.type || resource['@type'];
       resourceTypes = Array.isArray(resourceTypes) ? resourceTypes : [resourceTypes];
       if (resourceTypes.includes('foaf:Person')) {
         return {
