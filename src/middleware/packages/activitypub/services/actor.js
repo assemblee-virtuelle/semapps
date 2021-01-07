@@ -93,16 +93,17 @@ const ActorService = {
       for (let containerUri of this.settings.actorsContainers) {
         const containerData = await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
         for (let actor of containerData['ldp:contains']) {
+          const actorUri = actor.id || actor['@id'];
           if (!actor.preferredUsername) {
-            await this.actions.appendActorData({ actorUri: actor['@id'], userData: actor });
+            await this.actions.appendActorData({ actorUri, userData: actor });
           }
           if (!actor.inbox) {
-            await this.actions.attachCollections({ actorUri: actor['@id'] });
+            await this.actions.attachCollections({ actorUri });
           }
           if (!actor.publicKey) {
-            await this.actions.generateKeyPair({ actorUri: actor['@id'] });
+            await this.actions.generateKeyPair({ actorUri });
           }
-          console.log('Generated missing data for actor ' + actor['@id']);
+          console.log('Generated missing data for actor ' + actorUri);
         }
       }
     }
