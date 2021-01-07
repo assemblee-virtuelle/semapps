@@ -22,25 +22,22 @@ const WebIdService = {
         nick = email.split('@')[0].toLowerCase();
       }
 
-      const userData = {
-        nick,
-        email,
-        name,
-        familyName,
-        homepage
-      };
-      let type = (webId = await ctx.call('ldp.resource.post', {
+      const webId = await ctx.call('ldp.resource.post', {
         resource: {
           '@context': {
             '@vocab': 'http://xmlns.com/foaf/0.1/'
           },
           '@type': 'Person',
-          ...userData
+          nick,
+          email,
+          name,
+          familyName,
+          homepage
         },
         slug: nick,
         containerUri: this.settings.usersContainer,
         contentType: MIME_TYPES.JSON
-      }));
+      });
 
       let newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
@@ -55,7 +52,6 @@ const WebIdService = {
     },
     async view(ctx) {
       const webId = await this.getWebId(ctx);
-
       if (webId) {
         return await ctx.call('ldp.resource.get', {
           resourceUri: webId,
@@ -78,7 +74,6 @@ const WebIdService = {
         accept: MIME_TYPES.JSON
       });
     },
-
     async list(ctx) {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
@@ -97,7 +92,6 @@ const WebIdService = {
         accept: accept
       });
     },
-
     async findByEmail(ctx) {
       const { email } = ctx.params;
       const results = await ctx.call('triplestore.query', {
@@ -115,11 +109,9 @@ const WebIdService = {
 
       return results.length > 0 ? results[0].webId.value : null;
     },
-
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
     },
-
     getApiRoutes(ctx) {
       return getRoutes();
     }

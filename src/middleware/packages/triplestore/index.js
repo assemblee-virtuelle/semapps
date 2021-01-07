@@ -148,7 +148,7 @@ const TripleStoreService = {
         });
         if (!response.ok)
           throw new Error(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
-        // console.log(response.headers.get('content-type'));
+
         ctx.meta.$responseType = response.headers.get('content-type');
 
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;

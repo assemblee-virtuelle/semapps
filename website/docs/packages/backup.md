@@ -43,7 +43,9 @@ module.exports = {
   settings: {
     localServer: {
       fusekiBackupsPath: '/absolute/path/to/fuseki/backups',
-      uploadsPath: path.resolve(__dirname, '../uploads')
+      otherDirsPaths: {
+        uploads: path.resolve(__dirname, '../uploads')
+      }
     },
     // Rsync
     remoteServer: {
@@ -65,7 +67,7 @@ module.exports = {
 
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `localServer`| `[Object]`|  | Absolute path to the Fuseki backups and uploads directories |
+| `localServer`| `[Object]`|  | Absolute path to the Fuseki backups and other directories you want to backup |
 | `remoteServer`| `[Object]`|  | Informations to connect to the remote server (see above) |
 | `cronJob`| `[Object]`|  | Informations for the automatic backups (see above) |
 
@@ -73,13 +75,17 @@ module.exports = {
 
 The following service actions are available:
 
+### `backupAll`
+
+Calls `backupDatasets` and `backupOtherDirs`.
+
 ### `backupDatasets`
 
 Generate a compressed backup of all the existing datasets (through [Fuseki protocol](https://jena.apache.org/documentation/fuseki2/fuseki-server-protocol.html)), and rsync them with the remote server.
 
-### `backupUploads`
+### `backupOtherDirs`
 
-Rsync the uploaded files directory with the remote server.
+Rsync the other directories defined in the settings with the remote server.
 
 ### `syncWithRemoteServer`
 

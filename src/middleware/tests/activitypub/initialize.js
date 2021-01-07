@@ -2,8 +2,9 @@ const fse = require('fs-extra');
 const path = require('path');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
-const { ActivityPubService } = require('@semapps/activitypub');
+const { ActivityPubService, containers } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
+const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
@@ -21,8 +22,12 @@ const initialize = broker => async () => {
   });
   broker.createService(LdpService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL + 'ldp/',
-      ontologies
+      baseUrl: CONFIG.HOME_URL,
+      ontologies,
+      containers,
+      defaultContainerOptions: {
+        jsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
+      }
     }
   });
   broker.createService(ActivityPubService, {
@@ -34,6 +39,11 @@ const initialize = broker => async () => {
   broker.createService(SignatureService, {
     settings: {
       actorsKeyPairsDir: path.resolve(__dirname, './actors')
+    }
+  });
+  broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'actors/'
     }
   });
 

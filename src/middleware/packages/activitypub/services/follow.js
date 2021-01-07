@@ -4,15 +4,21 @@ const { ACTIVITY_TYPES } = require('../constants');
 const FollowService = {
   name: 'activitypub.follow',
   settings: {
-    actorsContainer: null
+    baseUri: null
   },
   dependencies: ['activitypub.actor', 'activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
+      let { username, containerUri: actorContainerUri, collectionUri } = ctx.params;
+
+      if ((!username || !actorContainerUri) && !collectionUri) {
+        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
+      }
+
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'followers'),
+        id: collectionUri || urlJoin(actorContainerUri, username, 'followers'),
         dereferenceItems: false
       });
 
@@ -23,10 +29,16 @@ const FollowService = {
       }
     },
     async listFollowing(ctx) {
+      let { username, containerUri: actorContainerUri, collectionUri } = ctx.params;
+
+      if ((!username || !actorContainerUri) && !collectionUri) {
+        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
+      }
+
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: urlJoin(this.settings.actorsContainer, ctx.params.username, 'following'),
+        id: collectionUri || urlJoin(actorContainerUri, username, 'following'),
         dereferenceItems: false
       });
 
@@ -121,7 +133,7 @@ const FollowService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.actorsContainer);
+      return uri.startsWith(this.settings.baseUri);
     }
   }
 };

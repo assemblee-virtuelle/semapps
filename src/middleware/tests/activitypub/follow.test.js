@@ -1,9 +1,11 @@
 const { ServiceBroker } = require('moleculer');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
+const CONFIG = require('../config');
 
-jest.setTimeout(100000);
+jest.setTimeout(50000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher]
@@ -16,28 +18,50 @@ afterAll(async () => {
 describe('Posting to followers', () => {
   let simon, sebastien, followActivity;
 
-  test('Create actor directly', async () => {
-    sebastien = await broker.call('activitypub.actor.create', {
-      slug: 'srosset81',
-      '@context': 'https://www.w3.org/ns/activitystreams',
+  test('Create actor', async () => {
+    const sebastienUri = await broker.call('webid.create', {
+      nick: 'srosset81',
+      name: 'Sébastien',
+      familyName: 'Rosset'
+    });
+
+    await broker.watchForEvent('activitypub.actor.created');
+
+    const simonUri = await broker.call('webid.create', {
+      nick: 'simonlouvet',
+      name: 'Simon',
+      familyName: 'Louvet'
+    });
+
+    await broker.watchForEvent('activitypub.actor.created');
+
+    sebastien = await broker.call('ldp.resource.get', {
+      resourceUri: sebastienUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
+
+    expect(sebastien).toMatchObject({
+      id: sebastienUri,
+      type: ['Person', 'foaf:Person'],
       preferredUsername: 'srosset81',
-      name: 'Sébastien Rosset'
+      'foaf:nick': 'srosset81',
+      inbox: sebastienUri + '/inbox',
+      outbox: sebastienUri + '/outbox',
+      followers: sebastienUri + '/followers',
+      following: sebastienUri + '/following'
     });
 
-    simon = await broker.call('activitypub.actor.create', {
-      slug: 'simonlouvet',
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      preferredUsername: 'simonlouvet',
-      name: 'Simon Louvet'
+    simon = await broker.call('ldp.resource.get', {
+      resourceUri: simonUri,
+      accept: MIME_TYPES.JSON
     });
-
-    expect(sebastien.preferredUsername).toBe('srosset81');
-    expect(simon.preferredUsername).toBe('simonlouvet');
   });
 
   test('Follow user', async () => {
     followActivity = await broker.call('activitypub.outbox.post', {
-      username: sebastien.preferredUsername,
+      collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
       type: ACTIVITY_TYPES.FOLLOW,
@@ -55,13 +79,14 @@ describe('Posting to followers', () => {
     await broker.watchForEvent('activitypub.follow.added');
 
     let result = await broker.call('activitypub.follow.listFollowers', {
-      username: simon.preferredUsername
+      collectionUri: simon.followers
     });
 
     expect(result.items).toContain(sebastien.id);
 
     result = await broker.call('activitypub.inbox.list', {
-      username: sebastien.preferredUsername
+      collectionUri: sebastien.inbox,
+      page: 1
     });
 
     expect(result.orderedItems).toHaveLength(1);
@@ -78,7 +103,7 @@ describe('Posting to followers', () => {
 
   test('Send message to followers', async () => {
     let result = await broker.call('activitypub.outbox.post', {
-      username: simon.preferredUsername,
+      collectionUri: simon.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
       name: 'Hello World',
@@ -99,7 +124,8 @@ describe('Posting to followers', () => {
     await broker.watchForEvent('activitypub.inbox.received');
 
     result = await broker.call('activitypub.inbox.list', {
-      username: sebastien.preferredUsername
+      collectionUri: sebastien.inbox,
+      page: 1
     });
 
     expect(result.orderedItems).toHaveLength(2);
@@ -107,7 +133,7 @@ describe('Posting to followers', () => {
 
   test('Unfollow user', async () => {
     let result = await broker.call('activitypub.outbox.post', {
-      username: sebastien.preferredUsername,
+      collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
       type: ACTIVITY_TYPES.UNDO,
@@ -128,9 +154,9 @@ describe('Posting to followers', () => {
     });
 
     result = await broker.call('activitypub.follow.listFollowers', {
-      username: simon.preferredUsername
+      collectionUri: simon.followers
     });
 
-    expect(result.items).not.toContain(sebastien.id);
+    expect(result.items).toBeUndefined();
   });
 });

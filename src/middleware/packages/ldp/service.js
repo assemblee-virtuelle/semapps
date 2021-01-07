@@ -9,22 +9,23 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['/resources'],
-    defaultAccept: 'text/turtle',
-    defaultJsonContext: null,
-    allowAnonymousEdit: false,
-    allowAnonymousDelete: false
+    containers: [],
+    defaultContainerOptions: {
+      accept: 'text/turtle',
+      jsonContext: null,
+      queryDepth: 0,
+      allowAnonymousEdit: false,
+      allowAnonymousDelete: false
+    }
   },
   async created() {
-    const { baseUrl, ontologies, containers, defaultAccept, defaultJsonContext } = this.schema.settings;
+    const { baseUrl, ontologies, containers } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
-        containers,
-        defaultAccept,
-        defaultJsonContext
+        containers
       }
     });
 
@@ -32,8 +33,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        defaultAccept,
-        defaultJsonContext
+        containers
       }
     });
 
@@ -46,17 +46,20 @@ module.exports = {
     getApiRoutes() {
       let routes = [];
       // Associate all containers in settings with the LDP service
-      for (let containerPath of this.settings.containers) {
-        routes.push(
-          ...getContainerRoutes(
-            urlJoin(this.settings.baseUrl, containerPath),
-            null,
-            this.settings.allowAnonymousEdit,
-            this.settings.allowAnonymousDelete
-          )
-        );
+      for (let container of this.settings.containers) {
+        const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
+        const { allowAnonymousEdit, allowAnonymousDelete } = this.actions.getContainerOptions({ uri: containerUri });
+        routes.push(...getContainerRoutes(containerUri, null, allowAnonymousEdit, allowAnonymousDelete));
       }
       return routes;
+    },
+    getContainerOptions(ctx) {
+      const { uri } = ctx.params;
+      const containerOptions =
+        this.settings.containers.find(
+          container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
+        ) || {};
+      return { ...this.settings.defaultContainerOptions, ...containerOptions };
     }
   }
 };

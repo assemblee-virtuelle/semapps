@@ -8,10 +8,10 @@ const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, parser, ...resource } = ctx.params;
+    let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
-      if (parser !== 'file') {
+      if (ctx.meta.parser !== 'file') {
         resourceUri = await ctx.call('ldp.resource.post', {
           containerUri: containerUri,
           slug: ctx.meta.headers.slug,

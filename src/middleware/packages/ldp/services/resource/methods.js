@@ -1,4 +1,5 @@
 const rdfParser = require('rdf-parse').default;
+const urlJoin = require('url-join');
 const streamifyString = require('streamify-string');
 const N3 = require('n3');
 const { negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');

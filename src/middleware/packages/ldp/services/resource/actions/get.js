@@ -8,7 +8,7 @@ module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
     const resourceUri = `${containerUri}/${id}`;
-    const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+    const { accept } = { ...(await ctx.call('ldp.getContainerOptions', { uri: resourceUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
@@ -27,8 +27,8 @@ module.exports = {
     params: {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
-      accept: { type: 'string' },
-      queryDepth: { type: 'number', default: 0 },
+      accept: { type: 'string', optional: true },
+      queryDepth: { type: 'number', optional: true },
       jsonContext: {
         type: 'multi',
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -40,7 +40,11 @@ module.exports = {
       keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, accept, webId, queryDepth, jsonContext, forceSemantic } = ctx.params;
+      const { resourceUri, webId, forceSemantic } = ctx.params;
+      const { accept, queryDepth, jsonContext } = {
+        ...(await ctx.call('ldp.getContainerOptions', { uri: resourceUri })),
+        ...ctx.params
+      };
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
@@ -66,7 +70,7 @@ module.exports = {
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
           result = await jsonld.frame(result, {
-            '@context': jsonContext || this.settings.defaultJsonContext || getPrefixJSON(this.settings.ontologies),
+            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
             '@id': resourceUri
           });
 

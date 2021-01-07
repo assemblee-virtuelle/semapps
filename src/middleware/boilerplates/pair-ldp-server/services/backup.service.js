@@ -7,7 +7,11 @@ module.exports = {
   settings: {
     localServer: {
       fusekiBackupsPath: CONFIG.BACKUP_FUSEKI_DATASETS_PATH,
-      uploadsPath: path.resolve(__dirname, '../uploads')
+      otherDirsPaths: {
+        actors: path.resolve(__dirname, '../actors'),
+        jwt: path.resolve(__dirname, '../jwt'),
+        uploads: path.resolve(__dirname, '../uploads')
+      }
     },
     // Rsync
     remoteServer: {

@@ -28,7 +28,7 @@ module.exports = {
       exposedHeaders: '*'
     }
   },
-  dependencies: ['ldp', 'sparqlEndpoint', 'webid'],
+  dependencies: ['ldp', 'activitypub', 'sparqlEndpoint', 'webid'],
   async started() {
     this.connector = new OidcConnector({
       issuer: CONFIG.OIDC_ISSUER,
@@ -73,6 +73,7 @@ module.exports = {
     [
       this.connector.getRoute(),
       ...(await this.broker.call('ldp.getApiRoutes')),
+      ...(await this.broker.call('activitypub.getApiRoutes')),
       ...(await this.broker.call('sparqlEndpoint.getApiRoutes'))
     ].forEach(route => this.addRoute(route));
   },

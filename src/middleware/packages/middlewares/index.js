@@ -44,7 +44,7 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const bodyRawPromise = req => {
+const getRawBody = req => {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', function(chunk) {
@@ -58,30 +58,34 @@ const bodyRawPromise = req => {
 
 const parseSparql = async (req, res, next) => {
   if (
-    !req.$params.parser &&
+    !req.$ctx.meta.parser &&
     (req.originalUrl.includes('/sparql') ||
       (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
   ) {
-    req.$params.parser = 'sparql';
-    req.$params.body = await bodyRawPromise(req);
+    req.$ctx.meta.parser = 'sparql';
+    req.$params.body = await getRawBody(req);
   }
   next();
 };
 
 const parseJson = async (req, res, next) => {
-  if (!req.$params.parser && req.headers['content-type'] && req.headers['content-type'] === MIME_TYPES.JSON) {
-    const body = await bodyRawPromise(req);
+  if (
+    !req.$ctx.meta.parser &&
+    req.headers['content-type'] &&
+    negotiateTypeMime(req.headers['content-type']) === MIME_TYPES.JSON
+  ) {
+    const body = await getRawBody(req);
     if (body) {
       const json = JSON.parse(body);
       req.$params = { ...json, ...req.$params };
     }
-    req.$params.parser = 'json';
+    req.$ctx.meta.parser = 'json';
   }
   next();
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$params.parser) {
+  if (!req.$ctx.meta.parser) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
       let files = [];
@@ -115,7 +119,7 @@ const parseFile = (req, res, next) => {
         req.$params.multipartFields = fields;
         next();
       });
-      req.$params.parser = 'file';
+      req.$ctx.meta.parser = 'file';
       req.pipe(busboy);
     } else {
       const files = [
@@ -125,7 +129,7 @@ const parseFile = (req, res, next) => {
         }
       ];
       req.$params.files = files;
-      req.$params.parser = 'file';
+      req.$ctx.meta.parser = 'file';
       next();
     }
   } else {

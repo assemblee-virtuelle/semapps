@@ -40,15 +40,25 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
+      let { resource, contentType, webId } = ctx.params;
+      const resourceUri = resource.id || resource['@id'];
+      const { queryDepth, jsonContext } = await ctx.call('ldp.getContainerOptions', { uri: resourceUri });
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       const oldData = await ctx.call('ldp.resource.get', {
-        resourceUri: resource['@id'],
+        resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1
+        queryDepth
       });
+
+      // Adds a default context, if it is missing
+      if (contentType === MIME_TYPES.JSON) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
+      }
 
       const query = await this.buildDeleteQueryFromResource(resource);
       await ctx.call('triplestore.update', {
@@ -66,21 +76,21 @@ module.exports = {
       const newData = await ctx.call(
         'ldp.resource.get',
         {
-          resourceUri: resource['@id'],
+          resourceUri,
           accept: MIME_TYPES.JSON,
-          queryDepth: 1
+          queryDepth
         },
         { meta: { $cache: false } }
       );
 
       ctx.emit('ldp.resource.updated', {
-        resourceUri: resource['@id'],
+        resourceUri,
         oldData,
         newData,
         webId
       });
 
-      return resource['@id'];
+      return resourceUri;
     }
   }
 };

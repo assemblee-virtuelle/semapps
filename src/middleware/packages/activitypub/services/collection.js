@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../utils');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -124,14 +125,15 @@ const CollectionService = {
           totalItems: result.items ? result.items.length : 0
         };
       } else {
-        let selectedItemsUris = result.items,
+        const allItems = defaultToArray(result.items);
+        let selectedItemsUris = allItems,
           selectedItems = [];
         const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
         if (itemsPerPage) {
           const start = (page - 1) * itemsPerPage;
-          selectedItemsUris = result.items.slice(start, start + itemsPerPage);
+          selectedItemsUris = allItems.slice(start, start + itemsPerPage);
         }
 
         if (dereferenceItems) {
@@ -160,7 +162,7 @@ const CollectionService = {
             prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
             next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems,
-            totalItems: result.items.length
+            totalItems: allItems ? allItems.length : 0
           };
         } else {
           // No pagination, return the collection
@@ -169,7 +171,7 @@ const CollectionService = {
             id: id,
             type: this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
             [itemsProp]: selectedItems,
-            totalItems: result.items.length
+            totalItems: allItems ? allItems.length : 0
           };
         }
       }

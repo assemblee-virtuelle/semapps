@@ -11,11 +11,9 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: ['resources'],
-    defaultAccept: null,
-    defaultJsonContext: null
+    containers: []
   },
-  dependencies: ['triplestore'],
+  dependencies: ['ldp', 'triplestore'],
   actions: {
     attach: attachAction,
     clear: clearAction,
@@ -27,7 +25,8 @@ module.exports = {
     get: getAction.action
   },
   async started() {
-    for (let containerPath of this.settings.containers) {
+    for (let container of this.settings.containers) {
+      const containerPath = typeof container === 'string' ? container : container.path;
       const containerUri = urlJoin(this.settings.baseUrl, containerPath);
       const exists = await this.actions.exist({ containerUri });
       if (!exists) {
