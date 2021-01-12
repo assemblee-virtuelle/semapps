@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const jsonld = require('jsonld');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery } = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -29,6 +29,7 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string', optional: true },
       queryDepth: { type: 'number', optional: true },
+      dereference: { type: 'array', optional: true },
       jsonContext: {
         type: 'multi',
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -37,11 +38,11 @@ module.exports = {
       forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'jsonContext']
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
       const { resourceUri, webId, forceSemantic } = ctx.params;
-      const { accept, queryDepth, jsonContext } = {
+      const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.getContainerOptions', { uri: resourceUri })),
         ...ctx.params
       };
@@ -49,18 +50,21 @@ module.exports = {
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
 
       if (resourceExist) {
-        const [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
+        const blandNodeQuery = buildBlankNodesQuery(queryDepth);
+        const dereferenceQuery = buildDereferenceQuery(dereference);
 
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
               <${resourceUri}> ?p1 ?o1 .
-              ${constructQuery}
+              ${blandNodeQuery.construct}
+              ${dereferenceQuery.construct}
             }
             WHERE {
               <${resourceUri}> ?p1 ?o1 .
-              ${whereQuery}
+              ${blandNodeQuery.where}
+              ${dereferenceQuery.where}
             }
           `,
           accept,
