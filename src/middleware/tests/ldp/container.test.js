@@ -150,7 +150,7 @@ describe('LDP container tests', () => {
     });
   });
 
-  test('Get container with query param', async () => {
+  test('Get container with filters param', async () => {
     await broker.call('ldp.resource.post', {
       containerUri: CONFIG.HOME_URL + 'resources',
       contentType: MIME_TYPES.JSON,
@@ -163,7 +163,7 @@ describe('LDP container tests', () => {
       }
     });
 
-    // Get without query param
+    // Get without filters param
     await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
@@ -182,12 +182,12 @@ describe('LDP container tests', () => {
       ]
     });
 
-    // Get with query param
+    // Get with filters param
     await expect(
       broker.call('ldp.container.get', {
         containerUri: CONFIG.HOME_URL + 'resources',
         accept: MIME_TYPES.JSON,
-        query: {
+        filters: {
           'pair:label': 'My project 2'
         }
       })
