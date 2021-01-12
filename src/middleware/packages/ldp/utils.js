@@ -1,7 +1,8 @@
 const ObjectID = require('bson').ObjectID;
 
 const buildBlankNodesQuery = depth => {
-  let construct = '', where = '';
+  let construct = '',
+    where = '';
   if (depth > 0) {
     for (let i = 1; i <= depth; i++) {
       construct += `
@@ -19,11 +20,15 @@ const buildBlankNodesQuery = depth => {
 };
 
 const buildDereferenceQuery = predicates => {
-  let construct = '', where = '';
-  if( predicates ) {
+  let construct = '',
+    where = '';
+  if (predicates) {
     predicates.forEach(predicate => {
       // Transform ontology:predicate to OntologyPredicate in order to use it as a variable name
-      const varName = predicate.split(':').map(s => s[0].toUpperCase() + s.slice(1)).join('');
+      const varName = predicate
+        .split(':')
+        .map(s => s[0].toUpperCase() + s.slice(1))
+        .join('');
 
       construct += `
         ?s1 ${predicate} ?s${varName} .
@@ -56,7 +61,7 @@ const buildFiltersQuery = filters => {
     });
   }
   return { where };
-}
+};
 
 // Generate a MongoDB-like object ID
 const generateId = () => new ObjectID().toString();

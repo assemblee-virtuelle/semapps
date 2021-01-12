@@ -1,6 +1,12 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery, buildFiltersQuery } = require('../../../utils');
+const {
+  getPrefixRdf,
+  getPrefixJSON,
+  buildBlankNodesQuery,
+  buildDereferenceQuery,
+  buildFiltersQuery
+} = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
