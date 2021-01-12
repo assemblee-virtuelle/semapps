@@ -20,6 +20,11 @@
     "url": "http://schema.org/"
   },
   {
+    "prefix": "sec",
+    "owl": "",
+    "url": "https://w3id.org/security#"
+  },
+  {
     "prefix": "foaf",
     "owl": "",
     "url": "http://xmlns.com/foaf/0.1/"
