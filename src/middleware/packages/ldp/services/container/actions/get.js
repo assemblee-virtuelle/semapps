@@ -5,7 +5,8 @@ const {
   getPrefixJSON,
   buildBlankNodesQuery,
   buildDereferenceQuery,
-  buildFiltersQuery
+  buildFiltersQuery,
+  defaultToArray
 } = require('../../../utils');
 
 module.exports = {
@@ -51,7 +52,7 @@ module.exports = {
       // does not work correctly and resources are not embedded at the right place.
       // This has bad impact on performances, unless the cache is activated
       if (accept === MIME_TYPES.JSON) {
-        const result = await ctx.call('triplestore.query', {
+        let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
@@ -74,7 +75,7 @@ module.exports = {
         // Request each resources
         let resources = [];
         if (result && result.contains) {
-          for (const resourceUri of result.contains) {
+          for (const resourceUri of defaultToArray(result.contains)) {
             resources.push(
               await ctx.call('ldp.resource.get', {
                 resourceUri,
@@ -88,7 +89,7 @@ module.exports = {
           }
         }
 
-        return jsonld.compact(
+        result = await jsonld.compact(
           {
             '@id': containerUri,
             '@type': ['ldp:Container', 'ldp:BasicContainer'],
@@ -96,6 +97,14 @@ module.exports = {
           },
           jsonContext || getPrefixJSON(this.settings.ontologies)
         );
+
+        // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
+        const ldpContainsKey = Object.keys(result).find(key => ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key));
+        if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
+          result[ldpContainsKey] = [result[ldpContainsKey]];
+        }
+
+        return result;
       } else {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);

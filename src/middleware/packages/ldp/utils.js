@@ -80,6 +80,8 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
+const defaultToArray = value => !value ? undefined : Array.isArray(value) ? value : [value];
+
 module.exports = {
   buildBlankNodesQuery,
   buildDereferenceQuery,
@@ -88,5 +90,6 @@ module.exports = {
   getPrefixRdf,
   getPrefixJSON,
   getSlugFromUri,
-  getContainerFromUri
+  getContainerFromUri,
+  defaultToArray
 };
