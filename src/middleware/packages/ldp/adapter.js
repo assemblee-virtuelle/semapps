@@ -49,7 +49,7 @@ class TripleStoreAdapter {
   find(filters) {
     return this.broker.call(this.containerService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
-      query: filters.query,
+      filters: filters.query,
       queryDepth: this.service.schema.settings.queryDepth,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON

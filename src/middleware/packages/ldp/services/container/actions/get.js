@@ -1,6 +1,12 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
+const {
+  getPrefixRdf,
+  getPrefixJSON,
+  buildBlankNodesQuery,
+  buildDereferenceQuery,
+  buildFiltersQuery
+} = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -10,7 +16,8 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.container.get', {
         containerUri,
-        accept
+        accept,
+        webId: ctx.meta.webId
       });
     } catch (e) {
       console.error(e);
@@ -22,37 +29,26 @@ module.exports = {
     visibility: 'public',
     params: {
       containerUri: { type: 'string', optional: true },
+      webId: { type: 'string', optional: true },
       accept: { type: 'string', optional: true },
-      query: { type: 'object', optional: true },
+      filters: { type: 'object', optional: true },
       queryDepth: { type: 'number', optional: true },
+      dereference: { type: 'array', optional: true },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
       keys: ['containerUri', 'accept', 'queryDepth', 'query', 'jsonContext']
     },
     async handler(ctx) {
-      const { containerUri, query } = ctx.params;
-      const { accept, queryDepth, jsonContext } = {
+      const { containerUri, filters, webId } = ctx.params;
+      const { accept, dereference, queryDepth, jsonContext } = {
         ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })),
         ...ctx.params
       };
-      let [constructQuery, whereQuery] = buildBlankNodesQuery(queryDepth);
 
-      if (query) {
-        Object.keys(query).forEach((predicate, i) => {
-          if (query[predicate]) {
-            whereQuery += `
-              FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} "${
-              query[predicate]
-            }" } .
-            `;
-          } else {
-            whereQuery += `
-              FILTER NOT EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ?unwanted${i} } .
-            `;
-          }
-        });
-      }
+      const blandNodeQuery = buildBlankNodesQuery(queryDepth);
+      const dereferenceQuery = buildDereferenceQuery(dereference);
+      const filtersQuery = buildFiltersQuery(filters);
 
       let result = await ctx.call('triplestore.query', {
         query: `
@@ -62,18 +58,22 @@ module.exports = {
               a ?containerType ;
               ldp:contains ?s1 .
             ?s1 ?p1 ?o1 .
-            ${constructQuery}
+            ${blandNodeQuery.construct}
+            ${dereferenceQuery.construct}
           }
           WHERE {
             <${containerUri}> a ldp:Container, ?containerType .
             OPTIONAL { 
               <${containerUri}> ldp:contains ?s1 .
               ?s1 ?p1 ?o1 .
-              ${whereQuery}
+              ${blandNodeQuery.where}
+              ${dereferenceQuery.where}
+              ${filtersQuery.where}
             }
           }
         `,
-        accept
+        accept,
+        webId
       });
 
       if (accept === MIME_TYPES.JSON) {

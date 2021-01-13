@@ -4,12 +4,12 @@ module.exports = [
   {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
-    queryDepth: 1
+    dereference: ['sec:publicKey']
   },
   {
     path: '/projects',
     acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
-    queryDepth: 1
+    dereference: ['sec:publicKey']
   },
   {
     path: '/events',
@@ -18,7 +18,7 @@ module.exports = [
   {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
-    queryDepth: 1
+    dereference: ['sec:publicKey']
   },
   {
     path: '/themes',

@@ -76,8 +76,7 @@ const ActorService = {
         resource: {
           '@id': actorUri,
           publicKey: {
-            // TODO expand the key, even if it has an ID (currently only blank nodes are expanded)
-            // id: actorUri + '#main-key',
+            '@id': actorUri + '#mainKey',
             owner: actorUri,
             publicKeyPem: publicKey
           }
