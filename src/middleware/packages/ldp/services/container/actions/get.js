@@ -99,7 +99,9 @@ module.exports = {
         );
 
         // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
-        const ldpContainsKey = Object.keys(result).find(key => ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key));
+        const ldpContainsKey = Object.keys(result).find(key =>
+          ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
+        );
         if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
           result[ldpContainsKey] = [result[ldpContainsKey]];
         }
