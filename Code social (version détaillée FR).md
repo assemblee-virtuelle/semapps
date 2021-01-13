@@ -1,4 +1,10 @@
-Le Code Social du projet a pour objectif de le décrire de manière exhaustive et systémique.
+## Qu'est-ce qu'un Code Social et en quoi bénéficierait-il à SemApps ? 
+
+Né de l'impulsion collaborative de l'Assemblée Virtuelle, un écosystème de personnes engagées dans la Transition, SemApps s'est constitué en tant qu'outil permettant la mise en réseau de projets, acteurs, idées ou encore ressources, inconsciemment liés par une même énergie. Se développant comme un projet à part entière, SemApps et ses contributeurs ont donc besoin d'un support, permettant de fonder, d'organiser et de donner sens à leurs actions. C'est ce rôle qu'un Code Social a pour vocation de satisfaire. En effet, tout comme un logiciel nécessite un code source, un projet, pour être mené à bien et être compris du monde extérieur, a besoin que ses valeurs et son fonctionnement soient clarifiés au sein d'un texte de référence. Un Code Social sert à coordonner les intentions de sa communauté et leur mise en pratique. Il se veut modulable selon les évolutions caractérisant son projet. 
+
+Si vous souhaitez comprendre le fonctionnement de l'Assemblée Virtuelle, allez jeter un coup d'oeil à son [Code Social](https://www.virtual-assembly.org/code-social-de-l-av/).
+
+Dans les lignes qui vont suivre, l'équipe SemApps travaille donc à définir son projet à travers sa raison d'être, et ses différents modèles (social et humain, technologique, culturel, écologique, économique, juridique et financier).
 
 # Raison d'être
 
