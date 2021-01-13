@@ -91,6 +91,7 @@ module.exports = {
         return jsonld.compact(
           {
             '@id': containerUri,
+            '@type': ['ldp:Container', 'ldp:BasicContainer'],
             'ldp:contains': resources
           },
           jsonContext || getPrefixJSON(this.settings.ontologies)
