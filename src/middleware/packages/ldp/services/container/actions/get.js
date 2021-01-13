@@ -73,20 +73,23 @@ module.exports = {
 
         // Request each resources
         let resources = [];
-        if( result && result.contains ) {
-          for( const resourceUri of result.contains ) {
-            resources.push(await ctx.call('ldp.resource.get', {
-              resourceUri,
-              webId,
-              accept,
-              queryDepth,
-              dereference,
-              jsonContext
-            }));
+        if (result && result.contains) {
+          for (const resourceUri of result.contains) {
+            resources.push(
+              await ctx.call('ldp.resource.get', {
+                resourceUri,
+                webId,
+                accept,
+                queryDepth,
+                dereference,
+                jsonContext
+              })
+            );
           }
         }
 
-        return jsonld.compact({
+        return jsonld.compact(
+          {
             '@id': containerUri,
             'ldp:contains': resources
           },
