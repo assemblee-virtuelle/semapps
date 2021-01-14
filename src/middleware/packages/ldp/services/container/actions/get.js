@@ -1,11 +1,13 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const {
   getPrefixRdf,
   getPrefixJSON,
   buildBlankNodesQuery,
   buildDereferenceQuery,
-  buildFiltersQuery
+  buildFiltersQuery,
+  defaultToArray
 } = require('../../../utils');
 
 module.exports = {
@@ -37,7 +39,7 @@ module.exports = {
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
-      keys: ['containerUri', 'accept', 'queryDepth', 'query', 'jsonContext']
+      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
       const { containerUri, filters, webId } = ctx.params;
@@ -45,59 +47,102 @@ module.exports = {
         ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })),
         ...ctx.params
       };
-
-      const blandNodeQuery = buildBlankNodesQuery(queryDepth);
-      const dereferenceQuery = buildDereferenceQuery(dereference);
       const filtersQuery = buildFiltersQuery(filters);
 
-      let result = await ctx.call('triplestore.query', {
-        query: `
-          ${getPrefixRdf(this.settings.ontologies)}
-          CONSTRUCT  {
-            <${containerUri}>
-              a ?containerType ;
-              ldp:contains ?s1 .
-            ?s1 ?p1 ?o1 .
-            ${blandNodeQuery.construct}
-            ${dereferenceQuery.construct}
-          }
-          WHERE {
-            <${containerUri}> a ldp:Container, ?containerType .
-            OPTIONAL { 
-              <${containerUri}> ldp:contains ?s1 .
-              ?s1 ?p1 ?o1 .
-              ${blandNodeQuery.where}
-              ${dereferenceQuery.where}
-              ${filtersQuery.where}
-            }
-          }
-        `,
-        accept,
-        webId
-      });
-
+      // Handle JSON-LD differently, because the framing (https://w3c.github.io/json-ld-framing/)
+      // does not work correctly and resources are not embedded at the right place.
+      // This has bad impact on performances, unless the cache is activated
       if (accept === MIME_TYPES.JSON) {
-        result = await jsonld.frame(result, {
-          '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-          '@id': containerUri
+        let result = await ctx.call('triplestore.query', {
+          query: `
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT  {
+              <${containerUri}>
+                a ?containerType ;
+                ldp:contains ?s1 .
+            }
+            WHERE {
+              <${containerUri}> a ldp:Container, ?containerType .
+              OPTIONAL { 
+                <${containerUri}> ldp:contains ?s1 .
+                ${filtersQuery.where}
+              }
+            }
+          `,
+          accept,
+          webId
         });
 
-        // Remove the @graph
-        result = {
-          '@context': result['@context'],
-          ...result['@graph'][0]
-        };
+        // Request each resources
+        let resources = [];
+        if (result && result.contains) {
+          for (const resourceUri of defaultToArray(result.contains)) {
+            try {
+              resources.push(
+                await ctx.call('ldp.resource.get', {
+                  resourceUri,
+                  webId,
+                  accept,
+                  queryDepth,
+                  dereference,
+                  jsonContext
+                })
+              );
+            } catch (e) {
+              // Ignore a resource if it is not found
+              if (!(e instanceof MoleculerError)) throw e;
+            }
+          }
+        }
 
-        // If the ldp:contains is a single object, wrap it in an array
+        result = await jsonld.compact(
+          {
+            '@id': containerUri,
+            '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
+            'http://www.w3.org/ns/ldp#contains': resources
+          },
+          jsonContext || getPrefixJSON(this.settings.ontologies)
+        );
+
+        // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
         const ldpContainsKey = Object.keys(result).find(key =>
           ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
         );
         if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
           result[ldpContainsKey] = [result[ldpContainsKey]];
         }
-      }
 
-      return result;
+        return result;
+      } else {
+        const blandNodeQuery = buildBlankNodesQuery(queryDepth);
+        const dereferenceQuery = buildDereferenceQuery(dereference);
+
+        return await ctx.call('triplestore.query', {
+          query: `
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT  {
+              <${containerUri}>
+                a ?containerType ;
+                ldp:contains ?s1 .
+              ?s1 ?p1 ?o1 .
+              ${blandNodeQuery.construct}
+              ${dereferenceQuery.construct}
+            }
+            WHERE {
+              <${containerUri}> a ldp:Container, ?containerType .
+              OPTIONAL { 
+                <${containerUri}> ldp:contains ?s1 .
+                ?s1 ?p1 ?o1 .
+                ${blandNodeQuery.where}
+                ${dereferenceQuery.where}
+                ${filtersQuery.where}
+              }
+            }
+          `,
+          accept,
+          webId
+        });
+      }
     }
   }
 };

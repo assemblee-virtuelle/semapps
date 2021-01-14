@@ -237,6 +237,6 @@ describe('LDP container tests', () => {
       accept: MIME_TYPES.JSON
     });
 
-    expect(container['ldp:contains']).toBeUndefined();
+    expect(container['ldp:contains']).toHaveLength(0);
   });
 });
