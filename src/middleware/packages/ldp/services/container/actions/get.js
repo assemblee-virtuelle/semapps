@@ -88,9 +88,9 @@ module.exports = {
                   jsonContext
                 })
               );
-            } catch(e) {
+            } catch (e) {
               // Ignore a resource if it is not found
-              if(!(e instanceof MoleculerError)) throw e;
+              if (!(e instanceof MoleculerError)) throw e;
             }
           }
         }
