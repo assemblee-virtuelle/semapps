@@ -1,5 +1,6 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const {
   getPrefixRdf,
   getPrefixJSON,
@@ -76,24 +77,29 @@ module.exports = {
         let resources = [];
         if (result && result.contains) {
           for (const resourceUri of defaultToArray(result.contains)) {
-            resources.push(
-              await ctx.call('ldp.resource.get', {
-                resourceUri,
-                webId,
-                accept,
-                queryDepth,
-                dereference,
-                jsonContext
-              })
-            );
+            try {
+              resources.push(
+                await ctx.call('ldp.resource.get', {
+                  resourceUri,
+                  webId,
+                  accept,
+                  queryDepth,
+                  dereference,
+                  jsonContext
+                })
+              );
+            } catch(e) {
+              // Ignore a resource if it is not found
+              if(!(e instanceof MoleculerError)) throw e;
+            }
           }
         }
 
         result = await jsonld.compact(
           {
             '@id': containerUri,
-            '@type': ['ldp:Container', 'ldp:BasicContainer'],
-            'ldp:contains': resources
+            '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
+            'http://www.w3.org/ns/ldp#contains': resources
           },
           jsonContext || getPrefixJSON(this.settings.ontologies)
         );
