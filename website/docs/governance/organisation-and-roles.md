@@ -24,6 +24,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 
 ### Responsibilities
 - Ensure that each person is welcomed and well included,
+- Take care of the departures
 - Ensure that documentation for technological tools is up to date.
 
 *This role is energized by Guillaume, with Yannick in support*
