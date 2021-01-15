@@ -101,6 +101,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - List the needs of the various products that wish to rely on SemApps.
 - Prioritize the different functionalities to be developed.
 - Organize arbitration sessions, either at the technical level or at the governance level, to choose what goes into SemApps core (= maintained by the team)
+- Inform the SemApps team and in particular DevX role of priorities when they are fund
 - Define detailed functional specifications
 - Define and develop a roadmap
 
