@@ -18,8 +18,7 @@ const ListActions = ({
   total
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const resourceDefinition = useResourceDefinition();
-
+  const resourceDefinition = useResourceDefinition({});
   return (
     <TopToolbar>
       {bulkActions &&
