@@ -18,7 +18,7 @@ const ListActions = ({
   total
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  console.log('ALORS HO ?',{resource});
+  console.log('ALORS HO ?', { resource });
   const resourceDefinition = useResourceDefinition();
 
   return (
