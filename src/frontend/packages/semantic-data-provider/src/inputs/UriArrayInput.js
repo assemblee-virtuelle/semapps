@@ -2,7 +2,7 @@ import React from 'react';
 import { ReferenceArrayInput, useResourceContext } from 'react-admin';
 
 const UriArrayInput = props => {
-  const resource = useResourceContext();
+  const resource = useResourceContext({});
   return (
     <ReferenceArrayInput
       {...props}
