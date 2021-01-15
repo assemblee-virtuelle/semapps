@@ -99,7 +99,6 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 ### Responsibilities
 - Listen to the needs of different product owners, keeping in touch
 - List the needs of the various products that wish to rely on SemApps.
-- Prioritize the different functionalities to be developed.
 - Organize arbitration sessions, either at the technical level or at the governance level, to choose what goes into SemApps core (= maintained by the team)
 - Inform the SemApps team and in particular the Development role of priorities when they are funded
 - Define detailed functional specifications
