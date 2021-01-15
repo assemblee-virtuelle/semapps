@@ -34,7 +34,7 @@ services:
       - "3000:3000"
     expose:
       - "3000"
-    command: ./boilerplates/${MIDDLEWARE}/entrypoint.sh
+    command: bash -c "npm rebuild && npm install && npm run bootstrap && ./boilerplates/${MIDDLEWARE}/entrypoint.sh"
 
   frontend:
     build:
@@ -56,7 +56,7 @@ services:
       - "5000:5000"
     expose:
       - "5000"
-    command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./${FRONTEND}"
+    command: bash -c "npm rebuild && npm install && npm run bootstrap && npm start --prefix ./boilerplates/${FRONTEND}"
 
   redis:
     image: redis
