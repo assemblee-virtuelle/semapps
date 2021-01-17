@@ -24,9 +24,10 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 
 ### Responsibilities
 - Ensure that each person is welcomed and well included,
+- Take care of the departures
 - Ensure that documentation for technological tools is up to date.
 
-*This role is energized by Gabriel*
+*This role is energized by Guillaume, with Yannick in support*
 
 ## Technical partnership
 ### Purpose
@@ -89,7 +90,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Manage domain names, OVH servers, etc.
 - Document what is done, to allow others to do it.
 
-*This role is hosted by Pierre, with Simon in support*
+*This role is hosted by Yannick, with Sébastien in support*
 
 ## Products
 ### Purpose
@@ -98,12 +99,12 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 ### Responsibilities
 - Listen to the needs of different product owners, keeping in touch
 - List the needs of the various products that wish to rely on SemApps.
-- Prioritize the different functionalities to be developed.
 - Organize arbitration sessions, either at the technical level or at the governance level, to choose what goes into SemApps core (= maintained by the team)
+- Inform the SemApps team and in particular the Development role of priorities when they are funded
 - Define detailed functional specifications
 - Define and develop a roadmap
 
-*This role is energized by Pierre*
+*This role is energized together by Guillaume and Pierre*
 
 ## Facilitation 
 ### Purpose
@@ -117,7 +118,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Introduce new facilitation methods
 - Train other people in facilitation methods
 
-*This role is energized by Pierre*
+*This role is energized by Sébastien, with Pierre, Guillaume and Jérémy in support*
 
 ## Economic sustainability
 ### Purpose
@@ -130,7 +131,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Keep available to all documents allowing to know the financial state of the project, in the short and medium terms.
 - Inform the coordination circle when there is an opportunity or a financial risk
 
-*This role is energized by Gabriel*
+*This role is energized by Simon, with Jérémy and Yannick in support*
 
 ## Mediation
 ### Purpose
@@ -142,7 +143,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Listen to people who have relationship difficulties with other members of SemApps
 - Be the referent of regulatory processes (to be established)
 
-*This role is energized together by Gabriel and Pierre*
+*This role is energized by Pierre, with Guillaume in support*
 
 ## Information gardening - Informational heritage
 ### Purpose
@@ -154,7 +155,7 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Whether using Roam Research, YesWiki or CodiMD, garden this tool so that it remains consistent and that everyone respects good practices.
 - Ensure that the rules around Riot salons are respected
 
-*This role is hosted by Guillaume*
+*This role is hosted by Jérémy, with Yannick in support*
 
 ## Development
 > The role is assumed by the circle and the referent is the privileged interlocutor of this circle. It is not a role of "Lead developer".
@@ -182,4 +183,4 @@ The objective of this organisation is to be very inclusive, evolutive and open t
 - Link with other AV projects
 - Fill out the AV newsletter
 
-*This role is energized by Gabriel*
+*This role is energized by Sébastien, with Guillaume in support*
