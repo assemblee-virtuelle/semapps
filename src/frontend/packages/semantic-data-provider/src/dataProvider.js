@@ -146,8 +146,8 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       // remove q params to filter
       // because q dedicate to query (search, AutocompleteArrayInput..) and
       // q isn't à propery of resource
-      if(params.filter.q){
-            delete params.filter.q;
+      if (params.filter.q) {
+        delete params.filter.q;
       }
       // Apply filter to results
       if (Object.keys(params.filter).length > 0) {
