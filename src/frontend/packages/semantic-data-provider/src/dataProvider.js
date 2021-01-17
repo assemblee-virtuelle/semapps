@@ -110,7 +110,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
 
-
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
           result = { data: [], total: 0 };
@@ -150,7 +149,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       if(params.filter.q){
             delete params.filter.q;
       }
-      
       // Apply filter to results
       if (Object.keys(params.filter).length > 0) {
         return {
