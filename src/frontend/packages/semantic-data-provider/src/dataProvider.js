@@ -66,7 +66,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
   return {
     getList: async (resourceId, params) => {
-      console.log("getList", resourceId,params);
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
       let result = {};
 
@@ -145,18 +144,15 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         }
       }
 
-      console.log('result',result);
-
       // remove q params to filter
       // because q dedicate to query (search, AutocompleteArrayInput..) and
       // q isn't à propery of resource
       if(params.filter.q){
             delete params.filter.q;
       }
+      
       // Apply filter to results
       if (Object.keys(params.filter).length > 0) {
-
-        console.log(Object.entries(params.filter));
         return {
           data: result.data.filter(resource =>
             Object.entries(params.filter).some(([k, v]) =>
