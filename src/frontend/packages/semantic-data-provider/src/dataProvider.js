@@ -66,7 +66,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
   return {
     getList: async (resourceId, params) => {
-      console.log("getList", resourceId,params);
+      console.log('getList', resourceId, params);
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
       let result = {};
 
@@ -111,7 +111,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
 
-
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
           result = { data: [], total: 0 };
@@ -145,17 +144,16 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         }
       }
 
-      console.log('result',result);
+      console.log('result', result);
 
       // remove q params to filter
       // because q dedicate to query (search, AutocompleteArrayInput..) and
       // q isn't à propery of resource
-      if(params.filter.q){
-            delete params.filter.q;
+      if (params.filter.q) {
+        delete params.filter.q;
       }
       // Apply filter to results
       if (Object.keys(params.filter).length > 0) {
-
         console.log(Object.entries(params.filter));
         return {
           data: result.data.filter(resource =>
