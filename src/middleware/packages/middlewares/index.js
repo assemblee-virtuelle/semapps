@@ -71,7 +71,7 @@ const parseSparql = async (req, res, next) => {
 const parseJson = async (req, res, next) => {
   let mimeType = null;
   try {
-    if( req.headers['content-type'] ) {
+    if (req.headers['content-type']) {
       mimeType = negotiateTypeMime(req.headers['content-type']);
     }
   } catch (e) {
