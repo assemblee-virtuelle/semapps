@@ -34,7 +34,7 @@ services:
       - "3000:3000"
     expose:
       - "3000"
-    command: bash -c "npm rebuild && npm install && npm run bootstrap && ./boilerplates/${MIDDLEWARE}/entrypoint.sh"
+    command: bash -c "npm rebuild && npm install && npm run bootstrap && ./boilerplates/${MIDDLEWARE}/initialize.sh && npm run dev --prefix ./boilerplates/${MIDDLEWARE}"
 
   frontend:
     build:
