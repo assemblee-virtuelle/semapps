@@ -190,6 +190,8 @@ La modification de ce code social se fait sur la base du consentement lorsqu'un 
 
 Pour en savoir plus sur la [gouvernance partagée](https://nos-communes.fr/gouvernance/introduction-a-la-gouvernance-partagee/#:~:text=La%20co%2Dresponsabilit%C3%A9%20n'emp%C3%AAche,fait%20ce%20qu'il%20veut).
 
+Pour en savoir plus sur l'organisation de [notre gouvernance](https://semapps.org/docs/governance/organisation-and-roles).
+
 ## Stratégie de développement
 
 Nous développons SemApps en collaboration avec un certain nombre de communautés ayant pris conscience de la nécessité de disposer de systèmes d'information en réseau, plutôt qu'en silos.
