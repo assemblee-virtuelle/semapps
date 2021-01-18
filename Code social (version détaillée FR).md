@@ -141,16 +141,16 @@ SemApps doit permettre aux acteurs :
 
 Nous concevons SemApps sur la base des principes suivants :
 
-*	Intéropérabilité : Les instances de SemApps seront nativement interopérables entre elles ainsi qu'avec l'ensemble des systèmes d'informations respectant les standards du web sémantique.
-*	Modularité : La base de données, le backend, le frontend, les ontologies pourront être remplacés par d'autres briques conformes aux standards du web sémantique.
-*	Généricité : Les briques de SemApps seront livrées dans une version générique adaptée à l'ensemble des besoins des communautés d'utilisateurs.
-*	Adaptabilité : SemApps pourra être configuré à la carte pour répondre à la diversité et à la spécificité des besoins des communautés d'utilisateurs.
-*	Scalabilité : Parce que c'est important.
-*	Accessibilité : Dans la perspective de créer de la valeur d'usage, plutôt que de la valeur marchande, nous concevons SemApps de manière à qu'il soit le plus facilement appropriable, déployable, paramétrable, et extensible.
-*	Convivialité : Dans le processus et dans le résultat ...
+*	**Intéropérabilité** : Les instances de SemApps seront nativement interopérables entre elles ainsi qu'avec l'ensemble des systèmes d'informations respectant les standards du web sémantique.
+*	**Modularité** : La base de données, le backend, le frontend, les ontologies pourront être remplacés par d'autres briques conformes aux standards du web sémantique.
+*	**Généricité** : Les briques de SemApps seront livrées dans une version générique adaptée à l'ensemble des besoins des communautés d'utilisateurs.
+*	**Adaptabilité** : SemApps pourra être configuré à la carte pour répondre à la diversité et à la spécificité des besoins des communautés d'utilisateurs.
+*	**Scalabilité** : Parce que c'est important.
+*	**Accessibilité** : Dans la perspective de créer de la valeur d'usage, plutôt que de la valeur marchande, nous concevons SemApps de manière à qu'il soit le plus facilement appropriable, déployable, paramétrable, et extensible.
+*	**Convivialité** : Dans le processus et dans le résultat ...
 
 
-#### Objectifs
+**Objectifs**
 
 *	Doter les organisations, les acteurs, les communautés d'outils numériques nativement interopérables en vue de favoriser leur mise en réseau.
 *	Développer une boite à outils permettant d'exploiter la diversité des propriétés du web sémantique : lier et structurer des données ; interopérer les systèmes d'information ; élaborer des requêtes complexes sur des graphes de connaissance ; raisonner et inférer (...)
@@ -181,6 +181,15 @@ Si le projet bénéficie de l'apport de nombreux contributeurs bénévoles, il c
 
 ## Introduction
 
+La communauté SemApps est composée d'une part de contributeurs, c'est à dire des membres plutôt actifs du projet, et d'autre part de sympathisants, qui ne sont autres que des partenaires, des utilisateurs de la plateforme ou encore des personnes simplement intéressées. Ce Code Social est donc rédigé de manière collaborative par le 1er cercle des contributeurs (les plus actifs), constitué de personnes physiques membres de l'Assemblée Virtuelle.
+
+Cohéremment avec les valeurs de sa communauté, la gouvernance de SemApps est partagée, c'est à dire que chaque membre actif de SemApps, selon ses appétences et compétences, énergise un ou plusieurs rôles nécessaires au développement du projet. La responsabilité est donc répartie au sein de ce 1er cercle, à travers ces rôles et leur périmètre d'autonomie. Certaines décisions sont prises individuellement, lorsqu'elles appartiennent au cadre d'action du représentant d'un rôle, tout comme d'autres sont prises collectivement lorsqu'elles concernent plusieurs aspects du projet. 
+
+Chaque membre de la gouvernance de SemApps doit sentir qu'il a sa place au sein de l'équipe, que ses besoins et envies soient écoutés et respectés dans la mesure du possible. L'organisation de ce collectif se fonde sur des liens de confiance, une communication interne régulière, et une égalité des pouvoirs. 
+La modification de ce code social se fait sur la base du consentement lorsqu'un des membres du projet en fait la demande.
+
+Pour en savoir plus sur la [gouvernance partagée](https://nos-communes.fr/gouvernance/introduction-a-la-gouvernance-partagee/#:~:text=La%20co%2Dresponsabilit%C3%A9%20n'emp%C3%AAche,fait%20ce%20qu'il%20veut).
+
 ## Stratégie de développement
 
 Nous développons SemApps en collaboration avec un certain nombre de communautés ayant pris conscience de la nécessité de disposer de systèmes d'information en réseau, plutôt qu'en silos.
@@ -195,7 +204,8 @@ Sur la base de systèmes d'informations interopérables, pourront se développer
 
 
 ## Gestion des conflits
-Nous croyons que les conflits font partie intégrante de la vie d'une communauté mais que le respect que nous avons pour chacun permet de les surmonter pour faire grandir notre organisation. Nous utilisons les cercles restauratifs pour bien gérer les conflits.
+
+Nous croyons que les conflits font partie intégrante de la vie d'une communauté mais que le respect que nous avons pour chacun permet de les surmonter pour faire grandir notre organisation. Nous utilisons les cercles restauratifs pour bien gérer les conflits. Le pilotage par tensions nous apparait donc comme essentiel, car il permet de mettre en lumière les obstacles rencontrés par le teneur d'un rôle, pour mieux les comprendre et éviter qu'ils réapparaissent et viennent contrarier le bon fonctionnement de notre organisation. 
 
 
 
