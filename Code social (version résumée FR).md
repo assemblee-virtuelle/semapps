@@ -2,27 +2,23 @@ Le Code Social du projet a pour objectif de le décrire de manière exhaustive e
 
 # Raison d'être
 
-## Introduction
-
-### Contexte & problématique
+## Contexte & problématique
 
 L'organisation actuelle des données très centralisée crée des effets de bord non désirable: 
 - Infobésité, multiplication des données et difficulté de s'y retrouver.
 - Incompatibilité des applications les unes avec les autres.
 - Fakenews, on ne sait pas qui produit la donnée, difficile d'avoir confiance en elle donc.
 
-### Le cercle d'or
-
-**Pourquoi ?**
+### Pourquoi ?
 
 Transformer la manière dont on produit et on consomme des données en la rendant plus responsable.
 
-**Quoi ?**
+### Quoi ?
 
 L'objectif de SemApps est de **favoriser la mise en réseau des acteurs grâce à la mise en synergie de leurs systèmes d'informations**.
 Nous utilisons pour cela les protocoles et standards du **web sémantique** qui permettent à de multiples systèmes d’information de s'interconnecter et de communiquer.
 
-**Comment ?**
+### Comment ?
 
 Notre ambition est la création d'un environnement technologique "data-agnostic" qui soit :
 - en capacité de manipuler des données issues d'une multiplicité de base de données à partir d'une même interface,
@@ -47,10 +43,9 @@ Le collectif qui contribue au Code Social est un groupe de personnes physiques m
 La gouvernance est partagée et répartie entre différents rôles qui ont chacun des responsabilités et des périmètres d'autonomie.
 La modification de ce code social se fait sur la base du consentement lorsqu'un des membres du projet en fait la demande.
 
-Plus d'informations sur la gouvernance (lien à ajouter)
+Pour en savoir plus sur la [gouvernance partagée](https://nos-communes.fr/gouvernance/introduction-a-la-gouvernance-partagee/#:~:text=La%20co%2Dresponsabilit%C3%A9%20n'emp%C3%AAche,fait%20ce%20qu'il%20veut).
 
-Plus d'informations sur le modèle Social et Humain (lien à ajouter)
-
+Pour en savoir plus sur l'organisation de [notre gouvernance](https://semapps.org/docs/governance/organisation-and-roles)
 
 # Modèle technologique 
 
