@@ -16,7 +16,7 @@ const ThemeShow = props => (
       <Column xs={12} sm={3} showLabel>
         <UriArrayField
           label="Organisations"
-          filter={{ '@type': 'pair:Organization' }}
+          filter={{ type: 'pair:Organization' }}
           reference="Organization"
           source="pair:topicOf"
         >
@@ -24,7 +24,7 @@ const ThemeShow = props => (
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
-        <UriArrayField label="Evénements" filter={{ '@type': 'pair:Event' }} reference="Event" source="pair:topicOf">
+        <UriArrayField label="Evénements" filter={{ type: 'pair:Event' }} reference="Event" source="pair:topicOf">
           <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
