@@ -8,16 +8,16 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "0.1.38",
-    "@semapps/connector": "0.1.38",
-    "@semapps/fuseki-admin": "0.1.38",
-    "@semapps/ldp": "0.1.38",
-    "@semapps/middlewares": "0.1.38",
-    "@semapps/mime-types": "0.1.38",
-    "@semapps/signature": "0.1.38",
-    "@semapps/sparql-endpoint": "0.1.38",
-    "@semapps/triplestore": "0.1.38",
-    "@semapps/webid": "0.1.38",
+    "@semapps/activitypub": "0.1.39",
+    "@semapps/connector": "0.1.39",
+    "@semapps/fuseki-admin": "0.1.39",
+    "@semapps/ldp": "0.1.39",
+    "@semapps/middlewares": "0.1.39",
+    "@semapps/mime-types": "0.1.39",
+    "@semapps/signature": "0.1.39",
+    "@semapps/sparql-endpoint": "0.1.39",
+    "@semapps/triplestore": "0.1.39",
+    "@semapps/webid": "0.1.39",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
@@ -29,5 +29,5 @@
     "jest": "^24.9.0",
     "supertest": "^4.0.2"
   },
-  "version": "0.1.38"
+  "version": "0.1.39"
 }
