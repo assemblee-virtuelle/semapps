@@ -5,7 +5,7 @@ import * as resources from './resources';
 
 const selectOptionTextByType = resource => {
   if (resource) {
-    const resourceType=resource['@type']||resource.type
+    const resourceType = resource['@type'] || resource.type;
     const matchingResourceKey = Object.keys(resources).find(resourceKey => {
       if (resources[resourceKey].dataModel.types.length === 1) {
         if (
