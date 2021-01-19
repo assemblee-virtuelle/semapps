@@ -4,7 +4,7 @@ import PanToolIcon from '@material-ui/icons/PanTool';
 
 const SkillList = props => (
   <List {...props}>
-    <SimpleList primaryText={record => record['pair:label']} leftIcon={() => <PanToolIcon />} />
+    <SimpleList primaryText={record => record['pair:label']} leftIcon={() => <PanToolIcon />} linkType="show" />
   </List>
 );
 

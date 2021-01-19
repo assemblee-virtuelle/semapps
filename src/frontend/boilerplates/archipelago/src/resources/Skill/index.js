@@ -1,6 +1,7 @@
 import PairResourceCreate from '../PairResourceCreate';
 import SkillEdit from './SkillEdit';
 import SkillList from './SkillList';
+import SkillShow from './SkillShow';
 import PanToolIcon from '@material-ui/icons/PanTool';
 
 export default {
@@ -8,6 +9,7 @@ export default {
     list: SkillList,
     create: PairResourceCreate,
     edit: SkillEdit,
+    show: SkillShow,
     icon: PanToolIcon,
     options: {
       label: 'Compétences'

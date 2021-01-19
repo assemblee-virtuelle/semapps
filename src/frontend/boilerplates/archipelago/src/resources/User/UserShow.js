@@ -35,12 +35,12 @@ const UserShow = props => (
           </SingleFieldList>
         </UriArrayField>
         <UriArrayField reference="Theme" source="pair:hasTopic">
-          <SingleFieldList>
+          <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>
         <UriArrayField reference="Skill" source="pair:offers">
-          <SingleFieldList linkType={false}>
+          <SingleFieldList linkType="show">
             <ChipField source="pair:label" color="secondary" />
           </SingleFieldList>
         </UriArrayField>

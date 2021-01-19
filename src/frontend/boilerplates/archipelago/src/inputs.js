@@ -5,18 +5,18 @@ import * as resources from './resources';
 
 const selectOptionTextByType = resource => {
   if (resource) {
+    const resourceType=resource['@type']||resource.type
     const matchingResourceKey = Object.keys(resources).find(resourceKey => {
       if (resources[resourceKey].dataModel.types.length === 1) {
         if (
-          resources[resourceKey].dataModel.types[0] === resource['@type'] ||
-          (Array.isArray(resource['@type']) && resource['@type'].includes(resources[resourceKey].dataModel.types[0]))
+          resources[resourceKey].dataModel.types[0] === resourceType ||
+          (Array.isArray(resourceType) && resourceType.includes(resources[resourceKey].dataModel.types[0]))
         ) {
           return true;
         }
       }
       return false;
     });
-
     if (Array.isArray(resources[matchingResourceKey].dataModel.slugField)) {
       return resources[matchingResourceKey].dataModel.slugField.map(field => resource[field]).join(' ');
     } else {
