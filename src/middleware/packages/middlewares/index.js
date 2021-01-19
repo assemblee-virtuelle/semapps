@@ -69,11 +69,16 @@ const parseSparql = async (req, res, next) => {
 };
 
 const parseJson = async (req, res, next) => {
-  if (
-    !req.$ctx.meta.parser &&
-    req.headers['content-type'] &&
-    negotiateTypeMime(req.headers['content-type']) === MIME_TYPES.JSON
-  ) {
+  let mimeType = null;
+  try {
+    if (req.headers['content-type']) {
+      mimeType = negotiateTypeMime(req.headers['content-type']);
+    }
+  } catch (e) {
+    // Do nothing if mime type is not found
+  }
+
+  if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
     const body = await getRawBody(req);
     if (body) {
       const json = JSON.parse(body);
