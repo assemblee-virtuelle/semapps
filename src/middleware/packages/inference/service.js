@@ -46,12 +46,12 @@ module.exports = {
     },
     generateInverseTriples(resource) {
       let inverseTriples = [];
-
       Object.keys(resource).forEach(property => {
         if (this.inverseRelations[property]) {
           resource[property].forEach(uri => {
             // Filter out remote URLs as we can't add them to the local dataset
-            if (uri['@id'].startsWith(this.settings.baseUrl)) {
+            // uri['@id'] can be undefined if context bad configuration ("@type": "@id" not configured for property)
+            if (uri['@id'] && uri['@id'].startsWith(this.settings.baseUrl)) {
               inverseTriples.push(
                 triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id']))
               );

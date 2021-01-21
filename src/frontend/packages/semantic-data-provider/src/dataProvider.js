@@ -142,26 +142,32 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           result = { data: returnData, total: compactJson['@graph'].length };
         }
       }
-
-      // remove q params to filter
-      // because q dedicate to query (search, AutocompleteArrayInput..) and
-      // q isn't à propery of resource
-      if (params.filter.q) {
-        delete params.filter.q;
-      }
-      // Apply filter to results
-      if (Object.keys(params.filter).length > 0) {
-        return {
-          data: result.data.filter(resource =>
-            Object.entries(params.filter).some(([k, v]) =>
-              Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-            )
-          ),
-          total: result.total
-        };
-      } else {
+      // filter can be undefined and cause exception
+      if (params.filter){
+        // remove q params to filter
+        // because q dedicate to query (search, AutocompleteArrayInput..) and
+        // q isn't à propery of resource
+        if (params.filter.q) {
+          delete params.filter.q;
+        }
+        // Apply filter to results
+        if (Object.keys(params.filter).length > 0) {
+          return {
+            data: result.data.filter(resource =>
+              Object.entries(params.filter).some(([k, v]) =>
+                Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+              )
+            ),
+            total: result.total
+          };
+        } else {
+          return result;
+        }
+      }else{
         return result;
       }
+
+
     },
     getOne: async (resourceId, params) => {
       let { json } = await httpClient(params.id);
