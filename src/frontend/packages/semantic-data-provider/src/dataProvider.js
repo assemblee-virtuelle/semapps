@@ -85,7 +85,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         });
 
         // Apply filter to results
-        if (params.filter){
+        if (params.filter) {
           // Remove search params from filter
           if (params.filter.q) {
             delete params.filter.q;
@@ -113,7 +113,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
          */
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
-          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter }},
+          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
           ontologies
         });
 

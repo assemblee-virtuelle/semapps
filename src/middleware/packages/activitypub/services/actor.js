@@ -23,8 +23,12 @@ const ActorService = {
         : [userData.type || userData['@type']];
 
       // Skip if ActivityPub information are already provided
-      if (userData.preferredUsername && userData.name && userTypes.some(type => Object.values(ACTOR_TYPES).includes(type))) {
-        console.log(`ActivityPub data have already been provided for ${actorUri}, skipping...`)
+      if (
+        userData.preferredUsername &&
+        userData.name &&
+        userTypes.some(type => Object.values(ACTOR_TYPES).includes(type))
+      ) {
+        console.log(`ActivityPub data have already been provided for ${actorUri}, skipping...`);
         return;
       }
 
