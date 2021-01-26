@@ -113,7 +113,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
          */
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
-          params: { ...params, filter: { ...params.filter, ...resources[resourceId].query }},
+          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter }},
           ontologies
         });
 
