@@ -5,13 +5,13 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "version": "lerna version --force-publish='*' --exact",
-    "wizard": "lerna-wizard",
     "publish": "lerna publish from-package",
-    "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'"
+    "prettier": "prettier --single-quote --print-width 120 --write --ignore-path .gitignore '**/*.js'",
+    "link-all": "lerna exec --parallel --scope @semapps/** -- npm link",
+    "unlink-all": "lerna exec --parallel --scope @semapps/** -- npm unlink"
   },
   "devDependencies": {
     "lerna": "^3.19.0",
-    "lerna-wizard": "^1.1.1",
     "prettier": "^1.19.1"
   }
 }

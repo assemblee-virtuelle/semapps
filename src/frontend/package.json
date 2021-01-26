@@ -6,7 +6,9 @@
     "bootstrap": "lerna bootstrap",
     "version": "lerna version --force-publish='*' --exact",
     "publish": "lerna run pre-publish && lerna publish from-package",
-    "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'"
+    "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'",
+    "link-all": "lerna exec --parallel --scope @semapps/** -- npm link",
+    "unlink-all": "lerna exec --parallel --scope @semapps/** -- npm unlink"
   },
   "devDependencies": {
     "lerna": "^3.19.0",
