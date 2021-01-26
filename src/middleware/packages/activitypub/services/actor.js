@@ -18,12 +18,17 @@ const ActorService = {
   actions: {
     async appendActorData(ctx) {
       const { actorUri, userData } = ctx.params;
-      const actorData = this.settings.selectActorData(userData);
-      const { '@type': type, name, preferredUsername } = actorData;
-
       const userTypes = Array.isArray(userData.type || userData['@type'])
         ? userData.type || userData['@type']
         : [userData.type || userData['@type']];
+
+      // Skip if ActivityPub information are already provided
+      if (userData.preferredUsername && userData.name && userTypes.some(type => Object.values(ACTOR_TYPES).includes(type))) {
+        console.log(`ActivityPub data have already been provided for ${actorUri}, skipping...`)
+        return;
+      }
+
+      const { '@type': type, name, preferredUsername } = this.settings.selectActorData(userData);
 
       await ctx.call('ldp.resource.patch', {
         resource: {
@@ -93,9 +98,7 @@ const ActorService = {
         const containerData = await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
         for (let actor of containerData['ldp:contains']) {
           const actorUri = actor.id || actor['@id'];
-          if (!actor.preferredUsername) {
-            await this.actions.appendActorData({ actorUri, userData: actor });
-          }
+          await this.actions.appendActorData({ actorUri, userData: actor });
           if (!actor.inbox) {
             await this.actions.attachCollections({ actorUri });
           }
@@ -113,7 +116,9 @@ const ActorService = {
       const containerUri = getContainerFromUri(resourceUri);
 
       if (this.settings.actorsContainers.includes(containerUri)) {
-        await this.actions.appendActorData({ actorUri: resourceUri, userData: newData });
+        if (!newData.preferredUsername || !newData.name) {
+          await this.actions.appendActorData({ actorUri: resourceUri, userData: newData });
+        }
         await this.actions.attachCollections({ actorUri: resourceUri });
         await this.actions.generateKeyPair({ actorUri: resourceUri });
         ctx.emit('activitypub.actor.created', newData);

@@ -47,6 +47,46 @@ const FollowService = {
       } else {
         ctx.meta.$statusCode = 404;
       }
+    },
+    async addFollower(ctx) {
+      const { follower, following } = ctx.params;
+
+      if (this.isLocalActor(following)) {
+        await this.broker.call('activitypub.collection.attach', {
+          collectionUri: urlJoin(following, 'followers'),
+          item: follower
+        });
+      }
+
+      // Add reverse relation
+      if (this.isLocalActor(follower)) {
+        await this.broker.call('activitypub.collection.attach', {
+          collectionUri: urlJoin(follower, 'following'),
+          item: following
+        });
+      }
+
+      ctx.emit('activitypub.follow.added', { follower, following });
+    },
+    async removeFollower(ctx) {
+      const { follower, following } = ctx.params;
+
+      if (this.isLocalActor(following)) {
+        await this.broker.call('activitypub.collection.detach', {
+          collectionUri: urlJoin(following, 'followers'),
+          item: follower
+        });
+      }
+
+      // Add reverse relation
+      if (this.isLocalActor(follower)) {
+        await this.broker.call('activitypub.collection.detach', {
+          collectionUri: urlJoin(follower, 'following'),
+          item: following
+        });
+      }
+
+      this.broker.emit('activitypub.follow.removed', { follower, following });
     }
   },
   events: {
@@ -57,7 +97,6 @@ const FollowService = {
       switch (activityType) {
         case ACTIVITY_TYPES.FOLLOW: {
           const { '@context': context, username, ...activityObject } = activity;
-
           await ctx.call('activitypub.outbox.post', {
             collectionUri: urlJoin(activity.object, 'outbox'),
             '@context': 'https://www.w3.org/ns/activitystreams',
@@ -66,7 +105,6 @@ const FollowService = {
             object: activityObject,
             to: activity.actor
           });
-
           break;
         }
 
@@ -74,22 +112,7 @@ const FollowService = {
           const objectType = activity.object.type || activity.object['@type'];
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
-
-            if (this.isLocalActor(followActivity.actor)) {
-              await this.broker.call('activitypub.collection.attach', {
-                collectionUri: urlJoin(followActivity.actor, 'following'),
-                item: followActivity.object
-              });
-            }
-
-            if (this.isLocalActor(followActivity.object)) {
-              await this.broker.call('activitypub.collection.attach', {
-                collectionUri: urlJoin(followActivity.object, 'followers'),
-                item: followActivity.actor
-              });
-            }
-
-            this.broker.emit('activitypub.follow.added', {
+            await this.actions.addFollower({
               follower: followActivity.actor,
               following: followActivity.object
             });
@@ -101,22 +124,7 @@ const FollowService = {
           const objectType = activity.object.type || activity.object['@type'];
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
-
-            if (this.isLocalActor(followActivity.object)) {
-              await this.broker.call('activitypub.collection.detach', {
-                collectionUri: urlJoin(followActivity.object, 'followers'),
-                item: followActivity.actor
-              });
-            }
-
-            if (this.isLocalActor(followActivity.actor)) {
-              await this.broker.call('activitypub.collection.detach', {
-                collectionUri: urlJoin(followActivity.actor, 'following'),
-                item: followActivity.object
-              });
-            }
-
-            this.broker.emit('activitypub.follow.removed', {
+            await this.actions.removeFollower({
               follower: followActivity.actor,
               following: followActivity.object
             });
