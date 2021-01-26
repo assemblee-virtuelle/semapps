@@ -60,9 +60,9 @@ module.exports = {
         };
       }
 
-      const query = await this.buildDeleteQueryFromResource(resource);
+      const deleteQuery = await this.buildDeleteQueryFromResource(resource);
       await ctx.call('triplestore.update', {
-        query,
+        query: deleteQuery,
         webId
       });
 

@@ -67,7 +67,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   return {
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
-      let result = {};
 
       if (params.id || params['@id'] || !resources[resourceId].types) {
         /*
@@ -85,6 +84,21 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           return item;
         });
 
+        // Apply filter to results
+        if (params.filter) {
+          // Remove search params from filter
+          if (params.filter.q) {
+            delete params.filter.q;
+          }
+          if (Object.keys(params.filter).length > 0) {
+            returnData = returnData.filter(resource =>
+              Object.entries(params.filter).some(([k, v]) =>
+                Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+              )
+            );
+          }
+        }
+
         if (params.pagination) {
           returnData = returnData.slice(
             (params.pagination.page - 1) * params.pagination.perPage,
@@ -92,14 +106,14 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           );
         }
 
-        result = { data: returnData, total: json[listProperty].length };
+        return { data: returnData, total: json[listProperty].length };
       } else {
         /*
          * Do a SPARQL search
          */
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
-          params: { ...params, query: resources[resourceId].query },
+          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
           ontologies
         });
 
@@ -112,11 +126,11 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
-          result = { data: [], total: 0 };
+          return { data: [], total: 0 };
         } else if (!compactJson['@graph']) {
           // If we have several fields but no @graph, there is a single match
           compactJson.id = compactJson.id || compactJson['@id'];
-          result = { data: [compactJson], total: 1 };
+          return { data: [compactJson], total: 1 };
         } else {
           const returnData = compactJson['@graph']
             .map(item => {
@@ -139,35 +153,9 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
               params.pagination.page * params.pagination.perPage
             );
 
-          result = { data: returnData, total: compactJson['@graph'].length };
+          return { data: returnData, total: compactJson['@graph'].length };
         }
       }
-      // filter can be undefined and cause exception
-      if (params.filter){
-        // remove q params to filter
-        // because q dedicate to query (search, AutocompleteArrayInput..) and
-        // q isn't à propery of resource
-        if (params.filter.q) {
-          delete params.filter.q;
-        }
-        // Apply filter to results
-        if (Object.keys(params.filter).length > 0) {
-          return {
-            data: result.data.filter(resource =>
-              Object.entries(params.filter).some(([k, v]) =>
-                Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-              )
-            ),
-            total: result.total
-          };
-        } else {
-          return result;
-        }
-      }else{
-        return result;
-      }
-
-
     },
     getOne: async (resourceId, params) => {
       let { json } = await httpClient(params.id);

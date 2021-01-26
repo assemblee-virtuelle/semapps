@@ -9,7 +9,6 @@ const WebhooksService = {
   adapter: new TripleStoreAdapter(),
   settings: {
     containerUri: null,
-    usersContainer: null,
     allowedActions: [],
     context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
@@ -37,19 +36,17 @@ const WebhooksService = {
       }
     },
     async generate(ctx) {
-      let userId = ctx.meta.webId || ctx.params.userId,
+      let userUri = ctx.meta.webId || ctx.params.userUri,
         action = ctx.params.action;
 
-      if (!userId || !action || !this.settings.allowedActions.includes(action)) {
+      if (!userUri || !action || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
-
-      if (!userId.startsWith('http')) userId = urlJoin(this.settings.usersContainer, userId);
 
       const webhook = await this.actions.create({
         '@type': 'Webhook',
         action,
-        user: userId
+        user: userUri
       });
 
       return webhook['@id'];
