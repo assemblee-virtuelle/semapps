@@ -7,10 +7,10 @@ module.exports = {
   },
   async handler(ctx) {
     const { uri } = ctx.params;
-    const containerOptions =
+    const options =
       this.settings.containers.find(
         container => typeof container !== 'string' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
       ) || {};
-    return { ...this.settings.defaultContainerOptions, ...containerOptions };
+    return { ...this.settings.defaultOptions, ...options };
   }
 };

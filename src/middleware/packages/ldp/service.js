@@ -14,7 +14,7 @@ module.exports = {
     defaultContainerOptions
   },
   async created() {
-    const { baseUrl, ontologies, containers } = this.schema.settings;
+    const { baseUrl, ontologies, containers, defaultContainerOptions } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
