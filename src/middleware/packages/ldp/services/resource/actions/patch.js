@@ -42,7 +42,7 @@ module.exports = {
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
       const resourceUri = resource.id || resource['@id'];
-      const { queryDepth, jsonContext } = await ctx.call('ldp.getContainerOptions', { uri: resourceUri });
+      const { queryDepth, jsonContext } = await ctx.call('ldp.container.getOptions', { uri: resourceUri });
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
