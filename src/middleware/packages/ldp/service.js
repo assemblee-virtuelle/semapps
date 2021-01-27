@@ -44,7 +44,9 @@ module.exports = {
       // Associate all containers in settings with the LDP service
       for (let container of this.settings.containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
-        const { allowAnonymousEdit, allowAnonymousDelete } = await ctx.call('ldp.container.getOptions', { uri: containerUri });
+        const { allowAnonymousEdit, allowAnonymousDelete } = await ctx.call('ldp.container.getOptions', {
+          uri: containerUri
+        });
         routes.push(...getContainerRoutes(containerUri, null, allowAnonymousEdit, allowAnonymousDelete));
       }
       return routes;
