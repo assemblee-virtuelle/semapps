@@ -41,6 +41,7 @@ module.exports = {
   actions: {
     async getApiRoutes(ctx) {
       let routes = [];
+      await this.broker.waitForServices(['ldp.container']);
       // Associate all containers in settings with the LDP service
       for (let container of this.settings.containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);

@@ -28,7 +28,7 @@ module.exports = {
       exposedHeaders: '*'
     }
   },
-  dependencies: ['ldp', 'ldp.container', 'activitypub', 'sparqlEndpoint', 'webid'],
+  dependencies: ['ldp', 'activitypub', 'sparqlEndpoint', 'webid'],
   async started() {
     this.connector = new OidcConnector({
       issuer: CONFIG.OIDC_ISSUER,

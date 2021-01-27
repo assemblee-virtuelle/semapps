@@ -41,7 +41,7 @@ beforeAll(async () => {
         exposedHeaders: '*'
       }
     },
-    dependencies: ['ldp', 'ldp.container'],
+    dependencies: ['ldp'],
     async started() {
       [...(await this.broker.call('ldp.getApiRoutes'))].forEach(route => this.addRoute(route));
     },
