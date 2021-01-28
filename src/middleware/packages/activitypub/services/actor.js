@@ -111,7 +111,7 @@ const ActorService = {
           },
           { meta: { $cache: false } }
         );
-      } while( !actor.publicKey );
+      } while (!actor.publicKey);
       return actor;
     },
     async generateMissingActorsData(ctx) {
