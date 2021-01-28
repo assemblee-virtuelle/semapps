@@ -46,14 +46,26 @@ module.exports = {
   mixins: [ActivityPubService],
   settings: {
     baseUri: 'http://localhost:3000/',
-    containers: {
-      activities: '/activities',
-      actors: '/actors',
-      objects: '/objects'
-    },
     additionalContext: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     }
+  }
+};
+```
+
+### Configure the LDP containers
+
+The containers for actors and objects are handled through the LDP service. You need to define containers with ActivityStreams's actors and objects in the `acceptedTypes`. Alternatively, you can load the default containers from the `@semapps/activitypub` package as below:
+
+```js
+const { LdpService } = require('@semapps/ldp');
+const { containers: apContainers } = require('@semapps/activitypub');
+
+module.exports = {
+  mixins: [LdpService],
+  settings: {
+    baseUrl: process.env.SEMAPPS_HOME_URL,
+    containers: ['/my-container', ...apContainers]
   }
 };
 ```
@@ -92,7 +104,6 @@ This is done automatically when a `webid.created` event is detected.
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `baseUri` | `String` | **required** | Base URI of your web server |
-| `containers` | `Object` |  | Path of the containers for the `activities`, `actors` and `objects`.
 | `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.
 | `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.
 
