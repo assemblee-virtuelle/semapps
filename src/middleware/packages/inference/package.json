@@ -1,6 +1,6 @@
 {
   "name": "@semapps/inference",
-  "version": "0.1.42",
+  "version": "0.1.43",
   "description": "Inference engine for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
