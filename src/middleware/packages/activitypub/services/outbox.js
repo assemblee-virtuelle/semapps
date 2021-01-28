@@ -21,7 +21,7 @@ const OutboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
-        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
+        throw new MoleculerError('Collection not found:' + collectionUri, 404, 'NOT_FOUND');
       }
 
       // Check that logged user is posting to his own outbox

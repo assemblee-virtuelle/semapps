@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
+const { delay } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -96,6 +97,22 @@ const ActorService = {
     async deleteKeyPair(ctx) {
       const { actorUri } = ctx.params;
       await ctx.call('signature.deleteActorKeyPair', { actorUri });
+    },
+    async awaitCreateComplete(ctx) {
+      const { actorUri } = ctx.params;
+      let actor;
+      do {
+        await delay(2000);
+        actor = await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri: actorUri,
+            accept: MIME_TYPES.JSON
+          },
+          { meta: { $cache: false } }
+        );
+      } while (!actor.publicKey);
+      return actor;
     },
     async generateMissingActorsData(ctx) {
       for (let containerUri of this.settings.actorsContainers) {

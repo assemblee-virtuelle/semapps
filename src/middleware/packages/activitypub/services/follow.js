@@ -96,15 +96,17 @@ const FollowService = {
 
       switch (activityType) {
         case ACTIVITY_TYPES.FOLLOW: {
-          const { '@context': context, username, ...activityObject } = activity;
-          await ctx.call('activitypub.outbox.post', {
-            collectionUri: urlJoin(activity.object, 'outbox'),
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            actor: activity.object,
-            type: ACTIVITY_TYPES.ACCEPT,
-            object: activityObject,
-            to: activity.actor
-          });
+          if (this.isLocalActor(activity.object)) {
+            const { '@context': context, username, ...activityObject } = activity;
+            await ctx.call('activitypub.outbox.post', {
+              collectionUri: urlJoin(activity.object, 'outbox'),
+              '@context': 'https://www.w3.org/ns/activitystreams',
+              actor: activity.object,
+              type: ACTIVITY_TYPES.ACCEPT,
+              object: activityObject,
+              to: activity.actor
+            });
+          }
           break;
         }
 

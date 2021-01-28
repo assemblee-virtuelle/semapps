@@ -11,6 +11,7 @@ const DispatchService = {
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
+      let localRecipients = [];
 
       if (activity.to) {
         const recipients = await this.getAllRecipients(activity);
@@ -23,6 +24,7 @@ const DispatchService = {
               collectionUri: inboxUri,
               item: activity
             });
+            localRecipients.push(recipientUri);
           } else {
             // If the QueueService mixin is available, use it
             if (this.createJob) {
@@ -34,7 +36,9 @@ const DispatchService = {
           }
         }
 
-        this.broker.emit('activitypub.inbox.received', { activity, recipients });
+        if (localRecipients.length > 0) {
+          this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
+        }
       }
     },
     'activitypub.inbox.received'() {
