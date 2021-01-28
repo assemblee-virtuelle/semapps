@@ -13,7 +13,7 @@ const {
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const { accept } = { ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })), ...ctx.meta.headers };
+    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.container.get', {
@@ -44,7 +44,7 @@ module.exports = {
     async handler(ctx) {
       const { containerUri, filters, webId } = ctx.params;
       const { accept, dereference, queryDepth, jsonContext } = {
-        ...(await ctx.call('ldp.getContainerOptions', { uri: containerUri })),
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
       const filtersQuery = buildFiltersQuery(filters);
