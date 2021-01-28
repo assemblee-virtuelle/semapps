@@ -27,8 +27,8 @@ const { WebfingerService } = require('@semapps/webfinger');
 module.exports = {
   mixins: [WebfingerService],
   settings: {
-    usersContainer: "http://localhost:3000/actors/",
-    domainName: "localhost" // Not necessary if it is the same as usersContainer
+    baseUrl: "https://mydomain.com",
+    domainName: "mydomain.com" // Not necessary if it is the same as usersContainer
   }
 }
 ```
@@ -54,7 +54,7 @@ module.exports = {
 
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `usersContainer` | `String` | **required** | Container where the actors can be found
+| `baseUrl` | `String` |  | Base URL of the server. Used to find the domain name if it is not set.
 | `domainName` | `String` |  | Domain name used for the user@domain webfinger identifier. If not set, the domain name will be guessed from the users' container.
 
 
