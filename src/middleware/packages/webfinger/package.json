@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "url-join": "^4.0.1"
+    "@semapps/mime-types": "0.1.41"
   },
   "publishConfig": {
     "access": "public"
