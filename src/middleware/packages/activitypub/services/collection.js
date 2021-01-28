@@ -109,7 +109,8 @@ const CollectionService = {
         accept: MIME_TYPES.JSON
       });
 
-      const numPages = !itemsPerPage ? 1 : result.items ? Math.ceil(result.items.length / itemsPerPage) : 0;
+      const allItems = defaultToArray(result.items);
+      const numPages = !itemsPerPage ? 1 : allItems ? Math.ceil(allItems.length / itemsPerPage) : 0;
 
       if (!result['@id'] || (page && page > numPages)) {
         // No persisted collection found or the collection page does not exist
@@ -122,10 +123,9 @@ const CollectionService = {
           '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
           first: numPages > 0 ? id + '?page=1' : undefined,
           last: numPages > 0 ? id + '?page=' + numPages : undefined,
-          totalItems: result.items ? result.items.length : 0
+          totalItems: allItems ? allItems.length : 0
         };
       } else {
-        const allItems = defaultToArray(result.items);
         let selectedItemsUris = allItems,
           selectedItems = [];
         const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
