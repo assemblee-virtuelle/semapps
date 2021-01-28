@@ -1,6 +1,7 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { getSlugFromUri, getContainerFromUri } = require('../utils');
+const { getSlugFromUri, getContainerFromUri, defaultToArray } = require('../utils');
 
 const BotService = {
   name: '', // Must be overwritten
@@ -62,9 +63,9 @@ const BotService = {
   methods: {
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {
-        collectionUri: this.settings.actor.uri
+        collectionUri: urlJoin(this.settings.actor.uri, 'followers')
       });
-      return result && result.items;
+      return result ? defaultToArray(result.items) : [];
     }
   }
 };

@@ -22,17 +22,19 @@ const WebhooksService = {
   actions: {
     async process(ctx) {
       const { hash, ...data } = ctx.params;
+      let webhook;
+
       try {
-        const webhook = await this.actions.get({ id: hash });
-        if (this.createJob) {
-          this.createJob('webhooks', webhook.action, { data, user: webhook.user });
-        } else {
-          // If no queue service is defined, run webhook immediately
-          return await this.actions[webhook.action]({ data, user: webhook.user });
-        }
+        webhook = await this.actions.get({ id: hash });
       } catch (e) {
-        console.error(e);
-        ctx.meta.$statusCode = 404;
+        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+      }
+
+      if (this.createJob) {
+        this.createJob('webhooks', webhook.action, { data, user: webhook.user });
+      } else {
+        // If no queue service is defined, run webhook immediately
+        return await this.actions[webhook.action]({ data, user: webhook.user });
       }
     },
     async generate(ctx) {

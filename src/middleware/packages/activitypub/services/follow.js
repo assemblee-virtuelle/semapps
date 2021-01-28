@@ -6,7 +6,7 @@ const FollowService = {
   settings: {
     baseUri: null
   },
-  dependencies: ['activitypub.actor', 'activitypub.collection'],
+  dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
     async listFollowers(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri } = ctx.params;
@@ -52,7 +52,7 @@ const FollowService = {
       const { follower, following } = ctx.params;
 
       if (this.isLocalActor(following)) {
-        await this.broker.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.attach', {
           collectionUri: urlJoin(following, 'followers'),
           item: follower
         });
@@ -60,7 +60,7 @@ const FollowService = {
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
-        await this.broker.call('activitypub.collection.attach', {
+        await ctx.call('activitypub.collection.attach', {
           collectionUri: urlJoin(follower, 'following'),
           item: following
         });
@@ -72,7 +72,7 @@ const FollowService = {
       const { follower, following } = ctx.params;
 
       if (this.isLocalActor(following)) {
-        await this.broker.call('activitypub.collection.detach', {
+        await ctx.call('activitypub.collection.detach', {
           collectionUri: urlJoin(following, 'followers'),
           item: follower
         });
@@ -80,13 +80,13 @@ const FollowService = {
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
-        await this.broker.call('activitypub.collection.detach', {
+        await ctx.call('activitypub.collection.detach', {
           collectionUri: urlJoin(follower, 'following'),
           item: following
         });
       }
 
-      this.broker.emit('activitypub.follow.removed', { follower, following });
+      ctx.emit('activitypub.follow.removed', { follower, following });
     }
   },
   events: {
