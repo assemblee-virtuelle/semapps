@@ -9,6 +9,7 @@ const WebfingerService = {
   dependencies: ['triplestore', 'ldp'],
   started() {
     if (!this.settings.domainName) {
+      if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
       this.settings.domainName = new URL(this.settings.baseUrl).host;
     }
   },
