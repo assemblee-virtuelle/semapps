@@ -33,8 +33,17 @@ const defaultToArray = value => {
   return !value ? undefined : Array.isArray(value) ? value : [value];
 };
 
+const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+
+const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 module.exports = {
   objectCurrentToId,
   objectIdToCurrent,
-  defaultToArray
+  defaultToArray,
+  getSlugFromUri,
+  getContainerFromUri,
+  delay
 };

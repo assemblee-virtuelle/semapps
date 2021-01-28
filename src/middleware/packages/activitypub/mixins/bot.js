@@ -1,54 +1,53 @@
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
+const { getSlugFromUri, getContainerFromUri } = require('../utils');
 
 const BotService = {
   name: '', // Must be overwritten
   settings: {
     actor: {
-      username: null,
-      name: null,
-      uri: null // Automatically set
+      uri: null,
+      name: null
     }
   },
-  dependencies: ['activitypub.actor'],
-  actions: {
-    getUri(ctx) {
-      return this.settings.actor.uri;
-    }
-  },
-  async started(ctx) {
-    let actor;
+  dependencies: ['ldp', 'activitypub.actor'],
+  async started() {
+    // Ensure LDP sub-services have been started
+    await this.broker.waitForServices(['ldp.container', 'ldp.resource']);
+
     const actorSettings = this.settings.actor;
-    if (!actorSettings.username || !actorSettings.name) {
+    if (!actorSettings.uri || !actorSettings.name) {
       return Promise.reject(new Error('Please set the actor settings in schema!'));
     }
 
-    try {
-      actor = await this.broker.call('activitypub.actor.get', {
-        id: actorSettings.username
+    const actorExist = await this.broker.call('ldp.resource.exist', {
+      resourceUri: actorSettings.uri
+    });
+
+    if (!actorExist) {
+      console.log(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
+
+      await this.broker.call('ldp.resource.post', {
+        containerUri: getContainerFromUri(actorSettings.uri),
+        slug: getSlugFromUri(actorSettings.uri),
+        resource: {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          type: ACTOR_TYPES.APPLICATION,
+          preferredUsername: actorSettings.username,
+          name: actorSettings.name
+        },
+        contentType: MIME_TYPES.JSON
       });
-    } catch (e) {
-      actor = null;
-    }
-
-    if (!actor) {
-      console.log(`BotService > Actor ${actorSettings.username} does not exist yet, create it...`);
-
-      actor = await this.broker.call('activitypub.actor.create', {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        slug: actorSettings.username,
-        type: ACTOR_TYPES.APPLICATION,
-        preferredUsername: actorSettings.username,
-        name: actorSettings.name
-      });
-
-      // Set actor URI before calling the actorCreated method
-      this.settings.actor.uri = actor.id;
 
       if (this.actorCreated) {
+        const actor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri: actorSettings.uri });
         this.actorCreated(actor);
       }
-    } else {
-      this.settings.actor.uri = actor.id;
+    }
+  },
+  actions: {
+    getUri() {
+      return this.settings.actor.uri;
     }
   },
   events: {
@@ -63,7 +62,7 @@ const BotService = {
   methods: {
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {
-        username: this.settings.actor.username
+        collectionUri: this.settings.actor.uri
       });
       return result && result.items;
     }
