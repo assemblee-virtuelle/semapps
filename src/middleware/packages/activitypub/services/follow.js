@@ -106,6 +106,10 @@ const FollowService = {
               object: activityObject,
               to: activity.actor
             });
+            await this.actions.addFollower({
+              follower: activity.actor,
+              following: activity.object
+            });
           }
           break;
         }
