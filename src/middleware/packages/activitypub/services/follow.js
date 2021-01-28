@@ -96,7 +96,7 @@ const FollowService = {
 
       switch (activityType) {
         case ACTIVITY_TYPES.FOLLOW: {
-          if( this.isLocalActor(activity.object) ) {
+          if (this.isLocalActor(activity.object)) {
             const { '@context': context, username, ...activityObject } = activity;
             await ctx.call('activitypub.outbox.post', {
               collectionUri: urlJoin(activity.object, 'outbox'),

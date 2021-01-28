@@ -35,7 +35,7 @@ const WebfingerService = {
           accept: MIME_TYPES.JSON
         });
 
-        if( result.length > 0 ) {
+        if (result.length > 0) {
           const userUri = result[0].userUri.value;
 
           let actor;
