@@ -8,11 +8,11 @@ const useStyles = makeStyles({
     height: 56
   },
   spacer: {
-    flex: 1,
+    flex: 1
   },
   searchForm: {
-    flex: 2,
-  },
+    flex: 2
+  }
 });
 
 const AppBar = props => {

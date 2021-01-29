@@ -6,17 +6,20 @@ import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
-const external = createFilter([
-  'react',
-  'react-admin',
-  'react-markdown',
-  'react-router-dom',
-  'react-final-form',
-  'react-router',
-  'react-redux',
-  '@material-ui/**'
-], null, {resolve: false});
-
+const external = createFilter(
+  [
+    'react',
+    'react-admin',
+    'react-markdown',
+    'react-router-dom',
+    'react-final-form',
+    'react-router',
+    'react-redux',
+    '@material-ui/**'
+  ],
+  null,
+  { resolve: false }
+);
 
 export default {
   input: './src/index.js',

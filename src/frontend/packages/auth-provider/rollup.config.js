@@ -5,11 +5,7 @@ import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import { createFilter } from 'rollup-pluginutils';
 
-const external = createFilter([
-  'react',
-  'react-admin',
-  '@material-ui/**'
-], null, {resolve: false});
+const external = createFilter(['react', 'react-admin', '@material-ui/**'], null, { resolve: false });
 
 export default {
   input: './src/index.js',
