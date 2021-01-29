@@ -1,12 +1,25 @@
-export { default as Organization } from './Organization';
-export { default as Project } from './Project';
-export { default as Event } from './Event';
-export { default as User } from './User';
-export { default as Document } from './Document';
-export { default as Skill } from './Skill';
-export { default as Theme } from './Theme';
+// Actors
+export { default as Organization } from './Agent/Actor/Organization';
+export { default as Person } from './Agent/Actor/Person';
+export { default as Actor } from './Agent/Actor/Actor';
 
-export { default as Folder } from './Folder';
-export { default as Actor } from './Actor';
-export { default as Activity } from './Activity';
-export { default as Subject } from './Subject';
+// Activities
+export { default as Project } from './Agent/Activity/Project';
+export { default as Event } from './Agent/Activity/Event';
+export { default as Activity } from './Agent/Activity/Activity';
+
+// Resources
+export { default as Skill } from './Resource/Skill';
+export { default as Resource } from './Resource/Resource';
+
+// Concepts
+export { default as Theme } from './Concept/Theme';
+export { default as Concept } from './Concept/Concept';
+
+// Objects
+export { default as Document } from './Object/Document';
+export { default as Folder } from './Object/Folder';
+export { default as Object } from './Object/Object';
+
+// Put this at the end, otherwise it will load as the homepage
+export { default as Agent } from './Agent/Agent';

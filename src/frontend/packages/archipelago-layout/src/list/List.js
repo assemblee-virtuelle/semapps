@@ -1,6 +1,5 @@
 import React from 'react';
 import { List as RaList, Pagination as RaPagination } from 'react-admin';
-import ResourceTabs from './ResourceTabs';
 import ListActions from './ListActions';
 
 const Pagination = props => <RaPagination rowsPerPageOptions={[25, 50, 100]} {...props} />;
@@ -13,10 +12,7 @@ const List = ({ children, ...otherProps }) => (
     perPage={50}
     {...otherProps}
   >
-    <>
-      <ResourceTabs />
-      {children}
-    </>
+    {children}
   </RaList>
 );
 

@@ -74,7 +74,7 @@ export const ThemesInput = ({ label, source }) => (
 );
 
 export const UsersInput = ({ label, source }) => (
-  <UriArrayInput label={label} reference="User" source={source}>
+  <UriArrayInput label={label} reference="Person" source={source}>
     <AutocompleteArrayInput
       optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
       shouldRenderSuggestions={value => value.length > 1}
@@ -83,8 +83,8 @@ export const UsersInput = ({ label, source }) => (
   </UriArrayInput>
 );
 
-export const SubjectsInput = ({ label, source }) => (
-  <UriArrayInput label={label} reference="Subject" source={source}>
+export const AgentsInput = ({ label, source }) => (
+  <UriArrayInput label={label} reference="Agent" source={source}>
     <AutocompleteArrayInput
       optionText={selectOptionTextByType}
       shouldRenderSuggestions={value => value.length > 1}

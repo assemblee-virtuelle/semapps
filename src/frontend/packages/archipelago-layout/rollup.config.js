@@ -4,6 +4,19 @@ import nodeResolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
+import { createFilter } from 'rollup-pluginutils';
+
+const external = createFilter([
+  'react',
+  'react-admin',
+  'react-markdown',
+  'react-router-dom',
+  'react-final-form',
+  'react-router',
+  'react-redux',
+  '@material-ui/**'
+], null, {resolve: false});
+
 
 export default {
   input: './src/index.js',
@@ -11,7 +24,7 @@ export default {
     { format: 'cjs', file: './dist/index.cjs.js', sourcemap: false },
     { format: 'es', file: './dist/index.es.js', sourcemap: false }
   ],
-  external: ['react', 'react-admin', 'react-markdown'],
+  external,
   plugins: [
     json(),
     replace({
