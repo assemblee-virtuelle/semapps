@@ -1,11 +1,11 @@
 {
   "name": "archipelago",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "private": true,
   "dependencies": {
-    "@semapps/archipelago-layout": "0.1.17",
-    "@semapps/auth-provider": "0.1.17",
-    "@semapps/semantic-data-provider": "0.1.17",
+    "@semapps/archipelago-layout": "0.1.18",
+    "@semapps/auth-provider": "0.1.18",
+    "@semapps/semantic-data-provider": "0.1.18",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
     "ra-language-french": "3.11.0",
