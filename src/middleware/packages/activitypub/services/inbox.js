@@ -28,19 +28,21 @@ const InboxService = {
         return;
       }
 
-      const validDigest = await ctx.call('signature.verifyDigest', {
-        body: JSON.stringify(activity),
-        headers: ctx.meta.headers
-      });
+      if( !ctx.meta.skipSignatureValidation ) {
+        const validDigest = await ctx.call('signature.verifyDigest', {
+          body: JSON.stringify(activity),
+          headers: ctx.meta.headers
+        });
 
-      const validSignature = await ctx.call('signature.verifyHttpSignature', {
-        url: collectionUri,
-        headers: ctx.meta.headers
-      });
+        const validSignature = await ctx.call('signature.verifyHttpSignature', {
+          url: collectionUri,
+          headers: ctx.meta.headers
+        });
 
-      if (!validDigest || !validSignature) {
-        ctx.meta.$statusCode = 401;
-        return;
+        if (!validDigest || !validSignature) {
+          ctx.meta.$statusCode = 401;
+          return;
+        }
       }
 
       // TODO check activity is valid
