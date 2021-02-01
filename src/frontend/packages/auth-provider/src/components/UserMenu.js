@@ -1,60 +1,46 @@
-import React, { useState } from 'react';
-import { useGetIdentity, MenuItemLink } from 'react-admin';
-import { Box, Button, Menu } from '@material-ui/core';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import EditIcon from '@material-ui/icons/Edit';
+import React, { forwardRef } from 'react';
+import { UserMenu as RaUserMenu, MenuItemLink, useGetIdentity } from 'react-admin';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import EditIcon from '@material-ui/icons/Edit';
 
-const UserMenu = ({ logout, children }) => {
+const ViewProfileMenu = forwardRef(({ onClick, webId }, ref) => (
+  <MenuItemLink
+    ref={ref}
+    to={`/Person/${encodeURIComponent(webId)}/show`}
+    primaryText="Voir mon profil"
+    leftIcon={<AccountCircleIcon />}
+    onClick={onClick}
+  />
+));
+
+const EditProfileMenu = forwardRef(({ onClick, webId }, ref) => (
+  <MenuItemLink
+    ref={ref}
+    to={`/Person/${encodeURIComponent(webId)}/edit`}
+    primaryText="Editer mon profil"
+    leftIcon={<EditIcon />}
+    onClick={onClick}
+  />
+));
+
+const LoginMenu = forwardRef(({ onClick }, ref) => (
+  <MenuItemLink ref={ref} to="/login" primaryText="Se connecter" onClick={onClick} />
+));
+
+const UserMenu = ({ logout, otherProps }) => {
   const { identity } = useGetIdentity();
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  if (!logout && !children) return null;
-  const open = Boolean(anchorEl);
-
-  const handleMenu = event => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-
   return (
-    <Box spacing={2}>
-      <Button variant="outlined" onClick={handleMenu} endIcon={<ArrowDropDownIcon />}>
-        {identity && identity.fullName ? identity.fullName : 'Anonyme'}
-      </Button>
-      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        open={open}
-        onClose={handleClose}
-      >
-        {identity && identity.id !== '' ? (
-          <>
-            <MenuItemLink
-              to={`/User/${encodeURIComponent(identity.id)}/show`}
-              primaryText="Voir son profil"
-              leftIcon={<AccountCircleIcon />}
-              onClick={handleClose}
-            />
-            <MenuItemLink
-              to={`/User/${encodeURIComponent(identity.id)}/edit`}
-              primaryText="Editer son profil"
-              leftIcon={<EditIcon />}
-              onClick={handleClose}
-            />
-            {logout}
-          </>
-        ) : (
-          <MenuItemLink to="/login" primaryText="Se connecter" onClick={handleClose} />
-        )}
-      </Menu>
-    </Box>
+    <RaUserMenu {...otherProps}>
+      {identity && identity.id !== '' ? (
+        [
+          <ViewProfileMenu webId={identity.id} key="view" />,
+          <EditProfileMenu webId={identity.id} key="edit" />,
+          React.cloneElement(logout, { key: 'logout' })
+        ]
+      ) : (
+        <LoginMenu />
+      )}
+    </RaUserMenu>
   );
 };
 

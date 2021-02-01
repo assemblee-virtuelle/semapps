@@ -1,6 +1,8 @@
 // General layout
-export { default as Layout } from './layout/Layout/Layout';
-export { default as AppBar } from './layout/Layout/AppBar';
+export { default as Layout } from './layout/DefaultLayout/Layout';
+export { default as AppBar } from './layout/DefaultLayout/AppBar';
+export { default as SimpleLayout } from './layout/SimpleLayout/Layout';
+export { default as SimpleAppBar } from './layout/SimpleLayout/AppBar';
 export { default as theme } from './layout/theme';
 
 // Create page
@@ -13,7 +15,7 @@ export { default as EditActions } from './edit/EditActions';
 
 // List page
 export { default as List } from './list/List';
-export { default as ResourceTabs } from './list/ResourceTabs';
+export { default as TabsMenu } from './list/TabsMenu';
 export { default as SimpleList } from './list/SimpleList';
 export { default as MasonryList } from './list/MasonryList';
 export { default as ReferenceFilter } from './list/ReferenceFilter';

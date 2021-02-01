@@ -7,7 +7,8 @@ import i18nProvider from './config/i18nProvider';
 import dataProvider from './config/dataProvider';
 import * as resources from './resources';
 
-const LayoutWithUserMenu = props => <Layout appBar={<AppBar userMenu={<UserMenu />} />} {...props} />;
+const AppBarWithUserMenu = props => <AppBar userMenu={<UserMenu />} {...props} />;
+const LayoutWithUserMenu = props => <Layout {...props} appBar={AppBarWithUserMenu} />;
 
 const App = () => (
   <Admin
