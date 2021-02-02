@@ -48,6 +48,15 @@ The following service actions are available:
 | `containerUri` | `String`| **required** | URI of the container to create |
 
 
+### `ldp.container.clear`
+* Deletes a container and all its attached resources
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `containerUri` | `String`| **required** | URI of the container to clear |
+
+
 ### `ldp.container.get`
 * Get all resources attached to a container
 * Use the LDP ontology of direct containers
@@ -65,3 +74,11 @@ You can also pass parameters defined in the [container options](index#container-
 ##### Return
 Triples, Turtle or JSON-LD depending on `accept` type.
 
+
+### `ldp.container.getOptions`
+* Returns the container options associated with the given URI (container or resource)
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `uri` | `String`  | **required** | URI of a container or a resource |

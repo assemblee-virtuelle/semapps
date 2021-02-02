@@ -1,11 +1,11 @@
 ---
-title: General use
+title: LDP
 ---
 
-This service allows you to setup LDP direct containers in which resources can be manipulated.
+This package allows you to setup LDP direct containers in which LDP resources can be manipulated.
 
 ## Features
-* Handles triples, turtle and JSON-LD
+* Handles triples, turtle and JSON-LD format
 * Automatic creation of containers on server start
 * Full container management: create, attach resources, detach, clear, delete...
 
