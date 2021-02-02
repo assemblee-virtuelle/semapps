@@ -12,7 +12,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 
 ## Dependencies
 
-- [LdpService](ldp.md)
+- [LdpService](ldp/index.md)
 
 ## Install
 

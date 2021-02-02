@@ -2,7 +2,7 @@
 title: Inference
 ---
 
-This service allows you to automatically generate inferences when resources are created, updated or deleted through [LDP](ldp.md).
+This service allows you to automatically generate inferences when resources are created, updated or deleted through [LDP](ldp/index.md).
 
 ## Features
 
@@ -13,7 +13,7 @@ This service allows you to automatically generate inferences when resources are 
 
 ## Dependencies
 - [TripleStoreService](triplestore.md)
-- [LdpService](ldp.md)
+- [LdpService](ldp/index.md)
 
 ## Install
 
