@@ -22,17 +22,19 @@ describe('Handle collections', () => {
 
   test('Create ressources', async () => {
     for (let i = 0; i < 10; i++) {
-      items.push(await broker.call('ldp.resource.post', {
-        containerUri: CONFIG.HOME_URL + 'objects',
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          '@type': 'Note',
-          name: `Note #${i}`,
-          content: `Contenu de ma note #${i}`,
-          published: `2021-01-0${i}T00:00:00.000Z`,
-        },
-        contentType: MIME_TYPES.JSON,
-      }));
+      items.push(
+        await broker.call('ldp.resource.post', {
+          containerUri: CONFIG.HOME_URL + 'objects',
+          resource: {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            '@type': 'Note',
+            name: `Note #${i}`,
+            content: `Contenu de ma note #${i}`,
+            published: `2021-01-0${i}T00:00:00.000Z`
+          },
+          contentType: MIME_TYPES.JSON
+        })
+      );
     }
     expect(items).toHaveLength(10);
   });
@@ -117,12 +119,14 @@ describe('Handle collections', () => {
       id: collectionUri,
       type: 'Collection',
       summary: 'My non-ordered collection',
-      items: [{
-        id: items[0],
-        type: 'Note',
-        content: 'Contenu de ma note #0',
-        name: 'Note #0'
-      }],
+      items: [
+        {
+          id: items[0],
+          type: 'Note',
+          content: 'Contenu de ma note #0',
+          name: 'Note #0'
+        }
+      ],
       totalItems: 1
     });
   });

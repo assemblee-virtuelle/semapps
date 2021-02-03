@@ -28,7 +28,7 @@ const InboxService = {
         return;
       }
 
-      if( !ctx.meta.skipSignatureValidation ) {
+      if (!ctx.meta.skipSignatureValidation) {
         const validDigest = await ctx.call('signature.verifyDigest', {
           body: JSON.stringify(activity),
           headers: ctx.meta.headers
