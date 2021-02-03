@@ -3,5 +3,6 @@ module.exports = {
   jsonContext: null,
   queryDepth: 0,
   allowAnonymousEdit: false,
-  allowAnonymousDelete: false
+  allowAnonymousDelete: false,
+  dereference: []
 };

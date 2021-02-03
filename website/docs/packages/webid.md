@@ -11,7 +11,7 @@ This service allows you to create and view WebID-conform profiles.
 
 ## Dependencies
 
-- [LdpService](ldp.md)
+- [LdpService](ldp/index.md)
 - [TripleStoreService](triplestore.md)
 
 ## Install

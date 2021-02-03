@@ -8,7 +8,28 @@
 module.exports = {
   docs: {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
-    Packages: ['packages/activitypub', 'packages/backup', 'packages/connector', 'packages/fuseki-admin', 'packages/importer', 'packages/inference', 'packages/ldp', 'packages/signature', 'packages/triplestore', 'packages/webfinger', 'packages/webhooks', 'packages/webid']
+    Packages: [
+      'packages/activitypub',
+      'packages/backup',
+      'packages/connector',
+      'packages/fuseki-admin',
+      'packages/importer',
+      'packages/inference',
+      {
+        type: 'category',
+        label: 'LDP',
+        items: [
+          'packages/ldp/index',
+          'packages/ldp/resource',
+          'packages/ldp/container',
+        ],
+      },
+      'packages/signature',
+      'packages/triplestore',
+      'packages/webfinger',
+      'packages/webhooks',
+      'packages/webid'
+    ]
   },
   contribute: {
     'SemApps core': ['contribute/code','contribute/coding-conventions'],
