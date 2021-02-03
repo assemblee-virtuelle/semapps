@@ -92,37 +92,63 @@ const CollectionService = {
      * @param queryDepth Number of blank nodes we want to dereference
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
+     * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage } = ctx.params;
+      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage, sort } = ctx.params;
 
-      let result = await ctx.call('triplestore.query', {
+      let collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
             <${id}> a as:Collection, ?collectionType .
-            <${id}> as:items ?itemUri .
+            <${id}> as:summary ?summary .
           }
           WHERE {
             <${id}> a as:Collection, ?collectionType .
-            OPTIONAL { <${id}> as:items ?itemUri . }
+            OPTIONAL { <${id}> as:summary ?summary . }
           }
         `,
         accept: MIME_TYPES.JSON
       });
 
-      const allItems = defaultToArray(result.items);
+      // No persisted collection found
+      if (!collection['@id']) return null;
+
+      if (this.isOrderedCollection(collection) && !sort) {
+        throw new Error('A sort parameter must be provided for ordered collections');
+      }
+
+      // Caution: we must do a select query, because construct queries cannot be sorted
+      let result = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          SELECT DISTINCT ?itemUri 
+          WHERE {
+            <${id}> a as:Collection .
+            OPTIONAL { 
+              <${id}> as:items ?itemUri . 
+              ${sort ? `OPTIONAL { ?itemUri ${sort.predicate} ?order . }` : ''}
+            }
+          }
+          ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
+        `,
+        accept: MIME_TYPES.JSON
+      });
+
+      const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
       const numPages = !itemsPerPage ? 1 : allItems ? Math.ceil(allItems.length / itemsPerPage) : 0;
 
-      if (!result['@id'] || (page && page > numPages)) {
-        // No persisted collection found or the collection page does not exist
+      if (page && page > numPages) {
+        // The collection page does not exist
         return null;
       } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
         return {
           '@context': this.settings.context,
-          '@id': id,
-          '@type': this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+          id,
+          type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
+          summary: collection.summary,
           first: numPages > 0 ? id + '?page=1' : undefined,
           last: numPages > 0 ? id + '?page=' + numPages : undefined,
           totalItems: allItems ? allItems.length : 0
@@ -130,7 +156,7 @@ const CollectionService = {
       } else {
         let selectedItemsUris = allItems,
           selectedItems = [];
-        const itemsProp = this.isOrderedCollection(result) ? 'orderedItems' : 'items';
+        const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
         if (itemsPerPage) {
@@ -159,7 +185,7 @@ const CollectionService = {
           return {
             '@context': this.settings.context,
             id: id + '?page=' + page,
-            type: this.isOrderedCollection(result) ? 'OrderedCollectionPage' : 'CollectionPage',
+            type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: id,
             prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
             next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
@@ -171,7 +197,8 @@ const CollectionService = {
           return {
             '@context': this.settings.context,
             id: id,
-            type: this.isOrderedCollection(result) ? 'OrderedCollection' : 'Collection',
+            type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
+            summary: collection.summary,
             [itemsProp]: selectedItems,
             totalItems: allItems ? allItems.length : 0
           };
