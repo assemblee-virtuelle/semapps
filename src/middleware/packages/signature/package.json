@@ -1,6 +1,6 @@
 {
   "name": "@semapps/signature",
-  "version": "0.1.44-alpha.0",
+  "version": "0.1.44-alpha.1",
   "description": "HTTP and LD signatures for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
