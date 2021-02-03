@@ -63,7 +63,8 @@ const OutboxService = {
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        queryDepth: 3
+        queryDepth: 3,
+        sort: { predicate: 'as:published', order: 'DESC' }
       });
 
       if (collection) {

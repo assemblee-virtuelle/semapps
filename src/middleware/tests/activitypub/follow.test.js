@@ -157,6 +157,6 @@ describe('Posting to followers', () => {
       collectionUri: simon.followers
     });
 
-    expect(result.items).toBeUndefined();
+    expect(result.items).toHaveLength(0);
   });
 });
