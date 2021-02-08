@@ -20,3 +20,6 @@ Une description claire et concise de ce que à vous vous seriez attendu.
 
 **Captures d'écran**
 Si ça peut être utile, ajoutez ici des captures d'écrans pour expliquer le problème.
+
+**Système**
+Si c'est bug côté frontend, indiquez votre navigateur et sa version.
