@@ -143,6 +143,6 @@ describe('Create/Update/Delete objects', () => {
         resourceUri: objectUri,
         accept: MIME_TYPES.JSON
       })
-    ).rejects.toThrow('Not found');
+    ).rejects.toThrow('Resource not found');
   });
 });

@@ -27,7 +27,7 @@ const WebhooksService = {
       try {
         webhook = await this.actions.get({ id: hash });
       } catch (e) {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+        throw new MoleculerError('Webhook not found', 404, 'NOT_FOUND');
       }
 
       if (this.createJob) {
