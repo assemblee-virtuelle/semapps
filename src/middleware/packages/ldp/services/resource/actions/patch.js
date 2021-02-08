@@ -1,3 +1,4 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
@@ -41,7 +42,10 @@ module.exports = {
     },
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
+
       const resourceUri = resource.id || resource['@id'];
+      if( !resourceUri ) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+
       const { queryDepth, jsonContext } = await ctx.call('ldp.container.getOptions', { uri: resourceUri });
 
       // Save the current data, to be able to send it through the event
