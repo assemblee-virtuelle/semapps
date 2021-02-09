@@ -5,6 +5,6 @@ const CONFIG = require('../config');
 module.exports = {
   mixins: [WebfingerService],
   settings: {
-    usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
+    baseUrl: CONFIG.HOME_URL
   }
 };
