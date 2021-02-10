@@ -11,7 +11,7 @@ const OrganizationList = props => (
         icon: ListIcon,
         sort: { field: 'pair:label', order: 'DESC' },
         perPage: 25,
-        list:
+        list: (
           <SimpleList
             primaryText={record => record['pair:label']}
             secondaryText={record => record['pair:comment']}
@@ -20,13 +20,14 @@ const OrganizationList = props => (
             )}
             linkType="show"
           />
+        )
       },
       map: {
         label: 'Carte',
         icon: MapIcon,
         perPage: 500,
         pagination: false,
-        list:
+        list: (
           <MapList
             latitude={record => record['pair:address'] && record['pair:address']['pair:latitude']}
             longitude={record => record['pair:address'] && record['pair:address']['pair:longitude']}
@@ -34,7 +35,8 @@ const OrganizationList = props => (
             description={record => record['pair:comment']}
             linkType="show"
           />
-      },
+        )
+      }
     }}
     {...props}
   />
