@@ -1,5 +1,13 @@
 import React from 'react';
-import { TopToolbar, Button, CreateButton, ExportButton, RefreshButton, useResourceDefinition, Link } from 'react-admin';
+import {
+  TopToolbar,
+  Button,
+  CreateButton,
+  ExportButton,
+  RefreshButton,
+  useResourceDefinition,
+  Link
+} from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
 
@@ -33,7 +41,7 @@ const ListActions = ({
             query.set('view', key);
             query.set('page', 1);
             query.set('perPage', view.perPage);
-            if( view.sort ) {
+            if (view.sort) {
               query.set('sort', view.sort.field);
               query.set('order', view.sort.order);
             }
@@ -43,9 +51,8 @@ const ListActions = ({
                   {React.createElement(view.icon)}
                 </Button>
               </Link>
-            )
-        })
-      }
+            );
+          })}
       {bulkActions &&
         React.cloneElement(bulkActions, {
           basePath,
