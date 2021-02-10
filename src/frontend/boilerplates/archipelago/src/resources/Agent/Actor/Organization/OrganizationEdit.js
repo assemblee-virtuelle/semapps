@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput } from 'react-admin';
+import { SimpleForm, TextInput, ImageInput, NumberInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField } from '@semapps/semantic-data-provider';
@@ -9,7 +9,7 @@ import OrganizationTitle from './OrganizationTitle';
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:label" />
+      <TextInput source="pair:label" fullWidth />
       <TextInput source="pair:comment" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
       <TextInput source="pair:homePage" fullWidth />
@@ -21,6 +21,8 @@ export const OrganizationEdit = props => (
       <EventsInput source="pair:involvedIn" />
       <ThemesInput source="pair:hasTopic" />
       <DocumentsInput source="pair:documentedBy" />
+      <NumberInput source="pair:address[pair:latitude]" fullWidth />
+      <NumberInput source="pair:address[pair:longitude]" fullWidth />
     </SimpleForm>
   </Edit>
 );

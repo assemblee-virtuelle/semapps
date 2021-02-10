@@ -16,11 +16,15 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "react-markdown": "^4.3.1",
-    "react-masonry-css": "^1.0.14"
+    "react-masonry-css": "^1.0.14",
+    "react-leaflet": "^3.1.0",
+    "react-leaflet-markercluster": "^3.0.0-rc1"
   },
   "peerDependencies": {
     "react": "^16.13.0",
-    "react-admin": "3.9.2"
+    "react-admin": "3.9.2",
+    "leaflet": "^1.7.1",
+    "leaflet.markercluster": "^1.4.1"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,6 @@
 import React from 'react';
-import { TopToolbar, CreateButton, ExportButton, RefreshButton, useResourceDefinition } from 'react-admin';
+import { TopToolbar, Button, CreateButton, ExportButton, RefreshButton, useResourceDefinition, Link } from 'react-admin';
+import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
 
 // Do not show Export and Refresh buttons on mobile
@@ -15,12 +16,36 @@ const ListActions = ({
   resource,
   selectedIds,
   showFilter,
-  total
+  total,
+  views,
+  currentView,
+  setView
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const resourceDefinition = useResourceDefinition({});
+  const query = new URLSearchParams(useLocation().search);
   return (
     <TopToolbar>
+      {views &&
+        Object.entries(views)
+          .filter(([key]) => key !== currentView)
+          .map(([key, view]) => {
+            query.set('view', key);
+            query.set('page', 1);
+            query.set('perPage', view.perPage);
+            if( view.sort ) {
+              query.set('sort', view.sort.field);
+              query.set('order', view.sort.order);
+            }
+            return (
+              <Link key={key} to={'?' + query.toString()}>
+                <Button onClick={() => setView(key)} label={view.label}>
+                  {React.createElement(view.icon)}
+                </Button>
+              </Link>
+            )
+        })
+      }
       {bulkActions &&
         React.cloneElement(bulkActions, {
           basePath,
