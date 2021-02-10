@@ -33,7 +33,7 @@ const OrganizationList = props => (
             longitude={record => record['pair:address'] && record['pair:address']['pair:longitude']}
             label={record => record['pair:label']}
             description={record => record['pair:comment']}
-            linkType="show"
+            scrollWheelZoom
           />
         )
       }
