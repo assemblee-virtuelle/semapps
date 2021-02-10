@@ -1,8 +1,10 @@
+import buildDereferenceQuery from './buildDereferenceQuery';
+
 const getPrefixRdf = ontologies => {
   return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
 
-const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, ontologies }) => {
+const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, dereference, ontologies }) => {
   let whereQuery = '';
 
   if (filter) {
@@ -25,16 +27,20 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, ontolog
     });
   }
 
+  const dereferenceQuery = buildDereferenceQuery(dereference);
+
   return `
     ${getPrefixRdf(ontologies)}
     CONSTRUCT {
-      ?s1 ?p2 ?o2
+      ?s1 ?p2 ?o2 .
+      ${dereferenceQuery.construct}
     }
     WHERE {
       ?s1 a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
       FILTER( (isIRI(?s1)) ) .
       ${whereQuery}
+      ${dereferenceQuery.where}
       ?s1 ?p2 ?o2 .
     }
     # TODO try to make pagination work in SPARQL as this doesn't work.
