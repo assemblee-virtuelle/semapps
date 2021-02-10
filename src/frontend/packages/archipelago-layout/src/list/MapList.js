@@ -1,10 +1,22 @@
 import React from 'react';
-import { useListContext, Link } from 'react-admin';
-import { Button, Typography } from '@material-ui/core';
+import { useListContext, ShowButton, EditButton, useResourceDefinition } from 'react-admin';
+import { Typography } from '@material-ui/core';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 
-const MapList = ({ latitude, longitude, label, description, linkType, ...otherProps }) => {
+const PopupContent = ({ record, basePath }) => {
+  const resourceDefinition = useResourceDefinition({});
+  return (
+    <>
+      {record.label && <Typography variant="h5">{record.label}</Typography>}
+      {record.description && <Typography>{record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}</Typography>}
+      {resourceDefinition.hasShow && <ShowButton basePath={basePath} record={record} />}
+      {resourceDefinition.hasEdit && <EditButton basePath={basePath} record={record} />}
+    </>
+  );
+}
+
+const MapList = ({ latitude, longitude, label, description, popupContent, ...otherProps }) => {
   const { ids, data, basePath } = useListContext();
   return (
     <MapContainer style={{ height: 700 }} {...otherProps} >
@@ -14,26 +26,20 @@ const MapList = ({ latitude, longitude, label, description, linkType, ...otherPr
       />
       <MarkerClusterGroup showCoverageOnHover={false}>
       {ids.map(id => {
-        const recordLatitude = latitude && latitude(data[id]);
-        const recordLongitude = longitude && longitude(data[id]);
-        const recordLabel = label && label(data[id]);
-
-        let recordDescription = description && description(data[id]);
-        if (recordDescription && recordDescription.length > 150) recordDescription = recordDescription.substring(0, 150) + '...'
-
-        let recordLink = `${basePath}/${encodeURIComponent(id)}`;
-        if (linkType === 'show') recordLink += '/show';
+        const record = {
+          ...data[id],
+          latitude: latitude && latitude(data[id]),
+          longitude: longitude && longitude(data[id]),
+          label: label && label(data[id]),
+          description: description && description(data[id])
+        };
 
         // Display a marker only if there is a latitude and longitude
-        if( recordLatitude && recordLongitude ) {
+        if( record.latitude && record.longitude ) {
           return (
-            <Marker key={id} position={[recordLatitude, recordLongitude]}>
+            <Marker key={id} position={[record.latitude, record.longitude]}>
               <Popup>
-                {recordLabel && <Typography variant="h5">{recordLabel}</Typography>}
-                {recordDescription && <Typography>{recordDescription}</Typography>}
-                <Link to={recordLink}>
-                  <Button color="primary" variant="contained">Voir</Button>
-                </Link>
+                {React.createElement(popupContent, { record, basePath })}
               </Popup>
             </Marker>
           );
@@ -47,11 +53,11 @@ const MapList = ({ latitude, longitude, label, description, linkType, ...otherPr
 };
 
 MapList.defaultProps = {
-  linkType: 'edit',
   height: 700,
   center: [47, 2.213749],
   zoom: 6,
-  scrollWheelZoom: false
+  scrollWheelZoom: false,
+  popupContent: PopupContent,
 }
 
 export default MapList;
