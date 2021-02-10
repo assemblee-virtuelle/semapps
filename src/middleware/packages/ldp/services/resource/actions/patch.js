@@ -44,7 +44,7 @@ module.exports = {
       let { resource, contentType, webId } = ctx.params;
 
       const resourceUri = resource.id || resource['@id'];
-      if( !resourceUri ) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+      if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
       const { queryDepth, jsonContext } = await ctx.call('ldp.container.getOptions', { uri: resourceUri });
 
