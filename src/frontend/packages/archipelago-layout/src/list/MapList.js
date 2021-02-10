@@ -10,12 +10,16 @@ const PopupContent = ({ record, basePath }) => {
   return (
     <>
       {record.label && <Typography variant="h5">{record.label}</Typography>}
-      {record.description && <Typography>{record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}</Typography>}
+      {record.description && (
+        <Typography>
+          {record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}
+        </Typography>
+      )}
       {resourceDefinition.hasShow && <ShowButton basePath={basePath} record={record} />}
       {resourceDefinition.hasEdit && <EditButton basePath={basePath} record={record} />}
     </>
   );
-}
+};
 
 // Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
 const QueryStringUpdater = () => {
@@ -23,15 +27,15 @@ const QueryStringUpdater = () => {
   const query = new URLSearchParams(history.location.search);
 
   useMapEvents({
-    moveend: (test) => {
+    moveend: test => {
       query.set('lat', test.target.getCenter().lat);
       query.set('lng', test.target.getCenter().lng);
       history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
     },
-    zoomend: (test) => {
+    zoomend: test => {
       query.set('zoom', test.target.getZoom());
       history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
-    },
+    }
   });
   return null;
 };
@@ -45,34 +49,32 @@ const MapList = ({ latitude, longitude, label, description, popupContent, center
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
 
   return (
-    <MapContainer style={{ height: 700 }} center={center} zoom={zoom} {...otherProps} >
+    <MapContainer style={{ height: 700 }} center={center} zoom={zoom} {...otherProps}>
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MarkerClusterGroup showCoverageOnHover={false}>
-      {ids.map(id => {
-        const record = {
-          ...data[id],
-          latitude: latitude && latitude(data[id]),
-          longitude: longitude && longitude(data[id]),
-          label: label && label(data[id]),
-          description: description && description(data[id])
-        };
+        {ids.map(id => {
+          const record = {
+            ...data[id],
+            latitude: latitude && latitude(data[id]),
+            longitude: longitude && longitude(data[id]),
+            label: label && label(data[id]),
+            description: description && description(data[id])
+          };
 
-        // Display a marker only if there is a latitude and longitude
-        if( record.latitude && record.longitude ) {
-          return (
-            <Marker key={id} position={[record.latitude, record.longitude]}>
-              <Popup>
-                {React.createElement(popupContent, { record, basePath })}
-              </Popup>
-            </Marker>
-          );
-        } else {
-          return null;
-        }
-      })}
+          // Display a marker only if there is a latitude and longitude
+          if (record.latitude && record.longitude) {
+            return (
+              <Marker key={id} position={[record.latitude, record.longitude]}>
+                <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
+              </Marker>
+            );
+          } else {
+            return null;
+          }
+        })}
       </MarkerClusterGroup>
       <QueryStringUpdater />
     </MapContainer>
@@ -84,7 +86,7 @@ MapList.defaultProps = {
   center: [47, 2.213749],
   zoom: 6,
   scrollWheelZoom: false,
-  popupContent: PopupContent,
+  popupContent: PopupContent
 };
 
 export default MapList;
