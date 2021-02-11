@@ -114,6 +114,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
           params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+          dereference: resources[resourceId].dereference,
           ontologies
         });
 
@@ -122,7 +123,10 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           body: sparqlQuery
         });
 
-        const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
+        const compactJson = await jsonld.frame(json, {
+          '@context': jsonContext || buildJsonContext(ontologies),
+          '@type': resources[resourceId].types
+        });
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
