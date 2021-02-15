@@ -19,7 +19,7 @@ export default {
   dataModel: {
     types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organizations',
-    dereference: ['pair:address'],
+    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
     slugField: 'pair:label'
   },
   translations: {
@@ -35,7 +35,8 @@ export default {
         'pair:partnerOf': 'Partenaires',
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
-        'pair:documentedBy': 'Documents'
+        'pair:documentedBy': 'Documents',
+        'pair:hasLocation': 'Adresse',
       }
     }
   }

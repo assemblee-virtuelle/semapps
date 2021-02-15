@@ -38,3 +38,4 @@ export { default as SeparatedListField } from './fields/SeparatedListField';
 
 // Inputs
 export { default as ReferenceQuickCreateInput } from './inputs/ReferenceQuickCreateInput';
+export { default as MapBoxInput } from './inputs/MapBoxInput';

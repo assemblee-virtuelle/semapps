@@ -29,8 +29,8 @@ const OrganizationList = props => (
         pagination: false,
         list: (
           <MapList
-            latitude={record => record['pair:address'] && record['pair:address']['pair:latitude']}
-            longitude={record => record['pair:address'] && record['pair:address']['pair:longitude']}
+            latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
+            longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
             label={record => record['pair:label']}
             description={record => record['pair:comment']}
             scrollWheelZoom
