@@ -36,7 +36,7 @@ export default {
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
         'pair:documentedBy': 'Documents',
-        'pair:hasLocation': 'Adresse',
+        'pair:hasLocation': 'Adresse'
       }
     }
   }
