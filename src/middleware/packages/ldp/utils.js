@@ -50,7 +50,7 @@ const buildDereferenceQuery = predicates => {
 
       // Group queries by parent, so that we can group WHERE triples in the same OPTIONAL tag
       const groupKey = parent === 'root' ? predicate : parent;
-      if( !queries[groupKey] ) queries[groupKey] = [];
+      if (!queries[groupKey]) queries[groupKey] = [];
 
       queries[groupKey].push(`
         ?s${parentVarName} ${predicate} ?s${varName} .
@@ -60,8 +60,12 @@ const buildDereferenceQuery = predicates => {
   }
 
   return {
-    construct: Object.values(queries).map(groupedQueries => Object.values(groupedQueries).join('\n')).join('\n'),
-    where: Object.values(queries).map(groupedQueries => `OPTIONAL { ${Object.values(groupedQueries).join('\n')} }`).join('\n')
+    construct: Object.values(queries)
+      .map(groupedQueries => Object.values(groupedQueries).join('\n'))
+      .join('\n'),
+    where: Object.values(queries)
+      .map(groupedQueries => `OPTIONAL { ${Object.values(groupedQueries).join('\n')} }`)
+      .join('\n')
   };
 };
 
