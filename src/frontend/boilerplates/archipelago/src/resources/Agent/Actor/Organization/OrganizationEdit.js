@@ -7,9 +7,9 @@ import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInpu
 import OrganizationTitle from './OrganizationTitle';
 
 const extractContext = (context, key) => {
-  const property = context.find(property => property.id.startsWith(key+'.'));
-  if( property ) return property.text;
-}
+  const property = context.find(property => property.id.startsWith(key + '.'));
+  if (property) return property.text;
+};
 
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>
@@ -40,7 +40,8 @@ export const OrganizationEdit = props => (
           'pair:latitude': value.center[1],
           'pair:hasPostalAddress': {
             type: 'pair:PostalAddress',
-            'pair:addressLocality': value.place_type[0] === 'place' ? value.text : extractContext(value.context, 'place'),
+            'pair:addressLocality':
+              value.place_type[0] === 'place' ? value.text : extractContext(value.context, 'place'),
             'pair:addressStreet': value.place_type[0] === 'address' ? [value.address, value.text].join(' ') : undefined,
             'pair:addressZipCode': extractContext(value.context, 'postcode'),
             'pair:addressCountry': extractContext(value.context, 'country')
