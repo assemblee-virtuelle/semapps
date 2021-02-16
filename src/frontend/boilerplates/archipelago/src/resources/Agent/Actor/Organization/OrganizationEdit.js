@@ -1,7 +1,8 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput, NumberInput } from 'react-admin';
+import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit, MapBoxInput } from '@semapps/archipelago-layout';
+import { Edit } from '@semapps/archipelago-layout';
+import { LocationInput } from '@semapps/geo-components';
 import { ImageField } from '@semapps/semantic-data-provider';
 import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../inputs';
 import OrganizationTitle from './OrganizationTitle';
@@ -26,9 +27,9 @@ export const OrganizationEdit = props => (
       <EventsInput source="pair:involvedIn" />
       <ThemesInput source="pair:hasTopic" />
       <DocumentsInput source="pair:documentedBy" />
-      <MapBoxInput
+      <LocationInput
         source="pair:hasLocation"
-        config={{
+        mapboxConfig={{
           access_token: 'pk.eyJ1Ijoic3Jvc3NldDgxIiwiYSI6ImNra3ptM3A5djFibDYycW80ZThwYjdpNXcifQ.l_t7_-T2XG_7--5udKYzLQ',
           types: ['place', 'address'],
           country: ['fr', 'be', 'ch']

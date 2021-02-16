@@ -17,7 +17,6 @@ export { default as EditActions } from './edit/EditActions';
 export { default as List } from './list/List';
 export { default as ListActions } from './list/ListActions';
 export { default as MultiViewsList } from './list/MultiViewsList';
-export { default as MapList } from './list/MapList';
 export { default as TabsMenu } from './list/TabsMenu';
 export { default as SimpleList } from './list/SimpleList';
 export { default as MasonryList } from './list/MasonryList';
@@ -38,4 +37,3 @@ export { default as SeparatedListField } from './fields/SeparatedListField';
 
 // Inputs
 export { default as ReferenceQuickCreateInput } from './inputs/ReferenceQuickCreateInput';
-export { default as MapBoxInput } from './inputs/MapBoxInput';

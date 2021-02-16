@@ -1,44 +1,10 @@
 import React from 'react';
-import { useListContext, ShowButton, EditButton, useResourceDefinition } from 'react-admin';
-import { Typography } from '@material-ui/core';
-import { useHistory, useLocation } from 'react-router';
-import { MapContainer, useMapEvents, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useListContext } from 'react-admin';
+import { useLocation } from 'react-router';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-
-const PopupContent = ({ record, basePath }) => {
-  const resourceDefinition = useResourceDefinition({});
-  return (
-    <>
-      {record.label && <Typography variant="h5">{record.label}</Typography>}
-      {record.description && (
-        <Typography>
-          {record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}
-        </Typography>
-      )}
-      {resourceDefinition.hasShow && <ShowButton basePath={basePath} record={record} />}
-      {resourceDefinition.hasEdit && <EditButton basePath={basePath} record={record} />}
-    </>
-  );
-};
-
-// Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
-const QueryStringUpdater = () => {
-  const history = useHistory();
-  const query = new URLSearchParams(history.location.search);
-
-  useMapEvents({
-    moveend: test => {
-      query.set('lat', test.target.getCenter().lat);
-      query.set('lng', test.target.getCenter().lng);
-      history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
-    },
-    zoomend: test => {
-      query.set('zoom', test.target.getZoom());
-      history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
-    }
-  });
-  return null;
-};
+import DefaultPopupContent from "./DefaultPopupContent";
+import QueryStringUpdater from "./QueryStringUpdater";
 
 const MapList = ({ latitude, longitude, label, description, popupContent, center, zoom, ...otherProps }) => {
   const { ids, data, basePath } = useListContext();
@@ -86,7 +52,7 @@ MapList.defaultProps = {
   center: [47, 2.213749],
   zoom: 6,
   scrollWheelZoom: false,
-  popupContent: PopupContent
+  popupContent: DefaultPopupContent
 };
 
 export default MapList;

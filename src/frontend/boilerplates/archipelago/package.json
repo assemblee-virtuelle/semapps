@@ -5,6 +5,7 @@
   "dependencies": {
     "@semapps/archipelago-layout": "0.1.18",
     "@semapps/auth-provider": "0.1.18",
+    "@semapps/geo-components": "0.1.18",
     "@semapps/semantic-data-provider": "0.1.18",
     "prop-types": "^15.7.2",
     "leaflet": "^1.7.1",

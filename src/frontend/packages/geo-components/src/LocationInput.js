@@ -24,7 +24,7 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const MapBoxInput = ({ config, record, resource, source, label, basePath, parse, optionText, ...rest }) => {
+const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath, parse, optionText, ...rest }) => {
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
@@ -44,10 +44,10 @@ const MapBoxInput = ({ config, record, resource, source, label, basePath, parse,
         const fetchUrl = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${keyword}.json`);
 
         // Use locale as default language
-        if (!config.language) config.language = locale;
+        if (!mapboxConfig.language) mapboxConfig.language = locale;
 
         // All options available at https://docs.mapbox.com/api/search/geocoding/#forward-geocoding
-        Object.entries(config).forEach(([key, value]) => {
+        Object.entries(mapboxConfig).forEach(([key, value]) => {
           if (Array.isArray(value)) {
             value = value.join(',');
           } else if (typeof value === 'boolean') {
@@ -60,7 +60,7 @@ const MapBoxInput = ({ config, record, resource, source, label, basePath, parse,
           .then(res => res.json())
           .then(json => callback(json));
       }, 200),
-    [config, locale]
+    [mapboxConfig, locale]
   );
 
   useEffect(() => {
@@ -138,9 +138,9 @@ const MapBoxInput = ({ config, record, resource, source, label, basePath, parse,
   );
 };
 
-MapBoxInput.defaultProps = {
+LocationInput.defaultProps = {
   variant: 'filled',
   margin: 'dense'
 };
 
-export default MapBoxInput;
+export default LocationInput;
