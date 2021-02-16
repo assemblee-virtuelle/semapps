@@ -67,7 +67,7 @@ module.exports = {
           contentType,
           webId
         });
-      } catch(e) {
+      } catch (e) {
         // If the insertion of new data fails, inserts back old data
         await ctx.call('triplestore.insert', {
           resource: oldData,
