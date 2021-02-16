@@ -2,9 +2,8 @@ import React from 'react';
 import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { LocationInput, extractContext } from '@semapps/geo-components';
 import { ImageField } from '@semapps/semantic-data-provider';
-import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../inputs';
+import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
 
 export const OrganizationEdit = props => (
@@ -22,30 +21,7 @@ export const OrganizationEdit = props => (
       <EventsInput source="pair:involvedIn" />
       <ThemesInput source="pair:hasTopic" />
       <DocumentsInput source="pair:documentedBy" />
-      <LocationInput
-        source="pair:hasLocation"
-        mapboxConfig={{
-          access_token: 'pk.eyJ1Ijoic3Jvc3NldDgxIiwiYSI6ImNra3ptM3A5djFibDYycW80ZThwYjdpNXcifQ.l_t7_-T2XG_7--5udKYzLQ',
-          types: ['place', 'address'],
-          country: ['fr', 'be', 'ch']
-        }}
-        parse={value => ({
-          type: 'pair:Place',
-          'pair:label': value.place_name,
-          'pair:longitude': value.center[0],
-          'pair:latitude': value.center[1],
-          'pair:hasPostalAddress': {
-            type: 'pair:PostalAddress',
-            'pair:addressLocality':
-              value.place_type[0] === 'place' ? value.text : extractContext(value.context, 'place'),
-            'pair:addressStreet': value.place_type[0] === 'address' ? [value.address, value.text].join(' ') : undefined,
-            'pair:addressZipCode': extractContext(value.context, 'postcode'),
-            'pair:addressCountry': extractContext(value.context, 'country')
-          }
-        })}
-        optionText={resource => resource['pair:label']}
-        fullWidth
-      />
+      <PairLocationInput source="pair:hasLocation" fullWidth />
     </SimpleForm>
   </Edit>
 );
