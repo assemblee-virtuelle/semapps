@@ -3,8 +3,8 @@ import { useListContext } from 'react-admin';
 import { useLocation } from 'react-router';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import DefaultPopupContent from "./DefaultPopupContent";
-import QueryStringUpdater from "./QueryStringUpdater";
+import DefaultPopupContent from './DefaultPopupContent';
+import QueryStringUpdater from './QueryStringUpdater';
 
 const MapList = ({ latitude, longitude, label, description, popupContent, center, zoom, ...otherProps }) => {
   const { ids, data, basePath } = useListContext();
