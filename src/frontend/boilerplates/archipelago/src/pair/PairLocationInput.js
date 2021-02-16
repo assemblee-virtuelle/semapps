@@ -1,5 +1,5 @@
-import React from "react";
-import { extractContext, LocationInput } from "@semapps/geo-components";
+import React from 'react';
+import { extractContext, LocationInput } from '@semapps/geo-components';
 
 const PairLocationInput = props => (
   <LocationInput
@@ -15,8 +15,7 @@ const PairLocationInput = props => (
       'pair:latitude': value.center[1],
       'pair:hasPostalAddress': {
         type: 'pair:PostalAddress',
-        'pair:addressLocality':
-          value.place_type[0] === 'place' ? value.text : extractContext(value.context, 'place'),
+        'pair:addressLocality': value.place_type[0] === 'place' ? value.text : extractContext(value.context, 'place'),
         'pair:addressStreet': value.place_type[0] === 'address' ? [value.address, value.text].join(' ') : undefined,
         'pair:addressZipCode': extractContext(value.context, 'postcode'),
         'pair:addressCountry': extractContext(value.context, 'country')
