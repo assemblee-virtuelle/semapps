@@ -20,7 +20,8 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "react-scripts": "3.4.0",
-    "vercel": "^21.1.0"
+    "vercel": "^21.1.0",
+    "source-map-explorer": "^2.5.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -28,6 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "bootstrap": "lerna bootstrap",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "deploy": "vercel"
   },
   "eslintConfig": {
