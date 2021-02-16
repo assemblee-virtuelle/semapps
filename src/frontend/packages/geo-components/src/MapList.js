@@ -6,7 +6,7 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 import DefaultPopupContent from "./DefaultPopupContent";
 import QueryStringUpdater from "./QueryStringUpdater";
 
-const MapList = ({ latitude, longitude, label, description, popupContent, center, zoom, ...otherProps }) => {
+const MapList = ({ latitude, longitude, label, description, popupContent, height, center, zoom, ...otherProps }) => {
   const { ids, data, basePath } = useListContext();
 
   // Get the zoom and center from query string, if available
@@ -15,7 +15,7 @@ const MapList = ({ latitude, longitude, label, description, popupContent, center
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
 
   return (
-    <MapContainer style={{ height: 700 }} center={center} zoom={zoom} {...otherProps}>
+    <MapContainer style={{ height }} center={center} zoom={zoom} {...otherProps}>
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

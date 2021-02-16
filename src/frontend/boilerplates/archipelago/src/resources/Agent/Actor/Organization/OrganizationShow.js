@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextField, UrlField, ChipField, SingleFieldList } from 'react-admin';
 import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { MapField } from '@semapps/geo-components';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 
@@ -13,6 +14,10 @@ const OrganizationShow = props => (
           <UrlField source="pair:homePage" />
         </Hero>
         <MarkdownField source="pair:description" />
+        <MapField
+          latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
+          longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
+        />
       </Column>
       <Column xs={12} sm={3} showLabel>
         <UriArrayField reference="Person" source="pair:affiliates">

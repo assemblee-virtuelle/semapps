@@ -2,15 +2,10 @@ import React from 'react';
 import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { LocationInput } from '@semapps/geo-components';
+import { LocationInput, extractContext } from '@semapps/geo-components';
 import { ImageField } from '@semapps/semantic-data-provider';
 import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../inputs';
 import OrganizationTitle from './OrganizationTitle';
-
-const extractContext = (context, key) => {
-  const property = context.find(property => property.id.startsWith(key + '.'));
-  if (property) return property.text;
-};
 
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>

@@ -36,7 +36,7 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
   const {
     input: { value, onChange },
     isRequired
-  } = useInput({ resource, source, ...rest });
+  } = useInput({ resource, source });
 
   const fetchMapbox = useMemo(
     () =>
