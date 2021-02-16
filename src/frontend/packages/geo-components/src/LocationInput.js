@@ -90,7 +90,7 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
       // This function is called when the user selects an option
       onChange={(event, newValue) => {
         // Parse only if the value is not null (happens if the user clears the value)
-        if (newValue) newValue = parse(newValue);
+        if (newValue && parse) newValue = parse(newValue);
         onChange(newValue);
         setOptions([]);
       }}
