@@ -15,6 +15,7 @@ export { default as Resource } from './Resource/Resource';
 // Concepts
 export { default as Theme } from './Concept/Theme';
 export { default as Concept } from './Concept/Concept';
+export { default as MembershipRole } from './Concept/MembershipRole';
 
 // Objects
 export { default as Document } from './Object/Document';

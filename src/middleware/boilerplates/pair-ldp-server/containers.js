@@ -1,10 +1,16 @@
 const { ACTOR_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
+const CONFIG = require('./config');
 
 module.exports = [
   {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
-    dereference: ['sec:publicKey']
+    dereference: ['sec:publicKey','pair:organizationOfMembership'],
+    disassembly: [{path:'pair:organizationOfMembership',container:CONFIG.HOME_URL+'/membershipAssociations'}]
+  },
+  {
+    path: '/membershipAssociations',
+    acceptedTypes: ['pair:MembershipAssociation'],
   },
   {
     path: '/projects',
@@ -27,6 +33,10 @@ module.exports = [
   {
     path: '/skills',
     acceptedTypes: 'pair:Skill'
+  },
+  {
+    path: '/membershipRole',
+    acceptedTypes: 'pair:MembershipRole',
   },
   {
     path: '/documents',
