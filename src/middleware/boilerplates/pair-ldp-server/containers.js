@@ -5,12 +5,12 @@ module.exports = [
   {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
-    dereference: ['sec:publicKey','pair:organizationOfMembership'],
-    disassembly: [{path:'pair:organizationOfMembership',container:CONFIG.HOME_URL+'/membershipAssociations'}]
+    dereference: ['sec:publicKey', 'pair:organizationOfMembership'],
+    disassembly: [{ path: 'pair:organizationOfMembership', container: CONFIG.HOME_URL + '/membershipAssociations' }]
   },
   {
     path: '/membershipAssociations',
-    acceptedTypes: ['pair:MembershipAssociation'],
+    acceptedTypes: ['pair:MembershipAssociation']
   },
   {
     path: '/projects',
@@ -36,7 +36,7 @@ module.exports = [
   },
   {
     path: '/membershipRole',
-    acceptedTypes: 'pair:MembershipRole',
+    acceptedTypes: 'pair:MembershipRole'
   },
   {
     path: '/documents',

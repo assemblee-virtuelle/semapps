@@ -86,9 +86,9 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const containerUri= ctx.params.containerUri;
+      const containerUri = ctx.params.containerUri;
       const { resource, slug, contentType, webId, fileStream, disassembly } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri})),
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
 
@@ -134,22 +134,22 @@ module.exports = {
         }
       }
 
-      if(disassembly && contentType==MIME_TYPES.JSON){
-        for(disassemblyItem of disassembly){
+      if (disassembly && contentType == MIME_TYPES.JSON) {
+        for (disassemblyItem of disassembly) {
           // console.log('disassembly',disassemblyItem);
           const disassemblyValue = {
-            '@context':resource['@context'],
-            ...resource[disassemblyItem.path],
+            '@context': resource['@context'],
+            ...resource[disassemblyItem.path]
           };
-          if(disassemblyValue){
+          if (disassemblyValue) {
             resourceUri = await ctx.call('ldp.resource.post', {
               containerUri: disassemblyItem.container,
-              resource:disassemblyValue,
+              resource: disassemblyValue,
               contentType: MIME_TYPES.JSON,
               accept: MIME_TYPES.JSON,
               webId: webId
             });
-            resource[disassemblyItem.path] =resourceUri;
+            resource[disassemblyItem.path] = resourceUri;
           }
         }
       }

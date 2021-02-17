@@ -9,7 +9,7 @@ export default {
     list: RoleList,
     create: RoleCreate,
     edit: RoleEdit,
-    show : RoleShow,
+    show: RoleShow,
     icon: FavoriteBorderIcon,
     options: {
       label: 'Rôle de membre',
@@ -32,5 +32,4 @@ export default {
       }
     }
   }
-
 };
