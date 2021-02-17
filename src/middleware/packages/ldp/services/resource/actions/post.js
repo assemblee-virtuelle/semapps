@@ -76,14 +76,23 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      disassembly: {
+        type: 'array',
+        optional: true
+      },
       fileStream: {
         type: 'object',
         optional: true
       }
     },
     async handler(ctx) {
-      const { resource, containerUri, slug, contentType, webId, fileStream } = ctx.params;
+      const containerUri= ctx.params.containerUri;
+      const { resource, slug, contentType, webId, fileStream, disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri})),
+        ...ctx.params
+      };
 
+      // console.log('initalRessource',resource);
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
         containerUri,
@@ -122,6 +131,26 @@ module.exports = {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localPath']));
         } catch (e) {
           throw new MoleculerError(e, 500, 'Server Error');
+        }
+      }
+
+      if(disassembly && contentType==MIME_TYPES.JSON){
+        for(disassemblyItem of disassembly){
+          // console.log('disassembly',disassemblyItem);
+          const disassemblyValue = {
+            '@context':resource['@context'],
+            ...resource[disassemblyItem.path],
+          };
+          if(disassemblyValue){
+            resourceUri = await ctx.call('ldp.resource.post', {
+              containerUri: disassemblyItem.container,
+              resource:disassemblyValue,
+              contentType: MIME_TYPES.JSON,
+              accept: MIME_TYPES.JSON,
+              webId: webId
+            });
+            resource[disassemblyItem.path] =resourceUri;
+          }
         }
       }
 

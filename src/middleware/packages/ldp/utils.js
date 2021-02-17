@@ -36,7 +36,7 @@ const generateSparqlVarName = predicate =>
   predicate
     .split(':')
     .map(s => s[0].toUpperCase() + s.slice(1))
-    .join('');
+    .join('').replace(/[^a-z0-9]+/gi, '');
 
 const buildDereferenceQuery = predicates => {
   let construct = '',
@@ -47,7 +47,6 @@ const buildDereferenceQuery = predicates => {
     for (const [predicate, parent] of Object.entries(flattenedPredicates)) {
       const varName = generateSparqlVarName(predicate);
       const parentVarName = parent === 'root' ? '1' : generateSparqlVarName(parent);
-
       const query = `
         ?s${parentVarName} ${predicate} ?s${varName} .
         ?s${varName} ?p${varName} ?o${varName} .
