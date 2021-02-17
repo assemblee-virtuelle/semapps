@@ -2,7 +2,7 @@ import React from 'react';
 import { ImageInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActorsInput, DocumentsInput, ThemesInput } from '../../../../inputs';
+import { ActorsInput, DocumentsInput, ThemesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
 import { ImageField } from '@semapps/semantic-data-provider';
 

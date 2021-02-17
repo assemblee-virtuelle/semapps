@@ -8,10 +8,11 @@ import { createFilter } from 'rollup-pluginutils';
 
 const external = createFilter(
   [
+    'leaflet',
+    'leaflet.markercluster',
     'react',
     'react-admin',
     'react-dom',
-    'react-markdown',
     'react-router-dom',
     'react-final-form',
     'react-router',

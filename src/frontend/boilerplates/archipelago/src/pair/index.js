@@ -1,7 +1,7 @@
 import React from 'react';
 import { UriArrayInput } from '@semapps/semantic-data-provider';
 import { AutocompleteArrayInput } from 'react-admin';
-import * as resources from './resources';
+import * as resources from '../resources';
 
 const selectOptionTextByType = resource => {
   if (resource) {
@@ -92,3 +92,6 @@ export const AgentsInput = ({ label, source }) => (
     />
   </UriArrayInput>
 );
+
+export { default as PairLocationInput } from './PairLocationInput';
+export { default as PairResourceCreate } from './PairResourceCreate';

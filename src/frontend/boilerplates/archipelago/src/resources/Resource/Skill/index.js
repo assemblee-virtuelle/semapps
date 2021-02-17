@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../PairResourceCreate';
+import { PairResourceCreate } from '../../../pair';
 import SkillEdit from './SkillEdit';
 import SkillList from './SkillList';
 import SkillShow from './SkillShow';

@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev": "moleculer-runner --repl --hot services",
-    "start": "moleculer-runner --instances=max services"
+    "start": "moleculer-runner --instances=max services",
+    "link-all": "npm link @semapps/activitypub && npm link @semapps/ldp && npm link @semapps/webhooks"
   },
   "dependencies": {
     "@semapps/activitypub": "0.1.44-alpha.1",

@@ -5,8 +5,11 @@
   "dependencies": {
     "@semapps/archipelago-layout": "0.1.18",
     "@semapps/auth-provider": "0.1.18",
+    "@semapps/geo-components": "0.1.18",
     "@semapps/semantic-data-provider": "0.1.18",
     "prop-types": "^15.7.2",
+    "leaflet": "^1.7.1",
+    "leaflet.markercluster": "^1.4.1",
     "ra-input-markdown": "^1.1.7",
     "ra-language-french": "3.11.0",
     "react": "^16.13.1",
@@ -18,7 +21,8 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "react-scripts": "3.4.0",
-    "vercel": "^21.1.0"
+    "vercel": "^21.1.0",
+    "source-map-explorer": "^2.5.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -26,6 +30,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "bootstrap": "lerna bootstrap",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "deploy": "vercel"
   },
   "eslintConfig": {
