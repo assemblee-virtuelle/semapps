@@ -1,5 +1,5 @@
 {
-  "name": "coographie-server",
+  "name": "pair-ldp-server",
   "version": "0.1.44",
   "private": true,
   "description": "SemApps-based semantic application",
