@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "version": "lerna version --force-publish='*' --exact",
+    "version": "lerna version --force-publish='*' --exact --tag-version-prefix='front-v'",
     "publish": "lerna run pre-publish && lerna publish from-package",
     "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'",
     "link-all": "lerna exec --parallel --scope @semapps/** -- npm link",
