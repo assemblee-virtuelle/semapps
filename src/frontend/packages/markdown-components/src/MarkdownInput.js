@@ -11,12 +11,16 @@ const MarkdownInput = props => {
     input: { value, onChange }
   } = useInput(props);
 
-  const converter = useMemo(() => new Showdown.Converter({
-    tables: true,
-    simplifiedAutoLink: true,
-    strikethrough: true,
-    tasklists: true
-  }), []);
+  const converter = useMemo(
+    () =>
+      new Showdown.Converter({
+        tables: true,
+        simplifiedAutoLink: true,
+        strikethrough: true,
+        tasklists: true
+      }),
+    []
+  );
 
   return (
     <FormControl fullWidth className="ra-input-mde">
