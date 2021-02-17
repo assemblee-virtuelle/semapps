@@ -18,7 +18,7 @@ module.exports = [
   {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
-    dereference: ['sec:publicKey']
+    dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
   },
   {
     path: '/themes',

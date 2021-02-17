@@ -14,6 +14,7 @@ const OrganizationShow = props => (
           <UrlField source="pair:homePage" />
         </Hero>
         <MarkdownField source="pair:description" />
+        <br />
         <MapField
           latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
           longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}

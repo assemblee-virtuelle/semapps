@@ -97,6 +97,9 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
       onInputChange={(event, newKeyword) => setKeyword(newKeyword)}
       noOptionsText={translate('ra.navigation.no_results')}
       renderInput={params => {
+        // Autocomplete=off doesn't work anymore in modern browsers
+        // https://stackoverflow.com/a/40791726/7900695
+        params.inputProps.autoComplete = 'new-password';
         return (
           <TextField
             {...params}
