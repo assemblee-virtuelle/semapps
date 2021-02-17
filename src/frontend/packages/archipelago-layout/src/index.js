@@ -32,7 +32,6 @@ export { default as ShowActions } from './show/ShowActions';
 export { default as UserIcon } from './show/UserIcon';
 
 // Fields
-export { default as MarkdownField } from './fields/MarkdownField';
 export { default as SeparatedListField } from './fields/SeparatedListField';
 
 // Inputs

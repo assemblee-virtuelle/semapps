@@ -1,10 +1,10 @@
 import React from 'react';
 import { ImageInput, SimpleForm, TextInput } from 'react-admin';
-import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
+import { ImageField } from '@semapps/semantic-data-provider';
+import { MarkdownInput } from '@semapps/markdown-components';
 import { ActorsInput, DocumentsInput, ThemesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
-import { ImageField } from '@semapps/semantic-data-provider';
 
 const ProjectEdit = props => (
   <Edit title={<ProjectTitle />} {...props}>
