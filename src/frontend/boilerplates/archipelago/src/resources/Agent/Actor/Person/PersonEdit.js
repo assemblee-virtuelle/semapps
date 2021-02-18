@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageInput, SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
-import {ActivitiesInput, OrganizationsInput, PairLocationInput, SkillsInput, ThemesInput} from '../../../../pair';
+import { ActivitiesInput, OrganizationsInput, PairLocationInput, SkillsInput, ThemesInput } from '../../../../pair';
 import { ImageField } from '@semapps/semantic-data-provider';
 import PersonTitle from './PersonTitle';
 
