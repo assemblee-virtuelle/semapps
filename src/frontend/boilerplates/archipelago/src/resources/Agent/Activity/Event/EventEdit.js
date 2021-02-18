@@ -5,7 +5,7 @@ import DateFnsUtils from '@date-io/date-fns';
 import frLocale from "date-fns/locale/fr";
 import { Edit } from '@semapps/archipelago-layout';
 import { DateTimeInput } from '@semapps/date-components';
-import { ActorsInput, ThemesInput } from '../../../../inputs';
+import { ActorsInput, ThemesInput } from '../../../../pair';
 import EventTitle from './EventTitle';
 
 const EventEdit = props => (

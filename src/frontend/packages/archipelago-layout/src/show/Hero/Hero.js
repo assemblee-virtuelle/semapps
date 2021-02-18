@@ -3,9 +3,10 @@ import { Grid, Typography, makeStyles } from '@material-ui/core';
 import DetailsList from './DetailsList';
 import MainImage from './MainImage';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    margin: theme.spacing(-1)
   }
 }));
 

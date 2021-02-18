@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../PairResourceCreate';
+import { PairResourceCreate } from '../../../pair';
 import DocumentEdit from './DocumentEdit';
 import DocumentList from './DocumentList';
 import DocumentShow from './DocumentShow';

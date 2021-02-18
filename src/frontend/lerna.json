@@ -1,5 +1,5 @@
 {
-  "version": "independent",
+  "version": "0.1.19",
   "packages": [
     "boilerplates/**",
     "packages/*",

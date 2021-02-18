@@ -15,6 +15,8 @@ export { default as EditActions } from './edit/EditActions';
 
 // List page
 export { default as List } from './list/List';
+export { default as ListActions } from './list/ListActions';
+export { default as MultiViewsList } from './list/MultiViewsList';
 export { default as TabsMenu } from './list/TabsMenu';
 export { default as SimpleList } from './list/SimpleList';
 export { default as MasonryList } from './list/MasonryList';
