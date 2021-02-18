@@ -16,8 +16,7 @@
     "react": "^16.13.1",
     "react-admin": "3.11.0",
     "react-dom": "^16.13.1",
-    "@date-io/date-fns": "^2.8.0",
-    "date-fns": "^2.8.1"
+    "date-fns": "~2.8.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^4.2.4",

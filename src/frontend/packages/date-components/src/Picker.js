@@ -1,108 +1,126 @@
-import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
-import { FieldTitle, useInput, useTranslate } from 'react-admin';
-import { LocalizationProvider } from '@material-ui/pickers';
-import { TextField } from '@material-ui/core';
+import React, { useCallback } from 'react';
+import { useInput, useTranslate, FieldTitle } from 'react-admin';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { dateTimeFormatter, dateTimeParser } from './utils';
+
+const sanitizeRestProps = ({
+  allowEmpty,
+  alwaysOn,
+  basePath,
+  component,
+  defaultValue,
+  format,
+  formClassName,
+  initialValue,
+  initializeForm,
+  input,
+  isRequired,
+  label,
+  limitChoicesToValue,
+  locale,
+  meta,
+  options,
+  optionText,
+  optionValue,
+  parse,
+  record,
+  resource,
+  source,
+  textAlign,
+  translate,
+  translateChoice,
+  labelTime,
+  ...rest
+}) => rest;
 
 const Picker = ({
-  Component,
-  options,
+  PickerComponent,
+  format = dateTimeFormatter,
   label,
+  options,
   source,
   resource,
-  className,
-  isRequired,
-  providerOptions,
-  fullWidth,
-  onChange
+  helperText,
+  margin = 'dense',
+  onBlur,
+  onChange,
+  onFocus,
+  parse = dateTimeParser,
+  validate,
+  variant = 'filled',
+  defaultValue,
+  providerOptions: { utils, locale },
+  pickerVariant = 'dialog',
+  stringFormat = 'ISO',
+  ...rest
 }) => {
   const translate = useTranslate();
-  const { input, meta } = useInput({ source });
-  const [isOpen, setIsOpen] = useState(false);
-  const { touched, error } = meta;
+  const {
+    id,
+    input,
+    isRequired,
+    meta: { error, touched }
+  } = useInput({
+    format,
+    onBlur,
+    onChange,
+    onFocus,
+    parse,
+    resource,
+    source,
+    validate,
+    /* type: 'datetime-local', */
+    ...rest
+  });
 
-  const handleChange = useCallback(
-    value => {
-      onChange(value);
-      Date.parse(value) ? input.onChange(value.toISOString()) : input.onChange(null);
-    },
-    [input]
-  );
+  const handleChange = useCallback(value => {
+    Date.parse(value)
+      ? input.onChange(stringFormat === 'ISO' ? value.toISOString() : value.toString())
+      : input.onChange(null);
+  }, []);
 
   return (
-    <div className="picker">
-      <LocalizationProvider {...providerOptions}>
-        <Component
-          {...options}
-          label={<FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />}
-          margin="normal"
-          error={!!(touched && error)}
-          helperText={false}
-          className={className}
-          value={input.value ? new Date(input.value) : null}
-          clearText={translate('ra.action.clear_input_value')}
-          cancelText={translate('ra.action.cancel')}
-          onChange={date => handleChange(date)}
-          onBlur={() => input.onBlur(input.value ? new Date(input.value).toISOString() : null)}
-          renderInput={props => <TextField {...props} margin="normal" variant="filled" fullWidth={fullWidth} />}
-          // open={isOpen}
-          // KeyboardButtonProps={{
-          //   onFocus: e => {
-          //     setIsOpen(true);
-          //   }
-          // }}
-          // PopoverProps={{
-          //   disableRestoreFocus: true,
-          //   onClose: () => {
-          //     setIsOpen(false);
-          //   }
-          // }}
-          // InputProps={{
-          //   onFocus: () => {
-          //     setIsOpen(true);
-          //   }
-          // }}
-        />
-      </LocalizationProvider>
-    </div>
+    <MuiPickersUtilsProvider utils={utils || DateFnsUtils} locale={locale}>
+      <PickerComponent
+        id={id}
+        InputLabelProps={{
+          shrink: true
+        }}
+        label={<FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />}
+        variant={pickerVariant}
+        inputVariant={variant}
+        margin={margin}
+        error={!!(touched && error)}
+        helperText=" "
+        clearLabel={translate('ra.action.clear_input_value')}
+        cancelLabel={translate('ra.action.cancel')}
+        {...options}
+        {...sanitizeRestProps(rest)}
+        value={input.value ? new Date(input.value) : null}
+        onChange={date => handleChange(date)}
+        onBlur={() =>
+          input.onBlur(
+            input.value
+              ? stringFormat === 'ISO'
+                ? new Date(input.value).toISOString()
+                : new Date(input.value).toString()
+              : null
+          )
+        }
+      />
+    </MuiPickersUtilsProvider>
   );
-};
-
-Picker.propTypes = {
-  input: PropTypes.object,
-  isRequired: PropTypes.bool,
-  label: PropTypes.string,
-  meta: PropTypes.object,
-  options: PropTypes.object,
-  resource: PropTypes.string,
-  source: PropTypes.string,
-  labelTime: PropTypes.string,
-  className: PropTypes.string,
-  providerOptions: PropTypes.shape({
-    dateAdapter: PropTypes.func,
-    dateLibInstance: PropTypes.func,
-    locale: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
-  }),
-  fullWidth: PropTypes.bool,
-  onChange: PropTypes.func
 };
 
 Picker.defaultProps = {
-  input: {},
   isRequired: false,
   meta: { touched: false, error: false },
   options: {},
-  resource: '',
-  source: '',
-  labelTime: '',
-  className: '',
   providerOptions: {
-    dateAdapter: DateFnsUtils,
+    utils: DateFnsUtils,
     locale: undefined
-  },
-  fullWidth: false,
-  onChange: () => {}
+  }
 };
 
 export default Picker;

@@ -2,8 +2,6 @@
 
 Forked from unmaintained [react-admin-date-inputs](https://github.com/vascofg/react-admin-date-inputs)
 
-![date-time-picker.gif](date-time-picker.gif)
-
 ## Installation
 
 ```bash
@@ -15,15 +13,14 @@ npm install @semapps/date-components --save
 ```jsx
 import React from 'react';
 import { Edit, SimpleForm } from 'react-admin'
-import { DateInput, TimeInput, DateTimeInput, DateRangeInput } from '@semapps/date-components';
+import { DateInput, TimeInput, DateTimeInput } from '@semapps/date-components';
 
 export const MyEdit = (props) => (
   <Edit {...props}>
     <SimpleForm>
-      <DateInput source="startDate" label="Start date" options={{ format: 'DD/MM/YYYY' }} />
+      <DateInput source="startDate" label="Start date" options={{ format: 'dd/MM/yyyy' }} />
       <TimeInput source="startTime" label="Start time" options={{ format: 'HH:mm:ss' }} />
-      <DateTimeInput source="endDate" label="End time" options={{ format: 'DD/MM/YYYY, HH:mm:ss', ampm: false, clearable: true }} />
-      <DateRangeInput sourceStart="startDate" sourceEnd="endDate" labelStart="Start date" labelEnd="End date"/>
+      <DateTimeInput source="endDate" label="End time" options={{ format: 'dd/MM/yyyy, HH:mm:ss', ampm: false, clearable: true }} />
     </SimpleForm>
   </Edit>
 );
@@ -48,14 +45,11 @@ import MomentUtils from 'material-ui-pickers/utils/moment-utils';
 import frLocale from "date-fns/locale/fr";
 import moment from "moment";
 
-<DateInput source="date" label="Date using moment" providerOptions={{ dateAdapter: MomentUtils, dateLibInstance: moment }} />
-<DateInput source="date" label="Date in French!" providerOptions={{ dateAdapter: DateFnsUtils, locale: frLocale }} />
+<DateInput source="date" label="Date using moment" providerOptions={{ utils: MomentUtils }} />
+<DateInput source="date" label="Date in French!" providerOptions={{ utils: DateFnsUtils, locale: frLocale }} />
 ```
 
-> Note: When specifying a locale you must also specify the `dateAdapter`, even if it's the default `DateFnsUtils`.
-
-
-## Commands
+## Development
 
 ### `npm run pre-publish`
 

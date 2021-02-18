@@ -1,9 +1,19 @@
 import React from 'react';
-import { DatePicker, DateRangePicker, DateTimePicker, TimePicker } from '@material-ui/pickers';
-import RangePicker from './RangePicker';
+import {
+  DatePicker,
+  TimePicker,
+  DateTimePicker,
+  KeyboardDatePicker,
+  KeyboardDateTimePicker,
+  KeyboardTimePicker
+} from '@material-ui/pickers';
 import Picker from './Picker';
 
-export const DateInput = props => <Picker Component={DatePicker} {...props} />;
-export const TimeInput = props => <Picker Component={TimePicker} {...props} />;
-export const DateTimeInput = props => <Picker Component={DateTimePicker} {...props} />;
-export const DateRangeInput = props => <RangePicker Component={DateRangePicker} {...props} />;
+const DateInput = props => <Picker PickerComponent={DatePicker} {...props} />;
+const TimeInput = props => <Picker PickerComponent={TimePicker} {...props} />;
+const DateTimeInput = props => <Picker PickerComponent={DateTimePicker} {...props} />;
+const KeyboardDateInput = props => <Picker PickerComponent={KeyboardDatePicker} {...props} />;
+const KeyboardDateTimeInput = props => <Picker PickerComponent={KeyboardDateTimePicker} {...props} />;
+const KeyboardTimeInput = props => <Picker PickerComponent={KeyboardTimePicker} {...props} />;
+
+export { DateInput, TimeInput, DateTimeInput, KeyboardDateInput, KeyboardDateTimeInput, KeyboardTimeInput };
