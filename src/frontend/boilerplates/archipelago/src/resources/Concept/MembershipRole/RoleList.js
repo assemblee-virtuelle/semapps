@@ -3,9 +3,7 @@ import { List, SimpleList } from '@semapps/archipelago-layout';
 
 const RoleList = props => (
   <List {...props}>
-    <SimpleList
-      primaryText={record => record['pair:label']}
-    />
+    <SimpleList primaryText={record => record['pair:label']} />
   </List>
 );
 

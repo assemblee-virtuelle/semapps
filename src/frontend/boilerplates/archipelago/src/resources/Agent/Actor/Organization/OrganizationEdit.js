@@ -1,5 +1,14 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput,SimpleFormIterator,ReferenceInput,AutocompleteInput,SelectInput } from 'react-admin';
+import {
+  SimpleForm,
+  TextInput,
+  ImageInput,
+  ArrayInput,
+  SimpleFormIterator,
+  ReferenceInput,
+  AutocompleteInput,
+  SelectInput
+} from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField,CompositArrayInput } from '@semapps/semantic-data-provider';
@@ -20,10 +29,14 @@ export const OrganizationEdit = props => (
       <CompositArrayInput label="Membres avec Role" source="pair:organizationOfMembership">
         <SimpleFormIterator>
           <ReferenceInput label="membre" reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText="pair:lastName" allowEmpty/>
+            <AutocompleteInput optionText="pair:lastName" allowEmpty />
           </ReferenceInput>
           <ReferenceInput label="role" reference="MembershipRole" source="pair:membershipRole">
-            <SelectInput optionText="pair:label" shouldRenderSuggestions={value => value && value.length > 1} fullWidth/>
+            <SelectInput
+              optionText="pair:label"
+              shouldRenderSuggestions={value => value && value.length > 1}
+              fullWidth
+            />
           </ReferenceInput>
         </SimpleFormIterator>
       </CompositArrayInput>
