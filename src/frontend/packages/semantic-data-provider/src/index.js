@@ -3,6 +3,7 @@ export { default as UriArrayField } from './fields/UriArrayField';
 
 export { default as DateTimeInput } from './inputs/DateTimeInput';
 export { default as UriArrayInput } from './inputs/UriArrayInput';
+export { default as CompositArrayInput } from './inputs/CompositArrayInput';
 
 export { default as dataProvider } from './dataProvider';
 export { default as httpClient } from './httpClient';

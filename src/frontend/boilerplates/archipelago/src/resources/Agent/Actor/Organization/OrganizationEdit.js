@@ -1,8 +1,8 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput,ArrayInput,SimpleFormIterator,ReferenceInput,AutocompleteInput,SelectInput } from 'react-admin';
+import { SimpleForm, TextInput, ImageInput,SimpleFormIterator,ReferenceInput,AutocompleteInput,SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { ImageField } from '@semapps/semantic-data-provider';
+import { ImageField,CompositArrayInput } from '@semapps/semantic-data-provider';
 import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../inputs';
 import OrganizationTitle from './OrganizationTitle';
 
@@ -17,7 +17,7 @@ export const OrganizationEdit = props => (
         <ImageField source="src" />
       </ImageInput>
       <UsersInput source="pair:affiliates" />
-      <ArrayInput label="Membres avec Role" source="pair:organizationOfMembership">
+      <CompositArrayInput label="Membres avec Role" source="pair:organizationOfMembership">
         <SimpleFormIterator>
           <ReferenceInput label="membre" reference="Person" source="pair:membershipActor">
             <AutocompleteInput optionText="pair:lastName" allowEmpty/>
@@ -26,7 +26,7 @@ export const OrganizationEdit = props => (
             <SelectInput optionText="pair:label" shouldRenderSuggestions={value => value && value.length > 1} fullWidth/>
           </ReferenceInput>
         </SimpleFormIterator>
-      </ArrayInput>
+      </CompositArrayInput>
       <OrganizationsInput source="pair:partnerOf" />
       <EventsInput source="pair:involvedIn" />
       <ThemesInput source="pair:hasTopic" />
