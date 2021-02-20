@@ -5,5 +5,8 @@ lerna-debug.log
 .DS_Store
 /.idea
 *.swp
+.classpath
+.project
+.settings
 # conflict
 *.orig
