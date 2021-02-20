@@ -60,10 +60,38 @@ The `localData` dataset is accessible there as if are a `system` user, and all t
 
 ## Web ACL
 
-For now the java class `ShiroEvaluator` is just accepting every request, without checking real ACLs.
-It already prevents a SemAppsUser from accessing the ACL graph.
+The java class `ShiroEvaluator` is checking, for every SPARQL request, the subjet and the object of each tuple that the SPARQL engine has asked to receive from the underlying storage.
+It also prevents a SemAppsUser from accessing the ACL graph.
 
-TODO : implement the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.
+Implementation of the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.
+
+We chose to implement the algorithm with a succession of small steps and SPARQL queries.
+Indeed, at any moment, the algorithm can stop if it finds a matching permission. There is no need then to continue processing all the other cases, and we save some processing time.
+Implementing a big and unique SPARQL query that would contain all the cases would be unrealistic, and not efficient.
+
+Having a fine-grained set of small SPARQL queries is more efficient also because we can chose to which graph each part should query. Most of the queries are done on the webACL graph. We use the defaultGraph only in 2 occasions: to fetch the group members and the containers.
+
+The algorithm proceeds like follow:
+* checks permissions on the Ressource itself
+* checks permissions on the containers of that Ressource
+* checks permissions on all the parent containers in a recursive way.
+
+For each step, we have 2 cases:
+* the user is anonymous, in which case we need to check for a `acl:AgentClass` with value `foaf:Agent`
+* the user is a well known WEBID, in this case we need to check :
+  * `acl:AgentClass` with value `foaf:Agent` (public access)
+  * `acl:AgentClass` with value `acl:AuthenticatedAgent` (all knwon registered users access)
+  * `acl:Agent` with the user's webID
+  * `acl:agentGroup` with each of the groups the user belongs to (we retrieve the list separately, so we can reuse it later on, for the containers)
+
+For the access Modes, here is the corresponding table between JENA access types and WebACL. `mode2` is an additional, complementary, optional mode that needs to be checked, in some cases.
+JENA | WebACL mode1 | WebACL mode2
+--- | --- | ---
+Create | Append | Write
+Read | Read | Write
+Update | Write |
+Delete | Write | 
+
 
 ## Middleware
 
