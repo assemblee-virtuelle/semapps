@@ -18,13 +18,18 @@
 package org.semapps.jena.permissions;
 
 import java.util.Set;
+import java.util.Queue;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
 import org.apache.jena.permissions.SecurityEvaluator ;
 import org.apache.jena.permissions.SecurityEvaluator.Action;
@@ -57,6 +62,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	private Dataset dataset;
 	
 	private static final String ACLGraphName = "http://semapps.org/securedWebacl";
+	private static final String ACLGraphNameExternal = "http://semapps.org/webacl";
 
 	/**
 	 * 
@@ -69,6 +75,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		this.dataset = dataset;
 		this.unionModel = dataset.asDatasetGraph();
 		//LOG.info( "Model: " + model);
+		
 	}
 
 	/***
@@ -122,38 +129,222 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		return semappsUser;
 	}
 
+	//private static final String AGENTCLASS_PUBLIC = "foaf:Agent";
+	//private static final String AGENTCLASS_ANYUSER = "acl:AuthenticatedAgent";
+	private static final String QUERY_MODE2 = "UNION { ?auth acl:mode %s }";
+	private static final String QUERY_ACCESSTO = "acl:accessTo ?resource .\n";
+	private static final String QUERY_DEFAULT = "acl:default ?resource .\n";
+
+	private void prepareNss(ParameterizedSparqlString nss, String query) {
+		nss.setCommandText(query);
+		nss.setNsPrefix("acl", "http://www.w3.org/ns/auth/acl#");
+		nss.setNsPrefix("foaf", "http://xmlns.com/foaf/0.1/");
+	}
+
+	private static final String AGENTCLASS_PUBLIC_RESOURCE_QUERY = 
+	"SELECT ?auth\n" +
+	"WHERE {\n" +
+	"{ \n" +
+	" ?auth a acl:Authorization ;\n" +
+	" acl:agentClass foaf:Agent ;\n" +
+	" %s" +
+	"} \n" +
+	"{ \n" +
+	" { ?auth acl:mode %s } %s\n" +
+	"} \n" +
+	"}";
+
+	private static final String AGENTCLASS_ANYUSER_RESOURCE_QUERY = 
+	"SELECT ?auth\n" +
+	"WHERE {\n" +
+	"{ \n" +
+	" ?auth a acl:Authorization ;\n" +
+	" %s" +
+	"} { { ?auth acl:agentClass foaf:Agent } UNION { ?auth acl:agentClass acl:AuthenticatedAgent } }\n" +
+	"{ \n" +
+	" { ?auth acl:mode %s } %s\n" +
+	"} \n" +
+	"}";
+
+	private boolean checkACLAgentClass(RDFNode r, boolean anyUser, String mode1, String mode2, boolean forResource) {
+		
+		ParameterizedSparqlString query = new ParameterizedSparqlString();
+		prepareNss(query, String.format(anyUser ? AGENTCLASS_ANYUSER_RESOURCE_QUERY : AGENTCLASS_PUBLIC_RESOURCE_QUERY,
+																		forResource ? QUERY_ACCESSTO : QUERY_DEFAULT,
+																		mode1, mode2!=null ? String.format(QUERY_MODE2, mode2) : "") );
+		query.setParam("resource", r);
+
+		System.out.println(query.toString());
+		return queryWebAclGraph(query.asQuery());
+	}
+
+	private static final String AGENT_RESOURCE_QUERY = 
+	"SELECT ?auth\n" +
+	"WHERE {\n" +
+	"{ \n" +
+	" ?auth a acl:Authorization ;\n" +
+	" acl:agent ?agent ;\n" +
+	" %s" +
+	"} \n" +
+	"{ \n" +
+	" { ?auth acl:mode %s } %s\n" +
+	"} \n" +
+	"}";
+
+	private boolean checkACLAgent(RDFNode r, String user, String mode1, String mode2, boolean forResource) {
+		
+		ParameterizedSparqlString query = new ParameterizedSparqlString();
+		prepareNss(query, String.format(AGENT_RESOURCE_QUERY, 
+																		forResource ? QUERY_ACCESSTO : QUERY_DEFAULT,
+																		mode1, mode2!=null ? String.format(QUERY_MODE2, mode2) : "") );
+		query.setParam("resource", r);
+		query.setIri("agent", user);
+
+		System.out.println(query.toString());
+		return queryWebAclGraph(query.asQuery());
+	}
+
+	private static final String USER_GROUPS_QUERY = 
+  "SELECT ?group\n" +
+  "WHERE {\n" +
+	"{ ?group vcard:hasMember ?member . }\n" +
+	"UNION { GRAPH <"+ACLGraphNameExternal+"> { ?group vcard:hasMember ?member . } }\n" +
+  "UNION\n" +
+  " {\n" +
+  "  ?group ?anyLink ?member .\n" +
+  "  ?anyLink rdfs:subPropertyOf vcard:hasMember .\n" +
+  " }\n" +
+  "}";
+
+	private ArrayList<RDFNode> getUserGroupsList(String user) {
+
+		ParameterizedSparqlString query = new ParameterizedSparqlString();
+		prepareNss(query, USER_GROUPS_QUERY );
+		query.setNsPrefix("vcard", "http://www.w3.org/2006/vcard/ns#");
+		query.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		query.setIri("member", user);
+
+		System.out.println(query.toString());
+		return queryUnionGraph(query.asQuery(),"group");
+
+	}
+
+	private static final String AGENTGROUP_RESOURCE_QUERY = 
+	"SELECT ?auth\n" +
+	"WHERE {\n" +
+	"{ \n" +
+	" ?auth a acl:Authorization ;\n" +
+	" %s" +
+	"} { %s } \n" +
+	"{ \n" +
+	" { ?auth acl:mode %s } %s\n" +
+	"} \n" +
+	"}";
+
+	private static final String AGENTGROUP_RESOURCE_AGENT_SUBQUERY =  "{ ?auth acl:agentGroup <%s> }\n";
+
+	private boolean checkACLAgentGroup(RDFNode r, ArrayList<RDFNode> groups, String mode1, String mode2, boolean forResource) {
+
+		if (groups.size() == 0) return false;
+
+		ParameterizedSparqlString query = new ParameterizedSparqlString();
+		String groupsUnion = groups.stream().map(g -> String.format(AGENTGROUP_RESOURCE_AGENT_SUBQUERY,g.toString())).collect(Collectors.joining("UNION "));
+		prepareNss(query, String.format(AGENTGROUP_RESOURCE_QUERY, 
+																		forResource ? QUERY_ACCESSTO : QUERY_DEFAULT,
+																		groupsUnion, 
+																		mode1, mode2!=null ? String.format(QUERY_MODE2, mode2) : "") );
+		query.setParam("resource", r);
+
+		System.out.println(query.toString());
+		return queryWebAclGraph(query.asQuery());
+
+	}
+
+	private static final String RESOURCE_CONTAINERS_QUERY = 
+  "SELECT ?container\n" +
+  "WHERE { ?container ldp:contains ?resource . }";
+
+	private ArrayList<RDFNode> getResourceContainers(RDFNode r) {
+
+		ParameterizedSparqlString query = new ParameterizedSparqlString();
+		prepareNss(query, RESOURCE_CONTAINERS_QUERY );
+		query.setNsPrefix("ldp", "http://www.w3.org/ns/ldp#");
+		query.setParam("resource", r);
+
+		System.out.println(query.toString());
+		return queryUnionGraph(query.asQuery(),"container");
+
+	}
+
+
 	/**
 	 * 
-	 * Used to query the Union graph of the defaultGraph and the Web ACL graph, useful for querying group membership.
+	 * Used to query the Union graph of the defaultGraph and the Web ACL graph, useful for querying group membership and container content.
 	 * 
 	 * @param queryString
-	 * @return
+	 * @return a list of the nodes found, of the "var" column in the resultSet
 	 */
-	private ResultSet queryUnionGraph(String queryString) {
-		Query query = QueryFactory.create(queryString);
+	private ArrayList<RDFNode> queryUnionGraph(Query query, String var) {
+
+		//Query query = QueryFactory.create(queryString);
     QueryExecution qexec = QueryExecutionFactory.create(query, unionModel);
     /*Execute the Query*/
     ResultSet results = qexec.execSelect();
-    ResultSetFormatter.out(results) ;
+		//ResultSetFormatter.out(results) ;
+		ArrayList<RDFNode> nodes = new ArrayList<RDFNode>();
+    while(results.hasNext()) {
+			QuerySolution sol = results.next();
+			nodes.add(sol.get(var));
+		}
 		qexec.close();
-		return results;
+		return nodes;
 	}
 
 	/**
 	 * Used to query the Web ACL graph, when we do not need to query on the groups and members of groups.
 	 * 
 	 * @param queryString
-	 * @return
+	 * @return a boolean if at least one result has been found
 	 */
-	private ResultSet queryWebAclGraph(String queryString) {
-		Query query = QueryFactory.create(queryString);
+	private boolean queryWebAclGraph(Query query) {
+
+		//Query query = QueryFactory.create(queryString);
     QueryExecution qexec = QueryExecutionFactory.create(query, aclModel);
     /*Execute the Query*/
-    ResultSet results = qexec.execSelect();
-    ResultSetFormatter.out(results) ;
+		ResultSet results = qexec.execSelect();
+		//TODO: comment out the 2 below lines. use the 3rd one instead
+				ResultSetFormatter.out(results) ;
+				boolean res = results.getRowNumber() > 0;
+		//boolean res = results.hasNext();
+		
 		qexec.close();
-		return results;
+		return res;
 	}
+
+	private String getMode1(Action action) {
+		switch(action) {
+			case Create:
+				return "acl:Append";
+			case Read:
+				return "acl:Read";
+			case Update:
+			case Delete:
+				return "acl:Write";
+		}
+		return null;
+	} 
+
+	private String getMode2(Action action) {
+		switch(action) {
+			case Update:
+			case Delete:
+				return null;
+			case Create:
+			case Read:
+				return "acl:Write";
+		}
+		return null;
+	} 
 
 	/**
 	 * This is our internal check to see if the user may access the resource.
@@ -171,26 +362,57 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		LOG.info( "*** evaluating resource : {} for user {}", r.toString(), user+ action.toString());
 
-		// if (action.equals(Action.Delete)) {
-		// 	LOG.info( "XXXX aborting DELETE ");
-		// 	return false;
-		// }
-		// if (action.equals(Action.Read)) {
-		// 	LOG.info( "XXXX aborting Read ");
-		// 	return false;
-		// }
+		// check Web ACL
 
-		// TODO here check Web ACL
+		String mode1 = getMode1(action);
+		String mode2 = getMode2(action);
 
-		String queryStr = "SELECT * { ?s ?p ?o }";
-		String queryAll = "SELECT * {	{ ?s ?p ?o } UNION { GRAPH ?g { ?s ?p ?o } } }";
-		
-		// queryWebAclGraph(queryStr);
-		// queryWebAclGraph(queryAll);
-		// queryUnionGraph(queryStr);
-		// queryUnionGraph(queryAll);
+		if (user.trim().equals("anon")) {
 
-		return true;	
+			if ( checkACLAgentClass(r, false, mode1, mode2, true ) ) return true;
+
+			// check containers, recursively
+			ArrayList<RDFNode> containers = getResourceContainers(r);
+			Queue<RDFNode> queue = new LinkedList<RDFNode>();
+			queue.addAll(containers);
+
+			while (!queue.isEmpty()) {
+				RDFNode container = queue.remove();
+
+				if ( checkACLAgentClass(container, false, mode1, mode2, false ) ) return true;
+
+				containers = getResourceContainers(container);
+				queue.addAll(containers);
+
+			}
+
+		} else {
+
+			if ( checkACLAgentClass(r, true, mode1, mode2, true ) ) return true;
+			if ( checkACLAgent(r, user, mode1, mode2, true ) ) return true;
+			ArrayList<RDFNode> groups = getUserGroupsList(user);
+			if ( checkACLAgentGroup(r, groups, mode1, mode2, true ) ) return true;
+
+			// check containers, recursively
+			ArrayList<RDFNode> containers = getResourceContainers(r);
+			Queue<RDFNode> queue = new LinkedList<RDFNode>();
+			queue.addAll(containers);
+
+			while (!queue.isEmpty()) {
+				RDFNode container = queue.remove();
+
+				if ( checkACLAgentClass(container, true, mode1, mode2, false ) ) return true;
+				if ( checkACLAgent(container, user, mode1, mode2, false ) ) return true;
+				if ( checkACLAgentGroup(container, groups, mode1, mode2, false ) ) return true;
+
+				containers = getResourceContainers(container);
+				queue.addAll(containers);
+
+			}
+
+		}
+
+		return false;
 	}
 	
 	/**
