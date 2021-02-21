@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.jena.atlas.lib.StrUtils ;
+import org.apache.jena.sparql.expr.Expr;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.graph.Triple;
@@ -40,6 +42,8 @@ import org.apache.jena.sparql.core.DatasetGraph;
 import org.apache.shiro.SecurityUtils ;
 import org.apache.shiro.subject.Subject ;
 import org.apache.shiro.web.subject.support.WebDelegatingSubject ;
+import org.apache.commons.collections4.map.LRUMap;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import org.slf4j.Logger ;
 import org.slf4j.LoggerFactory ;
@@ -98,11 +102,11 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		{
 			// we could throw an AuthenticationRequiredException but
 			// in our case we just return false.
-			LOG.info( "User not authenticated as admin");
+			//LOG.info( "User not authenticated as admin");
 			return null;
 		}
 
-		LOG.info( "Graph: " + graphIRI);
+		//LOG.info( "Graph: " + graphIRI);
 
 		// cast to WebDelegatingSubject because we know the request was made from web app
 		WebDelegatingSubject websubject = (WebDelegatingSubject)subject;
@@ -115,19 +119,117 @@ public class ShiroEvaluator implements SecurityEvaluator {
 				
 		if (semappsUser == null || semappsUser.equals("system"))
 		{
-			LOG.info( "Header User: system");
+			//LOG.info( "Header User: system");
 			return "system";
 		}
 
-		LOG.info( "Header User: " + semappsUser);
+		//LOG.info( "Header User: " + semappsUser);
 
 		if (graphIRI != null && graphIRI.toString().equals(ACLGraphName)) {
-			LOG.info( "Access denied to graph: " + graphIRI);
+			//LOG.info( "Access denied to graph: " + graphIRI);
 			return null;
 		}
 
 		return semappsUser;
 	}
+
+	/**
+	 * 
+	 * Caching mechanism to store temporarly the access right for a user on a resource.
+	 * the cache is emptied at every beginning of SPARQL request (we suppose)
+	 * 
+	 */
+
+	private class CacheKey implements Comparable<CacheKey> {
+		private final Action action;
+		private final String resource;
+		private final String user;
+		private Integer hashCode;
+
+		public CacheKey(final Action action, final String res, final String user) {
+			this.action = action;
+			this.resource = res;
+			this.user = user;
+		}
+
+		@Override
+		public int compareTo(final CacheKey other) {
+			int retval = this.action.compareTo(other.action);
+			if (retval == Expr.CMP_EQUAL) {
+				retval = StrUtils.strCompare(this.user, other.user);
+				if (retval == Expr.CMP_EQUAL) {
+					retval = StrUtils.strCompare(this.resource, other.resource);
+				}
+			}
+			return retval;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (o instanceof CacheKey) {
+				return this.compareTo((CacheKey) o) == 0;
+			}
+			return false;
+		}
+
+		@Override
+		public int hashCode() {
+			if (hashCode == null) {
+				hashCode = new HashCodeBuilder().append(action)
+						.append(user).append(resource).toHashCode();
+			}
+			return hashCode;
+		}
+	}
+
+	// the maximum size of the cache
+	public static int MAX_CACHE = 100000;
+	// the cache for this thread.
+	public static final ThreadLocal<LRUMap<CacheKey, Boolean>> CACHE = new ThreadLocal<>();
+
+	/**
+	 * recycle the cache.
+	 */
+	public static void recycleUse() {
+		final LRUMap<CacheKey, Boolean> cache = ShiroEvaluator.CACHE.get();
+		if (cache != null) ShiroEvaluator.CACHE.remove();
+		ShiroEvaluator.CACHE.set(new LRUMap<CacheKey, Boolean>(Math.max(
+				ShiroEvaluator.MAX_CACHE, 100)));
+	}
+
+		/**
+	 * get the cached value.
+	 * 
+	 * @param key
+	 *            The key to look for.
+	 * @return the value of the security check or <code>null</code> if the value
+	 *         has not been cached.
+	 */
+	private Boolean cacheGet(final CacheKey key) {
+		
+		final LRUMap<CacheKey, Boolean> cache = ShiroEvaluator.CACHE.get();
+		//if (cache != null) System.out.println(cache.size());
+		return (cache == null) ? null : (Boolean) cache.get(key);
+	}
+
+	/**
+	 * set the cache value.
+	 * 
+	 * @param key
+	 *            The key to set the value for.
+	 * @param value
+	 *            The value to set.
+	 */
+	private void cachePut(final CacheKey key, final boolean value) {
+		final LRUMap<CacheKey, Boolean> cache = ShiroEvaluator.CACHE.get();
+		if (cache != null) {
+			cache.put(key, value);
+			ShiroEvaluator.CACHE.set(cache);
+		}
+	}
+
+	// TODO: once we are sure that recycleUse() is called at every beginning of transaction, we can remove the User in the CacheKey
+
 
 	//private static final String AGENTCLASS_PUBLIC = "foaf:Agent";
 	//private static final String AGENTCLASS_ANYUSER = "acl:AuthenticatedAgent";
@@ -174,7 +276,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 																		mode1, mode2!=null ? String.format(QUERY_MODE2, mode2) : "") );
 		query.setParam("resource", r);
 
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		return queryWebAclGraph(query.asQuery());
 	}
 
@@ -200,7 +302,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		query.setParam("resource", r);
 		query.setIri("agent", user);
 
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		return queryWebAclGraph(query.asQuery());
 	}
 
@@ -224,7 +326,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		query.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 		query.setIri("member", user);
 
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		return queryUnionGraph(query.asQuery(),"group");
 
 	}
@@ -255,7 +357,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 																		mode1, mode2!=null ? String.format(QUERY_MODE2, mode2) : "") );
 		query.setParam("resource", r);
 
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		return queryWebAclGraph(query.asQuery());
 
 	}
@@ -271,7 +373,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		query.setNsPrefix("ldp", "http://www.w3.org/ns/ldp#");
 		query.setParam("resource", r);
 
-		System.out.println(query.toString());
+		//System.out.println(query.toString());
 		return queryUnionGraph(query.asQuery(),"container");
 
 	}
@@ -313,9 +415,9 @@ public class ShiroEvaluator implements SecurityEvaluator {
     /*Execute the Query*/
 		ResultSet results = qexec.execSelect();
 		//TODO: comment out the 2 below lines. use the 3rd one instead
-				ResultSetFormatter.out(results) ;
-				boolean res = results.getRowNumber() > 0;
-		//boolean res = results.hasNext();
+		//		ResultSetFormatter.out(results) ;
+		//		boolean res = results.getRowNumber() > 0;
+		boolean res = results.hasNext();
 		
 		qexec.close();
 		return res;
@@ -357,10 +459,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	 * @param r
 	 * @return
 	 */
-	private boolean evaluateResource( String user, Action action, Resource r )
-	{
-
-		LOG.info( "*** evaluating resource : {} for user {}", r.toString(), user+ action.toString());
+	private boolean cachedEvaluateResource( String user, Action action, Resource r, boolean isBlank ) {
 
 		// check Web ACL
 
@@ -370,6 +469,9 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		if (user.trim().equals("anon")) {
 
 			if ( checkACLAgentClass(r, false, mode1, mode2, true ) ) return true;
+
+			// we do not check for containers on blank nodes !
+			if (isBlank) return false;
 
 			// check containers, recursively
 			ArrayList<RDFNode> containers = getResourceContainers(r);
@@ -383,7 +485,6 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 				containers = getResourceContainers(container);
 				queue.addAll(containers);
-
 			}
 
 		} else {
@@ -392,6 +493,9 @@ public class ShiroEvaluator implements SecurityEvaluator {
 			if ( checkACLAgent(r, user, mode1, mode2, true ) ) return true;
 			ArrayList<RDFNode> groups = getUserGroupsList(user);
 			if ( checkACLAgentGroup(r, groups, mode1, mode2, true ) ) return true;
+
+			// we do not check for containers on blank nodes !
+			if (isBlank) return false;
 
 			// check containers, recursively
 			ArrayList<RDFNode> containers = getResourceContainers(r);
@@ -407,12 +511,30 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 				containers = getResourceContainers(container);
 				queue.addAll(containers);
-
 			}
+		}
+		return false;
+	}
 
+	private boolean evaluateResource( String user, Action action, Resource r, boolean isBlank )
+	{
+
+		//LOG.info( "*** evaluating resource : {} for user {}", r.toString(), user+ action.toString());
+
+		// check if we have it in cache
+
+		final CacheKey key = new CacheKey(action, r.toString(), user);
+		Boolean retval = cacheGet(key);
+		if (retval != null) {
+			//LOG.info( "> CACHE get {}", r.toString());
+			return retval;
 		}
 
-		return false;
+		retval = cachedEvaluateResource( user, action, r, isBlank );
+		cachePut(key, retval);
+		//LOG.info( "CACHE PUT {}", r.toString());
+
+		return retval;
 	}
 	
 	/**
@@ -436,7 +558,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		// URI nodes and blank nodes are retrieved from the model and evaluated
 		if (node.isURI() || node.isBlank()) {
 			Resource r = model.getRDFNode( node ).asResource();
-			return evaluateResource( user, action, r );
+			return evaluateResource( user, action, r, node.isBlank() );
 		}
 		// anything else (literals) can be seen.
 		return true;
@@ -444,10 +566,10 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	
 	private boolean evaluateTriple(String user, Action action, Triple triple) {
 
-		LOG.info( "evaluateTriple action {} for triple {}", action.toString(), triple.toString());
+		//LOG.info( "evaluateTriple action {} for triple {}", action.toString(), triple.toString());
 
-		return evaluateNode( user, action, triple.getSubject()) &&
-			     evaluateNode( user, action, triple.getObject());
+		return evaluateNode( user, action, triple.getSubject());
+			     //&& evaluateNode( user, action, triple.getObject());
 	}
 	
 	/**
@@ -455,7 +577,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	@Override
 	public boolean evaluate(Object principal, Action action, Node graphIRI, Triple triple) {
 		
-		LOG.info( "evaluate action {} on triple {}", action, triple);
+		//LOG.info( "evaluate action {} on triple {}", action, triple);
 
 		// we check here to see if the principal is the system and 
 		// returned true since the system can perform any operation on any triple.
@@ -475,13 +597,13 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	public boolean evaluate(Object principal, Set<Action> actions, Node graphIRI, Triple triple) {
 		
 		// FOR LOG purpose only, TODO: remove
-		String retString = "";
-		Iterator<Action> itrr = actions.iterator();
-    while(itrr.hasNext()){
-			Action action = itrr.next();
-			retString = retString + action.toString() + " ";
-		}
-		LOG.info( "evaluate set of actions {} on triple {}", retString, triple);
+		// String retString = "";
+		// Iterator<Action> itrr = actions.iterator();
+    // while(itrr.hasNext()){
+		// 	Action action = itrr.next();
+		// 	retString = retString + action.toString() + " ";
+		// }
+		//LOG.info( "evaluate set of actions {} on triple {}", retString, triple);
 
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
@@ -490,7 +612,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		Iterator<Action> itr = actions.iterator();
     while(itr.hasNext()){
       Action action = itr.next();
-			LOG.info( "evaluated action in set " + action.toString());
+			//LOG.info( "evaluated action in set " + action.toString());
 			if (! evaluateTriple(user, action, triple))
 				return false;
 		}
@@ -506,13 +628,13 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	public boolean evaluateAny(Object principal, Set<Action> actions, Node graphIRI, Triple triple) {
 		
 		// FOR LOG purpose only, TODO: remove
-		String retString = "";
-		Iterator<Action> itrr = actions.iterator();
-    while(itrr.hasNext()){
-			Action action = itrr.next();
-			retString = retString + action.toString() + " ";
-		}
-		LOG.info( "evaluateAny set of actions {} on triple {}", retString, triple);
+		// String retString = "";
+		// Iterator<Action> itrr = actions.iterator();
+    // while(itrr.hasNext()){
+		// 	Action action = itrr.next();
+		// 	retString = retString + action.toString() + " ";
+		// }
+		//LOG.info( "evaluateAny set of actions {} on triple {}", retString, triple);
 
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
@@ -521,7 +643,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		Iterator<Action> itr = actions.iterator();
     while(itr.hasNext()){
       Action action = itr.next();
-			LOG.info( "evaluated ANY action in set : " + action);
+			//LOG.info( "evaluated ANY action in set : " + action);
 			if (evaluateTriple(user, action, triple))
 				return true;
 		}
@@ -539,13 +661,13 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	public boolean evaluate(Object principal, Set<Action> actions, Node graphIRI) {
 
 		// FOR LOG purpose only, TODO: remove
-		String retString = "";
-		Iterator<Action> itr = actions.iterator();
-    while(itr.hasNext()){
-			Action action = itr.next();
-			retString = retString + action.toString() + " ";
-		}
-		LOG.info( "evaluate set of actions " + retString);
+		// String retString = "";
+		// Iterator<Action> itr = actions.iterator();
+    // while(itr.hasNext()){
+		// 	Action action = itr.next();
+		// 	retString = retString + action.toString() + " ";
+		// }
+		// LOG.info( "evaluate set of actions " + retString);
 
 		String user = checkUser(principal, graphIRI);
 		if (user != null && user.equals("system")) return true;
@@ -566,9 +688,14 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	@Override
 	public boolean evaluate(Object principal, Action action, Node graphIRI) {
 
+		ShiroEvaluator.recycleUse();
+
 		LOG.info( "evaluate action " + action);
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
+
+
+
 		return true;
 		
 	}
@@ -581,14 +708,14 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	@Override
 	public boolean evaluateAny(Object principal, Set<Action> actions, Node graphIRI) {
 
-		// FOR LOG purpose only, TODO: remove
-		String retString = "";
-		Iterator<Action> itr = actions.iterator();
-    while(itr.hasNext()){
-			Action action = itr.next();
-			retString = retString + action.toString() + " ";
-		}
-		LOG.info( "evaluateAny set of actions " + retString);
+		//FOR LOG purpose only, TODO: remove
+		// String retString = "";
+		// Iterator<Action> itr = actions.iterator();
+    // while(itr.hasNext()){
+		// 	Action action = itr.next();
+		// 	retString = retString + action.toString() + " ";
+		// }
+		// LOG.info( "evaluateAny set of actions " + retString);
 
 		String user = checkUser(principal, graphIRI);
 		if (user != null && user.equals("system")) return true;
@@ -603,7 +730,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	@Override
 	public boolean evaluateUpdate(Object principal, Node graphIRI, Triple from, Triple to) {
 
-		LOG.info( "evaluateUpdate " + from.toString() + " TO "+to.toString());
+		//LOG.info( "evaluateUpdate " + from.toString() + " TO "+to.toString());
 
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
