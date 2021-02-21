@@ -1,5 +1,5 @@
 const ApiGatewayService = require('moleculer-web');
-const { OidcConnector } = require('@semapps/connector');
+//const { OidcConnector } = require('@semapps/connector');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const CONFIG = require('../config');
 const path = require('path');
@@ -28,8 +28,8 @@ module.exports = {
       exposedHeaders: '*'
     }
   },
-  dependencies: ['ldp', 'activitypub', 'sparqlEndpoint', 'webid'],
-  async started() {
+  dependencies: ['activitypub', 'webid'],
+  /*async started() {
     this.connector = new OidcConnector({
       issuer: CONFIG.OIDC_ISSUER,
       clientId: CONFIG.OIDC_CLIENT_ID,
@@ -72,9 +72,7 @@ module.exports = {
 
     [
       this.connector.getRoute(),
-      ...(await this.broker.call('ldp.getApiRoutes')),
-      ...(await this.broker.call('activitypub.getApiRoutes')),
-      ...(await this.broker.call('sparqlEndpoint.getApiRoutes'))
+      ...(await this.broker.call('activitypub.getApiRoutes'))
     ].forEach(route => this.addRoute(route));
   },
   methods: {
@@ -84,5 +82,5 @@ module.exports = {
     authorize(ctx, route, req, res) {
       return this.connector.authorize(ctx, route, req, res);
     }
-  }
+  }*/
 };

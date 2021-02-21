@@ -1,6 +1,6 @@
 const { parseHeader, negotiateContentType, negotiateAccept, parseSparql } = require('@semapps/middlewares');
 
-function getRoutes() {
+function getRoute() {
   const commonRouteConfig = {
     path: '/sparql',
     // Disable the body parsers so that we can parse the body ourselves
@@ -13,8 +13,7 @@ function getRoutes() {
 
   const middlewares = [parseSparql, negotiateAccept];
 
-  return [
-    {
+  return {
       authorization: false,
       authentication: true,
       mergeParams: true,
@@ -24,7 +23,7 @@ function getRoutes() {
       },
       ...commonRouteConfig
     }
-  ];
+  ;
 }
 
-module.exports = getRoutes;
+module.exports = getRoute;
