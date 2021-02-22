@@ -350,7 +350,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		if (groups.size() == 0) return false;
 
 		ParameterizedSparqlString query = new ParameterizedSparqlString();
-		String groupsUnion = groups.stream().map(g -> String.format(AGENTGROUP_RESOURCE_AGENT_SUBQUERY,g.toString())).collect(Collectors.joining("UNION "));
+		String groupsUnion = groups.stream().filter(g -> g.isURIResource()).map(g -> String.format(AGENTGROUP_RESOURCE_AGENT_SUBQUERY,g.toString())).collect(Collectors.joining("UNION "));
 		prepareNss(query, String.format(AGENTGROUP_RESOURCE_QUERY, 
 																		forResource ? QUERY_ACCESSTO : QUERY_DEFAULT,
 																		groupsUnion, 
@@ -459,7 +459,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	 * @param r
 	 * @return
 	 */
-	private boolean cachedEvaluateResource( String user, Action action, Resource r, boolean isBlank ) {
+	private boolean cachedEvaluateResource( String user, Action action, Resource r ) {
 
 		// check Web ACL
 
@@ -469,9 +469,6 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		if (user.trim().equals("anon")) {
 
 			if ( checkACLAgentClass(r, false, mode1, mode2, true ) ) return true;
-
-			// we do not check for containers on blank nodes !
-			if (isBlank) return false;
 
 			// check containers, recursively
 			ArrayList<RDFNode> containers = getResourceContainers(r);
@@ -494,9 +491,6 @@ public class ShiroEvaluator implements SecurityEvaluator {
 			ArrayList<RDFNode> groups = getUserGroupsList(user);
 			if ( checkACLAgentGroup(r, groups, mode1, mode2, true ) ) return true;
 
-			// we do not check for containers on blank nodes !
-			if (isBlank) return false;
-
 			// check containers, recursively
 			ArrayList<RDFNode> containers = getResourceContainers(r);
 			Queue<RDFNode> queue = new LinkedList<RDFNode>();
@@ -516,7 +510,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		return false;
 	}
 
-	private boolean evaluateResource( String user, Action action, Resource r, boolean isBlank )
+	private boolean evaluateResource( String user, Action action, Resource r )
 	{
 
 		//LOG.info( "*** evaluating resource : {} for user {}", r.toString(), user+ action.toString());
@@ -530,7 +524,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 			return retval;
 		}
 
-		retval = cachedEvaluateResource( user, action, r, isBlank );
+		retval = cachedEvaluateResource( user, action, r );
 		cachePut(key, retval);
 		//LOG.info( "CACHE PUT {}", r.toString());
 
@@ -550,17 +544,18 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		if (node.equals( Node.ANY )) {
 			return false;
 		}
-		// TODO : check what happens with blank nodes
+		// TODO? allow everyone to see blank nodes?
+		if (node.isBlank()) return false;
 
-		// TODO : check what to do with SecurityEvaluator.FUTURE and SecurityEvaluator.VARIABLE
 		// see https://jena.apache.org/documentation/permissions/design.html
+		if (node.equals(SecurityEvaluator.FUTURE)) return true;
 		
-		// URI nodes and blank nodes are retrieved from the model and evaluated
-		if (node.isURI() || node.isBlank()) {
+		// URI nodes are retrieved from the model and evaluated
+		if (node.isURI() ) {
 			Resource r = model.getRDFNode( node ).asResource();
-			return evaluateResource( user, action, r, node.isBlank() );
+			return evaluateResource( user, action, r );
 		}
-		// anything else (literals) can be seen.
+		// anything else (literals and blank nodes) can be seen.
 		return true;
 	}
 	
@@ -568,6 +563,15 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		//LOG.info( "evaluateTriple action {} for triple {}", action.toString(), triple.toString());
 
+		// see https://jena.apache.org/documentation/permissions/design.html
+		if (triple.getSubject().equals(SecurityEvaluator.VARIABLE)) {
+			return true;
+		}
+		if (triple.getPredicate().equals(SecurityEvaluator.VARIABLE) || triple.getObject().equals(SecurityEvaluator.VARIABLE)) {
+			return false;
+		}
+
+		// We only check permissions for the subject part of the tuple, because this is the definition of a Resource in LDP.
 		return evaluateNode( user, action, triple.getSubject());
 			     //&& evaluateNode( user, action, triple.getObject());
 	}

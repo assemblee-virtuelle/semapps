@@ -60,7 +60,7 @@ The `localData` dataset is accessible there as if are a `system` user, and all t
 
 ## Web ACL
 
-The java class `ShiroEvaluator` is checking, for every SPARQL request, the subjet and the object of each tuple that the SPARQL engine has asked to receive from the underlying storage.
+The java class `ShiroEvaluator` is checking, for every SPARQL request, the subject of each tuple that the SPARQL engine has asked to receive from the underlying storage.
 It also prevents a SemAppsUser from accessing the ACL graph.
 
 Implementation of the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.
@@ -92,6 +92,7 @@ Read | Read | Write
 Update | Write |
 Delete | Write | 
 
+The evaluator stores in a cache the access control result that it finds for each ressource. The cache is used for subsequent evaluate calls within the same transaction/SPARQL request. Then the cache is emptied before the next query. 
 
 ## Middleware
 
