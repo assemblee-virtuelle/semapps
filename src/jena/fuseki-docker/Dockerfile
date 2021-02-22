@@ -25,7 +25,7 @@ MAINTAINER Niko PLP <info@parlepeuple.fr>
 
 # Update below according to https://jena.apache.org/download/ and
 # corresponding *.tar.gz.sha512 from https://www.apache.org/dist/jena/binaries/
-ENV FUSEKI_SHA512 321c763fa3b3532fa06bb146363722e58e10289194f622f2e29117b610521e62e7ea51b9d06cd366570ed143f2ebbeded22e5302d2375b49da253b7ddef86d34 
+ENV FUSEKI_SHA512 2b92f3304743da335f648c1be7b5d7c3a94725ed0a9b5123362c89a50986690114dcef0813e328126b14240f321f740b608cc353417e485c9235476f059bd380
 ENV FUSEKI_VERSION 3.17.0
 # Tip: No need for https as we've coded the sha512 above
 ENV ASF_MIRROR_EU http://www.eu.apache.org/dist/
