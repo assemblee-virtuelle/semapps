@@ -46,6 +46,8 @@ Choose `yes` to all questions
 ? Do you need a read-only SPARQL endpoint? Yes
 Create 'my-project' folder...
 ? Would you like to run 'npm install'? Yes
+
+Running 'npm install'...
 ```
 
 You can now go to the newly-created directory:
@@ -70,7 +72,7 @@ Please login - By default the login is `admin` and the password is also `admin`.
 Please start by create a new dataset and name it `localData` (case sensitive).
 Your triples will be stored there.
 
-You should get something like this :
+You should get something like this:
 
 ![](ldp_resources/jenafuseki_localData.jpg)
 
@@ -86,7 +88,7 @@ npm run dev
 
 Your instance of SemApps is available at http://localhost:3000.
 
-You should get something like this :
+You should get something like this:
 
 ![](ldp_resources/npm_run_dev.jpg)
 
@@ -94,7 +96,7 @@ You should get something like this :
 
 Now, it is time to test your LDP server, which means that you will try to update your data base by using this LDP server and not by using Jena Fuseki.
 
-By default, the LDP service will create a LDP container in the `/persons` path. Indeed, if you go to http://localhost:3000/persons, you should see this LDP container :
+By default, the LDP service will create a LDP container in the `/persons` path. Indeed, if you go to http://localhost:3000/persons, you should see this LDP container:
 
 ![](ldp_resources/ldp_container_persons_empty.jpg)
 
@@ -143,7 +145,7 @@ You should get this result:
   ]
 }
 ```
-You should also see the result on http://localhost:3000/persons :
+You should also see the result on http://localhost:3000/persons:
 
 ![](ldp_resources/ldp_container_persons_not_empty.jpg)
 
@@ -151,8 +153,8 @@ You should also see the result on http://localhost:3000/persons :
 
 To test if our LDP server is really working, you should check if the data has been added to our Jena Fuseki instance.
 
-Go to http://localhost:3030/dataset.html and make a SPARQL query to get all of your data. You should get the following result :
+Go to http://localhost:3030/dataset.html and make a SPARQL query to get all of your data. You should get the following result:
 
 ![](ldp_resources/query_result.jpg)
 
-Guillaume Cousin has been added to the database : the LDP server works !
+Guillaume Cousin has been added to the database : the LDP server works!
