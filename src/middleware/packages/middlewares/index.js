@@ -29,6 +29,14 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
+const throw403 = (msg) => {
+  throw new MoleculerError(msg, 403, "ACCESS_DENIED", {status: 'Forbidden'});  
+}
+
+const throw500 = (msg) => {
+  throw new MoleculerError(msg, 500, "INTERNAL_SERVER_ERROR");  
+}
+
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   if (req.headers.accept === '*/*') req.headers.accept = undefined;
@@ -154,5 +162,7 @@ module.exports = {
   negotiateAccept,
   parseJson,
   parseFile,
-  addContainerUriMiddleware
+  addContainerUriMiddleware,
+  throw403,
+  throw500
 };
