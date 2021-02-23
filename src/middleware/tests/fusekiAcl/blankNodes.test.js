@@ -1,21 +1,19 @@
 const doRequest = require('./utils');
 const CONFIG = require('../config');
 
-const adminAuth = CONFIG.JENA_USER+':'+CONFIG.JENA_PASSWORD;
-
+const adminAuth = CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD;
 
 describe('fuseki ACL blank nodes tests', () => {
-
   test('Ensure orphan blank nodes are not reachable', async () => {
     const { body, statusCode } = await doRequest({
       endpoint: 'query',
       auth: adminAuth,
       user: 'anon',
-      sparql: 'SELECT * { ?s <https://w3id.org/security#owner> <https://data.virtual-assembly.org/users/jeremy.dufraisse>. ?s <https://w3id.org/security#publicKeyPem> ?string }',
+      sparql:
+        'SELECT * { ?s <https://w3id.org/security#owner> <https://data.virtual-assembly.org/users/jeremy.dufraisse>. ?s <https://w3id.org/security#publicKeyPem> ?string }'
     });
 
-    expect(body.results.bindings.length).toBe(
-      0);
+    expect(body.results.bindings.length).toBe(0);
   });
 
   test('Ensure "pair:hasLocation" blank nodes inside organisations, are returned only when user has perms for org (anon)', async () => {
@@ -24,7 +22,8 @@ describe('fuseki ACL blank nodes tests', () => {
       auth: adminAuth,
       user: 'anon',
       jsonld: true,
-      sparql: 'PREFIX pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT { ?s pair:hasLocation ?place. ?place ?p ?o .} WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .}',
+      sparql:
+        'PREFIX pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT { ?s pair:hasLocation ?place. ?place ?p ?o .} WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .}'
     });
 
     expect(body['@graph'].length).toBe(8);
@@ -44,7 +43,8 @@ describe('fuseki ACL blank nodes tests', () => {
       auth: adminAuth,
       user: 'http://any/user',
       jsonld: true,
-      sparql: 'PREFIX pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT { ?s pair:hasLocation ?place. ?place ?p ?o .} WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .}',
+      sparql:
+        'PREFIX pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT { ?s pair:hasLocation ?place. ?place ?p ?o .} WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .}'
     });
 
     expect(body['@graph'].length).toBe(12);
@@ -68,7 +68,8 @@ describe('fuseki ACL blank nodes tests', () => {
       auth: adminAuth,
       user: 'anon',
       jsonld: true,
-      sparql: 'prefix pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT WHERE { ?s a pair:Place . ?s ?p ?o .}',
+      sparql:
+        'prefix pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT WHERE { ?s a pair:Place . ?s ?p ?o .}'
     });
 
     expect(body['@graph'].length).toBe(4);
@@ -84,7 +85,8 @@ describe('fuseki ACL blank nodes tests', () => {
       auth: adminAuth,
       user: 'anon',
       jsonld: true,
-      sparql: 'prefix pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .?place pair:hasPostalAddress ?address. ?address ?q ?r}',
+      sparql:
+        'prefix pair: <http://virtual-assembly.org/ontologies/pair#> CONSTRUCT WHERE { ?s  pair:hasLocation ?place . ?place ?p ?o .?place pair:hasPostalAddress ?address. ?address ?q ?r}'
     });
 
     expect(body['@graph'].length).toBe(12);
@@ -100,7 +102,5 @@ describe('fuseki ACL blank nodes tests', () => {
     expect(typeof body['@graph'][9].hasLocation).toBe('string');
     expect(typeof body['@graph'][10].hasLocation).toBe('string');
     expect(typeof body['@graph'][11].hasLocation).toBe('string');
-
   });
-
 });
