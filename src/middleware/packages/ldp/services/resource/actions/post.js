@@ -142,6 +142,7 @@ module.exports = {
             ...resource[disassemblyItem.path]
           };
           if (disassemblyValue) {
+            console.log('BEFORE');
             resourceUri = await ctx.call('ldp.resource.post', {
               containerUri: disassemblyItem.container,
               resource: disassemblyValue,
@@ -149,16 +150,19 @@ module.exports = {
               accept: MIME_TYPES.JSON,
               webId: webId
             });
+            console.log('AFTER');
             resource[disassemblyItem.path] = resourceUri;
           }
         }
       }
 
-      await ctx.call('triplestore.insert', {
+      const insertedUri = await ctx.call('triplestore.insert', {
         resource,
         contentType,
         webId
       });
+
+      console.log('insertedUri',insertedUri);
 
       await ctx.call('ldp.container.attach', {
         resourceUri: resource['@id'],

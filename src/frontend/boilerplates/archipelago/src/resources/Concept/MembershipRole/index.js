@@ -2,7 +2,7 @@ import RoleCreate from './RoleCreate';
 import RoleEdit from './RoleEdit';
 import RoleShow from './RoleShow';
 import RoleList from './RoleList';
-import FavoriteBorderIcon from '@material-ui/icons/Favorite';
+import FavoriteBorderIcon from '@material-ui/icons/Class';
 
 export default {
   config: {

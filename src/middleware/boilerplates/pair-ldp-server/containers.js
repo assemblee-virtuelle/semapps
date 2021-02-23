@@ -6,7 +6,7 @@ module.exports = [
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
     dereference: ['sec:publicKey', 'pair:organizationOfMembership'],
-    disassembly: [{ path: 'pair:organizationOfMembership', container: CONFIG.HOME_URL + '/membershipAssociations' }]
+    disassembly: [{ path: 'pair:organizationOfMembership', container: CONFIG.HOME_URL + 'membershipAssociations' }]
   },
   {
     path: '/membershipAssociations',
