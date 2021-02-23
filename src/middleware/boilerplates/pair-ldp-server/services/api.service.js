@@ -28,7 +28,6 @@ module.exports = {
       exposedHeaders: '*'
     }
   },
-  dependencies: ['activitypub', 'webid'],
   /*async started() {
     this.connector = new OidcConnector({
       issuer: CONFIG.OIDC_ISSUER,
@@ -69,11 +68,6 @@ module.exports = {
     });
 
     await this.connector.initialize();
-
-    [
-      this.connector.getRoute(),
-      ...(await this.broker.call('activitypub.getApiRoutes'))
-    ].forEach(route => this.addRoute(route));
   },
   methods: {
     authenticate(ctx, route, req, res) {

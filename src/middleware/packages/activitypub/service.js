@@ -91,6 +91,16 @@ const ActivityPubService = {
       }
     });
   },
+  async started() {
+    console.log("starting activitypub service");
+    const routes = await this.actions.getApiRoutes();
+    for (var element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
+    }
+    console.log("routes added for activitypub service");
+  },
   actions: {
     getApiRoutes() {
       // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)

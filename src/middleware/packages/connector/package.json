@@ -8,7 +8,7 @@
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
     "moleculer": "^0.14.3",
-    "moleculer-web": "^0.9.1",
+    "moleculer-web": "^0.10.0-beta1",
     "openid-client": "^3.11.0",
     "passport": "^0.4.1",
     "passport-cas2": "0.0.11"
