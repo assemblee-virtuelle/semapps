@@ -1,0 +1,171 @@
+PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl1>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/assemblee_virtuelle>;
+    acl:mode        acl:Read;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl2>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/el_capitan>;
+    acl:mode        acl:Read;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl3>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/la_bascule>;
+    acl:mode        acl:Append;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl4>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/villes_et_territoires_en_transition>;
+    acl:mode        acl:Read;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://test/acl/#acl5>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/babalex>;
+    acl:mode        acl:Read;
+    acl:agentClass  foaf:Agent.
+  } ;
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl6>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/reconnexion>;
+    acl:mode        acl:Write;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl7>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/atd_quart-monde>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl8>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/faire_ecole_ensemble>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/logilab>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl9>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/open_atlas>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/sparna>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl10>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/nature-en-occitanie>;
+    acl:mode        acl:Write;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl11>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/mes-occitanie>;
+    acl:mode        acl:Write;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl14>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/semwebpro>;
+    acl:mode        acl:Append;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl15>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/coopaname_-cae>;
+    acl:mode        acl:Append;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl16>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/paquerette_-chatons>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl17>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/_dialogue-design>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/https-www-elzeard-co>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl18>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/odass>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/colibris_lorient>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  acl:AuthenticatedAgent;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl12>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/startin-blox1>;
+    acl:mode        acl:Read;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl13>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/solucracy1>;
+    acl:mode        acl:Write;
+    acl:agentClass  foaf:Agent.
+  } };
