@@ -100,17 +100,26 @@ Blank nodes that are not part of a resource, meaning, orphan blanks nodes that l
 
 ## Tests
 
-Some unit tests have been setup up for the ACL mechanism. They are ran from `src/middleware/tests/`.
-With the command
-```
-npm test -- --testPathPattern=src/middleware/tests/fusekiAcl
-```
+Some unit tests have been setup up for the ACL mechanism. 
 
 In order for the test to work properly, you need to first load 2 files into Jena `testData` dataset:
 * file `src/middleware/tests/fusekiAcl/testData.ttl`
 * file `src/middleware/tests/fusekiAcl/ACL_test_data.ttl`
 
-if you encounter problems with the running port of Fuseki or username and password, please change values in `src/middleware/tests/.env`
+use this command in order to load the testData file:
+```
+$FUSEKI_HOME/tdbloader --loc=$FUSEKI_BASE/databases/testData testData.ttl
+```
+
+For the file `ACL_test_data.ttl` the easiest is to go to the web interface of fuseki, enter your the username admin and password, got to the dataset `testData` and enter the endpoint `/testData/update`. Then copy paste the content of the ACL_test_data.ttl into the textarea for the query, and press the play button.
+
+To run the tests, go to `src/middleware/tests/`.
+launch the command
+```
+npm test -- --testPathPattern=src/middleware/tests/fusekiAcl
+```
+
+During the test, if you encounter problems with the running port of Fuseki or username and password, please change values in `src/middleware/tests/.env`
 
 TODO: test membership of groups that are in the defaultGraph (with inference of `rdfs:subPropertyOf vcard:hasMember`).
 
