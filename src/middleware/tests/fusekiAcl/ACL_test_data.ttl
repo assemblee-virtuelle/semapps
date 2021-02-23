@@ -154,18 +154,3 @@ INSERT DATA { GRAPH <http://semapps.org/webacl> {
     acl:agent       <https://data.virtual-assembly.org/users/pierre>.
   } };
 
-INSERT DATA { GRAPH <http://semapps.org/webacl> {
-  <http://test/acl/#acl12>
-    a               acl:Authorization;
-    acl:accessTo    <https://data.virtual-assembly.org/organizations/startin-blox1>;
-    acl:mode        acl:Read;
-    acl:agentClass  foaf:Agent.
-  } };
-
-INSERT DATA { GRAPH <http://semapps.org/webacl> {
-  <http://test/acl/#acl13>
-    a               acl:Authorization;
-    acl:accessTo    <https://data.virtual-assembly.org/organizations/solucracy1>;
-    acl:mode        acl:Write;
-    acl:agentClass  foaf:Agent.
-  } };
