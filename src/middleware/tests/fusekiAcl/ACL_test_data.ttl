@@ -154,3 +154,122 @@ INSERT DATA { GRAPH <http://semapps.org/webacl> {
     acl:agent       <https://data.virtual-assembly.org/users/pierre>.
   } };
 
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/group1>
+    a               vcard:Group;
+    vcard:hasMember <https://data.virtual-assembly.org/users/sebastien.rosset>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/group2>
+    a               vcard:Group;
+    vcard:hasMember <https://data.virtual-assembly.org/users/franck.calis>.
+  } };
+
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl12>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/startin-blox1>;
+    acl:mode        acl:Read;
+    acl:agentGroup  <http://test/acl/group2>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl13>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/solucracy1>;
+    acl:mode        acl:Append;
+    acl:agentGroup  <http://test/acl/group1>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl19>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/la_coop_des_territoires>;
+    acl:mode        acl:Read;
+    acl:agentGroup  <http://test/acl/group1>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl20>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/coliving_el_capitan>;
+    acl:mode        acl:Write;
+    acl:agentGroup  <http://test/acl/group1>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl21>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/neurotechx_paris>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentGroup  <http://test/acl/group1>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl22>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/coglab>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/ecorhizo>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentGroup  <http://test/acl/group1>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl23>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/data_players>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/recma>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentGroup  <http://test/acl/group1>;
+    acl:agentGroup  <http://test/acl/group2>;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/group3>
+    a               vcard:Group;
+    vcard:hasMember <https://data.virtual-assembly.org/users/margaux.schulz>;
+    vcard:hasMember <https://data.virtual-assembly.org/users/jeremy.dufraisse>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl24>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/haut_conseil_a_la_vie_associative>;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/addes>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentGroup  <http://test/acl/group1>;
+    acl:agentGroup  <http://test/acl/group2>;
+    acl:agentGroup  <http://test/acl/group3>;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl25>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/mes>;
+    acl:mode        acl:Write;
+    acl:agentGroup  <http://test/acl/group2>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl26>
+    a               acl:Authorization;
+    acl:accessTo    <https://data.virtual-assembly.org/organizations/marsnet>;
+    acl:mode        acl:Write;
+    acl:agent       <https://data.virtual-assembly.org/users/jeremy.dufraisse>.
+  } };
