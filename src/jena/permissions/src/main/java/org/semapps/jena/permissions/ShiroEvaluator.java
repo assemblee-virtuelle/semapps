@@ -605,8 +605,8 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		//LOG.info( "evaluate action {} on triple {}", action, triple);
 
 		// we check here to see if the principal is the system and 
-		// returned true since the system can perform any operation on any triple.
-		// ptherwise we check the permission
+		// return true since the system can perform any operation on any triple.
+		// otherwise we check the permission
 
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
