@@ -530,6 +530,24 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		return retval;
 	}
+
+	private boolean evaluateBlankNode( String user, Action action, RDFNode node ) {
+
+		StmtIterator it = model.listStatements(null,null, node);
+		if (it.hasNext()) {
+			Statement st = it.nextStatement();
+			//System.out.println("the resource it is embedded in "+st.getSubject());
+			if (!st.getSubject().isAnon())
+				return evaluateResource( user, action, st.getSubject() );
+			else {
+				// recurse upward
+				//System.out.println("it is another blank node ");
+				return evaluateBlankNode(user, action, st.getSubject());
+			}
+		}		
+		return false;
+
+	}
 	
 	/**
 	 * Check that the user can see a specific node.
@@ -544,8 +562,11 @@ public class ShiroEvaluator implements SecurityEvaluator {
 		if (node.equals( Node.ANY )) {
 			return false;
 		}
-		// TODO? allow everyone to see blank nodes?
-		if (node.isBlank()) return false;
+
+		// Dealing with blank nodes
+		if (node.isBlank()) {
+			return evaluateBlankNode( user, action, model.getRDFNode( node ) );
+		}
 
 		// see https://jena.apache.org/documentation/permissions/design.html
 		if (node.equals(SecurityEvaluator.FUTURE)) return true;
