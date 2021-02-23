@@ -1,6 +1,7 @@
 PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
 PREFIX acl: <http://www.w3.org/ns/auth/acl#>
 PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
 
 INSERT DATA { GRAPH <http://semapps.org/webacl> {
   <http://test/acl/#acl1>
@@ -272,4 +273,317 @@ INSERT DATA { GRAPH <http://semapps.org/webacl> {
     acl:accessTo    <https://data.virtual-assembly.org/organizations/marsnet>;
     acl:mode        acl:Write;
     acl:agent       <https://data.virtual-assembly.org/users/jeremy.dufraisse>.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c1/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/manufabrick>.
+};
+
+INSERT DATA { 
+  <http://example.org/c2/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/la_coalition>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl27>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c2/>;
+    acl:mode        acl:Read;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c3/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/collectif_des_associations_citoyennes>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl28>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c3/>;
+    acl:mode        acl:Read;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c4/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/sciences_citoyennes>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl29>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c4/>;
+    acl:mode        acl:Read;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c5/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/territoires_zero_chomeurs_longue_duree>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl30>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c5/>;
+    acl:mode        acl:Append;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c6/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/poles_en_pomme>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl31>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c6/>;
+    acl:mode        acl:Write;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c7/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/open_opale>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl32>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c7/>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c8/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/officience>.
+};
+
+INSERT DATA { 
+  <http://example.org/c9/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/cheznous_mareuil>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl33>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c8/>;
+    acl:default     <http://example.org/c9/>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c10/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/animacoop>.
+};
+
+INSERT DATA { 
+  <http://example.org/c11/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/cheznous_mareuil>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl34>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c10/>;
+    acl:default     <http://example.org/c11/>;
+    acl:mode        acl:Read;
+    acl:mode        acl:Append;
+    acl:mode        acl:Write;
+    acl:mode        acl:Control;
+    acl:agentClass  foaf:Agent;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c12/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/territoires_en_liens>.
+};
+
+INSERT DATA { 
+  <http://example.org/c14/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c12/>.
+};
+
+INSERT DATA { 
+  <http://example.org/c13/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/tero>.
+};
+
+INSERT DATA { 
+  <http://example.org/c15/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c13/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl35>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c14/>;
+    acl:mode        acl:Read;
+    acl:agentClass  foaf:Agent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c16/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/la_fabrique_des_mobilites>.
+};
+
+INSERT DATA { 
+  <http://example.org/c17/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c16/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl36>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c17/>;
+    acl:mode        acl:Read;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c18/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/ademe>.
+};
+
+INSERT DATA { 
+  <http://example.org/c19/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c18/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl37>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c19/>;
+    acl:mode        acl:Read;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+
+INSERT DATA { 
+  <http://example.org/c20/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/picasoft>.
+};
+
+INSERT DATA { 
+  <http://example.org/c21/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c20/>.
+};
+
+INSERT DATA { 
+  <http://example.org/c22/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/la_myne>.
+};
+
+INSERT DATA { 
+  <http://example.org/c23/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c22/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl38>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c23/>;
+    acl:mode        acl:Read;
+    acl:agent       <https://data.virtual-assembly.org/users/guillaume.rouyer>.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c24/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/wemob>.
+};
+
+INSERT DATA { 
+  <http://example.org/c25/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c24/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl39>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c25/>;
+    acl:mode        acl:Read;
+    acl:agentClass  acl:AuthenticatedAgent.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c26/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/mob-ion>.
+};
+
+INSERT DATA { 
+  <http://example.org/c27/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c26/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl40>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c27/>;
+    acl:mode        acl:Read;
+    acl:agent       <https://data.virtual-assembly.org/users/pierre>.
+  } };
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/group4>
+    a               vcard:Group;
+    vcard:hasMember <https://data.virtual-assembly.org/users/sebastien.rosset>.
+  } };
+
+INSERT DATA { 
+  <http://example.org/c28/>
+    a ldp:BasicContainer;
+    ldp:contains <https://data.virtual-assembly.org/organizations/cheznous>.
+};
+
+INSERT DATA { 
+  <http://example.org/c29/>
+    a ldp:BasicContainer;
+    ldp:contains <http://example.org/c28/>.
+};
+
+INSERT DATA { GRAPH <http://semapps.org/webacl> {
+  <http://test/acl/#acl41>
+    a               acl:Authorization;
+    acl:default     <http://example.org/c29/>;
+    acl:mode        acl:Read;
+    acl:agentGroup  <http://test/acl/group4>.
   } };

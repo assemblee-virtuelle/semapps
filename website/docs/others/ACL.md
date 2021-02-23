@@ -98,6 +98,22 @@ The evaluator stores in a cache the access control result that it finds for each
 
 Blank nodes that are not part of a resource, meaning, orphan blanks nodes that linger at the root of the graph, can be created with Sparql, but cannot be retrieved afterwards. This is because the security mechanism cannot find the resource they belong to, and therefor, it denies access to it.
 
+## Tests
+
+Some unit tests have been setup up for the ACL mechanism. They are ran from `src/middleware/tests/`.
+With the command
+```
+npm test -- --testPathPattern=src/middleware/tests/fusekiAcl
+```
+
+In order for the test to work properly, you need to first load 2 files into Jena `testData` dataset:
+* file `src/middleware/tests/fusekiAcl/testData.ttl`
+* file `src/middleware/tests/fusekiAcl/ACL_test_data.ttl`
+
+if you encounter problems with the running port of Fuseki or username and password, please change values in `src/middleware/tests/.env`
+
+TODO: test membership of groups that are in the defaultGraph (with inference of `rdfs:subPropertyOf vcard:hasMember`).
+
 ## Middleware
 
 The SemApps middleware should always connect to the SPARQL endpoint with a Basic Authorization header containing the `admin` user and its password. `Authorization: Basic `and the base64 encoded username and password.
