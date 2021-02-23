@@ -4,6 +4,18 @@ const { SparqlJsonParser } = require('sparqljson-parse');
 const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 const { throw403, throw500 } = require('@semapps/middlewares');
 
+const handleError = async function(url, response){
+  if (response.status == 403)
+    throw403(await response.text());
+  else {
+    let txt = await response.text();
+    if (response.status == 500 && txt.includes('permissions violation')) 
+      throw403(txt);
+    else
+      throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+  }
+}
+
 const TripleStoreService = {
   name: 'triplestore',
   settings: {
@@ -57,10 +69,7 @@ const TripleStoreService = {
         });
 
         if (!response.ok){
-          if (response.status == 403)
-            throw403(await response.text());
-          else 
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+          await handleError(url, response);
         }
       }
     },
@@ -117,10 +126,7 @@ const TripleStoreService = {
         });
 
         if (!response.ok){
-          if (response.status == 403)
-            throw403(await response.text());
-          else 
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+          await handleError(url, response);
         }
       }
     },
@@ -156,10 +162,7 @@ const TripleStoreService = {
           headers
         });
         if (!response.ok) {
-          if (response.status == 403)
-            throw403(await response.text());
-          else 
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+          await handleError(url, response);
         }
 
         ctx.meta.$responseType = response.headers.get('content-type');
@@ -218,10 +221,7 @@ const TripleStoreService = {
         });
 
         if (!response.ok){
-          if (response.status == 403)
-            throw403(await response.text());
-          else 
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+          await handleError(url, response);
         }
 
         return response;
