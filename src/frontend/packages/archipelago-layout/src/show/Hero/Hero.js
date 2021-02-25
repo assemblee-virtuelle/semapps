@@ -30,7 +30,7 @@ const Hero = ({ basePath, children, record, resource, image, defaultImage }) => 
 };
 
 Hero.defaultProps = {
-  defaultImage: process.env.PUBLIC_URL + '/logo192.png'
+  defaultImage: process.env.PUBLIC_URL + '/logo512.png'
 };
 
 export default Hero;
