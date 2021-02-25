@@ -5,7 +5,7 @@ import { Box, Typography, makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   address: {
     marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -18,7 +18,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, ...o
 
   return (
     <Box addLabel={addLabel}>
-      {address && (<Typography className={classes.address}>{address(record)}</Typography>)}
+      {address && <Typography className={classes.address}>{address(record)}</Typography>}
       <MapContainer style={{ height }} center={position} {...otherProps}>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
-import { Grid } from "@material-ui/core";
+import { Grid } from '@material-ui/core';
 import { MainList, SideList, Hero, Show } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import { MapField } from '@semapps/geo-components';
@@ -41,7 +41,12 @@ const PersonShow = props => (
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
           </UriArrayField>
-          <UriArrayField label="Evénements" reference="Event" filter={{ '@type': 'pair:Event' }} source="pair:involvedIn">
+          <UriArrayField
+            label="Evénements"
+            reference="Event"
+            filter={{ '@type': 'pair:Event' }}
+            source="pair:involvedIn"
+          >
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>

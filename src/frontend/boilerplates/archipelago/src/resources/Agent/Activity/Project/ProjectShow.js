@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField } from 'react-admin';
-import {Grid} from "@material-ui/core";
+import { Grid } from '@material-ui/core';
 import { SideList, MainList, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import ProjectTitle from './ProjectTitle';
@@ -29,7 +29,12 @@ const ProjectShow = props => (
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
           </UriArrayField>
-          <UriArrayField label="Personnes" reference="Person" filter={{ '@type': 'pair:Person' }} source="pair:involves">
+          <UriArrayField
+            label="Personnes"
+            reference="Person"
+            filter={{ '@type': 'pair:Person' }}
+            source="pair:involves"
+          >
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>
