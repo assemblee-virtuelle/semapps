@@ -3,11 +3,11 @@ import { useTranslate, getFieldLabelTranslationArgs, useShowContext } from 'reac
 import { Box, makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => {
-  console.log('contrastText', theme)
-  return ({
+  console.log('contrastText', theme);
+  return {
     subTitle: {
       marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(1),
+      marginBottom: theme.spacing(1)
     },
     subTitleSpan: {
       color: theme.palette.primary.contrastText,
@@ -15,20 +15,20 @@ const useStyles = makeStyles(theme => {
       paddingTop: theme.spacing(0.75),
       paddingBottom: theme.spacing(0.75),
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(4),
+      paddingRight: theme.spacing(4)
     }
-  })
+  };
 });
 
 const MainList = ({ children }) => {
   const classes = useStyles();
   const translate = useTranslate();
   const { basePath, loaded, record, resource } = useShowContext();
-  if( !loaded ) return null;
+  if (!loaded) return null;
 
   return (
     <Box>
-      {React.Children.map(children, field => (
+      {React.Children.map(children, field =>
         field && record[field.props.source] && React.isValidElement(field) ? (
           <div key={field.props.source}>
             {field.props.addLabel ? (
@@ -61,7 +61,7 @@ const MainList = ({ children }) => {
             )}
           </div>
         ) : null
-      ))}
+      )}
     </Box>
   );
 };

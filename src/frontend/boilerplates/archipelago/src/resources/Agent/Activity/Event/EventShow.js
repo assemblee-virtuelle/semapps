@@ -1,15 +1,7 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
-import { Grid } from "@material-ui/core";
-import {
-  Hero,
-  Show,
-  MarkdownField,
-  GridList,
-  UserIcon,
-  MainList,
-  SideList
-} from '@semapps/archipelago-layout';
+import { Grid } from '@material-ui/core';
+import { Hero, Show, MarkdownField, GridList, UserIcon, MainList, SideList } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import EventTitle from './EventTitle';
 
@@ -39,7 +31,12 @@ const EventShow = props => (
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
           </UriArrayField>
-          <UriArrayField label="Personnes" reference="Person" filter={{ '@type': 'pair:Person' }} source="pair:involves">
+          <UriArrayField
+            label="Personnes"
+            reference="Person"
+            filter={{ '@type': 'pair:Person' }}
+            source="pair:involves"
+          >
             <GridList xs={6} linkType="show">
               <UserIcon />
             </GridList>
