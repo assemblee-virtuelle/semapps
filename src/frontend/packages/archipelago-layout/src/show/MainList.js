@@ -2,23 +2,20 @@ import React from 'react';
 import { useTranslate, getFieldLabelTranslationArgs, useShowContext } from 'react-admin';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles(theme => {
-  console.log('contrastText', theme)
-  return ({
-    subTitle: {
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(1),
-    },
-    subTitleSpan: {
-      color: theme.palette.primary.contrastText,
-      backgroundColor: theme.palette.primary.main,
-      paddingTop: theme.spacing(0.75),
-      paddingBottom: theme.spacing(0.75),
-      paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(4),
-    }
-  })
-});
+const useStyles = makeStyles(theme => ({
+  subTitle: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(1),
+  },
+  subTitleSpan: {
+    color: theme.palette.primary.contrastText,
+    backgroundColor: theme.palette.primary.main,
+    paddingTop: theme.spacing(0.75),
+    paddingBottom: theme.spacing(0.75),
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(4),
+  }
+}));
 
 const MainList = ({ children }) => {
   const classes = useStyles();
