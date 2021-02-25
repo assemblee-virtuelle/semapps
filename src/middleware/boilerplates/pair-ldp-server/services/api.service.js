@@ -37,7 +37,7 @@ module.exports = {
       redirectUri: CONFIG.HOME_URL + 'auth',
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
       publicKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key.pub'),
-      selectProfileData: authData => ({
+      selectProfileData: async authData => ({
         email: authData.email,
         name: authData.given_name,
         familyName: authData.family_name
@@ -45,10 +45,10 @@ module.exports = {
       findOrCreateProfile: async profileData => {
         let webId = await this.broker.call('webid.findByEmail', {
           email: profileData.email
-        });
+        }, { meta: { webId: 'system' } });
 
         if (!webId) {
-          webId = await this.broker.call('webid.create', profileData);
+          webId = await this.broker.call('webid.create', profileData, { meta: { webId: 'system' } });
 
           // Adds PAIR data
           await this.broker.call('ldp.resource.patch', {
@@ -61,7 +61,7 @@ module.exports = {
               'pair:e-mail': profileData.email
             },
             contentType: MIME_TYPES.JSON
-          });
+          }, { meta: { webId: 'system' } });
         }
 
         return webId;
