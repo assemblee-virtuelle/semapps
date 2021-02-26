@@ -1,4 +1,5 @@
-const authProvider = middlewareUri => ({
+
+const authProvider = (history, middlewareUri) => ({
 
   login: params => Promise.resolve(),
   logout: () => {
@@ -7,6 +8,7 @@ const authProvider = middlewareUri => ({
     return Promise.resolve('/loggingout');
   },
   checkAuth: () => {
+
     const url = new URL(window.location);
     if (localStorage.getItem('token')) {
       return Promise.resolve();
@@ -14,10 +16,10 @@ const authProvider = middlewareUri => ({
       if (url.searchParams.has('token')) {
         localStorage.setItem('token', url.searchParams.get('token'));
         url.searchParams.delete('token');
-        window.location.href = url.toString();
-        return Promise.reject({ redirectTo: '/no-access' });
+        //TODO: if other searchParams remain, we should add them here
+        history.push(url.pathname);
+        return Promise.resolve();
       } else {
-        console.log(window.location.pathname)
         if (window.location.pathname != '/loggingout')
           window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
         

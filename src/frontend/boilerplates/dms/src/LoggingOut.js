@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAuthState, Loading } from 'react-admin';
+import {  Loading } from 'react-admin';
 import { defaultTheme } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';

@@ -29,7 +29,7 @@ function App() {
         resources,
         ontologies
       })}
-      authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
+      authProvider={authProvider(history,process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
       {permissions => [
