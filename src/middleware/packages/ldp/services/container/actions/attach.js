@@ -16,7 +16,7 @@ module.exports = {
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
     if (!resourceExists) throw new Error('Cannot attach non-existing resource: ' + resourceUri);
 
-    const containerExists = await ctx.call(this.name+'.exist',{ containerUri });
+    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.insert', {

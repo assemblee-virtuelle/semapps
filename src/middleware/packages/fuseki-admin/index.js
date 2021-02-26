@@ -61,7 +61,7 @@ const FusekiAdminService = {
 
       // Wait for backup to complete
       const { taskId } = await response.json();
-      await this.actions.waitForTaskCompletion({ taskId });
+      await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
     },
     async waitForTaskCompletion(ctx) {
       const { taskId } = ctx.params;

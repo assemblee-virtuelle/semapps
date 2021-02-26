@@ -11,7 +11,7 @@ module.exports = {
         // Also clean the container containing the resource
         // TODO search all containers containing the resource
         const containerUri = getContainerFromUri(resourceUri);
-        await this.actions.cleanContainer({ containerUri });
+        await this.actions.cleanContainer({ containerUri }, { parentCtx: ctx });
       }
     },
     async cleanContainer(ctx) {
@@ -24,19 +24,19 @@ module.exports = {
   events: {
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri } = ctx.params;
-      await this.actions.cleanResource({ resourceUri });
+      await this.actions.cleanResource({ resourceUri }, { parentCtx: ctx });
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;
-      await this.actions.cleanResource({ resourceUri });
+      await this.actions.cleanResource({ resourceUri }, { parentCtx: ctx });
     },
     async 'ldp.container.attached'(ctx) {
       const { containerUri } = ctx.params;
-      await this.actions.cleanContainer({ containerUri });
+      await this.actions.cleanContainer({ containerUri }, { parentCtx: ctx });
     },
     async 'ldp.container.detached'(ctx) {
       const { containerUri } = ctx.params;
-      await this.actions.cleanContainer({ containerUri });
+      await this.actions.cleanContainer({ containerUri }, { parentCtx: ctx });
     }
   }
 };

@@ -22,7 +22,7 @@ const DeviceService = {
           'semapps:ownedBy': userUri,
           'semapps:pushToken': pushToken
         }
-      });
+      }, { parentCtx: ctx });
 
       if (!device['ldp:contains']) {
         device = await this.actions.create({
@@ -32,7 +32,7 @@ const DeviceService = {
           'semapps:ownedBy': userUri,
           'semapps:pushToken': pushToken,
           'semapps:addedAt': new Date().toISOString()
-        });
+        }, { parentCtx: ctx });
 
         if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
           await ctx.call('push.notification.send', {
@@ -47,7 +47,7 @@ const DeviceService = {
           'semapps:name': name,
           'semapps:yearClass': yearClass,
           'semapps:errorMessage': null
-        });
+        }, { parentCtx: ctx });
       }
 
       return device;
@@ -61,7 +61,7 @@ const DeviceService = {
             'semapps:ownedBy': userUri,
             'semapps:errorMessage': null
           }
-        });
+        }, { parentCtx: ctx });
 
         if (container['ldp:contains']) {
           devices.push(...container['ldp:contains']);

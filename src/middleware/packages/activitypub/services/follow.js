@@ -109,7 +109,7 @@ const FollowService = {
             await this.actions.addFollower({
               follower: activity.actor,
               following: activity.object
-            });
+            }, { parentCtx: ctx });
           }
           break;
         }
@@ -121,7 +121,7 @@ const FollowService = {
             await this.actions.addFollower({
               follower: followActivity.actor,
               following: followActivity.object
-            });
+            }, { parentCtx: ctx });
           }
           break;
         }
@@ -133,7 +133,7 @@ const FollowService = {
             await this.actions.removeFollower({
               follower: followActivity.actor,
               following: followActivity.object
-            });
+            }, { parentCtx: ctx });
           }
           break;
       }
