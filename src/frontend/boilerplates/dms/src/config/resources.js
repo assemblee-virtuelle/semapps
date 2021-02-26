@@ -1,14 +1,14 @@
 const resources = {
   Project: {
-    types: ['pairv1:Project'],
+    types: ['pair:Project'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },
   Organization: {
-    types: ['pairv1:Organization'],
+    types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },
   Person: {
-    types: ['pairv1:Person'],
+    types: ['pair:Person'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },
   Concept: {
@@ -16,7 +16,7 @@ const resources = {
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ldp/object'
   },
   Agent: {
-    types: ['pairv1:Person', 'pairv1:Organization']
+    types: ['pair:Person', 'pair:Organization']
   }
 };
 

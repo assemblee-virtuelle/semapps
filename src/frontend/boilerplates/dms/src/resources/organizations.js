@@ -20,46 +20,45 @@ export const OrganizationIcon = GroupIcon;
 export const OrganizationList = props => (
   <List title="Organisations" perPage={25} filters={<SearchFilter />} {...props}>
     <Datagrid rowClick="edit">
-      <TextField source="pairv1:preferedLabel" label="Nom" />
+      <TextField source="pair:label" label="Nom" />
       <EditButton basePath="/Organization" />
     </Datagrid>
   </List>
 );
 
 const OrganizationTitle = ({ record }) => {
-  return <span>Organisation {record ? `"${record['pairv1:label'] || record['pairv1:preferedLabel']}"` : ''}</span>;
+  return <span>Organisation {record ? `"${record['pair:label'] || record['pair:preferedLabel']}"` : ''}</span>;
 };
 
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>
     <SimpleForm>
-      <TextInput source="pairv1:preferedLabel" label="Nom" />
-      <TextInput source="pairv1:comment" label="Commentaire" fullWidth />
-      <MarkdownInput multiline source="pairv1:description" label="Description" fullWidth />
-      <UriInput source="pairv1:aboutPage" label="Site web" fullWidth />
-      <TextInput source="pairv1:adress" label="Adresse" fullWidth />
-      <TextInput source="pairv1:adressLine2" label="Adresse (suite)" fullWidth />
-      <JsonLdReferenceInput label="Responsables" reference="Person" source="pairv1:hasResponsible">
+      <TextInput source="pair:label" label="Nom" />
+      <TextInput source="pair:comment" label="Commentaire" fullWidth />
+      <MarkdownInput multiline source="pair:description" label="Description" fullWidth />
+      <UriInput source="pair:aboutPage" label="Site web" fullWidth />
+      <TextInput source="pair:address" label="Adresse" fullWidth />
+      <JsonLdReferenceInput label="Responsables" reference="Person" source="pair:hasResponsible">
         <AutocompleteArrayInput
           optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Membres" reference="Person" source="pairv1:hasMember">
+      <JsonLdReferenceInput label="Membres" reference="Person" source="pair:affiliates">
         <AutocompleteArrayInput
           optionText={record => `${record['foaf:givenName']} ${record['foaf:familyName']}`}
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Partenaires" reference="Agent" source="pairv1:isPartnerOf">
+      <JsonLdReferenceInput label="Partenaires" reference="Agent" source="pair:partnerOf">
         <AutocompleteArrayInput
           optionText={record =>
-            (record && (record['pairv1:preferedLabel'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
+            (record && (record['pair:label'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
           }
           fullWidth
         />
       </JsonLdReferenceInput>
-      <JsonLdReferenceInput label="Intérêts" reference="Concept" source="pairv1:hasInterest">
+      <JsonLdReferenceInput label="Intérêts" reference="Concept" source="pair:hasInterest">
         <AutocompleteArrayInput
           optionText={record => (record && record['skos:prefLabel']['@value']) || 'LABEL MANQUANT'}
           fullWidth
@@ -72,7 +71,7 @@ export const OrganizationEdit = props => (
 export const OrganizationCreate = props => (
   <Create title="Créer une organisation" {...props}>
     <SimpleForm>
-      <TextInput source="pairv1:preferedLabel" label="Nom" />
+      <TextInput source="pair:label" label="Nom" />
     </SimpleForm>
   </Create>
 );
