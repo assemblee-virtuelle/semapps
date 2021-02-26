@@ -130,3 +130,10 @@ The SemApps middleware should always connect to the SPARQL endpoint with a Basic
 If the middleware is doing a query on behalf of a semapps user, it should send the WebID URI of this user in the HTTP header `X-SemappsUser`. If no user is logged-in and the middleware is making a request as a public, anonymous user, then the `X-SemappsUser` header should be sent with the value `anon`.
 
 If to the contrary, the middleware is modifying the ACLs, it should send no header, or a header with the X-SemappsUser set to `system`.
+
+### Code guidelines
+
+When coding in moleculer, it is important to always respect those rules:
+* when calling the action directly from the same service `this.actions.nameOfAction(params)` it is important to add a second argument to pass the context `nameOfAction( params, { defaultCtx: ctx} );`
+* when inside an action and calling another action (to another service), always use the form `ctx.call()` and not the form `this.broker.call()` as the later will lose the context.
+* when you need to make a `system` call to the triplestore, you have to explicitly state it in the call, by adding an option in the 3rd arguments (2nd if using this.actions)) `{ meta: { webId:'system' } }` like this: `ctx.call('action.name',{ param }, { meta: { webId:'system' } })`
