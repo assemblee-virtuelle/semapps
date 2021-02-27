@@ -1,91 +1,121 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { 
+  getAuthorizationNode, 
+  checkAgentPresent, 
+  getUserGroups,
+  findParentContainers,
+  filterAgentAcl,
+  getAclUriFromResourceUri,
+  getUserAgentSearchParam,
+  convertBodyToTriples,
+  filterTriplesForResource,
+} = require('../../../utils');
+const urlJoin = require('url-join');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
+    const contentType = ctx.meta.headers['content-type'];
+    if (!contentType || ( contentType!= MIME_TYPES.JSON && contentType!= MIME_TYPES.TURTLE) )
+      throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST')
 
-    // PUT have to stay in same container and @id can't be different
-    // TODO generate an error instead of overwriting the ID
-    resource['@id'] = `${containerUri}/${id}`;
-    if (ctx.meta.parser === 'file') {
-      throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
-    }
+    let newRights = await convertBodyToTriples(ctx.meta.body, contentType)
 
-    try {
-      await ctx.call('ldp.resource.put', {
-        resource,
-        contentType: ctx.meta.headers['content-type'],
-        containerUri,
-        slug: id,
-        webId: ctx.meta.webId
-      });
-      ctx.meta.$statusCode = 204;
-      ctx.meta.$responseHeaders = {
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-    } catch (e) {
-      console.error(e);
-      ctx.meta.$statusCode = e.code || 500;
-      ctx.meta.$statusMessage = e.message;
-    }
+    if (newRights.length == 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
+
+    await ctx.call('webacl.resource.setRights', {
+      slugParts: ctx.params.slugParts,
+      newRights
+    });
+
+    ctx.meta.$statusCode = 204;
+
   },
   action: {
     visibility: 'public',
     params: {
-      resource: { type: 'object' },
+      resourceUri: { type: 'string', optional: true },
+      slugParts: { type: "array", items: "string", optional: true },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
+      newRights: { type: 'array', optional: false, min:1 },
+      // minimum is one right : We cannot leave a resource without rights.
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
-      const resourceUri = resource.id || resource['@id'];
+      let { slugParts, webId, newRights, resourceUri } = ctx.params;
+      webId = webId || ctx.meta.webId || 'anon';
 
-      // Save the current data, to be able to send it through the event
-      // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      if (!slugParts || slugParts.length == 0) {
+        // this is the root container.
+        slugParts = ['/'] ;
+      }
+      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
+      let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+
+      // check that the user has Control perm.
+      // TODO: bypass this check if user is 'system' (use system as a super-admin) ?
+      let {control} = await ctx.call('webacl.resource.hasRights', {
         resourceUri,
-        accept: MIME_TYPES.JSON,
-        queryDepth: 1
-      });
-
-      // First delete the resource
-      await ctx.call('triplestore.update', {
-        query: `
-          DELETE
-          WHERE
-          { <${resourceUri}> ?p ?v }
-        `,
+        rights : { control:true },
         webId
       });
+      if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
-      // ... then insert back all the data
-      await ctx.call('triplestore.insert', {
-        resource,
-        contentType,
-        webId
-      });
+      // filter out all the newRights that are not for the resource
+      let aclUri = getAclUriFromResourceUri(this.settings.baseUrl,resourceUri)
+      newRights = newRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
 
-      // Get the new data, with the same formatting as the old data
-      const newData = await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri,
-          accept: MIME_TYPES.JSON,
-          queryDepth: 1
-        },
-        { meta: { $cache: false } }
-      );
+      if (newRights.length == 0) throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
 
-      ctx.emit('ldp.resource.updated', {
-        resourceUri,
-        oldData,
-        newData,
-        webId
-      });
+      //console.log(newRights)
 
-      return resourceUri;
-    }
+      let currentPerms = await this.getExistingPerms(ctx, resourceUri, this.settings.baseUrl, this.settings.graphName, isContainer);
+
+      //console.log(currentPerms)
+
+      // find the difference between newRights and currentPerms. add only what is not existant yet. and remove those that are not needed anymore
+      let differenceAdd = newRights.filter(x => !currentPerms.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
+      let differenceDelete = currentPerms.filter(x => !newRights.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
+
+      //console.log(differenceAdd)
+      //console.log(differenceDelete)
+      if (differenceAdd.length == 0 && differenceDelete.length == 0) return;
+
+      // compile a list of Authorization already present. because if some of them don't exist, we need to create them
+      let currentAuths = this.compileAuthorizationNodesMap(currentPerms);
+
+      let addRequest = ''
+      for (const add of differenceAdd) {
+        if (!currentAuths[add.auth]) {
+          addRequest += this.generateNewAuthNode(add.auth);
+          currentAuths[add.auth] = 1;
+        } else {
+          currentAuths[add.auth] += 1;
+        }
+        addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
+      }
+
+      //console.log(addRequest)
+
+      let deleteRequest = ''
+      for (const del of differenceDelete) {
+        deleteRequest += `<${del.auth}> <${del.p}> <${del.o}>.\n`;
+        currentAuths[del.auth] -= 1;
+      }
+
+      for (const [auth, count] of Object.entries(currentAuths)) {
+        if (count < 1) {
+          deleteRequest += this.generateNewAuthNode(auth);
+      }}
+
+      //console.log(deleteRequest)
+
+      // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
+      await ctx.call('triplestore.update',{
+        query: `INSERT DATA { GRAPH ${this.settings.graphName} { ${addRequest} } }; DELETE DATA { GRAPH ${this.settings.graphName} { ${deleteRequest} } }`,
+        webId: 'system',
+      })
+
+    }   
   }
 };

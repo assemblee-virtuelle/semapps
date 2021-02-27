@@ -278,3 +278,18 @@ Please note that the URI of the `@base` or `@prefix` should not include a traili
 Hence, all resources should be modified with a `"@base": "http://server.com/_acl/path/of/resource"` in JSON-LD or `@prefix : <http://server.com/_acl/path/of/resource#>.` in turtle.
 
 But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
+
+
+### webacl.resource.setRights
+
+Changes the permissions of a resource so they become like in the document that is sent by the user. Only available if the user has Control access to the ressource.
+
+This API is available as an action or via HTTP.
+
+* `PUT /_acl/slug/of/container/or/resource` with a body containing the new permissions of this resource.
+THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
+
+The former permissions that are not present in the document will be removed.
+The new permissions will be added.
+
+The same rules as for `addRights` apply, regarding the format of the payload.

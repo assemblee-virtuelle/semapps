@@ -1,13 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { 
-  getAuthorizationNode, 
-  checkAgentPresent, 
-  getUserGroups,
-  findParentContainers,
-  filterAgentAcl,
   getAclUriFromResourceUri,
-  getUserAgentSearchParam,
   convertBodyToTriples,
   filterTriplesForResource,
 } = require('../../../utils');
@@ -72,7 +66,7 @@ module.exports = {
 
       //console.log(currentPerms)
 
-      // find the difference between addedRights and currentPerms. add only what is not exisant yet.
+      // find the difference between addedRights and currentPerms. add only what is not existant yet.
       let difference = addedRights.filter(x => !currentPerms.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
 
       //console.log(difference)

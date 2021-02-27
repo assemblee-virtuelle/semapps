@@ -59,6 +59,7 @@ module.exports = {
           },
           aliases: {
             'PATCH /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
+            'PUT /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],
           },
           onError (req, res, err) {
             let { type, code, message, data, name } = err

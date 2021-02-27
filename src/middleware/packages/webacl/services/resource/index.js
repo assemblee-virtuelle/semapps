@@ -83,7 +83,7 @@ module.exports = {
     compileAuthorizationNodesMap( nodes ) {
       let result = {};
       for (const node of nodes) {
-        result[node.auth] = true;
+        result[node.auth] = result[node.auth] ? result[node.auth]+1 : 1;
       }
       return result;
     },
