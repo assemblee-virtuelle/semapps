@@ -41,7 +41,7 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
-      },
+      }
     },
     async handler(ctx) {
       const containerUri = ctx.params.containerUri;
@@ -61,12 +61,11 @@ module.exports = {
       });
 
       // First delete the whole resource
-      console.log('resourceUri PUT',resourceUri);
+      console.log('resourceUri PUT', resourceUri);
       await ctx.call('ldp.resource.delete', {
         resourceUri,
         webId
       });
-
 
       // if (disassembly && contentType == MIME_TYPES.JSON) {
       //   for (disassemblyItem of disassembly) {
@@ -105,23 +104,23 @@ module.exports = {
       let newData;
       try {
         // ... then insert back all the data
-        console.log('resource[@id]',resource['@id']);
+        console.log('resource[@id]', resource['@id']);
         newData = await ctx.call('ldp.resource.post', {
           resource,
           contentType,
           containerUri,
           webId,
-          slug : getSlugFromUri(resource['@id'])
+          slug: getSlugFromUri(resource['@id'])
         });
       } catch (e) {
         // If the insertion of new data fails, inserts back old data
-        console.log('POST FAILED',e,oldData['@id']);
+        console.log('POST FAILED', e, oldData['@id']);
         newData = await ctx.call('ldp.resource.post', {
           resource: oldData,
           contentType: MIME_TYPES.JSON,
           containerUri,
           webId,
-          slug : getSlugFromUri(oldData['@id'])
+          slug: getSlugFromUri(oldData['@id'])
         });
 
         // ... then rethrows an error

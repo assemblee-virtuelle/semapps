@@ -139,16 +139,16 @@ module.exports = {
         for (disassemblyItem of disassembly) {
           if (resource[disassemblyItem.path]) {
             let rawDisassemblyValue = resource[disassemblyItem.path];
-            if (!Array.isArray(rawDisassemblyValue)){
-              rawDisassemblyValue=[rawDisassemblyValue];
+            if (!Array.isArray(rawDisassemblyValue)) {
+              rawDisassemblyValue = [rawDisassemblyValue];
             }
-            const uriInserted=[];
-            for (let disassemblyValue of rawDisassemblyValue){
+            const uriInserted = [];
+            for (let disassemblyValue of rawDisassemblyValue) {
               // id is extract to not interfer whith @id if set
-              let {id,...usableValue}=disassemblyValue
+              let { id, ...usableValue } = disassemblyValue;
               usableValue = {
                 '@context': resource['@context'],
-                ...usableValue,
+                ...usableValue
               };
               disassemblyResourceUri = await ctx.call('ldp.resource.post', {
                 containerUri: disassemblyItem.container,
@@ -170,7 +170,6 @@ module.exports = {
         contentType,
         webId
       });
-
 
       await ctx.call('ldp.container.attach', {
         resourceUri: resource['@id'],

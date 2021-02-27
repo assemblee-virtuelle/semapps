@@ -44,7 +44,7 @@ const TripleStoreService = {
           });
         }
 
-        console.log('INSERT RDF',rdf);
+        console.log('INSERT RDF', rdf);
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
         const response = await fetch(url, {
           method: 'POST',

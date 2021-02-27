@@ -7,7 +7,7 @@ const CompositArrayInput = props => {
     <ArrayInput
       {...props}
       format={value => {
-        console.log('FORMAT',value);
+        console.log('FORMAT', value);
         // If there is no value, return immediately
         if (!value) return value;
         // if the linked field value is not an array, turns it into an array.
