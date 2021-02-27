@@ -40,27 +40,34 @@ const generateSparqlVarName = predicate =>
     .replace(/[^a-z0-9]+/gi, '');
 
 const buildDereferenceQuery = predicates => {
-  let construct = '',
-    where = '';
+  let queries = [];
+
   if (predicates) {
     const flattenedPredicates = predicates.reduce((acc, predicate) => flattenPredicate(acc, predicate), {});
 
     for (const [predicate, parent] of Object.entries(flattenedPredicates)) {
       const varName = generateSparqlVarName(predicate);
       const parentVarName = parent === 'root' ? '1' : generateSparqlVarName(parent);
-      const query = `
+
+      // Group queries by parent, so that we can group WHERE triples in the same OPTIONAL tag
+      const groupKey = parent === 'root' ? predicate : parent;
+      if (!queries[groupKey]) queries[groupKey] = [];
+
+      queries[groupKey].push(`
         ?s${parentVarName} ${predicate} ?s${varName} .
         ?s${varName} ?p${varName} ?o${varName} .
-      `;
-
-      construct += query;
-      where += `
-        OPTIONAL { ${query} }
-      `;
+      `);
     }
   }
 
-  return { construct, where };
+  return {
+    construct: Object.values(queries)
+      .map(groupedQueries => Object.values(groupedQueries).join('\n'))
+      .join('\n'),
+    where: Object.values(queries)
+      .map(groupedQueries => `OPTIONAL { ${Object.values(groupedQueries).join('\n')} }`)
+      .join('\n')
+  };
 };
 
 const buildFiltersQuery = filters => {

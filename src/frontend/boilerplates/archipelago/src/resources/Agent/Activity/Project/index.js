@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../../PairResourceCreate';
+import { PairResourceCreate } from '../../../../pair';
 import ProjectEdit from './ProjectEdit';
 import ProjectList from './ProjectList';
 import ProjectShow from './ProjectShow';

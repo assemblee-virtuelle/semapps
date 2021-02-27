@@ -166,6 +166,9 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       json.id = json.id || json['@id'];
       // TODO compact only if remote context is different from local context
       const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
+      if (compactJson['pair:organizationOfMembership'] && !Array.isArray(compactJson['pair:organizationOfMembership'])){
+        compactJson['pair:organizationOfMembership']=[compactJson['pair:organizationOfMembership']];
+      }
       return { data: compactJson };
     },
     getMany: async (resourceId, params) => {

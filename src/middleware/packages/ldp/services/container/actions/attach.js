@@ -6,7 +6,6 @@ module.exports = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
     if (!resourceExists) throw new Error('Cannot attach non-existing resource: ' + resourceUri);
 

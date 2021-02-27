@@ -134,24 +134,33 @@ module.exports = {
         }
       }
 
+      //if disassembly predicat set and json-ld content, object of predicat extaction & ost on his own container
       if (disassembly && contentType == MIME_TYPES.JSON) {
         for (disassemblyItem of disassembly) {
-          // console.log('disassembly',disassemblyItem);
-          const disassemblyValue = {
-            '@context': resource['@context'],
-            ...resource[disassemblyItem.path]
-          };
-          if (disassemblyValue) {
-            console.log('BEFORE');
-            resourceUri = await ctx.call('ldp.resource.post', {
-              containerUri: disassemblyItem.container,
-              resource: disassemblyValue,
-              contentType: MIME_TYPES.JSON,
-              accept: MIME_TYPES.JSON,
-              webId: webId
-            });
-            console.log('AFTER');
-            resource[disassemblyItem.path] = resourceUri;
+          if (resource[disassemblyItem.path]) {
+            let rawDisassemblyValue = resource[disassemblyItem.path];
+            if (!Array.isArray(rawDisassemblyValue)){
+              rawDisassemblyValue=[rawDisassemblyValue];
+            }
+            const uriInserted=[];
+            for (let disassemblyValue of rawDisassemblyValue){
+              // id is extract to not interfer whith @id if set
+              let {id,...usableValue}=disassemblyValue
+              usableValue = {
+                '@context': resource['@context'],
+                ...usableValue,
+              };
+              disassemblyResourceUri = await ctx.call('ldp.resource.post', {
+                containerUri: disassemblyItem.container,
+                resource: usableValue,
+                contentType: MIME_TYPES.JSON,
+                accept: MIME_TYPES.JSON,
+                webId: webId
+              });
+              uriInserted.push(disassemblyResourceUri);
+            }
+
+            resource[disassemblyItem.path] = uriInserted;
           }
         }
       }
@@ -162,7 +171,6 @@ module.exports = {
         webId
       });
 
-      console.log('insertedUri',insertedUri);
 
       await ctx.call('ldp.container.attach', {
         resourceUri: resource['@id'],

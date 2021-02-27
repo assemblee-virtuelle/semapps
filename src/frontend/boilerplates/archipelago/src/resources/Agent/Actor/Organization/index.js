@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../../PairResourceCreate';
+import { PairResourceCreate } from '../../../../pair';
 import OrganizationEdit from './OrganizationEdit';
 import OrganizationList from './OrganizationList';
 import OrganizationShow from './OrganizationShow';
@@ -19,7 +19,7 @@ export default {
   dataModel: {
     types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organizations',
-    dereference: ['pair:address','pair:organizationOfMembership'],
+    dereference: ['pair:hasLocation/pair:hasPostalAddress','pair:organizationOfMembership'],
     slugField: 'pair:label'
   },
   translations: {
@@ -35,7 +35,8 @@ export default {
         'pair:partnerOf': 'Partenaires',
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
-        'pair:documentedBy': 'Documents'
+        'pair:documentedBy': 'Documents',
+        'pair:hasLocation': 'Adresse'
       }
     }
   }

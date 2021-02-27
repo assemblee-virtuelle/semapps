@@ -5,7 +5,7 @@ module.exports = [
   {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
-    dereference: ['sec:publicKey', 'pair:organizationOfMembership'],
+    dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress','pair:organizationOfMembership'],
     disassembly: [{ path: 'pair:organizationOfMembership', container: CONFIG.HOME_URL + 'membershipAssociations' }]
   },
   {
@@ -24,7 +24,7 @@ module.exports = [
   {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
-    dereference: ['sec:publicKey']
+    dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
   },
   {
     path: '/themes',

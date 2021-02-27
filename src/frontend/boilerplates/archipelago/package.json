@@ -1,11 +1,16 @@
 {
   "name": "archipelago",
-  "version": "0.1.18",
+  "version": "0.1.20",
   "private": true,
   "dependencies": {
-    "@semapps/archipelago-layout": "0.1.18",
-    "@semapps/auth-provider": "0.1.18",
-    "@semapps/semantic-data-provider": "0.1.18",
+    "@semapps/archipelago-layout": "0.1.20",
+    "@semapps/auth-provider": "0.1.20",
+    "@semapps/date-components": "0.1.20",
+    "@semapps/geo-components": "0.1.20",
+    "@semapps/semantic-data-provider": "0.1.20",
+    "date-fns": "~2.8.1",
+    "leaflet": "^1.7.1",
+    "leaflet.markercluster": "^1.4.1",
     "prop-types": "^15.7.2",
     "ra-input-markdown": "^1.1.7",
     "ra-language-french": "3.11.0",
@@ -18,6 +23,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "react-scripts": "3.4.0",
+    "source-map-explorer": "^2.5.2",
     "vercel": "^21.1.0"
   },
   "scripts": {
@@ -26,6 +32,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "bootstrap": "lerna bootstrap",
+    "analyze": "source-map-explorer 'build/static/js/*.js'",
     "deploy": "vercel"
   },
   "eslintConfig": {
