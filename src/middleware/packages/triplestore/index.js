@@ -43,10 +43,14 @@ const TripleStoreService = {
         webId: {
           type: 'string',
           optional: true
+        },
+        graphName: {
+          type: 'string',
+          optional: true
         }
       },
       async handler(ctx) {
-        const { resource, contentType, webId } = ctx.params;
+        const { resource, contentType, webId, graphName } = ctx.params;
 
         let rdf;
         if (contentType !== MIME_TYPES.JSON) {
@@ -60,7 +64,7 @@ const TripleStoreService = {
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
         const response = await fetch(url, {
           method: 'POST',
-          body: `INSERT DATA { ${rdf} }`,
+          body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
           headers: {
             'Content-Type': 'application/sparql-update',
             'X-SemappsUser': webId || ctx.meta.webId || 'anon',
