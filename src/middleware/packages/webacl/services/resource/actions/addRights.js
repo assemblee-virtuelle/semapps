@@ -1,100 +1,103 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { 
+  getAuthorizationNode, 
+  checkAgentPresent, 
+  getUserGroups,
+  findParentContainers,
+  filterAgentAcl,
+  getAclUriFromResourceUri,
+  getUserAgentSearchParam,
+  convertBodyToTriples,
+  filterTriplesForResource,
+} = require('../../../utils');
+const urlJoin = require('url-join');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
+    const contentType = ctx.meta.headers['content-type'];
+    if (!contentType || ( contentType!= MIME_TYPES.JSON && contentType!= MIME_TYPES.TURTLE) )
+      throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST')
 
-    // PATCH have to stay in same container and @id can't be different
-    // TODO generate an error instead of overwriting the ID
-    resource['@id'] = `${containerUri}/${id}`;
+    let addedRights = await convertBodyToTriples(ctx.meta.body, contentType)
 
-    try {
-      await ctx.call('ldp.resource.patch', {
-        resource,
-        contentType: ctx.meta.headers['content-type'],
-        webId: ctx.meta.webId
-      });
-      ctx.meta.$statusCode = 204;
-      ctx.meta.$responseHeaders = {
-        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
-      };
-    } catch (e) {
-      console.error(e);
-      ctx.meta.$statusCode = e.code || 500;
-      ctx.meta.$statusMessage = e.message;
-    }
+    if (addedRights.length == 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
+
+    await ctx.call('webacl.resource.addRights', {
+      slugParts: ctx.params.slugParts,
+      addedRights
+    });
+
+    ctx.meta.$statusCode = 204;
+
   },
   action: {
     visibility: 'public',
     params: {
-      resource: {
-        type: 'object'
-      },
-      webId: {
-        type: 'string',
-        optional: true
-      },
-      contentType: {
-        type: 'string'
-      }
+      resourceUri: { type: 'string', optional: true },
+      slugParts: { type: "array", items: "string", optional: true },
+      webId: { type: 'string', optional: true },
+      // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
+      addedRights: { type: 'array', optional: false, min:1 },
     },
     async handler(ctx) {
-      let { resource, contentType, webId } = ctx.params;
+      let { slugParts, webId, addedRights, resourceUri } = ctx.params;
+      webId = webId || ctx.meta.webId || 'anon';
 
-      const resourceUri = resource.id || resource['@id'];
-      if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+      if (!slugParts || slugParts.length == 0) {
+        // this is the root container.
+        slugParts = ['/'] ;
+      }
+      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
+      let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-      const { queryDepth, jsonContext } = await ctx.call('ldp.container.getOptions', { uri: resourceUri });
-
-      // Save the current data, to be able to send it through the event
-      // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      // check that the user has Control perm.
+      // TODO: bypass this check if user is 'system' (use system as a super-admin) ?
+      let {control} = await ctx.call('webacl.resource.hasRights', {
         resourceUri,
-        accept: MIME_TYPES.JSON,
-        queryDepth
+        rights : { control:true },
+        webId
       });
+      if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
-      // Adds a default context, if it is missing
-      if (contentType === MIME_TYPES.JSON) {
-        resource = {
-          '@context': jsonContext,
-          ...resource
-        };
+      // filter out all the addedRights that are not for the resource
+      let aclUri = getAclUriFromResourceUri(this.settings.baseUrl,resourceUri)
+      addedRights = addedRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
+
+      if (addedRights.length == 0) throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
+
+      //console.log(addedRights)
+
+      let currentPerms = await this.getExistingPerms(ctx, resourceUri, this.settings.baseUrl, this.settings.graphName, isContainer);
+
+      //console.log(currentPerms)
+
+      // find the difference between addedRights and currentPerms. add only what is not exisant yet.
+      let difference = addedRights.filter(x => !currentPerms.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
+
+      //console.log(difference)
+      if (difference.length == 0) return;
+
+      // compile a list of Authorization already present. if some of them don't exist, we need to create them
+      let currentAuths = this.compileAuthorizationNodesMap(currentPerms);
+
+      let addRequest = ''
+      for (const add of difference) {
+        if (!currentAuths[add.auth]) {
+          addRequest += this.generateNewAuthNode(add.auth);
+          currentAuths[add.auth] = true;
+        }
+        addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      const deleteQuery = await this.buildDeleteQueryFromResource(resource);
-      await ctx.call('triplestore.update', {
-        query: deleteQuery,
-        webId
-      });
+      //console.log(addRequest)
 
-      await ctx.call('triplestore.insert', {
-        resource,
-        contentType,
-        webId
-      });
+      await ctx.call('triplestore.insert',{
+        resource: addRequest,
+        webId: 'system',
+        graphName: this.settings.graphName
+      })
 
-      // Get the new data, with the same formatting as the old data
-      const newData = await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri,
-          accept: MIME_TYPES.JSON,
-          queryDepth
-        },
-        { meta: { $cache: false } }
-      );
-
-      ctx.emit('ldp.resource.updated', {
-        resourceUri,
-        oldData,
-        newData,
-        webId
-      });
-
-      return resourceUri;
-    }
+    }   
   }
 };

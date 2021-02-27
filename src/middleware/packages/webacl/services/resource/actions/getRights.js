@@ -175,14 +175,10 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   document.push(... await filterAcls(hasControl, uaSearchParam, controls))
 
   if (isContainer && hasControl) {
-    let containerreads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true);
-    document.push(... await filterAcls(hasControl, uaSearchParam, containerreads))
-    let containerwrites = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true);
-    document.push(... await filterAcls(hasControl, uaSearchParam, containerwrites))
-    let containerappends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true);
-    document.push(... await filterAcls(hasControl, uaSearchParam, containerappends))
-    let containercontrols = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true);
-    document.push(... await filterAcls(hasControl, uaSearchParam, containercontrols))
+    document.push(... await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true));
+    document.push(... await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true));
+    document.push(... await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true));
+    document.push(... await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true));
   }
 
   for (const [ key, value ] of Object.entries(containersMap)) {

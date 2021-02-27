@@ -207,9 +207,9 @@ In Turtle:
     acl:mode acl:Write;
     acl:agent <https://data.virtual-assembly.org/users/sebastien.rosset>.
 
-<http://localhost:3000/_acl/container29/#DefaultRead> a acl:Authorization;
+<http://localhost:3000/_acl/container29#DefaultRead> a acl:Authorization;
     acl:mode acl:Read;
-    acl:default <http://localhost:3000/container29/>;
+    acl:default <http://localhost:3000/container29>;
     acl:agentGroup <http://localhost:3000/_groups/group4>.
 ```
 
@@ -233,7 +233,7 @@ In JSON-LD:
             "@id": "http://localhost:3000/_acl/container29/#DefaultRead",
             "@type": "acl:Authorization",
             "acl:agentGroup": "http://localhost:3000/_groups/group4",
-            "acl:default": "http://localhost:3000/container29/",
+            "acl:default": "http://localhost:3000/container29",
             "acl:mode": "acl:Read"
         }
     ]
@@ -259,3 +259,22 @@ Furthermore, it happens that the same user has `Control` permission on the `cont
 ```
 
 Only a user that has `Control` access to a container, can see the `Default{Read,Write,Append,Control}` Authorization nodes of that container.
+
+### webacl.resource.addRights
+
+Adds some permissions to a resource. Only available if the user has Control access to the ressource.
+
+This API is available as an action or via HTTP.
+
+* `PATCH /_acl/slug/of/container/or/resource` with a body containing the permissions to add.
+THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
+
+This action does not take into account the `acl:mode` nor `acl:default` tuples that are sent. The only important part is the beginning of the node `:Read` or `"@id":"#Read"` in jsonLD. Likewise, the `acl:accessTo` and `acl:default` tuples are not taken into account neather. The presence of the keyword `Default` at the beginning of the node is what decides if we are adding an accessTo or a default permission.
+
+Becareful, the `@base` or `@prefix` in turtle is important, it needs to match the resource URL you are modifying with this action.
+
+Please note that the URI of the `@base` or `@prefix` should not include a trailing slash / . Except for the root container !
+
+Hence, all resources should be modified with a `"@base": "http://server.com/_acl/path/of/resource"` in JSON-LD or `@prefix : <http://server.com/_acl/path/of/resource#>.` in turtle.
+
+But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`

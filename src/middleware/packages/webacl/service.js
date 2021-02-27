@@ -47,6 +47,28 @@ module.exports = {
         {
           authorization: false,
           authentication: true,
+          bodyParsers: {
+            json: false,
+            urlencoded: false,
+            text: {
+              type: ["text/turtle", "application/ld+json"]
+            }
+          },
+          onBeforeCall(ctx, route, req, res) {
+            ctx.meta.body = req.body;
+          },
+          aliases: {
+            'PATCH /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
+          },
+          onError (req, res, err) {
+            let { type, code, message, data, name } = err
+            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ type, code, message, data, name }))
+          }
+        },
+        {
+          authorization: false,
+          authentication: true,
           aliases: {
             'GET /_acl/:slugParts*': [...middlewares, 'webacl.resource.api_getRights'],
             'GET /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],

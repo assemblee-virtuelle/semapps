@@ -1,5 +1,8 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const urlJoin = require('url-join');
+const { Parser } = require('n3');
+const streamifyString = require('streamify-string');
+const rdfParser = require('rdf-parse').default;
 
 const RESOURCE_CONTAINERS_QUERY = (resource) => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
@@ -75,13 +78,19 @@ const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, grap
 
 }
 
+const FULL_TYPE_URI = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+const FULL_ACCESSTO_URI = 'http://www.w3.org/ns/auth/acl#accessTo';
+const FULL_MODE_URI = 'http://www.w3.org/ns/auth/acl#mode';
+const FULL_DEFAULT_URI = 'http://www.w3.org/ns/auth/acl#default';
+const ACL_NS = 'http://www.w3.org/ns/auth/acl#';
+
 const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
 
   if (forOutput) {
-    return (acl.p.value == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' 
-    || acl.p.value == 'http://www.w3.org/ns/auth/acl#accessTo' 
-    || acl.p.value == 'http://www.w3.org/ns/auth/acl#mode'
-    || acl.p.value == 'http://www.w3.org/ns/auth/acl#default') 
+    return (acl.p.value == FULL_TYPE_URI
+    || acl.p.value ==  FULL_ACCESSTO_URI
+    || acl.p.value == FULL_MODE_URI
+    || acl.p.value == FULL_DEFAULT_URI) 
   }
 
   if (agentSearchParam.foafAgent && acl.p.value == 'http://www.w3.org/ns/auth/acl#agentClass' && acl.o.value == 'http://xmlns.com/foaf/0.1/Agent')
@@ -128,8 +137,84 @@ const checkAgentPresent = ( acls , agentSearchParam ) => {
 
 }
 
+const agentPredicates = [
+  'http://www.w3.org/ns/auth/acl#agentClass',
+  'http://www.w3.org/ns/auth/acl#agent',
+  'http://www.w3.org/ns/auth/acl#agentGroup'
+]
+
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'))
+}
+
+function filterAndConvertTriple(quad, property) {
+  if (agentPredicates.includes(quad.predicate[property])){
+    return {
+      auth: quad.subject[property],
+      p: quad.predicate[property],
+      o: quad.object[property],
+    }
+  }
+  return false;
+}
+
+const AuthorizationSuffixes = [
+  'Read', 'Write', 'Append', 'Control'
+]
+
+const AuthorizationDefaultSuffixes = [
+  'DefaultRead', 'DefaultWrite', 'DefaultAppend', 'DefaultControl'
+]
+
+function filterTriplesForResource(triple, resourceAclUri, allowDefault) {
+
+  let split = triple.auth.split('#');
+  if (split[0] != resourceAclUri) return false;
+  if (AuthorizationSuffixes.includes(split[1])) return true;
+  if (allowDefault && AuthorizationDefaultSuffixes.includes(split[1])) return true;
+  return false;
+
+}
+
+async function convertBodyToTriples(body, contentType) {
+
+  if (contentType == MIME_TYPES.TURTLE) {
+
+    return new Promise((resolve, reject) => {
+      const parser = new Parser({format: 'turtle'});
+      let res = [];
+      parser.parse( body,
+        (error, quad, prefixes) => {
+          if (error)
+            reject(error)
+          else if (quad) {
+            let q = filterAndConvertTriple(quad, 'id')
+            if (q) res.push(q)
+          }
+          else
+            resolve(res);
+        });
+      });
+
+  } else {
+
+    return new Promise((resolve, reject) => {
+      const textStream = streamifyString(body);
+      let res = [];
+      rdfParser
+        .parse(textStream, {
+          contentType: 'application/ld+json'
+        })
+        .on('data', quad => {
+          let q = filterAndConvertTriple(quad, 'value')
+          if (q) res.push(q)
+        })
+        .on('error', error => reject(error))
+        .on('end', () => {
+          resolve(res);
+        });
+      });
+  }
 }
 
 module.exports = {
@@ -139,5 +224,13 @@ module.exports = {
   findParentContainers,
   filterAgentAcl,
   getUserAgentSearchParam,
-  getAclUriFromResourceUri
+  getAclUriFromResourceUri,
+  convertBodyToTriples,
+  agentPredicates,
+  filterTriplesForResource,
+  FULL_TYPE_URI,
+  FULL_ACCESSTO_URI,
+  FULL_DEFAULT_URI,
+  FULL_MODE_URI,
+  ACL_NS
 };
