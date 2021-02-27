@@ -155,6 +155,8 @@ const TripleStoreService = {
           Accept: acceptNegotiatedType.fusekiMapping
         };
 
+        console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
+
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
         const response = await fetch(url, {
           method: 'POST',
@@ -165,7 +167,10 @@ const TripleStoreService = {
           await handleError(url, response);
         }
 
-        ctx.meta.$responseType = response.headers.get('content-type');
+        // we don't use the property ctx.meta.$responseType because we are not in a HTTP API call here
+        // we are in an moleculer Action.
+        // we use a different name (without the $) and then retrieve this value in the API action (sparqlendpoint.query) to set the $responseType
+        ctx.meta.responseType = response.headers.get('content-type');
 
         const regex = /(CONSTRUCT|SELECT|ASK).*/gm;
         const verb = regex.exec(query)[1];
@@ -179,7 +184,7 @@ const TripleStoreService = {
             }
             break;
           case 'SELECT':
-            if (acceptType === MIME_TYPES.JSON) {
+            if (acceptType === MIME_TYPES.JSON || acceptType === MIME_TYPES.SPARQL_JSON) {
               const jsonResult = await response.json();
               return await this.sparqlJsonParser.parseJsonResults(jsonResult);
             } else {

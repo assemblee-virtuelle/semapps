@@ -16,7 +16,7 @@ const SparqlEndpointService = {
         accept: accept
       });
       if (ctx.meta.$responseType === undefined) {
-        ctx.meta.$responseType = accept;
+        ctx.meta.$responseType = ctx.meta.responseType || accept;
       }
       return response;
     },

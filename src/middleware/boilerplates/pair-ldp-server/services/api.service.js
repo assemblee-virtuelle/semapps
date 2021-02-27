@@ -74,7 +74,8 @@ module.exports = {
       this.connector.getRoute(),
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes')),
-      ...(await this.broker.call('sparqlEndpoint.getApiRoutes'))
+      ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
+      ...(await this.broker.call('webacl.getApiRoutes'))
     ].forEach(route => this.addRoute(route));
   },
   methods: {
