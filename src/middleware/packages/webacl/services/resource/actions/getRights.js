@@ -11,7 +11,9 @@ const {
   checkAgentPresent, 
   getUserGroups,
   findParentContainers,
-  filterAgentAcl
+  filterAgentAcl,
+  getAclUriFromResourceUri,
+  getUserAgentSearchParam
 } = require('../../../utils');
 
 const prefixes = {
@@ -45,22 +47,6 @@ const prefixesJsonLD = {
   'acl:mode': {
     "@id": "http://www.w3.org/ns/auth/acl#mode",
       "@type": "@id"
-  }
-}
-
-function getUserAgentSearchParam(user, groups) {
-
-  if (user === 'anon') {
-    return {
-      foafAgent: true
-    }
-  } else {
-    return {
-      foafAgent: true,
-      authAgent: true,
-      webId: user,
-      groups: groups
-    }
   }
 }
 
@@ -128,18 +114,11 @@ async function filterAcls(hasControl, uaSearchParam, acls) {
   return [];
 }
 
-function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'))
-}
-
 async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isContainer) {
 
   let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-
-  let controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, isContainer);
-
+  let controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
   let uaSearchParam = getUserAgentSearchParam(user);
-
   let hasControl = checkAgentPresent(controls, uaSearchParam );
   let groups;
 
@@ -184,9 +163,9 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   }
 
   // we finish to get all the ACLs for the resource itself
-  let reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, isContainer);
-  let writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, isContainer);
-  let appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, isContainer);
+  let reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
+  let writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
+  let appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
 
   let document = []
   
@@ -194,6 +173,17 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   document.push(... await filterAcls(hasControl, uaSearchParam, writes))
   document.push(... await filterAcls(hasControl, uaSearchParam, appends))
   document.push(... await filterAcls(hasControl, uaSearchParam, controls))
+
+  if (isContainer && hasControl) {
+    let containerreads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName, true);
+    document.push(... await filterAcls(hasControl, uaSearchParam, containerreads))
+    let containerwrites = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName, true);
+    document.push(... await filterAcls(hasControl, uaSearchParam, containerwrites))
+    let containerappends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName, true);
+    document.push(... await filterAcls(hasControl, uaSearchParam, containerappends))
+    let containercontrols = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName, true);
+    document.push(... await filterAcls(hasControl, uaSearchParam, containercontrols))
+  }
 
   for (const [ key, value ] of Object.entries(containersMap)) {
     document.push(... await filterAcls(hasControl, uaSearchParam, value.reads))
@@ -224,49 +214,27 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
+      resourceUri: { type: 'string', optional: true },
       slugParts: { type: "array", items: "string", optional: true },
       webId: { type: 'string', optional: true },
       accept: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      let { slugParts, webId, accept } = ctx.params;
+      let { slugParts, webId, accept, resourceUri } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-
       if (!slugParts || slugParts.length == 0) {
         // this is the root container.
         slugParts = ['/'] ;
       }
+      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
+      let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-      // it can be a container or a resource
-      let resourceUri = urlJoin(this.settings.baseUrl, ...slugParts);
-      let resourceAclUri = urlJoin(this.settings.baseUrl, '_acl', ...slugParts);
+      return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri:resourceUri },{ meta: { webId:'system' } });
-
-      if (containerExist) {
-
-        return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, true);
-
-      } else {
-
-        // it must be a resource then!
-
-        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri },{ meta: { webId:'system' } });
-
-        if (!resourceExist) {
-          throw new MoleculerError(
-            `Cannot get permissions of non-existing container or resource ${resourceUri}`,
-            404, 'NOT_FOUND'
-          );
-        }
-
-        return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName);
-
-      }
     }   
   }
 };

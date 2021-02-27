@@ -13,7 +13,7 @@ const middlewares = [
   parseHeader,
   negotiateContentType,
   negotiateAccept,
-  parseJson,
+  //parseJson,
 ];
 
 module.exports = {
@@ -49,6 +49,8 @@ module.exports = {
           authentication: true,
           aliases: {
             'GET /_acl/:slugParts*': [...middlewares, 'webacl.resource.api_getRights'],
+            'GET /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
+            'POST /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
           },
           bodyParsers: {
             json: true

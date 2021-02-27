@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-
+const urlJoin = require('url-join');
 
 const RESOURCE_CONTAINERS_QUERY = (resource) => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
@@ -100,6 +100,22 @@ const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
 
 }
 
+function getUserAgentSearchParam(user, groups) {
+
+  if (user === 'anon') {
+    return {
+      foafAgent: true
+    }
+  } else {
+    return {
+      foafAgent: true,
+      authAgent: true,
+      webId: user,
+      groups: groups
+    }
+  }
+}
+
 const checkAgentPresent = ( acls , agentSearchParam ) => {
 
   for (const acl of acls) {
@@ -112,10 +128,16 @@ const checkAgentPresent = ( acls , agentSearchParam ) => {
 
 }
 
+function getAclUriFromResourceUri(baseUrl, resourceUri) {
+  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'))
+}
+
 module.exports = {
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,
   findParentContainers,
-  filterAgentAcl
+  filterAgentAcl,
+  getUserAgentSearchParam,
+  getAclUriFromResourceUri
 };
