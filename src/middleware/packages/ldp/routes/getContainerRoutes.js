@@ -33,6 +33,8 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
   const actions = serviceName
     ? {
         list: serviceName + '.find',
+        head: serviceName + '.head',
+        headres: serviceName + '.headres',
         get: serviceName + '.get',
         post: serviceName + '.create',
         patch: serviceName + '.update',
@@ -41,6 +43,8 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
       }
     : {
         list: 'ldp.container.api_get',
+        head: 'ldp.container.api_head',
+        headres: 'ldp.resource.api_head',
         get: 'ldp.resource.api_get',
         post: 'ldp.resource.api_post',
         patch: 'ldp.resource.api_patch',
@@ -53,8 +57,10 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
       authorization: false,
       authentication: true,
       aliases: {
+        'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
         'GET /': [...middlewares, actions.list],
-        'GET /:id': [...middlewares, actions.get]
+        'GET /:id': [...middlewares, actions.get],
+        'HEAD /:id': [addContainerUriMiddleware(containerUri), actions.headres]
       },
       ...commonRouteConfig
     },
