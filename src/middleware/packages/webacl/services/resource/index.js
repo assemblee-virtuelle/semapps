@@ -3,6 +3,7 @@ const getRightsAction = require('./actions/getRights');
 const setRightsAction = require('./actions/setRights');
 const addRightsAction = require('./actions/addRights');
 const hasRightsAction = require('./actions/hasRights');
+const deleteAllRightsAction = require('./actions/deleteAllRights');
 const { MoleculerError } = require('moleculer').Errors;
 const { 
   getAuthorizationNode, 
@@ -29,6 +30,7 @@ module.exports = {
   },
   dependencies: [ 'triplestore'],
   actions: {
+    deleteAllRights:deleteAllRightsAction.action,
     // Actions accessible through the API
     api_hasRights: hasRightsAction.api,
     hasRights: hasRightsAction.action,

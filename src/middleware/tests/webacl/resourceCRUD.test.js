@@ -109,6 +109,8 @@ describe('middleware CRUD resource with perms', () => {
 
   }, 20000);
 
+  let resourceUri;
+
   test('Ensure a call to ldp.resource.post creates some default permissions', async () => {
 
     try {
@@ -125,10 +127,8 @@ describe('middleware CRUD resource with perms', () => {
         containerUri: CONFIG.HOME_URL + 'resources'
       };
       let webId = 'http://a/user';
-      const resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId } });
-      console.log(resourceUri)
+      resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId } });
       project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
-      console.log(project1)
       expect(project1['pair:description']).toBe('myProject');
 
       let resourceRights = await broker.call('webacl.resource.hasRights',{
@@ -149,6 +149,38 @@ describe('middleware CRUD resource with perms', () => {
       });
 
     } catch (e) {
+      expect(e).toBe(null)
+    }
+
+  }, 20000);
+
+  test('Ensure a call to ldp.resource.delete removes all its permissions', async () => {
+
+    try {
+      const urlParamsPost = {
+        resourceUri,
+        webId : 'http://a/user'
+      };
+      let webId = 'http://a/user';
+      
+      await broker.call('ldp.resource.delete', urlParamsPost);
+      
+      const result = await broker.call('triplestore.query', {
+        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+          SELECT ?auth ?p2 ?o WHERE { GRAPH <http://semapps.org/webacl> { 
+          ?auth ?p <${resourceUri}>.
+          FILTER (?p IN (acl:accessTo, acl:default ) )
+          ?auth ?p2 ?o  } }`,
+        webId: 'system',
+        accept: MIME_TYPES.JSON
+      });
+
+      console.log(result)
+      
+      expect(result.length).toBe(0);
+
+    } catch (e) {
+      console.log(e)
       expect(e).toBe(null)
     }
 
