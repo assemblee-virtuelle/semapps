@@ -17,7 +17,7 @@ module.exports = {
     containers: [],
     defaultOptions
   },
-  dependencies: ['ldp', 'triplestore'],
+  dependencies: ['ldp', 'triplestore', 'webacl'],
   actions: {
     attach: attachAction,
     clear: clearAction,

@@ -153,12 +153,14 @@ class Connector {
       if (token) {
         const payload = await this.verifyToken(token);
         ctx.meta.tokenPayload = payload;
-        ctx.meta.webId = await this.getWebId(ctx);
+        ctx.meta.webId = await this.getWebId(ctx) || 'anon';
         return Promise.resolve(payload);
       } else {
+        ctx.meta.webId = 'anon'
         return Promise.resolve(null);
       }
     } catch (err) {
+      ctx.meta.webId = 'anon'
       return Promise.reject(err);
     }
   }
@@ -168,12 +170,14 @@ class Connector {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
         ctx.meta.tokenPayload = await this.verifyToken(token);
-        ctx.meta.webId = await this.getWebId(ctx);
+        ctx.meta.webId = await this.getWebId(ctx) || 'anon';
         return Promise.resolve(ctx);
       } else {
+        ctx.meta.webId = 'anon'
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
     } catch (err) {
+      ctx.meta.webId = 'anon'
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
     }
   }

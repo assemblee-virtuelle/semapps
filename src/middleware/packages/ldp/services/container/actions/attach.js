@@ -9,18 +9,19 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { containerUri, resourceUri, webId } = ctx.params;
+    const { containerUri, resourceUri } = ctx.params;
+    let { webId } = ctx.params;
+    webId = webId || ctx.meta.webId;
 
-    if (webId) ctx.meta.webId = webId;
-
-    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } } );
     if (!resourceExists) throw new Error('Cannot attach non-existing resource: ' + resourceUri);
 
-    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx });
+    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx, meta: { webId } });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.insert', {
-      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`
+      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
+      webId
     });
 
     ctx.emit('ldp.container.attached', {

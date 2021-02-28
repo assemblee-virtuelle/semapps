@@ -17,8 +17,7 @@ module.exports = {
           slug: ctx.meta.headers.slug,
           resource,
           contentType: ctx.meta.headers['content-type'],
-          accept: MIME_TYPES.JSON,
-          webId: ctx.meta.webId
+          accept: MIME_TYPES.JSON
         });
       } else {
         if (ctx.params.files) {
@@ -41,7 +40,6 @@ module.exports = {
             },
             contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
-            webId: ctx.meta.webId,
             fileStream: file.readableStream
           });
         }
@@ -82,8 +80,9 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const { resource, containerUri, slug, contentType, webId, fileStream } = ctx.params;
-
+      const { resource, containerUri, slug, contentType, fileStream } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
         containerUri,
@@ -91,7 +90,7 @@ module.exports = {
       );
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId} } );
 
       if (!containerExist) {
         throw new MoleculerError(
@@ -104,6 +103,17 @@ module.exports = {
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
+
+      // verifier que nous avons bien le droit Write ou Append sur le container.
+      let containerRights = await ctx.call('webacl.resource.hasRights',{
+        resourceUri: containerUri,
+        rights: { 
+          write: true,
+          append: true
+        },
+        webId});
+      
+      if (!containerRights.write && !containerRights.append) throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
 
       if (fileStream) {
         const filename = resource['@id'].replace(containerUri + '/', '');
@@ -125,6 +135,27 @@ module.exports = {
         }
       }
 
+      let newRights = {}
+      if (webId == 'anon') {
+        newRights.anon = {
+          read: true,
+          write: true
+        }
+      } else {
+        newRights.user = {
+          uri: webId,
+          read: true,
+          write: true,
+          control: true
+        }
+      }
+
+      await ctx.call('webacl.resource.addRights', {
+        webId: 'system',
+        resourceUri: resource['@id'],
+        newRights
+      });
+
       await ctx.call('triplestore.insert', {
         resource,
         contentType,
@@ -143,7 +174,8 @@ module.exports = {
           resourceUri: resource['@id'],
           accept: MIME_TYPES.JSON,
           queryDepth: 1,
-          forceSemantic: true
+          forceSemantic: true,
+          webId
         },
         { meta: { $cache: false } }
       );

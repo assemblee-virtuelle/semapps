@@ -13,8 +13,7 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
         resourceUri,
-        accept,
-        webId: ctx.meta.webId
+        accept
       });
     } catch (e) {
       console.error(e);
@@ -41,13 +40,15 @@ module.exports = {
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, webId, forceSemantic } = ctx.params;
+      const { resourceUri, forceSemantic } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
       const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
 
-      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta : { webId } } );
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);

@@ -9,8 +9,7 @@ module.exports = {
       const { typeURL, id, containerUri } = ctx.params;
       const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
       await ctx.call('ldp.resource.delete', {
-        resourceUri,
-        webId: ctx.meta.webId
+        resourceUri
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -30,7 +29,9 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      const { resourceUri, webId } = ctx.params;
+      const { resourceUri } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
@@ -38,13 +39,14 @@ module.exports = {
         resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1,
-        forceSemantic: true
+        forceSemantic: true,
+        webId
       });
 
       await ctx.call('ldp.container.detach', {
         containerUri: getContainerFromUri(resourceUri),
         resourceUri
-      });
+      }, { meta: { webId } });
 
       await ctx.call('triplestore.update', {
         query: `

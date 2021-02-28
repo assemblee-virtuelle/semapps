@@ -279,6 +279,45 @@ Hence, all resources should be modified with a `"@base": "http://server.com/_acl
 
 But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
 
+* call `addRights` as an moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
+```
+{
+  anon: {
+    read: boolean,
+    write: boolean,
+    append: boolean,
+    control: boolean,
+  },
+  anyUser: {
+    read: boolean,
+    write: boolean,
+    append: boolean,
+    control: boolean,
+  },
+  user: {
+    uri: '<URI of user>'
+    read: boolean
+    write: boolean
+    append: boolean
+    control: boolean
+  },
+  group: {
+    uri: '<URI of group>'
+    read: boolean
+    write: boolean
+    append: boolean
+    control: boolean
+  },
+  default : { // this is only possible on a container.
+    anon : { ... same as above },
+    anyUser : { ... same as above },
+    user : { ... same as above },
+    group : { ... same as above },
+  }
+}
+```
+
+This can only process one user and/or group at a time. repeat the call if you need to add permissions for several users or groups. Note that this limitation is not present in the `PATCH` HTTP method, but only if you call the action from moleculer. 
 
 ### webacl.resource.setRights
 

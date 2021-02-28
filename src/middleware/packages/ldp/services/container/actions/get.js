@@ -18,8 +18,7 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.container.get', {
         containerUri,
-        accept,
-        webId: ctx.meta.webId
+        accept
       });
     } catch (e) {
       console.error(e);
@@ -42,7 +41,10 @@ module.exports = {
       keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
-      const { containerUri, filters, webId } = ctx.params;
+      const { containerUri, filters } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
+
       const { accept, dereference, queryDepth, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params

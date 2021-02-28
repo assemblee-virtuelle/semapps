@@ -83,6 +83,11 @@ const FULL_ACCESSTO_URI = 'http://www.w3.org/ns/auth/acl#accessTo';
 const FULL_MODE_URI = 'http://www.w3.org/ns/auth/acl#mode';
 const FULL_DEFAULT_URI = 'http://www.w3.org/ns/auth/acl#default';
 const ACL_NS = 'http://www.w3.org/ns/auth/acl#';
+const FULL_AGENTCLASS_URI = 'http://www.w3.org/ns/auth/acl#agentClass';
+const FULL_AGENT_URI = 'http://www.w3.org/ns/auth/acl#agent';
+const FULL_AGENT_GROUP = 'http://www.w3.org/ns/auth/acl#agentGroup';
+const FULL_FOAF_AGENT = 'http://xmlns.com/foaf/0.1/Agent';
+const FULL_ACL_ANYAGENT = 'http://www.w3.org/ns/auth/acl#AuthenticatedAgent'
 
 const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
 
@@ -93,16 +98,16 @@ const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
     || acl.p.value == FULL_DEFAULT_URI) 
   }
 
-  if (agentSearchParam.foafAgent && acl.p.value == 'http://www.w3.org/ns/auth/acl#agentClass' && acl.o.value == 'http://xmlns.com/foaf/0.1/Agent')
+  if (agentSearchParam.foafAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_FOAF_AGENT)
     return true;
   
-  if (agentSearchParam.authAgent && acl.p.value == 'http://www.w3.org/ns/auth/acl#agentClass' && acl.o.value == 'http://www.w3.org/ns/auth/acl#AuthenticatedAgent')
+  if (agentSearchParam.authAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_ACL_ANYAGENT)
     return true;
 
-  if (agentSearchParam.webId && acl.p.value == 'http://www.w3.org/ns/auth/acl#agent' && acl.o.value == agentSearchParam.webId)
+  if (agentSearchParam.webId && acl.p.value == FULL_AGENT_URI && acl.o.value == agentSearchParam.webId)
     return true;
   
-  if (agentSearchParam.groups && agentSearchParam.groups.length && acl.p.value == 'http://www.w3.org/ns/auth/acl#agentGroup' && agentSearchParam.groups.includes(acl.o.value))
+  if (agentSearchParam.groups && agentSearchParam.groups.length && acl.p.value == FULL_AGENT_GROUP && agentSearchParam.groups.includes(acl.o.value))
     return true;
 
   return false;
@@ -138,9 +143,9 @@ const checkAgentPresent = ( acls , agentSearchParam ) => {
 }
 
 const agentPredicates = [
-  'http://www.w3.org/ns/auth/acl#agentClass',
-  'http://www.w3.org/ns/auth/acl#agent',
-  'http://www.w3.org/ns/auth/acl#agentGroup'
+  FULL_AGENTCLASS_URI,
+  FULL_AGENT_URI,
+  FULL_AGENT_GROUP
 ]
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
@@ -232,5 +237,10 @@ module.exports = {
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,
   FULL_MODE_URI,
-  ACL_NS
+  ACL_NS,
+  FULL_AGENTCLASS_URI,
+  FULL_AGENT_URI,
+  FULL_AGENT_GROUP,
+  FULL_FOAF_AGENT,
+  FULL_ACL_ANYAGENT
 };

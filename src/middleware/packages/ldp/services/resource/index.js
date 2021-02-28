@@ -14,7 +14,7 @@ module.exports = {
     ontologies: [],
     containers: []
   },
-  dependencies: ['ldp', 'triplestore'],
+  dependencies: ['ldp', 'triplestore', 'webacl'],
   actions: {
     exist: existAction,
     // Actions accessible through the API
