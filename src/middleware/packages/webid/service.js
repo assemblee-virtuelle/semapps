@@ -39,6 +39,23 @@ const WebIdService = {
         contentType: MIME_TYPES.JSON
       });
 
+      // We have to manually add the permissions for the user resource, as this is a very rare case 
+      // where the perms cannot be added before the creation of the resource (as the webId is generated afterwards)
+
+      const newRights = {
+        user: {
+          uri: webId,
+          read: true,
+          write: true,
+          control: true
+        }
+      }
+      await ctx.call('webacl.resource.addRights', {
+        webId: 'system',
+        resourceUri: webId, // itself !
+        newRights
+      });
+
       let newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
         accept: MIME_TYPES.JSON,
@@ -88,7 +105,6 @@ const WebIdService = {
       `;
       return await ctx.call('triplestore.query', {
         query: request,
-        webId: ctx.meta.webId,
         accept: accept
       });
     },
@@ -104,7 +120,8 @@ const WebIdService = {
           ?webId foaf:email '${email}' .
         }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
       return results.length > 0 ? results[0].webId.value : null;

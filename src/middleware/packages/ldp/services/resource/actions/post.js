@@ -134,26 +134,28 @@ module.exports = {
         }
       }
 
-      let newRights = {}
-      if (webId == 'anon') {
-        newRights.anon = {
-          read: true,
-          write: true
+      if (webId != 'system'){ 
+        let newRights = {}
+        if (webId == 'anon') {
+          newRights.anon = {
+            read: true,
+            write: true
+          }
+        } else {
+          newRights.user = {
+            uri: webId,
+            read: true,
+            write: true,
+            control: true
+          }
         }
-      } else {
-        newRights.user = {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        }
+        await ctx.call('webacl.resource.addRights', {
+          webId: 'system',
+          resourceUri: resource['@id'],
+          newRights
+        });
       }
-
-      await ctx.call('webacl.resource.addRights', {
-        webId: 'system',
-        resourceUri: resource['@id'],
-        newRights
-      });
+      else console.log(`resource ${resource['@id']} created without permissions as call was made by system`);
 
       await ctx.call('triplestore.insert', {
         resource,
