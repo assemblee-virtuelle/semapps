@@ -15,13 +15,19 @@ module.exports = {
   },
   dependencies: [ 'triplestore'],
   actions: {
-    create: createAction.action,
-    delete: deleteAction.action,
-    addMember: addMemberAction.action,
-    getMembers: getMembersAction.action,
     isMember: isMemberAction.action,
-    removeMember: removeMemberAction.action,
-    getGroups: getGroupsAction.action,
     // Actions accessible through the API
+    addMember: addMemberAction.action,
+    api_addMember: addMemberAction.api,
+    create: createAction.action,
+    api_create: createAction.api,
+    delete: deleteAction.action,
+    api_delete: deleteAction.api,
+    getGroups: getGroupsAction.action,
+    api_getGroups: getGroupsAction.api,
+    getMembers: getMembersAction.action,
+    api_getMembers: getMembersAction.api,
+    removeMember: removeMemberAction.action,
+    api_removeMember: removeMemberAction.api,
   }
 };

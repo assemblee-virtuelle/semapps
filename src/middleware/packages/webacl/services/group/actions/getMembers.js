@@ -2,6 +2,13 @@ const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
 
 module.exports = {
+  api: async function api(ctx) {
+
+    return await ctx.call('webacl.group.getMembers', {
+      groupSlug: ctx.params.id,
+    });
+
+  },
   action: {
     visibility: 'public',
     params: {
@@ -37,8 +44,6 @@ module.exports = {
           { <${groupUri}> vcard:hasMember ?m } }`,
         webId: 'system',
       })
-
-      // ctx.meta.$statusCode = 200;
 
       return members.map(m => m.m.value)
 

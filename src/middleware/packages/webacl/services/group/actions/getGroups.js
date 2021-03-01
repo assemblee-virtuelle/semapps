@@ -2,6 +2,12 @@ const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
 
 module.exports = {
+  api: async function api(ctx) {
+
+    return await ctx.call('webacl.group.getGroups', {
+    });
+
+  },
   action: {
     visibility: 'public',
     params: {
@@ -14,14 +20,6 @@ module.exports = {
       let groups;
 
       if (webId != 'system') {
-        // verifier que nous avons bien le droit Read sur le group.
-        let groupRights = await ctx.call('webacl.resource.hasRights',{
-          resourceUri: groupUri,
-          rights: { 
-            read: true
-          },
-          webId});
-        if (!groupRights.read) throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
 
         let agentSelector = webId == 'anon' ? 'acl:agentClass foaf:Agent.' : `acl:agent <${webId}>.`;
 
@@ -51,8 +49,6 @@ module.exports = {
           webId: 'system',
         })
       }
-
-      // ctx.meta.$statusCode = 200;
 
       return groups.map(m => m.g.value)
 

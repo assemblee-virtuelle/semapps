@@ -7,6 +7,17 @@ const {
 
 
 module.exports = {
+  api: async function api(ctx) {
+
+    if (!ctx.params.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
+
+    await ctx.call('webacl.group.create', {
+      slug: ctx.params.slug
+    });
+
+    ctx.meta.$statusCode = 204;
+
+  },
   action: {
     visibility: 'public',
     params: {

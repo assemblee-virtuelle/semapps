@@ -74,6 +74,12 @@ module.exports = {
             'GET /_acl/:slugParts*': [...middlewares, 'webacl.resource.api_getRights'],
             'GET /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
             'POST /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
+            'PATCH /_group/:id': ['webacl.group.api_addMember'],
+            'POST /_group': ['webacl.group.api_create'],
+            'GET /_group/:id': ['webacl.group.api_getMembers'],
+            'GET /_group': ['webacl.group.api_getGroups'],
+            'DELETE /_group/:id': ['webacl.group.api_delete'],
+            'POST /_group/:id': ['webacl.group.api_removeMember'],
           },
           bodyParsers: {
             json: true

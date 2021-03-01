@@ -82,7 +82,7 @@ module.exports = {
       slugParts = ['/'] ;
     }
     let resourceUri = urlJoin(this.settings.baseUrl, ...slugParts);
-    console.log(ctx.params)
+
     return await ctx.call('webacl.resource.hasRights', {
       resourceUri: resourceUri,
       rights: ctx.params.rights,

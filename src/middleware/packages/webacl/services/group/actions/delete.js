@@ -3,6 +3,17 @@ const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 
 module.exports = {
+  api: async function api(ctx) {
+
+    if (!ctx.params.memberUri) throw new MoleculerError('needs a memberUri in your PATCH (json)', 400, 'BAD_REQUEST');
+
+    await ctx.call('webacl.group.delete', {
+      groupSlug: ctx.params.id,
+    });
+
+    ctx.meta.$statusCode = 204;
+
+  },
   action: {
     visibility: 'public',
     params: {
@@ -60,8 +71,6 @@ module.exports = {
           }`,
         webId: 'system',
       })
-
-      //ctx.meta.$statusCode = 204;
 
     }
   }
