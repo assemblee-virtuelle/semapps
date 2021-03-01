@@ -339,3 +339,45 @@ The same rules as for `addRights` apply, regarding the format of the HTTP payloa
 
 ## ACL groups
 
+### webacl.group.create
+
+* `POST /_group` with a json payload containing `{ "slug": "name_of_the_group" }`
+will return a 400 if the group already exists.
+otherwise, these are the permissions you will get on this new group :
+if you created it while being logged-in: yoursef : read, write, control.
+if you where not logged in, the group gets permissions for anonymous users : read and write.
+
+### webacl.group.addMember
+
+* `PATCH /_group/name_of_the_group` with a json payload containing `{ "memberUri": "uri_of_user_to_be_added" }`
+if the user is already present in the group, nothing happens.
+If you need to add several members, repeat the request, one member at a time.
+You need Write or Append permission on the group.
+
+### webacl.group.getMembers
+
+* `GET /_group/name_of_the_group` returns a JSON array with strings of the members URIs.
+You need Read permission on the group.
+
+### webacl.group.isMember
+
+This is not available as an HTTP API. params are `{ groupSlug, memberId }` to check if memberId belings to this group.
+You need Read permission on the group.
+
+### webacl.group.removeMember
+
+* `POST /_group/name_of_the_group` with a json payload containing `{ "deleteUserUri": "uri_of_user_to_be_removed" }`
+if the user is not a member, nothing happens.
+You need Write permission on the group.
+
+### webacl.group.delete
+
+* `DELETE /_group/name_of_the_group`
+You need Write permission on the group.
+This will remove all members, and also will remove all permissions this group had on any resource in the system.
+
+
+### webacl.group.getGroups
+
+* `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
+You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
