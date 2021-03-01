@@ -148,6 +148,18 @@ const agentPredicates = [
   FULL_AGENT_GROUP
 ]
 
+async function aclGroupExists(groupUri, ctx, graphName) {
+  return await ctx.call('triplestore.query',{
+    query: `
+      PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+      ASK
+      WHERE { GRAPH ${graphName} {
+        <${groupUri}> a vcard:Group .
+      } }
+    `,
+    webId: 'system'})
+}
+
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'))
 }
@@ -233,6 +245,7 @@ module.exports = {
   convertBodyToTriples,
   agentPredicates,
   filterTriplesForResource,
+  aclGroupExists,
   FULL_TYPE_URI,
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,

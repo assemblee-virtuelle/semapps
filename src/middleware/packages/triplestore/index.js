@@ -5,12 +5,13 @@ const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 const { throw403, throw500 } = require('@semapps/middlewares');
 
 const handleError = async function(url, response){
+  let text = await response.text();
   if (response.status == 403)
-    throw403(await response.text());
+    throw403(text);
   else {
-    let txt = await response.text();
-    if (response.status == 500 && txt.includes('permissions violation')) 
-      throw403(txt);
+    // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
+    if (response.status == 500 && text.includes('permissions violation')) 
+     throw403(text);
     else
       throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
   }
@@ -145,7 +146,8 @@ const TripleStoreService = {
           optional: true
         },
         accept: {
-          type: 'string'
+          type: 'string',
+          default: MIME_TYPES.JSON
         }
       },
       async handler(ctx) {

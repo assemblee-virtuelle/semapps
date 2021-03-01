@@ -68,6 +68,11 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	private static final String ACLGraphName = "http://semapps.org/securedWebacl";
 	private static final String ACLGraphNameExternal = "http://semapps.org/webacl";
 
+	public ShiroEvaluator( Model model ) throws Exception
+	{
+		throw new Exception("your dataset .ttl configuration file is too old. please use the new one that you will find in the /jena-fuseki folder");
+		
+	}
 	/**
 	 * 
 	 * @param model The graph we are going to evaluate against.
@@ -715,7 +720,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		ShiroEvaluator.recycleUse();
 
-		LOG.info( "evaluate action " + action);
+		//LOG.info( "evaluate action " + action);
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
 

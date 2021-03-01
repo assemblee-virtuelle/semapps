@@ -5,6 +5,7 @@ const addMemberAction = require('./actions/addMember');
 const getMembersAction = require('./actions/getMembers');
 const isMemberAction = require('./actions/isMember');
 const removeMemberAction = require('./actions/removeMember');
+const getGroupsAction = require('./actions/getGroups');
 
 module.exports = {
   name: 'webacl.group',
@@ -20,6 +21,7 @@ module.exports = {
     getMembers: getMembersAction.action,
     isMember: isMemberAction.action,
     removeMember: removeMemberAction.action,
+    getGroups: getGroupsAction.action,
     // Actions accessible through the API
   }
 };

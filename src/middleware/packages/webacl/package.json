@@ -24,6 +24,7 @@
     "moleculer": "^0.14.3",
     "n3": "^1.8.0",
     "rdf-parse": "^1.7.0",
+    "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1"
   }

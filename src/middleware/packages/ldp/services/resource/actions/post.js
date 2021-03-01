@@ -112,7 +112,6 @@ module.exports = {
           append: true
         },
         webId});
-      
       if (!containerRights.write && !containerRights.append) throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
 
       if (fileStream) {

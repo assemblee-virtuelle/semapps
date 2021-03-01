@@ -139,11 +139,11 @@ module.exports = {
         // we set new rights for a non existing resource
         let aclUri = getAclUriFromResourceUri(this.settings.baseUrl,resourceUri) + '#'
         difference = processNewRights(newRights, aclUri);
-        // we currently do not add default container permissions if any is set in newRights. this is because we cannot know for sure 
+        // we do add default container permissions if any is set in newRights. but we cannot know for sure 
         // that the resource that will be created will be a container. we don't want to add default permissions on a resource !
-        // but i guess this will ahve to be done. we will need to be careful, as programmers, not to call newRights with default perms for a resource.
-        // if we need it, it would be something like: 
-        // if (newRights.default) difference = difference.concat( processNewRights(newRights.default, aclUri+'Default'));
+        // please be careful, as programmers, not to call newRights with 'default' perms for a resource.
+        // it should only be used for containers
+        if (newRights.default) difference = difference.concat( processNewRights(newRights.default, aclUri+'Default'));
         currentAuths = {}
              
         if (difference.length == 0) new MoleculerError('No permission set for the new resource. This won\'t work!', 400, 'BAD_REQUEST');
@@ -158,7 +158,7 @@ module.exports = {
         addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      console.log(addRequest)
+      //console.log(addRequest)
 
       await ctx.call('triplestore.insert',{
         resource: addRequest,

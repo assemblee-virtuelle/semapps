@@ -1,16 +1,68 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
+const createSlug = require('speakingurl');
+const urlJoin = require('url-join');
 
 module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: { type: 'object' },
-      webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      groupSlug: { type: 'string', optional: true, min:1, trim:true },
+      groupUri: { type: 'string', optional: true, trim:true },
+      webId: { type: 'string', optional: true}
     },
     async handler(ctx) {
       
+      let { groupSlug, groupUri } = ctx.params;
+      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      
+      if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
+
+      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl,'_group',groupSlug);
+
+      // TODO: check that the group exists ?
+
+      if (webId != 'system') {
+        // verifier que nous avons bien le droit Write sur le group.
+        let groupRights = await ctx.call('webacl.resource.hasRights',{
+          resourceUri: groupUri,
+          rights: { 
+            write: true
+          },
+          webId});
+        if (!groupRights.write) throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
+      }
+
+      // Deleting the group
+      await ctx.call('triplestore.update',{
+        query: `DELETE WHERE { GRAPH ${this.settings.graphName} 
+                { <${groupUri}> ?p ?o. } }`,
+        webId: 'system',
+      })
+
+      await ctx.call('webacl.resource.deleteAllRights', {resourceUri:groupUri }, { meta: { webId: 'system'} } );
+
+      // removing the acl:agentGroup relation to some Authorizations
+      await ctx.call('triplestore.update',{
+        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+          DELETE WHERE { GRAPH ${this.settings.graphName} { ?auth acl:agentGroup <${groupUri}> }}`,
+        webId: 'system',
+      })
+
+      // removing the Authorizations that are now empty
+      await ctx.call('triplestore.update',{
+        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+          WITH ${this.settings.graphName}
+          DELETE { ?auth ?p ?o }
+          WHERE { ?auth a acl:Authorization; ?p ?o
+            FILTER NOT EXISTS { ?auth acl:agent ?z }
+            FILTER NOT EXISTS { ?auth acl:agentGroup ?z2 }
+            FILTER NOT EXISTS { ?auth acl:agentClass ?z3 }
+          }`,
+        webId: 'system',
+      })
+
+      //ctx.meta.$statusCode = 204;
+
     }
   }
 };

@@ -37,7 +37,7 @@ module.exports = {
       forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
     },
     async handler(ctx) {
       const { resourceUri, forceSemantic } = ctx.params;

@@ -52,7 +52,7 @@ We continue the explanation of the configuration file :
 
 If the end-user adds some ACL tuples in the defaultGraph (via the sparql endpoint offered by the middleware, or as admin in the web interface of jena) then those ACL tuples will just be useless. We never use the defaultGraph to read out ACLs. This way, there is no way to inject malicious ACL tuples in our permission system.
 
-## Web interface from SPARQL queries
+## Web interface for SPARQL queries
 
 Fuseki offers a web interface to query your dataset [here](http://localhost:3030/dataset.html)
 
@@ -137,6 +137,9 @@ When coding in moleculer, it is important to always respect those rules:
 * when calling the action directly from the same service `this.actions.nameOfAction(params)` it is important to add a second argument to pass the context `nameOfAction( params, { defaultCtx: ctx} );`
 * when inside an action and calling another action (to another service), always use the form `ctx.call()` and not the form `this.broker.call()` as the later will lose the context.
 * when you need to make a `system` call to the triplestore, you have to explicitly state it in the call, by adding an option in the 3rd arguments (2nd if using this.actions)) `{ meta: { webId:'system' } }` like this: `ctx.call('action.name',{ param }, { meta: { webId:'system' } })`
+* when programming an action in moleculer, if you want to offer the user a parameter called `webId` in your `ctx.params`, then becareful of 2 points:
+  * you don't need to set this param `webId: ctx.meta.webId` when you call your action from the "API action". Indeed, the webId will come automatically from the context meta.
+  * in the moleculer action, you have to check if you received a webId from params, otherwise, use ctx.meta.webId. Something like `const webId = ctx.params.webId || ctx.meta.webId` and most importantly, in all your subsequent ctx.calls inside the action code, always pass this webId explicitly ! Or to other actions that take a webId in their params, or to actions that don't take a webId in their params and in this case by using the meta in 3rd argument : `ctx.call('an.action',{...myparams},{ meta: { webId} });`.
 
 ## APIs
 
@@ -279,7 +282,7 @@ Hence, all resources should be modified with a `"@base": "http://server.com/_acl
 
 But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
 
-* call `addRights` as an moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
+* call `addRights` as a moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
 ```
 {
   anon: {
@@ -331,4 +334,8 @@ THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type`
 The former permissions that are not present in the document will be removed.
 The new permissions will be added.
 
-The same rules as for `addRights` apply, regarding the format of the payload.
+The same rules as for `addRights` apply, regarding the format of the HTTP payload. This action can hardy be called from middleware.
+
+
+## ACL groups
+

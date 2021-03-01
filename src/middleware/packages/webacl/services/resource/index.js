@@ -8,6 +8,7 @@ const { MoleculerError } = require('moleculer').Errors;
 const { 
   getAuthorizationNode, 
   getAclUriFromResourceUri,
+  aclGroupExists,
   agentPredicates,
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,
@@ -44,6 +45,15 @@ module.exports = {
   methods: {
     // will return true if it is a container, false otherwise
     async checkResourceOrContainerExists(ctx, resourceUri) {
+      if (resourceUri.startsWith(urlJoin(this.settings.baseUrl,'_group'))){
+        let exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
+        if (!exists)
+          throw new MoleculerError(
+            `Cannot get permissions of non-existing ACL group ${resourceUri}`,
+            404, 'NOT_FOUND'
+          );
+        return false; // it is never a container
+      }
       // it can be a container or a resource
       const containerExist = await ctx.call('ldp.container.exist', { containerUri:resourceUri },{ meta: { webId:'system' } });
       if (!containerExist) {
