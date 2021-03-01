@@ -7,7 +7,7 @@ module.exports = {
 
     if (!ctx.params.deleteUserUri) throw new MoleculerError('needs a deleteUserUri in your POST (json)', 400, 'BAD_REQUEST');
 
-    await ctx.call('webacl.group.addMember', {
+    await ctx.call('webacl.group.removeMember', {
       groupSlug: ctx.params.id,
       memberUri: ctx.params.deleteUserUri
     });
@@ -44,10 +44,6 @@ module.exports = {
           webId});
         if (!groupRights.write) throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
       }
-
-      console.log(`PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-      DELETE DATA { GRAPH ${this.settings.graphName}
-        { <${groupUri}> vcard:hasMember <${memberUri}> } }`)
 
       await ctx.call('triplestore.update',{
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
