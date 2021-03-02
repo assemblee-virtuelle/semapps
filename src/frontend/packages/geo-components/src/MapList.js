@@ -1,18 +1,20 @@
 import React from 'react';
 import { useListContext } from 'react-admin';
 import { useLocation } from 'react-router';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 
-const MapList = ({ latitude, longitude, label, description, popupContent, height, center, zoom, ...otherProps }) => {
+const MapList = ({ latitude, longitude, label, description, popupContent, height, center, zoom, connectMarkers, ...otherProps }) => {
   const { ids, data, basePath } = useListContext();
 
   // Get the zoom and center from query string, if available
   const query = new URLSearchParams(useLocation().search);
   center = query.has('lat') && query.has('lng') ? [query.get('lat'), query.get('lng')] : center;
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
+
+  let previousRecord;
 
   return (
     <MapContainer style={{ height }} center={center} zoom={zoom} {...otherProps}>
@@ -32,11 +34,21 @@ const MapList = ({ latitude, longitude, label, description, popupContent, height
 
           // Display a marker only if there is a latitude and longitude
           if (record.latitude && record.longitude) {
-            return (
-              <Marker key={id} position={[record.latitude, record.longitude]}>
-                <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
-              </Marker>
+            const marker = (
+              <>
+                <Marker key={id} position={[record.latitude, record.longitude]}>
+                  <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
+                </Marker>
+                {connectMarkers && previousRecord && (
+                  <Polyline positions={[[previousRecord.latitude, previousRecord.longitude], [record.latitude, record.longitude]]} />
+                )}
+              </>
             );
+
+            // Save record so that we can trace lines
+            previousRecord = record;
+
+            return marker;
           } else {
             return null;
           }
@@ -51,6 +63,7 @@ MapList.defaultProps = {
   height: 700,
   center: [47, 2.213749],
   zoom: 6,
+  connectMarkers: false,
   scrollWheelZoom: false,
   popupContent: DefaultPopupContent
 };
