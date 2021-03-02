@@ -74,7 +74,7 @@ module.exports = {
       additionalRights: { type: 'object', optional: true },
     },
     async handler(ctx) {
-      let { slugParts, webId, addedRights, resourceUri, newRights } = ctx.params;
+      let { slugParts, webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       
       let difference;
