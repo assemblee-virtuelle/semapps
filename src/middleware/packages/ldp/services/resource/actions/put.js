@@ -17,7 +17,7 @@ module.exports = {
         resource,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
-        slug: id
+        slug: id,
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {

@@ -52,7 +52,9 @@ export const OrganizationEdit = props => (
       </JsonLdReferenceInput>
       <JsonLdReferenceInput label="Partenaires" reference="Agent" source="pair:partnerOf">
         <AutocompleteArrayInput
-          optionText={record => (record && (record['pair:label'] || record['foaf:givenName'])) || 'LABEL MANQUANT'}
+          optionText={record =>
+            (record && (record['pair:label'] || record['foaf:givenName'])) || 'LABEL MANQUANT'
+          }
           fullWidth
         />
       </JsonLdReferenceInput>

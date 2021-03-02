@@ -28,7 +28,7 @@ module.exports = {
     delete: deleteAction.action,
     api_put: putAction.api,
     put: putAction.action,
-    api_head: headAction.api
+    api_head: headAction.api,
   },
   methods
 };

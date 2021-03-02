@@ -35,14 +35,11 @@ const NotificationService = {
           'semapps:deviceId': device['@id'],
           'semapps:addedAt': new Date().toISOString(),
           'semapps:status': 'queued',
-          'semapps:message': JSON.stringify(
-            {
-              to: device['semapps:pushToken'],
-              body: message,
-              data
-            },
-            { parentCtx: ctx }
-          )
+          'semapps:message': JSON.stringify({
+            to: device['semapps:pushToken'],
+            body: message,
+            data
+          }, { parentCtx: ctx })
         });
       }
     },
@@ -60,14 +57,11 @@ const NotificationService = {
           // NOTE: Not all tickets have IDs; for example, tickets for notifications
           // that could not be enqueued will have error information and no receipt ID.
           if (receipt[0].id) {
-            await this.actions.update(
-              {
-                '@id': notification['@id'],
-                'semapps:status': 'processed',
-                'semapps:receiptId': receipt[0].id
-              },
-              { parentCtx: ctx }
-            );
+            await this.actions.update({
+              '@id': notification['@id'],
+              'semapps:status': 'processed',
+              'semapps:receiptId': receipt[0].id
+            }, { parentCtx: ctx });
           } else {
             // NOTE: If a ticket contains an error code in ticket.details.error, you
             // must handle it appropriately. The error codes are listed in the Expo
@@ -101,14 +95,11 @@ const NotificationService = {
               )['@id'];
 
               if (status === 'ok') {
-                await this.actions.update(
-                  {
-                    '@id': notificationId,
-                    'semapps:status': 'checked',
-                    'semapps:receiptStatus': status
-                  },
-                  { parentCtx: ctx }
-                );
+                await this.actions.update({
+                  '@id': notificationId,
+                  'semapps:status': 'checked',
+                  'semapps:receiptStatus': status
+                }, { parentCtx: ctx });
               } else if (status === 'error') {
                 // Append the error code to the message for easier debug
                 if (details && details.error) {
@@ -129,35 +120,25 @@ const NotificationService = {
   },
   methods: {
     async findByStatus(status, ctx) {
-      const collection = await this.actions.find(
-        {
-          query: {
-            'semapps:status': status
-          }
-        },
-        { parentCtx: ctx }
-      );
+      const collection = await this.actions.find({
+        query: {
+          'semapps:status': status
+        }
+      }, { parentCtx: ctx });
       return collection['ldp:contains'] || [];
     },
     async markAsError(notificationId, message, ctx) {
-      const notification = await this.actions.update(
-        {
-          '@id': notificationId,
-          'semapps:status': 'error',
-          'semapps:errorMessage': message
-        },
-        { parentCtx: ctx }
-      );
+      const notification = await this.actions.update({
+        '@id': notificationId,
+        'semapps:status': 'error',
+        'semapps:errorMessage': message
+      }, { parentCtx: ctx });
 
       // Also mark device as error
-      await ctx.call(
-        'push.device.update',
-        {
-          '@id': notification['semapps:deviceId'],
-          'semapps:errorMessage': message
-        },
-        { parentCtx: ctx }
-      );
+      await ctx.call('push.device.update', {
+        '@id': notification['semapps:deviceId'],
+        'semapps:errorMessage': message
+      }, { parentCtx: ctx });
     }
   }
 };

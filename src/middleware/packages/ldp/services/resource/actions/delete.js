@@ -43,14 +43,10 @@ module.exports = {
         webId
       });
 
-      await ctx.call(
-        'ldp.container.detach',
-        {
-          containerUri: getContainerFromUri(resourceUri),
-          resourceUri
-        },
-        { meta: { webId } }
-      );
+      await ctx.call('ldp.container.detach', {
+        containerUri: getContainerFromUri(resourceUri),
+        resourceUri
+      }, { meta: { webId } });
 
       await ctx.call('triplestore.update', {
         query: `
@@ -61,7 +57,7 @@ module.exports = {
         webId
       });
 
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
+      await ctx.call('webacl.resource.deleteAllRights', {resourceUri}, { meta: { webId: 'system'} } );
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);

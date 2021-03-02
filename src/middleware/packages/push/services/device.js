@@ -17,28 +17,22 @@ const DeviceService = {
     async subscribe(ctx) {
       const { name, yearClass, userUri, pushToken } = ctx.params;
 
-      let device = await this.actions.find(
-        {
-          query: {
-            'semapps:ownedBy': userUri,
-            'semapps:pushToken': pushToken
-          }
-        },
-        { parentCtx: ctx }
-      );
+      let device = await this.actions.find({
+        query: {
+          'semapps:ownedBy': userUri,
+          'semapps:pushToken': pushToken
+        }
+      }, { parentCtx: ctx });
 
       if (!device['ldp:contains']) {
-        device = await this.actions.create(
-          {
-            '@type': 'semapps:Device',
-            'semapps:name': name,
-            'semapps:yearClass': yearClass,
-            'semapps:ownedBy': userUri,
-            'semapps:pushToken': pushToken,
-            'semapps:addedAt': new Date().toISOString()
-          },
-          { parentCtx: ctx }
-        );
+        device = await this.actions.create({
+          '@type': 'semapps:Device',
+          'semapps:name': name,
+          'semapps:yearClass': yearClass,
+          'semapps:ownedBy': userUri,
+          'semapps:pushToken': pushToken,
+          'semapps:addedAt': new Date().toISOString()
+        }, { parentCtx: ctx });
 
         if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
           await ctx.call('push.notification.send', {
@@ -48,15 +42,12 @@ const DeviceService = {
         }
       } else {
         // If there was an error message on the device, clear it
-        device = await this.actions.update(
-          {
-            '@id': device['ldp:contains'][0]['@id'],
-            'semapps:name': name,
-            'semapps:yearClass': yearClass,
-            'semapps:errorMessage': null
-          },
-          { parentCtx: ctx }
-        );
+        device = await this.actions.update({
+          '@id': device['ldp:contains'][0]['@id'],
+          'semapps:name': name,
+          'semapps:yearClass': yearClass,
+          'semapps:errorMessage': null
+        }, { parentCtx: ctx });
       }
 
       return device;
@@ -65,15 +56,12 @@ const DeviceService = {
       let devices = [];
 
       for (let userUri of ctx.params.users) {
-        const container = await this.actions.find(
-          {
-            query: {
-              'semapps:ownedBy': userUri,
-              'semapps:errorMessage': null
-            }
-          },
-          { parentCtx: ctx }
-        );
+        const container = await this.actions.find({
+          query: {
+            'semapps:ownedBy': userUri,
+            'semapps:errorMessage': null
+          }
+        }, { parentCtx: ctx });
 
         if (container['ldp:contains']) {
           devices.push(...container['ldp:contains']);

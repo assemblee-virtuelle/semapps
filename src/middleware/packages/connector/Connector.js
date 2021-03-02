@@ -104,12 +104,13 @@ class Connector {
       let error = await new Promise(resolve => {
         try {
           asyncRes = middleware(req, res, resolve);
-        } catch (e) {
-          console.log(e);
+        }
+        catch(e){
+          console.log(e)
           resolve(e);
         }
       });
-      if (error) throw new MoleculerError(error);
+      if (error) throw new MoleculerError(error)
       await asyncRes;
     }
   }
@@ -132,7 +133,7 @@ class Connector {
         },
         async 'GET auth'(req, res, next) {
           try {
-            await this.connector.login()(req, res);
+            await (this.connector.login()(req, res));
           } catch (e) {
             console.log(e);
             //next(e);
@@ -140,7 +141,7 @@ class Connector {
           }
         }
       },
-      onError(req, res, err) {
+      onError (req, res, err) {
         console.log(err);
       }
     };
@@ -155,11 +156,11 @@ class Connector {
         ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
         return Promise.resolve(payload);
       } else {
-        ctx.meta.webId = 'anon';
+        ctx.meta.webId = 'anon'
         return Promise.resolve(null);
       }
     } catch (err) {
-      ctx.meta.webId = 'anon';
+      ctx.meta.webId = 'anon'
       return Promise.reject(err);
     }
   }
@@ -172,11 +173,11 @@ class Connector {
         ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
         return Promise.resolve(ctx);
       } else {
-        ctx.meta.webId = 'anon';
+        ctx.meta.webId = 'anon'
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
     } catch (err) {
-      ctx.meta.webId = 'anon';
+      ctx.meta.webId = 'anon'
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
     }
   }
