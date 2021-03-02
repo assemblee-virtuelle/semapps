@@ -6,7 +6,18 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 
-const MapList = ({ latitude, longitude, label, description, popupContent, height, center, zoom, connectMarkers, ...otherProps }) => {
+const MapList = ({
+  latitude,
+  longitude,
+  label,
+  description,
+  popupContent,
+  height,
+  center,
+  zoom,
+  connectMarkers,
+  ...otherProps
+}) => {
   const { ids, data, basePath } = useListContext();
 
   // Get the zoom and center from query string, if available
@@ -40,7 +51,12 @@ const MapList = ({ latitude, longitude, label, description, popupContent, height
                   <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
                 </Marker>
                 {connectMarkers && previousRecord && (
-                  <Polyline positions={[[previousRecord.latitude, previousRecord.longitude], [record.latitude, record.longitude]]} />
+                  <Polyline
+                    positions={[
+                      [previousRecord.latitude, previousRecord.longitude],
+                      [record.latitude, record.longitude]
+                    ]}
+                  />
                 )}
               </>
             );
