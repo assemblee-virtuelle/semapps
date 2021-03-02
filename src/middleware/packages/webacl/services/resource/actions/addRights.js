@@ -66,7 +66,7 @@ module.exports = {
       slugParts: { type: "array", items: "string", optional: true },
       webId: { type: 'string', optional: true },
       // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
-      // you will most liquely prefer to use additionalRights instead.
+      // you will most likely prefer to use additionalRights instead.
       addedRights: { type: 'array', optional: true, min:1 },
       // newRights is used to add rights to a non existing resource.
       newRights: { type: 'object', optional: true },

@@ -1,6 +1,11 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
+const { 
+  removeAgentGroupOrAgentFromAuthorizations
+} = require('../../../utils');
+
+removeAgentGroupOrAgentFromAuthorizations
 
 module.exports = {
   api: async function api(ctx) {
@@ -50,25 +55,7 @@ module.exports = {
 
       await ctx.call('webacl.resource.deleteAllRights', {resourceUri:groupUri }, { meta: { webId: 'system'} } );
 
-      // removing the acl:agentGroup relation to some Authorizations
-      await ctx.call('triplestore.update',{
-        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-          DELETE WHERE { GRAPH ${this.settings.graphName} { ?auth acl:agentGroup <${groupUri}> }}`,
-        webId: 'system',
-      })
-
-      // removing the Authorizations that are now empty
-      await ctx.call('triplestore.update',{
-        query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-          WITH ${this.settings.graphName}
-          DELETE { ?auth ?p ?o }
-          WHERE { ?auth a acl:Authorization; ?p ?o
-            FILTER NOT EXISTS { ?auth acl:agent ?z }
-            FILTER NOT EXISTS { ?auth acl:agentGroup ?z2 }
-            FILTER NOT EXISTS { ?auth acl:agentClass ?z3 }
-          }`,
-        webId: 'system',
-      })
+      await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
 
     }
   }

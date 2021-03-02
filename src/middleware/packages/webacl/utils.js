@@ -234,6 +234,33 @@ async function convertBodyToTriples(body, contentType) {
   }
 }
 
+// TODO: if one day you code a delete Profile action (probably in webid service) 
+// then you msut call the below method after deleting the user (and pass false to isGroup)
+
+async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName, ctx) {
+
+  // removing the acl:agentGroup relation to some Authorizations
+  await ctx.call('triplestore.update',{
+    query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+      DELETE WHERE { GRAPH ${graphName} { ?auth ${isGroup?'acl:agentGroup':'acl:agent'} <${uri}> }}`,
+    webId: 'system',
+  })
+
+  // removing the Authorizations that are now empty
+  await ctx.call('triplestore.update',{
+    query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+      WITH ${graphName}
+      DELETE { ?auth ?p ?o }
+      WHERE { ?auth a acl:Authorization; ?p ?o
+        FILTER NOT EXISTS { ?auth acl:agent ?z }
+        FILTER NOT EXISTS { ?auth acl:agentGroup ?z2 }
+        FILTER NOT EXISTS { ?auth acl:agentClass ?z3 }
+      }`,
+    webId: 'system',
+  })
+
+}
+
 module.exports = {
   getAuthorizationNode,
   checkAgentPresent,
@@ -246,6 +273,7 @@ module.exports = {
   agentPredicates,
   filterTriplesForResource,
   aclGroupExists,
+  removeAgentGroupOrAgentFromAuthorizations,
   FULL_TYPE_URI,
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,
