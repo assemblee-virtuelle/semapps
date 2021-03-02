@@ -339,6 +339,8 @@ The same rules as for `addRights` apply, regarding the format of the HTTP payloa
 
 ## ACL groups
 
+The groups have permissions too. And you can modify those permissions by using the usual APIs with the URL of the form `/_acl/_group/group-name`.
+
 ### webacl.group.create
 
 * `POST /_group` with a json payload containing `{ "slug": "name_of_the_group" }`
