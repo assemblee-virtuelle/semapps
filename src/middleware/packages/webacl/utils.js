@@ -4,12 +4,11 @@ const { Parser } = require('n3');
 const streamifyString = require('streamify-string');
 const rdfParser = require('rdf-parse').default;
 
-const RESOURCE_CONTAINERS_QUERY = (resource) => `SELECT ?container
+const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
 
 const findParentContainers = async (ctx, resource) => {
-
-  let query = "PREFIX ldp: <http://www.w3.org/ns/ldp#>\n" +  RESOURCE_CONTAINERS_QUERY(resource);
+  let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
   let containers = await ctx.call('triplestore.query', {
     query,
@@ -18,10 +17,9 @@ const findParentContainers = async (ctx, resource) => {
   });
 
   return containers;
+};
 
-}
-
-const USER_GROUPS_QUERY = (member, ACLGraphName) => { 
+const USER_GROUPS_QUERY = (member, ACLGraphName) => {
   return `SELECT ?group
   WHERE {
 	{ ?group vcard:hasMember <${member}> . }
@@ -32,17 +30,16 @@ const USER_GROUPS_QUERY = (member, ACLGraphName) => {
     ?anyLink rdfs:subPropertyOf vcard:hasMember .
    }
   }`;
-}
+};
 
-const PREFIXES = "PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>\n"+
-"PREFIX acl: <http://www.w3.org/ns/auth/acl#>\n"+
-"PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n"+
-"PREFIX ldp: <http://www.w3.org/ns/ldp#>\n"+
-"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n";
-
+const PREFIXES =
+  'PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>\n' +
+  'PREFIX acl: <http://www.w3.org/ns/auth/acl#>\n' +
+  'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
+  'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' +
+  'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n';
 
 const getUserGroups = async (ctx, user, graphName) => {
-
   let query = PREFIXES + USER_GROUPS_QUERY(user, graphName);
 
   let groups = await ctx.call('triplestore.query', {
@@ -51,9 +48,8 @@ const getUserGroups = async (ctx, user, graphName) => {
     webId: 'system'
   });
 
-  return groups.map(g => g.group.value)
-
-}
+  return groups.map(g => g.group.value);
+};
 
 const AUTHORIZATION_NODE_QUERY = (mode, accesToOrDefault, resource, graphName) => `SELECT ?auth ?p ?o
 WHERE { GRAPH ${graphName} {
@@ -64,9 +60,9 @@ WHERE { GRAPH ${graphName} {
 } }`;
 
 const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, graphName, seachForDefault) => {
-
-  let query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n"+ 
-              AUTHORIZATION_NODE_QUERY(mode, seachForDefault? 'default':'accessTo', resourceUri, graphName);
+  let query =
+    'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n' +
+    AUTHORIZATION_NODE_QUERY(mode, seachForDefault ? 'default' : 'accessTo', resourceUri, graphName);
 
   let auths = await ctx.call('triplestore.query', {
     query,
@@ -74,9 +70,11 @@ const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, grap
     webId: 'system'
   });
 
-  return auths.map(a => {a.auth.value = resourceAclUri+'#'+ (seachForDefault?'Default':'')+mode; return a} );
-
-}
+  return auths.map(a => {
+    a.auth.value = resourceAclUri + '#' + (seachForDefault ? 'Default' : '') + mode;
+    return a;
+  });
+};
 
 const FULL_TYPE_URI = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 const FULL_ACCESSTO_URI = 'http://www.w3.org/ns/auth/acl#accessTo';
@@ -87,69 +85,62 @@ const FULL_AGENTCLASS_URI = 'http://www.w3.org/ns/auth/acl#agentClass';
 const FULL_AGENT_URI = 'http://www.w3.org/ns/auth/acl#agent';
 const FULL_AGENT_GROUP = 'http://www.w3.org/ns/auth/acl#agentGroup';
 const FULL_FOAF_AGENT = 'http://xmlns.com/foaf/0.1/Agent';
-const FULL_ACL_ANYAGENT = 'http://www.w3.org/ns/auth/acl#AuthenticatedAgent'
+const FULL_ACL_ANYAGENT = 'http://www.w3.org/ns/auth/acl#AuthenticatedAgent';
 
 const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
-
   if (forOutput) {
-    return (acl.p.value == FULL_TYPE_URI
-    || acl.p.value ==  FULL_ACCESSTO_URI
-    || acl.p.value == FULL_MODE_URI
-    || acl.p.value == FULL_DEFAULT_URI) 
+    return (
+      acl.p.value == FULL_TYPE_URI ||
+      acl.p.value == FULL_ACCESSTO_URI ||
+      acl.p.value == FULL_MODE_URI ||
+      acl.p.value == FULL_DEFAULT_URI
+    );
   }
 
-  if (agentSearchParam.foafAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_FOAF_AGENT)
-    return true;
-  
-  if (agentSearchParam.authAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_ACL_ANYAGENT)
-    return true;
+  if (agentSearchParam.foafAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_FOAF_AGENT) return true;
 
-  if (agentSearchParam.webId && acl.p.value == FULL_AGENT_URI && acl.o.value == agentSearchParam.webId)
-    return true;
-  
-  if (agentSearchParam.groups && agentSearchParam.groups.length && acl.p.value == FULL_AGENT_GROUP && agentSearchParam.groups.includes(acl.o.value))
+  if (agentSearchParam.authAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_ACL_ANYAGENT) return true;
+
+  if (agentSearchParam.webId && acl.p.value == FULL_AGENT_URI && acl.o.value == agentSearchParam.webId) return true;
+
+  if (
+    agentSearchParam.groups &&
+    agentSearchParam.groups.length &&
+    acl.p.value == FULL_AGENT_GROUP &&
+    agentSearchParam.groups.includes(acl.o.value)
+  )
     return true;
 
   return false;
-
-}
+};
 
 function getUserAgentSearchParam(user, groups) {
-
   if (user === 'anon') {
     return {
       foafAgent: true
-    }
+    };
   } else {
     return {
       foafAgent: true,
       authAgent: true,
       webId: user,
       groups: groups
-    }
+    };
   }
 }
 
-const checkAgentPresent = ( acls , agentSearchParam ) => {
-
+const checkAgentPresent = (acls, agentSearchParam) => {
   for (const acl of acls) {
-
-    let res = filterAgentAcl( acl, agentSearchParam);
+    let res = filterAgentAcl(acl, agentSearchParam);
     if (res) return true;
-
   }
   return false;
+};
 
-}
-
-const agentPredicates = [
-  FULL_AGENTCLASS_URI,
-  FULL_AGENT_URI,
-  FULL_AGENT_GROUP
-]
+const agentPredicates = [FULL_AGENTCLASS_URI, FULL_AGENT_URI, FULL_AGENT_GROUP];
 
 async function aclGroupExists(groupUri, ctx, graphName) {
-  return await ctx.call('triplestore.query',{
+  return await ctx.call('triplestore.query', {
     query: `
       PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
       ASK
@@ -157,64 +148,51 @@ async function aclGroupExists(groupUri, ctx, graphName) {
         <${groupUri}> a vcard:Group .
       } }
     `,
-    webId: 'system'})
+    webId: 'system'
+  });
 }
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'))
+  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
 }
 
 function filterAndConvertTriple(quad, property) {
-  if (agentPredicates.includes(quad.predicate[property])){
+  if (agentPredicates.includes(quad.predicate[property])) {
     return {
       auth: quad.subject[property],
       p: quad.predicate[property],
-      o: quad.object[property],
-    }
+      o: quad.object[property]
+    };
   }
   return false;
 }
 
-const AuthorizationSuffixes = [
-  'Read', 'Write', 'Append', 'Control'
-]
+const AuthorizationSuffixes = ['Read', 'Write', 'Append', 'Control'];
 
-const AuthorizationDefaultSuffixes = [
-  'DefaultRead', 'DefaultWrite', 'DefaultAppend', 'DefaultControl'
-]
+const AuthorizationDefaultSuffixes = ['DefaultRead', 'DefaultWrite', 'DefaultAppend', 'DefaultControl'];
 
 function filterTriplesForResource(triple, resourceAclUri, allowDefault) {
-
   let split = triple.auth.split('#');
   if (split[0] != resourceAclUri) return false;
   if (AuthorizationSuffixes.includes(split[1])) return true;
   if (allowDefault && AuthorizationDefaultSuffixes.includes(split[1])) return true;
   return false;
-
 }
 
 async function convertBodyToTriples(body, contentType) {
-
   if (contentType == MIME_TYPES.TURTLE) {
-
     return new Promise((resolve, reject) => {
-      const parser = new Parser({format: 'turtle'});
+      const parser = new Parser({ format: 'turtle' });
       let res = [];
-      parser.parse( body,
-        (error, quad, prefixes) => {
-          if (error)
-            reject(error)
-          else if (quad) {
-            let q = filterAndConvertTriple(quad, 'id')
-            if (q) res.push(q)
-          }
-          else
-            resolve(res);
-        });
+      parser.parse(body, (error, quad, prefixes) => {
+        if (error) reject(error);
+        else if (quad) {
+          let q = filterAndConvertTriple(quad, 'id');
+          if (q) res.push(q);
+        } else resolve(res);
       });
-
+    });
   } else {
-
     return new Promise((resolve, reject) => {
       const textStream = streamifyString(body);
       let res = [];
@@ -223,31 +201,30 @@ async function convertBodyToTriples(body, contentType) {
           contentType: 'application/ld+json'
         })
         .on('data', quad => {
-          let q = filterAndConvertTriple(quad, 'value')
-          if (q) res.push(q)
+          let q = filterAndConvertTriple(quad, 'value');
+          if (q) res.push(q);
         })
         .on('error', error => reject(error))
         .on('end', () => {
           resolve(res);
         });
-      });
+    });
   }
 }
 
-// TODO: if one day you code a delete Profile action (probably in webid service) 
+// TODO: if one day you code a delete Profile action (probably in webid service)
 // then you msut call the below method after deleting the user (and pass false to isGroup)
 
 async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName, ctx) {
-
   // removing the acl:agentGroup relation to some Authorizations
-  await ctx.call('triplestore.update',{
+  await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-      DELETE WHERE { GRAPH ${graphName} { ?auth ${isGroup?'acl:agentGroup':'acl:agent'} <${uri}> }}`,
-    webId: 'system',
-  })
+      DELETE WHERE { GRAPH ${graphName} { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
+    webId: 'system'
+  });
 
   // removing the Authorizations that are now empty
-  await ctx.call('triplestore.update',{
+  await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
       WITH ${graphName}
       DELETE { ?auth ?p ?o }
@@ -256,9 +233,8 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
         FILTER NOT EXISTS { ?auth acl:agentGroup ?z2 }
         FILTER NOT EXISTS { ?auth acl:agentClass ?z3 }
       }`,
-    webId: 'system',
-  })
-
+    webId: 'system'
+  });
 }
 
 module.exports = {

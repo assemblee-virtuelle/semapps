@@ -90,7 +90,7 @@ module.exports = {
       );
       resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId} } );
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId } });
 
       if (!containerExist) {
         throw new MoleculerError(
@@ -105,14 +105,16 @@ module.exports = {
       }
 
       // verifier que nous avons bien le droit Write ou Append sur le container.
-      let containerRights = await ctx.call('webacl.resource.hasRights',{
+      let containerRights = await ctx.call('webacl.resource.hasRights', {
         resourceUri: containerUri,
-        rights: { 
+        rights: {
           write: true,
           append: true
         },
-        webId});
-      if (!containerRights.write && !containerRights.append) throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
+        webId
+      });
+      if (!containerRights.write && !containerRights.append)
+        throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
 
       if (fileStream) {
         const filename = resource['@id'].replace(containerUri + '/', '');
@@ -134,28 +136,27 @@ module.exports = {
         }
       }
 
-      if (webId != 'system'){ 
-        let newRights = {}
+      if (webId != 'system') {
+        let newRights = {};
         if (webId == 'anon') {
           newRights.anon = {
             read: true,
             write: true
-          }
+          };
         } else {
           newRights.user = {
             uri: webId,
             read: true,
             write: true,
             control: true
-          }
+          };
         }
         await ctx.call('webacl.resource.addRights', {
           webId: 'system',
           resourceUri: resource['@id'],
           newRights
         });
-      }
-      else console.log(`resource ${resource['@id']} created without permissions as call was made by system`);
+      } else console.log(`resource ${resource['@id']} created without permissions as call was made by system`);
 
       await ctx.call('triplestore.insert', {
         resource,
