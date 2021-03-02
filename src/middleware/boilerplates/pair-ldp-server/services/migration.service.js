@@ -28,6 +28,7 @@ module.exports = {
               read: true
             },
             anyUser: {
+              read: true,
               write: true
             }
           }
@@ -46,6 +47,7 @@ module.exports = {
                 },
                 user: {
                   uri: resource.id,
+                  read: true,
                   write: true,
                   control: true
                 }
@@ -60,6 +62,7 @@ module.exports = {
                   read: true
                 },
                 anyUser: {
+                  read: true,
                   write: true
                 }
               }
