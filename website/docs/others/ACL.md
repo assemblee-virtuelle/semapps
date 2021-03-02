@@ -381,3 +381,15 @@ This will remove all members, and also will remove all permissions this group ha
 
 * `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
 You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
+
+## Future
+
+If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
+
+When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
+```
+/_acl
+/_group
+/_rights
+```
+
