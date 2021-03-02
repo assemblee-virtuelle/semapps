@@ -92,7 +92,6 @@ module.exports = {
         ...ctx.params
       };
 
-      // console.log('initalRessource',resource);
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
         containerUri,
@@ -159,7 +158,6 @@ module.exports = {
               });
               uriInserted.push(disassemblyResourceUri);
             }
-
             resource[disassemblyItem.path] = uriInserted;
           }
         }

@@ -1,7 +1,5 @@
 import React from 'react';
-import { ChipField, SingleFieldList, TextField } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, Show, MarkdownField, UserIcon, GridList } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { Column, ColumnShowLayout, Show } from '@semapps/archipelago-layout';
 import { Typography } from '@material-ui/core';
 
 const RoleTitle = ({ record }) => {

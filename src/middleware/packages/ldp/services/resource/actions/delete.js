@@ -34,9 +34,7 @@ module.exports = {
       },
     },
     async handler(ctx) {
-      console.log('ressourceURI DELETE',ctx.params.resourceUri);
       const containerUri = getContainerFromUri(ctx.params.resourceUri);
-      // console.log(containerUri);
       const {resourceUri, webId, disassembly } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params

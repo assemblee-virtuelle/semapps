@@ -20,7 +20,8 @@ export default {
     types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organizations',
     dereference: ['pair:hasLocation/pair:hasPostalAddress','pair:organizationOfMembership'],
-    slugField: 'pair:label'
+    slugField: 'pair:label',
+    forceArray: ['pair:organizationOfMembership']
   },
   translations: {
     fr: {
