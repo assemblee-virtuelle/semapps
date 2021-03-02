@@ -48,7 +48,7 @@ module.exports = {
         ...ctx.params
       };
 
-      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta : { webId } } );
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);

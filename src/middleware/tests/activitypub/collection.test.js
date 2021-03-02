@@ -15,9 +15,9 @@ const collectionUri = CONFIG.HOME_URL + 'my-collection';
 const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
 
 beforeAll(async () => {
-  await (initialize(broker)());
+  await initialize(broker)();
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights',{
+  await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: collectionUri,
     newRights: {
@@ -26,7 +26,7 @@ beforeAll(async () => {
       }
     }
   });
-  await broker.call('webacl.resource.addRights',{
+  await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: orderedCollectionUri,
     newRights: {

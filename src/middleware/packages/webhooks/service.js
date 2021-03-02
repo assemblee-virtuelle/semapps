@@ -45,11 +45,14 @@ const WebhooksService = {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
-      const webhook = await this.actions.create({
-        '@type': 'Webhook',
-        action,
-        user: userUri
-      }, { parentCtx: ctx });
+      const webhook = await this.actions.create(
+        {
+          '@type': 'Webhook',
+          action,
+          user: userUri
+        },
+        { parentCtx: ctx }
+      );
 
       return webhook['@id'];
     },

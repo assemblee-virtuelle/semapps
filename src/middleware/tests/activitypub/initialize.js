@@ -55,39 +55,39 @@ const initialize = broker => async () => {
   });
 
   await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system'});
+  await broker.call('triplestore.dropAll', { webId: 'system' });
 
   // Restart broker after dropAll, so that the default container is recreated
   await broker.start();
 
-    // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
-    await broker.call('webacl.resource.addRights',{
-      webId: 'system',
-      slugParts: ['objects'],
-      additionalRights: {
-        anon: {
-          write: true
-        }
+  // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    slugParts: ['objects'],
+    additionalRights: {
+      anon: {
+        write: true
       }
-    });
-    await broker.call('webacl.resource.addRights',{
-      webId: 'system',
-      slugParts: ['actors'],
-      additionalRights: {
-        anon: {
-          write: true
-        }
+    }
+  });
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    slugParts: ['actors'],
+    additionalRights: {
+      anon: {
+        write: true
       }
-    });
-    await broker.call('webacl.resource.addRights',{
-      webId: 'system',
-      slugParts: ['activities'],
-      additionalRights: {
-        anon: {
-          write: true
-        }
+    }
+  });
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    slugParts: ['activities'],
+    additionalRights: {
+      anon: {
+        write: true
       }
-    });
+    }
+  });
 };
 
 module.exports = initialize;

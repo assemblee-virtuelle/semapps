@@ -40,7 +40,7 @@ const WebIdService = {
         webId: 'system'
       });
 
-      // We have to manually add the permissions for the user resource, as this is a very rare case 
+      // We have to manually add the permissions for the user resource, as this is a very rare case
       // where the perms cannot be added before the creation of the resource (as the webId is generated afterwards)
 
       const newRights = {
@@ -50,10 +50,10 @@ const WebIdService = {
           write: true,
           control: true
         },
-        anon : {
+        anon: {
           read: true
         }
-      }
+      };
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
         resourceUri: webId, // itself !

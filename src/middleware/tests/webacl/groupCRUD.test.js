@@ -11,8 +11,7 @@ const CONFIG = require('../config');
 const supertest = require('supertest');
 const urlJoin = require('url-join');
 
-const broker = new ServiceBroker({
-});
+const broker = new ServiceBroker({});
 
 let expressMocked = undefined;
 
@@ -84,105 +83,73 @@ afterAll(async () => {
 const console = require('console');
 
 describe('middleware CRUD group with perms', () => {
-
   test('Ensure a call as anonymous to webacl.group.create succeeds', async () => {
-
     try {
-    
-      const res = await broker.call('webacl.group.create', { slug: 'mygroup5'} );
+      const res = await broker.call('webacl.group.create', { slug: 'mygroup5' });
 
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL,'_group','mygroup5'))
-
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup5'));
     } catch (e) {
-      console.log(e)
-      expect(e).toEqual(null)
+      console.log(e);
+      expect(e).toEqual(null);
     }
-
   }, 20000);
 
   test('Ensure a call as user to webacl.group.create succeeds', async () => {
-
     try {
-    
-      const res = await broker.call('webacl.group.create', { slug: 'mygroup10', webId: 'http://test/user3'} );
-      
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL,'_group','mygroup10'))
+      const res = await broker.call('webacl.group.create', { slug: 'mygroup10', webId: 'http://test/user3' });
 
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup10'));
     } catch (e) {
-      console.log(e)
-      expect(e).toEqual(null)
+      console.log(e);
+      expect(e).toEqual(null);
     }
-
   }, 20000);
 
   test('Ensure a call to webacl.group.addMember succeeds. checks also getMembers', async () => {
-
     try {
-    
-      await broker.call('webacl.group.addMember', { groupSlug: 'mygroup5', memberUri: 'http://test/user1'} );
-      await broker.call('webacl.group.addMember', { groupSlug: 'mygroup5', memberUri: 'http://test/user2'} );
+      await broker.call('webacl.group.addMember', { groupSlug: 'mygroup5', memberUri: 'http://test/user1' });
+      await broker.call('webacl.group.addMember', { groupSlug: 'mygroup5', memberUri: 'http://test/user2' });
 
-      const members = await broker.call('webacl.group.getMembers', { groupSlug: 'mygroup5'} );
+      const members = await broker.call('webacl.group.getMembers', { groupSlug: 'mygroup5' });
 
-      expect(members).toEqual(expect.arrayContaining(['http://test/user1','http://test/user2']))
-
+      expect(members).toEqual(expect.arrayContaining(['http://test/user1', 'http://test/user2']));
     } catch (e) {
-      console.log(e)
-      expect(e).toEqual(null)
+      console.log(e);
+      expect(e).toEqual(null);
     }
-
   }, 20000);
 
-
   test('Ensure a call as anonymous to webacl.group.delete fails - access denied', async () => {
-
     try {
-    
-      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10'} );
-
+      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10' });
     } catch (e) {
-      expect(e.code).toEqual(403)
+      expect(e.code).toEqual(403);
     }
-
   }, 20000);
 
   test('Ensure a call as another user than creator to webacl.group.delete fails - access denied', async () => {
-
     try {
-    
-      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user2'} );
-
+      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user2' });
     } catch (e) {
-      expect(e.code).toEqual(403)
+      expect(e.code).toEqual(403);
     }
-
   }, 20000);
 
   test('Ensure a call as user to webacl.group.delete succeeds', async () => {
-
     try {
-    
-      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user3'} );
-
+      await broker.call('webacl.group.delete', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
     } catch (e) {
-      console.log(e)
-      expect(e).toEqual(null)
+      console.log(e);
+      expect(e).toEqual(null);
     }
-
   }, 20000);
 
   test('Ensure a call as anonymous to webacl.group.delete succeeds for a group created anonymously', async () => {
-
     try {
-    
-      await broker.call('webacl.group.delete', { groupSlug: 'mygroup5'} );
-
+      await broker.call('webacl.group.delete', { groupSlug: 'mygroup5' });
     } catch (e) {
-      console.log(e)
-      expect(e).toEqual(null)
+      console.log(e);
+      expect(e).toEqual(null);
     }
-
   }, 20000);
-
-
 });

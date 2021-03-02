@@ -2,17 +2,12 @@ const urlJoin = require('url-join');
 const WebACLResourceService = require('./services/resource');
 const WebACLGroupService = require('./services/group');
 
-const {
-  parseHeader,
-  negotiateContentType,
-  negotiateAccept,
-  parseJson,
-} = require('@semapps/middlewares');
+const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 const middlewares = [
   parseHeader,
   negotiateContentType,
-  negotiateAccept,
+  negotiateAccept
   //parseJson,
 ];
 
@@ -20,9 +15,9 @@ module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: null,
+    graphName: null
   },
-  dependencies: ['ldp','triplestore'],
+  dependencies: ['ldp', 'triplestore'],
   async created() {
     const { baseUrl, graphName } = this.schema.settings;
 
@@ -39,7 +34,6 @@ module.exports = {
         graphName
       }
     });
-
   },
   actions: {
     async getApiRoutes(ctx) {
@@ -51,7 +45,7 @@ module.exports = {
             json: false,
             urlencoded: false,
             text: {
-              type: ["text/turtle", "application/ld+json"]
+              type: ['text/turtle', 'application/ld+json']
             }
           },
           onBeforeCall(ctx, route, req, res) {
@@ -59,12 +53,14 @@ module.exports = {
           },
           aliases: {
             'PATCH /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
-            'PUT /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],
+            'PUT /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_setRights']
           },
-          onError (req, res, err) {
-            let { type, code, message, data, name } = err
-            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ type, code, message, data, name }))
+          onError(req, res, err) {
+            let { type, code, message, data, name } = err;
+            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
+              'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({ type, code, message, data, name }));
           }
         },
         {
@@ -79,18 +75,20 @@ module.exports = {
             'GET /_group/:id': ['webacl.group.api_getMembers'],
             'GET /_group': ['webacl.group.api_getGroups'],
             'DELETE /_group/:id': ['webacl.group.api_delete'],
-            'POST /_group/:id': ['webacl.group.api_removeMember'],
+            'POST /_group/:id': ['webacl.group.api_removeMember']
           },
           bodyParsers: {
             json: true
           },
-          onError (req, res, err) {
-            let { type, code, message, data, name } = err
-            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', { 'Content-Type': 'application/json' })
-            res.end(JSON.stringify({ type, code, message, data, name }))
+          onError(req, res, err) {
+            let { type, code, message, data, name } = err;
+            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
+              'Content-Type': 'application/json'
+            });
+            res.end(JSON.stringify({ type, code, message, data, name }));
           }
-        },
-      ]
+        }
+      ];
     }
   }
 };

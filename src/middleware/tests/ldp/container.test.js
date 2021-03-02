@@ -37,13 +37,13 @@ beforeAll(async () => {
   });
 
   await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system'});
+  await broker.call('triplestore.dropAll', { webId: 'system' });
 
   // Restart broker after dropAll, so that the default container is recreated
   await broker.start();
 
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights',{
+  await broker.call('webacl.resource.addRights', {
     webId: 'system',
     slugParts: ['resources'],
     additionalRights: {
@@ -72,7 +72,11 @@ describe('LDP container tests', () => {
       false
     );
 
-    await broker.call('ldp.container.create', { containerUri: CONFIG.HOME_URL + 'objects' }, { meta: { webId:'system' } } );
+    await broker.call(
+      'ldp.container.create',
+      { containerUri: CONFIG.HOME_URL + 'objects' },
+      { meta: { webId: 'system' } }
+    );
 
     await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(true);
 
