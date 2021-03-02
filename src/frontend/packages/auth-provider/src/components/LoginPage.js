@@ -67,7 +67,7 @@ const LoginPage = ({ theme, history, location }) => {
               className={classes.button}
               variant="outlined"
               type="submit"
-              onClick={() => login({},'/login')}
+              onClick={() => login({}, '/login')}
               startIcon={<Avatar src="/lescommuns.jpg" className={classes.icon} />}
             >
               Les Communs
