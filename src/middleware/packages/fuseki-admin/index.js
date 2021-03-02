@@ -4,7 +4,7 @@ const path = require('path');
 const templateFilePath = path.join(__dirname, 'dataset.template');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
-var format = require("string-template")
+var format = require('string-template');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -46,16 +46,16 @@ const FusekiAdminService = {
       if (!exist) {
         console.warn(`Data ${dataset} doesn't exist. Creating it...`);
         let template = await readFile(templateFilePath, 'utf8');
-        let assembler = format(template,{dataset: dataset});
+        let assembler = format(template, { dataset: dataset });
         const response = await fetch(this.settings.url + '$/datasets', {
           method: 'POST',
-          headers: { ...this.headers, 'Content-Type': 'text/turtle'},
+          headers: { ...this.headers, 'Content-Type': 'text/turtle' },
           body: assembler
         });
         if (response.status === 200) {
           console.log(`Dataset ${dataset} created`);
         } else {
-          console.log(await response.text())
+          console.log(await response.text());
           throw new Error(`Error when creating dataset ${dataset}`);
         }
       }

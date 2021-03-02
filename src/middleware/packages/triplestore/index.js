@@ -4,18 +4,15 @@ const { SparqlJsonParser } = require('sparqljson-parse');
 const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 const { throw403, throw500 } = require('@semapps/middlewares');
 
-const handleError = async function(url, response){
+const handleError = async function(url, response) {
   let text = await response.text();
-  if (response.status == 403)
-    throw403(text);
+  if (response.status == 403) throw403(text);
   else {
     // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
-    if (response.status == 500 && text.includes('permissions violation')) 
-     throw403(text);
-    else
-      throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+    if (response.status == 500 && text.includes('permissions violation')) throw403(text);
+    else throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
   }
-}
+};
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -73,7 +70,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
       }
@@ -116,7 +113,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId  || 'anon';
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         const query = ctx.params.query;
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
@@ -130,7 +127,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
       }
@@ -161,7 +158,7 @@ const TripleStoreService = {
           Accept: acceptNegotiatedType.fusekiMapping
         };
 
-        console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
+        console.log('XXX USER ', webId || ctx.meta.webId || 'anon');
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
         const response = await fetch(url, {
@@ -231,7 +228,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
 

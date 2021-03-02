@@ -8,19 +8,19 @@ module.exports = {
   dependencies: ['ldp', 'webacl'],
   actions: {
     async addRightsToAll(ctx) {
-      for( let containerConfig of containers ) {
+      for (let containerConfig of containers) {
         const container = await ctx.call(
           'ldp.container.get',
           {
             containerUri: urlJoin(CONFIG.HOME_URL, containerConfig.path),
-            accept: MIME_TYPES.JSON,
+            accept: MIME_TYPES.JSON
           },
           {
             meta: { webId: 'system' }
           }
         );
 
-        await ctx.call('webacl.resource.addRights',{
+        await ctx.call('webacl.resource.addRights', {
           webId: 'system',
           resourceUri: container.id,
           additionalRights: {
@@ -37,8 +37,8 @@ module.exports = {
         console.log('Rights added for container ' + container.id);
 
         for (let resource of container['ldp:contains']) {
-          if( containerConfig.path === '/users' ) {
-            await ctx.call('webacl.resource.addRights',{
+          if (containerConfig.path === '/users') {
+            await ctx.call('webacl.resource.addRights', {
               webId: 'system',
               resourceUri: resource.id,
               additionalRights: {
@@ -54,7 +54,7 @@ module.exports = {
               }
             });
           } else {
-            await ctx.call('webacl.resource.addRights',{
+            await ctx.call('webacl.resource.addRights', {
               webId: 'system',
               resourceUri: resource.id,
               additionalRights: {

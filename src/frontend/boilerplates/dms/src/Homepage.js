@@ -8,26 +8,30 @@ import CardContent from '@material-ui/core/CardContent';
 import { Title } from 'react-admin';
 
 const Homepage = ({ theme }) => {
-    
-    const { loading, authenticated } = useAuthState();
+  const { loading, authenticated } = useAuthState();
 
-    return (
-        <ThemeProvider theme={createMuiTheme(defaultTheme)}>
+  return (
+    <ThemeProvider theme={createMuiTheme(defaultTheme)}>
+      {authenticated && (
+        <Card>
+          <Title title="SemApps" />
+          <CardContent>
+            <h1>Welcome to SemApps</h1>
+            Choose a container in the left menu
+          </CardContent>
+        </Card>
+      )}
 
-          { authenticated && <Card>
-            <Title title="SemApps" />
-            <CardContent>
-              <h1>Welcome to SemApps</h1>
-              Choose a container in the left menu
-            </CardContent>
-          </Card> }
+      {!authenticated && loading && <Loading />}
 
-          { !authenticated && loading &&  <Loading /> }
-
-          { !authenticated && !loading && <> <h1> Not logged in</h1>  </>}
-
-        </ThemeProvider>
-    );
+      {!authenticated && !loading && (
+        <>
+          {' '}
+          <h1> Not logged in</h1>{' '}
+        </>
+      )}
+    </ThemeProvider>
+  );
 };
 
 export default Homepage;

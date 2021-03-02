@@ -19,7 +19,7 @@ function App() {
     <Admin
       disableTelemetry
       history={history}
-      title="SemApps" 
+      title="SemApps"
       customRoutes={customRoutes}
       loginPage={false}
       dashboard={Homepage}
@@ -29,32 +29,38 @@ function App() {
         resources,
         ontologies
       })}
-      authProvider={authProvider(history,process.env.REACT_APP_MIDDLEWARE_URL)}
+      authProvider={authProvider(history, process.env.REACT_APP_MIDDLEWARE_URL)}
       logoutButton={LogoutButton}
     >
       {permissions => [
-        permissions === 'user' &&
-        <Resource
-          name="Project"
-          list={ProjectList}
-          edit={ProjectEdit}
-          create={ProjectCreate}
-          icon={ProjectIcon}
-          options={{ label: 'Projets' }}
-        />,
-        permissions === 'user' &&<Resource
-          name="Organization"
-          list={OrganizationList}
-          edit={OrganizationEdit}
-          create={OrganizationCreate}
-          icon={OrganizationIcon}
-          options={{ label: 'Organisations' }}
-        />,
-        permissions === 'user' && <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />,
-        permissions === 'user' && <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />,
+        permissions === 'user' && (
+          <Resource
+            name="Project"
+            list={ProjectList}
+            edit={ProjectEdit}
+            create={ProjectCreate}
+            icon={ProjectIcon}
+            options={{ label: 'Projets' }}
+          />
+        ),
+        permissions === 'user' && (
+          <Resource
+            name="Organization"
+            list={OrganizationList}
+            edit={OrganizationEdit}
+            create={OrganizationCreate}
+            icon={OrganizationIcon}
+            options={{ label: 'Organisations' }}
+          />
+        ),
+        permissions === 'user' && (
+          <Resource name="Person" list={PersonList} icon={PersonIcon} options={{ label: 'Contributeurs' }} />
+        ),
+        permissions === 'user' && (
+          <Resource name="Concept" list={ConceptList} icon={ConceptIcon} options={{ label: 'Concepts' }} />
+        ),
         permissions === 'user' && <Resource name="Agent" />
       ]}
-    
     </Admin>
   );
 }
