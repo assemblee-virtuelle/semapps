@@ -7,4 +7,3 @@ lerna-debug.log
 *.swp
 # conflict
 *.orig
-data/
