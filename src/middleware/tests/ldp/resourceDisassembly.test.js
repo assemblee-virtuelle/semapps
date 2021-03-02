@@ -26,7 +26,7 @@ beforeAll(async () => {
       ontologies,
       containers: [
         {
-          path: 'place',
+          path: 'place'
         },
         {
           path: 'orga',
@@ -55,17 +55,17 @@ describe('CRUD Disassembly', () => {
     const urlParamsPost = {
       resource: {
         '@context': {
-          'pair': 'http://virtual-assembly.org/ontologies/pair#',
+          pair: 'http://virtual-assembly.org/ontologies/pair#',
           'pair:hasPlace': {
             '@type': '@id'
-          },
+          }
         },
         '@type': 'Organization',
         'pair:description': 'myOrga',
         'pair:label': 'myTitle',
         'pair:hasPlace': {
-          '@type':'Place',
-          'pair:description':'myPlace'
+          '@type': 'Place',
+          'pair:description': 'myPlace'
         }
       },
       contentType: MIME_TYPES.JSON,
@@ -75,8 +75,7 @@ describe('CRUD Disassembly', () => {
     const resourceUri = await broker.call('ldp.resource.post', urlParamsPost);
     orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
     expect(orga1['pair:description']).toBe('myOrga');
-    expect(orga1['pair:hasPlace']['@id']).toBeDefined()
+    expect(orga1['pair:hasPlace']['@id']).toBeDefined();
     expect(orga1['pair:hasPlace']['pair:description']).toBe('myPlace');
   }, 20000);
-
 });

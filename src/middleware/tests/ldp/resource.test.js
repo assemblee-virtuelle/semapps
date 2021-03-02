@@ -120,8 +120,6 @@ describe('CRUD Project', () => {
     );
   }, 20000);
 
-
-
   test('Replace One Project', async () => {
     const urlParamsPut = {
       resource: {
@@ -161,8 +159,6 @@ describe('CRUD Project', () => {
       expect(error && error.code).toBe(404);
     }
   }, 20000);
-
-
 
   test('Get resource with queryDepth', async () => {
     const resourceUri = await broker.call('ldp.resource.post', {

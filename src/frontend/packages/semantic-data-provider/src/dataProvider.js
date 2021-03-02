@@ -162,7 +162,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       }
     },
     getOne: async (resourceId, params) => {
-      if (!resources[resourceId]){
+      if (!resources[resourceId]) {
         Error(`Resource ${resourceId} is not mapped in resources file`);
       }
       const dataModel = resources[resourceId];
@@ -172,9 +172,9 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       // TODO compact only if remote context is different from local context
       const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
       // transform single value into array concidering forceArray predicates
-      for (const forceArrayItem of dataModel.forceArray){
-        if (compactJson[forceArrayItem] && !Array.isArray(compactJson[forceArrayItem])){
-          compactJson[forceArrayItem]=[compactJson[forceArrayItem]];
+      for (const forceArrayItem of dataModel.forceArray) {
+        if (compactJson[forceArrayItem] && !Array.isArray(compactJson[forceArrayItem])) {
+          compactJson[forceArrayItem] = [compactJson[forceArrayItem]];
         }
       }
 

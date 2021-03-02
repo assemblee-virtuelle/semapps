@@ -31,11 +31,11 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
-      },
+      }
     },
     async handler(ctx) {
       const containerUri = getContainerFromUri(ctx.params.resourceUri);
-      const {resourceUri, webId, disassembly } = {
+      const { resourceUri, webId, disassembly } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
@@ -58,12 +58,12 @@ module.exports = {
         for (disassemblyItem of disassembly) {
           if (oldData[disassemblyItem.path]) {
             let rawDisassemblyValue = oldData[disassemblyItem.path];
-            if (!Array.isArray(rawDisassemblyValue)){
-              rawDisassemblyValue=[rawDisassemblyValue];
+            if (!Array.isArray(rawDisassemblyValue)) {
+              rawDisassemblyValue = [rawDisassemblyValue];
             }
-            for (let disassemblyValue of rawDisassemblyValue){
-              console.log('disassemblyValue',disassemblyValue);
-              const idToDelete = disassemblyValue['@id']||disassemblyValue['id']||disassemblyValue;
+            for (let disassemblyValue of rawDisassemblyValue) {
+              console.log('disassemblyValue', disassemblyValue);
+              const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
               await ctx.call('ldp.resource.delete', {
                 resourceUri: idToDelete,
                 webId: webId

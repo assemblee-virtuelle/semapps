@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
-import {   ArrayInput, SimpleFormIterator, TextInput} from 'react-admin';
+import React, { useEffect, useState } from 'react';
+import { ArrayInput, SimpleFormIterator, TextInput } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 
 const ReificationArrayInput = props => {
   const useReferenceInputStyles = makeStyles({
-      form: {
-          display: 'flex',
-      },
-      container:{
-        paddingRight :'20px',
-      },
-      input:{
-        paddingRight :'20px',
-      }
+    form: {
+      display: 'flex'
+    },
+    container: {
+      paddingRight: '20px'
+    },
+    input: {
+      paddingRight: '20px'
+    }
   });
 
   const useHideInputStyles = makeStyles({
-      root: {
-          display: 'none',
-      },
+    root: {
+      display: 'none'
+    }
   });
 
-  const {reificationClass,children,...otherProps} = props;
+  const { reificationClass, children, ...otherProps } = props;
 
   const flexFormClasses = useReferenceInputStyles();
   const hideInputStyles = useHideInputStyles();
@@ -29,14 +29,12 @@ const ReificationArrayInput = props => {
   return (
     <ArrayInput {...otherProps}>
       <SimpleFormIterator classes={flexFormClasses}>
-        {
-          React.Children.map(props.children,(child, i) => {
-            return React.cloneElement(child,{
-              classes : flexFormClasses
-            });
-          })
-        }
-        <TextInput classes={hideInputStyles} source="type" initialValue={reificationClass}/>
+        {React.Children.map(props.children, (child, i) => {
+          return React.cloneElement(child, {
+            classes: flexFormClasses
+          });
+        })}
+        <TextInput classes={hideInputStyles} source="type" initialValue={reificationClass} />
       </SimpleFormIterator>
     </ArrayInput>
   );

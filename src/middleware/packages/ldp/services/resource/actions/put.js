@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri,getContainerFromUri } = require('../../../utils');
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -41,7 +41,7 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
-      },
+      }
     },
     async handler(ctx) {
       const resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
@@ -74,7 +74,7 @@ module.exports = {
           contentType,
           containerUri,
           webId,
-          slug : getSlugFromUri(resourceUri)
+          slug: getSlugFromUri(resourceUri)
         });
       } catch (e) {
         // If the insertion of new data fails, inserts back old data
@@ -83,7 +83,7 @@ module.exports = {
           contentType: MIME_TYPES.JSON,
           containerUri,
           webId,
-          slug : getSlugFromUri(oldData['@id'])
+          slug: getSlugFromUri(oldData['@id'])
         });
 
         // ... then rethrows an error
