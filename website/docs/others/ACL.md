@@ -384,12 +384,24 @@ You can then use those group URIs to give permissions to some resources to the g
 
 ## Future
 
-If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
+* If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
 
-When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
+* When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
 ```
 /_acl
 /_group
 /_rights
 ```
 
+* For perfs improvement, switch the code of ShiroEvaluator to use the Java API for querying the model, instead of SPARQL queries.
+
+* root container https://github.com/assemblee-virtuelle/semapps/issues/429
+
+* PATCH of a resource : do the DELETE and INSERT in one call/transaction.
+
+* default perms for containers as a parameter in the code?
+
+* create a system named graph to store semapps config as triples. should be protected as webacl graph (no access except by system)
+
+* inference and groups defined in the business data model : https://github.com/assemblee-virtuelle/semapps/issues/590
+in this case, how to call `removeAgentGroupOrAgentFromAuthorizations` when a group is deleted ? listen to some message ? need to configure which resource type should be listened to (Organization, Role...).

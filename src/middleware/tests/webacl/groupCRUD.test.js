@@ -124,7 +124,7 @@ describe('middleware CRUD group with perms', () => {
 
       const members = await broker.call('webacl.group.getMembers', { groupSlug: 'mygroup5'} );
 
-      expect(members).toEqual(['http://test/user1','http://test/user2'])
+      expect(members).toEqual(expect.arrayContaining(['http://test/user1','http://test/user2']))
 
     } catch (e) {
       console.log(e)

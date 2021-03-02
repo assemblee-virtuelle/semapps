@@ -1,6 +1,7 @@
 const fse = require('fs-extra');
 const path = require('path');
 const { TripleStoreService } = require('@semapps/triplestore');
+const { WebACLService } = require('@semapps/webacl');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService, containers } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
@@ -30,6 +31,12 @@ const initialize = broker => async () => {
       }
     }
   });
+  broker.createService(WebACLService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      graphName: '<http://semapps.org/webacl>'
+    }
+  });
   broker.createService(ActivityPubService, {
     settings: {
       baseUri: CONFIG.HOME_URL,
@@ -48,10 +55,39 @@ const initialize = broker => async () => {
   });
 
   await broker.start();
-  await broker.call('triplestore.dropAll');
+  await broker.call('triplestore.dropAll', { webId: 'system'});
 
   // Restart broker after dropAll, so that the default container is recreated
   await broker.start();
+
+    // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
+    await broker.call('webacl.resource.addRights',{
+      webId: 'system',
+      slugParts: ['objects'],
+      additionalRights: {
+        anon: {
+          write: true
+        }
+      }
+    });
+    await broker.call('webacl.resource.addRights',{
+      webId: 'system',
+      slugParts: ['actors'],
+      additionalRights: {
+        anon: {
+          write: true
+        }
+      }
+    });
+    await broker.call('webacl.resource.addRights',{
+      webId: 'system',
+      slugParts: ['activities'],
+      additionalRights: {
+        anon: {
+          write: true
+        }
+      }
+    });
 };
 
 module.exports = initialize;

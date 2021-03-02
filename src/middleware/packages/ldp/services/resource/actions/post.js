@@ -82,7 +82,7 @@ module.exports = {
     async handler(ctx) {
       const { resource, containerUri, slug, contentType, fileStream } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
         containerUri,
@@ -104,15 +104,17 @@ module.exports = {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
 
-      // verifier que nous avons bien le droit Write ou Append sur le container.
-      let containerRights = await ctx.call('webacl.resource.hasRights',{
-        resourceUri: containerUri,
-        rights: { 
-          write: true,
-          append: true
-        },
-        webId});
-      if (!containerRights.write && !containerRights.append) throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
+      if (webId != 'system'){ 
+        // verifier que nous avons bien le droit Write ou Append sur le container.
+        let containerRights = await ctx.call('webacl.resource.hasRights',{
+          resourceUri: containerUri,
+          rights: { 
+            write: true,
+            append: true
+          },
+          webId});
+        if (!containerRights.write && !containerRights.append) throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
+      }
 
       if (fileStream) {
         const filename = resource['@id'].replace(containerUri + '/', '');

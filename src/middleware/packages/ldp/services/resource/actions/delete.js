@@ -31,7 +31,7 @@ module.exports = {
     async handler(ctx) {
       const { resourceUri } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error

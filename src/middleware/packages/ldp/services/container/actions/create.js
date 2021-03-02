@@ -16,7 +16,7 @@ module.exports = {
     });
 
     // setting some perms on the container.
-    const webId = ctx.meta.webId;
+    const webId = ctx.meta.webId || 'anon';
     
     let newRights = {}
     if (webId == 'anon') {

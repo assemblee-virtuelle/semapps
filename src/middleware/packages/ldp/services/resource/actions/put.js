@@ -40,7 +40,7 @@ module.exports = {
     async handler(ctx) {
       const { resource, contentType } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
       const resourceUri = resource.id || resource['@id'];
 
       // Save the current data, to be able to send it through the event
