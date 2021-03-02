@@ -49,6 +49,9 @@ const WebIdService = {
           read: true,
           write: true,
           control: true
+        },
+        anon : {
+          read: true
         }
       }
       await ctx.call('webacl.resource.addRights', {
