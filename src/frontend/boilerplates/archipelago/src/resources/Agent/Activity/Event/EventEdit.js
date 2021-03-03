@@ -1,8 +1,10 @@
 import React from 'react';
-import { SimpleForm, TextInput, DateTimeInput } from 'react-admin';
+import { SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
+import frLocale from 'date-fns/locale/fr';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActorsInput, ThemesInput } from '../../../../inputs';
+import { DateTimeInput } from '@semapps/date-components';
+import { ActorsInput, ThemesInput } from '../../../../pair';
 import EventTitle from './EventTitle';
 
 const EventEdit = props => (
@@ -12,8 +14,28 @@ const EventEdit = props => (
       <TextInput source="pair:comment" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
       <TextInput source="pair:aboutPage" fullWidth />
-      <DateTimeInput source="pair:startDate" fullWidth />
-      <DateTimeInput source="pair:endDate" fullWidth />
+      <DateTimeInput
+        source="pair:startDate"
+        options={{
+          format: 'dd/MM/yyyy à HH:mm',
+          ampm: false
+        }}
+        providerOptions={{
+          locale: frLocale
+        }}
+        fullWidth
+      />
+      <DateTimeInput
+        source="pair:endDate"
+        options={{
+          format: 'dd/MM/yyyy à HH:mm',
+          ampm: false
+        }}
+        providerOptions={{
+          locale: frLocale
+        }}
+        fullWidth
+      />
       <ActorsInput source="pair:involves" />
       <ThemesInput source="pair:hasTopic" />
     </SimpleForm>

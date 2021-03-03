@@ -1,6 +1,6 @@
 {
   "name": "@semapps/archipelago-layout",
-  "version": "0.1.18",
+  "version": "0.1.21",
   "description": "React-Admin layout for semantic cartography",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -14,11 +14,19 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.57",
+    "autosuggest-highlight": "^3.1.1",
     "classnames": "^2.2.6",
+    "lodash.throttle": "^4.1.1",
+    "react-leaflet": "^3.1.0",
+    "react-leaflet-markercluster": "^3.0.0-rc1",
     "react-markdown": "^4.3.1",
     "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
+    "@material-ui/lab": "^4.0.0-alpha.57",
+    "leaflet": "^1.7.1",
+    "leaflet.markercluster": "^1.4.1",
     "react": "^16.13.0",
     "react-admin": "3.9.2"
   },
