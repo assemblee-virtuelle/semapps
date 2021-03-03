@@ -104,7 +104,7 @@ module.exports = {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
 
-      if (webId != 'system') {
+      if (webId !== 'system') {
         // verifier que nous avons bien le droit Write ou Append sur le container.
         let containerRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: containerUri,
@@ -138,14 +138,17 @@ module.exports = {
         }
       }
 
-      if (webId != 'system') {
+      if (webId !== 'system') {
         let newRights = {};
-        if (webId == 'anon') {
+        if (webId === 'anon') {
           newRights.anon = {
             read: true,
             write: true
           };
         } else {
+          newRights.anon = {
+            read: true
+          };
           newRights.user = {
             uri: webId,
             read: true,
