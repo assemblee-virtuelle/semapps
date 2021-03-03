@@ -50,6 +50,8 @@ We continue the explanation of the configuration file :
 * finally we can see that the 2 plain TDB graphs that hold our tuples are stored in 2 separate locations on the disk. the tuples of the WebACL go to the database called `aclData` while the tuples of the defaultGraph go to the database `localData`. Initially I tried to have both graphs stored in the same database. When we remove the security layers (the secured models and their evaluators), Jena accepts to store the 2 graphs in the same database. But there is a bug related to the transaction that is not propagated down the chain of wrapping of models and graphs, and it breaks Jena. [this bug report sees to be of interest](https://issues.apache.org/jira/browse/JENA-1492) but it concerns the use of a reasoner, not of a security evaluator. The bug has been fixed 2 years ago, but I suspect the wrapping of models and graphs in the SecuredAssembler is not done well, and the transaction is not forwarded down the line. [Here is a SO post that confirms that several named graphs and a defaultGraph could all be stored on the same database/DatasetTDB](https://stackoverflow.com/questions/35428064/reasoning-with-fuseki-tdb-and-named-graphs). But in our case, there is this problem of `TransactionException: Not in a transaction` ! So for the moment, the 2 graphs are stored in 2 separate databases.
 * please note that if you use additional named graphs in your system, they will be automatically created by Jena on the fly, and they will therefor be "in memory" graphs, hence, not persisted. Furthermore, they will not have any security or ACL enforcement mechanism. If you need to have some business related named graphs, you will have to add them in the localData.ttl configuration file, pretty much like the ACL graph has been added, and for the reason explained above, they will be stored in a separate database each. That does not prevent them from being accessed under the same `localData` endpoint !
 
+If the end-user adds some ACL tuples in the defaultGraph (via the sparql endpoint offered by the middleware, or as admin in the web interface of jena) then those ACL tuples will just be useless. We never use the defaultGraph to read out ACLs. This way, there is no way to inject malicious ACL tuples in our permission system.
+
 ## Web interface from SPARQL queries
 
 Fuseki offers a web interface to query your dataset [here](http://localhost:3030/dataset.html)
@@ -60,15 +62,71 @@ The `localData` dataset is accessible there as if are a `system` user, and all t
 
 ## Web ACL
 
-For now the java class `ShiroEvaluator` is just accepting every request, without checking real ACLs.
-It already prevents a SemAppsUser from accessing the ACL graph.
+The java class `ShiroEvaluator` is checking, for every SPARQL request, the subject of each tuple that the SPARQL engine has asked to receive from the underlying storage.
+It also prevents a SemAppsUser from accessing the ACL graph.
 
-TODO : implement the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.
+Implementation of the [ Web ACL specs](https://github.com/solid/web-access-control-spec) in Java.
+
+We chose to implement the algorithm with a succession of small steps and SPARQL queries.
+Indeed, at any moment, the algorithm can stop if it finds a matching permission. There is no need then to continue processing all the other cases, and we save some processing time.
+Implementing a big and unique SPARQL query that would contain all the cases would be unrealistic, and not efficient.
+
+Having a fine-grained set of small SPARQL queries is more efficient also because we can chose to which graph each part should query. Most of the queries are done on the webACL graph. We use the defaultGraph only in 2 occasions: to fetch the group members and the containers.
+
+The algorithm proceeds like follow:
+* checks permissions on the Ressource itself
+* checks permissions on the containers of that Ressource
+* checks permissions on all the parent containers in a recursive way.
+
+For each step, we have 2 cases:
+* the user is anonymous, in which case we need to check for a `acl:AgentClass` with value `foaf:Agent`
+* the user is a well known WEBID, in this case we need to check :
+  * `acl:AgentClass` with value `foaf:Agent` (public access)
+  * `acl:AgentClass` with value `acl:AuthenticatedAgent` (all knwon registered users access)
+  * `acl:Agent` with the user's webID
+  * `acl:agentGroup` with each of the groups the user belongs to (we retrieve the list separately, so we can reuse it later on, for the containers)
+
+For the access Modes, here is the corresponding table between JENA access types and WebACL. `mode2` is an additional, complementary, optional mode that needs to be checked, in some cases.
+JENA | WebACL mode1 | WebACL mode2
+--- | --- | ---
+Create | Append | Write
+Read | Read | Write
+Update | Write |
+Delete | Write | 
+
+The evaluator stores in a cache the access control result that it finds for each ressource. The cache is used for subsequent evaluate calls within the same transaction/SPARQL request. Then the cache is emptied before the next query. 
+
+Blank nodes that are not part of a resource, meaning, orphan blanks nodes that linger at the root of the graph, can be created with Sparql, but cannot be retrieved afterwards. This is because the security mechanism cannot find the resource they belong to, and therefor, it denies access to it.
+
+## Tests
+
+Some unit tests have been setup up for the ACL mechanism. 
+
+In order for the test to work properly, you need to first load 2 files into Jena `testData` dataset:
+* file `src/middleware/tests/fusekiAcl/testData.ttl`
+* file `src/middleware/tests/fusekiAcl/ACL_test_data.ttl`
+
+use this command in order to load the testData file:
+```
+$FUSEKI_HOME/tdbloader --loc=$FUSEKI_BASE/databases/testData testData.ttl
+```
+
+For the file `ACL_test_data.ttl` the easiest is to go to the web interface of fuseki, enter your the username admin and password, got to the dataset `testData` and enter the endpoint `/testData/update`. Then copy paste the content of the ACL_test_data.ttl into the textarea for the query, and press the play button.
+
+To run the tests, go to `src/middleware/tests/`.
+launch the command
+```
+npm test -- --testPathPattern=src/middleware/tests/fusekiAcl
+```
+
+During the test, if you encounter problems with the running port of Fuseki or username and password, please change values in `src/middleware/tests/.env`
+
+TODO: test membership of groups that are in the defaultGraph (with inference of `rdfs:subPropertyOf vcard:hasMember`).
 
 ## Middleware
 
 The SemApps middleware should always connect to the SPARQL endpoint with a Basic Authorization header containing the `admin` user and its password. `Authorization: Basic `and the base64 encoded username and password.
 
-If the middleware is doing a query on behalf of a semapps user, it should send the WebID URI of this user in the HTTP header `X-SemappsUser`.
+If the middleware is doing a query on behalf of a semapps user, it should send the WebID URI of this user in the HTTP header `X-SemappsUser`. If no user is logged-in and the middleware is making a request as a public, anonymous user, then the `X-SemappsUser` header should be sent with the value `anon`.
 
 If to the contrary, the middleware is modifying the ACLs, it should send no header, or a header with the X-SemappsUser set to `system`.
