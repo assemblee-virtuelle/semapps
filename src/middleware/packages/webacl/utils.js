@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const urlJoin = require('url-join');
 const { Parser } = require('n3');
 const streamifyString = require('streamify-string');
@@ -237,6 +238,11 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
   });
 }
 
+async function sanitizeSPARQL(text) {
+  if (text.includes('>') || text.includes('<') || /\s/g.test(text))
+    throw new MoleculerError('sparql injection detected. go away', 400, 'SPARQL_INJECTION');
+}
+
 module.exports = {
   getAuthorizationNode,
   checkAgentPresent,
@@ -250,6 +256,7 @@ module.exports = {
   filterTriplesForResource,
   aclGroupExists,
   removeAgentGroupOrAgentFromAuthorizations,
+  sanitizeSPARQL,
   FULL_TYPE_URI,
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,

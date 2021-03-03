@@ -384,6 +384,14 @@ This will remove all members, and also will remove all permissions this group ha
 * `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
 You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
 
+## Security
+
+In general it is possible to obtain the list of all resource inside a container, if the user has Read access to the container, and even if they have no accesss to the resources themselves. 
+
+The LDP API will not show those resources though, because of the way it is implemented internally. But a SPARQL query on the apraql public endpoint will return them. It will return only the URIs of those resources. But this could still be considered a leak of some information.
+
+The only way to eal with this problem is to uncomment line [602 of shiroEvaluator](https://github.com/assemblee-virtuelle/semapps/blob/e67f545faf55f3a6343012ab8b74878e14a7ba4c/src/jena/permissions/src/main/java/org/semapps/jena/permissions/ShiroEvaluator.java#L602) so it will check also the permissions of the Object of every triple, which we do not do for now, for performances reasons, and for compliance with the LDP protocol which deal with resources as a unit of data and ACL.
+
 ## Future
 
 * If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.

@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
+const { sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -27,8 +28,12 @@ module.exports = {
       let webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
+      if (!memberUri) throw new MoleculerError('needs a memberUri', 400, 'BAD_REQUEST');
 
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_group', groupSlug);
+
+      await sanitizeSPARQL(groupUri);
+      await sanitizeSPARQL(memberUri);
 
       // TODO: check that the member exists and is in the group ?
 
