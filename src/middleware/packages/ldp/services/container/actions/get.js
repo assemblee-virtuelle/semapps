@@ -38,12 +38,12 @@ module.exports = {
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
-      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext']
+      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
     },
     async handler(ctx) {
       const { containerUri, filters } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
 
       const { accept, dereference, queryDepth, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),

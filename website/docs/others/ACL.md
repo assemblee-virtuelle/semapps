@@ -52,7 +52,7 @@ We continue the explanation of the configuration file :
 
 If the end-user adds some ACL tuples in the defaultGraph (via the sparql endpoint offered by the middleware, or as admin in the web interface of jena) then those ACL tuples will just be useless. We never use the defaultGraph to read out ACLs. This way, there is no way to inject malicious ACL tuples in our permission system.
 
-## Web interface from SPARQL queries
+## Web interface for SPARQL queries
 
 Fuseki offers a web interface to query your dataset [here](http://localhost:3030/dataset.html)
 
@@ -137,6 +137,9 @@ When coding in moleculer, it is important to always respect those rules:
 * when calling the action directly from the same service `this.actions.nameOfAction(params)` it is important to add a second argument to pass the context `nameOfAction( params, { defaultCtx: ctx} );`
 * when inside an action and calling another action (to another service), always use the form `ctx.call()` and not the form `this.broker.call()` as the later will lose the context.
 * when you need to make a `system` call to the triplestore, you have to explicitly state it in the call, by adding an option in the 3rd arguments (2nd if using this.actions)) `{ meta: { webId:'system' } }` like this: `ctx.call('action.name',{ param }, { meta: { webId:'system' } })`
+* when programming an action in moleculer, if you want to offer the user a parameter called `webId` in your `ctx.params`, then becareful of 2 points:
+  * you don't need to set this param `webId: ctx.meta.webId` when you call your action from the "API action". Indeed, the webId will come automatically from the context meta.
+  * in the moleculer action, you have to check if you received a webId from params, otherwise, use ctx.meta.webId. Something like `const webId = ctx.params.webId || ctx.meta.webId` and most importantly, in all your subsequent ctx.calls inside the action code, always pass this webId explicitly ! Or to other actions that take a webId in their params, or to actions that don't take a webId in their params and in this case by using the meta in 3rd argument : `ctx.call('an.action',{...myparams},{ meta: { webId} });`.
 
 ## APIs
 
@@ -279,7 +282,7 @@ Hence, all resources should be modified with a `"@base": "http://server.com/_acl
 
 But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
 
-* call `addRights` as an moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
+* call `addRights` as a moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
 ```
 {
   anon: {
@@ -331,4 +334,84 @@ THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type`
 The former permissions that are not present in the document will be removed.
 The new permissions will be added.
 
-The same rules as for `addRights` apply, regarding the format of the payload.
+The same rules as for `addRights` apply, regarding the format of the HTTP payload. This action can hardy be called from middleware.
+
+
+## ACL groups
+
+The groups have permissions too. And you can modify those permissions by using the usual APIs with the URL of the form `/_acl/_group/group-name`.
+
+### webacl.group.create
+
+* `POST /_group` with a json payload containing `{ "slug": "name_of_the_group" }`
+will return a 400 if the group already exists.
+otherwise, these are the permissions you will get on this new group :
+if you created it while being logged-in: yoursef : read, write, control.
+if you where not logged in, the group gets permissions for anonymous users : read and write.
+
+### webacl.group.addMember
+
+* `PATCH /_group/name_of_the_group` with a json payload containing `{ "memberUri": "uri_of_user_to_be_added" }`
+if the user is already present in the group, nothing happens.
+If you need to add several members, repeat the request, one member at a time.
+You need Write or Append permission on the group.
+
+### webacl.group.getMembers
+
+* `GET /_group/name_of_the_group` returns a JSON array with strings of the members URIs.
+You need Read permission on the group.
+
+### webacl.group.isMember
+
+This is not available as an HTTP API. params are `{ groupSlug, memberId }` to check if memberId belings to this group.
+You need Read permission on the group.
+
+### webacl.group.removeMember
+
+* `POST /_group/name_of_the_group` with a json payload containing `{ "deleteUserUri": "uri_of_user_to_be_removed" }`
+if the user is not a member, nothing happens.
+You need Write permission on the group.
+
+### webacl.group.delete
+
+* `DELETE /_group/name_of_the_group`
+You need Write permission on the group.
+This will remove all members, and also will remove all permissions this group had on any resource in the system.
+
+
+### webacl.group.getGroups
+
+* `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
+You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
+
+## Security
+
+In general it is possible to obtain the list of all resource inside a container, if the user has Read access to the container, and even if they have no accesss to the resources themselves. 
+
+The LDP API will not show those resources though, because of the way it is implemented internally. But a SPARQL query on the apraql public endpoint will return them. It will return only the URIs of those resources. But this could still be considered a leak of some information.
+
+The only way to eal with this problem is to uncomment line [602 of shiroEvaluator](https://github.com/assemblee-virtuelle/semapps/blob/e67f545faf55f3a6343012ab8b74878e14a7ba4c/src/jena/permissions/src/main/java/org/semapps/jena/permissions/ShiroEvaluator.java#L602) so it will check also the permissions of the Object of every triple, which we do not do for now, for performances reasons, and for compliance with the LDP protocol which deal with resources as a unit of data and ACL.
+
+## Future
+
+* If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
+
+* When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
+```
+/_acl
+/_group
+/_rights
+```
+
+* For perfs improvement, switch the code of ShiroEvaluator to use the Java API for querying the model, instead of SPARQL queries.
+
+* root container https://github.com/assemblee-virtuelle/semapps/issues/429
+
+* PATCH of a resource : do the DELETE and INSERT in one call/transaction.
+
+* default perms for containers as a parameter in the code?
+
+* create a system named graph to store semapps config as triples. should be protected as webacl graph (no access except by system)
+
+* inference and groups defined in the business data model : https://github.com/assemblee-virtuelle/semapps/issues/590
+in this case, how to call `removeAgentGroupOrAgentFromAuthorizations` when a group is deleted ? listen to some message ? need to configure which resource type should be listened to (Organization, Role...).

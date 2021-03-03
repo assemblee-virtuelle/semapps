@@ -68,6 +68,11 @@ public class ShiroEvaluator implements SecurityEvaluator {
 	private static final String ACLGraphName = "http://semapps.org/securedWebacl";
 	private static final String ACLGraphNameExternal = "http://semapps.org/webacl";
 
+	public ShiroEvaluator( Model model ) throws Exception
+	{
+		throw new Exception("your dataset .ttl configuration file is too old. please use the new one that you will find in the /jena-fuseki folder");
+		
+	}
 	/**
 	 * 
 	 * @param model The graph we are going to evaluate against.
@@ -576,7 +581,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 			Resource r = model.getRDFNode( node ).asResource();
 			return evaluateResource( user, action, r );
 		}
-		// anything else (literals and blank nodes) can be seen.
+		// anything else (literals) can be seen.
 		return true;
 	}
 	
@@ -594,7 +599,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		// We only check permissions for the subject part of the tuple, because this is the definition of a Resource in LDP.
 		return evaluateNode( user, action, triple.getSubject());
-			     //&& evaluateNode( user, action, triple.getObject());
+			     //&& ( !triple.getObject().isURI() || evaluateNode( user, action, triple.getObject()));
 	}
 	
 	/**
@@ -715,7 +720,7 @@ public class ShiroEvaluator implements SecurityEvaluator {
 
 		ShiroEvaluator.recycleUse();
 
-		LOG.info( "evaluate action " + action);
+		//LOG.info( "evaluate action " + action);
 		String user = checkUser(principal, graphIRI);
 		if (user == null) return false;
 

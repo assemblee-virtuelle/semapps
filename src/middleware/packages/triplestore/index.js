@@ -4,17 +4,16 @@ const { SparqlJsonParser } = require('sparqljson-parse');
 const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 const { throw403, throw500 } = require('@semapps/middlewares');
 
-const handleError = async function(url, response){
-  if (response.status == 403)
-    throw403(await response.text());
+const handleError = async function(url, response) {
+  let text = await response.text();
+  if (response.status == 403) throw403(text);
   else {
-    let txt = await response.text();
-    if (response.status == 500 && txt.includes('permissions violation')) 
-      throw403(txt);
-    else
-      throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+    console.log(text);
+    // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
+    if (response.status == 500 && text.includes('permissions violation')) throw403(text);
+    else throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
   }
-}
+};
 
 const TripleStoreService = {
   name: 'triplestore',
@@ -72,7 +71,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
       }
@@ -115,7 +114,7 @@ const TripleStoreService = {
         }
       },
       async handler(ctx) {
-        const webId = ctx.params.webId || ctx.meta.webId  || 'anon';
+        const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         const query = ctx.params.query;
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
@@ -129,7 +128,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
       }
@@ -145,7 +144,8 @@ const TripleStoreService = {
           optional: true
         },
         accept: {
-          type: 'string'
+          type: 'string',
+          default: MIME_TYPES.JSON
         }
       },
       async handler(ctx) {
@@ -159,7 +159,7 @@ const TripleStoreService = {
           Accept: acceptNegotiatedType.fusekiMapping
         };
 
-        console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
+        //console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
         const response = await fetch(url, {
@@ -221,7 +221,7 @@ const TripleStoreService = {
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
         const response = await fetch(url, {
           method: 'POST',
-          body: 'update=DROP+ALL',
+          body: 'update=CLEAR+ALL',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-SemappsUser': webId,
@@ -229,7 +229,7 @@ const TripleStoreService = {
           }
         });
 
-        if (!response.ok){
+        if (!response.ok) {
           await handleError(url, response);
         }
 

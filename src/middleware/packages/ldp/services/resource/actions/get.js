@@ -37,18 +37,18 @@ module.exports = {
       forceSemantic: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
     },
     async handler(ctx) {
       const { resourceUri, forceSemantic } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
 
-      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta : { webId } } );
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);

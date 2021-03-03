@@ -10,8 +10,7 @@ const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
 const supertest = require('supertest');
 
-const broker = new ServiceBroker({
-});
+const broker = new ServiceBroker({});
 
 let expressMocked = undefined;
 
@@ -83,9 +82,7 @@ afterAll(async () => {
 const console = require('console');
 
 describe('middleware CRUD resource with perms', () => {
-
   test('Ensure a call to ldp.resource.post fails if anonymous user, because container access denied', async () => {
-
     // this is because containers only get Read perms for anonymous users.
 
     try {
@@ -102,17 +99,14 @@ describe('middleware CRUD resource with perms', () => {
         containerUri: CONFIG.HOME_URL + 'resources'
       };
       const resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId: 'anon' } });
-
     } catch (e) {
-      expect(e.code).toEqual(403)
+      expect(e.code).toEqual(403);
     }
-
   }, 20000);
 
   let resourceUri;
 
   test('Ensure a call to ldp.resource.post creates some default permissions', async () => {
-
     try {
       const urlParamsPost = {
         resource: {
@@ -131,15 +125,16 @@ describe('middleware CRUD resource with perms', () => {
       project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 
-      let resourceRights = await broker.call('webacl.resource.hasRights',{
+      let resourceRights = await broker.call('webacl.resource.hasRights', {
         resourceUri,
-        rights: { 
+        rights: {
           read: true,
           write: true,
           append: true,
           control: true
         },
-        webId });
+        webId
+      });
 
       expect(resourceRights).toMatchObject({
         read: true,
@@ -147,24 +142,21 @@ describe('middleware CRUD resource with perms', () => {
         append: false,
         control: true
       });
-
     } catch (e) {
-      expect(e).toBe(null)
+      console.log(e);
+      expect(e).toBe(null);
     }
-
   }, 20000);
 
   test('Ensure a call to ldp.resource.delete removes all its permissions', async () => {
-
     try {
       const urlParamsPost = {
         resourceUri,
-        webId : 'http://a/user'
+        webId: 'http://a/user'
       };
-      let webId = 'http://a/user';
-      
+
       await broker.call('ldp.resource.delete', urlParamsPost);
-      
+
       const result = await broker.call('triplestore.query', {
         query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
           SELECT ?auth ?p2 ?o WHERE { GRAPH <http://semapps.org/webacl> { 
@@ -175,17 +167,12 @@ describe('middleware CRUD resource with perms', () => {
         accept: MIME_TYPES.JSON
       });
 
-      console.log(result)
-      
+      console.log(result);
+
       expect(result.length).toBe(0);
-
     } catch (e) {
-      console.log(e)
-      expect(e).toBe(null)
+      console.log(e);
+      expect(e).toBe(null);
     }
-
   }, 20000);
-
-  
-
 });

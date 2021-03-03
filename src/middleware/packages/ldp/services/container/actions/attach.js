@@ -11,9 +11,9 @@ module.exports = {
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
     let { webId } = ctx.params;
-    webId = webId || ctx.meta.webId;
+    webId = webId || ctx.meta.webId || 'anon';
 
-    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } } );
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
     if (!resourceExists) throw new Error('Cannot attach non-existing resource: ' + resourceUri);
 
     const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx, meta: { webId } });
