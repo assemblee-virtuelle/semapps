@@ -34,7 +34,9 @@
   </organization>
 
   <properties>
-    <jena.version>3.14.0</jena.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <jena.version>3.17.0</jena.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <automatic.module.name>org.semapps.jena.permissions</automatic.module.name>
