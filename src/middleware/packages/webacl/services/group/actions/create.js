@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
-const { aclGroupExists } = require('../../../utils');
+const { aclGroupExists, sanitizeSPARQL } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -26,6 +26,9 @@ module.exports = {
       slug = createSlug(slug, { lang: 'fr', custom: { '.': '.' } });
 
       let groupUri = urlJoin(this.settings.baseUrl, '_group', slug);
+
+      // it would probably be impossible to get injection here since createSlug would remove all the bad characters. but anyway...
+      await sanitizeSPARQL(groupUri);
 
       // checks that it doesnt exist yet
       if (await aclGroupExists(groupUri, ctx, this.settings.graphName))

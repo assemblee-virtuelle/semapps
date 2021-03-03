@@ -37,7 +37,8 @@ describe('Posting to followers', () => {
 
     sebastien = await broker.call('ldp.resource.get', {
       resourceUri: sebastienUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: sebastienUri
     });
 
     expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
@@ -55,7 +56,8 @@ describe('Posting to followers', () => {
 
     simon = await broker.call('ldp.resource.get', {
       resourceUri: simonUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: simonUri
     });
   });
 

@@ -36,7 +36,8 @@ const WebIdService = {
         },
         slug: nick,
         containerUri: this.settings.usersContainer,
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
       // We have to manually add the permissions for the user resource, as this is a very rare case
@@ -48,6 +49,9 @@ const WebIdService = {
           read: true,
           write: true,
           control: true
+        },
+        anon: {
+          read: true
         }
       };
       await ctx.call('webacl.resource.addRights', {

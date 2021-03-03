@@ -339,6 +339,8 @@ The same rules as for `addRights` apply, regarding the format of the HTTP payloa
 
 ## ACL groups
 
+The groups have permissions too. And you can modify those permissions by using the usual APIs with the URL of the form `/_acl/_group/group-name`.
+
 ### webacl.group.create
 
 * `POST /_group` with a json payload containing `{ "slug": "name_of_the_group" }`
@@ -382,14 +384,34 @@ This will remove all members, and also will remove all permissions this group ha
 * `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
 You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
 
+## Security
+
+In general it is possible to obtain the list of all resource inside a container, if the user has Read access to the container, and even if they have no accesss to the resources themselves. 
+
+The LDP API will not show those resources though, because of the way it is implemented internally. But a SPARQL query on the apraql public endpoint will return them. It will return only the URIs of those resources. But this could still be considered a leak of some information.
+
+The only way to eal with this problem is to uncomment line [602 of shiroEvaluator](https://github.com/assemblee-virtuelle/semapps/blob/e67f545faf55f3a6343012ab8b74878e14a7ba4c/src/jena/permissions/src/main/java/org/semapps/jena/permissions/ShiroEvaluator.java#L602) so it will check also the permissions of the Object of every triple, which we do not do for now, for performances reasons, and for compliance with the LDP protocol which deal with resources as a unit of data and ACL.
+
 ## Future
 
-If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
+* If one day you program an action to delete a user profile, after deleting the user resource, please also call the `removeAgentGroupOrAgentFromAuthorizations` method, with a isGroup=false parameter.
 
-When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
+* When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
 ```
 /_acl
 /_group
 /_rights
 ```
 
+* For perfs improvement, switch the code of ShiroEvaluator to use the Java API for querying the model, instead of SPARQL queries.
+
+* root container https://github.com/assemblee-virtuelle/semapps/issues/429
+
+* PATCH of a resource : do the DELETE and INSERT in one call/transaction.
+
+* default perms for containers as a parameter in the code?
+
+* create a system named graph to store semapps config as triples. should be protected as webacl graph (no access except by system)
+
+* inference and groups defined in the business data model : https://github.com/assemblee-virtuelle/semapps/issues/590
+in this case, how to call `removeAgentGroupOrAgentFromAuthorizations` when a group is deleted ? listen to some message ? need to configure which resource type should be listened to (Organization, Role...).

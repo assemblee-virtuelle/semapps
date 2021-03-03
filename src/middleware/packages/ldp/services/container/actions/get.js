@@ -43,7 +43,7 @@ module.exports = {
     async handler(ctx) {
       const { containerUri, filters } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
 
       const { accept, dereference, queryDepth, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),

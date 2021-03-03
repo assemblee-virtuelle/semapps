@@ -3,6 +3,8 @@ const CONFIG = require('../config');
 
 const adminAuth = CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD;
 
+const console = require('console');
+
 describe('fuseki ACL blank nodes tests', () => {
   test('Ensure orphan blank nodes are not reachable', async () => {
     const { body, statusCode } = await doRequest({
@@ -90,14 +92,14 @@ describe('fuseki ACL blank nodes tests', () => {
     });
 
     expect(body['@graph'].length).toBe(12);
-    expect(typeof body['@graph'][0].addressCountry).toBe('string');
-    expect(typeof body['@graph'][1].hasPostalAddress).toBe('string');
-    expect(typeof body['@graph'][2].hasPostalAddress).toBe('string');
-    expect(typeof body['@graph'][3].hasPostalAddress).toBe('string');
-    expect(typeof body['@graph'][4].addressCountry).toBe('string');
-    expect(typeof body['@graph'][5].addressCountry).toBe('string');
-    expect(typeof body['@graph'][6].hasPostalAddress).toBe('string');
-    expect(typeof body['@graph'][7].addressCountry).toBe('string');
+    expect(typeof body['@graph'][0].addressCountry || typeof body['@graph'][0].hasPostalAddress).toBe('string');
+    expect(typeof (body['@graph'][1].addressCountry || body['@graph'][1].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][2].addressCountry || body['@graph'][2].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][3].addressCountry || body['@graph'][3].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][4].addressCountry || body['@graph'][4].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][5].addressCountry || body['@graph'][5].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][6].addressCountry || body['@graph'][6].hasPostalAddress)).toBe('string');
+    expect(typeof (body['@graph'][7].addressCountry || body['@graph'][7].hasPostalAddress)).toBe('string');
     expect(typeof body['@graph'][8].hasLocation).toBe('string');
     expect(typeof body['@graph'][9].hasLocation).toBe('string');
     expect(typeof body['@graph'][10].hasLocation).toBe('string');

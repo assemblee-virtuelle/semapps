@@ -27,7 +27,7 @@ module.exports = {
       );
 
       if (!webId) {
-        webId = await this.broker.call('webid.create', profileData, { meta: { webId: 'system' } });
+        webId = await this.broker.call('webid.create', profileData);
       }
 
       return webId;

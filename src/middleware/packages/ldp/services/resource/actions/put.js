@@ -40,11 +40,12 @@ module.exports = {
     async handler(ctx) {
       const { resource, contentType } = ctx.params;
       let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
       const resourceUri = resource.id || resource['@id'];
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
+      // If the new data are badly formatted, old data will be reinserted before throwing a 400 error
       const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
@@ -52,7 +53,7 @@ module.exports = {
         webId
       });
 
-      // First delete the resource
+      // First delete the whole resource
       await ctx.call('triplestore.update', {
         query: `
           DELETE
@@ -62,12 +63,23 @@ module.exports = {
         webId
       });
 
-      // ... then insert back all the data
-      await ctx.call('triplestore.insert', {
-        resource,
-        contentType,
-        webId
-      });
+      try {
+        // ... then insert back all the data
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType,
+          webId
+        });
+      } catch (e) {
+        // If the insertion of new data fails, inserts back old data
+        await ctx.call('triplestore.insert', {
+          resource: oldData,
+          contentType: MIME_TYPES.JSON
+        });
+
+        // ... then rethrows an error
+        throw new MoleculerError('Could not put resource: ' + e.message, 400, 'BAD_REQUEST');
+      }
 
       // Get the new data, with the same formatting as the old data
       const newData = await ctx.call(

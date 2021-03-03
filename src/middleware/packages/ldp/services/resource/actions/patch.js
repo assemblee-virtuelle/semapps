@@ -41,7 +41,7 @@ module.exports = {
     },
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
-      webId = webId || ctx.meta.webId;
+      webId = webId || ctx.meta.webId || 'anon';
 
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');

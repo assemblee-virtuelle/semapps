@@ -4,7 +4,7 @@ module.exports = [
   {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
-    dereference: ['sec:publicKey']
+    dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
   },
   {
     path: '/projects',
@@ -18,7 +18,7 @@ module.exports = [
   {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
-    dereference: ['sec:publicKey']
+    dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
   },
   {
     path: '/themes',

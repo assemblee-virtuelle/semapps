@@ -143,6 +143,7 @@ describe('middleware CRUD resource with perms', () => {
         control: true
       });
     } catch (e) {
+      console.log(e);
       expect(e).toBe(null);
     }
   }, 20000);
@@ -153,7 +154,6 @@ describe('middleware CRUD resource with perms', () => {
         resourceUri,
         webId: 'http://a/user'
       };
-      let webId = 'http://a/user';
 
       await broker.call('ldp.resource.delete', urlParamsPost);
 

@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../../PairResourceCreate';
+import { PairResourceCreate } from '../../../../pair';
 import EventEdit from './EventEdit';
 import EventList from './EventList';
 import EventShow from './EventShow';

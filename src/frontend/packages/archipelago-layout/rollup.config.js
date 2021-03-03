@@ -10,6 +10,7 @@ const external = createFilter(
   [
     'react',
     'react-admin',
+    'react-dom',
     'react-markdown',
     'react-router-dom',
     'react-final-form',
