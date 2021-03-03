@@ -1,4 +1,4 @@
-import PairResourceCreate from '../../PairResourceCreate';
+import { PairResourceCreate } from '../../../pair';
 import ThemeEdit from './ThemeEdit';
 import ThemeList from './ThemeList';
 import ThemeShow from './ThemeShow';
