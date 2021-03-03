@@ -1,13 +1,15 @@
 const doRequest = require('./utils');
 const CONFIG = require('../config');
 
-const adminAuth = CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD;
+const adminAuth = CONFIG.JENA_USER+':'+CONFIG.JENA_PASSWORD;
+
 
 describe('fuseki ACL graph tests', () => {
+
   test('Ensure that SPARQL http endpoint rejects requests without Authorization', async () => {
     const { body, statusCode } = await doRequest({
       endpoint: 'query',
-      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }',
     });
     expect(statusCode).toBe(401);
   });
@@ -16,7 +18,7 @@ describe('fuseki ACL graph tests', () => {
     const { body, statusCode } = await doRequest({
       endpoint: 'query',
       auth: adminAuth,
-      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }',
     });
     expect(statusCode).toBe(200);
   });
@@ -26,8 +28,7 @@ describe('fuseki ACL graph tests', () => {
       endpoint: 'query',
       auth: adminAuth,
       user: 'test',
-      sparql:
-        'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }',
     });
     expect(statusCode).toBe(403);
   });
@@ -37,7 +38,7 @@ describe('fuseki ACL graph tests', () => {
       endpoint: 'query',
       auth: adminAuth,
       user: 'test',
-      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }',
     });
     expect(statusCode).toBe(200);
   });
@@ -47,7 +48,7 @@ describe('fuseki ACL graph tests', () => {
       endpoint: 'query',
       auth: adminAuth,
       user: 'test',
-      sparql: 'SELECT * { { ?s ?p ?o } UNION { GRAPH ?g { ?s ?p ?o } } }'
+      sparql: 'SELECT * { { ?s ?p ?o } UNION { GRAPH ?g { ?s ?p ?o } } }',
     });
     expect(statusCode).toBe(200);
     expect(body).toEqual(expect.stringContaining('Request forbidden'));
@@ -57,7 +58,7 @@ describe('fuseki ACL graph tests', () => {
     const { body, statusCode } = await doRequest({
       endpoint: 'query',
       auth: adminAuth,
-      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }',
     });
     expect(statusCode).toBe(200);
   });
@@ -66,8 +67,7 @@ describe('fuseki ACL graph tests', () => {
     const { body, statusCode } = await doRequest({
       endpoint: 'query',
       auth: adminAuth,
-      sparql:
-        'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }',
     });
     expect(statusCode).toBe(200);
   });
@@ -77,7 +77,7 @@ describe('fuseki ACL graph tests', () => {
       endpoint: 'query',
       auth: adminAuth,
       user: 'system',
-      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { ?subject ?predicate ?object }',
     });
     expect(statusCode).toBe(200);
   });
@@ -87,10 +87,10 @@ describe('fuseki ACL graph tests', () => {
       endpoint: 'query',
       auth: adminAuth,
       user: 'system',
-      sparql:
-        'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }'
+      sparql: 'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }',
     });
     //console.log(body.results.bindings.length)
     expect(statusCode).toBe(200);
   });
+
 });

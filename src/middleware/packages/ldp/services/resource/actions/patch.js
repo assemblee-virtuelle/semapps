@@ -65,7 +65,7 @@ module.exports = {
         };
       }
 
-      // TODO : why to do it in 2 steps ? delete then insert? if an exception is raised after the delete is commited,
+      // TODO : why to do it in 2 steps ? delete then insert? if an exception is raised after the delete is commited, 
       // it won't be rollbacked. better to do only one call to the triplestore
       const deleteQuery = await this.buildDeleteQueryFromResource(resource);
       await ctx.call('triplestore.update', {

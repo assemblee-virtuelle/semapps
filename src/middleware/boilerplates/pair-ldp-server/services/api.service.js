@@ -43,33 +43,25 @@ module.exports = {
         familyName: authData.family_name
       }),
       findOrCreateProfile: async profileData => {
-        let webId = await this.broker.call(
-          'webid.findByEmail',
-          {
-            email: profileData.email
-          },
-          { meta: { webId: 'system' } }
-        );
+        let webId = await this.broker.call('webid.findByEmail', {
+          email: profileData.email
+        }, { meta: { webId: 'system' } });
 
         if (!webId) {
           webId = await this.broker.call('webid.create', profileData, { meta: { webId: 'system' } });
 
           // Adds PAIR data
-          await this.broker.call(
-            'ldp.resource.patch',
-            {
-              resource: {
-                '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
-                '@id': webId,
-                '@type': ['pair:Person', 'foaf:Person'],
-                'pair:firstName': profileData.name,
-                'pair:lastName': profileData.familyName,
-                'pair:e-mail': profileData.email
-              },
-              contentType: MIME_TYPES.JSON
+          await this.broker.call('ldp.resource.patch', {
+            resource: {
+              '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
+              '@id': webId,
+              '@type': ['pair:Person', 'foaf:Person'],
+              'pair:firstName': profileData.name,
+              'pair:lastName': profileData.familyName,
+              'pair:e-mail': profileData.email
             },
-            { meta: { webId: 'system' } }
-          );
+            contentType: MIME_TYPES.JSON
+          }, { meta: { webId: 'system' } });
         }
 
         return webId;

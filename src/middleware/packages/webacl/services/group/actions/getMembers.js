@@ -9,6 +9,8 @@ module.exports = {
       webId: { type: 'string', optional: true },
       contentType: { type: 'string' }
     },
-    async handler(ctx) {}
+    async handler(ctx) {
+      
+    }
   }
 };

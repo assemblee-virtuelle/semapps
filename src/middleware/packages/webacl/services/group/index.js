@@ -10,16 +10,16 @@ module.exports = {
   name: 'webacl.group',
   settings: {
     baseUrl: null,
-    graphName: null
+    graphName: null,
   },
-  dependencies: ['triplestore'],
+  dependencies: [ 'triplestore'],
   actions: {
     create: createAction.action,
     delete: deleteAction.action,
     addMember: addMemberAction.action,
     getMembers: getMembersAction.action,
     isMember: isMemberAction.action,
-    removeMember: removeMemberAction.action
+    removeMember: removeMemberAction.action,
     // Actions accessible through the API
   }
 };

@@ -53,11 +53,7 @@ describe('LDP container tests', () => {
       false
     );
 
-    await broker.call(
-      'ldp.container.create',
-      { containerUri: CONFIG.HOME_URL + 'objects' },
-      { meta: { webId: 'system' } }
-    );
+    await broker.call('ldp.container.create', { containerUri: CONFIG.HOME_URL + 'objects' }, { meta: { webId:'system' } } );
 
     await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(true);
 

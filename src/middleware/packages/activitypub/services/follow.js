@@ -106,13 +106,10 @@ const FollowService = {
               object: activityObject,
               to: activity.actor
             });
-            await this.actions.addFollower(
-              {
-                follower: activity.actor,
-                following: activity.object
-              },
-              { parentCtx: ctx }
-            );
+            await this.actions.addFollower({
+              follower: activity.actor,
+              following: activity.object
+            }, { parentCtx: ctx });
           }
           break;
         }
@@ -121,13 +118,10 @@ const FollowService = {
           const objectType = activity.object.type || activity.object['@type'];
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
-            await this.actions.addFollower(
-              {
-                follower: followActivity.actor,
-                following: followActivity.object
-              },
-              { parentCtx: ctx }
-            );
+            await this.actions.addFollower({
+              follower: followActivity.actor,
+              following: followActivity.object
+            }, { parentCtx: ctx });
           }
           break;
         }
@@ -136,13 +130,10 @@ const FollowService = {
           const objectType = activity.object.type || activity.object['@type'];
           if (objectType === ACTIVITY_TYPES.FOLLOW) {
             const followActivity = activity.object;
-            await this.actions.removeFollower(
-              {
-                follower: followActivity.actor,
-                following: followActivity.object
-              },
-              { parentCtx: ctx }
-            );
+            await this.actions.removeFollower({
+              follower: followActivity.actor,
+              following: followActivity.object
+            }, { parentCtx: ctx });
           }
           break;
       }

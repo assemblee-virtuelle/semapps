@@ -34,10 +34,10 @@ module.exports = {
     for (let container of this.settings.containers) {
       const containerPath = typeof container === 'string' ? container : container.path;
       const containerUri = urlJoin(this.settings.baseUrl, containerPath);
-      const exists = await this.actions.exist({ containerUri }, { meta: { webId: 'system' } });
+      const exists = await this.actions.exist({ containerUri },{ meta: { webId:'system' } });
       if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);
-        await this.actions.create({ containerUri }, { meta: { webId: 'system' } });
+        await this.actions.create({ containerUri },{ meta: { webId:'system' } } );
       }
     }
   }
