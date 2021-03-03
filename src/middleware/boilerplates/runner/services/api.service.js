@@ -18,12 +18,16 @@ module.exports = {
   dependencies: ['ldp', 'activitypub', 'webid', 'sparqlEndpoint'],
   async started() {
     const findOrCreateProfile = async profileData => {
-      let webId = await this.broker.call('webid.findByEmail', {
-        email: profileData.email
-      });
+      let webId = await this.broker.call(
+        'webid.findByEmail',
+        {
+          email: profileData.email
+        },
+        { meta: { webId: 'system' } }
+      );
 
       if (!webId) {
-        webId = await this.broker.call('webid.create', profileData);
+        webId = await this.broker.call('webid.create', profileData, { meta: { webId: 'system' } });
       }
 
       return webId;
@@ -68,7 +72,8 @@ module.exports = {
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('webid.getApiRoutes')),
       ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
-      ...(await this.broker.call('activitypub.getApiRoutes'))
+      ...(await this.broker.call('activitypub.getApiRoutes')),
+      ...(await this.broker.call('webacl.getApiRoutes'))
     ];
     routes.forEach(route => this.addRoute(route));
   },

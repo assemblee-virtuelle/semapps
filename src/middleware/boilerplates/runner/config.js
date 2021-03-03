@@ -13,5 +13,6 @@ module.exports = {
   OIDC_CLIENT_ID: process.env.SEMAPPS_OIDC_CLIENT_ID,
   OIDC_CLIENT_SECRET: process.env.SEMAPPS_OIDC_CLIENT_SECRET,
   OIDC_PUBLIC_KEY: process.env.SEMAPPS_OIDC_PUBLIC_KEY,
-  CAS_URL: process.env.SEMAPPS_CAS_URL
+  CAS_URL: process.env.SEMAPPS_CAS_URL,
+  WEBACL_GRAPH_URI: process.env.SEMAPPS_WEBACL_GRAPH_URI || '<http://semapps.org/webacl>'
 };

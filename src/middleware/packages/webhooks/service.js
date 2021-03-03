@@ -25,7 +25,7 @@ const WebhooksService = {
       let webhook;
 
       try {
-        webhook = await this.actions.get({ id: hash });
+        webhook = await this.actions.get({ id: hash }, { parentCtx: ctx });
       } catch (e) {
         throw new MoleculerError('Webhook not found', 404, 'NOT_FOUND');
       }
@@ -34,7 +34,7 @@ const WebhooksService = {
         this.createJob('webhooks', webhook.action, { data, user: webhook.user });
       } else {
         // If no queue service is defined, run webhook immediately
-        return await this.actions[webhook.action]({ data, user: webhook.user });
+        return await this.actions[webhook.action]({ data, user: webhook.user }, { parentCtx: ctx });
       }
     },
     async generate(ctx) {
@@ -45,11 +45,14 @@ const WebhooksService = {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
       }
 
-      const webhook = await this.actions.create({
-        '@type': 'Webhook',
-        action,
-        user: userUri
-      });
+      const webhook = await this.actions.create(
+        {
+          '@type': 'Webhook',
+          action,
+          user: userUri
+        },
+        { parentCtx: ctx }
+      );
 
       return webhook['@id'];
     },
@@ -80,7 +83,7 @@ const WebhooksService = {
     webhooks: {
       name: '*',
       async process(job) {
-        const result = await this.actions[job.name](job.data);
+        const result = await this.actions[job.name](job.data, { parentCtx: ctx });
 
         job.progress(100);
 

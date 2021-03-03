@@ -23,6 +23,7 @@
     "@semapps/signature": "0.1.44",
     "@semapps/sparql-endpoint": "0.1.44",
     "@semapps/triplestore": "0.1.44",
+    "@semapps/webacl": "^0.1.44",
     "@semapps/webfinger": "0.1.44",
     "@semapps/webid": "0.1.44",
     "dotenv-flow": "^3.2.0",

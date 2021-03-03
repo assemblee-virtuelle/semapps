@@ -37,31 +37,39 @@ module.exports = {
       redirectUri: CONFIG.HOME_URL + 'auth',
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
       publicKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key.pub'),
-      selectProfileData: authData => ({
+      selectProfileData: async authData => ({
         email: authData.email,
         name: authData.given_name,
         familyName: authData.family_name
       }),
       findOrCreateProfile: async profileData => {
-        let webId = await this.broker.call('webid.findByEmail', {
-          email: profileData.email
-        });
+        let webId = await this.broker.call(
+          'webid.findByEmail',
+          {
+            email: profileData.email
+          },
+          { meta: { webId: 'system' } }
+        );
 
         if (!webId) {
-          webId = await this.broker.call('webid.create', profileData);
+          webId = await this.broker.call('webid.create', profileData, { meta: { webId: 'system' } });
 
           // Adds PAIR data
-          await this.broker.call('ldp.resource.patch', {
-            resource: {
-              '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
-              '@id': webId,
-              '@type': ['pair:Person', 'foaf:Person'],
-              'pair:firstName': profileData.name,
-              'pair:lastName': profileData.familyName,
-              'pair:e-mail': profileData.email
+          await this.broker.call(
+            'ldp.resource.patch',
+            {
+              resource: {
+                '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
+                '@id': webId,
+                '@type': ['pair:Person', 'foaf:Person'],
+                'pair:firstName': profileData.name,
+                'pair:lastName': profileData.familyName,
+                'pair:e-mail': profileData.email
+              },
+              contentType: MIME_TYPES.JSON
             },
-            contentType: MIME_TYPES.JSON
-          });
+            { meta: { webId: 'system' } }
+          );
         }
 
         return webId;
@@ -74,7 +82,8 @@ module.exports = {
       this.connector.getRoute(),
       ...(await this.broker.call('ldp.getApiRoutes')),
       ...(await this.broker.call('activitypub.getApiRoutes')),
-      ...(await this.broker.call('sparqlEndpoint.getApiRoutes'))
+      ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
+      ...(await this.broker.call('webacl.getApiRoutes'))
     ].forEach(route => this.addRoute(route));
   },
   methods: {

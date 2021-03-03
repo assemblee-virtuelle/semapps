@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { MoleculerError } = require('moleculer').Errors;
 const passport = require('passport');
 const session = require('express-session');
 const E = require('moleculer-web').Errors;
@@ -33,23 +34,21 @@ class Connector {
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
-    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer;
+    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer || '/';
     next();
   }
-  findOrCreateProfile(req, res, next) {
+  async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
     // req.user provide by Passport strategy
-    const profileData = this.settings.selectProfileData(req.user);
-    this.settings.findOrCreateProfile(profileData).then(webId => {
-      // Keep the webId as we will need it for the token generation
-      req.user.webId = webId;
-      next();
-    });
+    const profileData = await this.settings.selectProfileData(req.user);
+    let webId = await this.settings.findOrCreateProfile(profileData);
+    req.user.webId = webId;
+    next();
   }
-  generateToken(req, res, next) {
+  async generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step. OIDC and CAS not provide Token
     if (!req.user.token) {
-      const profileData = this.settings.selectProfileData(req.user);
+      const profileData = await this.settings.selectProfileData(req.user);
       const payload = { webId: req.user.webId, ...profileData };
       req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
@@ -63,7 +62,7 @@ class Connector {
     //have to be implemented in extended class
     next();
   }
-  redirectToFront(req, res) {
+  redirectToFront(req, res, next) {
     // Redirect browser to the redirect URL pushed in session
     let redirectUrl = req.session.redirectUrl;
     // If a token was stored, add it to the URL so that the client may use it
@@ -71,9 +70,10 @@ class Connector {
     // Redirect using NodeJS HTTP
     res.writeHead(302, { Location: redirectUrl });
     res.end();
+    next();
   }
   login() {
-    return (req, res) => {
+    return async (req, res) => {
       const middlewares = [
         this.saveRedirectUrl.bind(this),
         this.passport.authenticate(this.passportId, {
@@ -84,23 +84,33 @@ class Connector {
         this.redirectToFront.bind(this)
       ];
 
-      this.runMiddlewares(middlewares, req, res);
+      await this.runMiddlewares(middlewares, req, res);
     };
   }
   logout() {
-    return (req, res) => {
+    return async (req, res) => {
       let middlewares = [
         this.saveRedirectUrl.bind(this),
         this.localLogout.bind(this),
         req.query.global === 'true' ? this.globalLogout.bind(this) : this.redirectToFront.bind(this)
       ];
 
-      this.runMiddlewares(middlewares, req, res);
+      await this.runMiddlewares(middlewares, req, res);
     };
   }
   async runMiddlewares(middlewares, req, res) {
     for (const middleware of middlewares) {
-      await new Promise(resolve => middleware(req, res, resolve));
+      let asyncRes;
+      let error = await new Promise(resolve => {
+        try {
+          asyncRes = middleware(req, res, resolve);
+        } catch (e) {
+          console.log(e);
+          resolve(e);
+        }
+      });
+      if (error) throw new MoleculerError(error);
+      await asyncRes;
     }
   }
   async getWebId(ctx) {
@@ -117,12 +127,21 @@ class Connector {
         this.passport.session()
       ],
       aliases: {
-        'GET auth/logout'(req, res) {
-          this.connector.logout()(req, res);
+        async 'GET auth/logout'(req, res) {
+          await this.connector.logout()(req, res);
         },
-        'GET auth'(req, res) {
-          this.connector.login()(req, res);
+        async 'GET auth'(req, res, next) {
+          try {
+            await this.connector.login()(req, res);
+          } catch (e) {
+            console.log(e);
+            //next(e);
+            await this.connector.logout()(req, res);
+          }
         }
+      },
+      onError(req, res, err) {
+        console.log(err);
       }
     };
   }
@@ -133,12 +152,14 @@ class Connector {
       if (token) {
         const payload = await this.verifyToken(token);
         ctx.meta.tokenPayload = payload;
-        ctx.meta.webId = await this.getWebId(ctx);
+        ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
         return Promise.resolve(payload);
       } else {
+        ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }
     } catch (err) {
+      ctx.meta.webId = 'anon';
       return Promise.reject(err);
     }
   }
@@ -148,12 +169,14 @@ class Connector {
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
         ctx.meta.tokenPayload = await this.verifyToken(token);
-        ctx.meta.webId = await this.getWebId(ctx);
+        ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
         return Promise.resolve(ctx);
       } else {
+        ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
     } catch (err) {
+      ctx.meta.webId = 'anon';
       return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
     }
   }

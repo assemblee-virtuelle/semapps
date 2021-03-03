@@ -17,8 +17,7 @@ module.exports = {
         resource,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
-        slug: id,
-        webId: ctx.meta.webId
+        slug: id
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -39,7 +38,9 @@ module.exports = {
       contentType: { type: 'string' }
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
+      const { resource, contentType } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
       const resourceUri = resource.id || resource['@id'];
 
       // Save the current data, to be able to send it through the event
@@ -47,7 +48,9 @@ module.exports = {
       // If the new data are badly formatted, old data will be reinserted before throwing a 400 error
       const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        queryDepth: 1,
+        webId
       });
 
       // First delete the whole resource
@@ -83,7 +86,9 @@ module.exports = {
         'ldp.resource.get',
         {
           resourceUri,
-          accept: MIME_TYPES.JSON
+          accept: MIME_TYPES.JSON,
+          queryDepth: 1,
+          webId
         },
         { meta: { $cache: false } }
       );

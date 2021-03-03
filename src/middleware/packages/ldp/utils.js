@@ -1,4 +1,9 @@
 const ObjectID = require('bson').ObjectID;
+const urlJoin = require('url-join');
+
+function getAclUriFromResourceUri(baseUrl, resourceUri) {
+  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
+}
 
 const buildBlankNodesQuery = depth => {
   let construct = '',
@@ -115,5 +120,6 @@ module.exports = {
   getPrefixJSON,
   getSlugFromUri,
   getContainerFromUri,
-  defaultToArray
+  defaultToArray,
+  getAclUriFromResourceUri
 };

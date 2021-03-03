@@ -12,8 +12,7 @@ module.exports = {
     try {
       await ctx.call('ldp.resource.patch', {
         resource,
-        contentType: ctx.meta.headers['content-type'],
-        webId: ctx.meta.webId
+        contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -42,6 +41,7 @@ module.exports = {
     },
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
+      webId = webId || ctx.meta.webId;
 
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
@@ -53,7 +53,8 @@ module.exports = {
       const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth
+        queryDepth,
+        webId
       });
 
       // Adds a default context, if it is missing
@@ -64,6 +65,8 @@ module.exports = {
         };
       }
 
+      // TODO : why to do it in 2 steps ? delete then insert? if an exception is raised after the delete is commited,
+      // it won't be rollbacked. better to do only one call to the triplestore
       const deleteQuery = await this.buildDeleteQueryFromResource(resource);
       await ctx.call('triplestore.update', {
         query: deleteQuery,
@@ -82,7 +85,8 @@ module.exports = {
         {
           resourceUri,
           accept: MIME_TYPES.JSON,
-          queryDepth
+          queryDepth,
+          webId
         },
         { meta: { $cache: false } }
       );

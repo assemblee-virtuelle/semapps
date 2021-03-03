@@ -130,3 +130,205 @@ The SemApps middleware should always connect to the SPARQL endpoint with a Basic
 If the middleware is doing a query on behalf of a semapps user, it should send the WebID URI of this user in the HTTP header `X-SemappsUser`. If no user is logged-in and the middleware is making a request as a public, anonymous user, then the `X-SemappsUser` header should be sent with the value `anon`.
 
 If to the contrary, the middleware is modifying the ACLs, it should send no header, or a header with the X-SemappsUser set to `system`.
+
+### Code guidelines
+
+When coding in moleculer, it is important to always respect those rules:
+* when calling the action directly from the same service `this.actions.nameOfAction(params)` it is important to add a second argument to pass the context `nameOfAction( params, { defaultCtx: ctx} );`
+* when inside an action and calling another action (to another service), always use the form `ctx.call()` and not the form `this.broker.call()` as the later will lose the context.
+* when you need to make a `system` call to the triplestore, you have to explicitly state it in the call, by adding an option in the 3rd arguments (2nd if using this.actions)) `{ meta: { webId:'system' } }` like this: `ctx.call('action.name',{ param }, { meta: { webId:'system' } })`
+
+## APIs
+
+### webacl.resource.hasRights
+
+Checks if a user (or the logged-in user) has some rights on a resource.
+
+This API is available as an action or via HTTP.
+
+returns a JSON object containing some of the properties :
+```
+{
+  read: boolean,
+  write: boolean,
+  append: boolean,
+  control: boolean
+}
+```
+
+* `GET /_rights/slug/of/container/or/resource` will return all the above properties
+* `POST /_rights/slug/of/container/or/resource` without a JSON body with return all the above properties. with a JSON body of this form it will return only the rights you asked for:
+```
+{
+  rights: {
+    read: true,
+    write: true,
+    append: true,
+    control: true
+  }
+}
+```
+
+### webacl.resource.getRights
+
+If the user has Control permission on the resource, it will return all the permissions on that resource.
+
+If the user doesn't have Control permission, it will return only the permissions related to the specific user that is doing the request.
+
+This API is available as an action or via HTTP.
+
+* `GET /_acl/slug/of/container/or/resource`
+
+can have an `Accept` header set to `application/ld+json` or `text/turtle`. The default is the later one.
+
+Will return the permissions grouped by the Authorization node they belong to.
+
+Each resource can have up to 4 Authorization nodes : `#Read` `#Write` `#Append` `#Control`. Each one contains the Agents, AgentClass, and/or AgentGroup that have the permission on the resource. In turtle, the `#` appears as a semi-colon `:`.
+
+Containers that define some default permissions for their contained resources will can have up to 4 additional Authorization nodes : `#DefaultRead` `#DefaultWrite` `#DefaultAppend` `#DefaultControl` that list the default permissions for that container.
+
+If their exist some additional permissions on the resource/container, that are inherited from a parent container, they will be displayed too at the end of the file, with Authorization nodes that have an id/URI that is fully-qualified, meaning it contains the full URI of the parent container, followed by `#Default...`. Likewise, you can distinguish between the default permissions that concern the container you queried the ACL for, and the default permissions that are inherited.
+
+An exemple:
+The user `https://data.virtual-assembly.org/users/sebastien.rosset` is member of the group `http://localhost:3000/_groups/group4`.
+
+The resource `http://localhost:3000/organizations/cheznous` is located, among others, in the container `http://localhost:3000/container28/` which itself is inside the parent container `http://localhost:3000/container29/`.
+
+Because the `group4` has been granted `Read` permission to the `container29`, and because the user `sebastien.rosset` has been granted an individual `Write` permission on the resource `organizations/cheznous`, the following reply is given to this API call for this resource :
+
+In Turtle:
+```
+@prefix acl: <http://www.w3.org/ns/auth/acl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix : <http://localhost:3000/_acl/organizations/cheznous#>.
+
+:Write a acl:Authorization;
+    acl:accessTo <http://localhost:3000/organizations/cheznous>;
+    acl:mode acl:Write;
+    acl:agent <https://data.virtual-assembly.org/users/sebastien.rosset>.
+
+<http://localhost:3000/_acl/container29#DefaultRead> a acl:Authorization;
+    acl:mode acl:Read;
+    acl:default <http://localhost:3000/container29>;
+    acl:agentGroup <http://localhost:3000/_groups/group4>.
+```
+
+In JSON-LD:
+```
+{
+    "@context": {
+        "acl": "http://www.w3.org/ns/auth/acl#",
+        "foaf": "http://xmlns.com/foaf/0.1/",
+        "@base": "http://localhost:3000/_acl/organizations/cheznous"
+    },
+    "@graph": [
+        {
+            "@id": "#Write",
+            "@type": "acl:Authorization",
+            "acl:accessTo": "http://localhost:3000/organizations/cheznous",
+            "acl:agent": "https://data.virtual-assembly.org/users/sebastien.rosset",
+            "acl:mode": "acl:Write"
+        },
+        {
+            "@id": "http://localhost:3000/_acl/container29/#DefaultRead",
+            "@type": "acl:Authorization",
+            "acl:agentGroup": "http://localhost:3000/_groups/group4",
+            "acl:default": "http://localhost:3000/container29",
+            "acl:mode": "acl:Read"
+        }
+    ]
+}
+```
+
+Furthermore, it happens that the same user has `Control` permission on the `container29`, if we ask for the permissions on that container, this is what we will get:
+
+```
+@prefix acl: <http://www.w3.org/ns/auth/acl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix : <http://localhost:3000/_acl/container29#>.
+
+:Control a acl:Authorization;
+    acl:accessTo <http://localhost:3000/container29>;
+    acl:mode acl:Control;
+    acl:agent <https://data.virtual-assembly.org/users/sebastien.rosset>.
+
+:DefaultRead a acl:Authorization;
+    acl:mode acl:Read;
+    acl:agentGroup <http://localhost:3000/_groups/group4>;
+    acl:default <http://localhost:3000/container29>.
+```
+
+Only a user that has `Control` access to a container, can see the `Default{Read,Write,Append,Control}` Authorization nodes of that container.
+
+### webacl.resource.addRights
+
+Adds some permissions to a resource. Only available if the user has Control access to the ressource.
+
+This API is available as an action or via HTTP.
+
+* `PATCH /_acl/slug/of/container/or/resource` with a body containing the permissions to add.
+THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
+
+This action does not take into account the `acl:mode` nor `acl:default` tuples that are sent. The only important part is the beginning of the node `:Read` or `"@id":"#Read"` in jsonLD. Likewise, the `acl:accessTo` and `acl:default` tuples are not taken into account neather. The presence of the keyword `Default` at the beginning of the node is what decides if we are adding an accessTo or a default permission.
+
+Becareful, the `@base` or `@prefix` in turtle is important, it needs to match the resource URL you are modifying with this action.
+
+Please note that the URI of the `@base` or `@prefix` should not include a trailing slash / . Except for the root container !
+
+Hence, all resources should be modified with a `"@base": "http://server.com/_acl/path/of/resource"` in JSON-LD or `@prefix : <http://server.com/_acl/path/of/resource#>.` in turtle.
+
+But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
+
+* call `addRights` as an moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
+```
+{
+  anon: {
+    read: boolean,
+    write: boolean,
+    append: boolean,
+    control: boolean,
+  },
+  anyUser: {
+    read: boolean,
+    write: boolean,
+    append: boolean,
+    control: boolean,
+  },
+  user: {
+    uri: '<URI of user>'
+    read: boolean
+    write: boolean
+    append: boolean
+    control: boolean
+  },
+  group: {
+    uri: '<URI of group>'
+    read: boolean
+    write: boolean
+    append: boolean
+    control: boolean
+  },
+  default : { // this is only possible on a container.
+    anon : { ... same as above },
+    anyUser : { ... same as above },
+    user : { ... same as above },
+    group : { ... same as above },
+  }
+}
+```
+
+This can only process one user and/or group at a time. repeat the call if you need to add permissions for several users or groups. Note that this limitation is not present in the `PATCH` HTTP method, but only if you call the action from moleculer. 
+
+### webacl.resource.setRights
+
+Changes the permissions of a resource so they become like in the document that is sent by the user. Only available if the user has Control access to the ressource.
+
+This API is available as an action or via HTTP.
+
+* `PUT /_acl/slug/of/container/or/resource` with a body containing the new permissions of this resource.
+THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
+
+The former permissions that are not present in the document will be removed.
+The new permissions will be added.
+
+The same rules as for `addRights` apply, regarding the format of the payload.
