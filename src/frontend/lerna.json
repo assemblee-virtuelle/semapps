@@ -4,5 +4,10 @@
     "boilerplates/**",
     "packages/*",
     "templates/**"
-  ]
+  ],
+  "command": {
+    "version": {
+      "allowBranch": ["master", "next"]
+    }
+  }
 }
