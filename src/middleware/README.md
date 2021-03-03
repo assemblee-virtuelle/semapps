@@ -15,9 +15,10 @@ npm start
 
 ### Add package
 
+Exemple: To add an npm package dependency for 'supercoolpkg' into the lerna package triplestore :
 ```
-cd packages/activitypub
-lerna add jsonld
+cd src/middleware
+lerna add supercoolpkg --scope=@semapps/triplestore
 ```
 
 ### Cleanup code

@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "@semapps/middlewares": "^0.1.44",
     "@semapps/mime-types": "0.1.44",
     "jsonld": "^1.8.1",
     "negotiator": "^0.6.2",
