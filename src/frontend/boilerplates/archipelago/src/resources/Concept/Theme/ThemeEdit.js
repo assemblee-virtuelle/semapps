@@ -1,7 +1,7 @@
 import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
-import { AgentsInput } from '../../../inputs';
+import { AgentsInput } from '../../../pair';
 import ThemeTitle from './ThemeTitle';
 
 export const ThemeEdit = props => (

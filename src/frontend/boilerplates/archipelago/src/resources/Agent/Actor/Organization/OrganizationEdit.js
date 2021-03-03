@@ -3,13 +3,20 @@ import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField } from '@semapps/semantic-data-provider';
-import { UsersInput, OrganizationsInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../inputs';
+import {
+  UsersInput,
+  OrganizationsInput,
+  EventsInput,
+  ThemesInput,
+  DocumentsInput,
+  PairLocationInput
+} from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
 
 export const OrganizationEdit = props => (
   <Edit title={<OrganizationTitle />} {...props}>
     <SimpleForm redirect="show">
-      <TextInput source="pair:label" />
+      <TextInput source="pair:label" fullWidth />
       <TextInput source="pair:comment" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
       <TextInput source="pair:homePage" fullWidth />
@@ -21,6 +28,7 @@ export const OrganizationEdit = props => (
       <EventsInput source="pair:involvedIn" />
       <ThemesInput source="pair:hasTopic" />
       <DocumentsInput source="pair:documentedBy" />
+      <PairLocationInput source="pair:hasLocation" fullWidth />
     </SimpleForm>
   </Edit>
 );

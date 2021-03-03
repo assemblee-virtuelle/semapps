@@ -2,6 +2,9 @@ import React from 'react';
 import { Grid } from '@material-ui/core';
 import RightLabel from './RightLabel';
 
+/**
+ * @deprecated
+ */
 const Column = ({ basePath, children, record, resource, showLabel, ...otherProps }) => {
   return (
     <Grid item {...otherProps}>
