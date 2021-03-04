@@ -28,7 +28,7 @@
     "leaflet": "^1.7.1",
     "leaflet.markercluster": "^1.4.1",
     "react": "^16.13.0",
-    "react-admin": "3.9.2"
+    "react-admin": "^3.13.1"
   },
   "publishConfig": {
     "access": "public"

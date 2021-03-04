@@ -29,9 +29,9 @@ export default {
         'pair:comment': 'Courte description',
         'pair:description': 'Description',
         'pair:homePage': 'Site web',
-        'pair:involves': 'Participants',
-        'pair:documentedBy': 'Documents',
-        'pair:hasTopic': 'Thèmes'
+        'pair:involves': 'Implique',
+        'pair:documentedBy': 'Documenté par',
+        'pair:hasTopic': 'A pour thème'
       }
     }
   }

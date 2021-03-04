@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "react": "^16.13.0",
-    "react-admin": "3.9.2"
+    "react-admin": "^3.13.1"
   },
   "publishConfig": {
     "access": "public"

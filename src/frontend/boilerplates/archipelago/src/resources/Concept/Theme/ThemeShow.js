@@ -18,17 +18,7 @@ const ThemeShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField
-            label="Organisations"
-            filter={{ type: 'pair:Organization' }}
-            reference="Organization"
-            source="pair:topicOf"
-          >
-            <SingleFieldList linkType="show">
-              <ChipField source="pair:label" color="secondary" />
-            </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField label="Evénements" filter={{ type: 'pair:Event' }} reference="Event" source="pair:topicOf">
+          <UriArrayField reference="Agent" source="pair:topicOf">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>

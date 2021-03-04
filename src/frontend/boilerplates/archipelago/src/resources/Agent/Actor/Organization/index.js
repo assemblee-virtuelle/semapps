@@ -31,11 +31,11 @@ export default {
         'pair:description': 'Description',
         'pair:homePage': 'Site web',
         image: 'Logo',
-        'pair:affiliates': 'Membres',
-        'pair:partnerOf': 'Partenaires',
-        'pair:involvedIn': 'Participe à',
-        'pair:hasTopic': 'Thèmes',
-        'pair:documentedBy': 'Documents',
+        'pair:affiliates': 'A pour membres',
+        'pair:partnerOf': 'Partenaire de',
+        'pair:involvedIn': 'Impliqué dans',
+        'pair:hasTopic': 'A pour thème',
+        'pair:documentedBy': 'Documenté par',
         'pair:hasLocation': 'Adresse'
       }
     }
