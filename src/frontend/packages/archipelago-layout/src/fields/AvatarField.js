@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const AvatarField = ({ record, label, image, fallback, variant, children }) => {
+const AvatarField = ({ record, label, image, fallback, variant, labelColor, children }) => {
   const classes = useStyles();
 
   if (!record) return null;
@@ -62,13 +62,17 @@ const AvatarField = ({ record, label, image, fallback, variant, children }) => {
           {children}
         </Avatar>
       </div>
-      <Box bgcolor="secondary.main" className={classes.child} borderRadius={5}>
+      <Box bgcolor={labelColor} className={classes.child} borderRadius={5}>
         <Typography align="center" className={classes.caption} noWrap>
           {computedLabel}
         </Typography>
       </Box>
     </Box>
   );
+};
+
+AvatarField.defaultProps = {
+  labelColor: 'secondary.main'
 };
 
 export default AvatarField;
