@@ -25,7 +25,6 @@ export { default as MasonryList } from './list/MasonryList';
 export { default as ReferenceFilter } from './list/ReferenceFilter';
 
 // Show page
-export { default as AvatarField } from './show/AvatarField';
 export { default as Column } from './show/Column';
 export { default as ColumnShowLayout } from './show/ColumnShowLayout';
 export { default as GridList } from './show/GridList';
@@ -40,6 +39,7 @@ export { default as UserIcon } from './show/UserIcon';
 // Fields
 export { default as MarkdownField } from './fields/MarkdownField';
 export { default as SeparatedListField } from './fields/SeparatedListField';
+export { default as AvatarField } from './fields/AvatarField';
 
 // Inputs
 export { default as ReferenceQuickCreateInput } from './inputs/ReferenceQuickCreateInput';
