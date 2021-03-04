@@ -8,11 +8,9 @@ const SparqlEndpointService = {
   },
   dependencies: ['triplestore', 'api'],
   async started () {
-    console.log("starting sparql-endpoint service");
     await this.broker.call('api.addRoute', {
       route: getRoute()
     });
-    console.log("routes added for sparql-endpoint service");
   },
   actions: {
     async query(ctx) {

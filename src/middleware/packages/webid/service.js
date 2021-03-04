@@ -12,14 +12,12 @@ const WebIdService = {
     defaultAccept: 'text/turtle'
   },
   async started() {
-    console.log("starting webid service");
     const routes = await this.actions.getApiRoutes();
     for (var element of routes) {
       await this.broker.call('api.addRoute', {
         route: element
       });
     }
-    console.log("routes added for webid service");
   },
   actions: {
     /**

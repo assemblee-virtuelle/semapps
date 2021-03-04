@@ -8,7 +8,6 @@ const WebfingerService = {
   },
   dependencies: ['activitypub.actor'],
   async started() {
-    console.log("starting webfinger service");
     if (!this.settings.domainName) {
       this.settings.domainName = new URL(this.settings.usersContainer).host;
     };
@@ -18,7 +17,6 @@ const WebfingerService = {
         route: element
       });
     }
-    console.log("routes added for webfinger service");
   },
   actions: {
     async get(ctx) {

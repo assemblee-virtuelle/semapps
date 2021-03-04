@@ -44,14 +44,12 @@ const LdpService = {
     }
   },
   async started() {
-    console.log("starting ldp service");
     const routes = await this.actions.getApiRoutes();
     for (var element of routes) {
       await this.broker.call('api.addRoute', {
         route: element
       });
     }
-    console.log("routes added for ldp service");
   },
   actions: {
     getContainerOptions(ctx) {

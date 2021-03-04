@@ -13,7 +13,6 @@ const WebhooksService = {
     context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
   async started() {
-    console.log("starting webhooks service");
     this.settings.allowedActions.forEach(actionName => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
@@ -25,7 +24,6 @@ const WebhooksService = {
         route: element
       });
     }
-    console.log("routes added for webhooks service");
   },
   actions: {
     async process(ctx) {
