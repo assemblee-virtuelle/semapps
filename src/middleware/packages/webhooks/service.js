@@ -13,11 +13,19 @@ const WebhooksService = {
     context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
   async started() {
+    console.log("starting webhooks service");
     this.settings.allowedActions.forEach(actionName => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
+    const routes = await this.actions.getApiRoutes();
+    for (var element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
+    }
+    console.log("routes added for webhooks service");
   },
   actions: {
     async process(ctx) {

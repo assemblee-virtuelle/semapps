@@ -33,6 +33,16 @@ const PushService = {
       }
     });
   },
+  async started() {
+    console.log("starting push service");
+    const routes = await this.actions.getApiRoutes();
+    for (var element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
+    }
+    console.log("routes added for push service");
+  },
   actions: {
     getApiRoutes() {
       return [

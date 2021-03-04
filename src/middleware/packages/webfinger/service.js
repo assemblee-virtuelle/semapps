@@ -7,10 +7,18 @@ const WebfingerService = {
     domainName: null // If not set, will be extracted from usersContainer
   },
   dependencies: ['activitypub.actor'],
-  started() {
+  async started() {
+    console.log("starting webfinger service");
     if (!this.settings.domainName) {
       this.settings.domainName = new URL(this.settings.usersContainer).host;
+    };
+    const routes = await this.actions.getApiRoutes();
+    for (var element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
     }
+    console.log("routes added for webfinger service");
   },
   actions: {
     async get(ctx) {
