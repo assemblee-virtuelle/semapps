@@ -1,9 +1,10 @@
 import React from 'react';
-import { ChipField, SingleFieldList, TextField, UrlField } from 'react-admin';
+import { ChipField, SingleFieldList, TextField, UrlField, SimpleList } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { SideList, MainList, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { SideList, MainList, Hero, AvatarField, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import ProjectTitle from './ProjectTitle';
+import DescriptionIcon from '@material-ui/icons/Description';
 
 const ProjectShow = props => (
   <Show title={<ProjectTitle />} {...props}>
@@ -15,36 +16,30 @@ const ProjectShow = props => (
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />
+          <UriArrayField reference="Document" source="pair:documentedBy">
+            <SimpleList
+              primaryText={record => record && record['pair:label']}
+              leftIcon={() => <DescriptionIcon />}
+              linkType="show"
+            />
+          </UriArrayField>
         </MainList>
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField
-            label="Organisations"
-            reference="Organization"
-            filter={{ '@type': 'pair:Organization' }}
-            source="pair:involves"
-          >
-            <SingleFieldList linkType="show">
-              <ChipField source="pair:label" color="secondary" />
-            </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField
-            label="Personnes"
-            reference="Person"
-            filter={{ '@type': 'pair:Person' }}
-            source="pair:involves"
-          >
+          <UriArrayField reference="Actor" source="pair:involves">
             <GridList xs={6} linkType="show">
-              <UserIcon />
+              <AvatarField
+                label={record =>
+                  record.type.includes('pair:Person')
+                    ? `${record['pair:firstName']} ${record['pair:lastName']}`
+                    : record['pair:label']
+                }
+                image={record => record['image']}
+              />
             </GridList>
           </UriArrayField>
           <UriArrayField reference="Theme" source="pair:hasTopic">
-            <SingleFieldList linkType={false}>
-              <ChipField source="pair:label" color="secondary" />
-            </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField reference="Document" source="pair:documentedBy">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>

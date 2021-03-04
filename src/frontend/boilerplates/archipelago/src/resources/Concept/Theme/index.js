@@ -28,7 +28,7 @@ export default {
         'pair:label': 'Titre',
         'pair:comment': 'Courte description',
         'pair:description': 'Description',
-        'pair:topicOf': 'Sujets'
+        'pair:topicOf': 'Sujet de'
       }
     }
   }
