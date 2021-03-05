@@ -8,7 +8,7 @@ In a context of strong fragmentation of dynamics in the field of transition, VA 
 
 SemApps is one of the Virtual Assembly's core projects. Its mission is to foster interconnections between communities by creating synergies between their information systems.
 
-SemApps is a collaborative, interoperable, generic and modular knowledge management system :
+SemApps is a collaborative, interoperable, generic and modular knowledge management system:
 
 - Based on linked & data semantic web technologies, it allows the co-production of knowledge graphs. 
 - Built on open standards, it enables the development of interoperable information systems. 
