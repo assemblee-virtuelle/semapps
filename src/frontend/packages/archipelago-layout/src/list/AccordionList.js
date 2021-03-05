@@ -5,10 +5,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
+    width: '100%'
   },
   accordion: {
-    backgroundColor: theme.palette.grey[200],
+    backgroundColor: theme.palette.grey[200]
   },
   accordionSummary: {
     minHeight: '0 !important',
@@ -26,11 +26,11 @@ const useStyles = makeStyles(theme => ({
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
     flexBasis: '15%',
-    flexShrink: 0,
+    flexShrink: 0
   },
   title: {
-    fontSize: theme.typography.pxToRem(15),
-  },
+    fontSize: theme.typography.pxToRem(15)
+  }
 }));
 
 const AccordionList = ({ date, title, content }) => {
@@ -54,7 +54,7 @@ const AccordionList = ({ date, title, content }) => {
               <Typography className={classes.title}>{computedTitle}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.accordionDetails}>
-              {typeof computedContent === 'object' ? computedContent : <Typography>{computedContent}</Typography> }
+              {typeof computedContent === 'object' ? computedContent : <Typography>{computedContent}</Typography>}
             </AccordionDetails>
           </Accordion>
         );

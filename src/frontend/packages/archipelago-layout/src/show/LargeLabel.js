@@ -20,9 +20,7 @@ const LargeLabel = ({ children }) => {
   const classes = useStyles();
   return (
     <Typography variant="h5" className={classes.subTitle}>
-      <span className={classes.subTitleSpan}>
-        {children}
-      </span>
+      <span className={classes.subTitleSpan}>{children}</span>
     </Typography>
   );
 };
