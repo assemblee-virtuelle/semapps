@@ -1,6 +1,5 @@
 import RoleCreate from './RoleCreate';
 import RoleEdit from './RoleEdit';
-import RoleShow from './RoleShow';
 import RoleList from './RoleList';
 import FavoriteBorderIcon from '@material-ui/icons/Class';
 
@@ -9,7 +8,6 @@ export default {
     list: RoleList,
     create: RoleCreate,
     edit: RoleEdit,
-    show: RoleShow,
     icon: FavoriteBorderIcon,
     options: {
       label: 'Rôle de membre',

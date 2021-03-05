@@ -18,30 +18,26 @@ export const OrganizationEdit = props => {
     <Edit title={<OrganizationTitle />} {...props}>
       <SimpleForm redirect="show">
         <TextInput source="pair:label" fullWidth />
-        <ReificationArrayInput
-          label="Membres avec Role"
-          source="pair:organizationOfMembership"
-          reificationClass="pair:MembershipAssociation"
-        >
-          <ReferenceInput label="membre" reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText="pair:lastName" allowEmpty />
-          </ReferenceInput>
-          <ReferenceInput label="role" reference="MembershipRole" source="pair:membershipRole">
-            <SelectInput
-              optionText="pair:label"
-              shouldRenderSuggestions={value => value && value.length > 1}
-              fullWidth
-            />
-          </ReferenceInput>
-        </ReificationArrayInput>
         <TextInput source="pair:comment" fullWidth />
         <MarkdownInput multiline source="pair:description" fullWidth />
         <TextInput source="pair:homePage" fullWidth />
         <ImageInput source="image" accept="image/*">
           <ImageField source="src" />
         </ImageInput>
-        <UsersInput source="pair:affiliates" />
-
+        <ReificationArrayInput
+          source="pair:organizationOfMembership"
+          reificationClass="pair:MembershipAssociation"
+        >
+          <ReferenceInput reference="Person" source="pair:membershipActor">
+            <AutocompleteInput optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}  />
+          </ReferenceInput>
+          <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
+            <SelectInput
+              optionText="pair:label"
+              shouldRenderSuggestions={value => value && value.length > 1}
+            />
+          </ReferenceInput>
+        </ReificationArrayInput>
         <OrganizationsInput source="pair:partnerOf" />
         <EventsInput source="pair:involvedIn" />
         <ThemesInput source="pair:hasTopic" />

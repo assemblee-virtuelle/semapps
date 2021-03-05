@@ -37,7 +37,10 @@ export default {
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
         'pair:documentedBy': 'Documents',
-        'pair:hasLocation': 'Adresse'
+        'pair:hasLocation': 'Adresse',
+        'pair:organizationOfMembership' : 'Membres avec Role',
+        'pair:membershipActor':'Membre',
+        'pair:membershipRole':'Role'
       }
     }
   }

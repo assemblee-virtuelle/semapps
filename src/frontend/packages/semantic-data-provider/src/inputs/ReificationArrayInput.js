@@ -2,27 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { ArrayInput, SimpleFormIterator, TextInput } from 'react-admin';
 import { makeStyles } from '@material-ui/core/styles';
 
-const ReificationArrayInput = props => {
-  const useReferenceInputStyles = makeStyles({
-    form: {
-      display: 'flex'
-    },
-    container: {
-      paddingRight: '20px'
-    },
-    input: {
-      paddingRight: '20px'
-    }
-  });
+const useReferenceInputStyles = makeStyles({
+  form: {
+    display: 'flex'
+  },
+  container: {
+    paddingRight: '20px'
+  },
+  input: {
+    paddingRight: '20px'
+  }
+});
 
-  const useHideInputStyles = makeStyles({
-    root: {
-      display: 'none'
-    }
-  });
+const useHideInputStyles = makeStyles({
+  root: {
+    display: 'none'
+  }
+});
+
+const ReificationArrayInput = props => {
 
   const { reificationClass, children, ...otherProps } = props;
-
   const flexFormClasses = useReferenceInputStyles();
   const hideInputStyles = useHideInputStyles();
 

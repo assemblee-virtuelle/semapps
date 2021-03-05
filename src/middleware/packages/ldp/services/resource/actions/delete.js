@@ -62,7 +62,6 @@ module.exports = {
               rawDisassemblyValue = [rawDisassemblyValue];
             }
             for (let disassemblyValue of rawDisassemblyValue) {
-              console.log('disassemblyValue', disassemblyValue);
               const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
               await ctx.call('ldp.resource.delete', {
                 resourceUri: idToDelete,

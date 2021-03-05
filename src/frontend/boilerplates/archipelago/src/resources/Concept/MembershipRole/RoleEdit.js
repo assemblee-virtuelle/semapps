@@ -5,7 +5,7 @@ import { Edit } from '@semapps/archipelago-layout';
 export const RoleEdit = props => (
   <Edit {...props}>
     <SimpleForm>
-      <TextInput source="pair:label" label="Titre" fullWidth />
+      <TextInput source="pair:label" fullWidth />
     </SimpleForm>
   </Edit>
 );

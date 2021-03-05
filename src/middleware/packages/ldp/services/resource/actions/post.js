@@ -135,7 +135,7 @@ module.exports = {
 
       //if disassembly predicat set and json-ld content, object of predicat extaction & ost on his own container
       if (disassembly && contentType == MIME_TYPES.JSON) {
-        for (disassemblyItem of disassembly) {
+        for (const disassemblyItem of disassembly) {
           if (resource[disassemblyItem.path]) {
             let rawDisassemblyValue = resource[disassemblyItem.path];
             if (!Array.isArray(rawDisassemblyValue)) {
@@ -163,7 +163,7 @@ module.exports = {
         }
       }
 
-      const insertedUri = await ctx.call('triplestore.insert', {
+      await ctx.call('triplestore.insert', {
         resource,
         contentType,
         webId

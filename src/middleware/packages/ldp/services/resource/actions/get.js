@@ -92,13 +92,13 @@ module.exports = {
             ctx.meta.$responseType = result['semapps:mimeType'];
             return fs.readFileSync(result['semapps:localPath']);
           } catch (e) {
-            throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+            throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
           }
         } else {
           return result;
         }
       } else {
-        throw new MoleculerError('Not found', 404, 'NOT_FOUND');
+        throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
       }
     }
   }
