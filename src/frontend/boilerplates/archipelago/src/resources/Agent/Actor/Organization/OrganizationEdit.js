@@ -29,12 +29,14 @@ export const OrganizationEdit = props => {
           reificationClass="pair:MembershipAssociation"
         >
           <ReferenceInput reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}  />
+            <AutocompleteInput
+              optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
+              shouldRenderSuggestions={value => value && value.length > 1}
+            />
           </ReferenceInput>
           <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
             <SelectInput
               optionText="pair:label"
-              shouldRenderSuggestions={value => value && value.length > 1}
             />
           </ReferenceInput>
         </ReificationArrayInput>

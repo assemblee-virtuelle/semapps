@@ -6,9 +6,6 @@ const useReferenceInputStyles = makeStyles({
   form: {
     display: 'flex'
   },
-  container: {
-    paddingRight: '20px'
-  },
   input: {
     paddingRight: '20px'
   }
@@ -28,13 +25,13 @@ const ReificationArrayInput = props => {
 
   return (
     <ArrayInput {...otherProps}>
-      <SimpleFormIterator classes={flexFormClasses}>
+      <SimpleFormIterator classes={{form:flexFormClasses.form}}>
         {React.Children.map(props.children, (child, i) => {
           return React.cloneElement(child, {
-            classes: flexFormClasses
+            className: flexFormClasses.input
           });
         })}
-        <TextInput classes={hideInputStyles} source="type" initialValue={reificationClass} />
+        <TextInput className={hideInputStyles.root}  source="type" initialValue={reificationClass} />
       </SimpleFormIterator>
     </ArrayInput>
   );
