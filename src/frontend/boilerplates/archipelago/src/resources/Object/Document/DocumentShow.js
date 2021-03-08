@@ -16,6 +16,11 @@ const DocumentShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
+          <ReferenceArrayField reference="Type" source="pair:hasType">
+            <SingleFieldList linkType={false}>
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
           <ReferenceArrayField reference="Agent" source="pair:documents">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
