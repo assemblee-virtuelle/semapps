@@ -64,7 +64,6 @@ module.exports = {
         accept: MIME_TYPES.JSON
       });
 
-      // console.log('XXX contentType',contentType);
       oldData = await this.deleteDisassembly(ctx, oldData,contentType,disassembly,webId);
 
       // First delete the whole resource
@@ -81,7 +80,6 @@ module.exports = {
 
       try {
         resource = await this.createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId);
-        // console.log('resource after sisaeembly',resource);
 
         // ... then insert back all the data
         await ctx.call('triplestore.insert', {
