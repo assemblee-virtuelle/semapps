@@ -87,10 +87,11 @@ module.exports = {
     },
     async handler(ctx) {
       const containerUri = ctx.params.containerUri;
-      const { resource, slug, contentType, webId, fileStream, disassembly } = {
+      const {slug, contentType, webId, fileStream, disassembly, ...otherParams } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
+      let resource = otherParams.resource;
 
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
@@ -133,36 +134,7 @@ module.exports = {
         }
       }
 
-      //if disassembly predicat set and json-ld content, object of predicat extaction & ost on his own container
-      if (disassembly && contentType == MIME_TYPES.JSON) {
-        for (const disassemblyItem of disassembly) {
-          if (resource[disassemblyItem.path]) {
-            let rawDisassemblyValue = resource[disassemblyItem.path];
-            if (!Array.isArray(rawDisassemblyValue)) {
-              rawDisassemblyValue = [rawDisassemblyValue];
-            }
-            const uriInserted = [];
-            for (let disassemblyValue of rawDisassemblyValue) {
-              // id is extract to not interfer whith @id if set
-              let { id, ...usableValue } = disassemblyValue;
-              usableValue = {
-                '@context': resource['@context'],
-                ...usableValue
-              };
-              disassemblyResourceUri = await ctx.call('ldp.resource.post', {
-                containerUri: disassemblyItem.container,
-                resource: usableValue,
-                contentType: MIME_TYPES.JSON,
-                accept: MIME_TYPES.JSON,
-                webId: webId
-              });
-              uriInserted.push(disassemblyResourceUri);
-            }
-            resource[disassemblyItem.path] = uriInserted;
-          }
-        }
-      }
-
+      resource = await this.createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId);
       await ctx.call('triplestore.insert', {
         resource,
         contentType,

@@ -28,7 +28,7 @@ export default {
         'pair:description': 'Description',
         'pair:comment': 'Courte description',
         'pair:containedIn': 'Dossier',
-        'pair:documents': 'Sujets'
+        'pair:documents': 'Documente'
       }
     }
   }

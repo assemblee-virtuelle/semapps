@@ -42,7 +42,7 @@ module.exports = {
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1,
@@ -54,23 +54,7 @@ module.exports = {
         resourceUri
       });
 
-      if (disassembly) {
-        for (disassemblyItem of disassembly) {
-          if (oldData[disassemblyItem.path]) {
-            let rawDisassemblyValue = oldData[disassemblyItem.path];
-            if (!Array.isArray(rawDisassemblyValue)) {
-              rawDisassemblyValue = [rawDisassemblyValue];
-            }
-            for (let disassemblyValue of rawDisassemblyValue) {
-              const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
-              await ctx.call('ldp.resource.delete', {
-                resourceUri: idToDelete,
-                webId: webId
-              });
-            }
-          }
-        }
-      }
+      oldData = await this.deleteDisassembly(ctx, oldData,MIME_TYPES.JSON,disassembly,webId);
 
       await ctx.call('triplestore.update', {
         query: `

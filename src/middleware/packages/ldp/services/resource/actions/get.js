@@ -52,6 +52,21 @@ module.exports = {
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
+        // console.log('dereferenceQuery',dereferenceQuery);
+        // console.log('QUERY',`
+        //   ${getPrefixRdf(this.settings.ontologies)}
+        //   CONSTRUCT  {
+        //     ?s1 ?p1 ?o1 .
+        //     ${blandNodeQuery.construct}
+        //     ${dereferenceQuery.construct}
+        //   }
+        //   WHERE {
+        //     BIND(<${resourceUri}> AS ?s1) .
+        //     ?s1 ?p1 ?o1 .
+        //     ${blandNodeQuery.where}
+        //     ${dereferenceQuery.where}
+        //   }
+        // `);
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
@@ -70,6 +85,7 @@ module.exports = {
           accept,
           webId
         });
+        // console.log('result',result);
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {

@@ -47,48 +47,70 @@ module.exports = {
       const resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
       const containerUri = getContainerFromUri(resourceUri);
-      const { resource, contentType, webId, disassembly } = {
+      const {contentType, webId, disassembly, ...otherParams } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
 
+      let resource = otherParams.resource;
+
+
+
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       // If the new data are badly formatted, old data will be reinserted before throwing a 400 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON
       });
 
+      // console.log('XXX contentType',contentType);
+      oldData = await this.deleteDisassembly(ctx, oldData,contentType,disassembly,webId);
+
       // First delete the whole resource
-      await ctx.call('ldp.resource.delete', {
-        resourceUri,
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE
+          { <${resourceUri}> ?p ?v }
+        `,
         webId
       });
 
-      let newData;
+
+
       try {
+        resource = await this.createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId);
+        // console.log('resource after sisaeembly',resource);
+
         // ... then insert back all the data
-        newData = await ctx.call('ldp.resource.post', {
+        await ctx.call('triplestore.insert', {
           resource,
           contentType,
-          containerUri,
-          webId,
-          slug: getSlugFromUri(resourceUri)
-        });
-      } catch (e) {
-        // If the insertion of new data fails, inserts back old data
-        newData = await ctx.call('ldp.resource.post', {
-          resource: oldData,
-          contentType: MIME_TYPES.JSON,
-          containerUri,
-          webId,
-          slug: getSlugFromUri(oldData['@id'])
+          webId
         });
 
+
+
+      } catch (e) {
+        // If the insertion of new data fails, inserts back old data
+        await ctx.call('triplestore.insert', {
+          resource: oldData,
+          contentType: MIME_TYPES.JSON
+        });
         // ... then rethrows an error
         throw new MoleculerError('Could not put resource: ' + e.message, 400, 'BAD_REQUEST');
       }
+
+      // Get the new data, with the same formatting as the old data
+      const newData = await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri,
+          accept: MIME_TYPES.JSON
+        },
+        { meta: { $cache: false } }
+      );
 
       ctx.emit('ldp.resource.updated', {
         resourceUri,

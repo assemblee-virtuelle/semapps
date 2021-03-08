@@ -25,6 +25,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+/**
+ * @deprecated Use AvatarField
+ */
 const UserIcon = ({ record }) => {
   const classes = useStyles();
   const fullName = record ? record['pair:firstName'] + ' ' + record['pair:lastName'] : '';
