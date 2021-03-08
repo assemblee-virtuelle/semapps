@@ -87,7 +87,7 @@ module.exports = {
     },
     async handler(ctx) {
       const containerUri = ctx.params.containerUri;
-      const {slug, contentType, webId, fileStream, disassembly, ...otherParams } = {
+      const { slug, contentType, webId, fileStream, disassembly, ...otherParams } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
@@ -134,7 +134,7 @@ module.exports = {
         }
       }
 
-      resource = await this.createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId);
+      resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
       await ctx.call('triplestore.insert', {
         resource,
         contentType,

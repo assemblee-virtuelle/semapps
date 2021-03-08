@@ -172,7 +172,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       // TODO compact only if remote context is different from local context
       const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
       // transform single value into array concidering forceArray predicates
-      if(dataModel.forceArray){
+      if (dataModel.forceArray) {
         for (const forceArrayItem of dataModel.forceArray) {
           if (compactJson[forceArrayItem] && !Array.isArray(compactJson[forceArrayItem])) {
             compactJson[forceArrayItem] = [compactJson[forceArrayItem]];

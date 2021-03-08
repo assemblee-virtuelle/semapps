@@ -38,9 +38,9 @@ export default {
         'pair:hasTopic': 'A pour thème',
         'pair:documentedBy': 'Documenté par',
         'pair:hasLocation': 'Adresse',
-        'pair:organizationOfMembership' : 'Membres avec Role',
-        'pair:membershipActor':'Membre',
-        'pair:membershipRole':'Role'
+        'pair:organizationOfMembership': 'Membres avec Role',
+        'pair:membershipActor': 'Membre',
+        'pair:membershipRole': 'Role'
       }
     }
   }

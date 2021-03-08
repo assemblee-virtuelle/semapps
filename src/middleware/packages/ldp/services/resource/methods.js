@@ -77,7 +77,7 @@ module.exports = {
         });
     });
   },
-  async createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId){
+  async createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId) {
     if (disassembly && contentType == MIME_TYPES.JSON) {
       for (const disassemblyItem of disassembly) {
         if (resource[disassemblyItem.path]) {
@@ -101,7 +101,7 @@ module.exports = {
               accept: MIME_TYPES.JSON,
               webId: webId
             });
-            uriInserted.push({'@id':disassemblyResourceUri, '@type':'@id'});
+            uriInserted.push({ '@id': disassemblyResourceUri, '@type': '@id' });
           }
           resource[disassemblyItem.path] = uriInserted;
         }
@@ -109,7 +109,7 @@ module.exports = {
     }
     return resource;
   },
-  async deleteDisassembly(ctx, resource, contentType,disassembly,webId){
+  async deleteDisassembly(ctx, resource, contentType, disassembly, webId) {
     if (disassembly) {
       for (disassemblyItem of disassembly) {
         if (resource[disassemblyItem.path]) {

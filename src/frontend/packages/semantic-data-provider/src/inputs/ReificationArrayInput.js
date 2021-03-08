@@ -18,20 +18,19 @@ const useHideInputStyles = makeStyles({
 });
 
 const ReificationArrayInput = props => {
-
   const { reificationClass, children, ...otherProps } = props;
   const flexFormClasses = useReferenceInputStyles();
   const hideInputStyles = useHideInputStyles();
 
   return (
     <ArrayInput {...otherProps}>
-      <SimpleFormIterator classes={{form:flexFormClasses.form}}>
+      <SimpleFormIterator classes={{ form: flexFormClasses.form }}>
         {React.Children.map(props.children, (child, i) => {
           return React.cloneElement(child, {
             className: flexFormClasses.input
           });
         })}
-        <TextInput className={hideInputStyles.root}  source="type" initialValue={reificationClass} />
+        <TextInput className={hideInputStyles.root} source="type" initialValue={reificationClass} />
       </SimpleFormIterator>
     </ArrayInput>
   );
