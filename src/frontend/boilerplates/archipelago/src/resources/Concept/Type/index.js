@@ -15,7 +15,24 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Type', 'pair:ActivityType', 'pair:AgentType', 'pair:ConceptType', 'pair:DocumentType', 'pair:EventType', 'pair:FolderType', 'pair:GroupType', 'pair:IdeaType', 'pair:ObjectType', 'pair:OrganizationType', 'pair:PlaceType', 'pair:ProjectType', 'pair:ResourceType', 'pair:SubjectType', 'pair:TaskType'],
+    types: [
+      'pair:Type',
+      'pair:ActivityType',
+      'pair:AgentType',
+      'pair:ConceptType',
+      'pair:DocumentType',
+      'pair:EventType',
+      'pair:FolderType',
+      'pair:GroupType',
+      'pair:IdeaType',
+      'pair:ObjectType',
+      'pair:OrganizationType',
+      'pair:PlaceType',
+      'pair:ProjectType',
+      'pair:ResourceType',
+      'pair:SubjectType',
+      'pair:TaskType'
+    ],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'types',
     slugField: 'pair:label'
   },

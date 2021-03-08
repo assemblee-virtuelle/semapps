@@ -4,7 +4,11 @@ import StyleIcon from '@material-ui/icons/Style';
 
 const TypeList = props => (
   <List {...props}>
-    <SimpleList primaryText={record => record['pair:label']} secondaryText={record => record.type} leftAvatar={() => <StyleIcon />} />
+    <SimpleList
+      primaryText={record => record['pair:label']}
+      secondaryText={record => record.type}
+      leftAvatar={() => <StyleIcon />}
+    />
   </List>
 );
 

@@ -15,7 +15,16 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Status', 'pair:ActivityStatus', 'pair:AgentStatus', 'pair:DocumentStatus', 'pair:EventStatus', 'pair:IdeaStatus', 'pair:ProjectStatus', 'pair:TaskStatus'],
+    types: [
+      'pair:Status',
+      'pair:ActivityStatus',
+      'pair:AgentStatus',
+      'pair:DocumentStatus',
+      'pair:EventStatus',
+      'pair:IdeaStatus',
+      'pair:ProjectStatus',
+      'pair:TaskStatus'
+    ],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'status',
     slugField: 'pair:label'
   },
