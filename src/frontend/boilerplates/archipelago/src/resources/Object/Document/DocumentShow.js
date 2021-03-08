@@ -2,7 +2,7 @@ import React from 'react';
 import { SingleFieldList, ChipField } from 'react-admin';
 import { Grid, Typography } from '@material-ui/core';
 import { MainList, SideList, Show, MarkdownField } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import DocumentTitle from './DocumentTitle';
 
 const DocumentShow = props => (
@@ -16,16 +16,16 @@ const DocumentShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Type" source="pair:hasType">
+          <ReferenceArrayField reference="Type" source="pair:hasType">
             <SingleFieldList linkType={false}>
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField reference="Agent" source="pair:documents">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Agent" source="pair:documents">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>
