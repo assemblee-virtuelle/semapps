@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
-import { SideList, Show, UserIcon, GridList } from '@semapps/archipelago-layout';
+import { SideList, Show, GridList, AvatarField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import SkillTitle from './SkillTitle';
 
@@ -10,17 +10,11 @@ const SkillShow = props => (
       <Grid item xs={12} sm={9}>
         <Typography variant="h3" color="primary" component="h1" id="react-admin-title" />
       </Grid>
-      <Grid xs={12} sm={3}>
+      <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField
-            label="Proposé par"
-            reference="Person"
-            source="pair:offeredBy"
-            filter={{ type: 'pair:Person' }}
-            filterToQuery={searchText => ({ title: searchText })}
-          >
+          <UriArrayField reference="Person" source="pair:offeredBy">
             <GridList xs={6} linkType="show">
-              <UserIcon />
+              <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
             </GridList>
           </UriArrayField>
         </SideList>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { MainList, SideList, Hero, Show } from '@semapps/archipelago-layout';
+import { MainList, SideList, Hero, Show, GridList, AvatarField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import { MapField } from '@semapps/geo-components';
 import PersonTitle from './PersonTitle';
+import HomeIcon from '@material-ui/icons/Home';
 
 const PersonShow = props => (
   <Show title={<PersonTitle />} {...props}>
@@ -27,26 +28,13 @@ const PersonShow = props => (
       <Grid item xs={12} sm={3}>
         <SideList>
           <UriArrayField reference="Organization" source="pair:affiliatedBy">
-            <SingleFieldList linkType="show">
-              <ChipField source="pair:label" color="secondary" />
-            </SingleFieldList>
+            <GridList xs={6} linkType="show">
+              <AvatarField label="pair:label" image="image">
+                <HomeIcon />
+              </AvatarField>
+            </GridList>
           </UriArrayField>
-          <UriArrayField
-            label="Projets"
-            reference="Project"
-            filter={{ '@type': 'pair:Project' }}
-            source="pair:involvedIn"
-          >
-            <SingleFieldList linkType="show">
-              <ChipField source="pair:label" color="secondary" />
-            </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField
-            label="Evénements"
-            reference="Event"
-            filter={{ '@type': 'pair:Event' }}
-            source="pair:involvedIn"
-          >
+          <UriArrayField reference="Activity" source="pair:involvedIn">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>

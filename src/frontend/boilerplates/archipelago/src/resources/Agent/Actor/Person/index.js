@@ -28,10 +28,10 @@ export default {
         'pair:lastName': 'Nom de famille',
         'pair:comment': 'En deux mots',
         image: 'Photo',
-        'pair:involvedIn': 'Participe à',
-        'pair:affiliatedBy': 'Organisations',
-        'pair:offers': 'Compétences',
-        'pair:hasTopic': 'Intérêts',
+        'pair:involvedIn': 'Impliqué dans',
+        'pair:affiliatedBy': 'Membre de',
+        'pair:offers': 'A pour compétences',
+        'pair:hasTopic': 'A pour intérêt',
         'pair:hasLocation': 'Adresse'
       }
     }

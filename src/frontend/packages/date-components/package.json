@@ -1,6 +1,6 @@
 {
   "name": "@semapps/date-components",
-  "version": "0.1.21",
+  "version": "0.1.23",
   "description": "React-Admin components for date display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -21,7 +21,7 @@
   },
   "peerDependencies": {
     "react": "^16.13.1",
-    "react-admin": "^3.11.0"
+    "react-admin": "^3.13.1"
   },
   "publishConfig": {
     "access": "public"
