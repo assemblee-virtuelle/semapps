@@ -47,14 +47,12 @@ module.exports = {
       const resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
       const containerUri = getContainerFromUri(resourceUri);
-      const {contentType, webId, disassembly, ...otherParams } = {
+      const { contentType, webId, disassembly, ...otherParams } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
 
       let resource = otherParams.resource;
-
-
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
@@ -65,7 +63,7 @@ module.exports = {
       });
 
       // console.log('XXX contentType',contentType);
-      oldData = await this.deleteDisassembly(ctx, oldData,contentType,disassembly,webId);
+      oldData = await this.deleteDisassembly(ctx, oldData, contentType, disassembly, webId);
 
       // First delete the whole resource
       await ctx.call('triplestore.update', {
@@ -77,10 +75,8 @@ module.exports = {
         webId
       });
 
-
-
       try {
-        resource = await this.createDisassemblyAndUpdateResource(ctx, resource,contentType,disassembly,webId);
+        resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
         // console.log('resource after sisaeembly',resource);
 
         // ... then insert back all the data
@@ -89,9 +85,6 @@ module.exports = {
           contentType,
           webId
         });
-
-
-
       } catch (e) {
         // If the insertion of new data fails, inserts back old data
         await ctx.call('triplestore.insert', {

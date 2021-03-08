@@ -54,7 +54,7 @@ module.exports = {
         resourceUri
       });
 
-      oldData = await this.deleteDisassembly(ctx, oldData,MIME_TYPES.JSON,disassembly,webId);
+      oldData = await this.deleteDisassembly(ctx, oldData, MIME_TYPES.JSON, disassembly, webId);
 
       await ctx.call('triplestore.update', {
         query: `

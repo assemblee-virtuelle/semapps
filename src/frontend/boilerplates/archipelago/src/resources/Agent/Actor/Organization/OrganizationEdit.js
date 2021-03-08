@@ -24,18 +24,14 @@ export const OrganizationEdit = props => {
         <ImageInput source="image" accept="image/*">
           <ImageField source="src" />
         </ImageInput>
-        <ReificationArrayInput
-          source="pair:organizationOfMembership"
-          reificationClass="pair:MembershipAssociation"
-        >
+        <ReificationArrayInput source="pair:organizationOfMembership" reificationClass="pair:MembershipAssociation">
           <ReferenceInput reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}  />
+            <AutocompleteInput
+              optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
+            />
           </ReferenceInput>
           <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
-            <SelectInput
-              optionText="pair:label"
-              shouldRenderSuggestions={value => value && value.length > 1}
-            />
+            <SelectInput optionText="pair:label" shouldRenderSuggestions={value => value && value.length > 1} />
           </ReferenceInput>
         </ReificationArrayInput>
         <OrganizationsInput source="pair:partnerOf" />

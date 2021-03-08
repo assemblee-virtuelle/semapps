@@ -55,7 +55,7 @@ describe('CRUD Disassembly', () => {
     const urlParamsPost = {
       resource: {
         '@context': {
-          pair: 'http://virtual-assembly.org/ontologies/pair#',
+          pair: 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Organization',
         'pair:description': 'myOrga',
@@ -76,23 +76,24 @@ describe('CRUD Disassembly', () => {
     expect(orga1['pair:hasPlace']['pair:description']).toBe('myPlace');
   }, 20000);
 
-
   test('Update project', async () => {
-
-    orga1ToUpdate = {...orga1};
-    orga1ToUpdate['pair:hasPlace']={
+    orga1ToUpdate = { ...orga1 };
+    orga1ToUpdate['pair:hasPlace'] = {
       '@type': 'Place',
       'pair:description': 'myPlace2'
-    }
-    orga1ToUpdate['pair:description']='myOrga2';
+    };
+    orga1ToUpdate['pair:description'] = 'myOrga2';
     const urlParamsPut = {
       resource: orga1ToUpdate,
       contentType: MIME_TYPES.JSON,
       containerUri: CONFIG.HOME_URL + 'orga'
     };
 
-    const PutResult =  await broker.call('ldp.resource.put', urlParamsPut);
-    let orga1Updated = await broker.call('ldp.resource.get', { resourceUri:orga1ToUpdate['@id'], accept: MIME_TYPES.JSON });
+    const PutResult = await broker.call('ldp.resource.put', urlParamsPut);
+    let orga1Updated = await broker.call('ldp.resource.get', {
+      resourceUri: orga1ToUpdate['@id'],
+      accept: MIME_TYPES.JSON
+    });
     expect(orga1Updated['pair:description']).toBe('myOrga2');
     expect(orga1Updated['pair:hasPlace']['@id']).toBeDefined();
     expect(orga1Updated['pair:hasPlace']['pair:description']).toBe('myPlace2');

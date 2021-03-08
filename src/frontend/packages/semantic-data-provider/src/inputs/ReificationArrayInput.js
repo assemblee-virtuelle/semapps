@@ -21,7 +21,6 @@ const useHideInputStyles = makeStyles({
 });
 
 const ReificationArrayInput = props => {
-
   const { reificationClass, children, ...otherProps } = props;
   const flexFormClasses = useReferenceInputStyles();
   const hideInputStyles = useHideInputStyles();
