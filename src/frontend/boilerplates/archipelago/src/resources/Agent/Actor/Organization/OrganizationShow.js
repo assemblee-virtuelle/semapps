@@ -3,7 +3,7 @@ import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'rea
 import { Grid } from '@material-ui/core';
 import { MainList, SideList, Hero, GridList, Show, MarkdownField, AvatarField } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
@@ -18,13 +18,13 @@ const OrganizationShow = props => (
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />
-          <UriArrayField reference="Document" source="pair:documentedBy">
+          <ReferenceArrayField reference="Document" source="pair:documentedBy">
             <SimpleList
               primaryText={record => record && record['pair:label']}
               leftIcon={() => <DescriptionIcon />}
               linkType="show"
             />
-          </UriArrayField>
+          </ReferenceArrayField>
           <MapField
             source="pair:hasLocation"
             address={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:label']}
@@ -35,28 +35,28 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Person" source="pair:affiliates">
+          <ReferenceArrayField reference="Person" source="pair:affiliates">
             <GridList xs={6} linkType="show">
               <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
             </GridList>
-          </UriArrayField>
-          <UriArrayField reference="Organization" source="pair:partnerOf">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">
                 <HomeIcon />
               </AvatarField>
             </GridList>
-          </UriArrayField>
-          <UriArrayField reference="Activity" source="pair:involvedIn">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Activity" source="pair:involvedIn">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
-          <UriArrayField reference="Theme" source="pair:hasTopic">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Theme" source="pair:hasTopic">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>

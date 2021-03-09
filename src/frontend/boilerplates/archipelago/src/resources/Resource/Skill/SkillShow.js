@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@material-ui/core';
 import { SideList, Show, GridList, AvatarField } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import SkillTitle from './SkillTitle';
 
 const SkillShow = props => (
@@ -12,11 +12,11 @@ const SkillShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Person" source="pair:offeredBy">
+          <ReferenceArrayField reference="Person" source="pair:offeredBy">
             <GridList xs={6} linkType="show">
               <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
             </GridList>
-          </UriArrayField>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>

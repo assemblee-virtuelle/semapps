@@ -2,7 +2,7 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, SimpleList } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import { SideList, MainList, Hero, AvatarField, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import ProjectTitle from './ProjectTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 
@@ -16,18 +16,18 @@ const ProjectShow = props => (
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />
-          <UriArrayField reference="Document" source="pair:documentedBy">
+          <ReferenceArrayField reference="Document" source="pair:documentedBy">
             <SimpleList
               primaryText={record => record && record['pair:label']}
               leftIcon={() => <DescriptionIcon />}
               linkType="show"
             />
-          </UriArrayField>
+          </ReferenceArrayField>
         </MainList>
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Actor" source="pair:involves">
+          <ReferenceArrayField reference="Actor" source="pair:involves">
             <GridList xs={6} linkType="show">
               <AvatarField
                 label={record =>
@@ -38,12 +38,12 @@ const ProjectShow = props => (
                 image={record => record['image']}
               />
             </GridList>
-          </UriArrayField>
-          <UriArrayField reference="Theme" source="pair:hasTopic">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Theme" source="pair:hasTopic">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>

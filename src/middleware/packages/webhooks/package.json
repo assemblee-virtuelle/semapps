@@ -1,11 +1,11 @@
 {
   "name": "@semapps/webhooks",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "Incoming webhooks for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.1.44",
+    "@semapps/ldp": "0.1.45",
     "moleculer": "^0.14.3",
     "moleculer-db": "^0.8.7",
     "url-join": "^4.0.1"
