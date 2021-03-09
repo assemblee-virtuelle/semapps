@@ -1,6 +1,6 @@
 {
   "name": "@semapps/react-admin",
-  "version": "0.1.25",
+  "version": "0.1.15",
   "description": "React-Admin extension for SemApps servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
