@@ -10,7 +10,7 @@ const authProvider = middlewareUri => ({
     // The login page will remove the token, display a notification and redirect to the homepage
     const url = new URL(window.location.href);
     window.location.href =
-      `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/#/login?logout');
+      `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout');
 
     // Avoid displaying immediately the login page
     return Promise.resolve('/');

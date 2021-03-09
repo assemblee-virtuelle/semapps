@@ -14,8 +14,8 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   </Card>
  * );
  */
-const ReferenceFilter = ({ reference, source, limit, label, icon }) => {
-  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, {}, {});
+const ReferenceFilter = ({ reference, source, limit, sort, filter, label, icon }) => {
+  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
   const resources = useSelector(getResources, shallowEqual);
   const currentResource = resources.filter(r => r?.name === reference)[0];
   return (
