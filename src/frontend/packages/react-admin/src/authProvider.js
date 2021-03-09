@@ -1,6 +1,4 @@
-
 const authProvider = (history, middlewareUri) => ({
-
   login: params => Promise.resolve(),
   logout: () => {
     localStorage.removeItem('token');
@@ -8,7 +6,6 @@ const authProvider = (history, middlewareUri) => ({
     return Promise.resolve('/loggingout');
   },
   checkAuth: () => {
-
     const url = new URL(window.location);
     if (localStorage.getItem('token')) {
       return Promise.resolve();
@@ -22,8 +19,8 @@ const authProvider = (history, middlewareUri) => ({
       } else {
         if (window.location.pathname != '/loggingout')
           window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
-        
-        return Promise.resolve()
+
+        return Promise.resolve();
       }
     }
   },
@@ -31,8 +28,7 @@ const authProvider = (history, middlewareUri) => ({
   getPermissions: params => {
     if (localStorage.getItem('token')) {
       return Promise.resolve('user');
-    }
-    else return Promise.resolve('');
+    } else return Promise.resolve('');
   }
 });
 

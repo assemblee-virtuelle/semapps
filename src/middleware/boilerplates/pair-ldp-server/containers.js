@@ -34,11 +34,37 @@ module.exports = [
   },
   {
     path: '/status',
-    acceptedTypes: ['pair:Status', 'pair:ActivityStatus', 'pair:AgentStatus', 'pair:DocumentStatus', 'pair:EventStatus', 'pair:IdeaStatus', 'pair:ProjectStatus', 'pair:TaskStatus'],
+    acceptedTypes: [
+      'pair:Status',
+      'pair:ActivityStatus',
+      'pair:AgentStatus',
+      'pair:DocumentStatus',
+      'pair:EventStatus',
+      'pair:IdeaStatus',
+      'pair:ProjectStatus',
+      'pair:TaskStatus'
+    ]
   },
   {
     path: '/types',
-    acceptedTypes: ['pair:Type', 'pair:ActivityType', 'pair:AgentType', 'pair:ConceptType', 'pair:DocumentType', 'pair:EventType', 'pair:FolderType', 'pair:GroupType', 'pair:IdeaType', 'pair:ObjectType', 'pair:OrganizationType', 'pair:PlaceType', 'pair:ProjectType', 'pair:ResourceType', 'pair:SubjectType', 'pair:TaskType'],
+    acceptedTypes: [
+      'pair:Type',
+      'pair:ActivityType',
+      'pair:AgentType',
+      'pair:ConceptType',
+      'pair:DocumentType',
+      'pair:EventType',
+      'pair:FolderType',
+      'pair:GroupType',
+      'pair:IdeaType',
+      'pair:ObjectType',
+      'pair:OrganizationType',
+      'pair:PlaceType',
+      'pair:ProjectType',
+      'pair:ResourceType',
+      'pair:SubjectType',
+      'pair:TaskType'
+    ]
   },
   {
     path: '/notes',
