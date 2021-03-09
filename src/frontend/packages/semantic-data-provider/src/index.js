@@ -5,6 +5,7 @@ export { default as ReferenceField } from './fields/ReferenceField';
 export { default as DateTimeInput } from './inputs/DateTimeInput';
 export { default as UriArrayInput, default as ReferenceArrayInput } from './inputs/ReferenceArrayInput';
 export { default as ReferenceInput } from './inputs/ReferenceInput';
+export { default as ReificationArrayInput } from './inputs/ReificationArrayInput';
 
 export { default as dataProvider } from './dataProvider';
 export { default as httpClient } from './httpClient';

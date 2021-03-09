@@ -19,8 +19,9 @@ export default {
   dataModel: {
     types: ['pair:Organization'],
     containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'organizations',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    slugField: 'pair:label'
+    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:organizationOfMembership'],
+    slugField: 'pair:label',
+    forceArray: ['pair:organizationOfMembership']
   },
   translations: {
     fr: {
@@ -36,7 +37,10 @@ export default {
         'pair:involvedIn': 'Impliqué dans',
         'pair:hasTopic': 'A pour thème',
         'pair:documentedBy': 'Documenté par',
-        'pair:hasLocation': 'Adresse'
+        'pair:hasLocation': 'Adresse',
+        'pair:organizationOfMembership': 'Membres avec Role',
+        'pair:membershipActor': 'Membre',
+        'pair:membershipRole': 'Role'
       }
     }
   }

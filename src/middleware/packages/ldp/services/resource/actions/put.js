@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -36,19 +37,32 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      contentType: { type: 'string' },
+      disassembly: {
+        type: 'array',
+        optional: true
+      }
     },
     async handler(ctx) {
-      const { resource, contentType, webId } = ctx.params;
-      const resourceUri = resource.id || resource['@id'];
+      const resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
+      if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+      const containerUri = getContainerFromUri(resourceUri);
+      const { contentType, webId, disassembly, ...otherParams } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...ctx.params
+      };
+
+      let resource = otherParams.resource;
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       // If the new data are badly formatted, old data will be reinserted before throwing a 400 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON
       });
+
+      oldData = await this.deleteDisassembly(ctx, oldData, contentType, disassembly, webId);
 
       // First delete the whole resource
       await ctx.call('triplestore.update', {
@@ -61,6 +75,8 @@ module.exports = {
       });
 
       try {
+        resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
+
         // ... then insert back all the data
         await ctx.call('triplestore.insert', {
           resource,
@@ -73,7 +89,6 @@ module.exports = {
           resource: oldData,
           contentType: MIME_TYPES.JSON
         });
-
         // ... then rethrows an error
         throw new MoleculerError('Could not put resource: ' + e.message, 400, 'BAD_REQUEST');
       }
