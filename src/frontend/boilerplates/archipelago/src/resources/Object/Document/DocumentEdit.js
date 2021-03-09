@@ -19,10 +19,10 @@ export const DocumentEdit = props => {
           suggestionTriggerCharacters="["
           loadSuggestions={loadLinks}
         />
-        <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:DocumentType' }}>
-          <SelectInput optionText="pair:label" />
-        </ReferenceInput>
-        <AgentsInput source="pair:documents" />
+        {/*<ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:DocumentType' }}>*/}
+        {/*  <SelectInput optionText="pair:label" />*/}
+        {/*</ReferenceInput>*/}
+        {/*<AgentsInput source="pair:documents" />*/}
       </SimpleForm>
     </Edit>
   );

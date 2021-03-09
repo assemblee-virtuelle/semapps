@@ -1,26 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import ReactMde from 'react-mde';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 import { useInput } from 'react-admin';
-import FormControl from '@material-ui/core/FormControl';
+import { FormControl } from '@material-ui/core';
 
 const MarkdownInput = props => {
   const [tab, setTab] = useState('write');
-
-  const {
-    input: { value, onChange }
-  } = useInput(props);
-
-  const converter = useMemo(
-    () =>
-      new Showdown.Converter({
-        tables: true,
-        simplifiedAutoLink: true,
-        strikethrough: true,
-        tasklists: true
-      }),
-    []
-  );
+  const { input: { value, onChange } } = useInput(props);
 
   return (
     <FormControl fullWidth className="ra-input-mde">
@@ -28,7 +14,7 @@ const MarkdownInput = props => {
         value={value}
         onChange={value => onChange(value)}
         onTabChange={tab => setTab(tab)}
-        generateMarkdownPreview={async markdown => converter.makeHtml(markdown)}
+        generateMarkdownPreview={async markdown => <ReactMarkdown source={markdown} />}
         selectedTab={tab}
         {...props}
       />
