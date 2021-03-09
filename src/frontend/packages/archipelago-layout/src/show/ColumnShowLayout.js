@@ -7,6 +7,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
+/**
+ * @deprecated
+ */
 const ColumnShowLayout = props => {
   const { basePath, children, record, resource } = props;
 
