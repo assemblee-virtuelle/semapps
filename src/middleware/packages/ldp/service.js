@@ -11,16 +11,18 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: [],
+    enableWebAcl: false,
     defaultContainerOptions
   },
   async created() {
-    const { baseUrl, ontologies, containers, defaultContainerOptions } = this.schema.settings;
+    const { baseUrl, ontologies, containers, enableWebAcl, defaultContainerOptions } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
         containers,
+        enableWebAcl,
         defaultOptions: defaultContainerOptions
       }
     });
@@ -29,7 +31,8 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        containers
+        containers,
+        enableWebAcl
       }
     });
 

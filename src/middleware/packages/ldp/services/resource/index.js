@@ -12,9 +12,10 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: []
+    containers: [],
+    enableWebAcl: false
   },
-  dependencies: ['ldp', 'triplestore', 'webacl'],
+  dependencies: ['ldp', 'triplestore'],
   actions: {
     exist: existAction,
     // Actions accessible through the API
@@ -29,6 +30,12 @@ module.exports = {
     api_put: putAction.api,
     put: putAction.action,
     api_head: headAction.api
+  },
+  async started() {
+    // If WebAcl is enabled, make sure the service exist and is started
+    if (this.settings.enableWebAcl) {
+      await this.broker.waitForServices('webacl');
+    }
   },
   methods
 };

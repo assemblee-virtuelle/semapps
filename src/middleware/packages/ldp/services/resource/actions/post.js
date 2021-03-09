@@ -104,18 +104,22 @@ module.exports = {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
       }
 
-      if (webId !== 'system') {
-        // verifier que nous avons bien le droit Write ou Append sur le container.
-        let containerRights = await ctx.call('webacl.resource.hasRights', {
-          resourceUri: containerUri,
-          rights: {
-            write: true,
-            append: true
-          },
-          webId
-        });
-        if (!containerRights.write && !containerRights.append)
-          throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
+      // Check we have Write or Append permissions on the container
+      if( this.settings.enableWebAcl ) {
+        if (webId !== 'system') {
+          let containerRights = await ctx.call('webacl.resource.hasRights', {
+            resourceUri: containerUri,
+            rights: {
+              write: true,
+              append: true
+            },
+            webId
+          });
+
+          if (!containerRights.write && !containerRights.append) {
+            throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
+          }
+        }
       }
 
       if (fileStream) {
@@ -138,30 +142,33 @@ module.exports = {
         }
       }
 
-      if (webId !== 'system') {
-        let newRights = {};
-        if (webId === 'anon') {
-          newRights.anon = {
-            read: true,
-            write: true
-          };
-        } else {
-          newRights.anon = {
-            read: true
-          };
-          newRights.user = {
-            uri: webId,
-            read: true,
-            write: true,
-            control: true
-          };
+      // We must add the permissions before inserting the resource
+      if( this.settings.enableWebAcl ) {
+        if (webId !== 'system') {
+          let newRights = {};
+          if (webId === 'anon') {
+            newRights.anon = {
+              read: true,
+              write: true
+            };
+          } else {
+            newRights.anon = {
+              read: true
+            };
+            newRights.user = {
+              uri: webId,
+              read: true,
+              write: true,
+              control: true
+            };
+          }
+          await ctx.call('webacl.resource.addRights', {
+            webId: 'system',
+            resourceUri: resource['@id'],
+            newRights
+          });
         }
-        await ctx.call('webacl.resource.addRights', {
-          webId: 'system',
-          resourceUri: resource['@id'],
-          newRights
-        });
-      } else console.log(`resource ${resource['@id']} created without permissions as call was made by system`);
+      }
 
       await ctx.call('triplestore.insert', {
         resource,

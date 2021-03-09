@@ -15,9 +15,10 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: [],
+    enableWebAcl: false,
     defaultOptions
   },
-  dependencies: ['ldp', 'triplestore', 'webacl'],
+  dependencies: ['ldp', 'triplestore'],
   actions: {
     attach: attachAction,
     clear: clearAction,
@@ -31,6 +32,12 @@ module.exports = {
     get: getAction.action
   },
   async started() {
+    // If WebAcl is enabled, make sure the service exist and is started
+    if( this.settings.enableWebAcl ) {
+      await this.broker.waitForServices('webacl');
+    }
+
+    // Create all containers defined in configurations
     for (let container of this.settings.containers) {
       const containerPath = typeof container === 'string' ? container : container.path;
       const containerUri = urlJoin(this.settings.baseUrl, containerPath);

@@ -61,7 +61,9 @@ module.exports = {
         webId
       });
 
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
+      if( this.settings.enableWebAcl ) {
+        await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
+      }
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);

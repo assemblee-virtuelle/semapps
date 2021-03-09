@@ -15,36 +15,38 @@ module.exports = {
       contentType: MIME_TYPES.JSON
     });
 
-    // setting some perms on the container.
-    const webId = ctx.meta.webId || 'anon';
+    // Add permissions to the container
+    if( this.settings.enableWebAcl ) {
+      const webId = ctx.meta.webId || 'anon';
 
-    let newRights = {};
-    if (webId == 'anon') {
-      newRights.anon = {
-        read: true,
-        append: true
-      };
-    } else if (webId == 'system') {
-      newRights.anon = {
-        read: true
-      };
-      newRights.anyUser = {
-        read: true,
-        write: true
-      };
-    } else if (webId) {
-      newRights.user = {
-        uri: webId,
-        read: true,
-        write: true,
-        control: true
-      };
+      let newRights = {};
+      if (webId === 'anon') {
+        newRights.anon = {
+          read: true,
+          append: true
+        };
+      } else if (webId === 'system') {
+        newRights.anon = {
+          read: true
+        };
+        newRights.anyUser = {
+          read: true,
+          write: true
+        };
+      } else if (webId) {
+        newRights.user = {
+          uri: webId,
+          read: true,
+          write: true,
+          control: true
+        };
+      }
+
+      await ctx.call('webacl.resource.addRights', {
+        webId: 'system',
+        resourceUri: ctx.params.containerUri,
+        newRights
+      });
     }
-
-    await ctx.call('webacl.resource.addRights', {
-      webId: 'system',
-      resourceUri: ctx.params.containerUri,
-      newRights
-    });
   }
 };
