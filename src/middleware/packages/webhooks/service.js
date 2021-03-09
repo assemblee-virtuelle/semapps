@@ -12,6 +12,7 @@ const WebhooksService = {
     allowedActions: [],
     context: { '@vocab': 'http://semapps.org/ns/core#' }
   },
+  dependencies: ['api'],
   async started() {
     this.settings.allowedActions.forEach(actionName => {
       if (!this.actions[actionName]) {
@@ -19,7 +20,7 @@ const WebhooksService = {
       }
     });
     const routes = await this.actions.getApiRoutes();
-    for (var element of routes) {
+    for (let element of routes) {
       await this.broker.call('api.addRoute', {
         route: element
       });

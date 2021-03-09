@@ -11,6 +11,7 @@ const PushService = {
       data: {}
     }
   },
+  dependencies: ['api'],
   created() {
     this.broker.createService(DeviceService, {
       settings: {
@@ -35,7 +36,7 @@ const PushService = {
   },
   async started() {
     const routes = await this.actions.getApiRoutes();
-    for (var element of routes) {
+    for (let element of routes) {
       await this.broker.call('api.addRoute', {
         route: element
       });
