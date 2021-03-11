@@ -23,7 +23,7 @@ const getSlugWithExtension = fileName => {
 const isType = (type, resource) => {
   const resourceType = resource.type || resource['@type'];
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
-}
+};
 
 const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri }) => {
   const uploadFile = async rawFile => {
@@ -77,9 +77,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         const url = params.id || params['@id'] || resources[resourceId].containerUri;
         let { json } = await httpClient(url);
 
-
-
-        if( isType('ldp:Container', json) ) {
+        if (isType('ldp:Container', json)) {
           /*
            * LDP Container
            */
@@ -117,7 +115,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
            */
 
           // If the collection is split amongst several pages, get the first page
-          if( json.first ) {
+          if (json.first) {
             const result = await httpClient(json.first);
             json = result.json;
           }
