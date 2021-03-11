@@ -38,13 +38,20 @@ const MapList = ({
     }))
     .filter(record => record.latitude && record.longitude);
 
-  const bounds = boundToMarkers && records.length > 0 ? records.map(record => ([record.latitude, record.longitude])) : undefined
+  const bounds =
+    boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
 
   // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
-  if( boundToMarkers && !bounds ) return null;
+  if (boundToMarkers && !bounds) return null;
 
   return (
-    <MapContainer style={{ height }} center={!boundToMarkers ? center : undefined} zoom={!boundToMarkers ? zoom : undefined} bounds={bounds} {...otherProps}>
+    <MapContainer
+      style={{ height }}
+      center={!boundToMarkers ? center : undefined}
+      zoom={!boundToMarkers ? zoom : undefined}
+      bounds={bounds}
+      {...otherProps}
+    >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
