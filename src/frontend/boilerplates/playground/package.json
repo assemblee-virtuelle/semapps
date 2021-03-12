@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "private": true,
   "dependencies": {
     "@reach/router": "^1.2.1",
