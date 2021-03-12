@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build":"lerna run pre-publish && git add -A && git commit -m 'build dist'",
+    "build": "lerna run pre-publish && git add -A && git commit -m 'build dist'",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='frontend-v'",
     "publish": "lerna publish from-package",
     "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'",
