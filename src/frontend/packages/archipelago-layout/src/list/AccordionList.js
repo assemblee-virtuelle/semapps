@@ -17,6 +17,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   accordionDetails: {
+    backgroundColor: theme.palette.common.white,
     display: 'block',
     '& p': {
       margin: 0
@@ -35,13 +36,12 @@ const useStyles = makeStyles(theme => ({
 
 const AccordionList = ({ date, title, content }) => {
   const classes = useStyles();
-  const { ids, data } = useListContext();
+  const { ids, data, resource, basePath } = useListContext();
   return (
     <div className={classes.root}>
       {ids.map((id, i) => {
         const computedDate = date && new Date(date(data[id]));
         const computedTitle = title && title(data[id]);
-        const computedContent = content && content(data[id]);
         return (
           <Accordion className={classes.accordion}>
             <AccordionSummary
@@ -54,7 +54,7 @@ const AccordionList = ({ date, title, content }) => {
               <Typography className={classes.title}>{computedTitle}</Typography>
             </AccordionSummary>
             <AccordionDetails className={classes.accordionDetails}>
-              {typeof computedContent === 'object' ? computedContent : <Typography>{computedContent}</Typography>}
+              {React.createElement(content, { record: data[id], resource, basePath })}
             </AccordionDetails>
           </Accordion>
         );

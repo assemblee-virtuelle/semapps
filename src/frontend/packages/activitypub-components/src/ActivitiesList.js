@@ -23,22 +23,22 @@ const ActivitiesList = ({ children, source, record = {} }) => {
     return <LinearProgress className={classes.progress} />;
   }
 
-  const activities = data
+  const notes = data
     .filter(activity => activity.type === 'Create')
     .reduce((o, activity) => ({ ...o, [activity.object.id]: activity.object }), {});
 
   return (
     <ListContextProvider
       value={{
-        basePath: '/Activity',
+        basePath: '/Note',
         currentSort: { field: 'id', order: 'ASC' },
-        data: activities,
+        data: notes,
         // defaultTitle: null,
         // displayedFilters: null,
         // filterValues: null,
         // hasCreate: null,
         // hideFilter: null,
-        ids: Object.keys(activities),
+        ids: Object.keys(notes),
         loaded,
         loading,
         // onSelect: null,
@@ -46,7 +46,7 @@ const ActivitiesList = ({ children, source, record = {} }) => {
         // onUnselectItems: null,
         page: 1,
         perPage: 10,
-        resource: 'Activity',
+        resource: 'Note',
         // selectedIds: null,
         // setFilters: null,
         // setPage: null,
