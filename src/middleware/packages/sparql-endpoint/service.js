@@ -7,7 +7,7 @@ const SparqlEndpointService = {
     defaultAccept: 'text/turtle'
   },
   dependencies: ['triplestore', 'api'],
-  async started () {
+  async started() {
     await this.broker.call('api.addRoute', {
       route: getRoute()
     });
@@ -24,7 +24,7 @@ const SparqlEndpointService = {
         ctx.meta.$responseType = ctx.meta.responseType || accept;
       }
       return response;
-    },
+    }
   }
 };
 
