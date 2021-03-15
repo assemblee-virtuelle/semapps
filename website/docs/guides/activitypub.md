@@ -1,12 +1,22 @@
 ---
 title: Create an ActivityPub server
 ---
+### Purpose
 
-In this guide you will setup a SemApps-powered [ActivityPub](https://www.w3.org/TR/activitypub/) server, you will create an actor and communicate with another [Mastodon](https://joinmastodon.org/) actor.
+[ActivityPub](https://www.w3.org/TR/activitypub/) is a W3C Recommendation that defines a protocol that provides a client to server API for creating, updating and deleting content, as well as delivering notifications and content. 
+
+In this guide you will 
+- Setup a SemApps-powered **[ActivityPub](https://www.w3.org/TR/activitypub/) server**;
+- **Create an actor**;
+- Make this actor **communicate** with another [Mastodon](https://joinmastodon.org/) actor.
+
+### Prerequisites
+
+You need to have [NodeJS](https://nodejs.org/en/) installed on your computer.
+
+You also need [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/) installed on your machine.
 
 ## Setup a new Moleculer project
-
-You will need to have [NodeJS](https://nodejs.org/en/) installed on your computer.
 
 First install the [moleculer-cli](https://github.com/moleculerjs/moleculer-cli) tool globally.
 
@@ -23,8 +33,10 @@ moleculer init assemblee-virtuelle/semapps-template-activitypub my-activitypub-s
 Choose `Yes` to all questions:
 ```
 ? Do you need a local instance of Jena Fuseki (with Docker)? Yes
-Create 'semapps' folder...
+Create 'my-activitypub-server' folder...
 ? Would you like to run 'npm install'? Yes
+
+Running npm install...
 ```
 
 You can now go to the newly-created directory:
@@ -37,8 +49,6 @@ cd my-activitypub-server
 
 Jena Fuseki is a semantic triple store. It is where your app's data will be stored.
 
-You need [docker](https://docs.docker.com/install/) and [docker-compose](https://docs.docker.com/compose/install/) installed on your machine.
-
 ```bash
 docker-compose up
 ```
@@ -48,6 +58,10 @@ Jena Fuseki is now available at the URL http://localhost:3030.
 Please login - by default, the login is `admin` and the password is also `admin`.
 
 Start by creating a new dataset and name it `localData` (case sensitive). Your data will be stored there.
+
+You should get something like this:
+
+![](ldp_resources/jenafuseki_localData.jpg)
 
 ### Create a HTTPS tunnel to your localhost
 
