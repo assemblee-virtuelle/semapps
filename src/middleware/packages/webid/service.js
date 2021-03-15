@@ -3,13 +3,21 @@ const getRoutes = require('./getRoutes');
 
 const WebIdService = {
   name: 'webid',
-  dependencies: ['ldp.resource', 'triplestore'],
+  dependencies: ['ldp.resource', 'triplestore','api'],
   settings: {
     usersContainer: null,
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
     defaultAccept: 'text/turtle'
+  },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
+    }
   },
   actions: {
     /**

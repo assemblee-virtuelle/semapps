@@ -26,7 +26,7 @@ const ActivityPubService = {
     }),
     queueServiceUrl: null
   },
-  dependencies: ['ldp'],
+  dependencies: ['ldp','api'],
   async created() {
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
@@ -90,6 +90,14 @@ const ActivityPubService = {
         baseUri: this.settings.baseUri
       }
     });
+  },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
+    }
   },
   actions: {
     getApiRoutes() {

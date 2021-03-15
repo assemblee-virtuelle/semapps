@@ -14,6 +14,7 @@ module.exports = {
     enableWebAcl: false,
     defaultContainerOptions
   },
+  dependencies: ['api'],
   async created() {
     const { baseUrl, ontologies, containers, enableWebAcl, defaultContainerOptions } = this.schema.settings;
 
@@ -39,6 +40,14 @@ module.exports = {
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
       await this.broker.createService(LdpCacheCleanerService);
+    }
+  },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
     }
   },
   actions: {

@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebfingerService = {
@@ -6,11 +7,18 @@ const WebfingerService = {
     baseUrl: null,
     domainName: null // If not set, will be extracted from baseUrl
   },
-  dependencies: ['triplestore', 'ldp'],
+  dependencies: ['triplestore', 'ldp', 'api'],
   started() {
     if (!this.settings.domainName) {
       if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
       this.settings.domainName = new URL(this.settings.baseUrl).host;
+    }
+
+    const routes = await this.actions.getApiRoutes();
+    for (let element of routes) {
+      await this.broker.call('api.addRoute', {
+        route: element
+      });
     }
   },
   actions: {

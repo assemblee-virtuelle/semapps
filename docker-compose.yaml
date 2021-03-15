@@ -1,9 +1,7 @@
 version: '3.5'
 services:
   fuseki:
-    build:
-      context: ./src/jena/fuseki-docker
-      dockerfile: Dockerfile
+    image: stain/jena-fuseki
     container_name: fuseki
     restart: always
     volumes:
