@@ -33,7 +33,7 @@ module.exports = {
   },
   async started() {
     // If WebAcl is enabled, make sure the service exist and is started
-    if( this.settings.enableWebAcl ) {
+    if (this.settings.enableWebAcl) {
       await this.broker.waitForServices('webacl');
     }
 
