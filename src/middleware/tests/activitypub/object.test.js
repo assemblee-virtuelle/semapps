@@ -8,7 +8,8 @@ const CONFIG = require('../config');
 jest.setTimeout(50000);
 
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+  middlewares: [EventsWatcher],
+  logger: false
 });
 beforeAll(initialize(broker));
 afterAll(async () => {

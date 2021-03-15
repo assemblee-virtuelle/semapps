@@ -26,6 +26,7 @@ const initialize = broker => async () => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers,
+      enableWebAcl: true,
       defaultContainerOptions: {
         jsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
       }

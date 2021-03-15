@@ -15,15 +15,23 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      const collection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        id: ctx.params.collectionUri,
-        type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-        summary: ctx.params.summary
-      };
+      await ctx.call('webacl.resource.addRights', {
+        webId: 'system',
+        resourceUri: ctx.params.collectionUri,
+        newRights: {
+          anon: {
+            write: true
+          }
+        }
+      });
 
       return await ctx.call('triplestore.insert', {
-        resource: collection,
+        resource: {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          id: ctx.params.collectionUri,
+          type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+          summary: ctx.params.summary
+        },
         accept: MIME_TYPES.JSON,
         contentType: MIME_TYPES.JSON
       });

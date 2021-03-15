@@ -10,6 +10,8 @@ const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
 const supertest = require('supertest');
 
+jest.setTimeout(20000);
+
 const broker = new ServiceBroker({});
 
 let expressMocked = undefined;
@@ -28,14 +30,14 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['/resources']
+      containers: ['/resources'],
+      enableWebAcl: true
     }
   });
 
   broker.createService(WebACLService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      graphName: '<http://semapps.org/webacl>'
+      baseUrl: CONFIG.HOME_URL
     }
   });
 
@@ -78,8 +80,6 @@ beforeAll(async () => {
 afterAll(async () => {
   await broker.stop();
 });
-
-const console = require('console');
 
 describe('middleware CRUD resource with perms', () => {
   test('Ensure a call to ldp.resource.post fails if anonymous user, because container access denied', async () => {
@@ -166,8 +166,6 @@ describe('middleware CRUD resource with perms', () => {
         webId: 'system',
         accept: MIME_TYPES.JSON
       });
-
-      console.log(result);
 
       expect(result.length).toBe(0);
     } catch (e) {

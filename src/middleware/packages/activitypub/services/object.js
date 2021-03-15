@@ -11,7 +11,7 @@ const ObjectService = {
   },
   actions: {
     async process(ctx) {
-      let { activity } = ctx.params;
+      let { activity, actorUri } = ctx.params;
       let activityType = activity.type || activity['@type'],
         objectUri;
 
@@ -40,7 +40,8 @@ const ObjectService = {
             containerUri,
             slug: ctx.meta.headers && ctx.meta.headers.slug,
             resource: activity.object,
-            contentType: MIME_TYPES.JSON
+            contentType: MIME_TYPES.JSON,
+            webId: actorUri
           });
           break;
         }
@@ -48,14 +49,16 @@ const ObjectService = {
         case ACTIVITY_TYPES.UPDATE: {
           objectUri = await ctx.call('ldp.resource.patch', {
             resource: activity.object,
-            contentType: MIME_TYPES.JSON
+            contentType: MIME_TYPES.JSON,
+            webId: actorUri
           });
           break;
         }
 
         case ACTIVITY_TYPES.DELETE: {
           await ctx.call('ldp.resource.delete', {
-            resourceUri: activity.object
+            resourceUri: activity.object,
+            webId: actorUri
           });
           break;
         }
@@ -66,7 +69,8 @@ const ObjectService = {
           'ldp.resource.get',
           {
             resourceUri: objectUri,
-            accept: MIME_TYPES.JSON
+            accept: MIME_TYPES.JSON,
+            webId: actorUri
           },
           { meta: { $cache: false } }
         );

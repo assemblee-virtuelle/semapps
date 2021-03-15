@@ -11,7 +11,8 @@ const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+  middlewares: [EventsWatcher],
+  logger: false
 });
 let expressMocked = undefined;
 
@@ -28,10 +29,10 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['resources']
+      enableWebAcl: true,
+      containers: ['resources'],
     }
   });
-
   broker.createService(WebACLService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,

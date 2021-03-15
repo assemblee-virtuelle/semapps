@@ -1,21 +1,19 @@
-const urlJoin = require('url-join');
 const WebACLResourceService = require('./services/resource');
 const WebACLGroupService = require('./services/group');
 
-const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
+const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
 
 const middlewares = [
   parseHeader,
   negotiateContentType,
   negotiateAccept
-  //parseJson,
 ];
 
 module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: null
+    graphName: '<http://semapps.org/webacl>'
   },
   dependencies: ['ldp', 'triplestore'],
   async created() {

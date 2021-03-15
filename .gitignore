@@ -1,4 +1,5 @@
-deploy/certbot/
+/deploy/certbot/
+/data
 node_modules
 yarn-error.log
 lerna-debug.log

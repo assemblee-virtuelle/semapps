@@ -11,6 +11,8 @@ const CONFIG = require('../config');
 const supertest = require('supertest');
 const urlJoin = require('url-join');
 
+jest.setTimeout(20000);
+
 const broker = new ServiceBroker({});
 
 let expressMocked = undefined;
@@ -29,7 +31,8 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['/resources']
+      containers: ['/resources'],
+      enableWebAcl: true
     }
   });
 

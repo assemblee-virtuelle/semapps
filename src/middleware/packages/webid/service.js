@@ -78,7 +78,7 @@ const WebIdService = {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
           jsonContext: this.settings.context,
-          webId: webId
+          webId
         });
       } else {
         ctx.meta.$statusCode = 404;
@@ -90,7 +90,7 @@ const WebIdService = {
       body['@id'] = webId;
       return await ctx.call('ldp.resource.patch', {
         resource: body,
-        webId: webId,
+        webId,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
       });
@@ -98,18 +98,18 @@ const WebIdService = {
     async list(ctx) {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
-      PREFIX ldp: <http://www.w3.org/ns/ldp#>
-      CONSTRUCT {
-        ?webId ?p ?o
-      }
-      WHERE{
-        <${this.settings.usersContainer}> ldp:contains ?webId .
-        ?webId ?p ?o.
-      }
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        CONSTRUCT {
+          ?webId ?p ?o
+        }
+        WHERE{
+          <${this.settings.usersContainer}> ldp:contains ?webId .
+          ?webId ?p ?o.
+        }
       `;
       return await ctx.call('triplestore.query', {
         query: request,
-        accept: accept
+        accept
       });
     },
     async findByEmail(ctx) {

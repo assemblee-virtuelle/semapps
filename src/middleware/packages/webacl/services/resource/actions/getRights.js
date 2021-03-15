@@ -1,7 +1,7 @@
 const jsonld = require('jsonld');
 const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer;
 const { DataFactory, Writer } = require('n3');
-const { namedNode, literal, defaultGraph, quad } = DataFactory;
+const { quad } = DataFactory;
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
@@ -82,7 +82,6 @@ async function formatOutput(output, resourceAclUri, jsonLD) {
     output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
     mySerializer.end();
     let jsonld1 = JSON.parse(await streamToString(mySerializer));
-    //console.log(JSON.stringify(jsonld1,null,2))
 
     let jsonld2 = await jsonld.compact(jsonld1, prefixesJsonLD);
     // trick to clean up the jsonld in case we have only one auth node and compact removed the @graph level
@@ -189,7 +188,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
 module.exports = {
   api: async function api(ctx) {
     const accept = ctx.meta.headers.accept;
-    if (accept && accept != MIME_TYPES.JSON && accept != MIME_TYPES.TURTLE)
+    if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
       throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
     return await ctx.call('webacl.resource.getRights', {

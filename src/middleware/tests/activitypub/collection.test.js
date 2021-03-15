@@ -8,7 +8,8 @@ const CONFIG = require('../config');
 jest.setTimeout(50000);
 
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+  middlewares: [EventsWatcher],
+  logger: false
 });
 
 const collectionUri = CONFIG.HOME_URL + 'my-collection';
@@ -16,25 +17,6 @@ const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
 
 beforeAll(async () => {
   await initialize(broker)();
-  // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: collectionUri,
-    newRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: orderedCollectionUri,
-    newRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
 });
 afterAll(async () => {
   await broker.stop();

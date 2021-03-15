@@ -9,7 +9,8 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+  middlewares: [EventsWatcher],
+  logger: false
 });
 
 beforeAll(async () => {
@@ -25,6 +26,7 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
+      enableWebAcl: true,
       containers: ['/resources']
     }
   });
