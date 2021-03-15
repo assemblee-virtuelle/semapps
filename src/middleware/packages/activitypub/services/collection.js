@@ -20,7 +20,7 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      if( this.settings.aclEnabled ) {
+      if (this.settings.aclEnabled) {
         await ctx.call('webacl.resource.addRights', {
           webId: 'system',
           resourceUri: ctx.params.collectionUri,

@@ -21,16 +21,15 @@ function getRoute() {
   const middlewares = [parseSparql, negotiateAccept];
 
   return {
-      authorization: false,
-      authentication: true,
-      mergeParams: true,
-      aliases: {
-        'GET /': [...middlewares, 'sparqlEndpoint.query'],
-        'POST /': [...middlewares, 'sparqlEndpoint.query']
-      },
-      ...commonRouteConfig
-    }
-  ;
+    authorization: false,
+    authentication: true,
+    mergeParams: true,
+    aliases: {
+      'GET /': [...middlewares, 'sparqlEndpoint.query'],
+      'POST /': [...middlewares, 'sparqlEndpoint.query']
+    },
+    ...commonRouteConfig
+  };
 }
 
 module.exports = getRoute;
