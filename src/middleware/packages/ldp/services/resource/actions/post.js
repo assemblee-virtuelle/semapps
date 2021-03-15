@@ -105,7 +105,7 @@ module.exports = {
       }
 
       // Check we have Write or Append permissions on the container
-      if (this.settings.enableWebAcl) {
+      if (this.settings.aclEnabled) {
         if (webId !== 'system') {
           let containerRights = await ctx.call('webacl.resource.hasRights', {
             resourceUri: containerUri,
@@ -143,7 +143,7 @@ module.exports = {
       }
 
       // We must add the permissions before inserting the resource
-      if (this.settings.enableWebAcl) {
+      if (this.settings.aclEnabled) {
         if (webId !== 'system') {
           let newRights = {};
           if (webId === 'anon') {

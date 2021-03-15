@@ -25,23 +25,19 @@ beforeAll(async () => {
       jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
-
   broker.createService(LdpService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers: ['/resources'],
-      enableWebAcl: true
+      aclEnabled: true
     }
   });
-
   broker.createService(WebACLService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      graphName: '<http://semapps.org/webacl>'
+      baseUrl: CONFIG.HOME_URL
     }
   });
-
   broker.createService(SparqlEndpointService, {
     settings: {
       defaultAccept: 'application/ld+json'
@@ -57,10 +53,6 @@ beforeAll(async () => {
         origin: '*',
         exposedHeaders: '*'
       }
-    },
-    dependencies: ['sparqlEndpoint'],
-    async started() {
-      [...(await this.broker.call('sparqlEndpoint.getApiRoutes'))].forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {

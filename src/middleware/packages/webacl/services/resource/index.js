@@ -28,7 +28,7 @@ module.exports = {
     baseUrl: null,
     graphName: null
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'ldp.resource'],
   actions: {
     deleteAllRights: deleteAllRightsAction.action,
     // Actions accessible through the API

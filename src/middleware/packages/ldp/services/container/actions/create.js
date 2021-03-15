@@ -16,7 +16,7 @@ module.exports = {
     });
 
     // Add permissions to the container
-    if (this.settings.enableWebAcl) {
+    if (this.settings.aclEnabled) {
       const webId = ctx.meta.webId || 'anon';
 
       let newRights = {};

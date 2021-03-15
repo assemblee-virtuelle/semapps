@@ -16,7 +16,7 @@ const collectionUri = CONFIG.HOME_URL + 'my-collection';
 const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
 
 beforeAll(async () => {
-  await initialize(broker)();
+  await initialize(broker);
 });
 afterAll(async () => {
   await broker.stop();

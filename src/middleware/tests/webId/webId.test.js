@@ -1,4 +1,5 @@
 const { ServiceBroker } = require('moleculer');
+const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -14,6 +15,9 @@ const broker = new ServiceBroker({
 });
 
 beforeAll(async () => {
+  await broker.createService({
+    mixins: [ApiGatewayService]
+  });
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -27,7 +31,7 @@ beforeAll(async () => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers: ['/users'],
-      enableWebAcl: true
+      aclEnabled: true
     }
   });
   broker.createService(WebACLService, {
@@ -41,10 +45,10 @@ beforeAll(async () => {
     }
   });
 
+  // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
   await broker.call('triplestore.dropAll', { webId: 'system' });
-
-  // Restart broker after dropAll, so that the default container is recreated
+  await broker.stop();
   await broker.start();
 
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.

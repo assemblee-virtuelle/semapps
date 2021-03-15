@@ -1,9 +1,6 @@
 const WebACLResourceService = require('./services/resource');
 const WebACLGroupService = require('./services/group');
-
 const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
-
-const middlewares = [parseHeader, negotiateContentType, negotiateAccept];
 
 module.exports = {
   name: 'webacl',
@@ -11,7 +8,7 @@ module.exports = {
     baseUrl: null,
     graphName: '<http://semapps.org/webacl>'
   },
-  dependencies: ['ldp', 'triplestore'],
+  dependencies: ['api'],
   async created() {
     const { baseUrl, graphName } = this.schema.settings;
 
@@ -29,8 +26,16 @@ module.exports = {
       }
     });
   },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
+    }
+  },
   actions: {
     async getApiRoutes(ctx) {
+      const middlewares = [parseHeader, negotiateContentType, negotiateAccept];
+
       return [
         {
           authorization: false,
@@ -42,7 +47,7 @@ module.exports = {
               type: ['text/turtle', 'application/ld+json']
             }
           },
-          onBeforeCall(ctx, route, req, res) {
+          onBeforeCall(ctx, route, req) {
             ctx.meta.body = req.body;
           },
           aliases: {

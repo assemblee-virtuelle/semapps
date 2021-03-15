@@ -8,17 +8,15 @@ const WebfingerService = {
     domainName: null // If not set, will be extracted from baseUrl
   },
   dependencies: ['triplestore', 'ldp', 'api'],
-  started() {
+  async started() {
     if (!this.settings.domainName) {
       if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
       this.settings.domainName = new URL(this.settings.baseUrl).host;
     }
 
     const routes = await this.actions.getApiRoutes();
-    for (let element of routes) {
-      await this.broker.call('api.addRoute', {
-        route: element
-      });
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {

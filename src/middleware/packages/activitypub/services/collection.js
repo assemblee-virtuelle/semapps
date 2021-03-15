@@ -1,13 +1,18 @@
-const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../utils');
 
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams'
+    context: 'https://www.w3.org/ns/activitystreams',
+    aclEnabled: false
   },
   dependencies: ['triplestore', 'ldp'],
+  async started() {
+    // If WebAcl is enabled, make sure the service exist and is started
+    if (this.settings.aclEnabled) {
+      await this.broker.waitForServices('webacl');
+    }
+  },
   actions: {
     /*
      * Create a persisted collection
@@ -15,15 +20,17 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      await ctx.call('webacl.resource.addRights', {
-        webId: 'system',
-        resourceUri: ctx.params.collectionUri,
-        newRights: {
-          anon: {
-            write: true
+      if( this.settings.aclEnabled ) {
+        await ctx.call('webacl.resource.addRights', {
+          webId: 'system',
+          resourceUri: ctx.params.collectionUri,
+          newRights: {
+            anon: {
+              write: true
+            }
           }
-        }
-      });
+        });
+      }
 
       return await ctx.call('triplestore.insert', {
         resource: {

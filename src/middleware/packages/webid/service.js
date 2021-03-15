@@ -3,7 +3,6 @@ const getRoutes = require('./getRoutes');
 
 const WebIdService = {
   name: 'webid',
-  dependencies: ['ldp.resource', 'triplestore','api'],
   settings: {
     usersContainer: null,
     context: {
@@ -11,12 +10,11 @@ const WebIdService = {
     },
     defaultAccept: 'text/turtle'
   },
+  dependencies: ['ldp.resource', 'triplestore', 'api'],
   async started() {
-    const routes = await this.actions.getApiRoutes();
-    for (let element of routes) {
-      await this.broker.call('api.addRoute', {
-        route: element
-      });
+    const routes = getRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {
@@ -140,9 +138,6 @@ const WebIdService = {
     },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
-    },
-    getApiRoutes(ctx) {
-      return getRoutes();
     }
   },
   methods: {

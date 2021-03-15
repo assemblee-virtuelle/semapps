@@ -19,6 +19,7 @@ const ActivityPubService = {
     baseUri: null,
     additionalContext: {},
     containers: [],
+    aclEnabled: false,
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
@@ -26,7 +27,7 @@ const ActivityPubService = {
     }),
     queueServiceUrl: null
   },
-  dependencies: ['ldp','api'],
+  dependencies: ['ldp', 'api'],
   async created() {
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
@@ -47,7 +48,8 @@ const ActivityPubService = {
 
     this.broker.createService(CollectionService, {
       settings: {
-        context
+        context,
+        aclEnabled: this.settings.aclEnabled
       }
     });
 
@@ -93,10 +95,8 @@ const ActivityPubService = {
   },
   async started() {
     const routes = await this.actions.getApiRoutes();
-    for (let element of routes) {
-      await this.broker.call('api.addRoute', {
-        route: element
-      });
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {

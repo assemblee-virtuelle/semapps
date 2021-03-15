@@ -61,7 +61,7 @@ module.exports = {
         webId
       });
 
-      if (this.settings.enableWebAcl) {
+      if (this.settings.aclEnabled) {
         await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
       }
 

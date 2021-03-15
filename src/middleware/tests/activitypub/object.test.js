@@ -11,7 +11,9 @@ const broker = new ServiceBroker({
   middlewares: [EventsWatcher],
   logger: false
 });
-beforeAll(initialize(broker));
+beforeAll(async () => {
+  await initialize(broker);
+});
 afterAll(async () => {
   await broker.stop();
 });
