@@ -3,11 +3,7 @@ const WebACLGroupService = require('./services/group');
 
 const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
 
-const middlewares = [
-  parseHeader,
-  negotiateContentType,
-  negotiateAccept
-];
+const middlewares = [parseHeader, negotiateContentType, negotiateAccept];
 
 module.exports = {
   name: 'webacl',

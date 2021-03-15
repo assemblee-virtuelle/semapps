@@ -30,7 +30,7 @@ beforeAll(async () => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       enableWebAcl: true,
-      containers: ['resources'],
+      containers: ['resources']
     }
   });
   broker.createService(WebACLService, {
