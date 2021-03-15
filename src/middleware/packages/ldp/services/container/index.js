@@ -49,17 +49,17 @@ module.exports = {
 
     // 2nd loop: Attach child containers to parent containers
     // Child containers must have been created first, or the attach action will fail
-    for(let container of this.settings.containers) {
+    for (let container of this.settings.containers) {
       const containerUri = this.getContainerUri(container);
 
       // Find all children containers for this container
       const childContainersUris = this.settings.containers
         .map(childContainer => this.getContainerUri(childContainer))
-        .filter(childContainerUri => childContainerUri !== containerUri && childContainerUri.startsWith(containerUri))
+        .filter(childContainerUri => childContainerUri !== containerUri && childContainerUri.startsWith(containerUri));
 
-      for( let childContainerUri of childContainersUris ) {
+      for (let childContainerUri of childContainersUris) {
         console.log(`Attaching ${childContainerUri} to ${containerUri}...`);
-        await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' })
+        await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
       }
     }
   },

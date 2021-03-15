@@ -92,7 +92,7 @@ module.exports = {
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
               // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
-              if( isContainer(resource) ) {
+              if (isContainer(resource)) {
                 delete resource['ldp:contains'];
                 resource.type = defaultToArray(resource.type);
                 resource.type.push('ldp:Resource');
