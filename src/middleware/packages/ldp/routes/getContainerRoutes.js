@@ -52,37 +52,52 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
         delete: 'ldp.resource.api_delete'
       };
 
-  return [
-    {
-      authorization: false,
-      authentication: true,
-      aliases: {
-        'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
-        'GET /': [...middlewares, actions.list],
-        'GET /:id': [...middlewares, actions.get],
-        'HEAD /:id': [addContainerUriMiddleware(containerUri), actions.headres]
+  if( commonRouteConfig.path === '/' ) {
+    // The root container only has GET/HEAD actions
+    return [
+      {
+        authorization: false,
+        authentication: true,
+        aliases: {
+          'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
+          'GET /': [...middlewares, actions.list]
+        },
+        ...commonRouteConfig
       },
-      ...commonRouteConfig
-    },
-    {
-      authorization: !allowAnonymousEdit,
-      authentication: !!allowAnonymousEdit,
-      aliases: {
-        'POST /': [...middlewares, actions.post],
-        'PUT /:id': [...middlewares, actions.put],
-        'PATCH /:id': [...middlewares, actions.patch]
+    ]
+  } else {
+    return [
+      {
+        authorization: false,
+        authentication: true,
+        aliases: {
+          'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
+          'GET /': [...middlewares, actions.list],
+          'GET /:id': [...middlewares, actions.get],
+          'HEAD /:id': [addContainerUriMiddleware(containerUri), actions.headres]
+        },
+        ...commonRouteConfig
       },
-      ...commonRouteConfig
-    },
-    {
-      authorization: !allowAnonymousDelete,
-      authentication: !!allowAnonymousDelete,
-      aliases: {
-        'DELETE /:id': [...middlewares, actions.delete]
+      {
+        authorization: !allowAnonymousEdit,
+        authentication: !!allowAnonymousEdit,
+        aliases: {
+          'POST /': [...middlewares, actions.post],
+          'PUT /:id': [...middlewares, actions.put],
+          'PATCH /:id': [...middlewares, actions.patch]
+        },
+        ...commonRouteConfig
       },
-      ...commonRouteConfig
-    }
-  ];
+      {
+        authorization: !allowAnonymousDelete,
+        authentication: !!allowAnonymousDelete,
+        aliases: {
+          'DELETE /:id': [...middlewares, actions.delete]
+        },
+        ...commonRouteConfig
+      }
+    ];
+  }
 }
 
 module.exports = getContainerRoutes;

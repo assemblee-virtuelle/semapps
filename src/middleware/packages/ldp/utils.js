@@ -109,6 +109,8 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
+const isContainer = resource => Array.isArray(resource.type) ? resource.type.includes('ldp:Container') : resource.type === 'ldp:Container';
+
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
 module.exports = {
@@ -120,6 +122,7 @@ module.exports = {
   getPrefixJSON,
   getSlugFromUri,
   getContainerFromUri,
+  isContainer,
   defaultToArray,
   getAclUriFromResourceUri
 };

@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const WebfingerService = {

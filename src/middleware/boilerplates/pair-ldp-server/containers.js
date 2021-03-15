@@ -2,6 +2,9 @@ const { ACTOR_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 
 module.exports = [
   {
+    path: '/'
+  },
+  {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']

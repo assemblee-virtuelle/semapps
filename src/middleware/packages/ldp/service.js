@@ -44,10 +44,8 @@ module.exports = {
   },
   async started() {
     const routes = await this.actions.getApiRoutes();
-    for (let element of routes) {
-      await this.broker.call('api.addRoute', {
-        route: element
-      });
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {
