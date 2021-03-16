@@ -52,7 +52,7 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
         delete: 'ldp.resource.api_delete'
       };
 
-  if( commonRouteConfig.path === '/' ) {
+  if (commonRouteConfig.path === '/') {
     // The root container only has GET/HEAD actions
     return [
       {
@@ -63,8 +63,8 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
           'GET /': [...middlewares, actions.list]
         },
         ...commonRouteConfig
-      },
-    ]
+      }
+    ];
   } else {
     return [
       {
