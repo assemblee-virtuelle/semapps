@@ -33,11 +33,11 @@ module.exports = {
     api_removeMember: removeMemberAction.api
   },
   async started() {
-    if( this.settings.superAdmins.length > 0 ) {
+    if (this.settings.superAdmins.length > 0) {
       const groupExists = await this.actions.exist({ groupSlug: 'superadmins', webId: 'system' });
 
-      if( !groupExists ) {
-        console.log('Super admin group doesn\'t exist, creating it...');
+      if (!groupExists) {
+        console.log("Super admin group doesn't exist, creating it...");
         const { groupUri } = await this.actions.create({ slug: 'superadmins', webId: 'system' });
 
         // Give full rights to root container
@@ -57,18 +57,22 @@ module.exports = {
               }
             }
           },
-          webId: 'system',
+          webId: 'system'
         });
       }
 
-      for( let memberUri of this.settings.superAdmins ) {
-        const isMember = await this.actions.isMember({ groupSlug: 'superadmins', memberId: memberUri, webId: 'system' });
+      for (let memberUri of this.settings.superAdmins) {
+        const isMember = await this.actions.isMember({
+          groupSlug: 'superadmins',
+          memberId: memberUri,
+          webId: 'system'
+        });
 
-        if( !isMember ) {
+        if (!isMember) {
           console.log(`User ${memberUri} is not member of superadmin group, adding it...`);
           await this.actions.addMember({ groupSlug: 'superadmins', memberUri, webId: 'system' });
         }
       }
     }
-  },
+  }
 };
