@@ -35,10 +35,14 @@ module.exports = {
         throw new MoleculerError('group already exists', 400, 'BAD_REQUEST');
 
       let newRights = {};
-      if (webId == 'anon') {
+      if (webId === 'anon') {
         newRights.anon = {
           read: true,
           write: true
+        };
+      } else if (webId === 'system') {
+        newRights.anon = {
+          read: true
         };
       } else {
         newRights.user = {

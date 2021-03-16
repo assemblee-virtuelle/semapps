@@ -10,15 +10,15 @@ function getRoutes() {
   const middlewares = [negotiateAccept];
 
   return [
-    {
-      authorization: false,
-      authentication: true,
-      aliases: {
-        'GET users/:userId': [...middlewares, 'webid.view'],
-        'GET users': [...middlewares, 'webid.list']
-      },
-      ...commonRouteConfig
-    },
+    // {
+    //   authorization: false,
+    //   authentication: true,
+    //   aliases: {
+    //     'GET users/:userId': [...middlewares, 'webid.view'],
+    //     'GET users': [...middlewares, 'webid.list']
+    //   },
+    //   ...commonRouteConfig
+    // },
     // Secured routes
     {
       authorization: true,

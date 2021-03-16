@@ -6,11 +6,12 @@ module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: '<http://semapps.org/webacl>'
+    graphName: '<http://semapps.org/webacl>',
+    superAdmins: []
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, graphName } = this.schema.settings;
+    const { baseUrl, graphName, superAdmins } = this.schema.settings;
 
     await this.broker.createService(WebACLResourceService, {
       settings: {
@@ -22,7 +23,8 @@ module.exports = {
     await this.broker.createService(WebACLGroupService, {
       settings: {
         baseUrl,
-        graphName
+        graphName,
+        superAdmins
       }
     });
   },

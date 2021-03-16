@@ -1,12 +1,14 @@
 version: '3.5'
 services:
   fuseki:
-    image: stain/jena-fuseki
+    build:
+      context: ./src/jena/fuseki-docker
+      dockerfile: Dockerfile
     container_name: fuseki
     restart: always
     volumes:
-      - rdf_data:/fuseki
-      - staging:/staging
+      - ./data/rdf_data:/fuseki
+      - ./data/staging:/staging
     ports:
       - "3030:3030"
     expose:
@@ -64,7 +66,7 @@ services:
     expose:
       - "6379"
     volumes:
-      - redis_data:/data
+      - ./data/redis_data:/data
     networks:
       - semapps
     command: ["redis-server", "--appendonly", "yes"]

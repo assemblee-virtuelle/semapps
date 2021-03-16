@@ -24,7 +24,7 @@ module.exports = {
 
       // TODO: check that the group exists ?
 
-      if (webId != 'system') {
+      if (webId !== 'system') {
         // verifier que nous avons bien le droit Read sur le group.
         let groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
@@ -37,9 +37,9 @@ module.exports = {
       }
 
       if (!memberId) memberId = webId;
-      if (memberId == 'anon' || memberId == 'system') return false; // anonymous is never member.
+      if (memberId === 'anon' || memberId === 'system') return false; // anonymous is never member.
 
-      let ok = await ctx.call('triplestore.query', {
+      return await ctx.call('triplestore.query', {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           ASK
           WHERE { GRAPH ${this.settings.graphName} {
@@ -48,10 +48,6 @@ module.exports = {
           `,
         webId: 'system'
       });
-
-      //ctx.meta.$statusCode = 200;
-
-      return ok;
     }
   }
 };
