@@ -6,8 +6,6 @@ module.exports = {
   settings: {
     graphName: CONFIG.WEBACL_GRAPH_URI,
     baseUrl: CONFIG.HOME_URL,
-    superAdmins: [
-      'http://localhost:3000/users/srosset81'
-    ]
+    superAdmins: ['http://localhost:3000/users/srosset81']
   }
 };
