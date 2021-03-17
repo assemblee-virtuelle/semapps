@@ -8,7 +8,7 @@ const {
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allowAnonymousDelete) {
+function getContainerRoutes(containerUri, serviceName) {
   const commonRouteConfig = {
     path: new URL(containerUri).pathname,
     // Disable the body parsers so that we can parse the body ourselves
@@ -33,8 +33,6 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
   const actions = serviceName
     ? {
         list: serviceName + '.find',
-        head: serviceName + '.head',
-        headres: serviceName + '.headres',
         get: serviceName + '.get',
         post: serviceName + '.create',
         patch: serviceName + '.update',
@@ -43,8 +41,8 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
       }
     : {
         list: 'ldp.container.api_get',
-        head: 'ldp.container.api_head',
-        headres: 'ldp.resource.api_head',
+        head_container: 'ldp.container.api_head',
+        head_resource: 'ldp.resource.api_head',
         get: 'ldp.resource.api_get',
         post: 'ldp.resource.api_post',
         patch: 'ldp.resource.api_patch',
@@ -52,52 +50,33 @@ function getContainerRoutes(containerUri, serviceName, allowAnonymousEdit, allow
         delete: 'ldp.resource.api_delete'
       };
 
-  if (commonRouteConfig.path === '/') {
-    // The root container only has GET/HEAD actions
-    return [
-      {
-        authorization: false,
-        authentication: true,
-        aliases: {
-          'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
-          'GET /': [...middlewares, actions.list]
-        },
-        ...commonRouteConfig
-      }
-    ];
-  } else {
-    return [
-      {
-        authorization: false,
-        authentication: true,
-        aliases: {
-          'HEAD /': [addContainerUriMiddleware(containerUri), actions.head],
-          'GET /': [...middlewares, actions.list],
-          'GET /:id': [...middlewares, actions.get],
-          'HEAD /:id': [addContainerUriMiddleware(containerUri), actions.headres]
-        },
-        ...commonRouteConfig
-      },
-      {
-        authorization: !allowAnonymousEdit,
-        authentication: !!allowAnonymousEdit,
-        aliases: {
-          'POST /': [...middlewares, actions.post],
-          'PUT /:id': [...middlewares, actions.put],
-          'PATCH /:id': [...middlewares, actions.patch]
-        },
-        ...commonRouteConfig
-      },
-      {
-        authorization: !allowAnonymousDelete,
-        authentication: !!allowAnonymousDelete,
-        aliases: {
-          'DELETE /:id': [...middlewares, actions.delete]
-        },
-        ...commonRouteConfig
-      }
-    ];
+  // Container aliases
+  let aliases = {
+    'GET /': [...middlewares, actions.list],
+    'POST /': [...middlewares, actions.post],
+    'HEAD /': actions.head_container ? [addContainerUriMiddleware(containerUri), actions.head_container] : undefined
+  };
+
+  // If this is not the root container, add resource aliases
+  if( commonRouteConfig.path !== '/' ) {
+    aliases = {
+      ...aliases,
+      'GET /:id': [...middlewares, actions.get],
+      'PUT /:id': [...middlewares, actions.put],
+      'PATCH /:id': [...middlewares, actions.patch],
+      'DELETE /:id': [...middlewares, actions.delete],
+      'HEAD /:id': actions.head_resource ? [addContainerUriMiddleware(containerUri), actions.head_resource] : undefined
+    }
   }
+
+  return [
+    {
+      authorization: false,
+      authentication: true,
+      aliases,
+      ...commonRouteConfig
+    }
+  ];
 }
 
 module.exports = getContainerRoutes;

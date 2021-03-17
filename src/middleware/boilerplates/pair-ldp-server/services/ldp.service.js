@@ -12,9 +12,7 @@ module.exports = {
     containers,
     aclEnabled: true,
     defaultContainerOptions: {
-      jsonContext: urlJoin(CONFIG.HOME_URL, 'context.json'),
-      allowAnonymousEdit: true,
-      allowAnonymousDelete: true
+      jsonContext: urlJoin(CONFIG.HOME_URL, 'context.json')
     }
   }
 };

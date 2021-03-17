@@ -49,16 +49,11 @@ module.exports = {
     }
   },
   actions: {
-    async getApiRoutes(ctx) {
+    async getApiRoutes() {
       let routes = [];
-      await this.broker.waitForServices(['ldp.container']);
-      // Associate all containers in settings with the LDP service
       for (let container of this.settings.containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
-        const { allowAnonymousEdit, allowAnonymousDelete } = await ctx.call('ldp.container.getOptions', {
-          uri: containerUri
-        });
-        routes.push(...getContainerRoutes(containerUri, null, allowAnonymousEdit, allowAnonymousDelete));
+        routes.push(...getContainerRoutes(containerUri, null));
       }
       return routes;
     }

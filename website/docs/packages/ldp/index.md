@@ -90,8 +90,6 @@ module.exports = {
 | `jsonContext` | `[Any]` |  | JSON context to use to format results |
 | `dereference`| `[Array]` | `[]` | Properties to dereference, prefixed with their ontology. You can define sub-predicates separated by `/` |
 | `queryDepth` | `Integer` | 0 | Depth of blank nodes to dereference |
-| `allowAnonymousEdit`| `Boolean` | false | Allow unlogged users to edit resources |
-| `allowAnonymousDelete`| `Boolean` | false | Allow unlogged users to delete resources |
 
 ## API routes
 
