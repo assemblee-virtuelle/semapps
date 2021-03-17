@@ -37,6 +37,15 @@ module.exports = {
     async 'ldp.container.detached'(ctx) {
       const { containerUri } = ctx.params;
       await this.actions.cleanContainer({ containerUri }, { parentCtx: ctx });
+    },
+    // Invalidate cache also when ACL rights are changed
+    async 'webacl.resource.updated'(ctx) {
+      const { resourceUri } = ctx.params;
+      await this.actions.cleanResource({ resourceUri }, { parentCtx: ctx });
+    },
+    async 'webacl.resource.deleted'(ctx) {
+      const { resourceUri } = ctx.params;
+      await this.actions.cleanResource({ resourceUri }, { parentCtx: ctx });
     }
   }
 };

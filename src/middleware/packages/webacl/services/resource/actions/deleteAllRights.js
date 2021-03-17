@@ -21,6 +21,8 @@ module.exports = {
           ?auth ?p2 ?o  }`,
         webId: 'system'
       });
+
+      ctx.emit('webacl.resource.deleted', { resourceUri });
     }
   }
 };

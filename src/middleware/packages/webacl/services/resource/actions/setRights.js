@@ -106,6 +106,8 @@ module.exports = {
         query: `INSERT DATA { GRAPH ${this.settings.graphName} { ${addRequest} } }; DELETE DATA { GRAPH ${this.settings.graphName} { ${deleteRequest} } }`,
         webId: 'system'
       });
+
+      ctx.emit('webacl.resource.updated', { resourceUri });
     }
   }
 };

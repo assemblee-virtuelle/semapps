@@ -174,11 +174,7 @@ module.exports = {
         graphName: this.settings.graphName
       });
 
-      ctx.emit('webacl.resource.added', {
-        resourceUri,
-        rights: addedRights || newRights,
-        webId
-      });
+      ctx.emit('webacl.resource.updated', { resourceUri });
     }
   }
 };
