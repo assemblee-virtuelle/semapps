@@ -91,23 +91,23 @@ const FULL_ACL_ANYAGENT = 'http://www.w3.org/ns/auth/acl#AuthenticatedAgent';
 const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
   if (forOutput) {
     return (
-      acl.p.value == FULL_TYPE_URI ||
-      acl.p.value == FULL_ACCESSTO_URI ||
-      acl.p.value == FULL_MODE_URI ||
-      acl.p.value == FULL_DEFAULT_URI
+      acl.p.value === FULL_TYPE_URI ||
+      acl.p.value === FULL_ACCESSTO_URI ||
+      acl.p.value === FULL_MODE_URI ||
+      acl.p.value === FULL_DEFAULT_URI
     );
   }
 
-  if (agentSearchParam.foafAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_FOAF_AGENT) return true;
+  if (agentSearchParam.foafAgent && acl.p.value === FULL_AGENTCLASS_URI && acl.o.value === FULL_FOAF_AGENT) return true;
 
-  if (agentSearchParam.authAgent && acl.p.value == FULL_AGENTCLASS_URI && acl.o.value == FULL_ACL_ANYAGENT) return true;
+  if (agentSearchParam.authAgent && acl.p.value === FULL_AGENTCLASS_URI && acl.o.value === FULL_ACL_ANYAGENT) return true;
 
-  if (agentSearchParam.webId && acl.p.value == FULL_AGENT_URI && acl.o.value == agentSearchParam.webId) return true;
+  if (agentSearchParam.webId && acl.p.value === FULL_AGENT_URI && acl.o.value === agentSearchParam.webId) return true;
 
   if (
     agentSearchParam.groups &&
     agentSearchParam.groups.length &&
-    acl.p.value == FULL_AGENT_GROUP &&
+    acl.p.value === FULL_AGENT_GROUP &&
     agentSearchParam.groups.includes(acl.o.value)
   )
     return true;
@@ -174,14 +174,14 @@ const AuthorizationDefaultSuffixes = ['DefaultRead', 'DefaultWrite', 'DefaultApp
 
 function filterTriplesForResource(triple, resourceAclUri, allowDefault) {
   let split = triple.auth.split('#');
-  if (split[0] != resourceAclUri) return false;
+  if (split[0] !== resourceAclUri) return false;
   if (AuthorizationSuffixes.includes(split[1])) return true;
   if (allowDefault && AuthorizationDefaultSuffixes.includes(split[1])) return true;
   return false;
 }
 
 async function convertBodyToTriples(body, contentType) {
-  if (contentType == MIME_TYPES.TURTLE) {
+  if (contentType === MIME_TYPES.TURTLE) {
     return new Promise((resolve, reject) => {
       const parser = new Parser({ format: 'turtle' });
       let res = [];

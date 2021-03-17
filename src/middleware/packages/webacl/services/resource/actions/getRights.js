@@ -101,8 +101,7 @@ async function filterAcls(hasControl, uaSearchParam, acls) {
   let filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
     let header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
-    let full = header.concat(filtered);
-    return full;
+    return header.concat(filtered);
   }
 
   return [];
@@ -116,7 +115,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   let groups;
 
   if (!hasControl && user !== 'anon') {
-    // retrive the groups of the user
+    // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
     uaSearchParam.groups = groups;
     // we check again for the groups. maybe user has control from a group
@@ -180,9 +179,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
-  let result = await formatOutput(document, resourceAclUri, ctx.meta.$responseType == MIME_TYPES.JSON);
-
-  return result;
+  return await formatOutput(document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
 module.exports = {
@@ -211,7 +208,7 @@ module.exports = {
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-      if (!slugParts || slugParts.length == 0) {
+      if (!slugParts || slugParts.length === 0) {
         // this is the root container.
         slugParts = ['/'];
       }

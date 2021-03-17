@@ -75,7 +75,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 module.exports = {
   api: async function api(ctx) {
     let slugParts = ctx.params.slugParts;
-    if (!slugParts || slugParts.length == 0) {
+    if (!slugParts || slugParts.length === 0) {
       // this is the root container.
       slugParts = ['/'];
     }
