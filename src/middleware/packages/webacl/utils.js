@@ -100,7 +100,8 @@ const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
 
   if (agentSearchParam.foafAgent && acl.p.value === FULL_AGENTCLASS_URI && acl.o.value === FULL_FOAF_AGENT) return true;
 
-  if (agentSearchParam.authAgent && acl.p.value === FULL_AGENTCLASS_URI && acl.o.value === FULL_ACL_ANYAGENT) return true;
+  if (agentSearchParam.authAgent && acl.p.value === FULL_AGENTCLASS_URI && acl.o.value === FULL_ACL_ANYAGENT)
+    return true;
 
   if (agentSearchParam.webId && acl.p.value === FULL_AGENT_URI && acl.o.value === agentSearchParam.webId) return true;
 
