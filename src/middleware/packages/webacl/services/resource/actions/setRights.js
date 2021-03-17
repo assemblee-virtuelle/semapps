@@ -66,7 +66,9 @@ module.exports = {
       );
 
       // find the difference between newRights and currentPerms. add only what is not existant yet. and remove those that are not needed anymore
-      let differenceAdd = newRights.filter(x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p));
+      let differenceAdd = newRights.filter(
+        x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
+      );
       let differenceDelete = currentPerms.filter(
         x => !newRights.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
