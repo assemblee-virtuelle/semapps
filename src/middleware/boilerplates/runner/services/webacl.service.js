@@ -1,10 +1,9 @@
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService } = require('@semapps/webacl');
 const CONFIG = require('../config');
 
 module.exports = {
-  mixins: [WebACLService],
+  mixins: [WebAclService],
   settings: {
-    graphName: CONFIG.WEBACL_GRAPH_URI,
     baseUrl: CONFIG.HOME_URL
   }
 };

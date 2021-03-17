@@ -1,5 +1,4 @@
 const { ServiceBroker } = require('moleculer');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
@@ -9,7 +8,7 @@ jest.setTimeout(50000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher],
-  logger: false
+  // logger: false
 });
 
 const collectionUri = CONFIG.HOME_URL + 'my-collection';

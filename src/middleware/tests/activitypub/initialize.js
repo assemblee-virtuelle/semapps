@@ -2,7 +2,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
 const { TripleStoreService } = require('@semapps/triplestore');
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService } = require('@semapps/webacl');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService, containers } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
@@ -36,7 +36,7 @@ const initialize = async broker => {
       }
     }
   });
-  await broker.createService(WebACLService, {
+  await broker.createService(WebAclService, {
     settings: {
       baseUrl: CONFIG.HOME_URL
     }

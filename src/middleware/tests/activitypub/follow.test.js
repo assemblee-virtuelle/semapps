@@ -9,7 +9,7 @@ jest.setTimeout(50000);
 
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher],
-  logger: false
+  // logger: false
 });
 beforeAll(async () => {
   await initialize(broker);

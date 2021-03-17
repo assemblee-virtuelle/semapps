@@ -1,7 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { LdpService } = require('@semapps/ldp');
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
 const express = require('express');
 const supertest = require('supertest');
@@ -12,7 +12,7 @@ const ontologies = require('../ontologies');
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher],
-  logger: false
+  // logger: false
 });
 let expressMocked = undefined;
 
@@ -33,7 +33,7 @@ beforeAll(async () => {
       containers: ['resources']
     }
   });
-  broker.createService(WebACLService, {
+  broker.createService(WebAclService, {
     settings: {
       baseUrl: CONFIG.HOME_URL
     }

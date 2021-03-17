@@ -1,7 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { LdpService } = require('@semapps/ldp');
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService } = require('@semapps/webacl');
 const ontologies = require('../ontologies');
 const express = require('express');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -33,7 +33,7 @@ beforeAll(async () => {
       aclEnabled: true
     }
   });
-  broker.createService(WebACLService, {
+  broker.createService(WebAclService, {
     settings: {
       baseUrl: CONFIG.HOME_URL
     }

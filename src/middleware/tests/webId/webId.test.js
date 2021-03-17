@@ -3,7 +3,7 @@ const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService } = require('@semapps/webacl');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
@@ -11,7 +11,7 @@ const ontologies = require('../ontologies');
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher],
-  logger: false
+  // logger: false
 });
 
 beforeAll(async () => {
@@ -34,7 +34,7 @@ beforeAll(async () => {
       aclEnabled: true
     }
   });
-  broker.createService(WebACLService, {
+  broker.createService(WebAclService, {
     settings: {
       baseUrl: CONFIG.HOME_URL
     }
