@@ -28,7 +28,7 @@ module.exports = {
     baseUrl: null,
     graphName: null
   },
-  dependencies: ['triplestore', 'ldp.resource', 'ldp.container'],
+  dependencies: ['triplestore'],
   actions: {
     deleteAllRights: deleteAllRightsAction.action,
     // Actions accessible through the API
@@ -44,6 +44,9 @@ module.exports = {
   methods: {
     // will return true if it is a container, false otherwise
     async checkResourceOrContainerExists(ctx, resourceUri) {
+      // Ensure LDP services have been started
+      await ctx.broker.waitForServices(['ldp.container', 'ldp.resource']);
+
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_group'))) {
         let exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
         if (!exists)

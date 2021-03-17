@@ -32,11 +32,6 @@ module.exports = {
     get: getAction.action
   },
   async started() {
-    // If WebAcl is enabled, make sure the service exist and is started
-    if (this.settings.aclEnabled) {
-      await this.broker.waitForServices('webacl');
-    }
-
     // 1st loop: Create all containers defined in configurations
     for (let container of this.settings.containers) {
       const containerUri = this.getContainerUri(container);

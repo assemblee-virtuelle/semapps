@@ -106,6 +106,7 @@ module.exports = {
 
       // Check we have Write or Append permissions on the container
       if (this.settings.aclEnabled) {
+        await ctx.broker.waitForServices('webacl.resource');
         if (webId !== 'system') {
           let containerRights = await ctx.call('webacl.resource.hasRights', {
             resourceUri: containerUri,
@@ -162,6 +163,8 @@ module.exports = {
               control: true
             };
           }
+
+          await ctx.broker.waitForServices('webacl.resource');
           await ctx.call('webacl.resource.addRights', {
             webId: 'system',
             resourceUri: resource['@id'],

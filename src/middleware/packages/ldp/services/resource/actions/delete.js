@@ -62,6 +62,7 @@ module.exports = {
       });
 
       if (this.settings.aclEnabled) {
+        await ctx.broker.waitForServices('webacl.resource');
         await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
       }
 

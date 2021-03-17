@@ -1,27 +1,17 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const {
-  getAuthorizationNode,
-  checkAgentPresent,
-  getUserGroups,
-  findParentContainers,
-  filterAgentAcl,
-  getAclUriFromResourceUri,
-  getUserAgentSearchParam,
-  convertBodyToTriples,
-  filterTriplesForResource
-} = require('../../../utils');
+const { getAclUriFromResourceUri, convertBodyToTriples, filterTriplesForResource } = require('../../../utils');
 const urlJoin = require('url-join');
 
 module.exports = {
   api: async function api(ctx) {
     const contentType = ctx.meta.headers['content-type'];
-    if (!contentType || (contentType != MIME_TYPES.JSON && contentType != MIME_TYPES.TURTLE))
+    if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST');
 
     let newRights = await convertBodyToTriples(ctx.meta.body, contentType);
 
-    if (newRights.length == 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
+    if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
     await ctx.call('webacl.resource.setRights', {
       slugParts: ctx.params.slugParts,
@@ -44,7 +34,7 @@ module.exports = {
       let { slugParts, webId, newRights, resourceUri } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (!slugParts || slugParts.length == 0) {
+      if (!slugParts || slugParts.length === 0) {
         // this is the root container.
         slugParts = ['/'];
       }
@@ -64,10 +54,8 @@ module.exports = {
       let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
       newRights = newRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
 
-      if (newRights.length == 0)
+      if (newRights.length === 0)
         throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
-
-      //console.log(newRights)
 
       let currentPerms = await this.getExistingPerms(
         ctx,
@@ -77,17 +65,13 @@ module.exports = {
         isContainer
       );
 
-      //console.log(currentPerms)
-
       // find the difference between newRights and currentPerms. add only what is not existant yet. and remove those that are not needed anymore
-      let differenceAdd = newRights.filter(x => !currentPerms.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
+      let differenceAdd = newRights.filter(x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p));
       let differenceDelete = currentPerms.filter(
-        x => !newRights.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p)
+        x => !newRights.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
 
-      //console.log(differenceAdd)
-      //console.log(differenceDelete)
-      if (differenceAdd.length == 0 && differenceDelete.length == 0) return;
+      if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
 
       // compile a list of Authorization already present. because if some of them don't exist, we need to create them
       let currentAuths = this.compileAuthorizationNodesMap(currentPerms);
@@ -103,8 +87,6 @@ module.exports = {
         addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      //console.log(addRequest)
-
       let deleteRequest = '';
       for (const del of differenceDelete) {
         deleteRequest += `<${del.auth}> <${del.p}> <${del.o}>.\n`;
@@ -116,8 +98,6 @@ module.exports = {
           deleteRequest += this.generateNewAuthNode(auth);
         }
       }
-
-      //console.log(deleteRequest)
 
       // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
       await ctx.call('triplestore.update', {

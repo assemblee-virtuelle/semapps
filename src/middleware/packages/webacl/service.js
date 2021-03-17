@@ -1,5 +1,5 @@
-const WebACLResourceService = require('./services/resource');
-const WebACLGroupService = require('./services/group');
+const WebAclResourceService = require('./services/resource');
+const WebAclGroupService = require('./services/group');
 const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
 
 module.exports = {
@@ -13,14 +13,14 @@ module.exports = {
   async created() {
     const { baseUrl, graphName, superAdmins } = this.schema.settings;
 
-    await this.broker.createService(WebACLResourceService, {
+    await this.broker.createService(WebAclResourceService, {
       settings: {
         baseUrl,
         graphName
       }
     });
 
-    await this.broker.createService(WebACLGroupService, {
+    await this.broker.createService(WebAclGroupService, {
       settings: {
         baseUrl,
         graphName,

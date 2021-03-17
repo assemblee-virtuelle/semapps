@@ -45,12 +45,12 @@ const processNewRights = (newRights, aclUri) => {
 module.exports = {
   api: async function api(ctx) {
     const contentType = ctx.meta.headers['content-type'];
-    if (!contentType || (contentType != MIME_TYPES.JSON && contentType != MIME_TYPES.TURTLE))
+    if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST');
 
     let addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
 
-    if (addedRights.length == 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
+    if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
     await ctx.call('webacl.resource.addRights', {
       slugParts: ctx.params.slugParts,
@@ -88,7 +88,7 @@ module.exports = {
             'BAD_REQUEST'
           );
 
-        if (!slugParts || slugParts.length == 0) {
+        if (!slugParts || slugParts.length === 0) {
           // this is the root container.
           slugParts = ['/'];
         }
@@ -97,7 +97,7 @@ module.exports = {
 
         // check that the user has Control perm.
         // bypass this check if user is 'system'
-        if (webId != 'system') {
+        if (webId !== 'system') {
           let { control } = await ctx.call('webacl.resource.hasRights', {
             resourceUri,
             rights: { control: true },
@@ -114,14 +114,13 @@ module.exports = {
           addedRights = processNewRights(additionalRights, aclUri + '#');
           if (isContainer && additionalRights.default)
             addedRights = addedRights.concat(processNewRights(additionalRights.default, aclUri + '#Default'));
-          if (addedRights.length == 0) new MoleculerError('No additional permissions to add!', 400, 'BAD_REQUEST');
+          if (addedRights.length === 0) new MoleculerError('No additional permissions to add!', 400, 'BAD_REQUEST');
         } else {
           // filter out all the addedRights that are not for the resource
           addedRights = addedRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
-          if (addedRights.length == 0)
+          if (addedRights.length === 0)
             throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
         }
-        //console.log(addedRights)
 
         let currentPerms = await this.getExistingPerms(
           ctx,
@@ -131,19 +130,15 @@ module.exports = {
           isContainer
         );
 
-        //console.log(currentPerms)
-
         // find the difference between addedRights and currentPerms. add only what is not existant yet.
-        difference = addedRights.filter(x => !currentPerms.some(y => x.auth == y.auth && x.o == y.o && x.p == y.p));
-
-        //console.log(difference)
-        if (difference.length == 0) return;
+        difference = addedRights.filter(x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p));
+        if (difference.length === 0) return;
 
         // compile a list of Authorization already present. if some of them don't exist, we need to create them here below
         currentAuths = this.compileAuthorizationNodesMap(currentPerms);
       } else if (newRights) {
         // TODO: check that the resource doesn't exist. otherwise, raise an error
-        if (webId != 'system')
+        if (webId !== 'system')
           throw new MoleculerError(
             'Access denied ! only system can add permissions for a newly created resource',
             403,
@@ -160,7 +155,7 @@ module.exports = {
         if (newRights.default) difference = difference.concat(processNewRights(newRights.default, aclUri + 'Default'));
         currentAuths = {};
 
-        if (difference.length == 0)
+        if (difference.length === 0)
           new MoleculerError("No permission set for the new resource. This won't work!", 400, 'BAD_REQUEST');
       }
 
@@ -173,12 +168,16 @@ module.exports = {
         addRequest += `<${add.auth}> <${add.p}> <${add.o}>.\n`;
       }
 
-      //console.log(addRequest)
-
       await ctx.call('triplestore.insert', {
         resource: addRequest,
         webId: 'system',
         graphName: this.settings.graphName
+      });
+
+      ctx.emit('webacl.resource.added', {
+        resourceUri,
+        rights: addedRights || newRights,
+        webId
       });
     }
   }

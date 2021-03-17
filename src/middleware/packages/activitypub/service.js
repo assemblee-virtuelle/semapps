@@ -27,7 +27,7 @@ const ActivityPubService = {
     }),
     queueServiceUrl: null
   },
-  dependencies: ['ldp', 'api'],
+  dependencies: ['api'],
   async created() {
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]

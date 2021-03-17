@@ -6,7 +6,7 @@ const CollectionService = {
     context: 'https://www.w3.org/ns/activitystreams',
     aclEnabled: false
   },
-  dependencies: ['triplestore', 'ldp'],
+  dependencies: ['triplestore', 'ldp.resource'],
   async started() {
     // If WebAcl is enabled, make sure the service exist and is started
     if (this.settings.aclEnabled) {

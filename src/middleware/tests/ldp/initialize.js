@@ -27,8 +27,7 @@ const initialize = async broker => {
   });
   await broker.createService(WebACLService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      graphName: '<http://semapps.org/webacl>'
+      baseUrl: CONFIG.HOME_URL
     }
   });
 

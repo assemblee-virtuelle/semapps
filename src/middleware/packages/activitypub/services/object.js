@@ -9,6 +9,7 @@ const ObjectService = {
     baseUri: null,
     containers: null
   },
+  dependencies: ['ldp.resource'],
   actions: {
     async process(ctx) {
       let { activity, actorUri } = ctx.params;

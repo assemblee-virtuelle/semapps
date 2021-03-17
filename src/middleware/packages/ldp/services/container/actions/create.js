@@ -42,6 +42,7 @@ module.exports = {
         };
       }
 
+      await ctx.broker.waitForServices('webacl.resource');
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
         resourceUri: ctx.params.containerUri,

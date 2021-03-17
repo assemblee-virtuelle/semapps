@@ -31,11 +31,5 @@ module.exports = {
     put: putAction.action,
     api_head: headAction.api
   },
-  async started() {
-    // If WebAcl is enabled, make sure the service exist and is started
-    if (this.settings.aclEnabled) {
-      await this.broker.waitForServices('webacl');
-    }
-  },
   methods
 };
