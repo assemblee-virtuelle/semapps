@@ -6,7 +6,7 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher],
+  middlewares: [EventsWatcher]
   // logger: false
 });
 
