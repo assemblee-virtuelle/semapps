@@ -65,6 +65,9 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   };
 
   return {
+    getResources: async (resourceId, params) => {
+      return {data:resources};
+    },
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 

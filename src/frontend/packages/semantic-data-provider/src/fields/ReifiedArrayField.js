@@ -1,23 +1,25 @@
 import React, {useState, useEffect} from 'react';
-import { ArrayField,useDataProvider } from 'react-admin';
+import { ArrayField,useDataProvider , useResourceContext} from 'react-admin';
 import {default as FilteredArrayField} from './FilteredArrayField'
+import { Typography, Box } from '@material-ui/core';
 
 
-const ReifiedArrayField  = ({children, groupReference, groupContainer, groupLabel, filterProperty, ...otherProps}) =>{
+const ReifiedArrayField  = ({children, groupReference, groupLabel, filterProperty,groupVariant, ...otherProps}) =>{
   const dataProvider = useDataProvider();
   const [groupes,setGroups] = useState();
 
   useEffect(() => {
     if(!groupes){
-      dataProvider.getList(groupReference,{'@id':process.env.REACT_APP_MIDDLEWARE_URL + groupContainer}).then(groupes=>{
-          setGroups(groupes.data);
-      }).catch(e=>{
-          setGroups([]);
-      })
+      dataProvider.getResources().then(resources=>{
+        const resource = resources.data[groupReference];
+        dataProvider.getList(groupReference,{'@id':resource.containerUri}).then(groupes=>{
+            setGroups(groupes.data);
+        }).catch(e=>{
+            setGroups([]);
+        })
+      });
     }
   },[groupes]);
-
-
 
   return (
     <>
@@ -25,19 +27,25 @@ const ReifiedArrayField  = ({children, groupReference, groupContainer, groupLabe
       groupes?.map((group, index) =>{
         let filter={};
         filter[filterProperty]=group.id;
-        return  <div key={index}>
-                  <h2>{group[groupLabel]}</h2>
-                  <FilteredArrayField {...otherProps} filter={filter}>
+        return  <Box key={index}>
+                  <Typography variant={groupVariant} align="left" noWrap>
+                    {group[groupLabel]}
+                  </Typography>
+                  <FilteredArrayField {...otherProps} filter={filter} label={group[groupLabel]} addLabel={true}>
                       {React.Children.only(children, (child, i) => {
                         return React.cloneElement(child, {});
                       })}
                   </FilteredArrayField>
-                </div>
+                </Box>
           }
       )
     }
     </>
   );
 }
+
+ReifiedArrayField.defaultProps = {
+  addLabel: true
+};
 
 export default ReifiedArrayField;

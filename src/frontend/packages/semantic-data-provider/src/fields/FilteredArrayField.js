@@ -6,7 +6,7 @@ const FilteredArrayField  = ({children,record,filter,source, ...otherProps }) =>
 
   const [filtered,setFiltered] = useState();
   useEffect(() => {
-    if(!filtered){
+    if(record && source && Array.isArray(record[source])){
       const filteredData = record[source].filter(r=>{
         let eq = true;
         for (const key in filter){
@@ -32,12 +32,18 @@ const FilteredArrayField  = ({children,record,filter,source, ...otherProps }) =>
   },[record,source,filter]);
 
   return (
-    <ArrayField record={filtered} source={source} {...otherProps}>
+    <ArrayField record={filtered} source={source} {...otherProps} addLabel={true}>
         {React.Children.only(children, (child, i) => {
           return React.cloneElement(child, {});
         })}
     </ArrayField>
   );
 }
+
+
+FilteredArrayField.defaultProps = {
+  addLabel: true
+};
+
 
 export default FilteredArrayField;

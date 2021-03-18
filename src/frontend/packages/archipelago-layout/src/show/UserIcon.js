@@ -1,14 +1,16 @@
 import React from 'react';
 import { Typography, Box, makeStyles } from '@material-ui/core';
 
-const useStyles = makeStyles(() => ({
-  parent: {
-    position: 'relative'
-  },
-  image: {
-    width: '100%',
-    borderRadius: '50%'
-  },
+const useStyles = makeStyles((theme) => ({
+  parent: props => ({
+   position: 'relative',
+   ...props.parent
+  }),
+  image: props => ({
+   width: '100%',
+   borderRadius: '50%',
+   ...props.image
+  }),
   child: {
     position: 'absolute',
     bottom: 0,
@@ -28,8 +30,9 @@ const useStyles = makeStyles(() => ({
 /**
  * @deprecated Use AvatarField
  */
-const UserIcon = ({ record }) => {
-  const classes = useStyles();
+const UserIcon = ({ record,styles , ...otherProps}) => {
+  console.log();
+  const classes = useStyles(styles);
   const fullName = record ? record['pair:firstName'] + ' ' + record['pair:lastName'] : '';
   return (
     <Box className={classes.parent}>
