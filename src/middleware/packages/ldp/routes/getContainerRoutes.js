@@ -58,7 +58,7 @@ function getContainerRoutes(containerUri, serviceName) {
   };
 
   // If this is not the root container, add resource aliases
-  if( commonRouteConfig.path !== '/' ) {
+  if (commonRouteConfig.path !== '/') {
     aliases = {
       ...aliases,
       'GET /:id': [...middlewares, actions.get],
@@ -66,7 +66,7 @@ function getContainerRoutes(containerUri, serviceName) {
       'PATCH /:id': [...middlewares, actions.patch],
       'DELETE /:id': [...middlewares, actions.delete],
       'HEAD /:id': actions.head_resource ? [addContainerUriMiddleware(containerUri), actions.head_resource] : undefined
-    }
+    };
   }
 
   return [

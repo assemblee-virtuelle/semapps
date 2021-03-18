@@ -5,16 +5,16 @@ let cacherMiddleware;
 // It has been suggested to put this middleware in Moleculer core code:
 // https://github.com/moleculerjs/moleculer/issues/892
 const CacherMiddleware = opts => ({
-  name: "CacherMiddleware",
+  name: 'CacherMiddleware',
   created(broker) {
-    if( opts ) {
+    if (opts) {
       const cacher = Cachers.resolve(opts);
       cacher.init(broker);
       cacherMiddleware = cacher.middleware();
     }
   },
   localAction(next, action) {
-    if( cacherMiddleware ) {
+    if (cacherMiddleware) {
       return cacherMiddleware(next, action);
     } else {
       return next;
