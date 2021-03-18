@@ -103,6 +103,7 @@ module.exports = {
       },
       webId: { type: 'string', optional: true }
     },
+    cache: true,
     async handler(ctx) {
       let { resourceUri, webId, rights } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';

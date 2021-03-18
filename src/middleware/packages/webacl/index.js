@@ -1,3 +1,4 @@
 module.exports = {
-  WebAclService: require('./service')
+  WebAclService: require('./service'),
+  WebAclMiddleware: require('./middleware')
 };

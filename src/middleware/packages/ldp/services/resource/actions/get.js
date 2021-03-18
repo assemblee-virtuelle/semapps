@@ -34,15 +34,18 @@ module.exports = {
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
         optional: true
       },
-      forceSemantic: { type: 'boolean', optional: true }
+      forceSemantic: { type: 'boolean', optional: true },
+      aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
+      // Enable cache only if the ACL have already been verified
+      // This allows use not to add the webId in the cache keys
+      enabled: ctx => !ctx.service.settings.aclEnabled || ctx.params.aclVerified,
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, forceSemantic } = ctx.params;
-      let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
+      const { resourceUri, forceSemantic, aclVerified } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
@@ -70,7 +73,7 @@ module.exports = {
             }
           `,
           accept,
-          webId
+          webId: aclVerified ? 'system' : webId
         });
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
