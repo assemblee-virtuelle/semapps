@@ -1,9 +1,18 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList,Datagrid } from 'react-admin';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, Datagrid } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { MainList, SideList, Hero, GridList, Show, MarkdownField, AvatarField, UserIcon } from '@semapps/archipelago-layout';
+import {
+  MainList,
+  SideList,
+  Hero,
+  GridList,
+  Show,
+  MarkdownField,
+  AvatarField,
+  UserIcon
+} from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import { ReferenceArrayField,ReferenceField, ReifiedArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField, ReferenceField, ReifiedArrayField } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
@@ -35,21 +44,28 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <ReifiedArrayField source="pair:organizationOfMembership" groupReference="MembershipRole" groupLabel="pair:label" filterProperty="pair:membershipRole">
+          <ReifiedArrayField
+            source="pair:organizationOfMembership"
+            groupReference="MembershipRole"
+            groupLabel="pair:label"
+            filterProperty="pair:membershipRole"
+          >
             <SingleFieldList linkType={false}>
               <ReferenceField reference="Person" source="pair:membershipActor" referenceBasePath="/User" link="show">
-                  <UserIcon styles={{
-                  image:{
-                    height: '150px',
-                    width:'auto',
-                    margin:'auto',
-                    display: 'block',
-                  },
-                  parent : {
-                    margin: '10px',
-                    width:'150px'
-                  }
-                }}/>
+                <UserIcon
+                  styles={{
+                    image: {
+                      height: '150px',
+                      width: 'auto',
+                      margin: 'auto',
+                      display: 'block'
+                    },
+                    parent: {
+                      margin: '10px',
+                      width: '150px'
+                    }
+                  }}
+                />
               </ReferenceField>
             </SingleFieldList>
           </ReifiedArrayField>
