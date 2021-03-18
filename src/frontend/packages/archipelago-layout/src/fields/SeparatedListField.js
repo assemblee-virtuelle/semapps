@@ -32,7 +32,7 @@ const SeparatedListField = props => {
   }
 
   return (
-    <div className={classnames(classes.root, className)} {...sanitizeListRestProps(rest)}>
+    <span className={classnames(classes.root, className)} {...sanitizeListRestProps(rest)}>
       {ids.map((id, i) => {
         const resourceLinkPath = !linkType ? false : linkToRecord(basePath, id, linkType);
 
@@ -53,14 +53,18 @@ const SeparatedListField = props => {
           );
         }
 
-        return cloneElement(Children.only(children), {
-          key: id,
-          record: data[id],
-          resource,
-          basePath
-        });
+        return (
+          <span key={id}>
+            {cloneElement(Children.only(children), {
+              record: data[id],
+              resource,
+              basePath
+            })}
+            {i < ids.length - 1 && separator + '\u00A0'}
+          </span>
+        );
       })}
-    </div>
+    </span>
   );
 };
 
