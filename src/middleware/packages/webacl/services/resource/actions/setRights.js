@@ -107,7 +107,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.updated', { resourceUri });
+      ctx.emit('webacl.resource.updated', { uri: resourceUri });
     }
   }
 };

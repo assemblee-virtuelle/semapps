@@ -11,13 +11,11 @@ const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
-  let containers = await ctx.call('triplestore.query', {
+  return await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.SPARQL_JSON,
     webId: 'system'
   });
-
-  return containers;
 };
 
 const USER_GROUPS_QUERY = (member, ACLGraphName) => {

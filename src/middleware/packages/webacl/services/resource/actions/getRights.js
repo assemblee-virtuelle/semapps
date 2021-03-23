@@ -185,11 +185,16 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
 module.exports = {
   api: async function api(ctx) {
     const accept = ctx.meta.headers.accept;
+    let slugParts = ctx.params.slugParts;
+
     if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
       throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
+    // this is the root container.
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+
     return await ctx.call('webacl.resource.getRights', {
-      slugParts: ctx.params.slugParts,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       accept: accept
     });
   },
@@ -197,23 +202,20 @@ module.exports = {
     visibility: 'public',
     params: {
       resourceUri: { type: 'string', optional: true },
-      slugParts: { type: 'array', items: 'string', optional: true },
-      webId: { type: 'string', optional: true },
-      accept: { type: 'string', optional: true }
+      accept: { type: 'string', optional: true },
+      webId: { type: 'string', optional: true }
+    },
+    cache: {
+      keys: ['resourceUri', 'accept', 'webId', '#webId']
     },
     async handler(ctx) {
-      let { slugParts, webId, accept, resourceUri } = ctx.params;
+      let { resourceUri, webId, accept } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-      if (!slugParts || slugParts.length === 0) {
-        // this is the root container.
-        slugParts = ['/'];
-      }
-      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
-      let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+      const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
     }

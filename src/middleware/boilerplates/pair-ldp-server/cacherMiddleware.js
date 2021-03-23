@@ -8,9 +8,9 @@ const CacherMiddleware = opts => ({
   name: "CacherMiddleware",
   created(broker) {
     if( opts ) {
-      const cacher = Cachers.resolve(opts);
-      cacher.init(broker);
-      cacherMiddleware = cacher.middleware();
+      broker.cacher = Cachers.resolve(opts);
+      broker.cacher.init(broker);
+      cacherMiddleware = broker.cacher.middleware();
     }
   },
   localAction(next, action) {

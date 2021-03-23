@@ -174,7 +174,7 @@ module.exports = {
         graphName: this.settings.graphName
       });
 
-      ctx.emit('webacl.resource.updated', { resourceUri });
+      ctx.emit('webacl.resource.updated', { uri: resourceUri });
     }
   }
 };
