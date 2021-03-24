@@ -5,17 +5,18 @@ title: LDP
 This package allows you to setup LDP direct containers in which LDP resources can be manipulated.
 
 ## Features
-* Handles triples, turtle and JSON-LD format
-* Automatic creation of containers on server start
-* Full container management: create, attach resources, detach, clear, delete...
+- Handles triples, turtle and JSON-LD format
+- Automatic creation of containers on server start
+- Full container management: create, attach resources, detach, clear, delete...
 
 ## Dependencies
-* [TripleStoreService](../triplestore.md)
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
+- [TripleStoreService](../triplestore.md)
 
 ## Sub-services
-* [LdpResourceService](resource.md)
-* [LdpContainerService](container.md)
-* CacheCleanerService
+- [LdpResourceService](resource.md)
+- [LdpContainerService](container.md)
+- LdpCacheCleanerService
 
 ## Install
 
@@ -56,23 +57,6 @@ module.exports = {
 
 ```
 
-Optionally, you can configure the API routes with moleculer-web:
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-
-module.exports = {
-  mixins: [ApiGatewayService],
-  dependencies: ['ldp'],
-  async started() {
-    [
-      ...(await this.broker.call('ldp.getApiRoutes')),
-      // Other routes here...
-    ].forEach(route => this.addRoute(route));
-  }
-}
-```
-
 ## Settings
 
 | Property | Type | Default | Description |
@@ -93,7 +77,7 @@ module.exports = {
 
 ## API routes
 
-These routes are automatically added to the `api` service, if it exists.
+These routes are automatically added to the `ApiGateway` service.
 
 | Route | Action called |
 | -------- | ---- |

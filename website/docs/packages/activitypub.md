@@ -17,6 +17,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 ## Dependencies
 
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [LdpService](ldp/index.md)
 - [WebfingerService](webfinger.md)
 - [SignatureService](signature.md)
@@ -70,22 +71,6 @@ module.exports = {
 };
 ```
 
-### Configure the API routes
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-
-module.exports = {
-  mixins: [ApiGatewayService],
-  dependencies: ['activitypub'],
-  async started() {
-    [
-      ...(await this.broker.call('activitypub.getApiRoutes')),
-      // Other routes here...
-    ].forEach(route => this.addRoute(route));
-  }
-}
-```
 
 ### Queue federation POSTs
 
@@ -106,13 +91,3 @@ This is done automatically when a `webid.created` event is detected.
 | `baseUri` | `String` | **required** | Base URI of your web server |
 | `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.
 | `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.
-
-
-## Actions
-
-The following service actions are available:
-
-### `getApiRoutes`
-
-##### Return
-`Object` - Routes formatted for the Moleculer ApiGateway

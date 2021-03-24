@@ -12,6 +12,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 
 ## Dependencies
 
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [LdpService](ldp/index.md)
 
 ## Install
@@ -37,23 +38,6 @@ module.exports = {
       const { user, data } = ctx.params;
       // Handle stuff here...
     }
-  }
-}
-```
-
-Optionally, you can configure the API routes with moleculer-web:
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-
-module.exports = {
-  mixins: [ApiGatewayService],
-  dependencies: ['webhooks'],
-  async started() {
-    [
-      ...(await this.broker.call('webhooks.getApiRoutes')),
-      // Other routes here...
-    ].forEach(route => this.addRoute(route));
   }
 }
 ```

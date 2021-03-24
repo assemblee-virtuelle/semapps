@@ -123,14 +123,6 @@ During the test, if you encounter problems with the running port of Fuseki or us
 
 TODO: test membership of groups that are in the defaultGraph (with inference of `rdfs:subPropertyOf vcard:hasMember`).
 
-## Middleware
-
-The SemApps middleware should always connect to the SPARQL endpoint with a Basic Authorization header containing the `admin` user and its password. `Authorization: Basic `and the base64 encoded username and password.
-
-If the middleware is doing a query on behalf of a semapps user, it should send the WebID URI of this user in the HTTP header `X-SemappsUser`. If no user is logged-in and the middleware is making a request as a public, anonymous user, then the `X-SemappsUser` header should be sent with the value `anon`.
-
-If to the contrary, the middleware is modifying the ACLs, it should send no header, or a header with the X-SemappsUser set to `system`.
-
 ### Code guidelines
 
 When coding in moleculer, it is important to always respect those rules:
@@ -141,58 +133,8 @@ When coding in moleculer, it is important to always respect those rules:
   * you don't need to set this param `webId: ctx.meta.webId` when you call your action from the "API action". Indeed, the webId will come automatically from the context meta.
   * in the moleculer action, you have to check if you received a webId from params, otherwise, use ctx.meta.webId. Something like `const webId = ctx.params.webId || ctx.meta.webId` and most importantly, in all your subsequent ctx.calls inside the action code, always pass this webId explicitly ! Or to other actions that take a webId in their params, or to actions that don't take a webId in their params and in this case by using the meta in 3rd argument : `ctx.call('an.action',{...myparams},{ meta: { webId} });`.
 
-## APIs
+## Example of usage
 
-### webacl.resource.hasRights
-
-Checks if a user (or the logged-in user) has some rights on a resource.
-
-This API is available as an action or via HTTP.
-
-returns a JSON object containing some of the properties :
-```
-{
-  read: boolean,
-  write: boolean,
-  append: boolean,
-  control: boolean
-}
-```
-
-* `GET /_rights/slug/of/container/or/resource` will return all the above properties
-* `POST /_rights/slug/of/container/or/resource` without a JSON body with return all the above properties. with a JSON body of this form it will return only the rights you asked for:
-```
-{
-  rights: {
-    read: true,
-    write: true,
-    append: true,
-    control: true
-  }
-}
-```
-
-### webacl.resource.getRights
-
-If the user has Control permission on the resource, it will return all the permissions on that resource.
-
-If the user doesn't have Control permission, it will return only the permissions related to the specific user that is doing the request.
-
-This API is available as an action or via HTTP.
-
-* `GET /_acl/slug/of/container/or/resource`
-
-can have an `Accept` header set to `application/ld+json` or `text/turtle`. The default is the later one.
-
-Will return the permissions grouped by the Authorization node they belong to.
-
-Each resource can have up to 4 Authorization nodes : `#Read` `#Write` `#Append` `#Control`. Each one contains the Agents, AgentClass, and/or AgentGroup that have the permission on the resource. In turtle, the `#` appears as a semi-colon `:`.
-
-Containers that define some default permissions for their contained resources will can have up to 4 additional Authorization nodes : `#DefaultRead` `#DefaultWrite` `#DefaultAppend` `#DefaultControl` that list the default permissions for that container.
-
-If their exist some additional permissions on the resource/container, that are inherited from a parent container, they will be displayed too at the end of the file, with Authorization nodes that have an id/URI that is fully-qualified, meaning it contains the full URI of the parent container, followed by `#Default...`. Likewise, you can distinguish between the default permissions that concern the container you queried the ACL for, and the default permissions that are inherited.
-
-An exemple:
 The user `https://data.virtual-assembly.org/users/sebastien.rosset` is member of the group `http://localhost:3000/_groups/group4`.
 
 The resource `http://localhost:3000/organizations/cheznous` is located, among others, in the container `http://localhost:3000/container28/` which itself is inside the parent container `http://localhost:3000/container29/`.
@@ -260,129 +202,6 @@ Furthermore, it happens that the same user has `Control` permission on the `cont
     acl:agentGroup <http://localhost:3000/_groups/group4>;
     acl:default <http://localhost:3000/container29>.
 ```
-
-Only a user that has `Control` access to a container, can see the `Default{Read,Write,Append,Control}` Authorization nodes of that container.
-
-### webacl.resource.addRights
-
-Adds some permissions to a resource. Only available if the user has Control access to the ressource.
-
-This API is available as an action or via HTTP.
-
-* `PATCH /_acl/slug/of/container/or/resource` with a body containing the permissions to add.
-THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
-
-This action does not take into account the `acl:mode` nor `acl:default` tuples that are sent. The only important part is the beginning of the node `:Read` or `"@id":"#Read"` in jsonLD. Likewise, the `acl:accessTo` and `acl:default` tuples are not taken into account neather. The presence of the keyword `Default` at the beginning of the node is what decides if we are adding an accessTo or a default permission.
-
-Becareful, the `@base` or `@prefix` in turtle is important, it needs to match the resource URL you are modifying with this action.
-
-Please note that the URI of the `@base` or `@prefix` should not include a trailing slash / . Except for the root container !
-
-Hence, all resources should be modified with a `"@base": "http://server.com/_acl/path/of/resource"` in JSON-LD or `@prefix : <http://server.com/_acl/path/of/resource#>.` in turtle.
-
-But the root container has to be accessed as follow : `"@base": "http://server.com/_acl/"` or `@prefix : <http://server.com/_acl/#>.`
-
-* call `addRights` as a moleculer action in middleware. In this case, use the parameter `additionalRights` with a format as below :
-```
-{
-  anon: {
-    read: boolean,
-    write: boolean,
-    append: boolean,
-    control: boolean,
-  },
-  anyUser: {
-    read: boolean,
-    write: boolean,
-    append: boolean,
-    control: boolean,
-  },
-  user: {
-    uri: '<URI of user>'
-    read: boolean
-    write: boolean
-    append: boolean
-    control: boolean
-  },
-  group: {
-    uri: '<URI of group>'
-    read: boolean
-    write: boolean
-    append: boolean
-    control: boolean
-  },
-  default : { // this is only possible on a container.
-    anon : { ... same as above },
-    anyUser : { ... same as above },
-    user : { ... same as above },
-    group : { ... same as above },
-  }
-}
-```
-
-This can only process one user and/or group at a time. repeat the call if you need to add permissions for several users or groups. Note that this limitation is not present in the `PATCH` HTTP method, but only if you call the action from moleculer. 
-
-### webacl.resource.setRights
-
-Changes the permissions of a resource so they become like in the document that is sent by the user. Only available if the user has Control access to the ressource.
-
-This API is available as an action or via HTTP.
-
-* `PUT /_acl/slug/of/container/or/resource` with a body containing the new permissions of this resource.
-THe format can be `text/turtle` or `application/ld+json`. Set the `Content-Type` header accordingly.
-
-The former permissions that are not present in the document will be removed.
-The new permissions will be added.
-
-The same rules as for `addRights` apply, regarding the format of the HTTP payload. This action can hardy be called from middleware.
-
-
-## ACL groups
-
-The groups have permissions too. And you can modify those permissions by using the usual APIs with the URL of the form `/_acl/_group/group-name`.
-
-### webacl.group.create
-
-* `POST /_group` with a json payload containing `{ "slug": "name_of_the_group" }`
-will return a 400 if the group already exists.
-otherwise, these are the permissions you will get on this new group :
-if you created it while being logged-in: yoursef : read, write, control.
-if you where not logged in, the group gets permissions for anonymous users : read and write.
-
-### webacl.group.addMember
-
-* `PATCH /_group/name_of_the_group` with a json payload containing `{ "memberUri": "uri_of_user_to_be_added" }`
-if the user is already present in the group, nothing happens.
-If you need to add several members, repeat the request, one member at a time.
-You need Write or Append permission on the group.
-
-### webacl.group.getMembers
-
-* `GET /_group/name_of_the_group` returns a JSON array with strings of the members URIs.
-You need Read permission on the group.
-
-### webacl.group.isMember
-
-This is not available as an HTTP API. params are `{ groupSlug, memberId }` to check if memberId belings to this group.
-You need Read permission on the group.
-
-### webacl.group.removeMember
-
-* `POST /_group/name_of_the_group` with a json payload containing `{ "deleteUserUri": "uri_of_user_to_be_removed" }`
-if the user is not a member, nothing happens.
-You need Write permission on the group.
-
-### webacl.group.delete
-
-* `DELETE /_group/name_of_the_group`
-You need Write permission on the group.
-This will remove all members, and also will remove all permissions this group had on any resource in the system.
-
-
-### webacl.group.getGroups
-
-* `GET /_group` returns a JSON array with strings of the existing groups URIs that you have Read access to.
-You can then use those group URIs to give permissions to some resources to the group. See the `/_acl` APIs for that.
 
 ## Security
 
