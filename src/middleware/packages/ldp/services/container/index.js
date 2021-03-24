@@ -15,7 +15,6 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: [],
-    aclEnabled: false,
     defaultOptions
   },
   dependencies: ['triplestore'],
@@ -53,7 +52,6 @@ module.exports = {
         .filter(childContainerUri => childContainerUri !== containerUri && childContainerUri.startsWith(containerUri));
 
       for (let childContainerUri of childContainersUris) {
-        console.log(`Attaching ${childContainerUri} to ${containerUri}...`);
         await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
       }
     }

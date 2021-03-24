@@ -1,5 +1,6 @@
 const WebAclResourceService = require('./services/resource');
 const WebAclGroupService = require('./services/group');
+const WebAclCacheCleanerService = require('./services/cache-cleaner');
 const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
 
 module.exports = {
@@ -27,6 +28,11 @@ module.exports = {
         superAdmins
       }
     });
+
+    // Only create this service if a cacher is defined
+    if (this.broker.cacher) {
+      await this.broker.createService(WebAclCacheCleanerService);
+    }
   },
   async started() {
     const routes = await this.actions.getApiRoutes();

@@ -22,7 +22,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.deleted', { resourceUri });
+      ctx.emit('webacl.resource.deleted', { uri: resourceUri });
     }
   }
 };

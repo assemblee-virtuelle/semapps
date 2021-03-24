@@ -1,4 +1,3 @@
-const ObjectID = require('bson').ObjectID;
 const urlJoin = require('url-join');
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
@@ -92,9 +91,6 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-// Generate a MongoDB-like object ID
-const generateId = () => new ObjectID().toString();
-
 const getPrefixRdf = ontologies => {
   return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
@@ -118,7 +114,6 @@ module.exports = {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
-  generateId,
   getPrefixRdf,
   getPrefixJSON,
   getSlugFromUri,

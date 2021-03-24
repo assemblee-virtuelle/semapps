@@ -5,6 +5,7 @@ module.exports = {
   params: {
     uri: { type: 'string' }
   },
+  cache: true,
   async handler(ctx) {
     const { uri } = ctx.params;
     const options =

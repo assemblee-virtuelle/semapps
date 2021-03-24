@@ -30,7 +30,7 @@ function doRequest(options) {
           try {
             response.body = JSON.parse(str);
           } catch (e) {
-            //console.log('invalid JSON')
+            console.error('Invalid JSON')
           }
 
         resolve(response);

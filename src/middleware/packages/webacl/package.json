@@ -26,6 +26,7 @@
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "ioredis": "^4.17.3"
   }
 }

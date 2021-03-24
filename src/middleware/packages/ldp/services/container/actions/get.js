@@ -76,6 +76,8 @@ module.exports = {
           webId
         });
 
+        console.log('container.get result', result);
+
         // Request each resources
         let resources = [];
         if (result && result.contains) {
@@ -100,6 +102,7 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
+              console.log('error requesting resource', resourceUri, e, e instanceof MoleculerError);
               // Ignore a resource if it is not found
               if (!(e instanceof MoleculerError)) throw e;
             }

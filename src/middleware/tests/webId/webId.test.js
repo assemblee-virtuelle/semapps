@@ -3,15 +3,15 @@ const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
-const { WebAclService } = require('@semapps/webacl');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
-  // logger: false
+  middlewares: [EventsWatcher, WebAclMiddleware],
+  logger: false
 });
 
 beforeAll(async () => {
@@ -30,8 +30,7 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['/users'],
-      aclEnabled: true
+      containers: ['/users']
     }
   });
   broker.createService(WebAclService, {
@@ -54,7 +53,7 @@ beforeAll(async () => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['users'],
+    resourceUri: CONFIG.HOME_URL + 'users',
     additionalRights: {
       anon: {
         write: true

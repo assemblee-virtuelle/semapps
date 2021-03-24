@@ -8,16 +8,16 @@ const rdfParser = require('rdf-parse').default;
 const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
 
+const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
-  let containers = await ctx.call('triplestore.query', {
+  return await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.SPARQL_JSON,
     webId: 'system'
   });
-
-  return containers;
 };
 
 const USER_GROUPS_QUERY = (member, ACLGraphName) => {
@@ -245,6 +245,7 @@ async function sanitizeSPARQL(text) {
 }
 
 module.exports = {
+  getSlugFromUri,
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,

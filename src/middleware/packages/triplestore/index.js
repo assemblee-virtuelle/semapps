@@ -159,8 +159,6 @@ const TripleStoreService = {
           Accept: acceptNegotiatedType.fusekiMapping
         };
 
-        //console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
-
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
         const response = await fetch(url, {
           method: 'POST',

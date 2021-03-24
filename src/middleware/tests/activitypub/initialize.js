@@ -1,16 +1,23 @@
 const fse = require('fs-extra');
 const path = require('path');
+const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { TripleStoreService } = require('@semapps/triplestore');
-const { WebAclService } = require('@semapps/webacl');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService, containers } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
 const { WebIdService } = require('@semapps/webid');
+const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
-const initialize = async broker => {
+const initialize = async () => {
+  const broker = new ServiceBroker({
+    middlewares: [EventsWatcher, WebAclMiddleware],
+    logger: false
+  });
+
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
 
@@ -30,7 +37,6 @@ const initialize = async broker => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers,
-      aclEnabled: true,
       defaultContainerOptions: {
         jsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
       }
@@ -44,8 +50,7 @@ const initialize = async broker => {
   await broker.createService(ActivityPubService, {
     settings: {
       baseUri: CONFIG.HOME_URL,
-      additionalContext: getPrefixJSON(ontologies),
-      aclEnabled: true
+      additionalContext: getPrefixJSON(ontologies)
     }
   });
   broker.createService(SignatureService, {
@@ -68,7 +73,7 @@ const initialize = async broker => {
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['objects'],
+    resourceUri: CONFIG.HOME_URL + 'objects',
     additionalRights: {
       anon: {
         write: true
@@ -77,7 +82,7 @@ const initialize = async broker => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['actors'],
+    resourceUri: CONFIG.HOME_URL + 'actors',
     additionalRights: {
       anon: {
         write: true
@@ -86,13 +91,15 @@ const initialize = async broker => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['activities'],
+    resourceUri: CONFIG.HOME_URL + 'activities',
     additionalRights: {
       anon: {
         write: true
       }
     }
   });
+
+  return broker;
 };
 
 module.exports = initialize;

@@ -10,7 +10,6 @@ module.exports = {
     baseUrl: CONFIG.HOME_URL,
     ontologies,
     containers,
-    aclEnabled: true,
     defaultContainerOptions: {
       jsonContext: urlJoin(CONFIG.HOME_URL, 'context.json')
     }

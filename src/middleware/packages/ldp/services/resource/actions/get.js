@@ -34,15 +34,15 @@ module.exports = {
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
         optional: true
       },
-      forceSemantic: { type: 'boolean', optional: true }
+      forceSemantic: { type: 'boolean', optional: true },
+      aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, forceSemantic } = ctx.params;
-      let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
+      const { resourceUri, forceSemantic, aclVerified } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
@@ -70,7 +70,8 @@ module.exports = {
             }
           `,
           accept,
-          webId
+          // Increase performance by using the 'system' bypass if ACL have already been verified
+          webId: aclVerified ? 'system' : webId
         });
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results

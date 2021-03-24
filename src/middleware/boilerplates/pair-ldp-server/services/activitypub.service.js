@@ -10,7 +10,6 @@ module.exports = {
     baseUri: CONFIG.HOME_URL,
     additionalContext: getPrefixJSON(ontologies),
     containers,
-    aclEnabled: true,
     selectActorData: resource => {
       let resourceId = resource.id || resource['@id'],
         resourceTypes = resource.type || resource['@type'];
