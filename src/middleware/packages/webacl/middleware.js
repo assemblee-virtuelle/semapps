@@ -10,12 +10,7 @@ const actionsToVerify = {
   'ldp.resource.post': { minimumRight: 'append', verifyOn: 'container' }
 };
 
-const rightsLevel = [
-  'read',
-  'append',
-  'write',
-  'control'
-];
+const rightsLevel = ['read', 'append', 'write', 'control'];
 
 const WebAclMiddleware = {
   name: 'WebAclMiddleware',
@@ -30,7 +25,10 @@ const WebAclMiddleware = {
         } else {
           const { minimumRight, verifyOn } = actionsToVerify[action.name];
           const result = await ctx.call('webacl.resource.hasRights', {
-            resourceUri: verifyOn === 'resource' ? ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'] : ctx.params.containerUri,
+            resourceUri:
+              verifyOn === 'resource'
+                ? ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id']
+                : ctx.params.containerUri,
             webId
           });
 

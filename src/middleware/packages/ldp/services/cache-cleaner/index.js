@@ -24,13 +24,9 @@ module.exports = {
     async cleanAll(ctx) {
       if (this.broker.cacher) {
         const { uri } = ctx.params;
-        const isContainer = await ctx.call(
-          'ldp.container.exist',
-          { containerUri: uri },
-          { meta: { webId: 'system' } }
-        );
+        const isContainer = await ctx.call('ldp.container.exist', { containerUri: uri }, { meta: { webId: 'system' } });
 
-        if( isContainer ) {
+        if (isContainer) {
           await this.actions.cleanContainer({ containerUri: uri }, { parentCtx: ctx });
           await this.actions.cleanResource({ resourceUri: uri }, { parentCtx: ctx });
         } else {
