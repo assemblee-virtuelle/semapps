@@ -9,10 +9,7 @@ const ontologies = require('../ontologies');
 
 const initialize = async () => {
   const broker = new ServiceBroker({
-    middlewares: [
-      EventsWatcher,
-      WebAclMiddleware
-    ],
+    middlewares: [EventsWatcher, WebAclMiddleware],
     logger: false
   });
 

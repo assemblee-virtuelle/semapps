@@ -11,7 +11,7 @@ beforeAll(async () => {
   broker = await initialize();
 });
 afterAll(async () => {
-  if( broker ) await broker.stop();
+  if (broker) await broker.stop();
 });
 
 describe('LDP container tests', () => {
@@ -92,7 +92,9 @@ describe('LDP container tests', () => {
           label: 'My project'
         }
       })
-    ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + CONFIG.HOME_URL + 'unknownContainer');
+    ).rejects.toThrow(
+      'Cannot get permissions of non-existing container or resource ' + CONFIG.HOME_URL + 'unknownContainer'
+    );
   });
 
   test('Attach a resource to a non-existing container', async () => {

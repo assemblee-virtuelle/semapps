@@ -11,7 +11,7 @@ beforeAll(async () => {
   broker = await initialize();
 });
 afterAll(async () => {
-  if( broker ) await broker.stop();
+  if (broker) await broker.stop();
 });
 
 describe('Create/Update/Delete objects', () => {

@@ -9,7 +9,7 @@ const handledActions = [
   'ldp.resource.post',
   'ldp.container.create',
   'activitypub.collection.create'
-]
+];
 
 const actionsToVerify = {
   // Resources
@@ -21,12 +21,7 @@ const actionsToVerify = {
   'ldp.resource.post': { minimumRight: 'append', verifyOn: 'container' }
 };
 
-const rightsLevel = [
-  'read',
-  'append',
-  'write',
-  'control'
-];
+const rightsLevel = ['read', 'append', 'write', 'control'];
 
 // TODO add different permissions depending on the webId ?
 const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
@@ -39,53 +34,53 @@ const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
       }
     }
   });
-}
+};
 
 const addRightsToNewResource = async (ctx, resourceUri, webId) => {
-    let newRights = {};
+  let newRights = {};
 
-    switch(webId) {
-      case 'anon':
-        newRights.anon = {
-          read: true,
-          write: true
-        };
-        break;
+  switch (webId) {
+    case 'anon':
+      newRights.anon = {
+        read: true,
+        write: true
+      };
+      break;
 
-      case 'system':
-        newRights.anon = {
-          read: true
-        };
-        newRights.anyUser = {
-          read: true,
-          write: true
-        };
-        break;
+    case 'system':
+      newRights.anon = {
+        read: true
+      };
+      newRights.anyUser = {
+        read: true,
+        write: true
+      };
+      break;
 
-      default:
-        newRights.anon = {
-          read: true
-        };
-        newRights.user = {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        };
-        break;
-    }
+    default:
+      newRights.anon = {
+        read: true
+      };
+      newRights.user = {
+        uri: webId,
+        read: true,
+        write: true,
+        control: true
+      };
+      break;
+  }
 
-    await ctx.call('webacl.resource.addRights', {
-      webId: 'system',
-      resourceUri,
-      newRights
-    });
-}
+  await ctx.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri,
+    newRights
+  });
+};
 
 const addRightsToNewContainer = async (ctx, containerUri, webId) => {
   let newRights = {};
 
-  switch(webId) {
+  switch (webId) {
     case 'anon':
       newRights.anon = {
         read: true,
@@ -118,7 +113,7 @@ const addRightsToNewContainer = async (ctx, containerUri, webId) => {
     resourceUri: containerUri,
     newRights
   });
-}
+};
 
 const WebAclMiddleware = {
   name: 'WebAclMiddleware',
@@ -126,7 +121,9 @@ const WebAclMiddleware = {
     if (handledActions.includes(action.name)) {
       return async ctx => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-        let authorized = true, newResourceUri, actionReturnValue;
+        let authorized = true,
+          newResourceUri,
+          actionReturnValue;
 
         /*
          * VERIFY AUTHORIZATIONS
@@ -136,7 +133,10 @@ const WebAclMiddleware = {
         if (webId !== 'system' && actionsToVerify[action.name]) {
           const { minimumRight, verifyOn } = actionsToVerify[action.name];
           const result = await ctx.call('webacl.resource.hasRights', {
-            resourceUri: verifyOn === 'resource' ? ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'] : ctx.params.containerUri,
+            resourceUri:
+              verifyOn === 'resource'
+                ? ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id']
+                : ctx.params.containerUri,
             webId
           });
 
@@ -153,10 +153,13 @@ const WebAclMiddleware = {
           /*
            * BEFORE HOOKS
            */
-          switch(action.name) {
+          switch (action.name) {
             case 'ldp.resource.post':
               // Use the same method as ldp.resource.post to generate the URI
-              newResourceUri = await ctx.call('ldp.resource.generateId', { containerUri: ctx.params.containerUri, slug: ctx.params.slug });
+              newResourceUri = await ctx.call('ldp.resource.generateId', {
+                containerUri: ctx.params.containerUri,
+                slug: ctx.params.slug
+              });
               // Ensure the action will use the same slug (this is necessary if the slug was generated automatically)
               ctx.params.slug = getSlugFromUri(newResourceUri);
               // We must add the permissions before inserting the resource
@@ -174,14 +177,22 @@ const WebAclMiddleware = {
            */
           try {
             actionReturnValue = await next(ctx);
-          } catch(e) {
+          } catch (e) {
             // Remove the permissions which were added just before
-            switch(action.name) {
+            switch (action.name) {
               case 'ldp.resource.post':
-                await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri }, { meta: { webId: 'system' } });
+                await ctx.call(
+                  'webacl.resource.deleteAllRights',
+                  { resourceUri: ctx.params.resourceUri },
+                  { meta: { webId: 'system' } }
+                );
                 break;
               case 'activitypub.collection.create':
-                await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.collectionUri }, { meta: { webId: 'system' } });
+                await ctx.call(
+                  'webacl.resource.deleteAllRights',
+                  { resourceUri: ctx.params.collectionUri },
+                  { meta: { webId: 'system' } }
+                );
                 break;
             }
             throw e;
@@ -190,9 +201,13 @@ const WebAclMiddleware = {
           /*
            * AFTER HOOKS
            */
-          switch(action.name) {
+          switch (action.name) {
             case 'ldp.resource.delete':
-              await ctx.call('webacl.resource.deleteAllRights', { resourceUri: ctx.params.resourceUri }, { meta: { webId: 'system' } });
+              await ctx.call(
+                'webacl.resource.deleteAllRights',
+                { resourceUri: ctx.params.resourceUri },
+                { meta: { webId: 'system' } }
+              );
               break;
 
             case 'ldp.container.create':

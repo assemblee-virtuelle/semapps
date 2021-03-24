@@ -14,7 +14,7 @@ const supertest = require('supertest');
 jest.setTimeout(20000);
 
 const broker = new ServiceBroker({
-  middlewares: [ WebAclMiddleware ],
+  middlewares: [WebAclMiddleware],
   logger: false
 });
 

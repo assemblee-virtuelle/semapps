@@ -13,7 +13,7 @@ const urlJoin = require('url-join');
 jest.setTimeout(20000);
 
 const broker = new ServiceBroker({
-  middlewares: [ WebAclMiddleware ],
+  middlewares: [WebAclMiddleware],
   logger: false
 });
 

@@ -13,12 +13,12 @@ module.exports = {
   async handler(ctx) {
     let { containerUri, slug } = ctx.params;
 
-    if( slug ) {
+    if (slug) {
       // Slugify
       slug = createSlug(slug, { lang: 'fr', custom: { '.': '.' } });
     } else {
       // Generate a MongoDB-like object ID
-      slug = new ObjectID().toString()
+      slug = new ObjectID().toString();
     }
 
     const preferredUri = urlJoin(containerUri, slug);
