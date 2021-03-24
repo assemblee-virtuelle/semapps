@@ -44,7 +44,7 @@ const FusekiAdminService = {
         console.warn(`Data ${dataset} doesn't exist. Creating it...`);
         let response;
 
-        if( secure ) {
+        if (secure) {
           const templateFilePath = path.join(__dirname, 'templates', 'secure-dataset.ttl');
           const template = await fsPromises.readFile(templateFilePath, 'utf8');
           const assembler = format(template, { dataset: dataset });
