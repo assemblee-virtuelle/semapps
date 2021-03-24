@@ -19,7 +19,6 @@ const ActivityPubService = {
     baseUri: null,
     additionalContext: {},
     containers: [],
-    aclEnabled: false,
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
@@ -48,8 +47,7 @@ const ActivityPubService = {
 
     this.broker.createService(CollectionService, {
       settings: {
-        context,
-        aclEnabled: this.settings.aclEnabled
+        context
       }
     });
 

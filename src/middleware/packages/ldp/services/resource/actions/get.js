@@ -38,9 +38,6 @@ module.exports = {
       aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      // Enable cache only if the ACL have already been verified
-      // This allows use not to add the webId in the cache keys
-      enabled: ctx => !ctx.service.settings.aclEnabled || ctx.params.aclVerified,
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
@@ -73,6 +70,7 @@ module.exports = {
             }
           `,
           accept,
+          // Increase performance by using the 'system' bypass if ACL have already been verified
           webId: aclVerified ? 'system' : webId
         });
 

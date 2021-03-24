@@ -1,21 +1,17 @@
-const { ServiceBroker } = require('moleculer');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
-const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
-  // logger: false
-});
+let broker;
+
 beforeAll(async () => {
-  await initialize(broker);
+  broker = await initialize();
 });
 afterAll(async () => {
-  await broker.stop();
+  if( broker ) await broker.stop();
 });
 
 describe('Create/Update/Delete objects', () => {
@@ -147,6 +143,6 @@ describe('Create/Update/Delete objects', () => {
         resourceUri: objectUri,
         accept: MIME_TYPES.JSON
       })
-    ).rejects.toThrow('Resource not found');
+    ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + objectUri);
   });
 });

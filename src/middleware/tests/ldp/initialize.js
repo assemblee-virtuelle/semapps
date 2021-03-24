@@ -1,11 +1,21 @@
+const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { LdpService } = require('@semapps/ldp');
-const { WebAclService } = require('@semapps/webacl');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
+const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
-const initialize = async broker => {
+const initialize = async () => {
+  const broker = new ServiceBroker({
+    middlewares: [
+      EventsWatcher,
+      WebAclMiddleware
+    ],
+    logger: false
+  });
+
   await broker.createService({
     mixins: [ApiGatewayService]
   });
@@ -21,7 +31,6 @@ const initialize = async broker => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      aclEnabled: true,
       containers: ['/resources']
     }
   });
@@ -40,13 +49,15 @@ const initialize = async broker => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['resources'],
+    resourceUri: CONFIG.HOME_URL + 'resources',
     additionalRights: {
       anon: {
         write: true
       }
     }
   });
+
+  return broker;
 };
 
 module.exports = initialize;

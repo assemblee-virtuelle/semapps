@@ -45,15 +45,19 @@ const processNewRights = (newRights, aclUri) => {
 module.exports = {
   api: async function api(ctx) {
     const contentType = ctx.meta.headers['content-type'];
+    let slugParts = ctx.params.slugParts;
+
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST');
 
     let addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
-
     if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+
     await ctx.call('webacl.resource.addRights', {
-      slugParts: ctx.params.slugParts,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       addedRights
     });
 
@@ -62,8 +66,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string', optional: true },
-      slugParts: { type: 'array', items: 'string', optional: true },
+      resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       // addedRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
       // you will most likely prefer to use additionalRights instead.
@@ -74,7 +77,7 @@ module.exports = {
       additionalRights: { type: 'object', optional: true }
     },
     async handler(ctx) {
-      let { slugParts, webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
+      let { webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       let difference;
@@ -88,11 +91,6 @@ module.exports = {
             'BAD_REQUEST'
           );
 
-        if (!slugParts || slugParts.length === 0) {
-          // this is the root container.
-          slugParts = ['/'];
-        }
-        resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
         let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
         // check that the user has Control perm.

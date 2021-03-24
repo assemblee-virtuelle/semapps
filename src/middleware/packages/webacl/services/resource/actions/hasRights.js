@@ -75,14 +75,12 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 module.exports = {
   api: async function api(ctx) {
     let slugParts = ctx.params.slugParts;
-    if (!slugParts || slugParts.length === 0) {
-      // this is the root container.
-      slugParts = ['/'];
-    }
-    let resourceUri = urlJoin(this.settings.baseUrl, ...slugParts);
+
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     return await ctx.call('webacl.resource.hasRights', {
-      resourceUri: resourceUri,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       rights: ctx.params.rights
     });
   },

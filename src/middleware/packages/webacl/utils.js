@@ -8,6 +8,8 @@ const rdfParser = require('rdf-parse').default;
 const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
 
+const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
@@ -243,6 +245,7 @@ async function sanitizeSPARQL(text) {
 }
 
 module.exports = {
+  getSlugFromUri,
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,

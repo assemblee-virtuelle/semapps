@@ -6,15 +6,19 @@ const urlJoin = require('url-join');
 module.exports = {
   api: async function api(ctx) {
     const contentType = ctx.meta.headers['content-type'];
+    let slugParts = ctx.params.slugParts;
+
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
       throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST');
 
     let newRights = await convertBodyToTriples(ctx.meta.body, contentType);
-
     if (newRights.length === 0) throw new MoleculerError('PUT rights cannot be empty', 400, 'BAD_REQUEST');
 
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+
     await ctx.call('webacl.resource.setRights', {
-      slugParts: ctx.params.slugParts,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       newRights
     });
 
@@ -23,22 +27,16 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string', optional: true },
-      slugParts: { type: 'array', items: 'string', optional: true },
+      resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
       newRights: { type: 'array', optional: false, min: 1 }
       // minimum is one right : We cannot leave a resource without rights.
     },
     async handler(ctx) {
-      let { slugParts, webId, newRights, resourceUri } = ctx.params;
+      let { webId, newRights, resourceUri } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (!slugParts || slugParts.length === 0) {
-        // this is the root container.
-        slugParts = ['/'];
-      }
-      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
       let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       // check that the user has Control perm.

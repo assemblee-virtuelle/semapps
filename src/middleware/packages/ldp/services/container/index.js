@@ -15,7 +15,6 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: [],
-    aclEnabled: false,
     defaultOptions
   },
   dependencies: ['triplestore'],

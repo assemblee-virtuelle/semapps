@@ -5,6 +5,7 @@ const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ontologies = require('../ontologies');
 const express = require('express');
+const { WebAclMiddleware } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
@@ -12,7 +13,10 @@ const supertest = require('supertest');
 
 jest.setTimeout(20000);
 
-const broker = new ServiceBroker({});
+const broker = new ServiceBroker({
+  middlewares: [ WebAclMiddleware ],
+  logger: false
+});
 
 let expressMocked = undefined;
 
@@ -29,8 +33,7 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: ['/resources'],
-      aclEnabled: true
+      containers: ['/resources']
     }
   });
   broker.createService(WebAclService, {

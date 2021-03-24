@@ -1,5 +1,3 @@
-const { ServiceBroker } = require('moleculer');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 const { getPrefixJSON } = require('@semapps/ldp');
@@ -7,16 +5,13 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);
-const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
-  // logger: false
-});
+let broker;
 
 beforeAll(async () => {
-  await initialize(broker);
+  broker = await initialize();
 });
 afterAll(async () => {
-  await broker.stop();
+  if( broker ) await broker.stop();
 });
 
 describe('LDP container tests', () => {
@@ -97,7 +92,7 @@ describe('LDP container tests', () => {
           label: 'My project'
         }
       })
-    ).rejects.toThrow('Cannot create resource in non-existing container');
+    ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + CONFIG.HOME_URL + 'unknownContainer');
   });
 
   test('Attach a resource to a non-existing container', async () => {

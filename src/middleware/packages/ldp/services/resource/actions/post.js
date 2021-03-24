@@ -1,8 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const urlJoin = require('url-join');
-const createSlug = require('speakingurl');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { generateId } = require('../../../utils');
 const path = require('path');
 const fs = require('fs');
 
@@ -83,15 +80,10 @@ module.exports = {
       const { resource, containerUri, slug, contentType, fileStream } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
-      // Generate ID and make sure it doesn't exist already
-      resource['@id'] = urlJoin(
-        containerUri,
-        slug ? createSlug(slug, { lang: 'fr', custom: { '.': '.' } }) : generateId()
-      );
-      resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
+
+      resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId } });
-
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,
@@ -102,25 +94,6 @@ module.exports = {
 
       if (!resource['@context']) {
         throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
-      }
-
-      // Check we have Write or Append permissions on the container
-      if (this.settings.aclEnabled) {
-        await ctx.broker.waitForServices('webacl.resource');
-        if (webId !== 'system') {
-          let containerRights = await ctx.call('webacl.resource.hasRights', {
-            resourceUri: containerUri,
-            rights: {
-              write: true,
-              append: true
-            },
-            webId
-          });
-
-          if (!containerRights.write && !containerRights.append) {
-            throw new MoleculerError(`Access denied to the container ${containerUri}`, 403, 'ACCESS_DENIED');
-          }
-        }
       }
 
       if (fileStream) {
@@ -140,36 +113,6 @@ module.exports = {
           fileStream.pipe(fs.createWriteStream(resource['semapps:localPath']));
         } catch (e) {
           throw new MoleculerError(e, 500, 'Server Error');
-        }
-      }
-
-      // We must add the permissions before inserting the resource
-      if (this.settings.aclEnabled) {
-        if (webId !== 'system') {
-          let newRights = {};
-          if (webId === 'anon') {
-            newRights.anon = {
-              read: true,
-              write: true
-            };
-          } else {
-            newRights.anon = {
-              read: true
-            };
-            newRights.user = {
-              uri: webId,
-              read: true,
-              write: true,
-              control: true
-            };
-          }
-
-          await ctx.broker.waitForServices('webacl.resource');
-          await ctx.call('webacl.resource.addRights', {
-            webId: 'system',
-            resourceUri: resource['@id'],
-            newRights
-          });
         }
       }
 

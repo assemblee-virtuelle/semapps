@@ -190,7 +190,7 @@ module.exports = {
     if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
       throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
-    // this is the root container.
+    // This is the root container
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     return await ctx.call('webacl.resource.getRights', {
@@ -201,7 +201,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string', optional: true },
+      resourceUri: { type: 'string' },
       accept: { type: 'string', optional: true },
       webId: { type: 'string', optional: true }
     },
