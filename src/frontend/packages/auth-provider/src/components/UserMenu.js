@@ -27,7 +27,7 @@ const LoginMenu = forwardRef(({ onClick }, ref) => (
   <MenuItemLink ref={ref} to="/login" primaryText="Se connecter" onClick={onClick} />
 ));
 
-const UserMenu = ({ logout, otherProps }) => {
+const UserMenu = ({ logout, ...otherProps }) => {
   const { identity } = useGetIdentity();
   return (
     <RaUserMenu {...otherProps}>
