@@ -7,6 +7,7 @@ const {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
+  isContainer,
   defaultToArray
 } = require('../../../utils');
 
@@ -75,22 +76,33 @@ module.exports = {
           webId
         });
 
+        console.log('container.get result', result);
+
         // Request each resources
         let resources = [];
         if (result && result.contains) {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
-              resources.push(
-                await ctx.call('ldp.resource.get', {
-                  resourceUri,
-                  webId,
-                  accept,
-                  queryDepth,
-                  dereference,
-                  jsonContext
-                })
-              );
+              let resource = await ctx.call('ldp.resource.get', {
+                resourceUri,
+                webId,
+                accept,
+                queryDepth,
+                dereference,
+                jsonContext
+              });
+
+              // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
+              // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
+              if (isContainer(resource)) {
+                delete resource['ldp:contains'];
+                resource.type = defaultToArray(resource.type);
+                resource.type.push('ldp:Resource');
+              }
+
+              resources.push(resource);
             } catch (e) {
+              console.log('error requesting resource', resourceUri, e, e instanceof MoleculerError);
               // Ignore a resource if it is not found
               if (!(e instanceof MoleculerError)) throw e;
             }

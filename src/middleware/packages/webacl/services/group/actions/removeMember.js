@@ -37,7 +37,7 @@ module.exports = {
 
       // TODO: check that the member exists and is in the group ?
 
-      if (webId != 'system') {
+      if (webId !== 'system') {
         // verifier que nous avons bien le droit Write sur le group.
         let groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,

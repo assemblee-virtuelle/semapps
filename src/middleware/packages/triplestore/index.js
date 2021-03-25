@@ -6,11 +6,11 @@ const { throw403, throw500 } = require('@semapps/middlewares');
 
 const handleError = async function(url, response) {
   let text = await response.text();
-  if (response.status == 403) throw403(text);
+  if (response.status === 403) throw403(text);
   else {
     console.log(text);
     // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
-    if (response.status == 500 && text.includes('permissions violation')) throw403(text);
+    if (response.status === 500 && text.includes('permissions violation')) throw403(text);
     else throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
   }
 };
@@ -158,8 +158,6 @@ const TripleStoreService = {
           Authorization: this.Authorization,
           Accept: acceptNegotiatedType.fusekiMapping
         };
-
-        //console.log('XXX USER ',webId || ctx.meta.webId || 'anon');
 
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/query';
         const response = await fetch(url, {

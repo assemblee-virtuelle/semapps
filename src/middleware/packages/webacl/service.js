@@ -1,42 +1,49 @@
-const urlJoin = require('url-join');
-const WebACLResourceService = require('./services/resource');
-const WebACLGroupService = require('./services/group');
-
-const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
-
-const middlewares = [
-  parseHeader,
-  negotiateContentType,
-  negotiateAccept
-  //parseJson,
-];
+const WebAclResourceService = require('./services/resource');
+const WebAclGroupService = require('./services/group');
+const WebAclCacheCleanerService = require('./services/cache-cleaner');
+const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
 
 module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: null
+    graphName: '<http://semapps.org/webacl>',
+    superAdmins: []
   },
-  dependencies: ['ldp', 'triplestore'],
+  dependencies: ['api'],
   async created() {
-    const { baseUrl, graphName } = this.schema.settings;
+    const { baseUrl, graphName, superAdmins } = this.schema.settings;
 
-    await this.broker.createService(WebACLResourceService, {
+    await this.broker.createService(WebAclResourceService, {
       settings: {
         baseUrl,
         graphName
       }
     });
 
-    await this.broker.createService(WebACLGroupService, {
+    await this.broker.createService(WebAclGroupService, {
       settings: {
         baseUrl,
-        graphName
+        graphName,
+        superAdmins
       }
     });
+
+    // Only create this service if a cacher is defined
+    if (this.broker.cacher) {
+      await this.broker.createService(WebAclCacheCleanerService);
+    }
+  },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
+    }
   },
   actions: {
     async getApiRoutes(ctx) {
+      const middlewares = [parseHeader, negotiateContentType, negotiateAccept];
+
       return [
         {
           authorization: false,
@@ -48,7 +55,7 @@ module.exports = {
               type: ['text/turtle', 'application/ld+json']
             }
           },
-          onBeforeCall(ctx, route, req, res) {
+          onBeforeCall(ctx, route, req) {
             ctx.meta.body = req.body;
           },
           aliases: {

@@ -9,7 +9,7 @@ module.exports = {
     async handler(ctx) {
       let { resourceUri } = ctx.params;
 
-      if (ctx.meta.webId != 'system')
+      if (ctx.meta.webId !== 'system')
         throw new MoleculerError('Access denied ! only system can do that', 403, 'ACCESS_DENIED');
 
       await ctx.call('triplestore.update', {
@@ -21,6 +21,8 @@ module.exports = {
           ?auth ?p2 ?o  }`,
         webId: 'system'
       });
+
+      ctx.emit('webacl.resource.deleted', { uri: resourceUri });
     }
   }
 };

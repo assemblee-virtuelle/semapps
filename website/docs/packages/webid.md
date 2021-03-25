@@ -11,6 +11,7 @@ This service allows you to create and view WebID-conform profiles.
 
 ## Dependencies
 
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [LdpService](ldp/index.md)
 - [TripleStoreService](triplestore.md)
 
@@ -31,20 +32,6 @@ module.exports = {
     usersContainer: 'http://localhost:3000/users/'
   }
 };
-```
-
-Optionally, you can configure the API routes with moleculer-web:
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-const { Routes } = require('@semapps/webid');
-
-broker.createService({
-  mixins: [ApiGatewayService],
-  settings: {
-    routes: [...Routes, /* Other routes here */],
-  }
-});
 ```
 
 ## Settings

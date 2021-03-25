@@ -4,6 +4,7 @@ const patchAction = require('./actions/patch');
 const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
+const generateIdAction = require('./actions/generateId');
 const headAction = require('./actions/head');
 const methods = require('./methods');
 
@@ -14,9 +15,10 @@ module.exports = {
     ontologies: [],
     containers: []
   },
-  dependencies: ['ldp', 'triplestore', 'webacl'],
+  dependencies: ['triplestore'],
   actions: {
     exist: existAction,
+    generateId: generateIdAction,
     // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,

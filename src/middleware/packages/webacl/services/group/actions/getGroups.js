@@ -15,8 +15,8 @@ module.exports = {
 
       let groups;
 
-      if (webId != 'system') {
-        let agentSelector = webId == 'anon' ? 'acl:agentClass foaf:Agent.' : `acl:agent <${webId}>.`;
+      if (webId !== 'system') {
+        let agentSelector = webId === 'anon' ? 'acl:agentClass foaf:Agent.' : `acl:agent <${webId}>.`;
 
         groups = await ctx.call('triplestore.query', {
           query: `

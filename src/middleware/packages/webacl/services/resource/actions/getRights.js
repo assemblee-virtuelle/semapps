@@ -1,7 +1,7 @@
 const jsonld = require('jsonld');
 const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer;
 const { DataFactory, Writer } = require('n3');
-const { namedNode, literal, defaultGraph, quad } = DataFactory;
+const { quad } = DataFactory;
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
@@ -82,7 +82,6 @@ async function formatOutput(output, resourceAclUri, jsonLD) {
     output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
     mySerializer.end();
     let jsonld1 = JSON.parse(await streamToString(mySerializer));
-    //console.log(JSON.stringify(jsonld1,null,2))
 
     let jsonld2 = await jsonld.compact(jsonld1, prefixesJsonLD);
     // trick to clean up the jsonld in case we have only one auth node and compact removed the @graph level
@@ -102,8 +101,7 @@ async function filterAcls(hasControl, uaSearchParam, acls) {
   let filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
     let header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
-    let full = header.concat(filtered);
-    return full;
+    return header.concat(filtered);
   }
 
   return [];
@@ -117,7 +115,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   let groups;
 
   if (!hasControl && user !== 'anon') {
-    // retrive the groups of the user
+    // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
     uaSearchParam.groups = groups;
     // we check again for the groups. maybe user has control from a group
@@ -181,43 +179,43 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
-  let result = await formatOutput(document, resourceAclUri, ctx.meta.$responseType == MIME_TYPES.JSON);
-
-  return result;
+  return await formatOutput(document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
 module.exports = {
   api: async function api(ctx) {
     const accept = ctx.meta.headers.accept;
-    if (accept && accept != MIME_TYPES.JSON && accept != MIME_TYPES.TURTLE)
+    let slugParts = ctx.params.slugParts;
+
+    if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
       throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
+
     return await ctx.call('webacl.resource.getRights', {
-      slugParts: ctx.params.slugParts,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       accept: accept
     });
   },
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string', optional: true },
-      slugParts: { type: 'array', items: 'string', optional: true },
-      webId: { type: 'string', optional: true },
-      accept: { type: 'string', optional: true }
+      resourceUri: { type: 'string' },
+      accept: { type: 'string', optional: true },
+      webId: { type: 'string', optional: true }
+    },
+    cache: {
+      keys: ['resourceUri', 'accept', 'webId', '#webId']
     },
     async handler(ctx) {
-      let { slugParts, webId, accept, resourceUri } = ctx.params;
+      let { resourceUri, webId, accept } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-      if (!slugParts || slugParts.length == 0) {
-        // this is the root container.
-        slugParts = ['/'];
-      }
-      resourceUri = resourceUri || urlJoin(this.settings.baseUrl, ...slugParts);
-      let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+      const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
     }

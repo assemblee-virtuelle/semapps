@@ -11,6 +11,7 @@ This service implements the [WebFinger](https://en.wikipedia.org/wiki/WebFinger)
 
 ## Dependencies
 
+- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - ActivityPub [ActorService](activitypub.md)
 
 ## Install
@@ -29,23 +30,6 @@ module.exports = {
   settings: {
     baseUrl: "https://mydomain.com",
     domainName: "mydomain.com" // Not necessary if it is the same as usersContainer
-  }
-}
-```
-
-Optionally, you can configure the API routes with moleculer-web:
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-
-module.exports = {
-  mixins: [ApiGatewayService],
-  dependencies: ['webfinger'],
-  async started() {
-    [
-      ...(await this.broker.call('webfinger.getApiRoutes')),
-      // Other routes here...
-    ].forEach(route => this.addRoute(route));
   }
 }
 ```

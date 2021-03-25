@@ -3,8 +3,6 @@ const CONFIG = require('../config');
 
 const adminAuth = CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD;
 
-const console = require('console');
-
 describe('fuseki ACL blank nodes tests', () => {
   test('Ensure orphan blank nodes are not reachable', async () => {
     const { body, statusCode } = await doRequest({

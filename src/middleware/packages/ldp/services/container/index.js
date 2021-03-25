@@ -17,7 +17,7 @@ module.exports = {
     containers: [],
     defaultOptions
   },
-  dependencies: ['ldp', 'triplestore', 'webacl'],
+  dependencies: ['triplestore'],
   actions: {
     attach: attachAction,
     clear: clearAction,
@@ -31,14 +31,35 @@ module.exports = {
     get: getAction.action
   },
   async started() {
+    // 1st loop: Create all containers defined in configurations
     for (let container of this.settings.containers) {
-      const containerPath = typeof container === 'string' ? container : container.path;
-      const containerUri = urlJoin(this.settings.baseUrl, containerPath);
+      const containerUri = this.getContainerUri(container);
       const exists = await this.actions.exist({ containerUri }, { meta: { webId: 'system' } });
       if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);
         await this.actions.create({ containerUri }, { meta: { webId: 'system' } });
       }
+    }
+
+    // 2nd loop: Attach child containers to parent containers
+    // Child containers must have been created first, or the attach action will fail
+    for (let container of this.settings.containers) {
+      const containerUri = this.getContainerUri(container);
+
+      // Find all children containers for this container
+      const childContainersUris = this.settings.containers
+        .map(childContainer => this.getContainerUri(childContainer))
+        .filter(childContainerUri => childContainerUri !== containerUri && childContainerUri.startsWith(containerUri));
+
+      for (let childContainerUri of childContainersUris) {
+        await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
+      }
+    }
+  },
+  methods: {
+    getContainerUri(containerConfig) {
+      const containerPath = typeof containerConfig === 'string' ? containerConfig : containerConfig.path;
+      return urlJoin(this.settings.baseUrl, containerPath);
     }
   }
 };

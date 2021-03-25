@@ -1,19 +1,30 @@
 const fse = require('fs-extra');
 const path = require('path');
+const { ServiceBroker } = require('moleculer');
+const ApiGatewayService = require('moleculer-web');
 const { TripleStoreService } = require('@semapps/triplestore');
-const { WebACLService } = require('@semapps/webacl');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { LdpService, getPrefixJSON } = require('@semapps/ldp');
 const { ActivityPubService, containers } = require('@semapps/activitypub');
 const { SignatureService } = require('@semapps/signature');
 const { WebIdService } = require('@semapps/webid');
+const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
-const initialize = broker => async () => {
+const initialize = async () => {
+  const broker = new ServiceBroker({
+    middlewares: [EventsWatcher, WebAclMiddleware],
+    logger: false
+  });
+
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
 
-  broker.createService(TripleStoreService, {
+  await broker.createService({
+    mixins: [ApiGatewayService]
+  });
+  await broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
       mainDataset: CONFIG.MAIN_DATASET,
@@ -21,7 +32,7 @@ const initialize = broker => async () => {
       jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
-  broker.createService(LdpService, {
+  await broker.createService(LdpService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
@@ -31,13 +42,12 @@ const initialize = broker => async () => {
       }
     }
   });
-  broker.createService(WebACLService, {
+  await broker.createService(WebAclService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      graphName: '<http://semapps.org/webacl>'
+      baseUrl: CONFIG.HOME_URL
     }
   });
-  broker.createService(ActivityPubService, {
+  await broker.createService(ActivityPubService, {
     settings: {
       baseUri: CONFIG.HOME_URL,
       additionalContext: getPrefixJSON(ontologies)
@@ -54,16 +64,16 @@ const initialize = broker => async () => {
     }
   });
 
+  // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
   await broker.call('triplestore.dropAll', { webId: 'system' });
-
-  // Restart broker after dropAll, so that the default container is recreated
+  await broker.stop();
   await broker.start();
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['objects'],
+    resourceUri: CONFIG.HOME_URL + 'objects',
     additionalRights: {
       anon: {
         write: true
@@ -72,7 +82,7 @@ const initialize = broker => async () => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['actors'],
+    resourceUri: CONFIG.HOME_URL + 'actors',
     additionalRights: {
       anon: {
         write: true
@@ -81,13 +91,15 @@ const initialize = broker => async () => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    slugParts: ['activities'],
+    resourceUri: CONFIG.HOME_URL + 'activities',
     additionalRights: {
       anon: {
         write: true
       }
     }
   });
+
+  return broker;
 };
 
 module.exports = initialize;

@@ -1,43 +1,18 @@
-const { ServiceBroker } = require('moleculer');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
-const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
-});
-
 const collectionUri = CONFIG.HOME_URL + 'my-collection';
 const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
+let broker;
 
 beforeAll(async () => {
-  await initialize(broker)();
-  // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: collectionUri,
-    newRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: orderedCollectionUri,
-    newRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
+  broker = await initialize();
 });
 afterAll(async () => {
-  await broker.stop();
+  if (broker) await broker.stop();
 });
 
 describe('Handle collections', () => {

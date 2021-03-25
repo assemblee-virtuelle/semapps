@@ -6,7 +6,7 @@ const { delay } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
-  dependencies: ['activitypub.collection', 'signature'],
+  dependencies: ['activitypub.collection', 'ldp.resource', 'ldp.container', 'signature'],
   settings: {
     actorsContainers: [],
     context: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],

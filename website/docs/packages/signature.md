@@ -35,23 +35,6 @@ module.exports = {
 }
 ```
 
-Optionally, you can configure the API routes with moleculer-web:
-
-```js
-const { ApiGatewayService } = require('moleculer-web');
-
-module.exports = {
-  mixins: [ApiGatewayService],
-  dependencies: ['signature'],
-  async started() {
-    [
-      ...(await this.broker.call('signature.getApiRoutes')),
-      // Other routes here...
-    ].forEach(route => this.addRoute(route));
-  }
-}
-```
-
 ## Settings
 
 | Property | Type | Default | Description |

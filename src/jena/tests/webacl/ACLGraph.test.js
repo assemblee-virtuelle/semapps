@@ -91,7 +91,6 @@ describe('fuseki ACL graph tests', () => {
       sparql:
         'SELECT ?subject ?predicate ?object WHERE { GRAPH <http://semapps.org/webacl> { ?subject ?predicate ?object } }'
     });
-    //console.log(body.results.bindings.length)
     expect(statusCode).toBe(200);
   });
 });

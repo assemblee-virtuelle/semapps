@@ -1,5 +1,3 @@
-const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 const urlJoin = require('url-join');
 const {
   getAuthorizationNode,
@@ -48,7 +46,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 
   await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
 
-  if (Object.keys(askedRights).length != Object.keys(resultRights).length) {
+  if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
     // we haven't found all the rights yet, we search in parent containers
     let parentContainers = await findParentContainers(ctx, resourceUri);
 
@@ -59,7 +57,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
       await checkRights(askedRights, resultRights, ctx, containerUri, aclUri, uaSearchParam, graphName, true);
 
       // if we are done finding all the asked rights, we return here, saving some processing.
-      if (Object.keys(askedRights).length == Object.keys(resultRights).length) return resultRights;
+      if (Object.keys(askedRights).length === Object.keys(resultRights).length) return resultRights;
 
       let moreParentContainers = await findParentContainers(ctx, containerUri);
       parentContainers.push(...moreParentContainers);
@@ -77,14 +75,12 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 module.exports = {
   api: async function api(ctx) {
     let slugParts = ctx.params.slugParts;
-    if (!slugParts || slugParts.length == 0) {
-      // this is the root container.
-      slugParts = ['/'];
-    }
-    let resourceUri = urlJoin(this.settings.baseUrl, ...slugParts);
+
+    // This is the root container
+    if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     return await ctx.call('webacl.resource.hasRights', {
-      resourceUri: resourceUri,
+      resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       rights: ctx.params.rights
     });
   },
@@ -105,11 +101,14 @@ module.exports = {
       },
       webId: { type: 'string', optional: true }
     },
+    cache: {
+      keys: ['resourceUri', 'rights', 'webId', '#webId']
+    },
     async handler(ctx) {
       let { resourceUri, webId, rights } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       rights = rights || {};
-      if (Object.keys(rights).length == 0) rights = { read: true, write: true, append: true, control: true };
+      if (Object.keys(rights).length === 0) rights = { read: true, write: true, append: true, control: true };
 
       await this.checkResourceOrContainerExists(ctx, resourceUri);
       return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);

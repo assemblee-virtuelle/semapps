@@ -1,8 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { LdpService } = require('@semapps/ldp');
-const { WebACLService } = require('@semapps/webacl');
-const { MIME_TYPES } = require('@semapps/mime-types');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const ontologies = require('../ontologies');
 const express = require('express');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -11,7 +10,12 @@ const CONFIG = require('../config');
 const supertest = require('supertest');
 const urlJoin = require('url-join');
 
-const broker = new ServiceBroker({});
+jest.setTimeout(20000);
+
+const broker = new ServiceBroker({
+  middlewares: [WebAclMiddleware],
+  logger: false
+});
 
 let expressMocked = undefined;
 
@@ -24,7 +28,6 @@ beforeAll(async () => {
       jenaPassword: CONFIG.JENA_PASSWORD
     }
   });
-
   broker.createService(LdpService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -32,14 +35,11 @@ beforeAll(async () => {
       containers: ['/resources']
     }
   });
-
-  broker.createService(WebACLService, {
+  broker.createService(WebAclService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      graphName: '<http://semapps.org/webacl>'
+      baseUrl: CONFIG.HOME_URL
     }
   });
-
   broker.createService(SparqlEndpointService, {
     settings: {
       defaultAccept: 'application/ld+json'
@@ -55,10 +55,6 @@ beforeAll(async () => {
         origin: '*',
         exposedHeaders: '*'
       }
-    },
-    dependencies: ['sparqlEndpoint'],
-    async started() {
-      [...(await this.broker.call('sparqlEndpoint.getApiRoutes'))].forEach(route => this.addRoute(route));
     },
     methods: {
       authenticate(ctx, route, req, res) {

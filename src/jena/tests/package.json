@@ -1,0 +1,15 @@
+{
+  "name": "jena-tests",
+  "private": true,
+  "description": "Jena Fuseki integration tests",
+  "scripts": {
+    "test": "jest --detectOpenHandles --verbose"
+  },
+  "author": "SemApps Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "supertest": "^4.0.2"
+  },
+  "version": "0.2.0-alpha.0"
+}

@@ -28,7 +28,6 @@ module.exports = {
       exposedHeaders: '*'
     }
   },
-  dependencies: ['ldp', 'activitypub', 'sparqlEndpoint', 'webid'],
   async started() {
     this.connector = new OidcConnector({
       issuer: CONFIG.OIDC_ISSUER,
@@ -37,7 +36,7 @@ module.exports = {
       redirectUri: CONFIG.HOME_URL + 'auth',
       privateKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key'),
       publicKeyPath: path.resolve(__dirname, '../jwt/jwtRS256.key.pub'),
-      selectProfileData: async authData => ({
+      selectProfileData: authData => ({
         email: authData.email,
         name: authData.given_name,
         familyName: authData.family_name
@@ -78,13 +77,7 @@ module.exports = {
 
     await this.connector.initialize();
 
-    [
-      this.connector.getRoute(),
-      ...(await this.broker.call('ldp.getApiRoutes')),
-      ...(await this.broker.call('activitypub.getApiRoutes')),
-      ...(await this.broker.call('sparqlEndpoint.getApiRoutes')),
-      ...(await this.broker.call('webacl.getApiRoutes'))
-    ].forEach(route => this.addRoute(route));
+    this.addRoute(this.connector.getRoute());
   },
   methods: {
     authenticate(ctx, route, req, res) {

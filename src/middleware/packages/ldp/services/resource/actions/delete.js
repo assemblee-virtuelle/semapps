@@ -1,6 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getContainerFromUri } = require('../../../utils');
-const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
 module.exports = {
@@ -60,8 +59,6 @@ module.exports = {
         `,
         webId
       });
-
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri }, { meta: { webId: 'system' } });
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);

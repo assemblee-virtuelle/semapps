@@ -26,6 +26,15 @@ module.exports = {
       },
       'packages/signature',
       'packages/triplestore',
+      {
+        type: 'category',
+        label: 'WebACL',
+        items: [
+          'packages/webacl/index',
+          'packages/webacl/resource',
+          'packages/webacl/group',
+        ],
+      },
       'packages/webfinger',
       'packages/webhooks',
       'packages/webid'

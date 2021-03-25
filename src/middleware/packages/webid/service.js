@@ -3,13 +3,19 @@ const getRoutes = require('./getRoutes');
 
 const WebIdService = {
   name: 'webid',
-  dependencies: ['ldp.resource', 'triplestore'],
   settings: {
     usersContainer: null,
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
     defaultAccept: 'text/turtle'
+  },
+  dependencies: ['ldp.resource', 'triplestore', 'api'],
+  async started() {
+    const routes = getRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
+    }
   },
   actions: {
     /**
@@ -78,7 +84,7 @@ const WebIdService = {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
           jsonContext: this.settings.context,
-          webId: webId
+          webId
         });
       } else {
         ctx.meta.$statusCode = 404;
@@ -90,7 +96,7 @@ const WebIdService = {
       body['@id'] = webId;
       return await ctx.call('ldp.resource.patch', {
         resource: body,
-        webId: webId,
+        webId,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
       });
@@ -98,18 +104,18 @@ const WebIdService = {
     async list(ctx) {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
-      PREFIX ldp: <http://www.w3.org/ns/ldp#>
-      CONSTRUCT {
-        ?webId ?p ?o
-      }
-      WHERE{
-        <${this.settings.usersContainer}> ldp:contains ?webId .
-        ?webId ?p ?o.
-      }
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        CONSTRUCT {
+          ?webId ?p ?o
+        }
+        WHERE{
+          <${this.settings.usersContainer}> ldp:contains ?webId .
+          ?webId ?p ?o.
+        }
       `;
       return await ctx.call('triplestore.query', {
         query: request,
-        accept: accept
+        accept
       });
     },
     async findByEmail(ctx) {
@@ -132,9 +138,6 @@ const WebIdService = {
     },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
-    },
-    getApiRoutes(ctx) {
-      return getRoutes();
     }
   },
   methods: {

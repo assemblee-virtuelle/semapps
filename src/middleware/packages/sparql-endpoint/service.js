@@ -1,12 +1,17 @@
 'use strict';
-const getRoutes = require('./getRoutes');
+const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
     defaultAccept: 'text/turtle'
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'api'],
+  async started() {
+    await this.broker.call('api.addRoute', {
+      route: getRoute()
+    });
+  },
   actions: {
     async query(ctx) {
       let query = ctx.params.query || ctx.params.body;
@@ -19,9 +24,6 @@ const SparqlEndpointService = {
         ctx.meta.$responseType = ctx.meta.responseType || accept;
       }
       return response;
-    },
-    getApiRoutes() {
-      return getRoutes();
     }
   }
 };
