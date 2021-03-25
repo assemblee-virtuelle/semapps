@@ -1,19 +1,21 @@
 ---
-title: WebAcl
+title: WebACL
 ---
 
-This package allows you to handle rights through the WebACL protocol.
+This package allows you to handle rights through the [WebACL standard](https://github.com/solid/web-access-control-spec).
 
 ## Features
--
+- View and modify rights of any resources
+- Automatically add rights when LDP resources, LDP containers or ActivityPub collections are created
+- Create ACL groups, manage members of these groups
 
 ## Dependencies
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [TripleStoreService](../triplestore.md)
 
 ## Sub-services
-- WebAclResourceService
-- WebAclGroupService
+- [WebAclResourceService](resource.md)
+- [WebAclGroupService](group.md)
 - WebAclCacheCleanerService
 
 ## Install
@@ -35,7 +37,8 @@ module.exports = {
 };
 ```
 
-This service must be used with an instance of Fuseki which can handle WebAcl. We recommend to use the image `semapps/jena-fuseki-webacl` ([see page on Docker Hub](https://hub.docker.com/r/semapps/jena-fuseki-webacl))
+This service must be used with an instance of Fuseki which can handle WebAcl.
+We recommend to use the image `semapps/jena-fuseki-webacl` ([see page on Docker Hub](https://hub.docker.com/r/semapps/jena-fuseki-webacl))
 
 You will also need to add the WebAcl middleware to the broker settings.
 
@@ -52,7 +55,7 @@ module.exports = {
 
 The WebAclMiddleware:
 - Protects the actions of the LDP service
-- Updates ACLs when LDP resources, LDP containers or ActivityPub collections are added or removed.
+- Automatically updates ACL when LDP resources, LDP containers or ActivityPub collections are added or removed.
 
 ## Caching
 
