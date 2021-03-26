@@ -29,10 +29,7 @@ const ProjectShow = props => (
         <SideList>
           <ReferenceArrayField reference="Actor" source="pair:involves">
             <GridList xs={6} linkType="show">
-              <AvatarField
-                label="pair:label"
-                image="image"
-              />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
           </ReferenceArrayField>
           <ReferenceArrayField reference="Theme" source="pair:hasTopic">

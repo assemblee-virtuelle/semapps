@@ -1,15 +1,16 @@
 import React from 'react';
 import { Avatar } from '@material-ui/core';
-import {AvatarField, GridList, MultiViewsList, SimpleList} from '@semapps/archipelago-layout';
+import { AvatarField, GridList, MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
 import { MapList } from '@semapps/geo-components';
 import MapIcon from '@material-ui/icons/Map';
 import ListIcon from '@material-ui/icons/List';
 import PersonIcon from '@material-ui/icons/Person';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import PersonFilterSidebar from "./PersonFilterSidebar";
+import PersonFilterSidebar from './PersonFilterSidebar';
 
 const PersonList = props => (
-  <MultiViewsList aside={<PersonFilterSidebar />}
+  <MultiViewsList
+    aside={<PersonFilterSidebar />}
     views={{
       avatar: {
         label: 'Trombinoscope',

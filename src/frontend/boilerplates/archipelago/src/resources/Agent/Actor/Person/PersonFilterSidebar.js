@@ -8,11 +8,11 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 0,
     [theme.breakpoints.up('sm')]: {
       minWidth: '15em',
-      marginLeft: '1em',
+      marginLeft: '1em'
     },
     [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
+      display: 'none'
+    }
   }
 }));
 
@@ -26,6 +26,6 @@ const ProjectFilterSidebar = () => {
       </CardContent>
     </Card>
   );
-}
+};
 
 export default ProjectFilterSidebar;
