@@ -37,7 +37,7 @@ const OrganizationShow = props => (
         <SideList>
           <ReferenceArrayField reference="Person" source="pair:affiliates">
             <GridList xs={6} linkType="show">
-              <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
           </ReferenceArrayField>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">

@@ -55,7 +55,8 @@ module.exports = {
             resource: {
               '@context': urlJoin(CONFIG.HOME_URL, 'context.json'),
               '@id': webId,
-              '@type': ['pair:Person', 'foaf:Person'],
+              '@type': ['pair:Person', 'foaf:Person', 'Person'],
+              'pair:label': `${profileData.name} ${profileData.familyName.toUpperCase()}`,
               'pair:firstName': profileData.name,
               'pair:lastName': profileData.familyName,
               'pair:e-mail': profileData.email
