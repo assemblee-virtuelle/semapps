@@ -23,14 +23,7 @@ const EventShow = props => (
         <SideList>
           <ReferenceArrayField reference="Actor" source="pair:involves" sort={{ field: 'type', order: 'ASC' }}>
             <GridList xs={6} linkType="show">
-              <AvatarField
-                label={record =>
-                  record.type.includes('pair:Person')
-                    ? `${record['pair:firstName']} ${record['pair:lastName']}`
-                    : record['pair:label']
-                }
-                image={record => record['image']}
-              />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
           </ReferenceArrayField>
           <ReferenceArrayField reference="Theme" source="pair:hasTopic">

@@ -14,7 +14,7 @@ const SkillShow = props => (
         <SideList>
           <ReferenceArrayField reference="Person" source="pair:offeredBy">
             <GridList xs={6} linkType="show">
-              <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
           </ReferenceArrayField>
         </SideList>
