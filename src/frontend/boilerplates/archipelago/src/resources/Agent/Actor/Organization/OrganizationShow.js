@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList,Labeled } from 'react-admin';
+import { Grid,Typography } from '@material-ui/core';
 import {
   MainList,
   SideList,
@@ -9,10 +9,11 @@ import {
   Show,
   MarkdownField,
   AvatarField,
-  UserIcon
+  UserIcon,
+  RightLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import { ReferenceArrayField, ReferenceField, ReifiedArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField, ReferenceField, GroupedArrayField,FilteredArrayField } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
@@ -44,31 +45,27 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <ReifiedArrayField
+          <GroupedArrayField
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupLabel="pair:label"
+            groupComponent={({record, ...otherProps })=>
+              <RightLabel label={record['pair:label']}/>
+            }
             filterProperty="pair:membershipRole"
+            addLabel={false}
           >
             <SingleFieldList linkType={false}>
-              <ReferenceField reference="Person" source="pair:membershipActor" referenceBasePath="/User" link="show">
-                <UserIcon
-                  styles={{
-                    image: {
-                      height: '150px',
-                      width: 'auto',
-                      margin: 'auto',
-                      display: 'block'
-                    },
-                    parent: {
-                      margin: '10px',
-                      width: '150px'
-                    }
-                  }}
-                />
+              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" classes={{
+                                    parent: {
+                                      width: '100px',
+                                      margin : '10px'
+                                    }
+                                  }}/>
+
               </ReferenceField>
             </SingleFieldList>
-          </ReifiedArrayField>
+          </GroupedArrayField>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">

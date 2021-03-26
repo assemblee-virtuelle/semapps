@@ -43,7 +43,7 @@ const AccordionList = ({ date, title, content }) => {
         const computedDate = date && new Date(date(data[id]));
         const computedTitle = title && title(data[id]);
         return (
-          <Accordion className={classes.accordion}>
+          <Accordion className={classes.accordion} key={i}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls={`panel${i}-content`}

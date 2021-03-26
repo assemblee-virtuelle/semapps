@@ -6,7 +6,7 @@ const ReferenceArrayField = ({ record, source, ...otherProps }) => {
     if (!Array.isArray(record[source])) {
       record[source] = [record[source]];
     }
-    record[source] = record[source].map(i => i['@id'] || i);
+    record[source] = record[source].map(i => i['@id'] || i.id || i);
   }
   return <RaReferenceArrayField record={record} source={source} {...otherProps} />;
 };

@@ -1,6 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { ArrayField } from 'react-admin';
 
+
+
+
+/**
+ * @example
+ * <Show>
+ *   <FilteredArrayField
+ *     source="property"
+ *     filter={{
+ *       'property':'value'
+ *     }}
+ *     >
+ *     <SingleFieldList>
+ *    </SingleFieldList>
+ *   </FilteredArrayField>
+ * </Show>
+ */
+
+
+
+
 const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
   useEffect(() => {
@@ -30,10 +51,8 @@ const FilteredArrayField = ({ children, record, filter, source, ...otherProps })
   }, [record, source, filter]);
 
   return (
-    <ArrayField record={filtered} source={source} {...otherProps} addLabel={true}>
-      {React.Children.only(children, (child, i) => {
-        return React.cloneElement(child, {});
-      })}
+    <ArrayField record={filtered} source={source} {...otherProps}>
+      {children}
     </ArrayField>
   );
 };
