@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, Box, CircularProgress } from '@material-ui/core';
 import { ImageField as RaImageField } from 'react-admin';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   loader: {
     width: '100%',
     backgroundColor: '#e0e0e0',
@@ -11,7 +11,10 @@ const useStyles = makeStyles(() => ({
   },
   image: {
     width: '100%',
-    maxHeight: 'none'
+    maxHeight: 'none',
+    [theme.breakpoints.down('sm')]: {
+      margin: 0
+    }
   }
 }));
 

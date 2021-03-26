@@ -65,7 +65,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
 };
 
 MasonryList.defaultProps = {
-  breakpointCols: { default: 3, 900: 2, 450: 1 },
+  breakpointCols: { default: 3, 1050: 2, 700: 1 },
   linkType: 'edit'
 };
 
