@@ -1,8 +1,9 @@
 import React from 'react';
 import { List, SimpleList } from '@semapps/archipelago-layout';
+import ProjectFilterSidebar from "./ProjectFilterSidebar";
 
 const ProjectList = props => (
-  <List {...props}>
+  <List aside={<ProjectFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => record['pair:comment']}

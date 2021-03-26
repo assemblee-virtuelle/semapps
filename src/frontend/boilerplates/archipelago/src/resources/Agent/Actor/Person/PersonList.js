@@ -15,7 +15,8 @@ const PersonList = props => (
         label: 'Trombinoscope',
         icon: AccountCircleIcon,
         sort: { field: 'pair:lastName', order: 'DESC' },
-        perPage: 25,
+        perPage: 500,
+        pagination: false,
         list: (
           <GridList xs={2} linkType="show">
             <AvatarField label="pair:label" image="image" />

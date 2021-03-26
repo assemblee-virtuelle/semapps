@@ -1,9 +1,10 @@
 import React from 'react';
 import { DateField } from 'react-admin';
 import { List, SimpleList } from '@semapps/archipelago-layout';
+import EventFilterSidebar from "./EventFilterSidebar";
 
 const EventList = props => (
-  <List {...props}>
+  <List aside={<EventFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => (
