@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList,Labeled } from 'react-admin';
-import { Grid,Typography } from '@material-ui/core';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, Labeled } from 'react-admin';
+import { Grid, Typography } from '@material-ui/core';
 import {
   MainList,
   SideList,
@@ -13,7 +13,12 @@ import {
   RightLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import { ReferenceArrayField, ReferenceField, GroupedArrayField,FilteredArrayField } from '@semapps/semantic-data-provider';
+import {
+  ReferenceArrayField,
+  ReferenceField,
+  GroupedArrayField,
+  FilteredArrayField
+} from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
@@ -48,21 +53,22 @@ const OrganizationShow = props => (
           <GroupedArrayField
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupComponent={({record, ...otherProps })=>
-              <RightLabel label={record['pair:label']}/>
-            }
+            groupComponent={({ record, ...otherProps }) => <RightLabel label={record['pair:label']} />}
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
             <SingleFieldList linkType={false}>
               <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" classes={{
-                                    parent: {
-                                      width: '100px',
-                                      margin : '10px'
-                                    }
-                                  }}/>
-
+                <AvatarField
+                  label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
+                  image="image"
+                  classes={{
+                    parent: {
+                      width: '100px',
+                      margin: '10px'
+                    }
+                  }}
+                />
               </ReferenceField>
             </SingleFieldList>
           </GroupedArrayField>

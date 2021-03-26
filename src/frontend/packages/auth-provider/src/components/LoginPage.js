@@ -55,16 +55,17 @@ const LoginPage = ({ theme, history, location, buttons }) => {
               <LockIcon />
             </Avatar>
           </div>
-          {buttons && buttons.map(button => (
-            <CardActions>
-              {React.cloneElement(button, {
-                fullWidth: true,
-                variant: 'outlined',
-                type: 'submit',
-                onClick: () => login({}, '/login')
-              })}
-            </CardActions>
-          ))}
+          {buttons &&
+            buttons.map(button => (
+              <CardActions>
+                {React.cloneElement(button, {
+                  fullWidth: true,
+                  variant: 'outlined',
+                  type: 'submit',
+                  onClick: () => login({}, '/login')
+                })}
+              </CardActions>
+            ))}
         </Card>
       </div>
       <Notification />
@@ -74,9 +75,7 @@ const LoginPage = ({ theme, history, location, buttons }) => {
 
 // TODO deprecate this
 LoginPage.defaultProps = {
-  buttons: [
-    <Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>
-  ]
+  buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>]
 };
 
 export default LoginPage;
