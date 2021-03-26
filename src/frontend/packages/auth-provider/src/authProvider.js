@@ -27,8 +27,8 @@ const authProvider = middlewareUri => ({
   getIdentity: () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const { webId, name, familyName } = jwtDecode(token);
-      return { id: webId, fullName: `${name} ${familyName}` };
+      const { webId, name } = jwtDecode(token);
+      return { id: webId, fullName: name };
     }
   }
 });
