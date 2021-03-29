@@ -10,7 +10,7 @@ export default {
     edit: RoleEdit,
     icon: FavoriteBorderIcon,
     options: {
-      label: 'Rôle de membre',
+      label: 'Rôle',
       parent: 'Concept'
     }
   },
@@ -21,12 +21,11 @@ export default {
   },
   translations: {
     fr: {
-      name: 'Rôle de membre |||| Rôles de membre',
+      name: 'Rôle |||| Rôles',
       fields: {
         'pair:label': 'Titre',
         'pair:comment': 'Courte description',
-        'pair:description': 'Description',
-        'pair:topicOf': 'Sujets'
+        'pair:description': 'Description'
       }
     }
   }

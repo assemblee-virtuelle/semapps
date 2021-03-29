@@ -28,6 +28,7 @@ export default {
         'pair:label': 'Nom',
         'pair:comment': 'Courte description',
         'pair:description': 'Description',
+        'pair:hasStatus': 'Statut',
         'pair:homePage': 'Site web',
         'pair:involves': 'Implique',
         'pair:documentedBy': 'Documenté par',

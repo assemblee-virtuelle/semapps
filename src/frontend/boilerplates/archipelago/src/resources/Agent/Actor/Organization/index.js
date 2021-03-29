@@ -35,6 +35,7 @@ export default {
         'pair:affiliates': 'A pour membres',
         'pair:partnerOf': 'Partenaire de',
         'pair:involvedIn': 'Impliqué dans',
+        'pair:hasType': 'Type',
         'pair:hasTopic': 'A pour thème',
         'pair:documentedBy': 'Documenté par',
         'pair:hasLocation': 'Adresse',

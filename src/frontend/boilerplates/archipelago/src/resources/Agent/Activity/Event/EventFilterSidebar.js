@@ -23,7 +23,7 @@ const ProjectFilterSidebar = () => {
   return (
     <Card className={classes.card}>
       <CardContent className={classes.cardContent}>
-        <ReferenceFilter reference="Theme" source="pair:hasTopic" />
+        <ReferenceFilter reference="Theme" source="pair:hasTopic" inverseSource="pair:topicOf" limit={100} sort={{ field: 'pair:label', order: 'DESC' }} />
       </CardContent>
     </Card>
   );
