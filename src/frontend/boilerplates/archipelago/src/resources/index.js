@@ -17,7 +17,7 @@ export { default as Theme } from './Concept/Theme';
 export { default as Status } from './Concept/Status';
 export { default as Type } from './Concept/Type';
 export { default as Concept } from './Concept/Concept';
-export { default as MembershipRole } from './Concept/MembershipRole';
+// export { default as MembershipRole } from './Concept/MembershipRole';
 
 // Objects
 export { default as Document } from './Object/Document';

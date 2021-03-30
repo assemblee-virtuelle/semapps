@@ -1,9 +1,9 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput, AutocompleteInput, SelectInput } from 'react-admin';
+import { SimpleForm, TextInput, ImageInput, SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
-import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
+import { ImageField, ReferenceInput } from '@semapps/semantic-data-provider';
+import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput, UsersInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
 
 export const OrganizationEdit = props => {
@@ -20,14 +20,7 @@ export const OrganizationEdit = props => {
         <ImageInput source="image" accept="image/*">
           <ImageField source="src" />
         </ImageInput>
-        <ReificationArrayInput source="pair:organizationOfMembership" reificationClass="pair:MembershipAssociation">
-          <ReferenceInput reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value && value.length > 1} />
-          </ReferenceInput>
-          <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
-            <SelectInput optionText="pair:label" />
-          </ReferenceInput>
-        </ReificationArrayInput>
+        <UsersInput source="pair:affiliates" />
         <OrganizationsInput source="pair:partnerOf" />
         <EventsInput source="pair:involvedIn" />
         <ThemesInput source="pair:hasTopic" />
