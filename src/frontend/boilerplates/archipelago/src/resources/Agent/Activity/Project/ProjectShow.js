@@ -51,6 +51,11 @@ const ProjectShow = props => (
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
           </ReferenceArrayField>
+          <ReferenceArrayField reference="Resource" source="pair:needs">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>
