@@ -14,6 +14,12 @@ export const ActorsInput = ({ label, source }) => (
   </ReferenceArrayInput>
 );
 
+export const ResourcesInput = ({ label, source }) => (
+  <ReferenceArrayInput label={label} reference="Resource" source={source}>
+    <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
+  </ReferenceArrayInput>
+);
+
 export const ActivitiesInput = ({ label, source }) => (
   <ReferenceArrayInput label={label} reference="Activity" source={source}>
     <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />

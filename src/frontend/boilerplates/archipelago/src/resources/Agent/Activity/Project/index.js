@@ -31,6 +31,7 @@ export default {
         'pair:hasStatus': 'Statut',
         'pair:homePage': 'Site web',
         'pair:involves': 'Implique',
+        'pair:needs': 'Compétences requises',
         'pair:documentedBy': 'Documenté par',
         'pair:hasTopic': 'A pour thème'
       }

@@ -3,6 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 import { SideList, Show, GridList, AvatarField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import SkillTitle from './SkillTitle';
+import { ChipField, SingleFieldList } from "react-admin";
 
 const SkillShow = props => (
   <Show title={<SkillTitle />} {...props}>
@@ -16,6 +17,11 @@ const SkillShow = props => (
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image" />
             </GridList>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Agent" source="pair:neededBy">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
           </ReferenceArrayField>
         </SideList>
       </Grid>
