@@ -1,7 +1,7 @@
 import React from 'react';
 
-const PersonTitle = ({ record }) => {
+const RoleTitle = ({ record }) => {
   return <span>{record ? record['pair:label'] : ''}</span>;
 };
 
-export default PersonTitle;
+export default RoleTitle;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, Labeled } from 'react-admin';
-import { Grid, Typography } from '@material-ui/core';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
+import { Grid } from '@material-ui/core';
 import {
   MainList,
   SideList,
@@ -9,7 +9,7 @@ import {
   Show,
   MarkdownField,
   AvatarField,
-  UserIcon,
+  SeparatedListField,
   RightLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
@@ -30,6 +30,11 @@ const OrganizationShow = props => (
         <Hero image="image">
           <TextField source="pair:comment" />
           <UrlField source="pair:homePage" />
+          <ReferenceArrayField reference="Type" source="pair:hasType">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />

@@ -1,7 +1,8 @@
 import React from 'react';
-import { SelectInput, SimpleForm, TextInput, ReferenceInput } from 'react-admin';
+import { SelectInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
+import { ReferenceInput } from '@semapps/semantic-data-provider';
 import { AgentsInput } from '../../../pair';
 import DocumentTitle from './DocumentTitle';
 
