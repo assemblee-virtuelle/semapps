@@ -58,24 +58,18 @@ const OrganizationShow = props => (
           <GroupedArrayField
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupComponent={({ record, ...otherProps }) => <RightLabel label={record['pair:label']} />}
+            groupComponent={record => <RightLabel record={record} source="pair:label" label={record?.['pair:label']}  />}
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-            <SingleFieldList linkType={false}>
-              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                <AvatarField
-                  label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
-                  image="image"
-                  classes={{
-                    parent: {
-                      width: '100px',
-                      margin: '10px'
-                    }
-                  }}
-                />
-              </ReferenceField>
-            </SingleFieldList>
+          <GridList xs={6} linkType={false}>
+            <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+               <AvatarField
+                 label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
+                 image="image"
+               />
+             </ReferenceField>
+          </GridList>
           </GroupedArrayField>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">

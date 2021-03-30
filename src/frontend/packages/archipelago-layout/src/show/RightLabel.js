@@ -15,7 +15,7 @@ const useStyles = makeStyles(() => ({
 const RightLabel = ({ label, children, record, resource, source, basePath }) => {
   const classes = useStyles();
   const translate = useTranslate();
-  // if (!record?.[source]) return null;
+  if (!record?.[source]) return null;
   return (
     <Box mb={4}>
       <Box className={classes.rightLabel}>
@@ -27,7 +27,7 @@ const RightLabel = ({ label, children, record, resource, source, basePath }) => 
           })
         )}
       </Box>
-      {record?.[source] && children && (
+      {children && (
         <Box m={0}>
           {React.cloneElement(children, {
             record,

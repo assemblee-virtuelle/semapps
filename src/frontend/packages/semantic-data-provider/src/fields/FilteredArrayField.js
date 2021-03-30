@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ArrayField } from 'react-admin';
 
+
+
+
 /**
  * @example
  * <Show>
  *   <FilteredArrayField
- *     source="property"
+ *     source="pair:organizationOfMembership"
  *     filter={{
- *       'property':'value'
+ *       'pair:membershipRole':'http://localhost:3000/membership-roles/role-1'
  *     }}
  *     >
  *     <SingleFieldList>
@@ -15,6 +18,9 @@ import { ArrayField } from 'react-admin';
  *   </FilteredArrayField>
  * </Show>
  */
+
+
+
 
 const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
