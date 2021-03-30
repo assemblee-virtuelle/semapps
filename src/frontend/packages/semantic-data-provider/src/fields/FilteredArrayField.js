@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrayField } from 'react-admin';
 
-
-
-
 /**
  * @example
  * <Show>
@@ -18,9 +15,6 @@ import { ArrayField } from 'react-admin';
  *   </FilteredArrayField>
  * </Show>
  */
-
-
-
 
 const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
