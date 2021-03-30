@@ -7,11 +7,11 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 0,
     [theme.breakpoints.up('sm')]: {
       minWidth: '15em',
-      marginLeft: '1em',
+      marginLeft: '1em'
     },
     [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
+      display: 'none'
+    }
   },
   cardContent: {
     paddingTop: 0
@@ -23,10 +23,17 @@ const ProjectFilterSidebar = () => {
   return (
     <Card className={classes.card}>
       <CardContent className={classes.cardContent}>
-        <ReferenceFilter label="Intérêts" reference="Theme" source="pair:hasTopic" inverseSource="pair:topicOf" sort={{ field: 'pair:label', order: 'DESC' }} limit={100} />
+        <ReferenceFilter
+          label="Intérêts"
+          reference="Theme"
+          source="pair:hasTopic"
+          inverseSource="pair:topicOf"
+          sort={{ field: 'pair:label', order: 'DESC' }}
+          limit={100}
+        />
       </CardContent>
     </Card>
   );
-}
+};
 
 export default ProjectFilterSidebar;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, SimpleList } from '@semapps/archipelago-layout';
-import { Avatar } from "@material-ui/core";
+import { Avatar } from '@material-ui/core';
 import FavoriteBorderIcon from '@material-ui/icons/Class';
 
 const RoleList = props => (
