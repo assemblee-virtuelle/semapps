@@ -2,7 +2,7 @@ import React from 'react';
 import { ReferenceArrayField as RaReferenceArrayField } from 'react-admin';
 
 const ReferenceArrayField = ({ record, source, ...otherProps }) => {
-  if (record[source]) {
+  if (record?.[source]) {
     if (!Array.isArray(record[source])) {
       record[source] = [record[source]];
     }

@@ -1,8 +1,8 @@
 import React from 'react';
 import { DateField } from 'react-admin';
 import { List, SimpleList } from '@semapps/archipelago-layout';
-import EventFilterSidebar from "./EventFilterSidebar";
-import { Avatar } from "@material-ui/core";
+import EventFilterSidebar from './EventFilterSidebar';
+import { Avatar } from '@material-ui/core';
 import EventIcon from '@material-ui/icons/Event';
 
 const EventList = props => (

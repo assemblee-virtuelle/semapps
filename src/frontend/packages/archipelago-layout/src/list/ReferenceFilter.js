@@ -24,7 +24,7 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
         .filter(id => !inverseSource || data[id][inverseSource])
         .map(id => (
           <FilterListItem key={id} label={data[id]['pair:label']} value={{ [source]: id }} />
-      ))}
+        ))}
     </FilterList>
   );
 };

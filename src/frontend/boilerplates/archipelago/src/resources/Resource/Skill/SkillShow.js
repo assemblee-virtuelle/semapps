@@ -3,7 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 import { SideList, Show, GridList, AvatarField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import SkillTitle from './SkillTitle';
-import { ChipField, SingleFieldList } from "react-admin";
+import { ChipField, SingleFieldList } from 'react-admin';
 
 const SkillShow = props => (
   <Show title={<SkillTitle />} {...props}>

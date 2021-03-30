@@ -1,7 +1,7 @@
 import React from 'react';
 import { SimpleForm, TextInput, ImageInput, AutocompleteInput, SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { Edit, RightLabel } from '@semapps/archipelago-layout';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
 import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
@@ -22,7 +22,10 @@ export const OrganizationEdit = props => {
         </ImageInput>
         <ReificationArrayInput source="pair:organizationOfMembership" reificationClass="pair:MembershipAssociation">
           <ReferenceInput reference="Person" source="pair:membershipActor">
-            <AutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value && value.length > 1} />
+            <AutocompleteInput
+              optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
+              shouldRenderSuggestions={value => value && value.length > 1}
+            />
           </ReferenceInput>
           <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
             <SelectInput optionText="pair:label" />

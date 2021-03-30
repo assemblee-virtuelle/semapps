@@ -9,10 +9,16 @@ import {
   Show,
   MarkdownField,
   AvatarField,
-  SeparatedListField
+  SeparatedListField,
+  RightLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import {
+  ReferenceArrayField,
+  ReferenceField,
+  GroupedArrayField,
+  FilteredArrayField
+} from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
@@ -49,11 +55,19 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <ReferenceArrayField reference="Person" source="pair:affiliates">
-            <GridList xs={6} linkType="show">
-              <AvatarField label="pair:label" image="image" />
+          <GroupedArrayField
+            source="pair:organizationOfMembership"
+            groupReference="MembershipRole"
+            groupComponent={record => <RightLabel record={record} source="pair:label" label={record?.['pair:label']} />}
+            filterProperty="pair:membershipRole"
+            addLabel={false}
+          >
+            <GridList xs={6} linkType={false}>
+              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
+              </ReferenceField>
             </GridList>
-          </ReferenceArrayField>
+          </GroupedArrayField>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">
