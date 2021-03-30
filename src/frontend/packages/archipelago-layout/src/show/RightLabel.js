@@ -27,7 +27,7 @@ const RightLabel = ({ label, children, record, resource, source, basePath }) => 
           })
         )}
       </Box>
-      {record?.[source] && children &&
+      {record?.[source] && children && (
         <Box m={0}>
           {React.cloneElement(children, {
             record,
@@ -35,7 +35,7 @@ const RightLabel = ({ label, children, record, resource, source, basePath }) => 
             basePath
           })}
         </Box>
-      }
+      )}
     </Box>
   );
 };

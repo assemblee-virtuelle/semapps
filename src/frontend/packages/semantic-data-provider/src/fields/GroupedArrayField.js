@@ -1,4 +1,4 @@
-import React, { useState, useEffect,createElement } from 'react';
+import React, { useState, useEffect, createElement } from 'react';
 import { ArrayField, useDataProvider, useResourceContext } from 'react-admin';
 import { default as FilteredArrayField } from './FilteredArrayField';
 import { Typography, Box } from '@material-ui/core';
@@ -17,23 +17,30 @@ import { Typography, Box } from '@material-ui/core';
  * </GroupedArrayField>
  */
 
- /**
-  * @example 2 : custom group label
-  * <GroupedArrayField
-  *   source="property"
-  *   groupReference="RAresource"
-  *   groupComponent={({record, ...otherProps })=>
-  *     <RightLabel label={record['property of RAresource display']}/>
-  *   }
-  *   filterProperty="property of source filtered by groupReference"
-  * >
-  *   <SingleFieldList>
-  *   </SingleFieldList>
-  * </GroupedArrayField>
-  */
+/**
+ * @example 2 : custom group label
+ * <GroupedArrayField
+ *   source="property"
+ *   groupReference="RAresource"
+ *   groupComponent={({record, ...otherProps })=>
+ *     <RightLabel label={record['property of RAresource display']}/>
+ *   }
+ *   filterProperty="property of source filtered by groupReference"
+ * >
+ *   <SingleFieldList>
+ *   </SingleFieldList>
+ * </GroupedArrayField>
+ */
 
-
-const GroupedArrayField = ({ children, groupReference, groupLabel, filterProperty,groupComponent, groupVariant, ...otherProps }) => {
+const GroupedArrayField = ({
+  children,
+  groupReference,
+  groupLabel,
+  filterProperty,
+  groupComponent,
+  groupVariant,
+  ...otherProps
+}) => {
   const dataProvider = useDataProvider();
   const [groups, setGroups] = useState();
 
@@ -60,14 +67,12 @@ const GroupedArrayField = ({ children, groupReference, groupLabel, filterPropert
         filter[filterProperty] = group.id;
         return (
           <Box key={index}>
-            {groupComponent &&
-              createElement(groupComponent,{record:group})
-            }
-            {!groupComponent &&
+            {groupComponent && createElement(groupComponent, { record: group })}
+            {!groupComponent && (
               <Typography variant={groupVariant} align="left" noWrap>
                 {group[groupLabel]}
               </Typography>
-            }
+            )}
 
             <FilteredArrayField {...otherProps} filter={filter}>
               {children}
