@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, SimpleList } from '@semapps/archipelago-layout';
-import ProjectFilterSidebar from "./ProjectFilterSidebar";
-import { Avatar } from "@material-ui/core";
+import ProjectFilterSidebar from './ProjectFilterSidebar';
+import { Avatar } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 const ProjectList = props => (
