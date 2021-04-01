@@ -1,3 +1,4 @@
+const jsonld = require('jsonld');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -45,49 +46,47 @@ module.exports = {
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      // If the new data are badly formatted, old data will be reinserted before throwing a 400 error
       const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1,
         webId
       });
 
-      // First delete the whole resource
-      await ctx.call('triplestore.update', {
-        query: `
-          DELETE
-          WHERE
-          { <${resourceUri}> ?p ?v }
-        `,
-        webId
-      });
+      const oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
+      const newTriples = await this.bodyToTriples(resource, contentType);
 
-      try {
-        // ... then insert back all the data
-        await ctx.call('triplestore.insert', {
-          resource,
-          contentType,
-          webId
-        });
-      } catch (e) {
-        // If the insertion of new data fails, inserts back old data
-        await ctx.call('triplestore.insert', {
-          resource: oldData,
-          contentType: MIME_TYPES.JSON
-        });
+      const blankNodesVars = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
-        // ... then rethrows an error
-        throw new MoleculerError('Could not put resource: ' + e.message, 400, 'BAD_REQUEST');
+      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples);
+      const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
+
+      // The exact same data have been posted, skip
+      if( triplesToAdd.length === 0 && triplesToRemove.length === 0 ) {
+        return resourceUri;
       }
 
+      // Keep track of blank nodes to use in WHERE clause
+      const triplesWithBlankNodes = newTriples.filter(triple => triple.object.termType === 'BlankNode');
+
+      // Generate the query
+      let query = '';
+      if( triplesToRemove.length > 0 ) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
+      if( triplesToAdd.length > 0 ) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
+      if( triplesWithBlankNodes.length > 0 ) {
+        query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
+      } else {
+        query += `WHERE {}`;
+      }
+
+      await ctx.call('triplestore.update', { query, webId });
+
       // Get the new data, with the same formatting as the old data
+      // We skip the cache because it has not been invalidated yet
       const newData = await ctx.call(
         'ldp.resource.get',
         {
           resourceUri,
           accept: MIME_TYPES.JSON,
-          queryDepth: 1,
           webId
         },
         { meta: { $cache: false } }

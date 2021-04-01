@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 const { sanitizeSPARQL } = require('../../../utils');
 
