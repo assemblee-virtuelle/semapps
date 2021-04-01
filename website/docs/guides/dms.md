@@ -16,7 +16,7 @@ In this guide, you will :
 
 ### Prerequisites
 
-The only prerequisites is to have [NodeJS](https://nodejs.org/en/) installed on your computer.
+The only prerequisites is to have [NodeJS](https://nodejs.org/en/) installed on your computer (**use NodeJS version 12**).
 
 You will of course also need a LDP server, configured with a SPARQL endpoint. Please see [this guide](ldp-server.md) if you didn't set it up yet.
 
