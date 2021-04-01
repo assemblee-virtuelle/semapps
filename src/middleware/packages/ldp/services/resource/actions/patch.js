@@ -75,16 +75,20 @@ module.exports = {
 
       // We want to remove in old triples only the triples for which we have provided a new literal value
       const literalNewTriples = newTriples.filter(t => t.object.termType === 'Literal');
-      const triplesToRemove = oldTriples.filter(ot => literalNewTriples.some(nt => {
-        // If the subject is a blank node, we use the variable name in order to identify equals
-        const oldSubjectValue = ot.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
-        const newSubjectValue = nt.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
+      const triplesToRemove = oldTriples.filter(ot =>
+        literalNewTriples.some(nt => {
+          // If the subject is a blank node, we use the variable name in order to identify equals
+          const oldSubjectValue =
+            ot.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
+          const newSubjectValue =
+            nt.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
 
-        return newSubjectValue === oldSubjectValue && nt.predicate.value === ot.predicate.value;
-      }));
+          return newSubjectValue === oldSubjectValue && nt.predicate.value === ot.predicate.value;
+        })
+      );
 
       // The exact same data have been posted, skip
-      if( triplesToAdd.length === 0 && triplesToRemove.length === 0 ) {
+      if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
         return resourceUri;
       }
 
@@ -93,9 +97,9 @@ module.exports = {
 
       // Generate the query
       let query = '';
-      if( triplesToRemove.length > 0 ) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
-      if( triplesToAdd.length > 0 ) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
-      if( triplesWithBlankNodes.length > 0 ) {
+      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
+      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
+      if (triplesWithBlankNodes.length > 0) {
         query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
       } else {
         query += `WHERE {}`;

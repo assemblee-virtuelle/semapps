@@ -10,7 +10,10 @@ module.exports = {
     const { uri } = ctx.params;
     const options =
       this.settings.containers.find(
-        container => typeof container !== 'string' && container.path !== '/' && uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
+        container =>
+          typeof container !== 'string' &&
+          container.path !== '/' &&
+          uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
       ) || {};
     return { ...this.settings.defaultOptions, ...options };
   }

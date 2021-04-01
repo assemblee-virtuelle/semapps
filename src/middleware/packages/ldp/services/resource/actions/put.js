@@ -61,7 +61,7 @@ module.exports = {
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
       // The exact same data have been posted, skip
-      if( triplesToAdd.length === 0 && triplesToRemove.length === 0 ) {
+      if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
         return resourceUri;
       }
 
@@ -70,9 +70,9 @@ module.exports = {
 
       // Generate the query
       let query = '';
-      if( triplesToRemove.length > 0 ) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
-      if( triplesToAdd.length > 0 ) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
-      if( triplesWithBlankNodes.length > 0 ) {
+      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
+      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
+      if (triplesWithBlankNodes.length > 0) {
         query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
       } else {
         query += `WHERE {}`;

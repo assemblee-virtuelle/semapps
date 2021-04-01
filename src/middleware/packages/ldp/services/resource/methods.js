@@ -5,7 +5,7 @@ const streamifyString = require('streamify-string');
 module.exports = {
   async bodyToTriples(body, contentType) {
     return new Promise((resolve, reject) => {
-      if( contentType === 'application/ld+json' && typeof body === 'object' ) body = JSON.stringify(body);
+      if (contentType === 'application/ld+json' && typeof body === 'object') body = JSON.stringify(body);
       const textStream = streamifyString(body);
       let res = [];
       rdfParser
@@ -19,8 +19,8 @@ module.exports = {
   getTriplesDifference(triples1, triples2) {
     return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
   },
-  getNodeForQuery(node, blankNodesVars){
-    switch(node.termType) {
+  getNodeForQuery(node, blankNodesVars) {
+    switch (node.termType) {
       case 'BlankNode':
         // Blank nodes are considered as SPARQL variables
         return blankNodesVars[node.value];
@@ -31,7 +31,7 @@ module.exports = {
         // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
         return `'''${node.value}'''`;
       default:
-        throw new Error("Unknown node type: " + node.termType)
+        throw new Error('Unknown node type: ' + node.termType);
     }
   },
   /*
@@ -43,12 +43,18 @@ module.exports = {
     let blankNodesVars = {};
     triples
       .filter(triple => triple.object.termType === 'BlankNode')
-      .forEach(triple => blankNodesVars[triple.object.value] = '?' + triple.predicate.value.split('#')[1]);
+      .forEach(triple => (blankNodesVars[triple.object.value] = '?' + triple.predicate.value.split('#')[1]));
     return blankNodesVars;
   },
   triplesToString(triples, blankNodesVars) {
     return triples
-      .map(triple => `${this.getNodeForQuery(triple.subject, blankNodesVars)} <${triple.predicate.value}> ${this.getNodeForQuery(triple.object, blankNodesVars)} .`)
+      .map(
+        triple =>
+          `${this.getNodeForQuery(triple.subject, blankNodesVars)} <${triple.predicate.value}> ${this.getNodeForQuery(
+            triple.object,
+            blankNodesVars
+          )} .`
+      )
       .join('\n');
   }
 };
