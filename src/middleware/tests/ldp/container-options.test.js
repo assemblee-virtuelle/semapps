@@ -162,7 +162,7 @@ describe('Container options', () => {
       containerUri: CONFIG.HOME_URL + 'organizations'
     });
 
-    orga1 = await broker.call('ldp.resource.get', {resourceUri, accept: MIME_TYPES.JSON});
+    orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
     expect(orga1['pair:description']).toBe('myOrga');
     expect(orga1['pair:hasLocation']['@id']).toBeDefined();
     expect(orga1['pair:hasLocation']['pair:description']).toBe('myPlace');
