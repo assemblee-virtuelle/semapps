@@ -218,7 +218,7 @@ The only way to eal with this problem is to uncomment line [602 of shiroEvaluato
 * When creation of arbitrary containers at the root will be possible, please prevent the user from chosing those slugs, that must be reserved for system paths :
 ```
 /_acl
-/_group
+/_groups
 /_rights
 ```
 

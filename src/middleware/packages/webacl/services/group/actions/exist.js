@@ -13,7 +13,7 @@ module.exports = {
       let { groupUri, groupSlug, webId } = ctx.params;
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
-      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_group', groupSlug);
+      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
       return await ctx.call('triplestore.query', {
         query: `

@@ -25,7 +25,7 @@ module.exports = {
       let slug = ctx.params.slug;
       slug = createSlug(slug, { lang: 'fr', custom: { '.': '.' } });
 
-      let groupUri = urlJoin(this.settings.baseUrl, '_group', slug);
+      let groupUri = urlJoin(this.settings.baseUrl, '_groups', slug);
 
       // it would probably be impossible to get injection here since createSlug would remove all the bad characters. but anyway...
       await sanitizeSPARQL(groupUri);

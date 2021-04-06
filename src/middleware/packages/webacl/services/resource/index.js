@@ -48,7 +48,7 @@ module.exports = {
       // We cannot add them as dependencies as this creates circular dependencies
       await ctx.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
-      if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_group'))) {
+      if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
         let exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
         if (!exists)
           throw new MoleculerError(`Cannot get permissions of non-existing ACL group ${resourceUri}`, 404, 'NOT_FOUND');

@@ -83,7 +83,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { slug: 'mygroup5' });
 
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup5'));
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup5'));
     } catch (e) {
       console.log(e);
       expect(e).toEqual(null);
@@ -94,7 +94,7 @@ describe('middleware CRUD group with perms', () => {
     try {
       const res = await broker.call('webacl.group.create', { slug: 'mygroup10', webId: 'http://test/user3' });
 
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup10'));
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup10'));
     } catch (e) {
       console.log(e);
       expect(e).toEqual(null);
