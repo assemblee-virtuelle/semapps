@@ -141,4 +141,50 @@ describe('Container options', () => {
       }
     });
   });
+
+  test('Update resource with disassembly', async () => {
+    const resourceUri = await broker.call('ldp.resource.post', {
+      resource: {
+        '@context': {
+          pair: 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Organization',
+        'pair:description': 'myOrga',
+        'pair:label': 'myTitle',
+        'pair:hasLocation': {
+          '@type': 'Place',
+          'pair:description': 'myPlace'
+        }
+      },
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'organizations'
+    });
+
+    let orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
+    expect(orga1['pair:description']).toBe('myOrga');
+    expect(orga1['pair:hasLocation']['@id']).toBeDefined();
+    expect(orga1['pair:hasLocation']['pair:description']).toBe('myPlace');
+
+    orga1ToUpdate = { ...orga1 };
+    orga1ToUpdate['pair:hasLocation'] = {
+      '@type': 'Place',
+      'pair:description': 'myPlace2'
+    };
+    orga1ToUpdate['pair:description'] = 'myOrga2';
+
+    await broker.call('ldp.resource.put', {
+      resource: orga1ToUpdate,
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'organizations'
+    });
+
+    let orga1Updated = await broker.call('ldp.resource.get', {
+      resourceUri: orga1ToUpdate['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(orga1Updated['pair:description']).toBe('myOrga2');
+    expect(orga1Updated['pair:hasLocation']['@id']).toBeDefined();
+    expect(orga1Updated['pair:hasLocation']['pair:description']).toBe('myPlace2');
+  }, 20000);
 });

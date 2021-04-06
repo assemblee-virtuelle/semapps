@@ -32,7 +32,15 @@ const initialize = async () => {
         {
           path: '/resources',
           dereference: ['pair:hasLocation']
-        }
+        },
+        {
+          path: '/organizations',
+          dereference: ['pair:hasLocation'],
+          disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
+        },
+        {
+          path: '/places'
+        },
       ]
     }
   });
@@ -52,6 +60,26 @@ const initialize = async () => {
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: CONFIG.HOME_URL + 'resources',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'organizations',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'places',
     additionalRights: {
       anon: {
         write: true
