@@ -16,8 +16,7 @@ import { MapField } from '@semapps/geo-components';
 import {
   ReferenceArrayField,
   ReferenceField,
-  GroupedArrayField,
-  FilteredArrayField
+  GroupedArrayField
 } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
