@@ -25,7 +25,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
   },
   checkError: error => Promise.resolve(),
   getPermissions: async resourceId => {
-    if( !checkPermissions ) return true;
+    if (!checkPermissions) return true;
 
     // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
     const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;

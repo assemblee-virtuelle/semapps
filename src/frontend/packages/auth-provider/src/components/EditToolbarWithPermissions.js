@@ -6,7 +6,7 @@ const useStyles = makeStyles(() => ({
   toolbar: {
     flex: 1,
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   }
 }));
 
@@ -15,9 +15,9 @@ const EditToolbarWithPermissions = ({ hasDelete, ...rest }) => {
   return (
     <Toolbar {...rest} className={classes.toolbar}>
       <SaveButton />
-      {hasDelete && <DeleteButton undoable={false} /> }
+      {hasDelete && <DeleteButton undoable={false} />}
     </Toolbar>
   );
-}
+};
 
 export default EditToolbarWithPermissions;

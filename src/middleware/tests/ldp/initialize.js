@@ -40,7 +40,7 @@ const initialize = async () => {
         },
         {
           path: '/places'
-        },
+        }
       ]
     }
   });
