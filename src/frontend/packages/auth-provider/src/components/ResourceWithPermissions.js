@@ -1,10 +1,10 @@
 import React from 'react';
 import { Resource, usePermissions } from 'react-admin';
-import { rightsToList, rightsToCreate } from "../rights";
+import { rightsToList, rightsToCreate } from '../rights';
 
 const ResourceWithPermission = ({ name, list, create, ...rest }) => {
   const { permissions } = usePermissions(name);
-  return(
+  return (
     <Resource
       {...rest}
       name={name}
