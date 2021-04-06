@@ -13,6 +13,8 @@ afterAll(async () => {
 });
 
 describe('Container options', () => {
+  let orga1;
+
   test('Get resource with queryDepth', async () => {
     const resourceUri = await broker.call('ldp.resource.post', {
       resource: {
@@ -142,7 +144,7 @@ describe('Container options', () => {
     });
   });
 
-  test('Update resource with disassembly', async () => {
+  test('Create resource with disassembly', async () => {
     const resourceUri = await broker.call('ldp.resource.post', {
       resource: {
         '@context': {
@@ -160,11 +162,13 @@ describe('Container options', () => {
       containerUri: CONFIG.HOME_URL + 'organizations'
     });
 
-    let orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
+    orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
     expect(orga1['pair:description']).toBe('myOrga');
     expect(orga1['pair:hasLocation']['@id']).toBeDefined();
     expect(orga1['pair:hasLocation']['pair:description']).toBe('myPlace');
+  });
 
+  test('Update (PUT) resource with disassembly', async () => {
     orga1ToUpdate = { ...orga1 };
     orga1ToUpdate['pair:hasLocation'] = {
       '@type': 'Place',
@@ -186,5 +190,23 @@ describe('Container options', () => {
     expect(orga1Updated['pair:description']).toBe('myOrga2');
     expect(orga1Updated['pair:hasLocation']['@id']).toBeDefined();
     expect(orga1Updated['pair:hasLocation']['pair:description']).toBe('myPlace2');
+  }, 20000);
+
+  test('Delete resource with disassembly', async () => {
+    await broker.call('ldp.resource.delete', {
+      resourceUri: orga1['@id']
+    });
+
+    let error;
+    try {
+      await broker.call('ldp.resource.get', {
+        resourceUri: orga1['pair:hasLocation']['@id'],
+        accept: MIME_TYPES.JSON
+      });
+    } catch (e) {
+      error = e;
+    } finally {
+      expect(error && error.code).toBe(404);
+    }
   }, 20000);
 });

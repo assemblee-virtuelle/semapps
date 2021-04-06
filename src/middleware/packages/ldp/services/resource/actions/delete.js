@@ -33,12 +33,11 @@ module.exports = {
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       const { disassembly } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
 
@@ -55,13 +54,15 @@ module.exports = {
       await ctx.call(
         'ldp.container.detach',
         {
-          containerUri,
+          containerUri: getContainerFromUri(resourceUri),
           resourceUri
         },
         { meta: { webId } }
       );
 
-      oldData = await this.deleteDisassembly(ctx, oldData, MIME_TYPES.JSON, disassembly, webId);
+      if (disassembly) {
+        await this.deleteDisassembly(ctx, oldData, disassembly, webId);
+      }
 
       await ctx.call('triplestore.update', {
         query: `

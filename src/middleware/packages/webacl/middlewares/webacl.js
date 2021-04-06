@@ -183,7 +183,7 @@ const WebAclMiddleware = {
               case 'ldp.resource.post':
                 await ctx.call(
                   'webacl.resource.deleteAllRights',
-                  { resourceUri: ctx.params.resourceUri },
+                  { resourceUri: newResourceUri },
                   { meta: { webId: 'system' } }
                 );
                 break;

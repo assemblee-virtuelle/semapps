@@ -1,5 +1,6 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
@@ -57,57 +58,49 @@ module.exports = {
       )
       .join('\n');
   },
-  async createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId) {
-    if (disassembly && contentType == MIME_TYPES.JSON) {
-      for (const disassemblyItem of disassembly) {
-        if (resource[disassemblyItem.path]) {
-          let rawDisassemblyValue = resource[disassemblyItem.path];
-          if (!Array.isArray(rawDisassemblyValue)) {
-            rawDisassemblyValue = [rawDisassemblyValue];
-          }
-          const uriInserted = [];
-          for (let disassemblyValue of rawDisassemblyValue) {
-            // id is extract to not interfer whith @id if set
-            let { id, ...usableValue } = disassemblyValue;
-            usableValue = {
-              '@context': resource['@context'],
-              ...usableValue
-            };
-
-            disassemblyResourceUri = await ctx.call('ldp.resource.post', {
-              containerUri: disassemblyItem.container,
-              resource: usableValue,
-              contentType: MIME_TYPES.JSON,
-              accept: MIME_TYPES.JSON,
-              webId: webId
-            });
-            uriInserted.push({ '@id': disassemblyResourceUri, '@type': '@id' });
-          }
-          resource[disassemblyItem.path] = uriInserted;
+  async createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId) {
+    for (let disassemblyItem of disassembly) {
+      if (resource[disassemblyItem.path]) {
+        let rawDisassemblyValue = resource[disassemblyItem.path];
+        if (!Array.isArray(rawDisassemblyValue)) {
+          rawDisassemblyValue = [rawDisassemblyValue];
         }
+        const uriInserted = [];
+        for (let disassemblyValue of rawDisassemblyValue) {
+          let { id, ...usableValue } = disassemblyValue;
+          usableValue = {
+            '@context': resource['@context'],
+            ...usableValue
+          };
+
+          const disassemblyResourceUri = await ctx.call('ldp.resource.post', {
+            containerUri: disassemblyItem.container,
+            resource: usableValue,
+            contentType: MIME_TYPES.JSON,
+            webId
+          });
+          uriInserted.push({ '@id': disassemblyResourceUri, '@type': '@id' });
+        }
+        resource[disassemblyItem.path] = uriInserted;
       }
     }
     return resource;
   },
-  async deleteDisassembly(ctx, resource, contentType, disassembly, webId) {
-    if (disassembly) {
-      for (disassemblyItem of disassembly) {
-        if (resource[disassemblyItem.path]) {
-          let rawDisassemblyValue = resource[disassemblyItem.path];
-          if (!Array.isArray(rawDisassemblyValue)) {
-            rawDisassemblyValue = [rawDisassemblyValue];
-          }
-          for (let disassemblyValue of rawDisassemblyValue) {
-            const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
-            await ctx.call('ldp.resource.delete', {
-              resourceUri: idToDelete,
-              webId: webId
-            });
-          }
+  async deleteDisassembly(ctx, resource, disassembly, webId) {
+    for (let disassemblyItem of disassembly) {
+      if (resource[disassemblyItem.path]) {
+        let rawDisassemblyValue = resource[disassemblyItem.path];
+        if (!Array.isArray(rawDisassemblyValue)) {
+          rawDisassemblyValue = [rawDisassemblyValue];
+        }
+        for (let disassemblyValue of rawDisassemblyValue) {
+          const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
+          await ctx.call('ldp.resource.delete', {
+            resourceUri: idToDelete,
+            webId
+          });
         }
       }
     }
-    // resource[disassemblyItem.path]==undefined;
-    return resource;
   }
 };
