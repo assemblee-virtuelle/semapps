@@ -60,7 +60,7 @@ module.exports = {
         { meta: { webId } }
       );
 
-      if( disassembly ) {
+      if (disassembly) {
         await this.deleteDisassembly(ctx, oldData, disassembly, webId);
       }
 
