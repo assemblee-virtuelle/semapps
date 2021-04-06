@@ -15,6 +15,7 @@ const MapList = ({
   height,
   center,
   zoom,
+  boundToMarkers,
   connectMarkers,
   ...otherProps
 }) => {
@@ -27,47 +28,56 @@ const MapList = ({
 
   let previousRecord;
 
+  const records = ids
+    .map(id => ({
+      ...data[id],
+      latitude: latitude && latitude(data[id]),
+      longitude: longitude && longitude(data[id]),
+      label: label && label(data[id]),
+      description: description && description(data[id])
+    }))
+    .filter(record => record.latitude && record.longitude);
+
+  const bounds =
+    boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
+
+  // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
+  if (boundToMarkers && !bounds) return null;
+
   return (
-    <MapContainer style={{ height }} center={center} zoom={zoom} {...otherProps}>
+    <MapContainer
+      style={{ height }}
+      center={!boundToMarkers ? center : undefined}
+      zoom={!boundToMarkers ? zoom : undefined}
+      bounds={bounds}
+      {...otherProps}
+    >
       <TileLayer
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MarkerClusterGroup showCoverageOnHover={false}>
-        {ids.map(id => {
-          const record = {
-            ...data[id],
-            latitude: latitude && latitude(data[id]),
-            longitude: longitude && longitude(data[id]),
-            label: label && label(data[id]),
-            description: description && description(data[id])
-          };
+        {records.map((record, i) => {
+          const marker = (
+            <React.Fragment key={i}>
+              <Marker position={[record.latitude, record.longitude]}>
+                <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
+              </Marker>
+              {connectMarkers && previousRecord && (
+                <Polyline
+                  positions={[
+                    [previousRecord.latitude, previousRecord.longitude],
+                    [record.latitude, record.longitude]
+                  ]}
+                />
+              )}
+            </React.Fragment>
+          );
 
-          // Display a marker only if there is a latitude and longitude
-          if (record.latitude && record.longitude) {
-            const marker = (
-              <>
-                <Marker key={id} position={[record.latitude, record.longitude]}>
-                  <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>
-                </Marker>
-                {connectMarkers && previousRecord && (
-                  <Polyline
-                    positions={[
-                      [previousRecord.latitude, previousRecord.longitude],
-                      [record.latitude, record.longitude]
-                    ]}
-                  />
-                )}
-              </>
-            );
+          // Save record so that we can trace lines
+          previousRecord = record;
 
-            // Save record so that we can trace lines
-            previousRecord = record;
-
-            return marker;
-          } else {
-            return null;
-          }
+          return marker;
         })}
       </MarkerClusterGroup>
       <QueryStringUpdater />

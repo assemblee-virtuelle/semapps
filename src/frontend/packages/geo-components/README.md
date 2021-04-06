@@ -69,7 +69,8 @@ const MyList = props => (
 | `description` | `Function` | | A function which takes a record and returns a description to be displayed in the popup. This is not used if `popupContent` is provided. |
 | `popupContent` | `React Component` |  | A React component to customize the content of the popup (see above) |
 | `height` | `Number` | 700 | The height in pixel of the map |
-| `connectMarkers` | `Boolean` | false | Trace lines between the markers. The order depends on the list parameters |
+| `boundToMarkers` | `Boolean` | false | If true, center the map around the markers. |
+| `connectMarkers` | `Boolean` | false | If true, trace lines between the markers. The order depends on the list parameters |
 
 You can also provide all the options of [LeafletJS Map](https://leafletjs.com/reference-1.7.1.html#map) (`center`, `zoom`, `scrollWheelZoom`...).
 

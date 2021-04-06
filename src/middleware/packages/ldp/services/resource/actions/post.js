@@ -71,15 +71,24 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      disassembly: {
+        type: 'array',
+        optional: true
+      },
       fileStream: {
         type: 'object',
         optional: true
       }
     },
     async handler(ctx) {
-      const { resource, containerUri, slug, contentType, fileStream } = ctx.params;
+      let { resource, containerUri, slug, contentType, fileStream } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+
+      const { disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...ctx.params
+      };
 
       resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
@@ -116,6 +125,7 @@ module.exports = {
         }
       }
 
+      resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
       await ctx.call('triplestore.insert', {
         resource,
         contentType,

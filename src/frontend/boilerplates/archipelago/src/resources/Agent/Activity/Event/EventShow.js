@@ -2,7 +2,7 @@ import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import { Hero, Show, MarkdownField, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import EventTitle from './EventTitle';
 
 const EventShow = props => (
@@ -21,23 +21,16 @@ const EventShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Actor" source="pair:involves" sort={{ field: 'type', order: 'ASC' }}>
+          <ReferenceArrayField reference="Actor" source="pair:involves" sort={{ field: 'type', order: 'ASC' }}>
             <GridList xs={6} linkType="show">
-              <AvatarField
-                label={record =>
-                  record.type.includes('pair:Person')
-                    ? `${record['pair:firstName']} ${record['pair:lastName']}`
-                    : record['pair:label']
-                }
-                image={record => record['image']}
-              />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
-          </UriArrayField>
-          <UriArrayField reference="Theme" source="pair:hasTopic">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Theme" source="pair:hasTopic">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>

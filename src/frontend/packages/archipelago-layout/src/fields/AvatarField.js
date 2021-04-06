@@ -2,9 +2,10 @@ import React from 'react';
 import { Typography, Box, makeStyles, Avatar } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  parent: {
-    position: 'relative'
-  },
+  parent: props => ({
+    position: 'relative',
+    ...props.parent
+  }),
   square: {
     width: '100%',
     paddingBottom: '100%',
@@ -40,9 +41,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const AvatarField = ({ record, label, image, fallback, variant, labelColor, children }) => {
-  const classes = useStyles();
-
+const AvatarField = ({ record, label, image, fallback, variant, labelColor, classes, children }) => {
+  classes = useStyles(classes);
   if (!record) return null;
 
   const computedLabel = typeof label === 'function' ? label(record) : record[label];

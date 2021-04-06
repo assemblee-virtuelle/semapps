@@ -1,7 +1,7 @@
 import React from 'react';
 
 const PersonTitle = ({ record }) => {
-  return <span>{record ? `${record['pair:firstName']} ${record['pair:lastName']}` : ''}</span>;
+  return <span>{record ? record['pair:label'] : ''}</span>;
 };
 
 export default PersonTitle;

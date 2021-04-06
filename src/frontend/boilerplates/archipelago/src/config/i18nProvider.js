@@ -9,6 +9,8 @@ const getMessages = lang => ({
   )
 });
 
-const i18nProvider = polyglotI18nProvider(getMessages, 'fr');
+const i18nProvider = polyglotI18nProvider(getMessages, 'fr', {
+  allowMissing: true
+});
 
 export default i18nProvider;

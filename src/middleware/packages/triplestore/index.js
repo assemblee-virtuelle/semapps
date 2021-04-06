@@ -59,7 +59,6 @@ const TripleStoreService = {
             format: 'application/n-quads'
           });
         }
-
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
         const response = await fetch(url, {
           method: 'POST',

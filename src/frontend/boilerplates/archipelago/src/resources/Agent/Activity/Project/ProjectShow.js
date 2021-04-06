@@ -1,8 +1,17 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, SimpleList } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { SideList, MainList, Hero, AvatarField, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
-import { UriArrayField } from '@semapps/semantic-data-provider';
+import {
+  SideList,
+  MainList,
+  Hero,
+  AvatarField,
+  GridList,
+  Show,
+  MarkdownField,
+  SeparatedListField
+} from '@semapps/archipelago-layout';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import ProjectTitle from './ProjectTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 
@@ -13,37 +22,40 @@ const ProjectShow = props => (
         <Hero image="image">
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
+          <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
         </Hero>
         <MainList>
           <MarkdownField source="pair:description" />
-          <UriArrayField reference="Document" source="pair:documentedBy">
+          <ReferenceArrayField reference="Document" source="pair:documentedBy">
             <SimpleList
               primaryText={record => record && record['pair:label']}
               leftIcon={() => <DescriptionIcon />}
               linkType="show"
             />
-          </UriArrayField>
+          </ReferenceArrayField>
         </MainList>
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <UriArrayField reference="Actor" source="pair:involves">
+          <ReferenceArrayField reference="Actor" source="pair:involves">
             <GridList xs={6} linkType="show">
-              <AvatarField
-                label={record =>
-                  record.type.includes('pair:Person')
-                    ? `${record['pair:firstName']} ${record['pair:lastName']}`
-                    : record['pair:label']
-                }
-                image={record => record['image']}
-              />
+              <AvatarField label="pair:label" image="image" />
             </GridList>
-          </UriArrayField>
-          <UriArrayField reference="Theme" source="pair:hasTopic">
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Theme" source="pair:hasTopic">
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
-          </UriArrayField>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Resource" source="pair:needs">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
         </SideList>
       </Grid>
     </Grid>

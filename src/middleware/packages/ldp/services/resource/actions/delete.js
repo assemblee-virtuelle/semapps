@@ -25,16 +25,26 @@ module.exports = {
     visibility: 'public',
     params: {
       resourceUri: 'string',
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
+      disassembly: {
+        type: 'array',
+        optional: true
+      }
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
+      const containerUri = getContainerFromUri(resourceUri);
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
+      const { disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...ctx.params
+      };
+
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1,
@@ -45,11 +55,13 @@ module.exports = {
       await ctx.call(
         'ldp.container.detach',
         {
-          containerUri: getContainerFromUri(resourceUri),
+          containerUri,
           resourceUri
         },
         { meta: { webId } }
       );
+
+      oldData = await this.deleteDisassembly(ctx, oldData, MIME_TYPES.JSON, disassembly, webId);
 
       await ctx.call('triplestore.update', {
         query: `

@@ -25,17 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   lockIcon: {
     backgroundColor: theme.palette.secondary[500]
-  },
-  button: {
-    width: '100%'
-  },
-  icon: {
-    width: 24,
-    height: 24
   }
 }));
 
-const LoginPage = ({ theme, history, location }) => {
+const LoginPage = ({ theme, history, location, buttons }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
@@ -62,22 +55,27 @@ const LoginPage = ({ theme, history, location }) => {
               <LockIcon />
             </Avatar>
           </div>
-          <CardActions>
-            <Button
-              className={classes.button}
-              variant="outlined"
-              type="submit"
-              onClick={() => login({}, '/login')}
-              startIcon={<Avatar src="/lescommuns.jpg" className={classes.icon} />}
-            >
-              Les Communs
-            </Button>
-          </CardActions>
+          {buttons &&
+            buttons.map(button => (
+              <CardActions>
+                {React.cloneElement(button, {
+                  fullWidth: true,
+                  variant: 'outlined',
+                  type: 'submit',
+                  onClick: () => login({}, '/login')
+                })}
+              </CardActions>
+            ))}
         </Card>
       </div>
       <Notification />
     </ThemeProvider>
   );
+};
+
+// TODO deprecate this
+LoginPage.defaultProps = {
+  buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>]
 };
 
 export default LoginPage;

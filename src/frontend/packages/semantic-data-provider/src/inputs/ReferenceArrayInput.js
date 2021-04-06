@@ -1,10 +1,10 @@
 import React from 'react';
-import { ReferenceArrayInput, useResourceContext } from 'react-admin';
+import { ReferenceArrayInput as RaReferenceArrayInput, useResourceContext } from 'react-admin';
 
-const UriArrayInput = props => {
+const ReferenceArrayInput = props => {
   const resource = useResourceContext({});
   return (
-    <ReferenceArrayInput
+    <RaReferenceArrayInput
       {...props}
       resource={resource}
       format={value => {
@@ -23,4 +23,4 @@ const UriArrayInput = props => {
   );
 };
 
-export default UriArrayInput;
+export default ReferenceArrayInput;

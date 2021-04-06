@@ -1,6 +1,7 @@
 const jsonld = require('jsonld');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -36,21 +37,35 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      contentType: { type: 'string' },
+      disassembly: {
+        type: 'array',
+        optional: true
+      }
     },
     async handler(ctx) {
       const { resource, contentType } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+
       const resourceUri = resource.id || resource['@id'];
+      const containerUri = getContainerFromUri(resourceUri);
+
+      const { disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...ctx.params
+      };
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
+      let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
         webId
       });
+
+      // oldData = await this.deleteDisassembly(ctx, oldData, contentType, disassembly, webId);
+      // resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
 
       const oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       const newTriples = await this.bodyToTriples(resource, contentType);
