@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 const { sanitizeSPARQL } = require('../../../utils');
 
@@ -28,7 +27,7 @@ module.exports = {
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
-      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_group', groupSlug);
+      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
       // sanitizing
       await sanitizeSPARQL(groupUri);

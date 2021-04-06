@@ -30,7 +30,7 @@ module.exports = {
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
       if (!memberUri) throw new MoleculerError('needs a memberUri', 400, 'BAD_REQUEST');
 
-      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_group', groupSlug);
+      if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
 
       await sanitizeSPARQL(groupUri);
       await sanitizeSPARQL(memberUri);

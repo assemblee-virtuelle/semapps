@@ -82,7 +82,7 @@ describe('pentest for the ACL groups API', () => {
   test('Ensure an injection with > in addMember fails', async () => {
     try {
       const res = await broker.call('webacl.group.create', { slug: 'mygroup1' });
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup1'));
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup1'));
 
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',
@@ -116,7 +116,7 @@ describe('pentest for the ACL groups API', () => {
   test('Ensure an injection with \\x3C in addMember fails', async () => {
     try {
       const res = await broker.call('webacl.group.create', { slug: 'mygroup1' });
-      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_group', 'mygroup1'));
+      expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup1'));
 
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',

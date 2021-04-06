@@ -111,14 +111,14 @@ These routes are automatically added to the `api` service.
 
 | Route | Action called | Body |
 | ----- | ------------- | ---- |
-| `GET /_group` | `webacl.group.getGroups` | Null |
-| `POST /_group` | `webacl.group.create` | Null |
-| `GET /_group/name_of_the_group`  | `webacl.group.getMembers` | Null |
-| `PATCH /_group/name_of_the_group` | `webacl.group.addMember` | `{ "memberUri": "..." }` |
-| `POST /_group/name_of_the_group` | `webacl.group.removeMember` | `{ "deleteUserUri": "..." }` |
-| `DELETE /_group/name_of_the_group` | `webacl.group.delete` | Null |
+| `GET /_groups` | `webacl.group.getGroups` | Null |
+| `POST /_groups` | `webacl.group.create` | Null |
+| `GET /_groups/name_of_the_group`  | `webacl.group.getMembers` | Null |
+| `PATCH /_groups/name_of_the_group` | `webacl.group.addMember` | `{ "memberUri": "..." }` |
+| `POST /_groups/name_of_the_group` | `webacl.group.removeMember` | `{ "deleteUserUri": "..." }` |
+| `DELETE /_groups/name_of_the_group` | `webacl.group.delete` | Null |
 
 
 ## Permissions
 
-Groups have permissions too. You can modify those permissions by using the usual APIs with the URL in the form of `/_acl/_group/group-name`.
+Groups have permissions too. You can modify those permissions by using the usual APIs with the URL in the form of `/_acl/_groups/group-name`.
