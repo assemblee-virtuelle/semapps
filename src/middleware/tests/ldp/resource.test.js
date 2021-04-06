@@ -12,10 +12,10 @@ afterAll(async () => {
   if (broker) await broker.stop();
 });
 
-describe('CRUD Project', () => {
+describe('Resource CRUD operations', () => {
   let project1;
 
-  test('Create project', async () => {
+  test('Post resource in container', async () => {
     const urlParamsPost = {
       resource: {
         '@context': {
@@ -34,7 +34,7 @@ describe('CRUD Project', () => {
     expect(project1['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get One project', async () => {
+  test('Get resource in JSON-LD format', async () => {
     const newProject = await broker.call('ldp.resource.get', {
       accept: MIME_TYPES.JSON,
       resourceUri: project1['@id']
@@ -42,7 +42,36 @@ describe('CRUD Project', () => {
     expect(newProject['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Update One Project', async () => {
+  test('Get resource in turtle format', async () => {
+    const newProject = await broker.call('ldp.resource.get', {
+      accept: MIME_TYPES.TURTLE,
+      resourceUri: project1['@id']
+    });
+    expect(newProject).toMatch(new RegExp(`<${project1['@id']}>`));
+    expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
+    expect(newProject).toMatch(new RegExp(`pair:description.*"myProject"`));
+    expect(newProject).toMatch(new RegExp(`pair:label.*"myTitle"`));
+  }, 20000);
+
+  test('Get resource in triple format', async () => {
+    const newProject = await broker.call('ldp.resource.get', {
+      accept: MIME_TYPES.TRIPLE,
+      resourceUri: project1['@id']
+    });
+    expect(newProject).toMatch(
+      new RegExp(
+        `<${project1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
+      )
+    );
+    expect(newProject).toMatch(
+      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProject"`)
+    );
+    expect(newProject).toMatch(
+      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
+    );
+  }, 20000);
+
+  test('Patch resource', async () => {
     const urlParamsPatch = {
       resource: {
         '@context': {
@@ -64,36 +93,7 @@ describe('CRUD Project', () => {
     expect(updatedProject['pair:label']).toBe('myTitle');
   }, 20000);
 
-  test('Get One project turtle', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TURTLE,
-      resourceUri: project1['@id']
-    });
-    expect(newProject).toMatch(new RegExp(`<${project1['@id']}>`));
-    expect(newProject).toMatch(new RegExp(`a.*pair:Project`));
-    expect(newProject).toMatch(new RegExp(`pair:description.*"myProjectUpdated"`));
-    expect(newProject).toMatch(new RegExp(`pair:label.*"myTitle"`));
-  }, 20000);
-
-  test('Get One project triple', async () => {
-    const newProject = await broker.call('ldp.resource.get', {
-      accept: MIME_TYPES.TRIPLE,
-      resourceUri: project1['@id']
-    });
-    expect(newProject).toMatch(
-      new RegExp(
-        `<${project1['@id']}>.*<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.*<http://virtual-assembly.org/ontologies/pair#Project>`
-      )
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#description>.*"myProjectUpdated"`)
-    );
-    expect(newProject).toMatch(
-      new RegExp(`<${project1['@id']}>.*<http://virtual-assembly.org/ontologies/pair#label>.*"myTitle"`)
-    );
-  }, 20000);
-
-  test('Replace One Project', async () => {
+  test('Put resource', async () => {
     const urlParamsPut = {
       resource: {
         '@context': {
@@ -114,17 +114,16 @@ describe('CRUD Project', () => {
     expect(updatedProject['pair:label']).toBeUndefined();
   }, 20000);
 
-  test('Delete project', async () => {
-    const params = {
+  test('Delete resource', async () => {
+    await broker.call('ldp.resource.delete', {
       resourceUri: project1['@id']
-    };
-    await broker.call('ldp.resource.delete', params);
+    });
 
     let error;
     try {
       await broker.call('ldp.resource.get', {
-        accept: MIME_TYPES.JSON,
-        ...params
+        resourceUri: project1['@id'],
+        accept: MIME_TYPES.JSON
       });
     } catch (e) {
       error = e;
@@ -132,49 +131,4 @@ describe('CRUD Project', () => {
       expect(error && error.code).toBe(404);
     }
   }, 20000);
-
-  test('Get resource with queryDepth', async () => {
-    const resourceUri = await broker.call('ldp.resource.post', {
-      resource: {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'Event',
-        location: {
-          type: 'Place',
-          name: 'Chantilly'
-        }
-      },
-      contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
-    });
-
-    // Get resource without queryDepth
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        accept: MIME_TYPES.JSON,
-        jsonContext: 'https://www.w3.org/ns/activitystreams'
-      })
-    ).resolves.toMatchObject({
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Event',
-      location: '_:b0'
-    });
-
-    // Get resource with queryDepth
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        queryDepth: 1,
-        accept: MIME_TYPES.JSON,
-        jsonContext: 'https://www.w3.org/ns/activitystreams'
-      })
-    ).resolves.toMatchObject({
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Event',
-      location: {
-        type: 'Place',
-        name: 'Chantilly'
-      }
-    });
-  });
 });
