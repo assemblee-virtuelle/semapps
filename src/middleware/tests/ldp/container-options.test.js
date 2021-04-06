@@ -62,7 +62,7 @@ describe('Container options', () => {
     const jsonContext = [
       'https://www.w3.org/ns/activitystreams',
       {
-        'schema': 'http://schema.org/'
+        schema: 'http://schema.org/'
       }
     ];
 
@@ -74,11 +74,11 @@ describe('Container options', () => {
           type: 'Place',
           name: 'Chantilly',
           'schema:address': {
-            type: "schema:PostalAddress",
-            'schema:streetAddress': "Rue du Général Paton",
-            'schema:postalCode': "28190",
-            'schema:addressLocality': "Pontgouin",
-            'schema:addressCountry': "France"
+            type: 'schema:PostalAddress',
+            'schema:streetAddress': 'Rue du Général Paton',
+            'schema:postalCode': '28190',
+            'schema:addressLocality': 'Pontgouin',
+            'schema:addressCountry': 'France'
           }
         }
       },
@@ -132,11 +132,11 @@ describe('Container options', () => {
         type: 'Place',
         name: 'Chantilly',
         'schema:address': {
-          type: "schema:PostalAddress",
-          'schema:streetAddress': "Rue du Général Paton",
-          'schema:postalCode': "28190",
-          'schema:addressLocality': "Pontgouin",
-          'schema:addressCountry': "France"
+          type: 'schema:PostalAddress',
+          'schema:streetAddress': 'Rue du Général Paton',
+          'schema:postalCode': '28190',
+          'schema:addressLocality': 'Pontgouin',
+          'schema:addressCountry': 'France'
         }
       }
     });
