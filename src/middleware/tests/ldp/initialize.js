@@ -28,10 +28,12 @@ const initialize = async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
-      containers: [{
-        path: '/resources',
-        dereference: ['pair:hasLocation']
-      }]
+      containers: [
+        {
+          path: '/resources',
+          dereference: ['pair:hasLocation']
+        }
+      ]
     }
   });
   await broker.createService(WebAclService, {
