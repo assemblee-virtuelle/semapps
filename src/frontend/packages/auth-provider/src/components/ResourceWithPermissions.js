@@ -1,8 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Resource, usePermissions } from 'react-admin';
-
-const rightsToList = ['acl:Read', 'acl:Append', 'acl:Write', 'acl:Control'];
-const rightsToCreate = ['acl:Append', 'acl:Write', 'acl:Control'];
+import { rightsToList, rightsToCreate } from "../rights";
 
 const ResourceWithPermission = ({ name, list, create, ...rest }) => {
   const { permissions } = usePermissions(name);

@@ -1,13 +1,13 @@
 import React from 'react';
 import { ImageInput, SelectInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ActorsInput, DocumentsInput, ThemesInput, ResourcesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
 import { ImageField, ReferenceInput } from '@semapps/semantic-data-provider';
 
 const ProjectEdit = props => (
-  <Edit title={<ProjectTitle />} {...props}>
+  <EditWithPermissions title={<ProjectTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <TextInput source="pair:comment" fullWidth />
@@ -24,7 +24,7 @@ const ProjectEdit = props => (
       <DocumentsInput source="pair:documentedBy" />
       <ThemesInput source="pair:hasTopic" />
     </SimpleForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default ProjectEdit;

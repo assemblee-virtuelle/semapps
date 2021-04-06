@@ -2,13 +2,13 @@ import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import frLocale from 'date-fns/locale/fr';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { DateTimeInput } from '@semapps/date-components';
 import { ActorsInput, ThemesInput } from '../../../../pair';
 import EventTitle from './EventTitle';
 
 const EventEdit = props => (
-  <Edit title={<EventTitle />} {...props}>
+  <EditWithPermissions title={<EventTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <TextInput source="pair:comment" fullWidth />
@@ -39,7 +39,7 @@ const EventEdit = props => (
       <ActorsInput source="pair:involves" />
       <ThemesInput source="pair:hasTopic" />
     </SimpleForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default EventEdit;

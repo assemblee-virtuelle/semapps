@@ -1,14 +1,14 @@
 import React from 'react';
 import { SimpleForm, TextInput, ImageInput, AutocompleteInput, SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
 import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
 
 export const OrganizationEdit = props => {
   return (
-    <Edit title={<OrganizationTitle />} {...props}>
+    <EditWithPermissions title={<OrganizationTitle />} {...props}>
       <SimpleForm redirect="show">
         <TextInput source="pair:label" fullWidth />
         <TextInput source="pair:comment" fullWidth />
@@ -37,7 +37,7 @@ export const OrganizationEdit = props => {
         <DocumentsInput source="pair:documentedBy" />
         <PairLocationInput source="pair:hasLocation" fullWidth />
       </SimpleForm>
-    </Edit>
+    </EditWithPermissions>
   );
 };
 

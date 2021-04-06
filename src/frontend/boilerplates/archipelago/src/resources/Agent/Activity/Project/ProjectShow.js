@@ -7,16 +7,16 @@ import {
   Hero,
   AvatarField,
   GridList,
-  Show,
   MarkdownField,
   SeparatedListField
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import ProjectTitle from './ProjectTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 
 const ProjectShow = props => (
-  <Show title={<ProjectTitle />} {...props}>
+  <ShowWithPermissions title={<ProjectTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero image="image">
@@ -59,7 +59,7 @@ const ProjectShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default ProjectShow;

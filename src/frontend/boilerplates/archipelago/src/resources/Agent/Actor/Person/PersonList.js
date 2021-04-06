@@ -31,7 +31,7 @@ const PersonList = props => (
         perPage: 25,
         list: (
           <SimpleList
-            primaryText={record => `${record['pair:firstName']} ${record['pair:lastName'].toUpperCase()}`}
+            primaryText={record => record['pair:label']}
             secondaryText={record => record['pair:comment']}
             leftAvatar={record => (
               <Avatar src={record['image']} width="100%">

@@ -1,14 +1,14 @@
 import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import TypeTitle from './TypeTitle';
 
 export const ThemeEdit = props => (
-  <Edit title={<TypeTitle />} {...props}>
+  <EditWithPermissions title={<TypeTitle />} {...props}>
     <SimpleForm>
       <TextInput source="pair:label" fullWidth />
     </SimpleForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default ThemeEdit;
