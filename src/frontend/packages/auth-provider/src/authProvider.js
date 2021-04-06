@@ -24,12 +24,14 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: async ({ resourceId }) => {
+  getPermissions: async resourceId => {
     if( !checkPermissions ) return true;
 
-    // If no ID is provided, we assume we need to check the container URI
-    const resourceUri = /*id || */ resources[resourceId].containerUri;
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
 
+    // Transform the URI to the one used to find the ACL
+    // To be compatible with all servers, we should do a HEAD request to the resource URI
     const aclUri = urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
 
     let { json } = await httpClient(aclUri);

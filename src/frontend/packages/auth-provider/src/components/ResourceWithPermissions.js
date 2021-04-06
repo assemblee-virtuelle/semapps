@@ -5,9 +5,7 @@ const rightsToList = ['acl:Read', 'acl:Append', 'acl:Write', 'acl:Control'];
 const rightsToCreate = ['acl:Append', 'acl:Write', 'acl:Control'];
 
 const ResourceWithPermission = ({ name, list, create, ...rest }) => {
-  const permissionsRequest = useMemo(() => ({ resourceId: name }), [name]);
-  const { permissions } = usePermissions(permissionsRequest);
-
+  const { permissions } = usePermissions(name);
   return(
     <Resource
       {...rest}
