@@ -25,8 +25,8 @@ describe('Resource CRUD operations', () => {
         description: 'myProject',
         label: 'myTitle',
         affiliates: [
-          { '@id': "http://localhost:3000/users/guillaume" },
-          { '@id': "http://localhost:3000/users/sebastien" }
+          { '@id': 'http://localhost:3000/users/guillaume' },
+          { '@id': 'http://localhost:3000/users/sebastien' }
         ],
         hasLocation: {
           label: 'Paris',
@@ -104,9 +104,9 @@ describe('Resource CRUD operations', () => {
       'pair:description': 'myProjectUpdated',
       'pair:label': 'myTitle',
       'pair:affiliates': [
-        {'@id': "http://localhost:3000/users/simon"},
-        {'@id': "http://localhost:3000/users/sebastien"},
-        {'@id': "http://localhost:3000/users/guillaume"}
+        { '@id': 'http://localhost:3000/users/simon' },
+        { '@id': 'http://localhost:3000/users/sebastien' },
+        { '@id': 'http://localhost:3000/users/guillaume' }
       ],
       'pair:hasLocation': {
         'pair:label': 'Compiègne',
@@ -139,7 +139,7 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:affiliates': { '@id': "http://localhost:3000/users/pierre" },
+      'pair:affiliates': { '@id': 'http://localhost:3000/users/pierre' },
       'pair:hasLocation': {
         'pair:label': 'Nantes'
       }
