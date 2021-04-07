@@ -76,8 +76,6 @@ module.exports = {
           webId
         });
 
-        console.log('container.get result', result);
-
         // Request each resources
         let resources = [];
         if (result && result.contains) {
