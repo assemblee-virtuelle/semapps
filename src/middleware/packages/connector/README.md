@@ -2,4 +2,4 @@
 
 OIDC/Cas module for SemApps
 
-[Documentation](https://semapps.org/docs/packages/connector)
+[Documentation](https://semapps.org/docs/middleware/connector)

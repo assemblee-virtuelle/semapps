@@ -2,4 +2,4 @@
 
 Triple store module for SemApps
 
-[Documentation](https://semapps.org/docs/packages/triplestore)
+[Documentation](https://semapps.org/docs/middleware/triplestore)

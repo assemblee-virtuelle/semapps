@@ -2,4 +2,4 @@
 
 SPARQL endpoint for SemApps
 
-[Documentation](https://semapps.org/docs/packages/sparql-endpoint)
+[Documentation](https://semapps.org/docs/middleware/sparql-endpoint)

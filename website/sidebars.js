@@ -8,36 +8,41 @@
 module.exports = {
   docs: {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
-    Packages: [
-      'packages/activitypub',
-      'packages/backup',
-      'packages/connector',
-      'packages/fuseki-admin',
-      'packages/importer',
-      'packages/inference',
+    'Middleware packages': [
+      'middleware/activitypub',
+      'middleware/backup',
+      'middleware/connector',
+      'middleware/fuseki-admin',
+      'middleware/importer',
+      'middleware/inference',
       {
         type: 'category',
         label: 'LDP',
         items: [
-          'packages/ldp/index',
-          'packages/ldp/resource',
-          'packages/ldp/container',
+          'middleware/ldp/index',
+          'middleware/ldp/resource',
+          'middleware/ldp/container',
         ],
       },
-      'packages/signature',
-      'packages/triplestore',
+      'middleware/signature',
+      'middleware/triplestore',
       {
         type: 'category',
         label: 'WebACL',
         items: [
-          'packages/webacl/index',
-          'packages/webacl/resource',
-          'packages/webacl/group',
+          'middleware/webacl/index',
+          'middleware/webacl/resource',
+          'middleware/webacl/group',
         ],
       },
-      'packages/webfinger',
-      'packages/webhooks',
-      'packages/webid'
+      'middleware/webfinger',
+      'middleware/webhooks',
+      'middleware/webid'
+    ],
+    'Frontend packages': [
+      'frontend/auth-provider',
+      'frontend/date-components',
+      'frontend/geo-components'
     ]
   },
   contribute: {
