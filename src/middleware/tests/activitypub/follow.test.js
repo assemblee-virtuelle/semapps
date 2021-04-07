@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
-jest.setTimeout(50000);
+jest.setTimeout(100000);
 
 let broker;
 
