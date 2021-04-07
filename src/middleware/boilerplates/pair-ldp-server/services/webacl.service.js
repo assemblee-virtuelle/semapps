@@ -5,6 +5,13 @@ module.exports = {
   mixins: [WebAclService],
   settings: {
     baseUrl: CONFIG.HOME_URL,
-    superAdmins: ['http://localhost:3000/users/srosset81']
+    superAdmins: [
+      CONFIG.HOME_URL + 'users/srosset81',
+      CONFIG.HOME_URL + 'users/guillaume.rouyer',
+      CONFIG.HOME_URL + 'users/simon.louvet.zen',
+      CONFIG.HOME_URL + 'users/pierre',
+      CONFIG.HOME_URL + 'users/yannick-duthe',
+      CONFIG.HOME_URL + 'users/jeremy.dufraisse'
+    ]
   }
 };
