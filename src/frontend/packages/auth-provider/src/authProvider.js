@@ -1,6 +1,7 @@
 import jwtDecode from 'jwt-decode';
+import urlJoin from 'url-join';
 
-const authProvider = middlewareUri => ({
+const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
     window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
     return Promise.resolve();
@@ -23,7 +24,20 @@ const authProvider = middlewareUri => ({
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: params => Promise.resolve(),
+  getPermissions: async resourceId => {
+    if (!checkPermissions) return true;
+
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+
+    // Transform the URI to the one used to find the ACL
+    // To be compatible with all servers, we should do a HEAD request to the resource URI
+    const aclUri = urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
+
+    let { json } = await httpClient(aclUri);
+
+    return json['@graph'].map(permission => permission['acl:mode']);
+  },
   getIdentity: () => {
     const token = localStorage.getItem('token');
     if (token) {

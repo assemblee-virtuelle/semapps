@@ -1,13 +1,13 @@
 import React from 'react';
 import { SelectInput, SimpleForm, TextInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import { AgentsInput } from '../../../pair';
 import DocumentTitle from './DocumentTitle';
 
 export const DocumentEdit = props => (
-  <Edit title={<DocumentTitle />} {...props}>
+  <EditWithPermissions title={<DocumentTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
@@ -16,7 +16,7 @@ export const DocumentEdit = props => (
       </ReferenceInput>
       <AgentsInput source="pair:documents" />
     </SimpleForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default DocumentEdit;

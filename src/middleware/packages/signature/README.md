@@ -2,4 +2,4 @@
 
 HTTP and LD signatures for SemApps
 
-[Documentation](https://semapps.org/docs/packages/signature)
+[Documentation](https://semapps.org/docs/middleware/signature)

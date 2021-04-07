@@ -14,7 +14,8 @@
     "dev": "rollup --watch --config"
   },
   "dependencies": {
-    "jwt-decode": "^3.0.0"
+    "jwt-decode": "^3.0.0",
+    "url-join": "^4.0.1"
   },
   "peerDependencies": {
     "react": "^16.13.0",
