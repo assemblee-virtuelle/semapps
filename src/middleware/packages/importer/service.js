@@ -1,6 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-const { ServiceSchemaError, MoleculerError } = require('moleculer');
+const { ServiceSchemaError, MoleculerError } = require('moleculer').Errors;
 
 const ImporterService = {
   name: 'importer',

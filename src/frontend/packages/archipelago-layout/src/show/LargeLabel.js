@@ -3,7 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   subTitle: {
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(5),
     marginBottom: theme.spacing(2)
   },
   subTitleSpan: {

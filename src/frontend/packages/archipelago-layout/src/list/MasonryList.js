@@ -7,6 +7,7 @@ const useStyles = makeStyles(() => ({
   grid: {
     display: 'flex',
     marginLeft: -20,
+    marginBottom: -20,
     width: 'auto'
   },
   column: {
