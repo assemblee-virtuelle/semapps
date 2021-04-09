@@ -27,7 +27,7 @@ const ImporterService = {
       let json = JSON.parse(file.toString());
 
       // If the json is not an array, try to convert an object to an array
-      if( !Array.isArray(json) ) json = Object.values(json);
+      if (!Array.isArray(json)) json = Object.values(json);
 
       console.log(`Importing ${json.length} items...`);
 
