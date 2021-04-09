@@ -24,7 +24,10 @@ const ImporterService = {
       }
 
       const file = await fs.readFile(path.resolve(this.settings.importsDir, fileName));
-      const json = JSON.parse(file.toString());
+      let json = JSON.parse(file.toString());
+
+      // If the json is not an array, try to convert an object to an array
+      if( !Array.isArray(json) ) json = Object.values(json);
 
       console.log(`Importing ${json.length} items...`);
 
