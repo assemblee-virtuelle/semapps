@@ -21,9 +21,8 @@ const ActivitiesList = ({ children, source, record = {} }) => {
 
   if (!loaded) {
     return <LinearProgress className={classes.progress} />;
-  }
-  else if( data.length === 0 ) {
-    return "Aucune activité pour le moment."
+  } else if (data.length === 0) {
+    return 'Aucune activité pour le moment.';
   }
 
   const notes = data
