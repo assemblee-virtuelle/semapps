@@ -1,6 +1,6 @@
 {
   "name": "@semapps/connector",
-  "version": "0.1.46",
+  "version": "0.1.47",
   "description": "OIDC/Cas module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
