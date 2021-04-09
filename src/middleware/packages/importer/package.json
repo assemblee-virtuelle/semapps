@@ -1,6 +1,6 @@
 {
   "name": "@semapps/importer",
-  "version": "0.1.45",
+  "version": "0.1.46",
   "description": "Mass importer for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
