@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useListContext, linkToRecord } from 'react-admin';
+import { useListContext, linkToRecord, Link } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 
 // useful to prevent click bubbling in a datagrid with rowClick
 const stopPropagation = e => e.stopPropagation();
@@ -17,14 +16,21 @@ const GridList = ({ children, xs, linkType }) => {
     <Grid container spacing={3}>
       {ids.map(id => (
         <Grid item xs={xs} key={id}>
-          <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
-            {React.cloneElement(React.Children.only(children), {
+          {linkType ? (
+            <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation} t>
+              {React.cloneElement(React.Children.only(children), {
+                record: data[id],
+                basePath,
+                // Workaround to force ChipField to be clickable
+                onClick: handleClick
+              })}
+            </Link>
+          ) : (
+            React.cloneElement(React.Children.only(children), {
               record: data[id],
-              basePath,
-              // Workaround to force ChipField to be clickable
-              onClick: handleClick
-            })}
-          </Link>
+              basePath
+            })
+          )}
         </Grid>
       ))}
     </Grid>
