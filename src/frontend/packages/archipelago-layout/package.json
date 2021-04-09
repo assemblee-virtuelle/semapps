@@ -27,7 +27,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "leaflet": "^1.7.1",
     "leaflet.markercluster": "^1.4.1",
-    "react": "^16.13.0",
+    "react": "^17.0.1",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {
