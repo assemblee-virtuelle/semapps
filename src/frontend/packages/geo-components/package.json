@@ -23,7 +23,7 @@
   "peerDependencies": {
     "leaflet": "^1.7.1",
     "leaflet.markercluster": "^1.4.1",
-    "react": "^17.0.1",
+    "react": "^16.13.1",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {
