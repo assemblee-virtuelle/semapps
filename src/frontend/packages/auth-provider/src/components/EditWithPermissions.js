@@ -2,7 +2,7 @@ import React from 'react';
 import { Edit as RaEdit, usePermissionsOptimized } from 'react-admin';
 import EditActions from './EditActions';
 import EditToolbarWithPermissions from './EditToolbarWithPermissions';
-import { rightsToDelete } from '../rights';
+import { rightsToDelete } from '../constants';
 
 const EditWithPermissions = props => {
   const { permissions } = usePermissionsOptimized(props.id);

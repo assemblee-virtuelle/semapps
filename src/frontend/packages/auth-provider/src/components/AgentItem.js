@@ -3,13 +3,7 @@ import { useDataProvider, Loading, Error } from 'react-admin';
 import { makeStyles, Avatar, ListItem, ListItemIcon, ListItemAvatar, ListItemText, ListItemSecondaryAction, IconButton, Menu, MenuItem } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-
-const rightsLabel = {
-  'acl:Read': 'Lire',
-  'acl:Append': 'Enrichir',
-  'acl:Write': 'Modifier',
-  'acl:Control': 'Administrer'
-};
+import { rightsLabel } from "../constants";
 
 const useStyles = makeStyles(() => ({
   listItem: {

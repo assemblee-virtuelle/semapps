@@ -1,6 +1,6 @@
 import React from 'react';
 import { Resource, usePermissionsOptimized } from 'react-admin';
-import { rightsToList, rightsToCreate } from '../rights';
+import { rightsToList, rightsToCreate } from '../constants';
 
 const ResourceWithPermission = ({ name, list, create, ...rest }) => {
   const { permissions } = usePermissionsOptimized(name);

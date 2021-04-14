@@ -1,29 +1,8 @@
 import React, { useMemo } from 'react';
 import { usePermissionsOptimized } from 'react-admin';
-import { List, makeStyles, TextField } from '@material-ui/core';
-import PublicIcon from '@material-ui/icons/Public';
-import VpnLockIcon from '@material-ui/icons/VpnLock';
-import VerifiedUserIcon from "@material-ui/icons/VerifiedUser";
-import PersonIcon from "@material-ui/icons/Person";
-import GroupIcon from "@material-ui/icons/Group";
+import { List, makeStyles } from '@material-ui/core';
 import AgentItem from "./AgentItem";
-
-const agentsDefinitions = {
-  anon: {
-    label: 'Tous les utilisateurs',
-    icon: <PublicIcon />
-  },
-  anyUser: {
-    label: 'Utilisateurs connectés',
-    icon: <VerifiedUserIcon/>
-  },
-  user: {
-    icon: <PersonIcon />
-  },
-  group: {
-    icon: <GroupIcon />
-  }
-};
+import { agentsDefinitions } from "../constants";
 
 const useStyles = makeStyles((theme) => ({
   list: {
