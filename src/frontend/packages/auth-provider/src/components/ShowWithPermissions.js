@@ -1,16 +1,16 @@
 import React from 'react';
-import { Show as RaShow, usePermissions } from 'react-admin';
+import { Show as RaShow, usePermissionsOptimized } from 'react-admin';
 import ShowActions from './ShowActions';
-import { rightsToEdit } from '../rights';
+import { rightsToEdit, rightsToControl } from '../rights';
 
 const ShowWithPermissions = props => {
-  const { loaded, permissions } = usePermissions(props.id);
+  const { permissions } = usePermissionsOptimized(props.id);
   return (
     <RaShow
-      actions={<ShowActions />}
+      actions={<ShowActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />}
       {...props}
       permissions={permissions}
-      hasEdit={loaded && permissions.some(p => rightsToEdit.includes(p))}
+      hasEdit={permissions && permissions.some(p => rightsToEdit.includes(p['acl:mode']))}
     />
   );
 };

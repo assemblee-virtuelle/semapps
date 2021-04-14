@@ -36,7 +36,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
 
     let { json } = await httpClient(aclUri);
 
-    return json['@graph'].map(permission => permission['acl:mode']);
+    return json['@graph'];
   },
   getIdentity: () => {
     const token = localStorage.getItem('token');
