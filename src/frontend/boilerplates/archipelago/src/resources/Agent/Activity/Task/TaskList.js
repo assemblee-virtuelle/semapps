@@ -9,14 +9,7 @@ const TaskList = props => (
   <List aside={<TaskFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
-      secondaryText={record => (
-        <>
-          Du&nbsp;
-          <DateField record={record} source="pair:startDate" showTime />
-          &nbsp;au&nbsp;
-          <DateField record={record} source="pair:endDate" showTime />
-        </>
-      )}
+      secondaryText={record => record['pair:description']}
       leftAvatar={() => (
         <Avatar width="100%">
           <TaskIcon />
