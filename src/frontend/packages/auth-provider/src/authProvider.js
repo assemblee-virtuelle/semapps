@@ -1,6 +1,10 @@
 import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 
+// Transform the URI to the one used to find the ACL
+// To be compatible with all servers, we should do a HEAD request to the resource URI
+const getAclUri = (middlewareUri, resourceUri) => urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
+
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
     window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
@@ -30,13 +34,54 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
     const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
 
-    // Transform the URI to the one used to find the ACL
-    // To be compatible with all servers, we should do a HEAD request to the resource URI
-    const aclUri = urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
+    const aclUri = getAclUri(middlewareUri, resourceUri);
 
     let { json } = await httpClient(aclUri);
 
     return json['@graph'];
+  },
+  addPermission: async (resourceId, agentId, agentType, mode) => {
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+
+    const aclUri = getAclUri(middlewareUri, resourceUri);
+
+    let authorization = {
+      "@id": aclUri + '#' + mode.replace('acl:', ''),
+      "@type": "acl:Authorization",
+      "acl:accessTo": resourceUri,
+      "acl:mode": mode
+    };
+
+    switch(agentType) {
+      case 'user':
+        authorization['acl:agent'] = agentId;
+        break;
+      case 'group':
+        authorization['acl:agentGroup'] = agentId;
+        break;
+      case 'anon':
+      case 'anyUser':
+        authorization['acl:agentClass'] = agentId;
+        break;
+      default:
+        throw new Error('Unknown agent type: ' + agentType);
+    }
+
+    const result = await httpClient(aclUri, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        "@context": {
+          acl: "http://www.w3.org/ns/auth/acl#",
+          foaf: "http://xmlns.com/foaf/0.1/"
+        },
+        "@graph": [
+          authorization
+        ]
+      })
+    });
+
+    return result.status === 204;
   },
   getIdentity: () => {
     const token = localStorage.getItem('token');

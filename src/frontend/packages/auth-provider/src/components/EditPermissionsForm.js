@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { usePermissionsOptimized } from 'react-admin';
+import React, { useEffect, useCallback, useState } from 'react';
+import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
 import { List, makeStyles } from '@material-ui/core';
 import AgentItem from "./AgentItem";
 import { agentsDefinitions } from "../constants";
@@ -29,9 +29,11 @@ const appendPermission = (agents, agentId, agentType, p) => {
 
 const EditPermissionsForm = ({ record }) => {
   const classes = useStyles();
+  const [ agents, setAgents ] = useState({});
   const { permissions } = usePermissionsOptimized(record.id);
+  const authProvider = useAuthProvider();
 
-  const agents = useMemo(() => {
+  useEffect(() => {
     let returnValue = {};
     for( let p of permissions ) {
       if( applyToAgentClass(p, 'foaf:Agent') ) {
@@ -47,13 +49,23 @@ const EditPermissionsForm = ({ record }) => {
         defaultToArray(p['acl:agentGroup']).forEach(groupUri => appendPermission(returnValue, groupUri, 'group', p['acl:mode']));
       }
     }
-    return returnValue;
+    setAgents(returnValue);
   }, [permissions]);
+
+  const addPermission = useCallback((agentId, agentType, mode) => {
+    authProvider
+      .addPermission(record.id, agentId, agentType, mode)
+      .then(result => {
+        if( result ) {
+          // appendPermission(agents, agentId, agentType, mode);
+        }
+      });
+  }, [agents]);
 
   return(
     <List dense className={classes.list}>
       {Object.entries(agents).map(([agentId, agent]) => (
-        <AgentItem key={agentId} agent={agent} />
+        <AgentItem key={agentId} agent={agent} addPermission={addPermission} />
       ))}
     </List>
   )

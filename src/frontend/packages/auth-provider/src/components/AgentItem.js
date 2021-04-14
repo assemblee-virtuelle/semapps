@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AgentItem = ({ agent }) => {
+const AgentItem = ({ agent, addPermission }) => {
   const classes = useStyles();
   const dataProvider = useDataProvider();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -74,7 +74,7 @@ const AgentItem = ({ agent }) => {
           onClose={closeMenu}
         >
           {Object.entries(rightsLabel).map(([rightKey, rightLabel]) => (
-            <MenuItem onClick={closeMenu}>
+            <MenuItem onClick={() => { addPermission(agent.id, agent.type, rightKey); closeMenu(); }}>
               <ListItemIcon>{agent.permissions && agent.permissions.includes(rightKey) ? <CheckIcon /> : null}</ListItemIcon>
               <ListItemText primary={rightLabel} />
             </MenuItem>
