@@ -47,13 +47,13 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
     let authorization = {
-      "@id": aclUri + '#' + mode.replace('acl:', ''),
-      "@type": "acl:Authorization",
-      "acl:accessTo": resourceUri,
-      "acl:mode": mode
+      '@id': aclUri + '#' + mode.replace('acl:', ''),
+      '@type': 'acl:Authorization',
+      'acl:accessTo': resourceUri,
+      'acl:mode': mode
     };
 
-    switch(agentType) {
+    switch (agentType) {
       case 'user':
         authorization['acl:agent'] = agentId;
         break;
@@ -71,13 +71,11 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     const result = await httpClient(aclUri, {
       method: 'PATCH',
       body: JSON.stringify({
-        "@context": {
-          acl: "http://www.w3.org/ns/auth/acl#",
-          foaf: "http://xmlns.com/foaf/0.1/"
+        '@context': {
+          acl: 'http://www.w3.org/ns/auth/acl#',
+          foaf: 'http://xmlns.com/foaf/0.1/'
         },
-        "@graph": [
-          authorization
-        ]
+        '@graph': [authorization]
       })
     });
 

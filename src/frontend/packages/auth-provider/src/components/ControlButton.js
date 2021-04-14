@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-admin';
 import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles, TextField } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
-import EditPermissionsForm from "./EditPermissionsForm";
+import EditPermissionsForm from './EditPermissionsForm';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -26,18 +26,15 @@ const ControlButton = ({ record }) => {
   const classes = useStyles();
   const [showDialog, setShowDialog] = useState(false);
 
-  return(
+  return (
     <>
-      <Button label="Permissions" onClick={() => setShowDialog(true)}><ShareIcon /></Button>
+      <Button label="Permissions" onClick={() => setShowDialog(true)}>
+        <ShareIcon />
+      </Button>
       <Dialog fullWidth open={showDialog} onClose={() => setShowDialog(false)}>
         <DialogTitle className={classes.title}>Permissions sur la ressource</DialogTitle>
         <DialogContent className={classes.addForm}>
-          <TextField
-            label="Ajouter un utilisateur ou un groupe..."
-            variant="filled"
-            margin="dense"
-            fullWidth
-          />
+          <TextField label="Ajouter un utilisateur ou un groupe..." variant="filled" margin="dense" fullWidth />
         </DialogContent>
         <DialogContent className={classes.listForm}>
           <EditPermissionsForm record={record} />
@@ -47,7 +44,7 @@ const ControlButton = ({ record }) => {
         </DialogActions>
       </Dialog>
     </>
-  )
+  );
 };
 
 export default ControlButton;
