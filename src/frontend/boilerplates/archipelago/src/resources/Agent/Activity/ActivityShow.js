@@ -8,6 +8,8 @@ const RedirectByType = ({ record }) => {
       return <Redirect to={`/Project/${encodeURIComponent(record.id)}/show`} />;
     } else {
       return <Redirect to={`/Event/${encodeURIComponent(record.id)}/show`} />;
+    } else {
+      return <Redirect to={`/Task/${encodeURIComponent(record.id)}/show`} />;
     }
   }
   return null;

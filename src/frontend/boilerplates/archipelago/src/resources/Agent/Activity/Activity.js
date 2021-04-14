@@ -5,7 +5,7 @@ import { RedirectByType } from '@semapps/archipelago-layout';
 
 const ActivityRedirect = props => (
   <Show {...props}>
-    <RedirectByType typesMap={{ Project: 'pair:Project', Event: 'pair:Event' }} />
+    <RedirectByType typesMap={{ Project: 'pair:Project', Event: 'pair:Event', Task: 'pair:Task' }} />
   </Show>
 );
 
@@ -18,7 +18,7 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Project', 'pair:Event']
+    types: ['pair:Project', 'pair:Event', 'pair:task']
   },
   translations: {
     fr: {
