@@ -18,7 +18,7 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Project', 'pair:Event', 'pair:task']
+    types: ['pair:Project', 'pair:Event', 'pair:Task']
   },
   translations: {
     fr: {
