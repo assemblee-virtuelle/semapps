@@ -4,7 +4,7 @@ import MarkdownInput from 'ra-input-markdown';
 import frLocale from 'date-fns/locale/fr';
 import { Edit } from '@semapps/archipelago-layout';
 import { DateTimeInput } from '@semapps/date-components';
-import { ActorsInput, ActivitiesInput} from '../../../../pair';
+import { ActorsInput, ActivitiesInput } from '../../../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 
