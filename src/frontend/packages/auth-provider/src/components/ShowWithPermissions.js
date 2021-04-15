@@ -7,7 +7,9 @@ const ShowWithPermissions = props => {
   const { permissions } = usePermissionsOptimized(props.id);
   return (
     <RaShow
-      actions={<ShowActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />}
+      actions={
+        <ShowActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
+      }
       {...props}
       permissions={permissions}
       hasEdit={permissions && permissions.some(p => rightsToEdit.includes(p['acl:mode']))}

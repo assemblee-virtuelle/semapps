@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopToolbar, EditButton, ListButton } from 'react-admin';
-import ControlButton from "./ControlButton";
+import ControlButton from './ControlButton';
 
 const ShowActions = ({ basePath, className, data, hasList, hasEdit, hasControl, ...otherProps }) => (
   <TopToolbar className={className} {...otherProps}>

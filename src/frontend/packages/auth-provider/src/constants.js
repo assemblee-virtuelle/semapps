@@ -1,8 +1,8 @@
 import React from 'react';
 import PublicIcon from '@material-ui/icons/Public';
 import VpnLockIcon from '@material-ui/icons/VpnLock';
-import PersonIcon from "@material-ui/icons/Person";
-import GroupIcon from "@material-ui/icons/Group";
+import PersonIcon from '@material-ui/icons/Person';
+import GroupIcon from '@material-ui/icons/Group';
 
 export const ACL_READ = 'acl:Read';
 export const ACL_APPEND = 'acl:Append';
@@ -29,7 +29,7 @@ export const agentsDefinitions = {
   },
   anyUser: {
     label: 'Utilisateurs connectés',
-    icon: <VpnLockIcon/>
+    icon: <VpnLockIcon />
   },
   user: {
     icon: <PersonIcon />
