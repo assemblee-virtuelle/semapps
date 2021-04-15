@@ -1,8 +1,8 @@
 import React, { useEffect, useCallback, useState } from 'react';
 import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
 import { List, makeStyles } from '@material-ui/core';
-import AgentItem from "./AgentItem";
-import { agentsDefinitions } from "../constants";
+import AgentItem from "../AgentItem";
+import { agentsDefinitions } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -27,10 +27,10 @@ const appendPermission = (agents, agentId, agentType, p) => {
   }
 };
 
-const EditPermissionsForm = ({ record }) => {
+const EditPermissionsForm = ({ resourceId }) => {
   const classes = useStyles();
   const [ agents, setAgents ] = useState({});
-  const { permissions } = usePermissionsOptimized(record.id);
+  const { permissions } = usePermissionsOptimized(resourceId);
   const authProvider = useAuthProvider();
 
   useEffect(() => {
@@ -54,7 +54,7 @@ const EditPermissionsForm = ({ record }) => {
 
   const addPermission = useCallback((agentId, agentType, mode) => {
     authProvider
-      .addPermission(record.id, agentId, agentType, mode)
+      .addPermission(resourceId, agentId, agentType, mode)
       .then(result => {
         if( result ) {
           // appendPermission(agents, agentId, agentType, mode);
