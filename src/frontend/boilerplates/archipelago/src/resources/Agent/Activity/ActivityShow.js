@@ -6,7 +6,7 @@ const RedirectByType = ({ record }) => {
   if (record) {
     if (record.type === 'pair:Project') {
       return <Redirect to={`/Project/${encodeURIComponent(record.id)}/show`} />;
-    } else {
+    } else if (record.type === 'pair:Event') {
       return <Redirect to={`/Event/${encodeURIComponent(record.id)}/show`} />;
     } else {
       return <Redirect to={`/Task/${encodeURIComponent(record.id)}/show`} />;
