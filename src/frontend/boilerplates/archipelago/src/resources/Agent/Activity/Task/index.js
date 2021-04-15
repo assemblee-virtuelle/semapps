@@ -28,7 +28,9 @@ export default {
         'pair:label': 'Titre',
         'pair:description': 'Description',
         'pair:assignedTo': 'Est assigné à',
-        'pair:partOf': 'Fait partie de'
+        'pair:partOf': 'Fait partie de',
+        'pair:hasType': 'Type',
+        'pair:hasStatus': 'Statut'
       }
     }
   }

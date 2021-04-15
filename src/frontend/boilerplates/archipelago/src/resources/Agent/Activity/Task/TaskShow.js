@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { Hero, Show, MarkdownField, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
+import { Hero, Show, MarkdownField, GridList, MainList, SideList, AvatarField, SeparatedListField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 
@@ -24,6 +24,16 @@ const TaskShow = props => (
             <SingleFieldList linkType="show">
               <ChipField source="pair:label" color="secondary" />
             </SingleFieldList>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Type" source="pair:hasType">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
           </ReferenceArrayField>
         </SideList>
       </Grid>
