@@ -12,23 +12,26 @@ const alreadyFetchedPermissions = { '{}': undefined };
 const usePermissionsWithRefetch = (params = emptyParams) => {
   const key = JSON.stringify(params);
   const [state, setState] = useSafeSetState({
-    permissions: alreadyFetchedPermissions[key],
+    permissions: alreadyFetchedPermissions[key]
   });
   const getPermissions = useGetPermissions();
 
-  const fetchPermissions = useCallback(() =>
-    getPermissions(params)
-      .then(permissions => {
-        if (!isEqual(permissions, state.permissions)) {
-          alreadyFetchedPermissions[key] = permissions;
-          setState({ permissions });
-        }
-      })
-      .catch(error => {
-        setState({
-          error,
-        });
-      }), [key, params, getPermissions]);
+  const fetchPermissions = useCallback(
+    () =>
+      getPermissions(params)
+        .then(permissions => {
+          if (!isEqual(permissions, state.permissions)) {
+            alreadyFetchedPermissions[key] = permissions;
+            setState({ permissions });
+          }
+        })
+        .catch(error => {
+          setState({
+            error
+          });
+        }),
+    [key, params, getPermissions]
+  );
 
   useEffect(() => {
     fetchPermissions();
