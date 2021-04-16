@@ -22,6 +22,13 @@ export const rightsLabel = {
   [ACL_CONTROL]: 'Administrer'
 };
 
+export const agentsClasses = {
+  'anon': 'acl:agentClass',
+  'anyUser': 'acl:agentClass',
+  'user': 'acl:agent',
+  'group': 'acl:group'
+};
+
 export const agentsDefinitions = {
   anon: {
     label: 'Tous les utilisateurs',

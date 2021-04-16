@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AgentItem = ({ agent, addPermission }) => {
+const AgentItem = ({ agent, addPermission, removePermission }) => {
   const classes = useStyles();
   const dataProvider = useDataProvider();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -68,7 +68,7 @@ const AgentItem = ({ agent, addPermission }) => {
       <ListItemAvatar>
         <Avatar src={user?.image}>{agent.icon}</Avatar>
       </ListItemAvatar>
-      <ListItemText primary={agent.label || user?.name} />
+      <ListItemText primary={agent.label || user?.['pair:label']} />
       <ListItemText
         className={classes.secondaryText}
         primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
@@ -78,19 +78,26 @@ const AgentItem = ({ agent, addPermission }) => {
           <EditIcon />
         </IconButton>
         <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
-          {Object.entries(rightsLabel).map(([rightKey, rightLabel]) => (
-            <MenuItem
-              onClick={() => {
-                addPermission(agent.id, agent.type, rightKey);
-                closeMenu();
-              }}
-            >
-              <ListItemIcon>
-                {agent.permissions && agent.permissions.includes(rightKey) ? <CheckIcon /> : null}
-              </ListItemIcon>
-              <ListItemText primary={rightLabel} />
-            </MenuItem>
-          ))}
+          {Object.entries(rightsLabel).map(([rightKey, rightLabel]) => {
+            const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
+            return (
+              <MenuItem
+                onClick={() => {
+                  if( hasPermission ) {
+                    removePermission(agent.id, agent.type, rightKey);
+                  } else {
+                    addPermission(agent.id, agent.type, rightKey);
+                  }
+                  closeMenu();
+                }}
+              >
+                <ListItemIcon>
+                  {hasPermission ? <CheckIcon /> : null}
+                </ListItemIcon>
+                <ListItemText primary={rightLabel} />
+              </MenuItem>
+            )
+          })}
         </Menu>
       </ListItemSecondaryAction>
     </ListItem>

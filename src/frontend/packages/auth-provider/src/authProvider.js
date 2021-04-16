@@ -1,9 +1,6 @@
 import jwtDecode from 'jwt-decode';
-import urlJoin from 'url-join';
-
-// Transform the URI to the one used to find the ACL
-// To be compatible with all servers, we should do a HEAD request to the resource URI
-const getAclUri = (middlewareUri, resourceUri) => urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
+import { agentsClasses } from "./constants";
+import { defaultToArray, getAclUri } from "./utils";
 
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
@@ -68,7 +65,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
         throw new Error('Unknown agent type: ' + agentType);
     }
 
-    const result = await httpClient(aclUri, {
+    await httpClient(aclUri, {
       method: 'PATCH',
       body: JSON.stringify({
         '@context': {
@@ -78,8 +75,32 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
         '@graph': [authorization]
       })
     });
+  },
+  removePermission: async (resourceId, agentId, agentType, mode) => {
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+    const agentClass = agentsClasses[agentType];
+    const aclUri = getAclUri(middlewareUri, resourceUri);
 
-    return result.status === 204;
+    // Fetch current permissions
+    let { json } = await httpClient(aclUri);
+
+    const updatedPermissions = json['@graph'].map(authorization => {
+      const modes = defaultToArray(authorization['acl:mode']);
+      let agents = defaultToArray(authorization[agentClass]);
+      if( mode && modes.includes(mode) && agents && agents.includes(agentId) ) {
+        agents = agents.filter(agent => agent !== agentId);
+      }
+      return { ...authorization, [agentClass]: agents };
+    });
+
+    await httpClient(aclUri, {
+      method: 'PUT',
+      body: JSON.stringify({
+        ...json,
+        '@graph': updatedPermissions
+      })
+    });
   },
   getIdentity: () => {
     const token = localStorage.getItem('token');

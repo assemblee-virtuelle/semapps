@@ -2,6 +2,7 @@ import React, { useMemo, useCallback } from 'react';
 import { useAuthProvider } from 'react-admin';
 import { List, makeStyles } from '@material-ui/core';
 import AgentItem from "../AgentItem";
+import { defaultToArray } from "../../utils";
 import { agentsDefinitions } from "../../constants";
 import usePermissionsWithRefetch from "../usePermissionsWithRefetch";
 
@@ -13,17 +14,16 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 const applyToAgentClass = (p, agentClass) => Array.isArray(p['acl:agentClass']) ? p['acl:agentClass'].includes(agentClass) : p['acl:agentClass'] === agentClass;
-const appendPermission = (agents, agentId, agentType, p) => {
+const appendPermission = (agents, agentId, agentType, mode) => {
   if( agents[agentId] ) {
-    agents[agentId].permissions.push(p);
+    agents[agentId].permissions.push(mode);
   } else {
     agents[agentId] = {
       id: agentId,
       type: agentType,
       ...agentsDefinitions[agentType],
-      permissions: [p]
+      permissions: [mode]
     };
   }
 };
@@ -58,17 +58,19 @@ const EditPermissionsForm = ({ resourceId }) => {
   const addPermission = useCallback((agentId, agentType, mode) => {
     authProvider
       .addPermission(resourceId, agentId, agentType, mode)
-      .then(result => {
-        if( result ) {
-          refetch();
-        }
-      });
+      .then(() => refetch());
+  }, [resourceId, authProvider, refetch]);
+
+  const removePermission = useCallback((agentId, agentType, mode) => {
+    authProvider
+      .removePermission(resourceId, agentId, agentType, mode)
+      .then(() => refetch());
   }, [resourceId, authProvider, refetch]);
 
   return(
     <List dense className={classes.list}>
       {Object.entries(agents).map(([agentId, agent]) => (
-        <AgentItem key={agentId} agent={agent} addPermission={addPermission} />
+        <AgentItem key={agentId} agent={agent} addPermission={addPermission} removePermission={removePermission} />
       ))}
     </List>
   )

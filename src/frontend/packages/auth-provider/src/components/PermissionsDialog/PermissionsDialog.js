@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
     paddingTop: 0,
     paddingBottom: 0,
     paddingRight: 0,
-    maxHeight: 200
+    maxHeight: 210
   }
 }));
 
