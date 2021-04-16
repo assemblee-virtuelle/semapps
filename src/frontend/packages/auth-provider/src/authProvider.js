@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
-import { agentsClasses } from "./constants";
-import { defaultToArray, getAclUri } from "./utils";
+import { agentsClasses } from './constants';
+import { defaultToArray, getAclUri } from './utils';
 
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
@@ -88,7 +88,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     const updatedPermissions = json['@graph'].map(authorization => {
       const modes = defaultToArray(authorization['acl:mode']);
       let agents = defaultToArray(authorization[agentClass]);
-      if( mode && modes.includes(mode) && agents && agents.includes(agentId) ) {
+      if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
         agents = agents.filter(agent => agent !== agentId);
       }
       return { ...authorization, [agentClass]: agents };

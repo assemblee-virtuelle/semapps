@@ -3,7 +3,7 @@ import { useGetList } from 'react-admin';
 import { TextField, makeStyles, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import PersonIcon from '@material-ui/icons/Person';
-import { ACL_READ } from "../../constants";
+import { ACL_READ } from '../../constants';
 
 const useStyles = makeStyles(() => ({
   list: {
@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
     width: '100%'
   },
   option: {
-    padding: 0,
+    padding: 0
   }
 }));
 
@@ -31,13 +31,13 @@ const AddPermissionsForm = ({ addPermission }) => {
 
   useEffect(() => {
     setOptions(ids.length > 0 ? Object.values(data) : []);
-  }, [ids, data])
+  }, [ids, data]);
 
-  return(
+  return (
     <Autocomplete
       classes={{ option: classes.option }}
       getOptionLabel={option => option['pair:label']}
-      filterOptions={(x) => x}
+      filterOptions={x => x}
       options={options}
       noOptionsText="Aucun résultat"
       autoComplete
@@ -54,16 +54,24 @@ const AddPermissionsForm = ({ addPermission }) => {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={(params) => (
-        <TextField {...params} label="Ajouter un utilisateur ou un groupe..." variant="filled" margin="dense" fullWidth />
+      renderInput={params => (
+        <TextField
+          {...params}
+          label="Ajouter un utilisateur ou un groupe..."
+          variant="filled"
+          margin="dense"
+          fullWidth
+        />
       )}
-      renderOption={(option) => (
+      renderOption={option => (
         <List dense className={classes.list}>
           <ListItem button>
             <ListItemAvatar>
-              <Avatar src={option.image}><PersonIcon /></Avatar>
+              <Avatar src={option.image}>
+                <PersonIcon />
+              </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={option['pair:label']}/>
+            <ListItemText primary={option['pair:label']} />
           </ListItem>
         </List>
       )}
