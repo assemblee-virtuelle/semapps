@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { rightsLabel } from '../constants';
+import { rightsLabel } from '../../constants';
 
 const useStyles = makeStyles(() => ({
   listItem: {
