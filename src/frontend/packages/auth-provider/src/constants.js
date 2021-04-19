@@ -1,13 +1,14 @@
-import React from 'react';
-import PublicIcon from '@material-ui/icons/Public';
-import VpnLockIcon from '@material-ui/icons/VpnLock';
-import PersonIcon from '@material-ui/icons/Person';
-import GroupIcon from '@material-ui/icons/Group';
-
 export const ACL_READ = 'acl:Read';
 export const ACL_APPEND = 'acl:Append';
 export const ACL_WRITE = 'acl:Write';
 export const ACL_CONTROL = 'acl:Control';
+
+export const USER_AGENT = 'acl:agent';
+export const GROUP_AGENT = 'acl:agentGroup';
+export const CLASS_AGENT = 'acl:agentClass';
+
+export const ANONYMOUS_AGENT = 'foaf:Agent';
+export const AUTHENTICATED_AGENT = 'acl:AuthenticatedAgent';
 
 export const rightsToList = [ACL_READ, ACL_APPEND, ACL_WRITE, ACL_CONTROL];
 export const rightsToCreate = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
@@ -22,26 +23,15 @@ export const rightsLabel = {
   [ACL_CONTROL]: 'Administrer'
 };
 
-export const agentsClasses = {
-  anon: 'acl:agentClass',
-  anyUser: 'acl:agentClass',
-  user: 'acl:agent',
-  group: 'acl:group'
-};
-
-export const agentsDefinitions = {
-  anon: {
-    label: 'Tous les utilisateurs',
-    icon: <PublicIcon />
+export const defaultAgents = {
+  [ANONYMOUS_AGENT]: {
+    id: ANONYMOUS_AGENT,
+    predicate: CLASS_AGENT,
+    permissions: []
   },
-  anyUser: {
-    label: 'Utilisateurs connectés',
-    icon: <VpnLockIcon />
+  [AUTHENTICATED_AGENT]: {
+    id: AUTHENTICATED_AGENT,
+    predicate: CLASS_AGENT,
+    permissions: []
   },
-  user: {
-    icon: <PersonIcon />
-  },
-  group: {
-    icon: <GroupIcon />
-  }
 };

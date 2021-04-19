@@ -3,7 +3,7 @@ import { useGetList } from 'react-admin';
 import { TextField, makeStyles, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import PersonIcon from '@material-ui/icons/Person';
-import { ACL_READ } from '../../constants';
+import { USER_AGENT, ACL_READ } from '../../constants';
 
 const useStyles = makeStyles(() => ({
   list: {
@@ -47,7 +47,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       disableClearable
       value={value}
       onChange={(event, record) => {
-        addPermission(record.id || record['@id'], 'user', ACL_READ);
+        addPermission(record.id || record['@id'], USER_AGENT, ACL_READ);
         setValue(null);
         setInputValue('');
         setOptions([]);

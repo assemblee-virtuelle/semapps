@@ -1,5 +1,4 @@
 import jwtDecode from 'jwt-decode';
-import { agentsClasses } from './constants';
 import { defaultToArray, getAclUri } from './utils';
 
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
@@ -37,7 +36,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
 
     return json['@graph'];
   },
-  addPermission: async (resourceId, agentId, agentType, mode) => {
+  addPermission: async (resourceId, agentId, predicate, mode) => {
     // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
     const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
 
@@ -46,24 +45,10 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     let authorization = {
       '@id': aclUri + '#' + mode.replace('acl:', ''),
       '@type': 'acl:Authorization',
+      [predicate]: agentId,
       'acl:accessTo': resourceUri,
       'acl:mode': mode
     };
-
-    switch (agentType) {
-      case 'user':
-        authorization['acl:agent'] = agentId;
-        break;
-      case 'group':
-        authorization['acl:agentGroup'] = agentId;
-        break;
-      case 'anon':
-      case 'anyUser':
-        authorization['acl:agentClass'] = agentId;
-        break;
-      default:
-        throw new Error('Unknown agent type: ' + agentType);
-    }
 
     await httpClient(aclUri, {
       method: 'PATCH',
@@ -76,10 +61,9 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
       })
     });
   },
-  removePermission: async (resourceId, agentId, agentType, mode) => {
+  removePermission: async (resourceId, agentId, predicate, mode) => {
     // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
     const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
-    const agentClass = agentsClasses[agentType];
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
     // Fetch current permissions
@@ -87,11 +71,11 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
 
     const updatedPermissions = json['@graph'].map(authorization => {
       const modes = defaultToArray(authorization['acl:mode']);
-      let agents = defaultToArray(authorization[agentClass]);
+      let agents = defaultToArray(authorization[predicate]);
       if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
         agents = agents.filter(agent => agent !== agentId);
       }
-      return { ...authorization, [agentClass]: agents };
+      return { ...authorization, [predicate]: agents };
     });
 
     await httpClient(aclUri, {

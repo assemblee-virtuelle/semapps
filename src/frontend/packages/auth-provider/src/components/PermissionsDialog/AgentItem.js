@@ -14,7 +14,8 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { rightsLabel } from '../../constants';
+import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, rightsLabel } from '../../constants';
+import AgentIcon from "./AgentIcon";
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -44,7 +45,7 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
   const [error, setError] = useState();
 
   useEffect(() => {
-    if (agent.type === 'user') {
+    if (agent.predicate === USER_AGENT) {
       dataProvider
         .getOne('Person', { id: agent.id })
         .then(({ data }) => {
@@ -58,10 +59,10 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
     } else {
       setLoading(false);
     }
-  }, [agent.id, agent.type]);
+  }, [agent.id, agent.predicate]);
 
   // For now, do not display groups
-  if (agent.type === 'group') return null;
+  if (agent.predicate === GROUP_AGENT) return null;
 
   const openMenu = event => setAnchorEl(event.currentTarget);
   const closeMenu = () => setAnchorEl(null);
@@ -72,9 +73,11 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
   return (
     <ListItem button className={classes.listItem}>
       <ListItemAvatar>
-        <Avatar src={user?.image}>{agent.icon}</Avatar>
+        <Avatar src={user?.image}><AgentIcon agent={agent} /></Avatar>
       </ListItemAvatar>
-      <ListItemText className={classes.primaryText} primary={agent.label || user?.['pair:label']} />
+      <ListItemText
+        className={classes.primaryText}
+        primary={user ? user['pair:label'] : agent.id === 'foaf:Agent' ? 'Tous les utilisateurs' : 'Utilisateurs connectés'} />
       <ListItemText
         className={classes.secondaryText}
         primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
@@ -90,9 +93,9 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
               <MenuItem
                 onClick={() => {
                   if (hasPermission) {
-                    removePermission(agent.id, agent.type, rightKey);
+                    removePermission(agent.id, agent.predicate, rightKey);
                   } else {
-                    addPermission(agent.id, agent.type, rightKey);
+                    addPermission(agent.id, agent.predicate, rightKey);
                   }
                   closeMenu();
                 }}

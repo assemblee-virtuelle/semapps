@@ -1,33 +1,15 @@
 import { useEffect, useCallback, useState } from 'react';
 import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
-import { agentsDefinitions } from '../constants';
 import { defaultToArray } from '../utils';
+import { CLASS_AGENT, GROUP_AGENT, USER_AGENT, defaultAgents } from '../constants';
 
-const defaultAgents = {
-  'foaf:Agent': {
-    id: 'foaf:Agent',
-    type: 'anon',
-    ...agentsDefinitions.anon,
-    permissions: []
-  },
-  'acl:AuthenticatedAgent': {
-    id: 'acl:AuthenticatedAgent',
-    type: 'anyUser',
-    ...agentsDefinitions.anyUser,
-    permissions: []
-  },
-};
-
-const applyToAgentClass = (p, agentClass) =>
-  Array.isArray(p['acl:agentClass']) ? p['acl:agentClass'].includes(agentClass) : p['acl:agentClass'] === agentClass;
-const appendPermission = (agents, agentId, agentType, mode) => {
+const appendPermission = (agents, agentId, predicate, mode) => {
   if (agents[agentId]) {
     agents[agentId].permissions.push(mode);
   } else {
     agents[agentId] = {
       id: agentId,
-      type: agentType,
-      ...agentsDefinitions[agentType],
+      predicate,
       permissions: [mode]
     };
   }
@@ -43,18 +25,15 @@ const useAgents = resourceId => {
     let result = defaultAgents;
     if (permissions) {
       for (let p of permissions) {
-        if (applyToAgentClass(p, 'foaf:Agent')) {
-          appendPermission(result, 'foaf:Agent', 'anon', p['acl:mode']);
+        if (p[CLASS_AGENT]) {
+          defaultToArray(p[CLASS_AGENT]).forEach(agentId => appendPermission(result, agentId, CLASS_AGENT, p['acl:mode']));
         }
-        if (applyToAgentClass(p, 'acl:AuthenticatedAgent')) {
-          appendPermission(result, 'acl:AuthenticatedAgent', 'anyUser', p['acl:mode']);
+        if (p[USER_AGENT]) {
+          defaultToArray(p[USER_AGENT]).forEach(userUri => appendPermission(result, userUri, USER_AGENT, p['acl:mode']));
         }
-        if (p['acl:agent']) {
-          defaultToArray(p['acl:agent']).forEach(userUri => appendPermission(result, userUri, 'user', p['acl:mode']));
-        }
-        if (p['acl:agentGroup']) {
-          defaultToArray(p['acl:agentGroup']).forEach(groupUri =>
-            appendPermission(result, groupUri, 'group', p['acl:mode'])
+        if (p[GROUP_AGENT]) {
+          defaultToArray(p[GROUP_AGENT]).forEach(groupUri =>
+            appendPermission(result, groupUri, GROUP_AGENT, p['acl:mode'])
           );
         }
       }
@@ -63,28 +42,27 @@ const useAgents = resourceId => {
   }, [permissions]);
 
   const addPermission = useCallback(
-    (agentId, agentType, mode) => {
-      const prevAgents = agents;
+    (agentId, predicate, mode) => {
+      const prevAgents = { ...agents };
       setAgents({
         ...agents,
         [agentId]: {
           id: agentId,
-          type: agentType,
-          ...agentsDefinitions[agentType],
+          predicate,
           permissions: agents[agentId] ? [...agents[agentId]?.permissions, mode] : [mode]
         }
       });
-      authProvider.addPermission(resourceId, agentId, agentType, mode).catch(() => {
+      authProvider.addPermission(resourceId, agentId, predicate, mode).catch(e => {
         // If there was an error, revert the optimistic update
         setAgents(prevAgents);
       });
     },
-    [agents, resourceId, authProvider]
+    [agents, setAgents, resourceId, authProvider]
   );
 
   const removePermission = useCallback(
-    (agentId, agentType, mode) => {
-      const prevAgents = agents;
+    (agentId, predicate, mode) => {
+      const prevAgents = { ...agents };
       setAgents(
         Object.fromEntries(
           Object.entries(agents)
@@ -94,18 +72,19 @@ const useAgents = resourceId => {
               }
               return [key, agent];
             })
+            // Remove agents if they have no permissions (except if they are class agents)
             .filter(
               ([_, agent]) =>
-                agent.id === 'foaf:Agent' || agent.id === 'acl:AuthenticatedAgent' || agent.permissions.length > 0
+                agent.predicate === CLASS_AGENT || agent.permissions.length > 0
             )
         )
       );
-      authProvider.removePermission(resourceId, agentId, agentType, mode).catch(() => {
+      authProvider.removePermission(resourceId, agentId, predicate, mode).catch(e => {
         // If there was an error, revert the optimistic update
         setAgents(prevAgents);
       });
     },
-    [agents, resourceId, authProvider]
+    [agents, setAgents, resourceId, authProvider]
   );
 
   return { agents, addPermission, removePermission };
