@@ -3,6 +3,21 @@ import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
 import { agentsDefinitions } from '../constants';
 import { defaultToArray } from '../utils';
 
+const defaultAgents = {
+  'foaf:Agent': {
+    id: 'foaf:Agent',
+    type: 'anon',
+    ...agentsDefinitions.anon,
+    permissions: []
+  },
+  'acl:AuthenticatedAgent': {
+    id: 'acl:AuthenticatedAgent',
+    type: 'anyUser',
+    ...agentsDefinitions.anyUser,
+    permissions: []
+  },
+};
+
 const applyToAgentClass = (p, agentClass) =>
   Array.isArray(p['acl:agentClass']) ? p['acl:agentClass'].includes(agentClass) : p['acl:agentClass'] === agentClass;
 const appendPermission = (agents, agentId, agentType, mode) => {
@@ -25,7 +40,7 @@ const useAgents = resourceId => {
 
   // Format list of authorized agents, based on the permissions returned for the resource
   useEffect(() => {
-    let result = {};
+    let result = defaultAgents;
     if (permissions) {
       for (let p of permissions) {
         if (applyToAgentClass(p, 'foaf:Agent')) {

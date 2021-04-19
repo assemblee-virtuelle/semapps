@@ -3,7 +3,7 @@ import { Button } from 'react-admin';
 import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@material-ui/core';
 import AddPermissionsForm from './AddPermissionsForm';
 import EditPermissionsForm from './EditPermissionsForm';
-import useAgents from '../useAgents';
+import useAgents from '../../hooks/useAgents';
 
 const useStyles = makeStyles(() => ({
   title: {
