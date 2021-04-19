@@ -74,10 +74,7 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
       <ListItemAvatar>
         <Avatar src={user?.image}>{agent.icon}</Avatar>
       </ListItemAvatar>
-      <ListItemText
-        className={classes.primaryText}
-        primary={agent.label || user?.['pair:label']}
-      />
+      <ListItemText className={classes.primaryText} primary={agent.label || user?.['pair:label']} />
       <ListItemText
         className={classes.secondaryText}
         primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
