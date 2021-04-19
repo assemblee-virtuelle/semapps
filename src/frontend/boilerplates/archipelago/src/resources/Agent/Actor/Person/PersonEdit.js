@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageInput, SimpleForm, TextInput } from 'react-admin';
+import { ImageInput, SimpleForm, TabbedForm, TextInput, FormTab } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
 import { ActivitiesInput, OrganizationsInput, PairLocationInput, SkillsInput, ThemesInput } from '../../../../pair';
 import { ImageField } from '@semapps/semantic-data-provider';
@@ -11,19 +11,23 @@ export const PersonEdit = props => (
     transform={data => ({ ...data, 'pair:label': `${data['pair:firstName']} ${data['pair:lastName']?.toUpperCase()}` })}
     {...props}
   >
-    <SimpleForm redirect="show">
-      <TextInput source="pair:firstName" fullWidth />
-      <TextInput source="pair:lastName" fullWidth />
-      <TextInput source="pair:comment" fullWidth />
-      <ImageInput source="image" accept="image/*">
-        <ImageField source="src" />
-      </ImageInput>
-      <ActivitiesInput source="pair:involvedIn" />
-      <OrganizationsInput source="pair:affiliatedBy" />
-      <SkillsInput source="pair:offers" />
-      <ThemesInput source="pair:hasTopic" />
-      <PairLocationInput source="pair:hasLocation" fullWidth />
-    </SimpleForm>
+    <TabbedForm redirect="show">
+      <FormTab label="Données">
+        <TextInput source="pair:firstName" fullWidth />
+        <TextInput source="pair:lastName" fullWidth />
+        <TextInput source="pair:comment" fullWidth />
+        <PairLocationInput source="pair:hasLocation" fullWidth />
+        <ImageInput source="image" accept="image/*">
+          <ImageField source="src" />
+        </ImageInput>
+      </FormTab>
+      <FormTab label="Données">
+        <ActivitiesInput source="pair:involvedIn" />
+        <OrganizationsInput source="pair:affiliatedBy" />
+        <SkillsInput source="pair:offers" />
+        <ThemesInput source="pair:hasTopic" />
+      </FormTab>
+    </TabbedForm>
   </Edit>
 );
 
