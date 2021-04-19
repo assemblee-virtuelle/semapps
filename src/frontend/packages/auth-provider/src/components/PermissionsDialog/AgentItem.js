@@ -83,7 +83,7 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
             return (
               <MenuItem
                 onClick={() => {
-                  if( hasPermission ) {
+                  if (hasPermission) {
                     removePermission(agent.id, agent.type, rightKey);
                   } else {
                     addPermission(agent.id, agent.type, rightKey);
@@ -91,12 +91,10 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
                   closeMenu();
                 }}
               >
-                <ListItemIcon>
-                  {hasPermission ? <CheckIcon /> : null}
-                </ListItemIcon>
+                <ListItemIcon>{hasPermission ? <CheckIcon /> : null}</ListItemIcon>
                 <ListItemText primary={rightLabel} />
               </MenuItem>
-            )
+            );
           })}
         </Menu>
       </ListItemSecondaryAction>

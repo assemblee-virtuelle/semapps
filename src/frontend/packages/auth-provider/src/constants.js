@@ -23,10 +23,10 @@ export const rightsLabel = {
 };
 
 export const agentsClasses = {
-  'anon': 'acl:agentClass',
-  'anyUser': 'acl:agentClass',
-  'user': 'acl:agent',
-  'group': 'acl:group'
+  anon: 'acl:agentClass',
+  anyUser: 'acl:agentClass',
+  user: 'acl:agent',
+  group: 'acl:group'
 };
 
 export const agentsDefinitions = {
