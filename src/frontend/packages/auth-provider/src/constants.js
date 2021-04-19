@@ -33,5 +33,5 @@ export const defaultAgents = {
     id: AUTHENTICATED_AGENT,
     predicate: CLASS_AGENT,
     permissions: []
-  },
+  }
 };

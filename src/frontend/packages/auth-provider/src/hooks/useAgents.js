@@ -26,10 +26,14 @@ const useAgents = resourceId => {
     if (permissions) {
       for (let p of permissions) {
         if (p[CLASS_AGENT]) {
-          defaultToArray(p[CLASS_AGENT]).forEach(agentId => appendPermission(result, agentId, CLASS_AGENT, p['acl:mode']));
+          defaultToArray(p[CLASS_AGENT]).forEach(agentId =>
+            appendPermission(result, agentId, CLASS_AGENT, p['acl:mode'])
+          );
         }
         if (p[USER_AGENT]) {
-          defaultToArray(p[USER_AGENT]).forEach(userUri => appendPermission(result, userUri, USER_AGENT, p['acl:mode']));
+          defaultToArray(p[USER_AGENT]).forEach(userUri =>
+            appendPermission(result, userUri, USER_AGENT, p['acl:mode'])
+          );
         }
         if (p[GROUP_AGENT]) {
           defaultToArray(p[GROUP_AGENT]).forEach(groupUri =>
@@ -73,10 +77,7 @@ const useAgents = resourceId => {
               return [key, agent];
             })
             // Remove agents if they have no permissions (except if they are class agents)
-            .filter(
-              ([_, agent]) =>
-                agent.predicate === CLASS_AGENT || agent.permissions.length > 0
-            )
+            .filter(([_, agent]) => agent.predicate === CLASS_AGENT || agent.permissions.length > 0)
         )
       );
       authProvider.removePermission(resourceId, agentId, predicate, mode).catch(e => {

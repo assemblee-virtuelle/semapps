@@ -15,7 +15,7 @@ import {
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
 import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, rightsLabel } from '../../constants';
-import AgentIcon from "./AgentIcon";
+import AgentIcon from './AgentIcon';
 
 const useStyles = makeStyles(() => ({
   listItem: {
@@ -73,11 +73,16 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
   return (
     <ListItem button className={classes.listItem}>
       <ListItemAvatar>
-        <Avatar src={user?.image}><AgentIcon agent={agent} /></Avatar>
+        <Avatar src={user?.image}>
+          <AgentIcon agent={agent} />
+        </Avatar>
       </ListItemAvatar>
       <ListItemText
         className={classes.primaryText}
-        primary={user ? user['pair:label'] : agent.id === 'foaf:Agent' ? 'Tous les utilisateurs' : 'Utilisateurs connectés'} />
+        primary={
+          user ? user['pair:label'] : agent.id === 'foaf:Agent' ? 'Tous les utilisateurs' : 'Utilisateurs connectés'
+        }
+      />
       <ListItemText
         className={classes.secondaryText}
         primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
