@@ -15,7 +15,7 @@ const defaultAgents = {
     type: 'anyUser',
     ...agentsDefinitions.anyUser,
     permissions: []
-  },
+  }
 };
 
 const applyToAgentClass = (p, agentClass) =>
