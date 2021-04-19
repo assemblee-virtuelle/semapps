@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGetList } from 'react-admin';
 import { TextField, makeStyles, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -15,11 +15,11 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AddPermissionsForm = ({ addPermission }) => {
+const AddPermissionsForm = ({ agents, addPermission }) => {
   const classes = useStyles();
-  const [value, setValue] = React.useState(null);
-  const [inputValue, setInputValue] = React.useState('');
-  const [options, setOptions] = React.useState([]);
+  const [value, setValue] = useState(null);
+  const [inputValue, setInputValue] = useState('');
+  const [options, setOptions] = useState([]);
 
   const { ids, data } = useGetList(
     'Person',
@@ -37,7 +37,8 @@ const AddPermissionsForm = ({ addPermission }) => {
     <Autocomplete
       classes={{ option: classes.option }}
       getOptionLabel={option => option['pair:label']}
-      filterOptions={x => x}
+      // Do not return agents which have already been added
+      filterOptions={x => x.filter(agent => !Object.keys(agents).includes(agent.id))}
       options={options}
       noOptionsText="Aucun résultat"
       autoComplete

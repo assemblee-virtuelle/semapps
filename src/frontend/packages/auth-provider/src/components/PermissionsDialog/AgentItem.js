@@ -21,9 +21,15 @@ const useStyles = makeStyles(() => ({
     paddingLeft: 4,
     paddingRight: 36
   },
+  primaryText: {
+    width: '30%',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
   secondaryText: {
     textAlign: 'center',
-    width: '50%',
+    width: '60%',
     fontStyle: 'italic',
     color: 'grey'
   }
@@ -68,7 +74,10 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
       <ListItemAvatar>
         <Avatar src={user?.image}>{agent.icon}</Avatar>
       </ListItemAvatar>
-      <ListItemText primary={agent.label || user?.['pair:label']} />
+      <ListItemText
+        className={classes.primaryText}
+        primary={agent.label || user?.['pair:label']}
+      />
       <ListItemText
         className={classes.secondaryText}
         primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
