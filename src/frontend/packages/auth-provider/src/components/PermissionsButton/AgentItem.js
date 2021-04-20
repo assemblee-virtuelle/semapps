@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
-import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, rightsLabel } from '../../constants';
+import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, resourceRightsLabels, containerRightsLabels } from '../../constants';
 import AgentIcon from './AgentIcon';
 
 const useStyles = makeStyles(() => ({
@@ -36,7 +36,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const AgentItem = ({ agent, addPermission, removePermission }) => {
+const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
   const classes = useStyles();
   const dataProvider = useDataProvider();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -67,11 +67,13 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
   const openMenu = event => setAnchorEl(event.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
+  const labels = isContainer ? containerRightsLabels : resourceRightsLabels;
+
   if (loading) return <Loading />;
   if (error) return <Error />;
 
   return (
-    <ListItem button className={classes.listItem}>
+    <ListItem className={classes.listItem}>
       <ListItemAvatar>
         <Avatar src={user?.image}>
           <AgentIcon agent={agent} />
@@ -80,19 +82,19 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
       <ListItemText
         className={classes.primaryText}
         primary={
-          user ? user['pair:label'] : agent.id === 'foaf:Agent' ? 'Tous les utilisateurs' : 'Utilisateurs connectés'
+          user ? user['pair:label'] : agent.id === ANONYMOUS_AGENT ? 'Tous les utilisateurs' : 'Utilisateurs connectés'
         }
       />
       <ListItemText
         className={classes.secondaryText}
-        primary={agent.permissions && agent.permissions.map(p => rightsLabel[p]).join(', ')}
+        primary={agent.permissions && agent.permissions.map(p => labels[p]).join(', ')}
       />
       <ListItemSecondaryAction>
         <IconButton onClick={openMenu}>
           <EditIcon />
         </IconButton>
         <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
-          {Object.entries(rightsLabel).map(([rightKey, rightLabel]) => {
+          {Object.entries(labels).map(([rightKey, rightLabel]) => {
             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
             return (
               <MenuItem

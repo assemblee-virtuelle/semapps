@@ -16,15 +16,15 @@ export const rightsToEdit = [ACL_APPEND, ACL_WRITE, ACL_CONTROL];
 export const rightsToDelete = [ACL_WRITE, ACL_CONTROL];
 export const rightsToControl = [ACL_CONTROL];
 
-export const rightsLabel = {
+export const resourceRightsLabels = {
   [ACL_READ]: 'Lire',
   [ACL_APPEND]: 'Enrichir',
   [ACL_WRITE]: 'Modifier',
   [ACL_CONTROL]: 'Administrer'
 };
 
-export const containerRightsLabel = {
+export const containerRightsLabels = {
   [ACL_READ]: 'Lister',
-  [ACL_APPEND]: 'Ajouter',
+  [ACL_WRITE]: 'Ajouter',
   [ACL_CONTROL]: 'Administrer'
 };

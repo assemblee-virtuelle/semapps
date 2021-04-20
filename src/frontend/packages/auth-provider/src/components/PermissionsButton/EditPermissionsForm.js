@@ -10,12 +10,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditPermissionsForm = ({ agents, addPermission, removePermission }) => {
+const EditPermissionsForm = ({ isContainer, agents, addPermission, removePermission }) => {
   const classes = useStyles();
   return (
     <List dense className={classes.list}>
       {Object.entries(agents).map(([agentId, agent]) => (
-        <AgentItem key={agentId} agent={agent} addPermission={addPermission} removePermission={removePermission} />
+        <AgentItem key={agentId} isContainer={isContainer} agent={agent} addPermission={addPermission} removePermission={removePermission} />
       ))}
     </List>
   );

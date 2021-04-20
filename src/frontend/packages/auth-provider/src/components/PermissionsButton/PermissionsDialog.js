@@ -34,7 +34,7 @@ const PermissionsDialog = ({ open, onClose, resourceId, isContainer }) => {
         <AddPermissionsForm agents={agents} addPermission={addPermission} />
       </DialogContent>
       <DialogContent className={classes.listForm}>
-        <EditPermissionsForm isContainer={isContainer}agents={agents} addPermission={addPermission} removePermission={removePermission} />
+        <EditPermissionsForm isContainer={isContainer} agents={agents} addPermission={addPermission} removePermission={removePermission} />
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button label="ra.action.close" variant="text" onClick={onClose} />
