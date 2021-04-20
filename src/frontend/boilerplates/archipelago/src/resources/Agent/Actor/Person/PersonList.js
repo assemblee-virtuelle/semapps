@@ -1,7 +1,8 @@
 import React from 'react';
 import { Avatar } from '@material-ui/core';
-import { AvatarField, GridList, MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
+import { AvatarField, GridList, ListActions, MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
 import { MapList } from '@semapps/geo-components';
+import { PermissionsButton } from "@semapps/auth-provider";
 import MapIcon from '@material-ui/icons/Map';
 import ListIcon from '@material-ui/icons/List';
 import PersonIcon from '@material-ui/icons/Person';
@@ -11,6 +12,7 @@ import PersonFilterSidebar from './PersonFilterSidebar';
 const PersonList = props => (
   <MultiViewsList
     aside={<PersonFilterSidebar />}
+    actions={<ListActions bulkActions={<PermissionsButton />} />}
     views={{
       avatar: {
         label: 'Trombinoscope',
