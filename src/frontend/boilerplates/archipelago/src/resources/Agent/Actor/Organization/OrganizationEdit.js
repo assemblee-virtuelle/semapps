@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
+import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit, RightLabel } from '@semapps/archipelago-layout';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';

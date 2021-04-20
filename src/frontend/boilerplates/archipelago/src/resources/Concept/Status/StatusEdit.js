@@ -1,13 +1,15 @@
 import React from 'react';
-import { SimpleForm, TextInput } from 'react-admin';
+import { TabbedForm, TextInput, FormTab } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
 import StatusTitle from './StatusTitle';
 
 export const ThemeEdit = props => (
   <Edit title={<StatusTitle />} {...props}>
-    <SimpleForm>
-      <TextInput source="pair:label" fullWidth />
-    </SimpleForm>
+    <TabbedForm redirect="show">
+      <FormTab label="données">
+        <TextInput source="pair:label" fullWidth />
+      </FormTab>
+    </TabbedForm >
   </Edit>
 );
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ImageInput, SimpleForm, TabbedForm, TextInput, FormTab } from 'react-admin';
+import { ImageInput, TabbedForm, TextInput, FormTab } from 'react-admin';
 import { Edit } from '@semapps/archipelago-layout';
 import { ActivitiesInput, OrganizationsInput, PairLocationInput, SkillsInput, ThemesInput } from '../../../../pair';
 import { ImageField } from '@semapps/semantic-data-provider';
@@ -21,7 +21,7 @@ export const PersonEdit = props => (
           <ImageField source="src" />
         </ImageInput>
       </FormTab>
-      <FormTab label="Données">
+      <FormTab label="Relations">
         <ActivitiesInput source="pair:involvedIn" />
         <OrganizationsInput source="pair:affiliatedBy" />
         <SkillsInput source="pair:offers" />
