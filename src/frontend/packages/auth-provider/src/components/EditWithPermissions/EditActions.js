@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopToolbar, ShowButton, ListButton } from 'react-admin';
-import PermissionsButton from "../PermissionsButton/PermissionsButton";
+import PermissionsButton from '../PermissionsButton/PermissionsButton';
 
 const EditActions = ({ basePath, className, data, hasList, hasShow, hasControl, ...otherProps }) => (
   <TopToolbar className={className} {...otherProps}>

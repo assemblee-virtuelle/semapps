@@ -9,7 +9,9 @@ const EditWithPermissions = props => {
   const { permissions } = usePermissionsOptimized(props.id);
   return (
     <RaEdit
-      actions={<EditActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />}
+      actions={
+        <EditActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
+      }
       {...props}
       permissions={permissions}
     >

@@ -83,10 +83,7 @@ const useAgents = resourceId => {
               return [key, agent];
             })
             // Remove agents if they have no permissions (except if they are class agents)
-            .filter(
-              ([_, agent]) =>
-                agent.predicate === CLASS_AGENT || agent.permissions.length > 0
-            )
+            .filter(([_, agent]) => agent.predicate === CLASS_AGENT || agent.permissions.length > 0)
         )
       );
       authProvider.removePermission(resourceId, agentId, predicate, mode).catch(e => {

@@ -29,12 +29,19 @@ const PermissionsDialog = ({ open, onClose, resourceId, isContainer }) => {
 
   return (
     <Dialog fullWidth open={open} onClose={onClose}>
-      <DialogTitle className={classes.title}>{isContainer ? 'Permissions sur le container' : 'Permissions sur la ressource'}</DialogTitle>
+      <DialogTitle className={classes.title}>
+        {isContainer ? 'Permissions sur le container' : 'Permissions sur la ressource'}
+      </DialogTitle>
       <DialogContent className={classes.addForm}>
         <AddPermissionsForm agents={agents} addPermission={addPermission} />
       </DialogContent>
       <DialogContent className={classes.listForm}>
-        <EditPermissionsForm isContainer={isContainer}agents={agents} addPermission={addPermission} removePermission={removePermission} />
+        <EditPermissionsForm
+          isContainer={isContainer}
+          agents={agents}
+          addPermission={addPermission}
+          removePermission={removePermission}
+        />
       </DialogContent>
       <DialogActions className={classes.actions}>
         <Button label="ra.action.close" variant="text" onClick={onClose} />
