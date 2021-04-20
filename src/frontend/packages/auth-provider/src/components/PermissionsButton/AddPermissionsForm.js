@@ -57,13 +57,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
         setInputValue(newInputValue);
       }}
       renderInput={params => (
-        <TextField
-          {...params}
-          label={translate('auth.input.agent_select')}
-          variant="filled"
-          margin="dense"
-          fullWidth
-        />
+        <TextField {...params} label={translate('auth.input.agent_select')} variant="filled" margin="dense" fullWidth />
       )}
       renderOption={option => (
         <List dense className={classes.list}>

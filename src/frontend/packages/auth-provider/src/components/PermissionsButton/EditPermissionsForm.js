@@ -15,7 +15,13 @@ const EditPermissionsForm = ({ isContainer, agents, addPermission, removePermiss
   return (
     <List dense className={classes.list}>
       {Object.entries(agents).map(([agentId, agent]) => (
-        <AgentItem key={agentId} isContainer={isContainer} agent={agent} addPermission={addPermission} removePermission={removePermission} />
+        <AgentItem
+          key={agentId}
+          isContainer={isContainer}
+          agent={agent}
+          addPermission={addPermission}
+          removePermission={removePermission}
+        />
       ))}
     </List>
   );

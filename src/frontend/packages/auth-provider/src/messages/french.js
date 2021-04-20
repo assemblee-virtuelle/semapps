@@ -1,4 +1,4 @@
-import {ACL_APPEND, ACL_CONTROL, ACL_READ, ACL_WRITE} from "../constants";
+import { ACL_APPEND, ACL_CONTROL, ACL_READ, ACL_WRITE } from '../constants';
 
 const frenchMessages = {
   auth: {
@@ -21,7 +21,7 @@ const frenchMessages = {
         append: 'Ajouter',
         write: 'Ajouter',
         control: 'Administrer'
-      },
+      }
     },
     agent: {
       anonymous: 'Tous les utilisateurs',
