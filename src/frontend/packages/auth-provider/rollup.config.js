@@ -3,9 +3,10 @@ import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
+import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
-const external = createFilter(['react', 'react-admin', '@material-ui/**'], null, { resolve: false });
+const external = createFilter(['react', 'react-admin', '@material-ui/**', '@semapps/**'], null, { resolve: false });
 
 export default {
   input: './src/index.js',
@@ -15,6 +16,7 @@ export default {
   ],
   external,
   plugins: [
+    json(),
     replace({
       // Make sure React code is compiled in production mode
       'process.env.NODE_ENV': JSON.stringify('production')

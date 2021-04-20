@@ -91,6 +91,7 @@ const AgentItem = ({ agent, addPermission, removePermission }) => {
             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
             return (
               <MenuItem
+                key={rightKey}
                 onClick={() => {
                   if (hasPermission) {
                     removePermission(agent.id, agent.predicate, rightKey);

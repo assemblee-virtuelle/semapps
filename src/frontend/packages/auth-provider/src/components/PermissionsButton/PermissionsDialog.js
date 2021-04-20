@@ -23,21 +23,21 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const PermissionsDialog = ({ open, onClose, resourceId }) => {
+const PermissionsDialog = ({ open, onClose, resourceId, isContainer }) => {
   const classes = useStyles();
   const { agents, addPermission, removePermission } = useAgents(resourceId);
 
   return (
     <Dialog fullWidth open={open} onClose={onClose}>
-      <DialogTitle className={classes.title}>Permissions sur la ressource</DialogTitle>
+      <DialogTitle className={classes.title}>{isContainer ? 'Permissions sur le container' : 'Permissions sur la ressource'}</DialogTitle>
       <DialogContent className={classes.addForm}>
         <AddPermissionsForm agents={agents} addPermission={addPermission} />
       </DialogContent>
       <DialogContent className={classes.listForm}>
-        <EditPermissionsForm agents={agents} addPermission={addPermission} removePermission={removePermission} />
+        <EditPermissionsForm isContainer={isContainer}agents={agents} addPermission={addPermission} removePermission={removePermission} />
       </DialogContent>
       <DialogActions className={classes.actions}>
-        <Button label="ra.action.close" variant="inlined" onClick={onClose} />
+        <Button label="ra.action.close" variant="text" onClick={onClose} />
       </DialogActions>
     </Dialog>
   );

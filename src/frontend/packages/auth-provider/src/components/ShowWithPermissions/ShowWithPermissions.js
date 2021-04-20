@@ -1,7 +1,7 @@
 import React from 'react';
 import { Show as RaShow, usePermissionsOptimized } from 'react-admin';
 import ShowActions from './ShowActions';
-import { rightsToEdit, rightsToControl } from '../constants';
+import { rightsToEdit, rightsToControl } from '../../constants';
 
 const ShowWithPermissions = props => {
   const { permissions } = usePermissionsOptimized(props.id);

@@ -4,16 +4,18 @@ import ListActions from './ListActions';
 
 const Pagination = props => <RaPagination rowsPerPageOptions={[25, 50, 100]} {...props} />;
 
-const List = ({ children, ...otherProps }) => (
+const List = ({ actions, ...otherProps }) => (
   <RaList
-    actions={<ListActions />}
+    actions={React.cloneElement(actions, otherProps)}
     sort={{ field: 'pair:label', order: 'DESC' }}
     pagination={<Pagination />}
     perPage={50}
     {...otherProps}
-  >
-    {children}
-  </RaList>
+  />
 );
+
+List.defaultProps = {
+  actions: <ListActions />
+};
 
 export default List;

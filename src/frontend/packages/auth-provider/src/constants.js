@@ -23,15 +23,8 @@ export const rightsLabel = {
   [ACL_CONTROL]: 'Administrer'
 };
 
-export const defaultAgents = {
-  [ANONYMOUS_AGENT]: {
-    id: ANONYMOUS_AGENT,
-    predicate: CLASS_AGENT,
-    permissions: []
-  },
-  [AUTHENTICATED_AGENT]: {
-    id: AUTHENTICATED_AGENT,
-    predicate: CLASS_AGENT,
-    permissions: []
-  },
+export const containerRightsLabel = {
+  [ACL_READ]: 'Lister',
+  [ACL_APPEND]: 'Ajouter',
+  [ACL_CONTROL]: 'Administrer'
 };
