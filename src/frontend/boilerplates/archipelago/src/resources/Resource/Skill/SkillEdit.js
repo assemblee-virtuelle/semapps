@@ -13,7 +13,7 @@ export const SkillEdit = props => (
       <FormTab label="relations">
         <UsersInput source="pair:offeredBy" />
         <AgentsInput source="pair:neededBy" />
-      </FormTab >
+      </FormTab>
     </TabbedForm>
   </Edit>
 );

@@ -5,8 +5,8 @@ import RoleTitle from './RoleTitle';
 
 export const RoleEdit = props => (
   <Edit title={<RoleTitle />} {...props}>
-    <TabbedForm redirect="show" >
-      <FormTab label="données" >
+    <TabbedForm redirect="show">
+      <FormTab label="données">
         <TextInput source="pair:label" fullWidth />
       </FormTab>
     </TabbedForm>

@@ -9,7 +9,7 @@ export const ThemeEdit = props => (
       <FormTab label="données">
         <TextInput source="pair:label" fullWidth />
       </FormTab>
-    </TabbedForm >
+    </TabbedForm>
   </Edit>
 );
 
