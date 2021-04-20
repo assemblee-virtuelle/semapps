@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, usePermissionsOptimized } from 'react-admin';
 import ShareIcon from '@material-ui/icons/Share';
 import PermissionsDialog from './PermissionsDialog';
-import { rightsToControl } from "../../constants";
+import { rightsToControl } from '../../constants';
 
 const PermissionsButton = ({ record, resource }) => {
   const [showDialog, setShowDialog] = useState(false);
@@ -14,7 +14,7 @@ const PermissionsButton = ({ record, resource }) => {
     return (
       <>
         <Button label="auth.action.permissions" onClick={() => setShowDialog(true)}>
-          <ShareIcon/>
+          <ShareIcon />
         </Button>
         <PermissionsDialog
           resourceId={resourceId}

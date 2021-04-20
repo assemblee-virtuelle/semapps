@@ -83,7 +83,9 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
       <ListItemText
         className={classes.primaryText}
         primary={
-          user ? user['pair:label'] : translate(agent.id === ANONYMOUS_AGENT ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
+          user
+            ? user['pair:label']
+            : translate(agent.id === ANONYMOUS_AGENT ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
         }
       />
       <ListItemText
