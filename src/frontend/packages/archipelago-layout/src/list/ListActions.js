@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  TopToolbar,
-  Button,
-  CreateButton,
-  ExportButton,
-  useResourceDefinition,
-  Link
-} from 'react-admin';
+import { TopToolbar, Button, CreateButton, ExportButton, useResourceDefinition, Link } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
 
