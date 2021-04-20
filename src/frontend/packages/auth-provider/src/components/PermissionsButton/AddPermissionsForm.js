@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGetList } from 'react-admin';
+import { useGetList, useTranslate } from 'react-admin';
 import { TextField, makeStyles, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import PersonIcon from '@material-ui/icons/Person';
@@ -17,6 +17,7 @@ const useStyles = makeStyles(() => ({
 
 const AddPermissionsForm = ({ agents, addPermission }) => {
   const classes = useStyles();
+  const translate = useTranslate();
   const [value, setValue] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
@@ -40,7 +41,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       // Do not return agents which have already been added
       filterOptions={x => x.filter(agent => !Object.keys(agents).includes(agent.id))}
       options={options}
-      noOptionsText="Aucun résultat"
+      noOptionsText={translate('ra.navigation.no_results')}
       autoComplete
       blurOnSelect
       clearOnBlur
@@ -58,7 +59,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       renderInput={params => (
         <TextField
           {...params}
-          label="Ajouter un utilisateur ou un groupe..."
+          label={translate('auth.input.agent_select')}
           variant="filled"
           margin="dense"
           fullWidth

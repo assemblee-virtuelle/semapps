@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDataProvider, Loading, Error } from 'react-admin';
+import { useDataProvider, useTranslate, Loading, Error } from 'react-admin';
 import {
   makeStyles,
   Avatar,
@@ -38,6 +38,7 @@ const useStyles = makeStyles(() => ({
 
 const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
   const classes = useStyles();
+  const translate = useTranslate();
   const dataProvider = useDataProvider();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [user, setUser] = useState();
@@ -82,12 +83,12 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
       <ListItemText
         className={classes.primaryText}
         primary={
-          user ? user['pair:label'] : agent.id === ANONYMOUS_AGENT ? 'Tous les utilisateurs' : 'Utilisateurs connectés'
+          user ? user['pair:label'] : translate(agent.id === ANONYMOUS_AGENT ? 'auth.agent.anonymous' : 'auth.agent.authenticated')
         }
       />
       <ListItemText
         className={classes.secondaryText}
-        primary={agent.permissions && agent.permissions.map(p => labels[p]).join(', ')}
+        primary={agent.permissions && agent.permissions.map(p => translate(labels[p])).join(', ')}
       />
       <ListItemSecondaryAction>
         <IconButton onClick={openMenu}>
@@ -109,7 +110,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
                 }}
               >
                 <ListItemIcon>{hasPermission ? <CheckIcon /> : null}</ListItemIcon>
-                <ListItemText primary={rightLabel} />
+                <ListItemText primary={translate(rightLabel)} />
               </MenuItem>
             );
           })}

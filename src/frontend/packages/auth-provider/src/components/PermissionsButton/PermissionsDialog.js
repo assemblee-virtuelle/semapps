@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-admin';
+import { Button, useTranslate } from 'react-admin';
 import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@material-ui/core';
 import AddPermissionsForm from './AddPermissionsForm';
 import EditPermissionsForm from './EditPermissionsForm';
@@ -25,11 +25,12 @@ const useStyles = makeStyles(() => ({
 
 const PermissionsDialog = ({ open, onClose, resourceId, isContainer }) => {
   const classes = useStyles();
+  const translate = useTranslate();
   const { agents, addPermission, removePermission } = useAgents(resourceId);
 
   return (
     <Dialog fullWidth open={open} onClose={onClose}>
-      <DialogTitle className={classes.title}>{isContainer ? 'Permissions sur le container' : 'Permissions sur la ressource'}</DialogTitle>
+      <DialogTitle className={classes.title}>{translate(isContainer ? 'auth.dialog.container_permissions' : 'auth.dialog.resource_permissions')}</DialogTitle>
       <DialogContent className={classes.addForm}>
         <AddPermissionsForm agents={agents} addPermission={addPermission} />
       </DialogContent>

@@ -17,14 +17,14 @@ export const rightsToDelete = [ACL_WRITE, ACL_CONTROL];
 export const rightsToControl = [ACL_CONTROL];
 
 export const resourceRightsLabels = {
-  [ACL_READ]: 'Lire',
-  [ACL_APPEND]: 'Enrichir',
-  [ACL_WRITE]: 'Modifier',
-  [ACL_CONTROL]: 'Administrer'
+  [ACL_READ]: 'auth.right.resource.read',
+  [ACL_APPEND]: 'auth.right.resource.append',
+  [ACL_WRITE]: 'auth.right.resource.write',
+  [ACL_CONTROL]: 'auth.right.resource.control'
 };
 
 export const containerRightsLabels = {
-  [ACL_READ]: 'Lister',
-  [ACL_WRITE]: 'Ajouter',
-  [ACL_CONTROL]: 'Administrer'
+  [ACL_READ]: 'auth.right.container.read',
+  [ACL_WRITE]: 'auth.right.container.write',
+  [ACL_CONTROL]: 'auth.right.container.control'
 };
