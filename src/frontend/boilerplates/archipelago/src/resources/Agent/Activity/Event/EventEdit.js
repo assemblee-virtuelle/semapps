@@ -38,7 +38,7 @@ const EventEdit = props => (
           fullWidth
         />
       </FormTab>
-      <FormTab label="relations">
+      <FormTab label="Relations">
         <ActorsInput source="pair:involves" />
         <ThemesInput source="pair:hasTopic" />
       </FormTab>

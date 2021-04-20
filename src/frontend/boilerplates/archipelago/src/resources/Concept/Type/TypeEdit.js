@@ -6,7 +6,7 @@ import TypeTitle from './TypeTitle';
 export const ThemeEdit = props => (
   <Edit title={<TypeTitle />} {...props}>
     <TabbedForm redirect="show">
-      <FormTab label="données">
+      <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
       </FormTab>
     </TabbedForm >

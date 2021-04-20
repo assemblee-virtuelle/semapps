@@ -21,7 +21,7 @@ const ProjectEdit = props => (
           <ImageField source="src" />
         </ImageInput>
       </FormTab>
-      <FormTab label="RELATIONS">
+      <FormTab label="Relations">
         <ActorsInput source="pair:involves" />
         <ResourcesInput source="pair:needs" />
         <DocumentsInput source="pair:documentedBy" />

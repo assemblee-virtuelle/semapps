@@ -6,7 +6,7 @@ import StatusTitle from './StatusTitle';
 export const ThemeEdit = props => (
   <Edit title={<StatusTitle />} {...props}>
     <TabbedForm redirect="show">
-      <FormTab label="données">
+      <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
       </FormTab>
     </TabbedForm >
