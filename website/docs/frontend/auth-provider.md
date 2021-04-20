@@ -29,6 +29,22 @@ const App = () => (
 
 See the [official React-Docs about authentication](https://marmelab.com/react-admin/Authentication.html) for more details.
 
+You will also need to include the package-specific translations messages in React-Admin's `i18nProvider`:
+
+```jsx
+import polyglotI18nProvider from 'ra-i18n-polyglot';
+import frenchMessages from 'ra-language-french';
+import { frenchMessages as authFrenchMessages } from '@semapps/auth-provider';
+
+export const i18nProvider = polyglotI18nProvider(
+  lang => ({
+    ...frenchMessages,
+    ...authFrenchMessages
+  }),
+  'fr'
+);
+```
+
 ## Adding user authentication to Archipelago layout
 
 ```jsx
@@ -85,4 +101,20 @@ const App = () => (
 );
 ```
 
-Additionally, you should use the components `<ShowWithPermissions />` and `<EditWithPermissions />` instead of React-Admin's default `<Show />` and `<Edit />` components.
+Additionally, you should use the components `<ShowWithPermissions />`, `<ListWithPermissions />` and `<EditWithPermissions />` instead of React-Admin's default `<Show />`, `<List />` and `<Edit />` components.
+
+### With a custom List component
+
+If you use a custom List component but still want to show the Permissions button, you only need to add the `<PermissionsButton />` to the list of `bulkActions`. The button will be displayed if the user has the right to control the container.
+
+```jsx
+import { ListActions } from 'react-admin';
+import { PermissionsButton } from '@semapps/auth-provider';
+
+export const PostList = props => (
+  <MyListComponent
+    actions={<ListActions bulkActions={<PermissionsButton />}
+    {...props}
+  >
+);
+```
