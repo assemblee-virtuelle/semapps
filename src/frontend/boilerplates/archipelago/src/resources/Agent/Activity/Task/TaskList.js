@@ -1,5 +1,4 @@
 import React from 'react';
-import { DateField } from 'react-admin';
 import { List, SimpleList } from '@semapps/archipelago-layout';
 import TaskFilterSidebar from './TaskFilterSidebar';
 import { Avatar } from '@material-ui/core';
