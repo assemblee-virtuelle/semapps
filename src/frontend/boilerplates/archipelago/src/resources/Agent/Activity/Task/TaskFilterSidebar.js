@@ -18,16 +18,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ProjectFilterSidebar = () => {
+const TaskFilterSidebar = () => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
       <CardContent className={classes.cardContent}>
         <ReferenceFilter
-          reference="Theme"
-          source="pair:hasTopic"
-          inverseSource="pair:topicOf"
+          reference="Status"
+          source="pair:hasStatus"
           limit={100}
+          filter={{ a: 'pair:TaskStatus' }}
+          sort={{ field: 'pair:label', order: 'DESC' }}
+        />
+        <ReferenceFilter
+          reference="Type"
+          source="pair:hasType"
+          limit={100}
+          filter={{ a: 'pair:TaskType' }}
           sort={{ field: 'pair:label', order: 'DESC' }}
         />
       </CardContent>
@@ -35,4 +42,4 @@ const ProjectFilterSidebar = () => {
   );
 };
 
-export default ProjectFilterSidebar;
+export default TaskFilterSidebar;

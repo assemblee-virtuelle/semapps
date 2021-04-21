@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ProjectFilterSidebar = () => {
+const EventFilterSidebar = () => {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
@@ -35,4 +35,4 @@ const ProjectFilterSidebar = () => {
   );
 };
 
-export default ProjectFilterSidebar;
+export default EventFilterSidebar;
