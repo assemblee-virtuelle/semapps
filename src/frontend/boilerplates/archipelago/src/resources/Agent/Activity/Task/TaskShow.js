@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChipField, SingleFieldList, TextField} from 'react-admin';
+import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   Hero,

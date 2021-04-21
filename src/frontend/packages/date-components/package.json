@@ -20,7 +20,7 @@
     "date-fns": "~2.8.1"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
+    "react": "^16.13.1 || ^17.0.0",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {
