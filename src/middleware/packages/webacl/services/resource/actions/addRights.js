@@ -173,7 +173,7 @@ module.exports = {
         graphName: this.settings.graphName
       });
 
-      if( newRights ) {
+      if (newRights) {
         ctx.emit('webacl.resource.created', { uri: resourceUri });
       } else {
         const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));

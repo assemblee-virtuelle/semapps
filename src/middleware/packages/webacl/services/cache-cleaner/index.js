@@ -22,7 +22,10 @@ module.exports = {
   events: {
     async 'webacl.resource.updated'(ctx) {
       const { uri, isContainer, defaultRightsUpdated } = ctx.params;
-      await this.actions.cleanResourceRights({ uri, specificUriOnly: !isContainer || !defaultRightsUpdated }, { parentCtx: ctx });
+      await this.actions.cleanResourceRights(
+        { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
+        { parentCtx: ctx }
+      );
     },
     async 'webacl.resource.deleted'(ctx) {
       const { uri } = ctx.params;

@@ -105,7 +105,9 @@ module.exports = {
         webId: 'system'
       });
 
-      const defaultRightsUpdated = isContainer && differenceAdd.some(triple => triple.auth.includes('#Default')) || differenceDelete.some(triple => triple.auth.includes('#Default'));
+      const defaultRightsUpdated =
+        (isContainer && differenceAdd.some(triple => triple.auth.includes('#Default'))) ||
+        differenceDelete.some(triple => triple.auth.includes('#Default'));
       ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated });
     }
   }
