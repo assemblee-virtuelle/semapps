@@ -105,7 +105,10 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.updated', { uri: resourceUri });
+      const defaultRightsUpdated =
+        (isContainer && differenceAdd.some(triple => triple.auth.includes('#Default'))) ||
+        differenceDelete.some(triple => triple.auth.includes('#Default'));
+      ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated });
     }
   }
 };

@@ -55,6 +55,8 @@ module.exports = {
           { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
         webId: 'system'
       });
+
+      ctx.emit('webacl.group.member-added', { groupUri, memberUri });
     }
   }
 };

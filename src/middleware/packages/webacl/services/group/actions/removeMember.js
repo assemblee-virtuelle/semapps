@@ -57,7 +57,7 @@ module.exports = {
         webId: 'system'
       });
 
-      //ctx.meta.$statusCode = 204;
+      ctx.emit('webacl.group.member-removed', { groupUri, memberUri });
     }
   }
 };

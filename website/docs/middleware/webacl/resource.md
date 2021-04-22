@@ -150,6 +150,38 @@ Null
 Null
 
 
+## Events
+
+### `webacl.resource.created`
+
+Sent when the ACL for a new resource or container are created.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `uri` | `String` | URI of the resource on which rights were created |
+
+### `webacl.resource.updated`
+
+Sent when the ACL for a resource or container are updated.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `uri` | `String` | URI of the resource on which rights were updated |
+| `isContainer` | `Boolean` | True if the resource is a container |
+| `defaultRightsUpdated` | `Boolean` | True if the resource is a container and some of the default rights of the container were updated |
+
+### `webacl.resource.deleted`
+
+Sent when the ACL for a resource or container are updated.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `uri` | `String` | URI of the resource on which rights were deleted |
+
+
 ## API routes
 
 These routes are automatically added to the `ApiGateway` service.
