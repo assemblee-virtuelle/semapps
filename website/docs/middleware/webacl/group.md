@@ -105,6 +105,29 @@ Null
 | `webId` | `String`  | 'anon' | WebID of the logged user |
 
 
+## Events
+
+### `webacl.group.member-added`
+
+Sent when an user is added to a group.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `uri` | `String` | URI of the resource on which rights were created |
+
+### `webacl.group.member-removed`
+
+Sent when an user is added to a group.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `uri` | `String` | URI of the resource on which rights were updated |
+| `isContainer` | `Boolean` | True if the resource is a container |
+| `defaultRightsUpdated` | `Boolean` | True if the resource is a container and some of the default rights of the container were updated |
+
+
 ## API routes
 
 These routes are automatically added to the `api` service.

@@ -82,6 +82,7 @@ module.exports = {
 
       let difference;
       let currentAuths;
+      let isContainer;
 
       if (!newRights && (addedRights || additionalRights)) {
         if (!addedRights && !additionalRights)
@@ -91,7 +92,7 @@ module.exports = {
             'BAD_REQUEST'
           );
 
-        let isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+        isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
         // check that the user has Control perm.
         // bypass this check if user is 'system'
@@ -172,7 +173,12 @@ module.exports = {
         graphName: this.settings.graphName
       });
 
-      ctx.emit('webacl.resource.updated', { uri: resourceUri });
+      if( newRights ) {
+        ctx.emit('webacl.resource.created', { uri: resourceUri });
+      } else {
+        const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
+        ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated });
+      }
     }
   }
 };
