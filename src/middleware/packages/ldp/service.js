@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
-const LdpCacheCleanerService = require('./services/cache-cleaner');
+const LdpCacheService = require('./services/cache');
 const getContainerRoutes = require('./routes/getContainerRoutes');
 const defaultContainerOptions = require('./services/container/defaultOptions');
 
@@ -36,7 +36,7 @@ module.exports = {
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
-      await this.broker.createService(LdpCacheCleanerService);
+      await this.broker.createService(LdpCacheService);
     }
   },
   async started() {
