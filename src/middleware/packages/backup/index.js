@@ -66,7 +66,7 @@ const BackupService = {
       const { path, subDir } = ctx.params;
       const { remoteServer } = this.settings;
 
-      if( !remoteServer.host ) {
+      if (!remoteServer.host) {
         console.log('No remove server defined, skipping remote backup...');
         return;
       }

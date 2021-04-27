@@ -14,6 +14,9 @@ export const OrganizationEdit = props => {
           <TextInput source="pair:label" fullWidth />
           <TextInput source="pair:comment" fullWidth />
           <MarkdownInput multiline source="pair:description" fullWidth />
+          <ReferenceInput reference="Status" source="pair:hasStatus" filter={{ a: 'pair:AgentStatus' }}>
+            <SelectInput optionText="pair:label" />
+          </ReferenceInput>
           <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
