@@ -30,6 +30,11 @@ const OrganizationShow = props => (
         <Hero image="image">
           <TextField source="pair:comment" />
           <UrlField source="pair:homePage" />
+          <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
               <TextField source="pair:label" />
