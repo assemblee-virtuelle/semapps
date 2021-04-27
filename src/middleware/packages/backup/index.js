@@ -68,6 +68,7 @@ const BackupService = {
 
       if( !remoteServer.host ) {
         console.log('No remove server defined, skipping remote backup...');
+        return;
       }
 
       // Setup rsync to remote server
