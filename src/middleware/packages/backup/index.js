@@ -23,9 +23,9 @@ const BackupService = {
   },
   dependencies: ['fuseki-admin'],
   started() {
-    const { cronJob, remoteServer } = this.settings;
+    const { cronJob } = this.settings;
 
-    if (cronJob.time && remoteServer.host) {
+    if (cronJob.time) {
       this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
   },
@@ -65,6 +65,10 @@ const BackupService = {
     syncWithRemoteServer(ctx) {
       const { path, subDir } = ctx.params;
       const { remoteServer } = this.settings;
+
+      if( !remoteServer.host ) {
+        console.log('No remove server defined, skipping remote backup...');
+      }
 
       // Setup rsync to remote server
       const rsync = new Rsync()
