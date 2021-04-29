@@ -47,13 +47,13 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, derefer
     }
   `;
   //need to do query without params for GroupedArrayField (getList)
-  if (pagination){
-    query=`
+  if (pagination) {
+    query = `
     ${query}
     # TODO try to make pagination work in SPARQL as this doesn't work.
     # LIMIT ${pagination.perPage}
     # OFFSET ${(pagination.page - 1) * pagination.perPage}
-    `
+    `;
   }
 
   return query;

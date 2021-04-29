@@ -30,13 +30,7 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   </SingleFieldList>
  * </GroupedArrayField>
  */
-const GroupedArrayField = ({
-  children,
-  groupReference,
-  groupLabel,
-  filterProperty,
-  ...otherProps
-}) => {
+const GroupedArrayField = ({ children, groupReference, groupLabel, filterProperty, ...otherProps }) => {
   const { data } = useQueryWithStore({
     type: 'getList',
     resource: groupReference,
