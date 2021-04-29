@@ -10,6 +10,9 @@ assignees: ''
 
 **Description**
 
+**Prérequis avant chiffrage**
+- [ ] Titre de l'issue liée #
+
 **Issues liées**
 - [ ] Titre de l'issue liée #
 

@@ -22,6 +22,10 @@ module.exports = [
     acceptedTypes: ['pair:Event', OBJECT_TYPES.EVENT]
   },
   {
+    path: '/tasks',
+    acceptedTypes: ['pair:Task', OBJECT_TYPES.EVENT]
+  },
+  {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']

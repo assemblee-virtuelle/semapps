@@ -22,8 +22,10 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, derefer
       delete filter.q;
     }
     Object.keys(filter).forEach(predicate => {
-      const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
-      whereQuery += `?s1 ${predicate} ${object} .`;
+      if (filter[predicate]) {
+        const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
+        whereQuery += `?s1 ${predicate} ${object} .`;
+      }
     });
   }
 

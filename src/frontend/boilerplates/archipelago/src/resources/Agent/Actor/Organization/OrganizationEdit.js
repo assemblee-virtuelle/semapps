@@ -1,5 +1,5 @@
 import React from 'react';
-import { SimpleForm, TextInput, ImageInput, AutocompleteInput, SelectInput } from 'react-admin';
+import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit, RightLabel } from '@semapps/archipelago-layout';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
@@ -9,34 +9,43 @@ import OrganizationTitle from './OrganizationTitle';
 export const OrganizationEdit = props => {
   return (
     <Edit title={<OrganizationTitle />} {...props}>
-      <SimpleForm redirect="show">
-        <TextInput source="pair:label" fullWidth />
-        <TextInput source="pair:comment" fullWidth />
-        <MarkdownInput multiline source="pair:description" fullWidth />
-        <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
-          <SelectInput optionText="pair:label" />
-        </ReferenceInput>
-        <TextInput source="pair:homePage" fullWidth />
-        <ImageInput source="image" accept="image/*">
-          <ImageField source="src" />
-        </ImageInput>
-        <ReificationArrayInput source="pair:organizationOfMembership" reificationClass="pair:MembershipAssociation">
-          <ReferenceInput reference="Person" source="pair:membershipActor">
-            <AutocompleteInput
-              optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
-              shouldRenderSuggestions={value => value && value.length > 1}
-            />
-          </ReferenceInput>
-          <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
+      <TabbedForm redirect="show">
+        <FormTab label="Données">
+          <TextInput source="pair:label" fullWidth />
+          <TextInput source="pair:comment" fullWidth />
+          <MarkdownInput multiline source="pair:description" fullWidth />
+          <ReferenceInput reference="Status" source="pair:hasStatus" filter={{ a: 'pair:AgentStatus' }}>
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
-        </ReificationArrayInput>
-        <OrganizationsInput source="pair:partnerOf" />
-        <EventsInput source="pair:involvedIn" />
-        <ThemesInput source="pair:hasTopic" />
-        <DocumentsInput source="pair:documentedBy" />
-        <PairLocationInput source="pair:hasLocation" fullWidth />
-      </SimpleForm>
+          <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
+            <SelectInput optionText="pair:label" />
+          </ReferenceInput>
+          <TextInput source="pair:homePage" fullWidth />
+          <PairLocationInput source="pair:hasLocation" fullWidth />
+          <ImageInput source="image" accept="image/*">
+            <ImageField source="src" />
+          </ImageInput>
+        </FormTab>
+        <FormTab label="Membres">
+          <ReificationArrayInput source="pair:organizationOfMembership" reificationClass="pair:MembershipAssociation">
+            <ReferenceInput reference="Person" source="pair:membershipActor">
+              <AutocompleteInput
+                optionText={record => record && `${record['pair:firstName']} ${record['pair:lastName']}`}
+                shouldRenderSuggestions={value => value && value.length > 1}
+              />
+            </ReferenceInput>
+            <ReferenceInput reference="MembershipRole" source="pair:membershipRole">
+              <SelectInput optionText="pair:label" />
+            </ReferenceInput>
+          </ReificationArrayInput>
+        </FormTab>
+        <FormTab label="Relations">
+          <OrganizationsInput source="pair:partnerOf" />
+          <EventsInput source="pair:involvedIn" />
+          <ThemesInput source="pair:hasTopic" />
+          <DocumentsInput source="pair:documentedBy" />
+        </FormTab>
+      </TabbedForm>
     </Edit>
   );
 };

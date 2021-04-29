@@ -1,6 +1,6 @@
 {
   "name": "@semapps/react-admin",
-  "version": "0.1.28",
+  "version": "0.1.30",
   "description": "React-Admin extension for SemApps servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -18,7 +18,7 @@
     "jsonld": "^3.0.1"
   },
   "peerDependencies": {
-    "react": "^16.13.0",
+    "react": "^16.13.1 || ^17.0.0",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {

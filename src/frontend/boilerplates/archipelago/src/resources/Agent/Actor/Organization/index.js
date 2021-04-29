@@ -36,6 +36,7 @@ export default {
         'pair:partnerOf': 'Partenaire de',
         'pair:involvedIn': 'Impliqué dans',
         'pair:hasType': 'Type',
+        'pair:hasStatus': 'Statut',
         'pair:hasTopic': 'A pour thème',
         'pair:documentedBy': 'Documenté par',
         'pair:hasLocation': 'Adresse',

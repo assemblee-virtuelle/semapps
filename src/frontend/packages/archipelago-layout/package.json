@@ -1,6 +1,6 @@
 {
   "name": "@semapps/archipelago-layout",
-  "version": "0.1.28",
+  "version": "0.1.30",
   "description": "React-Admin layout for semantic cartography",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -27,7 +27,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "leaflet": "^1.7.1",
     "leaflet.markercluster": "^1.4.1",
-    "react": "^16.13.0",
+    "react": "^16.13.1 || ^17.0.0",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {

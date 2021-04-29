@@ -5,7 +5,7 @@ import { Typography, Box } from '@material-ui/core';
 import { shallowEqual, useSelector } from 'react-redux';
 
 /**
- * @example 1 : simple group label
+ * @example Simple group label
  * <GroupedArrayField
  *   source="property"
  *   groupReference="RAresource"
@@ -16,14 +16,12 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   <SingleFieldList>
  *   </SingleFieldList>
  * </GroupedArrayField>
- */
-
-/**
- * @example 2 : custom group label
+ *
+ * @example 2 Custom group label
  * <GroupedArrayField
  *   source="property"
  *   groupReference="RAresource"
- *   groupComponent={({record, ...otherProps })=>
+ *   groupComponent={record=>
  *     <RightLabel label={record['property of RAresource display']}/>
  *   }
  *   filterProperty="property of source filtered by groupReference"
@@ -32,7 +30,6 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   </SingleFieldList>
  * </GroupedArrayField>
  */
-
 const GroupedArrayField = ({
   children,
   groupReference,

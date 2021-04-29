@@ -128,7 +128,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           }
 
           const listProperty = ['as:orderedItems', 'orderedItems', 'as:items', 'items'].find(p => json[p]);
-          if (!listProperty) throw new Error('Unknown list type');
+          if (!listProperty) return { data: [], total: 0 };
 
           // TODO fetch several pages depending on params.pagination
 

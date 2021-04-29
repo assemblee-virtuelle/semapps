@@ -6,6 +6,7 @@ export { default as Actor } from './Agent/Actor/Actor';
 // Activities
 export { default as Project } from './Agent/Activity/Project';
 export { default as Event } from './Agent/Activity/Event';
+export { default as Task } from './Agent/Activity/Task';
 export { default as Activity } from './Agent/Activity/Activity';
 
 // Resources
