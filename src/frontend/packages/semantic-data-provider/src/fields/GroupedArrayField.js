@@ -1,10 +1,10 @@
-import React, { useState, useEffect, createElement } from 'react';
-import { ArrayField, useDataProvider, useResourceContext } from 'react-admin';
+import React, { useState, useEffect } from 'react';
+import { useDataProvider } from 'react-admin';
 import { default as FilteredArrayField } from './FilteredArrayField';
 import { Typography, Box } from '@material-ui/core';
 
 /**
- * @example 1 : simple group label
+ * @example Simple group label
  * <GroupedArrayField
  *   source="property"
  *   groupReference="RAresource"
@@ -15,14 +15,12 @@ import { Typography, Box } from '@material-ui/core';
  *   <SingleFieldList>
  *   </SingleFieldList>
  * </GroupedArrayField>
- */
-
-/**
- * @example 2 : custom group label
+ *
+ * @example 2 Custom group label
  * <GroupedArrayField
  *   source="property"
  *   groupReference="RAresource"
- *   groupComponent={({record, ...otherProps })=>
+ *   groupComponent={record=>
  *     <RightLabel label={record['property of RAresource display']}/>
  *   }
  *   filterProperty="property of source filtered by groupReference"
@@ -31,7 +29,6 @@ import { Typography, Box } from '@material-ui/core';
  *   </SingleFieldList>
  * </GroupedArrayField>
  */
-
 const GroupedArrayField = ({
   children,
   groupReference,
@@ -67,15 +64,13 @@ const GroupedArrayField = ({
         filter[filterProperty] = group.id;
         return (
           <Box key={index}>
-            {groupComponent && groupComponent(group)
-            // createElement(groupComponent,{record:group})
-            }
-            {!groupComponent && (
+            {groupComponent ?
+              groupComponent(group) :
+              (
               <Typography variant={groupVariant} align="left" noWrap>
                 {group[groupLabel]}
               </Typography>
             )}
-
             <FilteredArrayField {...otherProps} filter={filter}>
               {children}
             </FilteredArrayField>
