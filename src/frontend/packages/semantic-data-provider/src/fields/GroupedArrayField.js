@@ -1,7 +1,8 @@
 import React, { useState, useEffect, createElement } from 'react';
-import { ArrayField, useDataProvider, useResourceContext } from 'react-admin';
+import { ArrayField, useDataProvider, useResourceContext, getResources, useQueryWithStore } from 'react-admin';
 import { default as FilteredArrayField } from './FilteredArrayField';
 import { Typography, Box } from '@material-ui/core';
+import { shallowEqual, useSelector } from 'react-redux';
 
 /**
  * @example 1 : simple group label
@@ -37,49 +38,23 @@ const GroupedArrayField = ({
   groupReference,
   groupLabel,
   filterProperty,
-  groupComponent,
-  groupVariant,
   ...otherProps
 }) => {
-  const dataProvider = useDataProvider();
-  const [groups, setGroups] = useState();
-
-  useEffect(() => {
-    if (!groups) {
-      dataProvider.getResources().then(resources => {
-        const resource = resources.data[groupReference];
-        dataProvider
-          .getList(groupReference, { '@id': resource.containerUri })
-          .then(groups => {
-            setGroups(groups.data);
-          })
-          .catch(e => {
-            setGroups([]);
-          });
-      });
-    }
-  }, [groups]);
+  const { data } = useQueryWithStore({
+    type: 'getList',
+    resource: groupReference,
+    payload: {}
+  });
 
   return (
     <>
-      {groups?.map((group, index) => {
+      {data?.map((data, index) => {
         let filter = {};
-        filter[filterProperty] = group.id;
+        filter[filterProperty] = data.id;
         return (
-          <Box key={index}>
-            {groupComponent && groupComponent(group)
-            // createElement(groupComponent,{record:group})
-            }
-            {!groupComponent && (
-              <Typography variant={groupVariant} align="left" noWrap>
-                {group[groupLabel]}
-              </Typography>
-            )}
-
-            <FilteredArrayField {...otherProps} filter={filter}>
-              {children}
-            </FilteredArrayField>
-          </Box>
+          <FilteredArrayField {...otherProps} filter={filter} label={data[groupLabel]}>
+            {children}
+          </FilteredArrayField>
         );
       })}
     </>

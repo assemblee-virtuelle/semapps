@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   MainList,
@@ -58,15 +58,19 @@ const OrganizationShow = props => (
           <GroupedArrayField
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupComponent={record => <RightLabel record={record} source="pair:label" label={record?.['pair:label']} />}
+            groupLabel="pair:label"
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-            <GridList xs={6} linkType={false}>
-              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
-              </ReferenceField>
-            </GridList>
+            <RightLabel>
+              <ArrayField source="pair:organizationOfMembership">
+                <GridList xs={6} linkType={false}>
+                  <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                    <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
+                  </ReferenceField>
+                </GridList>
+              </ArrayField>
+            </RightLabel>
           </GroupedArrayField>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">

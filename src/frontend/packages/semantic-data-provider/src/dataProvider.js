@@ -70,13 +70,17 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   };
 
   return {
-    getResources: async (resourceId, params) => {
-      return { data: resources };
+    getResources: async () => {
+      // console.log('getResources',resources);
+      const clone = JSON.parse(JSON.stringify(resources))
+      return { data: clone };
     },
     getList: async (resourceId, params) => {
+
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
       if (params.id || params['@id'] || !resources[resourceId].types) {
+
         const url = params.id || params['@id'] || resources[resourceId].containerUri;
         let { json } = await httpClient(url);
 
@@ -164,12 +168,15 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           compactJson.id = compactJson.id || compactJson['@id'];
           return { data: [compactJson], total: 1 };
         } else {
-          const returnData = compactJson['@graph']
+
+          let returnData = compactJson['@graph']
             .map(item => {
               item.id = item.id || item['@id'];
               return item;
             })
-            .sort((a, b) => {
+
+          if(params.sort){
+            returnData = returnData.sort((a, b) => {
               if (params.sort && a[params.sort.field] && b[params.sort.field]) {
                 if (params.sort.order === 'DESC') {
                   return a[params.sort.field].localeCompare(b[params.sort.field]);
@@ -180,10 +187,13 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
                 return true;
               }
             })
-            .slice(
+          }
+          if(params.pagination){
+            returnData = returnData.slice(
               (params.pagination.page - 1) * params.pagination.perPage,
               params.pagination.page * params.pagination.perPage
             );
+          }
 
           return { data: returnData, total: compactJson['@graph'].length };
         }

@@ -18,9 +18,10 @@ import { ArrayField } from 'react-admin';
 
 const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
+  console.log('FilteredArrayField');
   useEffect(() => {
-    if (record && source && Array.isArray(record[source])) {
-      const filteredData = record[source].filter(r => {
+    if (record && source && Array.isArray(record?.[source])) {
+      const filteredData = record?.[source].filter(r => {
         let eq = true;
         for (const key in filter) {
           const value = r[key];
@@ -39,16 +40,29 @@ const FilteredArrayField = ({ children, record, filter, source, ...otherProps })
       let newRecord = {
         ...record
       };
-      newRecord[source] = filteredData;
+      //undefined setted if no data to obtain no render in RightLabel or equivalent
+      newRecord[source] = filteredData.length>0?filteredData:undefined;
       setFiltered(newRecord);
     }
   }, [record, source, filter]);
 
+
+
   return (
-    <ArrayField record={filtered} source={source} {...otherProps}>
-      {children}
-    </ArrayField>
+    <>
+      {
+        React.Children.map(children, (child, i) => {
+            return React.cloneElement(child, {
+              ...otherProps,
+              record: filtered,
+              source
+            });
+          })
+      }
+    </>
   );
+
+
 };
 
 FilteredArrayField.defaultProps = {
