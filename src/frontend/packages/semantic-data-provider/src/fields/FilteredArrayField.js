@@ -5,8 +5,10 @@ import { ArrayField } from 'react-admin';
  * @example
  * <Show>
  *   <FilteredArrayField
- *     source="pair:organizationOfMembership"
+ *     source="property" // ex pair:organizationOfMembership
  *     filter={{
+ *       'propertyToFilter':'value'
+ *     }} // ex {{
  *       'pair:membershipRole':'http://localhost:3000/membership-roles/role-1'
  *     }}
  *     >

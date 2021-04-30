@@ -4,32 +4,23 @@ import { default as FilteredArrayField } from './FilteredArrayField';
 import { Typography, Box } from '@material-ui/core';
 import { shallowEqual, useSelector } from 'react-redux';
 
-/**
+/*
  * @example Simple group label
  * <GroupedArrayField
- *   source="property"
- *   groupReference="RAresource"
- *   groupLabel="property of RAresource display"
- *   groupVariant="Typography MaterialUI variant"
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
  *   filterProperty="property of source filtered by groupReference"
  * >
- *   <SingleFieldList>
- *   </SingleFieldList>
- * </GroupedArrayField>
- *
- * @example 2 Custom group label
- * <GroupedArrayField
- *   source="property"
- *   groupReference="RAresource"
- *   groupComponent={record=>
- *     <RightLabel label={record['property of RAresource display']}/>
- *   }
- *   filterProperty="property of source filtered by groupReference"
- * >
- *   <SingleFieldList>
- *   </SingleFieldList>
+ *   <RightLabel>
+ *     <ArrayField source="property"> // same props as GroupedArrayField source
+ *       <GridList>
+ *       </GridList>
+ *     </ArrayField>
+ *   </RightLabel>
  * </GroupedArrayField>
  */
+ 
 const GroupedArrayField = ({
   children,
   groupReference,
