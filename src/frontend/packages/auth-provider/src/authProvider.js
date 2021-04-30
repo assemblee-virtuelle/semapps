@@ -1,6 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import { defaultToArray, getAclUri } from './utils';
-import { ANONYMOUS_AGENT, FULL_ANONYMOUS_AGENT, AUTHENTICATED_AGENT, FULL_AUTHENTICATED_AGENT } from "./constants";
+import { defaultToArray, getAclUri, getAclContext } from './utils';
 
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
@@ -43,17 +42,8 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
 
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
-    // Use a full URI for the class agents as there is an issue
-    // See https://github.com/assemblee-virtuelle/semapps/issues/727
-    // An alternative could be to use the triple format
-    if( agentId === ANONYMOUS_AGENT ) {
-      agentId = FULL_ANONYMOUS_AGENT;
-    } else if( agentId === AUTHENTICATED_AGENT ) {
-      agentId = FULL_AUTHENTICATED_AGENT;
-    }
-
     let authorization = {
-      '@id': aclUri + '#' + mode.replace('acl:', ''),
+      '@id': '#' + mode.replace('acl:', ''),
       '@type': 'acl:Authorization',
       [predicate]: agentId,
       'acl:accessTo': resourceUri,
@@ -63,10 +53,7 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     await httpClient(aclUri, {
       method: 'PATCH',
       body: JSON.stringify({
-        '@context': {
-          acl: 'http://www.w3.org/ns/auth/acl#',
-          foaf: 'http://xmlns.com/foaf/0.1/'
-        },
+        '@context': getAclContext(aclUri),
         '@graph': [authorization]
       })
     });
@@ -79,19 +66,21 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     // Fetch current permissions
     let { json } = await httpClient(aclUri);
 
-    const updatedPermissions = json['@graph'].map(authorization => {
-      const modes = defaultToArray(authorization['acl:mode']);
-      let agents = defaultToArray(authorization[predicate]);
-      if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
-        agents = agents.filter(agent => agent !== agentId);
-      }
-      return { ...authorization, [predicate]: agents };
-    });
+    const updatedPermissions = json['@graph']
+      .filter(authorization => !authorization['@id'].includes('#Default'))
+      .map(authorization => {
+        const modes = defaultToArray(authorization['acl:mode']);
+        let agents = defaultToArray(authorization[predicate]);
+        if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
+          agents = agents.filter(agent => agent !== agentId);
+        }
+        return { ...authorization, [predicate]: agents };
+      });
 
     await httpClient(aclUri, {
       method: 'PUT',
       body: JSON.stringify({
-        ...json,
+        '@context': getAclContext(aclUri),
         '@graph': updatedPermissions
       })
     });

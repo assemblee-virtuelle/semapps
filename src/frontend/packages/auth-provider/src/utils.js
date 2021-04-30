@@ -6,3 +6,14 @@ export const defaultToArray = value => (!value ? undefined : Array.isArray(value
 // To be compatible with all servers, we should do a HEAD request to the resource URI
 export const getAclUri = (middlewareUri, resourceUri) =>
   urlJoin(middlewareUri, resourceUri.replace(middlewareUri, '_acl/'));
+
+export const getAclContext = baseUri => ({
+  '@base': baseUri,
+  acl: 'http://www.w3.org/ns/auth/acl#',
+  foaf: 'http://xmlns.com/foaf/0.1/',
+  'acl:agent': { '@type': '@id' },
+  'acl:agentGroup': { '@type': '@id' },
+  'acl:agentClass': { '@type': '@id' },
+  'acl:mode': { '@type': '@id' },
+  'acl:accessTo': { '@type': '@id' }
+});
