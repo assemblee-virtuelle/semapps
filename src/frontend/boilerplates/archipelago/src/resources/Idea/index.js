@@ -12,7 +12,7 @@ export default {
     edit: IdeaEdit,
     icon: IdeaIcon,
     options: {
-      label: 'Idées',
+      label: 'Idées'
     }
   },
   dataModel: {
