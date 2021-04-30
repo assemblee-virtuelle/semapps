@@ -20,7 +20,6 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   </RightLabel>
  * </GroupedArrayField>
  */
- 
 const GroupedArrayField = ({
   children,
   groupReference,

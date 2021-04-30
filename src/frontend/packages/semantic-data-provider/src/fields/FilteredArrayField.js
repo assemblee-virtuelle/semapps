@@ -42,28 +42,22 @@ const FilteredArrayField = ({ children, record, filter, source, ...otherProps })
         ...record
       };
       //undefined setted if no data to obtain no render in RightLabel or equivalent
-      newRecord[source] = filteredData.length>0?filteredData:undefined;
+      newRecord[source] = filteredData.length > 0 ? filteredData : undefined;
       setFiltered(newRecord);
     }
   }, [record, source, filter]);
 
-
-
   return (
     <>
-      {
-        React.Children.map(children, (child, i) => {
-            return React.cloneElement(child, {
-              ...otherProps,
-              record: filtered,
-              source
-            });
-          })
-      }
+      {React.Children.map(children, (child, i) => {
+        return React.cloneElement(child, {
+          ...otherProps,
+          record: filtered,
+          source
+        });
+      })}
     </>
   );
-
-
 };
 
 FilteredArrayField.defaultProps = {
