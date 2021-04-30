@@ -70,11 +70,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   };
 
   return {
-    getResources: async () => {
-      // console.log('getResources',resources);
-      const clone = JSON.parse(JSON.stringify(resources))
-      return { data: clone };
-    },
     getList: async (resourceId, params) => {
 
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);

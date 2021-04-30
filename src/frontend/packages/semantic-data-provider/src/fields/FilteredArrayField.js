@@ -20,7 +20,6 @@ import { ArrayField } from 'react-admin';
 
 const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
-  console.log('FilteredArrayField');
   useEffect(() => {
     if (record && source && Array.isArray(record?.[source])) {
       const filteredData = record?.[source].filter(r => {
