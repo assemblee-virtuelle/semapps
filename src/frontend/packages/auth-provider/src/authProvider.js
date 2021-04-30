@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import { defaultToArray, getAclUri } from './utils';
+import { ANONYMOUS_AGENT, FULL_ANONYMOUS_AGENT, AUTHENTICATED_AGENT, FULL_AUTHENTICATED_AGENT } from "./constants";
 
 const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
@@ -41,6 +42,15 @@ const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }
     const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
 
     const aclUri = getAclUri(middlewareUri, resourceUri);
+
+    // Use a full URI for the class agents as there is an issue
+    // See https://github.com/assemblee-virtuelle/semapps/issues/727
+    // An alternative could be to use the triple format
+    if( agentId === ANONYMOUS_AGENT ) {
+      agentId = FULL_ANONYMOUS_AGENT;
+    } else if( agentId === AUTHENTICATED_AGENT ) {
+      agentId = FULL_AUTHENTICATED_AGENT;
+    }
 
     let authorization = {
       '@id': aclUri + '#' + mode.replace('acl:', ''),
