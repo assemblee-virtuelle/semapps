@@ -64,9 +64,9 @@ const GroupedArrayField = ({
         filter[filterProperty] = group.id;
         return (
           <Box key={index}>
-            {groupComponent ?
-              groupComponent(group) :
-              (
+            {groupComponent ? (
+              groupComponent(group)
+            ) : (
               <Typography variant={groupVariant} align="left" noWrap>
                 {group[groupLabel]}
               </Typography>

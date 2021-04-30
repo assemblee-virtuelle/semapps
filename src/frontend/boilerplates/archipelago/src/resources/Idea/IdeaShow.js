@@ -1,0 +1,55 @@
+import React from 'react';
+import { ChipField, SingleFieldList, TextField } from 'react-admin';
+import { Grid } from '@material-ui/core';
+import {
+  Hero,
+  Show,
+  MarkdownField,
+  GridList,
+  MainList,
+  SideList,
+  AvatarField,
+  SeparatedListField
+} from '@semapps/archipelago-layout';
+import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import IdeaTitle from './IdeaTitle';
+
+const IdeaShow = props => (
+  <Show title={<IdeaTitle />} {...props}>
+    <Grid container spacing={5}>
+      <Grid item xs={12} sm={9}>
+        <Hero image="image">
+          <ReferenceArrayField reference="Actor" source="pair:brainstormedBy">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
+          <ReferenceArrayField reference="Type" source="pair:hasType">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
+        </Hero>
+        <MainList>
+          <MarkdownField source="pair:description" />
+        </MainList>
+      </Grid>
+      <Grid item xs={12} sm={3}>
+        <SideList>
+          <ReferenceArrayField reference="Activity" source="pair:concretizedBy" sort={{ field: 'type', order: 'ASC' }}>
+            <GridList xs={6} linkType="show">
+              <AvatarField label="pair:label" image="image" />
+            </GridList>
+          </ReferenceArrayField>
+        </SideList>
+      </Grid>
+    </Grid>
+  </Show>
+);
+
+export default IdeaShow;
