@@ -1,8 +1,6 @@
-import React, { useState, useEffect, createElement } from 'react';
-import { ArrayField, useDataProvider, useResourceContext, getResources, useQueryWithStore } from 'react-admin';
+import React from 'react';
+import { useQueryWithStore } from 'react-admin';
 import { default as FilteredArrayField } from './FilteredArrayField';
-import { Typography, Box } from '@material-ui/core';
-import { shallowEqual, useSelector } from 'react-redux';
 
 /*
  * @example Simple group label
