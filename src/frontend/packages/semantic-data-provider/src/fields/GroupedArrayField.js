@@ -18,13 +18,7 @@ import { default as FilteredArrayField } from './FilteredArrayField';
  *   </RightLabel>
  * </GroupedArrayField>
  */
-const GroupedArrayField = ({
-  children,
-  groupReference,
-  groupLabel,
-  filterProperty,
-  ...otherProps
-}) => {
+const GroupedArrayField = ({ children, groupReference, groupLabel, filterProperty, ...otherProps }) => {
   const { data } = useQueryWithStore({
     type: 'getList',
     resource: groupReference,

@@ -161,14 +161,12 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           compactJson.id = compactJson.id || compactJson['@id'];
           return { data: [compactJson], total: 1 };
         } else {
+          let returnData = compactJson['@graph'].map(item => {
+            item.id = item.id || item['@id'];
+            return item;
+          });
 
-          let returnData = compactJson['@graph']
-            .map(item => {
-              item.id = item.id || item['@id'];
-              return item;
-            })
-
-          if(params.sort){
+          if (params.sort) {
             returnData = returnData.sort((a, b) => {
               if (params.sort && a[params.sort.field] && b[params.sort.field]) {
                 if (params.sort.order === 'DESC') {

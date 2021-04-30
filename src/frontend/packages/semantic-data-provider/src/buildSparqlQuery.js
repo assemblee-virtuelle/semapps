@@ -47,8 +47,8 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, derefer
     }
   `;
   //need to do query without params (getList)
-  if (pagination){
-    query=`
+  if (pagination) {
+    query = `
     ${query}
     # TODO try to make pagination work in SPARQL as this doesn't work.
     # LIMIT ${pagination.perPage}
