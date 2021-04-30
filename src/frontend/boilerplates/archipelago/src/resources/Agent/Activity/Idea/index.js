@@ -27,9 +27,9 @@ export default {
       fields: {
         'pair:label': 'Titre',
         'pair:description': 'Description',
-//       about -> [Subject]
+        //       about -> [Subject]
         'pair:brainstormedBy': 'Imaginée par' /*Actor*/,
-        'pair:concretizedBy' : 'Concrétisée par' /*Activity*/,
+        'pair:concretizedBy': 'Concrétisée par' /*Activity*/,
         'pair:hasType': 'Type',
         'pair:hasStatus': 'Statut'
       }
