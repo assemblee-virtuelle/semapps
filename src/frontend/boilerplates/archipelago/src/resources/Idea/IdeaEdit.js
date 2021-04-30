@@ -2,7 +2,7 @@ import React from 'react';
 import { SimpleForm, TextInput, SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActorsInput, ActivitiesInput } from '../../../../pair';
+import { ActorsInput, ActivitiesInput } from '../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import IdeaTitle from './IdeaTitle';
 

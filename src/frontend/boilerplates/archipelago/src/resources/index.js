@@ -6,7 +6,6 @@ export { default as Actor } from './Agent/Actor/Actor';
 // Activities
 export { default as Project } from './Agent/Activity/Project';
 export { default as Event } from './Agent/Activity/Event';
-export { default as Idea } from './Agent/Activity/Idea';
 export { default as Task } from './Agent/Activity/Task';
 export { default as Activity } from './Agent/Activity/Activity';
 
@@ -24,6 +23,9 @@ export { default as MembershipRole } from './Concept/MembershipRole';
 // Objects
 export { default as Document } from './Object/Document';
 export { default as Object } from './Object/Object';
+
+// Ideas
+export { default as Idea } from './Idea';
 
 // Put this at the end, otherwise it will load as the homepage
 export { default as Agent } from './Agent/Agent';

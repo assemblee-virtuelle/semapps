@@ -9,7 +9,6 @@ const ActivityRedirect = props => (
       typesMap={{
         Project: 'pair:Project',
         Event: 'pair:Event',
-        Idea: 'pair:Idea',
         Task: 'pair:Task'
       }}
     />
@@ -25,7 +24,7 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Project', 'pair:Event', 'pair:Idea', 'pair:Task']
+    types: ['pair:Project', 'pair:Event', 'pair:Task']
   },
   translations: {
     fr: {

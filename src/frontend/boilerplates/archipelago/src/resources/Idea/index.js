@@ -1,4 +1,4 @@
-import { PairResourceCreate } from '../../../../pair';
+import { PairResourceCreate } from '../../pair';
 import IdeaEdit from './IdeaEdit';
 import IdeaList from './IdeaList';
 import IdeaShow from './IdeaShow';
@@ -13,7 +13,6 @@ export default {
     icon: IdeaIcon,
     options: {
       label: 'Idées',
-      parent: 'Activity'
     }
   },
   dataModel: {
@@ -27,7 +26,7 @@ export default {
       fields: {
         'pair:label': 'Titre',
         'pair:description': 'Description',
-        //       about -> [Subject]
+        // about -> [Subject]
         'pair:brainstormedBy': 'Imaginée par' /*Actor*/,
         'pair:concretizedBy': 'Concrétisée par' /*Activity*/,
         'pair:hasType': 'Type',
