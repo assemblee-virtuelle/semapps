@@ -79,7 +79,7 @@ module.exports = {
       if (this.broker.cacher) {
         for (let triple of triples) {
           const resourceUri = triple.subject.id;
-          ctx.call('ldp.cache-cleaner.cleanResource', { resourceUri });
+          ctx.call('ldp.cache.invalidateResource', { resourceUri });
         }
       }
     },
