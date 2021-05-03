@@ -19,10 +19,11 @@ const ListActions = ({
   total,
   views,
   currentView,
-  setView
+  setView,
+  ...rest
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const resourceDefinition = useResourceDefinition({});
+  const resourceDefinition = useResourceDefinition(rest);
   const query = new URLSearchParams(useLocation().search);
   return (
     <TopToolbar>
