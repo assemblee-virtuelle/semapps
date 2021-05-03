@@ -7,11 +7,11 @@ module.exports = {
   actions: {
     async generate(ctx) {
       const containersUris = await ctx.call('ldp.container.getAll');
-      for( let containerUri of containersUris ) {
+      for (let containerUri of containersUris) {
         try {
-          await ctx.call('ldp.container.get', {containerUri, accept: MIME_TYPES.JSON});
+          await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
           console.log('Generated cache for container ' + containerUri);
-        } catch(e) {
+        } catch (e) {
           console.log('Error when generating cache for container ' + containerUri);
           console.error(e);
         }
