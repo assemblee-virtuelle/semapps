@@ -11,7 +11,7 @@ const ListWithPermissions = ({ actions, resource, ...rest }) => {
       {...rest}
       resource={resource}
       hasCreate={!!(permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])))}
-      actions={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))
+      actions={actions && permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))
         ? React.cloneElement(actions, { bulkActions: <PermissionsButton /> })
         : actions
       }
