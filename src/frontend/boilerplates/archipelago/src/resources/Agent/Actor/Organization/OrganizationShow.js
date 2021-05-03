@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
+import { TextField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   MainList,
@@ -16,12 +16,31 @@ import { MapField } from '@semapps/geo-components';
 import {
   ReferenceArrayField,
   ReferenceField,
-  GroupedArrayField,
-  FilteredArrayField
+  GroupedArrayField
 } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
+
+import Chip from '@material-ui/core/Chip'
+
+function handleClick (item)
+{
+  window.location.href = item;
+}
+const TextArrayField = ({ record, source }) => {
+  const array = record[source]
+  if (typeof array === 'undefined' || array === null || array.length === 0) {
+    return <div/>
+  } else {
+    return (
+      <>
+        {array.map(item => <Chip label={item} key={item} onClick={handleClick.bind(this, item)} />)}
+      </>
+    )    
+  }
+}
+TextArrayField.defaultProps = { addLabel: true }
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -29,10 +48,16 @@ const OrganizationShow = props => (
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-          <UrlField source="pair:homePage" />
+
+          <TextArrayField label="Liens utiles" source="pair:homepage" >
+            <SingleFieldList linkType="show" >
+              <ChipField />
+            </SingleFieldList>
+          </TextArrayField>
+
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
-              <TextField source="pair:label" />
+              <Chip source="pair:label" />
             </SeparatedListField>
           </ReferenceArrayField>
         </Hero>

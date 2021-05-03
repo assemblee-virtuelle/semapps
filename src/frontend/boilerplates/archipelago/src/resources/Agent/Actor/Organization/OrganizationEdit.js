@@ -1,7 +1,7 @@
 import React from 'react';
-import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
+import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab, ArrayInput, SimpleFormIterator, DateInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit, RightLabel } from '@semapps/archipelago-layout';
+import { Edit } from '@semapps/archipelago-layout';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
 import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
@@ -17,7 +17,13 @@ export const OrganizationEdit = props => {
           <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
-          <TextInput source="pair:homePage" fullWidth />
+
+          <ArrayInput label="liens" source="pair:homepage" >
+            <SimpleFormIterator>
+              <TextInput label="" fullWidth />
+            </SimpleFormIterator>
+          </ArrayInput>
+
           <PairLocationInput source="pair:hasLocation" fullWidth />
           <ImageInput source="image" accept="image/*">
             <ImageField source="src" />
