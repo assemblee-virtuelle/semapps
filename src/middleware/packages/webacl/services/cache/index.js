@@ -1,9 +1,9 @@
 module.exports = {
-  name: 'webacl.cache-cleaner',
+  name: 'webacl.cache',
   actions: {
     // Invalidate the WebACL cache of the given resource
     // If specificUriOnly is false, it will invalidate all resources starting with the given URI
-    async cleanResourceRights(ctx) {
+    async invalidateResourceRights(ctx) {
       if (this.broker.cacher) {
         const { uri, specificUriOnly } = ctx.params;
         await this.broker.cacher.clean(`webacl.resource.getRights:${uri}${specificUriOnly ? '|**' : '**'}`);
@@ -11,7 +11,7 @@ module.exports = {
       }
     },
     // Invalidate all WebACL cache for the given user
-    async cleanAllUserRights(ctx) {
+    async invalidateAllUserRights(ctx) {
       if (this.broker.cacher) {
         const { uri } = ctx.params;
         await this.broker.cacher.clean(`webacl.resource.getRights:**${uri}**`);
@@ -22,24 +22,24 @@ module.exports = {
   events: {
     async 'webacl.resource.updated'(ctx) {
       const { uri, isContainer, defaultRightsUpdated } = ctx.params;
-      await this.actions.cleanResourceRights(
+      await this.actions.invalidateResourceRights(
         { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
         { parentCtx: ctx }
       );
     },
     async 'webacl.resource.deleted'(ctx) {
       const { uri } = ctx.params;
-      await this.actions.cleanResourceRights({ uri, specificUriOnly: false }, { parentCtx: ctx });
+      await this.actions.invalidateResourceRights({ uri, specificUriOnly: false }, { parentCtx: ctx });
     },
     async 'webacl.group.member-added'(ctx) {
       const { groupUri, memberUri } = ctx.params;
-      await this.actions.cleanResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
-      await this.actions.cleanAllUserRights({ uri: memberUri }, { parentCtx: ctx });
+      await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
+      await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
     },
     async 'webacl.group.member-removed'(ctx) {
       const { groupUri, memberUri } = ctx.params;
-      await this.actions.cleanResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
-      await this.actions.cleanAllUserRights({ uri: memberUri }, { parentCtx: ctx });
+      await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
+      await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
     }
   }
 };

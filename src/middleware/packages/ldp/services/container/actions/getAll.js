@@ -4,7 +4,7 @@ const { getPrefixRdf } = require('../../../utils');
 module.exports = {
   visibility: 'public',
   async handler(ctx) {
-    await ctx.call('triplestore.query', {
+    const result = await ctx.call('triplestore.query', {
       query: `
         ${getPrefixRdf(this.settings.ontologies)}
         SELECT ?containerUri
@@ -15,5 +15,7 @@ module.exports = {
       accept: MIME_TYPES.JSON,
       webId: 'system'
     });
+
+    return result.map(node => node.containerUri.value);
   }
 };

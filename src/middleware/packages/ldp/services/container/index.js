@@ -7,6 +7,7 @@ const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
 const headAction = require('./actions/head');
+const getAllAction = require('./actions/getAll');
 const getOptionsAction = require('./actions/getOptions');
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
     detach: detachAction,
     exist: existAction,
     getOptions: getOptionsAction,
+    getAll: getAllAction,
     // Actions accessible through the API
     api_get: getAction.api,
     api_head: headAction.api,
