@@ -1,6 +1,6 @@
 import React from 'react';
-import { MultiViewsList, SimpleList, ListActions } from '@semapps/archipelago-layout';
-import { PermissionsButton } from '@semapps/auth-provider';
+import { MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
+import { ListWithPermissions } from '@semapps/auth-provider';
 import { MapList } from '@semapps/geo-components';
 import { Avatar } from '@material-ui/core';
 import MapIcon from '@material-ui/icons/Map';
@@ -10,8 +10,8 @@ import OrganizationFilterSidebar from './OrganizationFilterSidebar';
 
 const OrganizationList = props => (
   <MultiViewsList
+    ListComponent={ListWithPermissions}
     aside={<OrganizationFilterSidebar />}
-    actions={<ListActions bulkActions={<PermissionsButton />} />}
     views={{
       list: {
         label: 'Liste',

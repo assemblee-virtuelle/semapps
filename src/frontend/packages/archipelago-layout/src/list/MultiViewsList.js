@@ -3,12 +3,12 @@ import { List } from 'react-admin';
 import { useLocation } from 'react-router';
 import ListActions from './ListActions';
 
-const MultiViewsList = ({ children, actions, views, ...otherProps }) => {
+const MultiViewsList = ({ children, actions, views, ListComponent, ...otherProps }) => {
   const query = new URLSearchParams(useLocation().search);
   const initialView = query.has('view') ? query.get('view') : Object.keys(views)[0];
   const [currentView, setView] = useState(initialView);
   return (
-    <List
+    <ListComponent
       actions={React.cloneElement(actions, { views, currentView, setView, ...otherProps })}
       pagination={views[currentView].pagination}
       // Set initial values, but use the query string to change these values to avoid a complete refresh
@@ -17,12 +17,13 @@ const MultiViewsList = ({ children, actions, views, ...otherProps }) => {
       {...otherProps}
     >
       {views[currentView].list}
-    </List>
+    </ListComponent>
   );
 };
 
 MultiViewsList.defaultProps = {
-  actions: <ListActions />
+  actions: <ListActions />,
+  ListComponent: List
 };
 
 export default MultiViewsList;

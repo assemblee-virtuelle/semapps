@@ -1,7 +1,7 @@
 import React from 'react';
-import { Admin } from 'react-admin';
+import { Admin, Resource } from 'react-admin';
 import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
-import { LoginPage, LogoutButton, UserMenu, ResourceWithPermissions } from '@semapps/auth-provider';
+import { LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 import { createBrowserHistory as createHistory } from 'history';
 
 import i18nProvider from './config/i18nProvider';
@@ -27,7 +27,7 @@ const App = () => (
     logoutButton={LogoutButton}
   >
     {Object.entries(resources).map(([key, resource]) => (
-      <ResourceWithPermissions key={key} name={key} {...resource.config} />
+      <Resource key={key} name={key} {...resource.config} />
     ))}
   </Admin>
 );

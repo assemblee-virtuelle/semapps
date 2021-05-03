@@ -71,12 +71,11 @@ const App = () => (
 
 ## Checking permissions
 
-If you want to check permissions based on WebACL, you need to provide additional parameters to the authProvider and you need to use the `<ResourceWithPermissions />` component instead of React-Admin's default `<Resource />` component.
-The result will be that resources will only be shown if the user has the right to see its container. Additionally the Create, Edit and Delete buttons will be hidden to users who are not allowed to do these actions.
+If you want to check permissions based on WebACL, you need to provide additional parameters to the authProvider.
 
 ```jsx
-import { Admin } from 'react-admin';
-import { authProvider, ResourceWithPermissions } from '@semapps/auth-provider';
+import { Admin, Resource } from 'react-admin';
+import { authProvider } from '@semapps/auth-provider';
 import { httpClient } from '@semapps/semantic-data-provider';
 
 const App = () => (
@@ -95,26 +94,12 @@ const App = () => (
       }
     })}
   >
-    <ResourceWithPermissions name="Project" />
-    <ResourceWithPermissions name="Organization" />
+    <Resource name="Project" />
+    <Resource name="Organization" />
   </Admin>
 );
 ```
 
-Additionally, you should use the components `<ShowWithPermissions />`, `<ListWithPermissions />` and `<EditWithPermissions />` instead of React-Admin's default `<Show />`, `<List />` and `<Edit />` components.
+Additionally, you should use the `<ListWithPermissions />`, `<ShowWithPermissions />` and `<EditWithPermissions />` components instead of React-Admin's default `<List />`, `<Show />` and `<Edit />` components.
 
-### With a custom List component
-
-If you use a custom List component but still want to show the Permissions button, you only need to add the `<PermissionsButton />` to the list of `bulkActions`. The button will be displayed if the user has the right to control the container.
-
-```jsx
-import { ListActions } from 'react-admin';
-import { PermissionsButton } from '@semapps/auth-provider';
-
-export const PostList = props => (
-  <MyListComponent
-    actions={<ListActions bulkActions={<PermissionsButton />}
-    {...props}
-  >
-);
-```
+This will hide the Create, Edit and Delete buttons to users who are not allowed to do these actions, and show a Permissions button to users who have `acl:Control` over a resource or a container.
