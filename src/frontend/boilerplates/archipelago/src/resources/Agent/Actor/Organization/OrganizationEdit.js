@@ -18,7 +18,7 @@ export const OrganizationEdit = props => {
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
 
-          <ArrayInput label="liens" source="pair:homepage" >
+          <ArrayInput label="liens" source="pair:homePage" >
             <SimpleFormIterator>
               <TextInput label="" fullWidth />
             </SimpleFormIterator>

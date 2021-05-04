@@ -28,6 +28,7 @@ function handleClick (item)
 {
   window.location.href = item;
 }
+
 const TextArrayField = ({ record, source }) => {
   const array = record[source]
   if (typeof array === 'undefined' || array === null || array.length === 0) {
@@ -35,7 +36,7 @@ const TextArrayField = ({ record, source }) => {
   } else {
     return (
       <>
-        {array.map(item => <Chip label={item} key={item} onClick={handleClick.bind(this, item)} />)}
+        {array.map(item => <Chip label={item} key={item} target="_blank" />)}
       </>
     )    
   }
@@ -49,7 +50,7 @@ const OrganizationShow = props => (
         <Hero image="image">
           <TextField source="pair:comment" />
 
-          <TextArrayField label="Liens utiles" source="pair:homepage" >
+          <TextArrayField label="Liens utiles" source="pair:homePage" >
             <SingleFieldList linkType="show" >
               <ChipField />
             </SingleFieldList>
