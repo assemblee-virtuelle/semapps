@@ -5,7 +5,6 @@ import EditToolbarWithPermissions from './EditToolbarWithPermissions';
 import { rightsToControl, rightsToDelete } from '../../constants';
 
 const EditWithPermissions = props => {
-  console.log('EditWithPermissions', props.id);
   const { permissions } = usePermissionsOptimized(props.id);
   return (
     <RaEdit
