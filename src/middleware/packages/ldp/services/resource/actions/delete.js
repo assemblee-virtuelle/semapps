@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri } = require('../../../utils');
+const { buildBlankNodesQuery, getContainerFromUri } = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -64,11 +64,18 @@ module.exports = {
         await this.deleteDisassembly(ctx, oldData, disassembly, webId);
       }
 
+      const blandNodeQuery = buildBlankNodesQuery(5);
+
       await ctx.call('triplestore.update', {
         query: `
-          DELETE
-          WHERE
-          { <${resourceUri}> ?p ?v }
+          DELETE {
+            <${resourceUri}> ?p1 ?o1 .
+            ${blandNodeQuery.construct}
+          }
+          WHERE { 
+            <${resourceUri}> ?p1 ?o1 .
+            ${blandNodeQuery.where}
+          }
         `,
         webId
       });
