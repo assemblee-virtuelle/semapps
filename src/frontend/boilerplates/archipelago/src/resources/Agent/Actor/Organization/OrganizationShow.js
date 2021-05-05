@@ -24,16 +24,15 @@ import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 
-const ConditionalSourceDefinedHandler = ({record,source,children,...otherProps})=>{
-  if (record?.[source] && (!Array.isArray(record[source])||record[source].length>0)){
-    return  React.Children.map(children, (child, i) => {
-        return React.cloneElement(child, {...otherProps,record,source});
-      })
-  }else{
-    return <></>
+const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherProps }) => {
+  if (record?.[source] && (!Array.isArray(record[source]) || record[source].length > 0)) {
+    return React.Children.map(children, (child, i) => {
+      return React.cloneElement(child, { ...otherProps, record, source });
+    });
+  } else {
+    return <></>;
   }
-}
-
+};
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -79,9 +78,8 @@ const OrganizationShow = props => (
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-
             <ConditionalSourceDefinedHandler>
-              <RightLabel/>
+              <RightLabel />
               <ArrayField source="pair:organizationOfMembership">
                 <GridList xs={6} linkType={false}>
                   <ReferenceField reference="Person" source="pair:membershipActor" link="show">
