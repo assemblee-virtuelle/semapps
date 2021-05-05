@@ -4,21 +4,19 @@ import { ArrayField } from 'react-admin';
 /**
  * @example
  * <Show>
- *   <FilteredArrayField
+ *   <FilterHandler
  *     source="property" // ex pair:organizationOfMembership
  *     filter={{
  *       'propertyToFilter':'value'
- *     }} // ex {{
- *       'pair:membershipRole':'http://localhost:3000/membership-roles/role-1'
- *     }}
+ *     }} // ex {{'pair:membershipRole':'http://localhost:3000/membership-roles/role-1'}}
  *     >
  *     <SingleFieldList>
  *    </SingleFieldList>
- *   </FilteredArrayField>
+ *   </FilterHandler>
  * </Show>
  */
 
-const FilteredArrayField = ({ children, record, filter, source, ...otherProps }) => {
+const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
   useEffect(() => {
     if (record && source && Array.isArray(record?.[source])) {
@@ -53,15 +51,11 @@ const FilteredArrayField = ({ children, record, filter, source, ...otherProps })
         return React.cloneElement(child, {
           ...otherProps,
           record: filtered,
+          addLabel:true,
           source
         });
       })}
     </>
   );
 };
-
-FilteredArrayField.defaultProps = {
-  addLabel: true
-};
-
-export default FilteredArrayField;
+export default FilterHandler;

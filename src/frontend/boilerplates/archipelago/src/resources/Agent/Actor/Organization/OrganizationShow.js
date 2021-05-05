@@ -10,18 +10,30 @@ import {
   MarkdownField,
   AvatarField,
   SeparatedListField,
-  RightLabel
+  RightLabel,
+  LargeLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
 import {
   ReferenceArrayField,
   ReferenceField,
-  GroupedArrayField,
-  FilteredArrayField
+  GroupedReferenceHandler,
+  FilterHandler
 } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
+
+const ConditionalSourceDefinedHandler = ({record,source,children,...otherProps})=>{
+  if (record?.[source] && (!Array.isArray(record[source])||record[source].length>0)){
+    return  React.Children.map(children, (child, i) => {
+        return React.cloneElement(child, {...otherProps,record,source});
+      })
+  }else{
+    return <></>
+  }
+}
+
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -60,14 +72,16 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <GroupedArrayField
+          <GroupedReferenceHandler
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
             groupLabel="pair:label"
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-            <RightLabel>
+
+            <ConditionalSourceDefinedHandler>
+              <RightLabel/>
               <ArrayField source="pair:organizationOfMembership">
                 <GridList xs={6} linkType={false}>
                   <ReferenceField reference="Person" source="pair:membershipActor" link="show">
@@ -78,8 +92,8 @@ const OrganizationShow = props => (
                   </ReferenceField>
                 </GridList>
               </ArrayField>
-            </RightLabel>
-          </GroupedArrayField>
+            </ConditionalSourceDefinedHandler>
+          </GroupedReferenceHandler>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">
