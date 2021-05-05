@@ -51,7 +51,7 @@ const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
         return React.cloneElement(child, {
           ...otherProps,
           record: filtered,
-          addLabel:true,
+          addLabel: true,
           source
         });
       })}

@@ -66,7 +66,14 @@ import { default as FilterHandler } from './FilterHandler';
  *
  *
  */
-const GroupedReferenceHandler = ({ children, groupReference, groupLabel, groupHeader, filterProperty, ...otherProps }) => {
+const GroupedReferenceHandler = ({
+  children,
+  groupReference,
+  groupLabel,
+  groupHeader,
+  filterProperty,
+  ...otherProps
+}) => {
   const { data } = useQueryWithStore({
     type: 'getList',
     resource: groupReference,
@@ -80,9 +87,7 @@ const GroupedReferenceHandler = ({ children, groupReference, groupLabel, groupHe
         filter[filterProperty] = data.id;
         return (
           <>
-            {groupHeader &&
-              groupHeader({...otherProps,group:data})
-            }
+            {groupHeader && groupHeader({ ...otherProps, group: data })}
             <FilterHandler {...otherProps} filter={filter} label={data[groupLabel]}>
               {children}
             </FilterHandler>
