@@ -31,6 +31,10 @@ module.exports = [
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
   },
   {
+    path: '/ideas',
+    acceptedTypes: 'pair:Idea'
+  },
+  {
     path: '/themes',
     acceptedTypes: 'pair:Theme'
   },
