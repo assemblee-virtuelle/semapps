@@ -3,12 +3,7 @@ import { SimpleForm, TextInput, ImageInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { Edit } from '@semapps/archipelago-layout';
 import { ImageField } from '@semapps/semantic-data-provider';
-import {
-  UsersInput,
-  EventsInput,
-  ThemesInput,
-  DocumentsInput,
-} from '../../../../pair';
+import { UsersInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../pair';
 import GroupTitle from './GroupTitle';
 
 export const GroupEdit = props => (

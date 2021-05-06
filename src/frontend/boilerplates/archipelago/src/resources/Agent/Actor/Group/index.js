@@ -33,9 +33,8 @@ export default {
         'pair:partnerOf': 'Partenaires',
         'pair:involvedIn': 'Participe à',
         'pair:hasTopic': 'Thèmes',
-        'pair:documentedBy': 'Documents',
+        'pair:documentedBy': 'Documents'
       }
     }
   }
 };
-
