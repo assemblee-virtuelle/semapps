@@ -10,8 +10,8 @@ module.exports = {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
     'Middleware packages': [
       'middleware/activitypub',
+      'middleware/auth',
       'middleware/backup',
-      'middleware/connector',
       'middleware/fuseki-admin',
       'middleware/importer',
       'middleware/inference',
