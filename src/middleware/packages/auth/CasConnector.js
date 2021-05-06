@@ -1,5 +1,4 @@
 const { Strategy } = require('passport-cas2');
-const fs = require('fs');
 const Connector = require('./Connector');
 
 class CasConnector extends Connector {

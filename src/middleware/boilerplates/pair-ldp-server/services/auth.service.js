@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const path = require('path');
-const { AuthService } = require('@semapps/connector');
+const { AuthService } = require('@semapps/auth');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const CONFIG = require('../config');
 

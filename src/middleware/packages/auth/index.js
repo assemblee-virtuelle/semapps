@@ -1,6 +1,6 @@
 module.exports = {
+  AuthService: require('./service'),
   Connector: require('./Connector'),
   CasConnector: require('./CasConnector'),
-  OidcConnector: require('./OidcConnector'),
-  AuthService: require('./service')
+  OidcConnector: require('./OidcConnector')
 };

@@ -1,7 +1,6 @@
 const path = require('path');
 const ApiGatewayService = require('moleculer-web');
-
-const { CasConnector, OidcConnector } = require('@semapps/connector');
+const { CasConnector, OidcConnector } = require('@semapps/auth');
 
 const CONFIG = require('../config');
 

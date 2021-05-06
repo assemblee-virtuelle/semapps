@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/connector",
+  "name": "@semapps/auth",
   "version": "0.2.0-alpha.2",
-  "description": "OIDC/Cas module for SemApps",
+  "description": "Authentification module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
@@ -16,6 +16,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+  }
 }

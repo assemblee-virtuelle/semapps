@@ -9,7 +9,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@semapps/activitypub": "0.2.0-alpha.2",
-    "@semapps/connector": "0.2.0-alpha.2",
     "@semapps/fuseki-admin": "0.2.0-alpha.2",
     "@semapps/ldp": "0.2.0-alpha.2",
     "@semapps/middlewares": "0.2.0-alpha.2",
