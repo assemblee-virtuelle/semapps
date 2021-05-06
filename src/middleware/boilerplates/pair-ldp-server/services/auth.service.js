@@ -14,7 +14,7 @@ module.exports = {
       clientId: CONFIG.OIDC_CLIENT_ID,
       clientSecret: CONFIG.OIDC_CLIENT_SECRET
     },
-    selectWebIdData: authData => ({
+    selectProfileData: authData => ({
       email: authData.email,
       name: authData.given_name,
       familyName: authData.family_name

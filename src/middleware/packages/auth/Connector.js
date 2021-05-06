@@ -116,34 +116,15 @@ class Connector {
   async getWebId(ctx) {
     return ctx.meta.tokenPayload.webId;
   }
-  getRoute() {
-    return {
-      use: [
-        session({
-          secret: this.settings.sessionSecret,
-          maxAge: null
-        }),
-        this.passport.initialize(),
-        this.passport.session()
-      ],
-      aliases: {
-        async 'GET auth/logout'(req, res) {
-          await this.connector.logout()(req, res);
-        },
-        async 'GET auth'(req, res, next) {
-          try {
-            await this.connector.login()(req, res);
-          } catch (e) {
-            console.log(e);
-            //next(e);
-            await this.connector.logout()(req, res);
-          }
-        }
-      },
-      onError(req, res, err) {
-        console.log(err);
-      }
-    };
+  getRouteMiddlewares() {
+    return([
+      session({
+        secret: this.settings.sessionSecret,
+        maxAge: null
+      }),
+      this.passport.initialize(),
+      this.passport.session()
+    ]);
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {

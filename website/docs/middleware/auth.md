@@ -108,3 +108,28 @@ http://localhost:3000/auth/logout?redirectUrl=...
 If you wish to logout the user remotely (on the SSO), you can do:
 
 http://localhost:3000/auth/logout?global=true&redirectUrl...
+
+
+## Events
+
+### `auth.registered`
+
+Sent when a new user registers.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `webId` | `String` | URI of the user |
+| `profileData` | `Object` | Data of the user's webId profile |
+| `authData` | `Object` | Data returned by the OIDC or CAS provider |
+
+### `auth.connected`
+
+Sent when an user connects.
+
+##### Parameters
+| Property | Type | Description |
+| -------- | ---- | ----------- |
+| `webId` | `String` | URI of the user |
+| `profileData` | `Object` | Data of the user's webId profile |
+| `authData` | `Object` | Data returned by the OIDC or CAS provider |
