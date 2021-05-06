@@ -41,7 +41,7 @@ class Connector {
     // Select profile data amongst all the data returned by the connector
     // req.user provide by Passport strategy
     const profileData = await this.settings.selectProfileData(req.user);
-    let webId = await this.settings.findOrCreateProfile(profileData);
+    let webId = await this.settings.findOrCreateProfile(profileData, req.user);
     req.user.webId = webId;
     next();
   }
