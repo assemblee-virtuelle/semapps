@@ -50,7 +50,7 @@ module.exports = {
 
     await this.connector.initialize();
 
-    await this.broker.call('api.addRoute', { route: this.getApiRoute() } );
+    await this.broker.call('api.addRoute', { route: this.getApiRoute() });
   },
   methods: {
     async findOrCreateProfile(profileData, authData) {
@@ -79,7 +79,7 @@ module.exports = {
         onError(req, res, err) {
           console.error(err);
         }
-      }
+      };
     }
   },
   actions: {
