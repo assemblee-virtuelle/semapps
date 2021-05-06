@@ -16,7 +16,7 @@ module.exports = {
     cas: {
       url: null
     },
-    selectProfileData: null,
+    selectProfileData: null
   },
   dependencies: ['api', 'webid'],
   async started() {
@@ -25,7 +25,7 @@ module.exports = {
     const privateKeyPath = path.resolve(jwtPath, 'jwtRS256.key');
     const publicKeyPath = path.resolve(jwtPath, 'jwtRS256.key.pub');
 
-    if( oidc.issuer ) {
+    if (oidc.issuer) {
       this.connector = new OidcConnector({
         issuer: oidc.issuer,
         clientId: oidc.clientId,
@@ -36,7 +36,7 @@ module.exports = {
         selectProfileData,
         findOrCreateProfile: this.findOrCreateProfile
       });
-    } else if ( cas.url ) {
+    } else if (cas.url) {
       this.connector = new CasConnector({
         casUrl: cas.url,
         privateKeyPath,
