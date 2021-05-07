@@ -4,6 +4,7 @@ services:
     build:
       context: ./src/jena/fuseki-docker
       dockerfile: Dockerfile
+    image: semapps/jena-fuseki-webacl
     container_name: fuseki
     restart: always
     volumes:
