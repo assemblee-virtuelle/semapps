@@ -117,14 +117,14 @@ class Connector {
     return ctx.meta.tokenPayload.webId;
   }
   getRouteMiddlewares() {
-    return([
+    return [
       session({
         secret: this.settings.sessionSecret,
         maxAge: null
       }),
       this.passport.initialize(),
       this.passport.session()
-    ]);
+    ];
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
