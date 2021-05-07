@@ -78,6 +78,8 @@ module.exports = {
         query += `WHERE {}`;
       }
 
+      console.log('query', query);
+
       await ctx.call('triplestore.update', { query, webId });
 
       // Get the new data, with the same formatting as the old data
