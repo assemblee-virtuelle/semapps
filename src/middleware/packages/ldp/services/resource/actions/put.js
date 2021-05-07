@@ -44,6 +44,8 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
+      console.log('put', resourceUri);
+
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       let oldData = await ctx.call('ldp.resource.get', {
@@ -60,6 +62,9 @@ module.exports = {
       const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples);
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
+      console.log('triplesToAdd', triplesToAdd);
+      console.log('triplesToRemove', triplesToRemove);
+      
       // The exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
         return resourceUri;
