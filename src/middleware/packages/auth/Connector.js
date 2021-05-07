@@ -39,10 +39,10 @@ class Connector {
   }
   async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    // req.user provide by Passport strategy
     const profileData = await this.settings.selectProfileData(req.user);
-    let webId = await this.settings.findOrCreateProfile(profileData, req.user);
+    const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
     req.user.webId = webId;
+    req.user.newUser = newUser;
     next();
   }
   async generateToken(req, res, next) {
@@ -66,7 +66,7 @@ class Connector {
     // Redirect browser to the redirect URL pushed in session
     let redirectUrl = req.session.redirectUrl;
     // If a token was stored, add it to the URL so that the client may use it
-    if (req.user && req.user.token) redirectUrl += '?token=' + req.user.token;
+    if (req.user && req.user.token) redirectUrl += '?token=' + req.user.token + '&new=' + req.user.newUser ? 'true' : 'false';
     // Redirect using NodeJS HTTP
     res.writeHead(302, { Location: redirectUrl });
     res.end();

@@ -60,14 +60,16 @@ module.exports = {
         { meta: { webId: 'system' } }
       );
 
-      if (!webId) {
+      const newUser = !webId;
+
+      if (newUser) {
         webId = await this.broker.call('webid.create', profileData);
         await this.broker.emit('auth.registered', { webId, profileData, authData });
       } else {
         await this.broker.emit('auth.connected', { webId, profileData, authData });
       }
 
-      return webId;
+      return { webId, newUser };
     },
     getApiRoute() {
       return {
