@@ -9,6 +9,7 @@ module.exports = {
   mixins: [ApiGatewayService],
   settings: {
     server: true,
+    port: CONFIG.PORT,
     routes: [
       {
         path: '/context.json',
