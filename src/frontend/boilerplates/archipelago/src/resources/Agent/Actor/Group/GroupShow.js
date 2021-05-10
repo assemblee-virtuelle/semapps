@@ -17,7 +17,7 @@ const GroupShow = props => (
       <Column xs={12} sm={3} showLabel>
         <UriArrayField reference="Person" source="pair:affiliates">
           <GridList xs={6} linkType="show">
-            <UserIcon />
+            <AvatarField label="pair:label" image="image" />
           </GridList>
         </UriArrayField>
         <UriArrayField
