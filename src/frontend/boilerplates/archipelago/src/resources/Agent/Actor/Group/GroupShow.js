@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField, ChipField, SingleFieldList } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, UserIcon, GridList, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { Column, ColumnShowLayout, Hero, GridList, Show, MarkdownField, AvatarField } from '@semapps/archipelago-layout';
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import GroupTitle from './GroupTitle';
 
