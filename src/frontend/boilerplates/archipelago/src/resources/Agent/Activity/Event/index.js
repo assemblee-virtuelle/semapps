@@ -31,8 +31,8 @@ export default {
         'pair:aboutPage': 'Site web',
         'pair:startDate': 'Date de début',
         'pair:endDate': 'Date de fin',
-        'pair:involves': 'Participants',
-        'pair:hasTopic': 'Thèmes'
+        'pair:involves': 'Implique',
+        'pair:hasTopic': 'A pour thème'
       }
     }
   }

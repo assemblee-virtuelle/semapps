@@ -28,10 +28,12 @@ export default {
         'pair:label': 'Nom',
         'pair:comment': 'Courte description',
         'pair:description': 'Description',
+        'pair:hasStatus': 'Statut',
         'pair:homePage': 'Site web',
-        'pair:involves': 'Participants',
-        'pair:documentedBy': 'Documents',
-        'pair:hasTopic': 'Thèmes'
+        'pair:involves': 'Implique',
+        'pair:needs': 'Compétences requises',
+        'pair:documentedBy': 'Documenté par',
+        'pair:hasTopic': 'A pour thème'
       }
     }
   }

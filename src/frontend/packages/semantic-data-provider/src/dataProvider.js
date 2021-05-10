@@ -20,6 +20,11 @@ const getSlugWithExtension = fileName => {
   return createSlug(fileName, { lang: 'fr' }) + '.' + fileExtension;
 };
 
+const isType = (type, resource) => {
+  const resourceType = resource.type || resource['@type'];
+  return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
+};
+
 const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri }) => {
   const uploadFile = async rawFile => {
     if (!uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
@@ -65,48 +70,71 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
   };
 
   return {
+    getResources: async (resourceId, params) => {
+      return { data: resources };
+    },
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
       if (params.id || params['@id'] || !resources[resourceId].types) {
-        /*
-         * Query the container
-         */
         const url = params.id || params['@id'] || resources[resourceId].containerUri;
-        const { json } = await httpClient(url);
+        let { json } = await httpClient(url);
 
-        const listProperties = ['ldp:contains', 'as:orderedItems', 'orderedItems', 'as:items', 'items'];
-        const listProperty = listProperties.find(p => json[p]);
-        if (!listProperty) throw new Error('Unknown list type');
+        if (isType('ldp:Container', json)) {
+          /*
+           * LDP Container
+           */
+          let returnData = json['ldp:contains'].map(item => {
+            item.id = item.id || item['@id'];
+            return item;
+          });
 
-        let returnData = json[listProperty].map(item => {
-          item.id = item.id || item['@id'];
-          return item;
-        });
-
-        // Apply filter to results
-        if (params.filter) {
-          // Remove search params from filter
-          if (params.filter.q) {
-            delete params.filter.q;
+          // Apply filter to results
+          if (params.filter) {
+            // Remove search params from filter
+            if (params.filter.q) {
+              delete params.filter.q;
+            }
+            if (Object.keys(params.filter).length > 0) {
+              returnData = returnData.filter(resource =>
+                Object.entries(params.filter).some(([k, v]) =>
+                  Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+                )
+              );
+            }
           }
-          if (Object.keys(params.filter).length > 0) {
-            returnData = returnData.filter(resource =>
-              Object.entries(params.filter).some(([k, v]) =>
-                Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-              )
+
+          if (params.pagination) {
+            returnData = returnData.slice(
+              (params.pagination.page - 1) * params.pagination.perPage,
+              params.pagination.page * params.pagination.perPage
             );
           }
-        }
 
-        if (params.pagination) {
-          returnData = returnData.slice(
-            (params.pagination.page - 1) * params.pagination.perPage,
-            params.pagination.page * params.pagination.perPage
-          );
-        }
+          return { data: returnData, total: json['ldp:contains'].length };
+        } else {
+          /*
+           * ActivityPub collection
+           */
 
-        return { data: returnData, total: json[listProperty].length };
+          // If the collection is split amongst several pages, get the first page
+          if (json.first) {
+            const result = await httpClient(json.first);
+            json = result.json;
+          }
+
+          const listProperty = ['as:orderedItems', 'orderedItems', 'as:items', 'items'].find(p => json[p]);
+          if (!listProperty) return { data: [], total: 0 };
+
+          // TODO fetch several pages depending on params.pagination
+
+          let returnData = json[listProperty].map(item => {
+            item.id = item.id || item['@id'];
+            return item;
+          });
+
+          return { data: returnData, total: json.totalItems };
+        }
       } else {
         /*
          * Do a SPARQL search
@@ -162,10 +190,23 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       }
     },
     getOne: async (resourceId, params) => {
+      if (!resources[resourceId]) {
+        Error(`Resource ${resourceId} is not mapped in resources file`);
+      }
+      const dataModel = resources[resourceId];
+
       let { json } = await httpClient(params.id);
       json.id = json.id || json['@id'];
       // TODO compact only if remote context is different from local context
       const compactJson = await jsonld.compact(json, jsonContext || buildJsonContext(ontologies));
+      // transform single value into array concidering forceArray predicates
+      if (dataModel.forceArray) {
+        for (const forceArrayItem of dataModel.forceArray) {
+          if (compactJson[forceArrayItem] && !Array.isArray(compactJson[forceArrayItem])) {
+            compactJson[forceArrayItem] = [compactJson[forceArrayItem]];
+          }
+        }
+      }
       return { data: compactJson };
     },
     getMany: async (resourceId, params) => {

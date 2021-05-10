@@ -27,8 +27,8 @@ export default {
         'pair:label': 'Titre',
         'pair:description': 'Description',
         'pair:comment': 'Courte description',
-        'pair:containedIn': 'Dossier',
-        'pair:documents': 'Sujets'
+        'pair:hasType': 'Type',
+        'pair:documents': 'Documente'
       }
     }
   }

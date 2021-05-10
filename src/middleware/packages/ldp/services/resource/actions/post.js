@@ -76,13 +76,22 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      disassembly: {
+        type: 'array',
+        optional: true
+      },
       fileStream: {
         type: 'object',
         optional: true
       }
     },
     async handler(ctx) {
-      const { resource, containerUri, slug, contentType, webId, fileStream } = ctx.params;
+      const containerUri = ctx.params.containerUri;
+      const { slug, contentType, webId, fileStream, disassembly, ...otherParams } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...ctx.params
+      };
+      let resource = otherParams.resource;
 
       // Generate ID and make sure it doesn't exist already
       resource['@id'] = urlJoin(
@@ -125,6 +134,7 @@ module.exports = {
         }
       }
 
+      resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
       await ctx.call('triplestore.insert', {
         resource,
         contentType,

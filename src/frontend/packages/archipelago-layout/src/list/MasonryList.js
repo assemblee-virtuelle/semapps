@@ -1,12 +1,13 @@
 import React from 'react';
 import { useListContext, Link, linkToRecord } from 'react-admin';
-import { makeStyles, Card, CardActionArea, CardMedia, CardContent } from '@material-ui/core';
+import { makeStyles, Card, CardActionArea, CardMedia, CardContent, CardActions } from '@material-ui/core';
 import Masonry from 'react-masonry-css';
 
 const useStyles = makeStyles(() => ({
   grid: {
     display: 'flex',
     marginLeft: -20,
+    marginBottom: -20,
     width: 'auto'
   },
   column: {
@@ -37,7 +38,7 @@ const useStyles = makeStyles(() => ({
  *   />
  * </List>
  */
-const MasonryList = ({ image, content, breakpointCols, linkType }) => {
+const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
   const classes = useStyles();
   const { ids, data, basePath } = useListContext();
   return (
@@ -52,6 +53,11 @@ const MasonryList = ({ image, content, breakpointCols, linkType }) => {
                 {content && <CardContent>{content(data[id])}</CardContent>}
               </CardActionArea>
             </Link>
+            {actions && (
+              <CardActions>
+                {actions.map(action => React.createElement(action, { record: data[id], basePath }))}
+              </CardActions>
+            )}
           </Card>
         );
       })}
@@ -60,7 +66,7 @@ const MasonryList = ({ image, content, breakpointCols, linkType }) => {
 };
 
 MasonryList.defaultProps = {
-  breakpointCols: { default: 3, 900: 2, 450: 1 },
+  breakpointCols: { default: 3, 1050: 2, 700: 1 },
   linkType: 'edit'
 };
 
