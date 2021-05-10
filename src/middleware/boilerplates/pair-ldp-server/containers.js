@@ -14,6 +14,11 @@ module.exports = [
   },
 
   {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
+  {
     path: '/projects',
     acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
     dereference: ['sec:publicKey']
