@@ -12,6 +12,18 @@ module.exports = [
     path: '/membership-associations',
     acceptedTypes: ['pair:MembershipAssociation']
   },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
   {
     path: '/projects',
     acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
