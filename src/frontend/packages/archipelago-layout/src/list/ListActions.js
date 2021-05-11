@@ -70,7 +70,7 @@ const ListActions = ({
           context: 'button'
         })}
       {resourceDefinition.hasCreate && <CreateButton basePath={basePath} />}
-      {!xs && (
+      {!xs && exporter !== false && (
         <ExportButton
           disabled={total === 0}
           resource={resource}
