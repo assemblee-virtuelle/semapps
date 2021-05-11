@@ -1,5 +1,6 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
+const { variable } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 // TODO put each method in a different file (problems with "this" not working)
@@ -16,18 +17,25 @@ module.exports = {
         .on('end', () => resolve(res));
     });
   },
+  convertBlankNodesToVars(triples, blankNodesVarsMap) {
+    return triples.map(triple => {
+      if( triple.subject.termType === 'BlankNode' ) {
+        triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
+      }
+      if( triple.object.termType === 'BlankNode' ) {
+        triple.object = variable(blankNodesVarsMap[triple.object.value]);
+      }
+      return triple;
+    })
+  },
   // Exclude from triples1 the triples which also exist in triples2
   getTriplesDifference(triples1, triples2) {
     return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
   },
-  getTriplesStringDifference(triples1, triples2) {
-    return triples1.filter(t1 => !triples2.some(t2 => t1 === t2));
-  },
-  getNodeForQuery(node, blankNodesVars) {
+  nodeToString(node) {
     switch (node.termType) {
-      case 'BlankNode':
-        // Blank nodes are considered as SPARQL variables
-        return blankNodesVars[node.value];
+      case 'Variable':
+        return `?${node.value}`;
       case 'NamedNode':
         return `<${node.value}>`;
       case 'Literal':
@@ -51,24 +59,18 @@ module.exports = {
     let blankNodesVars = {};
     triples
       .filter(triple => triple.object.termType === 'BlankNode')
-      .forEach(triple => (blankNodesVars[triple.object.value] = '?' + triple.predicate.value.split('#')[1]));
+      .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
     return blankNodesVars;
   },
-  triplesToString(triples, blankNodesVars) {
+  triplesToString(triples) {
     return triples
-      .map(
-        triple =>
-          `${this.getNodeForQuery(triple.subject, blankNodesVars)} <${triple.predicate.value}> ${this.getNodeForQuery(
-            triple.object,
-            blankNodesVars
-          )} .`
-      )
+      .map(triple => `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`)
+      .join('\n');
   },
-  bindNewBlankNodes(triples, blankNodesVars) {
-    return triples.
-      map(
-        triple => `BIND (BNODE() AS ${blankNodesVars[triple.object.value]}) .`
-    )
+  bindNewBlankNodes(triples) {
+    return triples
+      .map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`)
+      .join('\n');
   },
   async createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId) {
     for (let disassemblyItem of disassembly) {
