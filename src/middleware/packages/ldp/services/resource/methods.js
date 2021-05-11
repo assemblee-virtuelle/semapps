@@ -20,6 +20,9 @@ module.exports = {
   getTriplesDifference(triples1, triples2) {
     return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
   },
+  getTriplesStringDifference(triples1, triples2) {
+    return triples1.filter(t1 => !triples2.some(t2 => t1 === t2));
+  },
   getNodeForQuery(node, blankNodesVars) {
     switch (node.termType) {
       case 'BlankNode':
@@ -28,9 +31,13 @@ module.exports = {
       case 'NamedNode':
         return `<${node.value}>`;
       case 'Literal':
-        // Use triple quotes SPARQL notation to allow new lines and double quotes
-        // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
-        return `'''${node.value}'''`;
+        if( node.datatype.value === 'http://www.w3.org/2001/XMLSchema#string') {
+          // Use triple quotes SPARQL notation to allow new lines and double quotes
+          // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
+          return `'''${node.value}'''`;
+        } else {
+          return `"${node.value}"^^<${node.datatype.value}>`;
+        }
       default:
         throw new Error('Unknown node type: ' + node.termType);
     }
@@ -56,7 +63,12 @@ module.exports = {
             blankNodesVars
           )} .`
       )
-      .join('\n');
+  },
+  bindNewBlankNodes(triples, blankNodesVars) {
+    return triples.
+      map(
+        triple => `BIND (BNODE() AS ${blankNodesVars[triple.object.value]}) .`
+    )
   },
   async createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId) {
     for (let disassemblyItem of disassembly) {

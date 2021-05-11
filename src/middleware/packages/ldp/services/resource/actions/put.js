@@ -44,8 +44,6 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
-      console.log('put', resourceUri);
-
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
       let oldData = await ctx.call('ldp.resource.get', {
@@ -59,26 +57,35 @@ module.exports = {
 
       const blankNodesVars = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples);
-      const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
+      // Convert the triples to string. If a blank node is detected, use the variable instead.
+      // This will be used for the comparison below, in order to more easily compare blank nodes.
+      const oldTriplesString = this.triplesToString(oldTriples, blankNodesVars);
+      const newTriplesString = this.triplesToString(newTriples, blankNodesVars);
 
-      console.log('triplesToAdd', triplesToAdd);
-      console.log('triplesToRemove', triplesToRemove);
-      
+      // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
+      // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
+      // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
+      const triplesToAdd = this.getTriplesStringDifference(newTriplesString, oldTriplesString).reverse();
+      const triplesToRemove = this.getTriplesStringDifference(oldTriplesString, newTriplesString);
+
       // The exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
         return resourceUri;
       }
 
       // Keep track of blank nodes to use in WHERE clause
-      const triplesWithBlankNodes = newTriples.filter(triple => triple.object.termType === 'BlankNode');
+      const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(triple => triple.object.termType === 'BlankNode');
+      const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'BlankNode');
 
       // Generate the query
       let query = '';
-      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
-      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
-      if (triplesWithBlankNodes.length > 0) {
-        query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
+      if (triplesToRemove.length > 0) query += `DELETE { ${triplesToRemove.join('\n')} } `;
+      if (triplesToAdd.length > 0) query += `INSERT { ${triplesToAdd.join('\n')} } `;
+      if (newBlankNodes.length > 0 || existingBlankNodes.length > 0) {
+        query += `WHERE { 
+          ${this.bindNewBlankNodes(newBlankNodes, blankNodesVars).join('\n')} 
+          ${this.triplesToString(existingBlankNodes, blankNodesVars).join('\n')} 
+        }`;
       } else {
         query += `WHERE {}`;
       }
