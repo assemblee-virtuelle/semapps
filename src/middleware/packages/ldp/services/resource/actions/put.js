@@ -52,12 +52,18 @@ module.exports = {
         webId
       });
 
-      const oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      const newTriples = await this.bodyToTriples(resource, contentType);
+      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
+      let newTriples = await this.bodyToTriples(resource, contentType);
 
-      const blankNodesVars = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
+      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples);
+      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
+      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+
+      // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
+      // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
+      // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
+      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
       // The exact same data have been posted, skip
@@ -66,17 +72,19 @@ module.exports = {
       }
 
       // Keep track of blank nodes to use in WHERE clause
-      const triplesWithBlankNodes = newTriples.filter(triple => triple.object.termType === 'BlankNode');
+      const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(triple => triple.object.termType === 'Variable');
+      const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
 
       // Generate the query
       let query = '';
-      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
-      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
-      if (triplesWithBlankNodes.length > 0) {
-        query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
-      } else {
-        query += `WHERE {}`;
-      }
+      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+      query += `WHERE { `;
+      if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+      if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+      query += ` }`;
+
+      console.log('query', query);
 
       await ctx.call('triplestore.update', { query, webId });
 

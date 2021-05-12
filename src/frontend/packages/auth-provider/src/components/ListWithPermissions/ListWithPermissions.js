@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePermissionsOptimized } from 'react-admin';
-import { List } from '@semapps/archipelago-layout';
+import { List, ListActions } from '@semapps/archipelago-layout';
 import PermissionsButton from '../PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
 
@@ -18,6 +18,10 @@ const ListWithPermissions = ({ actions, resource, ...rest }) => {
       }
     />
   );
+};
+
+ListWithPermissions.defaultProps = {
+  actions: <ListActions />
 };
 
 export default ListWithPermissions;

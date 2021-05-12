@@ -9,20 +9,20 @@
     "start": "moleculer-runner --instances=max services"
   },
   "dependencies": {
-    "@semapps/activitypub": "0.2.0-alpha.2",
-    "@semapps/auth": "0.2.0-alpha.2",
-    "@semapps/fuseki-admin": "0.2.0-alpha.2",
-    "@semapps/inference": "0.2.0-alpha.2",
-    "@semapps/ldp": "0.2.0-alpha.2",
-    "@semapps/signature": "0.2.0-alpha.2",
-    "@semapps/sparql-endpoint": "0.2.0-alpha.2",
-    "@semapps/triplestore": "0.2.0-alpha.2",
-    "@semapps/webacl": "0.2.0-alpha.2",
-    "@semapps/webid": "0.2.0-alpha.2",
+    "@semapps/activitypub": "0.2.0-alpha.6",
+    "@semapps/auth": "0.2.0-alpha.6",
+    "@semapps/fuseki-admin": "0.2.0-alpha.6",
+    "@semapps/inference": "0.2.0-alpha.6",
+    "@semapps/ldp": "0.2.0-alpha.6",
+    "@semapps/signature": "0.2.0-alpha.6",
+    "@semapps/sparql-endpoint": "0.2.0-alpha.6",
+    "@semapps/triplestore": "0.2.0-alpha.6",
+    "@semapps/webacl": "0.2.0-alpha.6",
+    "@semapps/webid": "0.2.0-alpha.6",
     "dotenv-flow": "^3.1.0",
     "moleculer": "^0.14.3",
     "moleculer-repl": "^0.6.3",
     "moleculer-web": "^0.10.0-beta1"
   },
-  "version": "0.2.0-alpha.2"
+  "version": "0.2.0-alpha.6"
 }

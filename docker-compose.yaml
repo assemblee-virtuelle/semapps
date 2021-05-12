@@ -4,8 +4,8 @@ services:
     build:
       context: ./src/jena/fuseki-docker
       dockerfile: Dockerfile
+    image: semapps/jena-fuseki-webacl
     container_name: fuseki
-    restart: always
     volumes:
       - ./data/rdf_data:/fuseki
       - ./data/staging:/staging
@@ -23,7 +23,6 @@ services:
       context: ./src/middleware
       dockerfile: Dockerfile
     container_name: middleware
-    restart: always
     depends_on:
       - fuseki
     volumes:
@@ -43,7 +42,6 @@ services:
       args:
         - FRONTEND
     container_name: frontend
-    restart: always
     depends_on:
       - middleware
     environment:

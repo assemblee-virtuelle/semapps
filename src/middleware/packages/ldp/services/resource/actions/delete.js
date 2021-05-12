@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { buildBlankNodesQuery, getContainerFromUri } = require('../../../utils');
+const { getContainerFromUri } = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -51,6 +51,42 @@ module.exports = {
         webId
       });
 
+      if (disassembly) {
+        await this.deleteDisassembly(ctx, oldData, disassembly, webId);
+      }
+
+      // TODO see why blank node deletion does not work (permission error)
+      // const blandNodeQuery = buildBlankNodesQuery(3);
+      //
+      // // The resource must be deleted after the blank node, otherwise the permissions will fail
+      // const query =  `
+      //   DELETE {
+      //     ${blandNodeQuery.construct}
+      //     <${resourceUri}> ?p1 ?dataProp1 .
+      //   }
+      //   WHERE {
+      //     {
+      //       ${blandNodeQuery.where}
+      //       <${resourceUri}> ?p1 ?o1 .
+      //     }
+      //     UNION
+      //     {
+      //       <${resourceUri}> ?p1 ?dataProp1 .
+      //     }
+      //   }
+      // `;
+
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE { 
+            <${resourceUri}> ?p1 ?o1 .
+          }
+        `,
+        webId
+      });
+
+      // We must detach the resource from the container after deletion, otherwise the permissions will fail
       await ctx.call(
         'ldp.container.detach',
         {
@@ -59,26 +95,6 @@ module.exports = {
         },
         { meta: { webId } }
       );
-
-      if (disassembly) {
-        await this.deleteDisassembly(ctx, oldData, disassembly, webId);
-      }
-
-      const blandNodeQuery = buildBlankNodesQuery(5);
-
-      await ctx.call('triplestore.update', {
-        query: `
-          DELETE {
-            <${resourceUri}> ?p1 ?o1 .
-            ${blandNodeQuery.construct}
-          }
-          WHERE { 
-            <${resourceUri}> ?p1 ?o1 .
-            ${blandNodeQuery.where}
-          }
-        `,
-        webId
-      });
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);
