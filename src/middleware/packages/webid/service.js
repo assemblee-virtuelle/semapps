@@ -24,6 +24,10 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
+      if (!email) {
+        throw new Error('The email field is required for webId profile creation');
+      }
+
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
       }
@@ -48,22 +52,20 @@ const WebIdService = {
 
       // We have to manually add the permissions for the user resource, as this is a very rare case
       // where the perms cannot be added before the creation of the resource (as the webId is generated afterwards)
-
-      const newRights = {
-        user: {
-          uri: webId,
-          read: true,
-          write: true,
-          control: true
-        },
-        anon: {
-          read: true
-        }
-      };
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
         resourceUri: webId, // itself !
-        newRights
+        newRights: {
+          user: {
+            uri: webId,
+            read: true,
+            write: true,
+            control: true
+          },
+          anon: {
+            read: true
+          }
+        }
       });
 
       let newPerson = await ctx.call('ldp.resource.get', {

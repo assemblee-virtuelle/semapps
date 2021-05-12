@@ -51,7 +51,9 @@ module.exports = {
     cas: {
       url: "https://my-cas-server.com/cas",
     }
-    selectWebIdData: authData => ({
+    // Return data for the creation of the webId profile (FOAF Person).
+    // Available fields: email (required), name, familyName, nick, homepage
+    selectProfileData: authData => ({
       email: authData.email,
       name: authData.given_name,
       familyName: authData.family_name
