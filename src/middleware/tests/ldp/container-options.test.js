@@ -154,7 +154,7 @@ describe('Container options', () => {
         'pair:description': 'myOrga',
         'pair:label': 'myTitle',
         'pair:hasLocation': {
-          '@type': 'Place',
+          '@type': 'pair:Place',
           'pair:description': 'myPlace'
         }
       },
@@ -169,21 +169,21 @@ describe('Container options', () => {
   });
 
   test('Update (PUT) resource with disassembly', async () => {
-    orga1ToUpdate = { ...orga1 };
-    orga1ToUpdate['pair:hasLocation'] = {
-      '@type': 'Place',
-      'pair:description': 'myPlace2'
-    };
-    orga1ToUpdate['pair:description'] = 'myOrga2';
-
     await broker.call('ldp.resource.put', {
-      resource: orga1ToUpdate,
-      contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'organizations'
+      resource: {
+        ...orga1,
+        'pair:hasLocation': {
+          ...orga1['pair:hasLocation'],
+          '@type': 'pair:Place',
+          'pair:description': 'myPlace2'
+        },
+        'pair:description': 'myOrga2'
+      },
+      contentType: MIME_TYPES.JSON
     });
 
     let orga1Updated = await broker.call('ldp.resource.get', {
-      resourceUri: orga1ToUpdate['@id'],
+      resourceUri: orga1['@id'],
       accept: MIME_TYPES.JSON
     });
 
