@@ -34,7 +34,7 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    input: { value, onChange },
+    input: { value, onChange, onBlur, onFocus },
     isRequired,
     meta: { error, submitError, touched },
   } = useInput({ resource, source });
@@ -104,6 +104,22 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
         return (
           <TextField
             {...params}
+            inputProps={{
+              ...params.inputProps,
+              onBlur: (e) => {
+                onBlur(e);
+                if (params.inputProps.onBlur) {
+                  params.inputProps.onBlur(e)
+                }
+              },
+              onFocus: (e) => {
+                onFocus(e);
+                if (params.inputProps.onFocus) {
+                  params.inputProps.onFocus(e)
+                }
+              },
+            }
+            }
             label={
               label !== '' &&
               label !== false && (
