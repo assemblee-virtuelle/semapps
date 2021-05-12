@@ -15,7 +15,7 @@
   "dependencies": {
     "@semapps/activitypub": "0.2.0-alpha.6",
     "@semapps/backup": "0.2.0-alpha.6",
-    "@semapps/connector": "0.2.0-alpha.6",
+    "@semapps/auth": "0.2.0-alpha.6",
     "@semapps/fuseki-admin": "0.2.0-alpha.6",
     "@semapps/inference": "0.2.0-alpha.6",
     "@semapps/ldp": "0.2.0-alpha.6",

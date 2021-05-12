@@ -39,10 +39,10 @@ class Connector {
   }
   async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    // req.user provide by Passport strategy
     const profileData = await this.settings.selectProfileData(req.user);
-    let webId = await this.settings.findOrCreateProfile(profileData);
+    const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
     req.user.webId = webId;
+    req.user.newUser = newUser;
     next();
   }
   async generateToken(req, res, next) {
@@ -66,7 +66,8 @@ class Connector {
     // Redirect browser to the redirect URL pushed in session
     let redirectUrl = req.session.redirectUrl;
     // If a token was stored, add it to the URL so that the client may use it
-    if (req.user && req.user.token) redirectUrl += '?token=' + req.user.token;
+    if (req.user && req.user.token)
+      redirectUrl += '?token=' + req.user.token + '&new=' + (req.user.newUser ? 'true' : 'false');
     // Redirect using NodeJS HTTP
     res.writeHead(302, { Location: redirectUrl });
     res.end();
@@ -116,34 +117,15 @@ class Connector {
   async getWebId(ctx) {
     return ctx.meta.tokenPayload.webId;
   }
-  getRoute() {
-    return {
-      use: [
-        session({
-          secret: this.settings.sessionSecret,
-          maxAge: null
-        }),
-        this.passport.initialize(),
-        this.passport.session()
-      ],
-      aliases: {
-        async 'GET auth/logout'(req, res) {
-          await this.connector.logout()(req, res);
-        },
-        async 'GET auth'(req, res, next) {
-          try {
-            await this.connector.login()(req, res);
-          } catch (e) {
-            console.log(e);
-            //next(e);
-            await this.connector.logout()(req, res);
-          }
-        }
-      },
-      onError(req, res, err) {
-        console.log(err);
-      }
-    };
+  getRouteMiddlewares() {
+    return [
+      session({
+        secret: this.settings.sessionSecret,
+        maxAge: null
+      }),
+      this.passport.initialize(),
+      this.passport.session()
+    ];
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {

@@ -101,7 +101,7 @@ module.exports = {
             } catch (e) {
               console.log('error requesting resource: ', resourceUri, e);
               // Ignore a resource if it is not found
-              if (e.name !== "MoleculerError") throw e;
+              if (e.name !== 'MoleculerError') throw e;
             }
           }
         }
