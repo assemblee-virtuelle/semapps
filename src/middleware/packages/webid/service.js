@@ -50,11 +50,16 @@ const WebIdService = {
         webId: 'system'
       });
 
-      // We have to manually add the permissions for the user resource, as this is a very rare case
-      // where the perms cannot be added before the creation of the resource (as the webId is generated afterwards)
+      // Manually add the permissions for the user resource now that we have the webId
+      // First delete the default permissions added by the middleware when we called ldp.resource.post
+      await ctx.call(
+        'webacl.resource.deleteAllRights',
+        { resourceUri: webId },
+        { meta: { webId: 'system' } }
+      );
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
-        resourceUri: webId, // itself !
+        resourceUri: webId,
         newRights: {
           user: {
             uri: webId,
@@ -64,6 +69,9 @@ const WebIdService = {
           },
           anon: {
             read: true
+          },
+          anyUser: {
+            read: true,
           }
         }
       });
