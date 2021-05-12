@@ -24,14 +24,14 @@ La petite surprise, c'est qu'il n'est pas forcément nécessaire de se crééer 
 
 Intégration de l'ontologie PAIR et refonte de l'interface => ce serait super d'envoyer la newsletter à l'issue de ce chantier, ce qui permettrait de témoigner d'une avancée substantielle et nous fixerait un objectif ? 
 
-
-## Avancées humaines
-
 ## La carto des carto
 
 https://fluidlog.gitlab.io/cartosemapps/
 
-### La résidence !
+
+## Avancées humaines
+
+### Résidence en janvier
 Les contributrices et contributeurs du projet se sont retrouvés du 5 au 8 Janvier au coliving El Capitan pour 4 jours de travail et de retrouvailles intenses. 
 Nous étions ému et ravi d'avoir la chance de nous retrouver après tant de visio et de réunions à distance.
 
@@ -40,8 +40,14 @@ La constellation familiale est un atelier sensible, singulier et très puissant 
 
 La vie au coliving est toujours aussi douce, nous étions ravi de pouvoir profiter du passage des quelques voisins.
 
+### Le club des débutants
+
 
 ## Nouveaux déploiements SemApps
+
+### Classe-dehors
+
+### Colibris Pays Creillois
 
 ### Lancement du chantier CdlT
 Cette résidence a aussi été l'occasion de passer le flambeau à l'équipe des Chemins de la Transition qui souhaite utiliser une instance SemApps pour ses activités.
