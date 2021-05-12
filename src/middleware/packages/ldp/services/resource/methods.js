@@ -19,14 +19,14 @@ module.exports = {
   },
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {
-      if( triple.subject.termType === 'BlankNode' ) {
+      if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
       }
-      if( triple.object.termType === 'BlankNode' ) {
+      if (triple.object.termType === 'BlankNode') {
         triple.object = variable(blankNodesVarsMap[triple.object.value]);
       }
       return triple;
-    })
+    });
   },
   // Exclude from triples1 the triples which also exist in triples2
   getTriplesDifference(triples1, triples2) {
@@ -39,7 +39,7 @@ module.exports = {
       case 'NamedNode':
         return `<${node.value}>`;
       case 'Literal':
-        if( node.datatype.value === 'http://www.w3.org/2001/XMLSchema#string') {
+        if (node.datatype.value === 'http://www.w3.org/2001/XMLSchema#string') {
           // Use triple quotes SPARQL notation to allow new lines and double quotes
           // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
           return `'''${node.value}'''`;
@@ -64,13 +64,14 @@ module.exports = {
   },
   triplesToString(triples) {
     return triples
-      .map(triple => `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`)
+      .map(
+        triple =>
+          `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
+      )
       .join('\n');
   },
   bindNewBlankNodes(triples) {
-    return triples
-      .map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`)
-      .join('\n');
+    return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
   },
   async createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId) {
     for (let disassemblyItem of disassembly) {
