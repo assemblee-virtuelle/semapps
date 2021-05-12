@@ -1,6 +1,5 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
 const {
   getPrefixRdf,
   getPrefixJSON,
@@ -100,9 +99,9 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
-              console.log('error requesting resource', resourceUri, e, e instanceof MoleculerError);
+              console.log('error requesting resource: ', resourceUri, e);
               // Ignore a resource if it is not found
-              if (!(e instanceof MoleculerError)) throw e;
+              if (e.name !== "MoleculerError") throw e;
             }
           }
         }
