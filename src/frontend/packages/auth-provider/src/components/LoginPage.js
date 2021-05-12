@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import jwtDecode from 'jwt-decode';
 import { useLogin, useNotify, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
@@ -28,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LoginPage = ({ theme, history, location, buttons }) => {
+const LoginPage = ({ theme, history, location, buttons, userResource }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
@@ -36,8 +37,14 @@ const LoginPage = ({ theme, history, location, buttons }) => {
   const searchParams = new URLSearchParams(location.search);
   if (searchParams.has('token')) {
     localStorage.setItem('token', searchParams.get('token'));
-    notify('Vous êtes maintenant connecté', 'info');
-    history.push('/');
+    if (searchParams.has('new') && searchParams.get('new') === 'true') {
+      notify('Votre compte a été créé, vous pouvez maintenant le compléter', 'info');
+      const { webId } = jwtDecode(searchParams.get('token'))
+      history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
+    } else {
+      notify('Vous êtes maintenant connecté', 'info');
+      history.push('/');
+    }
   }
 
   if (searchParams.has('logout')) {
@@ -75,7 +82,8 @@ const LoginPage = ({ theme, history, location, buttons }) => {
 
 // TODO deprecate this
 LoginPage.defaultProps = {
-  buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>]
+  buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>],
+  userResource: 'Person'
 };
 
 export default LoginPage;
