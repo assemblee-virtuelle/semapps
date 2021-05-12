@@ -86,7 +86,6 @@ const ActorService = {
         resource: {
           '@id': actorUri,
           publicKey: {
-            '@id': actorUri + '#mainKey',
             owner: actorUri,
             publicKeyPem: publicKey
           }
