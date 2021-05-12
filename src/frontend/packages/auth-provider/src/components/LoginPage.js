@@ -39,7 +39,7 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
     localStorage.setItem('token', searchParams.get('token'));
     if (searchParams.has('new') && searchParams.get('new') === 'true') {
       notify('Votre compte a été créé, vous pouvez maintenant le compléter', 'info');
-      const { webId } = jwtDecode(searchParams.get('token'))
+      const { webId } = jwtDecode(searchParams.get('token'));
       history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
     } else {
       notify('Vous êtes maintenant connecté', 'info');
