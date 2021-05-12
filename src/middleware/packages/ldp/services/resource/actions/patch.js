@@ -66,25 +66,22 @@ module.exports = {
         };
       }
 
-      const oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      const newTriples = await this.bodyToTriples(resource, contentType);
+      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
+      let newTriples = await this.bodyToTriples(resource, contentType);
 
-      const blankNodesVars = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
+      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples);
+      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
+      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+
+      // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
+      // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
+      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
 
       // We want to remove in old triples only the triples for which we have provided a new literal value
       const literalNewTriples = newTriples.filter(t => t.object.termType === 'Literal');
       const triplesToRemove = oldTriples.filter(ot =>
-        literalNewTriples.some(nt => {
-          // If the subject is a blank node, we use the variable name in order to identify equals
-          const oldSubjectValue =
-            ot.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
-          const newSubjectValue =
-            nt.subject.termType === 'BlankNode' ? blankNodesVars[nt.subject.value] : nt.subject.value;
-
-          return newSubjectValue === oldSubjectValue && nt.predicate.value === ot.predicate.value;
-        })
+        literalNewTriples.some(nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value)
       );
 
       // The exact same data have been posted, skip
@@ -92,18 +89,20 @@ module.exports = {
         return resourceUri;
       }
 
-      // Triples with blank nodes to use in WHERE clause, otherwise
-      const triplesWithBlankNodes = newTriples.filter(triple => triple.object.termType === 'BlankNode');
+      // Keep track of blank nodes to use in WHERE clause
+      const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
+        triple => triple.object.termType === 'Variable'
+      );
+      const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
 
       // Generate the query
       let query = '';
-      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove, blankNodesVars)} } `;
-      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd, blankNodesVars)} } `;
-      if (triplesWithBlankNodes.length > 0) {
-        query += `WHERE { ${this.triplesToString(triplesWithBlankNodes, blankNodesVars)} }`;
-      } else {
-        query += `WHERE {}`;
-      }
+      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+      query += `WHERE { `;
+      if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+      if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+      query += ` }`;
 
       await ctx.call('triplestore.update', { query, webId });
 
