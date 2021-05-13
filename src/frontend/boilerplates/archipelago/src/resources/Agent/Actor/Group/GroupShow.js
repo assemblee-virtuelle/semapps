@@ -5,15 +5,15 @@ import {
   ColumnShowLayout,
   Hero,
   GridList,
-  Show,
   MarkdownField,
   AvatarField
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from "@semapps/auth-provider";
 import { UriArrayField } from '@semapps/semantic-data-provider';
 import GroupTitle from './GroupTitle';
 
 const GroupShow = props => (
-  <Show title={<GroupTitle />} {...props}>
+  <ShowWithPermissions title={<GroupTitle />} {...props}>
     <ColumnShowLayout>
       <Column xs={12} sm={9}>
         <Hero image="image">
@@ -55,7 +55,7 @@ const GroupShow = props => (
         </UriArrayField>
       </Column>
     </ColumnShowLayout>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default GroupShow;

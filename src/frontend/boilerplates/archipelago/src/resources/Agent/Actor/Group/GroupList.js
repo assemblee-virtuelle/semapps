@@ -1,17 +1,22 @@
 import React from 'react';
-import { List, SimpleList } from '@semapps/archipelago-layout';
+import { SimpleList } from '@semapps/archipelago-layout';
+import { ListWithPermissions } from '@semapps/auth-provider';
+import { Avatar } from "@material-ui/core";
+import GroupIcon from '@material-ui/icons/Group';
 
 const GroupList = props => (
-  <List {...props}>
+  <ListWithPermissions {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => record['pair:comment']}
-      leftAvatar={record => (
-        <img src={record['image'] || process.env.PUBLIC_URL + '/logo192.png'} width="100%" alt="SemApps" />
+      leftAvatar={() => (
+        <Avatar width="100%">
+          <GroupIcon />
+        </Avatar>
       )}
       linkType="show"
     />
-  </List>
+  </ListWithPermissions>
 );
 
 export default GroupList;

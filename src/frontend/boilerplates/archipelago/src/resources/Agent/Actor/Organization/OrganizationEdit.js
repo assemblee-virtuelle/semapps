@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { EditWithPermissions, RightLabel } from '@semapps/auth-provider';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
 import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';

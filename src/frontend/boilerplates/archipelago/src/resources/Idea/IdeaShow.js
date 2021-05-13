@@ -3,7 +3,6 @@ import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   Hero,
-  Show,
   MarkdownField,
   GridList,
   MainList,
@@ -11,11 +10,12 @@ import {
   AvatarField,
   SeparatedListField
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from "@semapps/auth-provider";
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import IdeaTitle from './IdeaTitle';
 
 const IdeaShow = props => (
-  <Show title={<IdeaTitle />} {...props}>
+  <ShowWithPermissions title={<IdeaTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero image="image">
@@ -49,7 +49,7 @@ const IdeaShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default IdeaShow;

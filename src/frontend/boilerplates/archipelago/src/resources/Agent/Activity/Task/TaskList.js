@@ -1,11 +1,12 @@
 import React from 'react';
-import { List, SimpleList } from '@semapps/archipelago-layout';
+import { SimpleList } from '@semapps/archipelago-layout';
+import { ListWithPermissions } from '@semapps/auth-provider';
 import TaskFilterSidebar from './TaskFilterSidebar';
 import { Avatar } from '@material-ui/core';
 import TaskIcon from '@material-ui/icons/PlaylistAddCheck';
 
 const TaskList = props => (
-  <List aside={<TaskFilterSidebar />} {...props}>
+  <ListWithPermissions aside={<TaskFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => record['pair:description']}
@@ -16,7 +17,7 @@ const TaskList = props => (
       )}
       linkType="show"
     />
-  </List>
+  </ListWithPermissions>
 );
 
 export default TaskList;

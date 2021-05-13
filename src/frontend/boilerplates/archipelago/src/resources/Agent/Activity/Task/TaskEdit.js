@@ -1,13 +1,13 @@
 import React from 'react';
 import { SimpleForm, TextInput, SelectInput } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ActorsInput, ActivitiesInput } from '../../../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 
 const TaskEdit = props => (
-  <Edit title={<TaskTitle />} {...props}>
+  <EditWithPermissions title={<TaskTitle />} {...props}>
     <SimpleForm redirect="show">
       <TextInput source="pair:label" fullWidth />
       <MarkdownInput multiline source="pair:description" fullWidth />
@@ -20,7 +20,7 @@ const TaskEdit = props => (
       <ActorsInput source="pair:assignedTo" />
       <ActivitiesInput source="pair:partOf" />
     </SimpleForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default TaskEdit;

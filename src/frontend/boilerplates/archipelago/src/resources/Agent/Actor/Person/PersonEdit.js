@@ -28,7 +28,7 @@ export const PersonEdit = props => (
         <ThemesInput source="pair:hasTopic" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default PersonEdit;
