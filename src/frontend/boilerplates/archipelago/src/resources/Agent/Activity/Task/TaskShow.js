@@ -10,7 +10,7 @@ import {
   AvatarField,
   SeparatedListField
 } from '@semapps/archipelago-layout';
-import { ShowWithPermissions } from "@semapps/auth-provider";
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 

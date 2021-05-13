@@ -9,15 +9,11 @@ import {
   MarkdownField,
   AvatarField,
   SeparatedListField,
-  RightLabel,
+  RightLabel
 } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { MapField } from '@semapps/geo-components';
-import {
-  ReferenceArrayField,
-  ReferenceField,
-  GroupedReferenceHandler
-} from '@semapps/semantic-data-provider';
+import { ReferenceArrayField, ReferenceField, GroupedReferenceHandler } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
