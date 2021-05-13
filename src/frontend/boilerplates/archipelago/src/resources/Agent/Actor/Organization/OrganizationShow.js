@@ -79,7 +79,7 @@ const OrganizationShow = props => (
             addLabel={false}
           >
             <ConditionalSourceDefinedHandler>
-              <RightLabel mb={0}/>
+              <RightLabel mb={0} />
               <ArrayField source="pair:organizationOfMembership">
                 <Box mb={4}>
                   <GridList xs={6} linkType={false}>

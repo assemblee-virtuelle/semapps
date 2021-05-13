@@ -41,7 +41,7 @@ const RightLabel = ({ label, children, record, resource, source, basePath, mb })
 };
 
 RightLabel.defaultProps = {
-    mb: 4,
+  mb: 4
 };
- 
+
 export default RightLabel;
