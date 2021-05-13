@@ -9,7 +9,7 @@ const EditWithPermissions = props => {
   return (
     <RaEdit
       actions={
-        <EditActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
+        <EditActions hasControl={!!permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
       }
       {...props}
       permissions={permissions}
@@ -17,7 +17,7 @@ const EditWithPermissions = props => {
       {React.cloneElement(props.children, {
         toolbar: (
           <EditToolbarWithPermissions
-            hasDelete={permissions && permissions.some(p => rightsToDelete.includes(p['acl:mode']))}
+            hasDelete={!!permissions && permissions.some(p => rightsToDelete.includes(p['acl:mode']))}
           />
         )
       })}

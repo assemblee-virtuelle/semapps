@@ -8,11 +8,11 @@ const ShowWithPermissions = props => {
   return (
     <RaShow
       actions={
-        <ShowActions hasControl={permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
+        <ShowActions hasControl={!!permissions && permissions.some(p => rightsToControl.includes(p['acl:mode']))} />
       }
       {...props}
       permissions={permissions}
-      hasEdit={permissions && permissions.some(p => rightsToEdit.includes(p['acl:mode']))}
+      hasEdit={props.hasEdit && !!permissions && permissions.some(p => rightsToEdit.includes(p['acl:mode']))}
     />
   );
 };
