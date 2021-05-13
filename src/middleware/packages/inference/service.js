@@ -138,12 +138,18 @@ module.exports = {
       filteredTriplesToAdd = await this.filterMissingResources(ctx, filteredTriplesToAdd);
 
       if (filteredTriplesToRemove.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(filteredTriplesToRemove), webId: 'system' });
+        await ctx.call('triplestore.update', {
+          query: this.generateDeleteQuery(filteredTriplesToRemove),
+          webId: 'system'
+        });
         this.cleanResourcesCache(ctx, filteredTriplesToRemove);
       }
 
       if (filteredTriplesToAdd.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateInsertQuery(filteredTriplesToAdd), webId: 'system' });
+        await ctx.call('triplestore.update', {
+          query: this.generateInsertQuery(filteredTriplesToAdd),
+          webId: 'system'
+        });
         this.cleanResourcesCache(ctx, filteredTriplesToAdd);
       }
     }

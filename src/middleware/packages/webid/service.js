@@ -52,11 +52,7 @@ const WebIdService = {
 
       // Manually add the permissions for the user resource now that we have the webId
       // First delete the default permissions added by the middleware when we called ldp.resource.post
-      await ctx.call(
-        'webacl.resource.deleteAllRights',
-        { resourceUri: webId },
-        { meta: { webId: 'system' } }
-      );
+      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: webId }, { meta: { webId: 'system' } });
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
         resourceUri: webId,
@@ -71,7 +67,7 @@ const WebIdService = {
             read: true
           },
           anyUser: {
-            read: true,
+            read: true
           }
         }
       });
