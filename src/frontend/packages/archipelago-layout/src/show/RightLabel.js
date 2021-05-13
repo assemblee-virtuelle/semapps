@@ -12,12 +12,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const RightLabel = ({ label, children, record, resource, source, basePath }) => {
+const RightLabel = ({ label, children, record, resource, source, basePath, mb }) => {
   const classes = useStyles();
   const translate = useTranslate();
   if (!record?.[source]) return null;
   return (
-    <Box mb={4}>
+    <Box mb={mb}>
       <Box className={classes.rightLabel}>
         {translate(
           ...getFieldLabelTranslationArgs({
@@ -40,4 +40,8 @@ const RightLabel = ({ label, children, record, resource, source, basePath }) => 
   );
 };
 
+RightLabel.defaultProps = {
+    mb: 4,
+};
+ 
 export default RightLabel;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { Box, Grid } from '@material-ui/core';
 import {
   MainList,
   SideList,
@@ -79,16 +79,18 @@ const OrganizationShow = props => (
             addLabel={false}
           >
             <ConditionalSourceDefinedHandler>
-              <RightLabel />
+              <RightLabel mb={0}/>
               <ArrayField source="pair:organizationOfMembership">
-                <GridList xs={6} linkType={false}>
-                  <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                    <AvatarField
-                      label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
-                      image="image"
-                    />
-                  </ReferenceField>
-                </GridList>
+                <Box mb={4}>
+                  <GridList xs={6} linkType={false}>
+                    <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                      <AvatarField
+                        label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
+                        image="image"
+                      />
+                    </ReferenceField>
+                  </GridList>
+                </Box>
               </ArrayField>
             </ConditionalSourceDefinedHandler>
           </GroupedReferenceHandler>
