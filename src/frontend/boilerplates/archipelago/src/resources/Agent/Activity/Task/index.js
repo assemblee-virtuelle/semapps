@@ -30,7 +30,9 @@ export default {
         'pair:assignedTo': 'Est assigné à',
         'pair:partOf': 'Fait partie de',
         'pair:hasType': 'Type',
-        'pair:hasStatus': 'Statut'
+        'pair:hasStatus': 'Statut',
+        'pair:dueDate': 'Date attendue',
+        'pair:endDate': 'Date de fin effective'
       }
     }
   }
