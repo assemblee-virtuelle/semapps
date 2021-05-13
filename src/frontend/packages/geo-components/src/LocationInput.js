@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, useInput, useTranslate, useLocale } from 'react-admin';
+import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale } from 'react-admin';
 import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
@@ -24,7 +24,7 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath, parse, optionText, ...rest }) => {
+const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath, parse, optionText, helperText, ...rest }) => {
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
@@ -34,8 +34,9 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    input: { value, onChange },
-    isRequired
+    input: { value, onChange, onBlur, onFocus },
+    isRequired,
+    meta: { error, submitError, touched },
   } = useInput({ resource, source });
 
   const fetchMapbox = useMemo(
@@ -103,11 +104,35 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
         return (
           <TextField
             {...params}
+            inputProps={{
+              ...params.inputProps,
+              onBlur: (e) => {
+                onBlur(e);
+                if (params.inputProps.onBlur) {
+                  params.inputProps.onBlur(e)
+                }
+              },
+              onFocus: (e) => {
+                onFocus(e);
+                if (params.inputProps.onFocus) {
+                  params.inputProps.onFocus(e)
+                }
+              },
+            }
+            }
             label={
               label !== '' &&
               label !== false && (
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
+            }
+            error={!!(touched && (error || submitError))}
+            helperText={
+                <InputHelperText
+                    touched={touched}
+                    error={error || submitError}
+                    helperText={helperText}
+                />
             }
             {...rest}
           />

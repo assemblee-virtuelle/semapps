@@ -15,6 +15,18 @@ module.exports = [
     path: '/membership-associations',
     acceptedTypes: ['pair:MembershipAssociation']
   },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
   {
     path: '/projects',
     acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
@@ -25,9 +37,17 @@ module.exports = [
     acceptedTypes: ['pair:Event', OBJECT_TYPES.EVENT]
   },
   {
+    path: '/tasks',
+    acceptedTypes: ['pair:Task', OBJECT_TYPES.EVENT]
+  },
+  {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
+  },
+  {
+    path: '/ideas',
+    acceptedTypes: 'pair:Idea'
   },
   {
     path: '/themes',

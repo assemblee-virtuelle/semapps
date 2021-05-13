@@ -1,0 +1,101 @@
+import React from 'react';
+import { useQueryWithStore } from 'react-admin';
+import { default as FilterHandler } from './FilterHandler';
+
+/*
+ * @example Label used in examples
+ *  const Label = ({label, ...otherProps})=>{
+ *     return <h2>{label}</h2>
+ *  }
+ *
+ * @example show header for each group with group property thanks to groupHeader
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupHeader={({group,...otherProps}) => <Label {...otherProps} label={group['pair:label']}></Label> }
+ *   filterProperty="property of source filtered by groupReference"
+ *   addLabel={false}
+ * >
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <GridList>
+ *    </GridList>
+ *   </ArrayField>
+ * </GroupedReferenceHandler>
+ *
+ * @example call chhildren with label thanks to groupLabel
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
+ *   filterProperty="property of source filtered by groupReference"
+ *   addLabel={false}
+ * >
+ *   <Label>
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <GridList>
+ *    </GridList>
+ *   </ArrayField>
+ * </GroupedReferenceHandler>
+ *
+ * @example conditional show of group if no data in source. Conditionale groupHeader is not possible because GroupedArrayField define group before filter ; need use chhildren.
+ * const ConditionalSourceDefinedHandler = ({record,source,children,...otherProps})=>{
+ *   if (record?.[source] && (!Array.isArray(record[source])||record[source].length>0)){
+ *     return  React.Children.map(children, (child, i) => {
+ *         return React.cloneElement(child, {...otherProps,record,source});
+ *       })
+ *   }else{
+ *     return <></>
+ *   }
+ * }
+ *
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
+ *   filterProperty="property of source filtered by groupReference"
+ *   addLabel={false}
+ * >
+ *  <ConditionalSourceDefinedHandler>
+ *   <Label>
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <GridList>
+ *    </GridList>
+ *   </ArrayField>
+ *  </ConditionalSourceDefinedHandler>
+ * </GroupedReferenceHandler>
+ *
+ *
+ */
+const GroupedReferenceHandler = ({
+  children,
+  groupReference,
+  groupLabel,
+  groupHeader,
+  filterProperty,
+  ...otherProps
+}) => {
+  const { data } = useQueryWithStore({
+    type: 'getList',
+    resource: groupReference,
+    payload: {}
+  });
+
+  return (
+    <>
+      {data?.map((data, index) => {
+        let filter = {};
+        filter[filterProperty] = data.id;
+        return (
+          <>
+            {groupHeader && groupHeader({ ...otherProps, group: data })}
+            <FilterHandler {...otherProps} filter={filter} label={data[groupLabel]}>
+              {children}
+            </FilterHandler>
+          </>
+        );
+      })}
+    </>
+  );
+};
+
+export default GroupedReferenceHandler;

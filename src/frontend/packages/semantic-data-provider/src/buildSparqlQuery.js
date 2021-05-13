@@ -22,14 +22,16 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, derefer
       delete filter.q;
     }
     Object.keys(filter).forEach(predicate => {
-      const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
-      whereQuery += `?s1 ${predicate} ${object} .`;
+      if (filter[predicate]) {
+        const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
+        whereQuery += `?s1 ${predicate} ${object} .`;
+      }
     });
   }
 
   const dereferenceQuery = buildDereferenceQuery(dereference);
 
-  return `
+  let query = `
     ${getPrefixRdf(ontologies)}
     CONSTRUCT {
       ?s1 ?p2 ?o2 .
@@ -43,10 +45,18 @@ const buildSparqlQuery = ({ types, params: { pagination, sort, filter }, derefer
       ${dereferenceQuery.where}
       ?s1 ?p2 ?o2 .
     }
+  `;
+  //need to do query without params (getList)
+  if (pagination) {
+    query = `
+    ${query}
     # TODO try to make pagination work in SPARQL as this doesn't work.
     # LIMIT ${pagination.perPage}
     # OFFSET ${(pagination.page - 1) * pagination.perPage}
-  `;
+    `;
+  }
+
+  return query;
 };
 
 export default buildSparqlQuery;

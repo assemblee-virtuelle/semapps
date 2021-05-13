@@ -1,6 +1,6 @@
 {
   "name": "@semapps/geo-components",
-  "version": "0.1.28",
+  "version": "0.1.33",
   "description": "React-Admin component for geographic data display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -23,7 +23,7 @@
   "peerDependencies": {
     "leaflet": "^1.7.1",
     "leaflet.markercluster": "^1.4.1",
-    "react": "^16.13.0",
+    "react": "^16.13.1 || ^17.0.0",
     "react-admin": "^3.13.1"
   },
   "publishConfig": {

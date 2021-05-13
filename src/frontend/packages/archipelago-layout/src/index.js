@@ -28,11 +28,13 @@ export { default as ReferenceFilter } from './list/ReferenceFilter';
 // Show page
 export { default as Column } from './show/Column';
 export { default as DetailsList } from './show/Hero/DetailsList';
+export { default as InverseReferenceShowLayout } from './show/InverseReferenceShowLayout';
 export { default as MainImage } from './show/Hero/MainImage';
 export { default as ColumnShowLayout } from './show/ColumnShowLayout';
 export { default as GridList } from './show/GridList';
 export { default as Hero } from './show/Hero/Hero';
 export { default as LargeLabel } from './show/LargeLabel';
+export { default as ListTab } from './show/ListTab';
 export { default as MainList } from './show/MainList';
 export { default as RedirectByType } from './show/RedirectByType';
 export { default as RightLabel } from './show/RightLabel';
