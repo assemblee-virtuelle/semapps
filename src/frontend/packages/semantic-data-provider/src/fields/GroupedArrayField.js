@@ -63,7 +63,7 @@ const GroupedArrayField = ({
         let filter = {};
         filter[filterProperty] = group.id;
         return (
-          <Box key={index}>
+          <Box key={index} mb={4}>
             {groupComponent ? (
               groupComponent(group)
             ) : (
