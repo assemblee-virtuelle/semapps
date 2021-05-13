@@ -1,4 +1,5 @@
 const ApiGatewayService = require('moleculer-web');
+const CONFIG = require('../config');
 
 module.exports = {
   mixins: [ApiGatewayService],
