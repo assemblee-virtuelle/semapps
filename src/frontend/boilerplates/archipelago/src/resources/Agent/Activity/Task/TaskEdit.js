@@ -1,25 +1,53 @@
 import React from 'react';
-import { SimpleForm, TextInput, SelectInput } from 'react-admin';
+import { FormTab, TextInput, SelectInput, TabbedForm } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
+import frLocale from 'date-fns/locale/fr';
 import { Edit } from '@semapps/archipelago-layout';
 import { ActorsInput, ActivitiesInput } from '../../../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
+import { DateTimeInput } from '@semapps/date-components';
 
 const TaskEdit = props => (
   <Edit title={<TaskTitle />} {...props}>
-    <SimpleForm redirect="show">
-      <TextInput source="pair:label" fullWidth />
-      <MarkdownInput multiline source="pair:description" fullWidth />
-      <ReferenceInput reference="Status" source="pair:hasStatus" filter={{ a: 'pair:TaskStatus' }}>
-        <SelectInput optionText="pair:label" />
-      </ReferenceInput>
-      <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:TaskType' }}>
-        <SelectInput optionText="pair:label" />
-      </ReferenceInput>
-      <ActorsInput source="pair:assignedTo" />
-      <ActivitiesInput source="pair:partOf" />
-    </SimpleForm>
+    <TabbedForm redirect="show">
+      <FormTab label="Données">
+        <TextInput source="pair:label" fullWidth />
+        <MarkdownInput multiline source="pair:description" fullWidth />
+        <ReferenceInput reference="Status" source="pair:hasStatus" filter={{ a: 'pair:TaskStatus' }}>
+          <SelectInput optionText="pair:label" />
+        </ReferenceInput>
+        <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:TaskType' }}>
+          <SelectInput optionText="pair:label" />
+        </ReferenceInput>
+        <DateTimeInput
+          source="pair:dueDate"
+          options={{
+            format: 'dd/MM/yyyy à HH:mm',
+            ampm: false
+          }}
+          providerOptions={{
+            locale: frLocale
+          }}
+          fullWidth
+        />
+        <DateTimeInput
+          source="pair:endDate"
+          options={{
+            format: 'dd/MM/yyyy à HH:mm',
+            ampm: false
+          }}
+          providerOptions={{
+            locale: frLocale
+          }}
+          fullWidth
+        />
+      </FormTab>
+      <FormTab label="Données">
+        <ActorsInput source="pair:assignedTo" />
+        <ActivitiesInput source="pair:partOf" />
+      </FormTab>
+    </TabbedForm>
   </Edit>
 );
 

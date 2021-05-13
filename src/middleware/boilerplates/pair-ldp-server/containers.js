@@ -35,7 +35,7 @@ module.exports = [
   },
   {
     path: '/tasks',
-    acceptedTypes: ['pair:Task', OBJECT_TYPES.EVENT]
+    acceptedTypes: ['pair:Task']
   },
   {
     path: '/users',
