@@ -24,7 +24,18 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath, parse, optionText, helperText, ...rest }) => {
+const LocationInput = ({
+  mapboxConfig,
+  record,
+  resource,
+  source,
+  label,
+  basePath,
+  parse,
+  optionText,
+  helperText,
+  ...rest
+}) => {
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
@@ -36,7 +47,7 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
   const {
     input: { value, onChange, onBlur, onFocus },
     isRequired,
-    meta: { error, submitError, touched },
+    meta: { error, submitError, touched }
   } = useInput({ resource, source });
 
   const fetchMapbox = useMemo(
@@ -106,20 +117,19 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
             {...params}
             inputProps={{
               ...params.inputProps,
-              onBlur: (e) => {
+              onBlur: e => {
                 onBlur(e);
                 if (params.inputProps.onBlur) {
-                  params.inputProps.onBlur(e)
+                  params.inputProps.onBlur(e);
                 }
               },
-              onFocus: (e) => {
+              onFocus: e => {
                 onFocus(e);
                 if (params.inputProps.onFocus) {
-                  params.inputProps.onFocus(e)
+                  params.inputProps.onFocus(e);
                 }
-              },
-            }
-            }
+              }
+            }}
             label={
               label !== '' &&
               label !== false && (
@@ -127,13 +137,7 @@ const LocationInput = ({ mapboxConfig, record, resource, source, label, basePath
               )
             }
             error={!!(touched && (error || submitError))}
-            helperText={
-                <InputHelperText
-                    touched={touched}
-                    error={error || submitError}
-                    helperText={helperText}
-                />
-            }
+            helperText={<InputHelperText touched={touched} error={error || submitError} helperText={helperText} />}
             {...rest}
           />
         );

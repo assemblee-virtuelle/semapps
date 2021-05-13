@@ -17,7 +17,6 @@ import TaskTitle from './TaskTitle';
 const TaskShow = props => (
   <Show title={<TaskTitle />} {...props}>
     <Grid container spacing={5}>
-
       <Grid item xs={12} sm={9}>
         <Hero>
           <DateField source="pair:dueDate" showTime />
@@ -52,7 +51,6 @@ const TaskShow = props => (
               <TextField source="pair:label" />
             </SeparatedListField>
           </ReferenceArrayField>
-
         </Hero>
 
         <MainList>
@@ -79,7 +77,6 @@ const TaskShow = props => (
           </ReferenceArrayField>
         </SideList>
       </Grid>
-
     </Grid>
   </Show>
 );
