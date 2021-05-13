@@ -5,7 +5,7 @@ import { UsersInput, AgentsInput } from '../../../pair';
 import SkillTitle from './SkillTitle';
 
 export const SkillEdit = props => (
-  <Edit title={<SkillTitle />} {...props}>
+  <EditWithPermissions title={<SkillTitle />} {...props}>
     <TabbedForm redirect="show">
       <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
@@ -15,7 +15,7 @@ export const SkillEdit = props => (
         <AgentsInput source="pair:neededBy" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default SkillEdit;
