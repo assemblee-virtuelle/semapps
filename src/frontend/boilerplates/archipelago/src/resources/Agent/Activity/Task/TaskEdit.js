@@ -3,7 +3,15 @@ import { FormTab, TextInput, SelectInput, TabbedForm } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import frLocale from 'date-fns/locale/fr';
 import { Edit } from '@semapps/archipelago-layout';
-import { ActorsInput, ActivitiesInput } from '../../../../pair';
+import {
+  ActorsInput,
+  ThemesInput,
+  AgentsInput,
+  TasksInput,
+  SkillsInput,
+  DocumentsInput,
+  ActivitiesInput
+} from '../../../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 import { DateTimeInput } from '@semapps/date-components';
@@ -43,9 +51,15 @@ const TaskEdit = props => (
           fullWidth
         />
       </FormTab>
-      <FormTab label="Données">
+      <FormTab label="Relations">
         <ActorsInput source="pair:assignedTo" />
         <ActivitiesInput source="pair:partOf" />
+        <ActorsInput source="pair:hasFollower" />
+        <ActorsInput source="pair:involves" />
+        <TasksInput source="pair:inspiredBy" />
+        <ThemesInput source="pair:hasTopic" />
+        <SkillsInput source="pair:needs" />
+        <DocumentsInput source="pair:uses" />
       </FormTab>
     </TabbedForm>
   </Edit>
