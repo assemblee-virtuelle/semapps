@@ -1,6 +1,6 @@
 {
   "name": "@semapps/auth-provider",
-  "version": "0.1.28",
+  "version": "0.1.33",
   "description": "React-Admin auth provider for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -21,7 +21,7 @@
   "peerDependencies": {
     "react": "^16.13..1 || ^17.0.0",
     "react-admin": "^3.13.1",
-    "@semapps/archipelago-layout": "^0.1.28"
+    "@semapps/archipelago-layout": "^0.1.33"
   },
   "publishConfig": {
     "access": "public"
