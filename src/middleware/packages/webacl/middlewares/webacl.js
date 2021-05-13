@@ -61,6 +61,9 @@ const addRightsToNewResource = async (ctx, resourceUri, webId) => {
       newRights.anon = {
         read: true
       };
+      newRights.anyUser = {
+        read: true
+      };
       newRights.user = {
         uri: webId,
         read: true,
