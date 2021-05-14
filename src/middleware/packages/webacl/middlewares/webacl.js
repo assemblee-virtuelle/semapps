@@ -15,7 +15,7 @@ const actionsToVerify = {
   // Resources
   'ldp.resource.get': { minimumRight: 'read', verifyOn: 'resource' },
   'ldp.resource.patch': { minimumRight: 'append', verifyOn: 'resource' },
-  'ldp.resource.put': { minimumRight: 'write', verifyOn: 'resource' },
+  'ldp.resource.put': { minimumRight: 'append', verifyOn: 'resource' },
   'ldp.resource.delete': { minimumRight: 'write', verifyOn: 'resource' },
   // Container
   'ldp.resource.post': { minimumRight: 'append', verifyOn: 'container' }
