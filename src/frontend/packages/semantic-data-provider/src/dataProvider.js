@@ -139,55 +139,31 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
           params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
-          dereference: resources[resourceId].dereference,
           ontologies
         });
 
-        const { json } = await httpClient(sparqlEndpoint, {
+        let { json } = await httpClient(sparqlEndpoint, {
           method: 'POST',
           body: sparqlQuery
         });
 
-        const compactJson = await jsonld.frame(json, {
-          '@context': jsonContext || buildJsonContext(ontologies),
-          '@type': resources[resourceId].types
-        });
+        const total = json.length;
 
-        if (Object.keys(compactJson).length === 1) {
-          // If we have only the context, it means there is no match
-          return { data: [], total: 0 };
-        } else if (!compactJson['@graph']) {
-          // If we have several fields but no @graph, there is a single match
-          compactJson.id = compactJson.id || compactJson['@id'];
-          return { data: [compactJson], total: 1 };
-        } else {
-          let returnData = compactJson['@graph'].map(item => {
-            item.id = item.id || item['@id'];
-            return item;
-          });
-
-          if (params.sort) {
-            returnData = returnData.sort((a, b) => {
-              if (params.sort && a[params.sort.field] && b[params.sort.field]) {
-                if (params.sort.order === 'DESC') {
-                  return a[params.sort.field].localeCompare(b[params.sort.field]);
-                } else {
-                  return b[params.sort.field].localeCompare(a[params.sort.field]);
-                }
-              } else {
-                return true;
-              }
-            });
-          }
-          if (params.pagination) {
-            returnData = returnData.slice(
-              (params.pagination.page - 1) * params.pagination.perPage,
-              params.pagination.page * params.pagination.perPage
-            );
-          }
-
-          return { data: returnData, total: compactJson['@graph'].length };
+        if (params.pagination) {
+          json = json.slice(
+            (params.pagination.page - 1) * params.pagination.perPage,
+            params.pagination.page * params.pagination.perPage
+          );
         }
+
+        let data = await Promise.allSettled(json.map(
+          result => httpClient(result.resource.value).then(result => result.json)
+        ));
+
+        // Ignore resources we were not able to fetch
+        data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
+
+        return { data, total }
       }
     },
     getOne: async (resourceId, params) => {
