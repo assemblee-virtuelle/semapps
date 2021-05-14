@@ -29,6 +29,9 @@ const frenchMessages = {
     },
     input: {
       agent_select: 'Ajouter un utilisateur...'
+    },
+    message: {
+      resource_edit_forbidden: 'Vous n\'avez pas la permission d\'éditer cette ressource'
     }
   }
 };
