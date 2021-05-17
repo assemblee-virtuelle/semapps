@@ -92,9 +92,7 @@ describe('LDP container tests', () => {
           label: 'My project'
         }
       })
-    ).rejects.toThrow(
-      'Cannot create resource in non-existing container ' + CONFIG.HOME_URL + 'unknownContainer'
-    );
+    ).rejects.toThrow('Cannot create resource in non-existing container ' + CONFIG.HOME_URL + 'unknownContainer');
   });
 
   test('Attach a resource to a non-existing container', async () => {
