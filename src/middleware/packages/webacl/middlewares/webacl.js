@@ -114,7 +114,7 @@ const WebAclMiddleware = {
   name: 'WebAclMiddleware',
   async started(broker) {
     const containers = await broker.call('ldp.container.getAll');
-    for( let containerUri of containers ) {
+    for (let containerUri of containers) {
       const authorizations = await broker.call('triplestore.query', {
         query: `
           PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -133,7 +133,7 @@ const WebAclMiddleware = {
         webId: 'system'
       });
 
-      if( authorizations.length > 0 ) {
+      if (authorizations.length > 0) {
         containersWithDefaultAnonRead.push(containerUri);
       }
     }
@@ -155,7 +155,7 @@ const WebAclMiddleware = {
           const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
           const containerUri = getContainerFromUri(resourceUri);
 
-          if( containersWithDefaultAnonRead.includes(containerUri) ) {
+          if (containersWithDefaultAnonRead.includes(containerUri)) {
             authorized = true;
           } else {
             const result = await ctx.call('webacl.resource.hasRights', {
