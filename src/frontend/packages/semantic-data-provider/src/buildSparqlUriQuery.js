@@ -34,6 +34,6 @@ const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) =>
     }
     ${sort && sort.field.includes(':') ? `ORDER BY ${sort.order}(?sortField)` : ''}
   `;
-}
+};
 
 export default buildSparqlUriQuery;
