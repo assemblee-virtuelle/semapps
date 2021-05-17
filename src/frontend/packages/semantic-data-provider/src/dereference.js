@@ -49,22 +49,26 @@ export const buildDereferenceQuery = predicates => {
 };
 
 export const getEmbedFrame = paths => {
-  let embedFrame = {}, predicates;
+  let embedFrame = {},
+    predicates;
   if (paths) {
-    for( let path of paths ) {
-      if( path.includes('/') ) {
+    for (let path of paths) {
+      if (path.includes('/')) {
         predicates = path.split('/').reverse();
       } else {
         predicates = [path];
       }
       embedFrame = {
         ...embedFrame,
-        ...predicates.reduce((accumulator, predicate) => ({
-          [predicate]: {
-            '@embed': '@last',
-            ...accumulator
-          }
-        }), {})
+        ...predicates.reduce(
+          (accumulator, predicate) => ({
+            [predicate]: {
+              '@embed': '@last',
+              ...accumulator
+            }
+          }),
+          {}
+        )
       };
     }
     return embedFrame;
