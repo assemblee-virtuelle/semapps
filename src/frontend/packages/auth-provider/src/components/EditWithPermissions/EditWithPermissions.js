@@ -9,7 +9,7 @@ const EditWithPermissions = props => {
   const notify = useNotify();
   const redirect = useRedirect();
   useEffect(() => {
-    if( permissions && !permissions.some(p => rightsToEdit.includes(p['acl:mode']))) {
+    if (permissions && !permissions.some(p => rightsToEdit.includes(p['acl:mode']))) {
       notify('auth.message.resource_edit_forbidden', 'error');
       redirect(props.basePath);
     }

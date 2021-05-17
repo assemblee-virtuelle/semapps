@@ -156,14 +156,14 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           );
         }
 
-        let data = await Promise.allSettled(json.map(
-          result => httpClient(result.resource.value).then(result => result.json)
-        ));
+        let data = await Promise.allSettled(
+          json.map(result => httpClient(result.resource.value).then(result => result.json))
+        );
 
         // Ignore resources we were not able to fetch
         data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
 
-        return { data, total }
+        return { data, total };
       }
     },
     getOne: async (resourceId, params) => {
