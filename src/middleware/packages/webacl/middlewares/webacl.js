@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getSlugFromUri } = require('../utils');
+const { getSlugFromUri, getContainerFromUri } = require('../utils');
 
 const handledActions = [
   'ldp.resource.get',
@@ -10,18 +10,6 @@ const handledActions = [
   'ldp.container.create',
   'activitypub.collection.create'
 ];
-
-const actionsToVerify = {
-  // Resources
-  'ldp.resource.get': { minimumRight: 'read', verifyOn: 'resource' },
-  'ldp.resource.patch': { minimumRight: 'append', verifyOn: 'resource' },
-  'ldp.resource.put': { minimumRight: 'append', verifyOn: 'resource' },
-  'ldp.resource.delete': { minimumRight: 'write', verifyOn: 'resource' },
-  // Container
-  'ldp.resource.post': { minimumRight: 'append', verifyOn: 'container' }
-};
-
-const rightsLevel = ['read', 'append', 'write', 'control'];
 
 // TODO add different permissions depending on the webId ?
 const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
@@ -118,8 +106,38 @@ const addRightsToNewContainer = async (ctx, containerUri, webId) => {
   });
 };
 
+// List of containers with default anon read, so that we can bypass permissions check for the resources it contains
+// TODO invalidate this cache when default permissions are changed
+let containersWithDefaultAnonRead = [];
+
 const WebAclMiddleware = {
   name: 'WebAclMiddleware',
+  async started(broker) {
+    const containers = await broker.call('ldp.container.getAll');
+    for( let containerUri of containers ) {
+      const authorizations = await broker.call('triplestore.query', {
+        query: `
+          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+          PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+          SELECT ?auth
+          WHERE {
+            GRAPH <http://semapps.org/webacl> {
+              ?auth a acl:Authorization ;
+                acl:default <${containerUri}> ;
+                acl:agentClass foaf:Agent ;
+                acl:mode acl:Read .
+            }
+          }
+        `,
+        webId: 'system'
+      });
+
+      if( authorizations.length > 0 ) {
+        containersWithDefaultAnonRead.push(containerUri);
+      }
+    }
+  },
   localAction: (wrapWebAclMiddleware = (next, action) => {
     if (handledActions.includes(action.name)) {
       return async ctx => {
@@ -130,27 +148,27 @@ const WebAclMiddleware = {
 
         /*
          * VERIFY AUTHORIZATIONS
-         * This allows us to quickly check the permissions using the Redis cache on webacl.resource.hasRights
+         * This allows us to quickly check the permissions for GET operations using the Redis cache
          * This way, we don't need to add the webId in the Redis cache key and it is more efficient
          */
-        if (webId !== 'system' && actionsToVerify[action.name]) {
-          const { minimumRight, verifyOn } = actionsToVerify[action.name];
-          const result = await ctx.call('webacl.resource.hasRights', {
-            resourceUri:
-              verifyOn === 'resource'
-                ? ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id']
-                : ctx.params.containerUri,
-            webId
-          });
+        if (webId !== 'system' && action.name === 'ldp.resource.get') {
+          const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
+          const containerUri = getContainerFromUri(resourceUri);
 
-          // We must check that at least one of these right is true
-          // For example if the minimumRight is 'append', we check that either append, write or control are true
-          const rightsToCheck = rightsLevel.slice(rightsLevel.indexOf(minimumRight));
-          authorized = rightsToCheck.some(rightKey => result[rightKey] === true);
+          if( containersWithDefaultAnonRead.includes(containerUri) ) {
+            authorized = true;
+          } else {
+            const result = await ctx.call('webacl.resource.hasRights', {
+              resourceUri,
+              rights: { read: true }, // Check only the read permissions to improve performances
+              webId
+            });
+            authorized = result.read;
+          }
         }
 
         if (authorized) {
-          // This can be used by actions, for example to use a 'system' webId in order to improve performances
+          // This is used by the ldp.resource.get action to avoid checking twice the permissions
           ctx.params.aclVerified = true;
 
           /*

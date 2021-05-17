@@ -39,7 +39,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
   let resultRights = {};
   let groups;
   if (user !== 'anon') {
-    // retrive the groups of the user
+    // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
   }
   let uaSearchParam = getUserAgentSearchParam(user, groups);
