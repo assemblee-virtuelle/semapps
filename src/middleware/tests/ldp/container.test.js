@@ -93,7 +93,7 @@ describe('LDP container tests', () => {
         }
       })
     ).rejects.toThrow(
-      'Cannot get permissions of non-existing container or resource ' + CONFIG.HOME_URL + 'unknownContainer'
+      'Cannot create resource in non-existing container ' + CONFIG.HOME_URL + 'unknownContainer'
     );
   });
 

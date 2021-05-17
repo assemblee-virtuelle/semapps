@@ -21,7 +21,8 @@ describe('Posting to followers', () => {
     const sebastienUri = await broker.call('webid.create', {
       nick: 'srosset81',
       name: 'Sébastien',
-      familyName: 'Rosset'
+      familyName: 'Rosset',
+      email: 'seb@test.com'
     });
 
     await broker.watchForEvent('activitypub.actor.created');
@@ -29,7 +30,8 @@ describe('Posting to followers', () => {
     const simonUri = await broker.call('webid.create', {
       nick: 'simonlouvet',
       name: 'Simon',
-      familyName: 'Louvet'
+      familyName: 'Louvet',
+      email: 'sim@test.com'
     });
 
     await broker.watchForEvent('activitypub.actor.created');
