@@ -7,7 +7,7 @@
   ],
   "command": {
     "version": {
-      "allowBranch": ["master", "next", "improve-data-provider-sparql-query"]
+      "allowBranch": ["master", "next"]
     }
   }
 }

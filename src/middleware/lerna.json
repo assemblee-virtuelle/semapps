@@ -9,7 +9,8 @@
     "version": {
       "allowBranch": [
         "master",
-        "next"
+        "next",
+        "improve-data-provider-sparql-query"
       ]
     }
   }
