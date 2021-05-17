@@ -17,7 +17,7 @@ const generateSparqlVarName = predicate =>
     .map(s => s[0].toUpperCase() + s.slice(1))
     .join('');
 
-const buildDereferenceQuery = predicates => {
+export const buildDereferenceQuery = predicates => {
   let queries = [];
 
   if (predicates) {
@@ -48,4 +48,29 @@ const buildDereferenceQuery = predicates => {
   };
 };
 
-export default buildDereferenceQuery;
+export const getEmbedFrame = paths => {
+  let embedFrame = {},
+    predicates;
+  if (paths) {
+    for (let path of paths) {
+      if (path.includes('/')) {
+        predicates = path.split('/').reverse();
+      } else {
+        predicates = [path];
+      }
+      embedFrame = {
+        ...embedFrame,
+        ...predicates.reduce(
+          (accumulator, predicate) => ({
+            [predicate]: {
+              '@embed': '@last',
+              ...accumulator
+            }
+          }),
+          {}
+        )
+      };
+    }
+    return embedFrame;
+  }
+};

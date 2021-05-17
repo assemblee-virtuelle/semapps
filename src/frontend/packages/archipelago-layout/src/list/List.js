@@ -7,7 +7,7 @@ const Pagination = props => <RaPagination rowsPerPageOptions={[25, 50, 100]} {..
 const List = ({ actions, ...otherProps }) => (
   <RaList
     actions={React.cloneElement(actions, otherProps)}
-    sort={{ field: 'pair:label', order: 'DESC' }}
+    sort={{ field: 'pair:label', order: 'ASC' }}
     pagination={<Pagination />}
     perPage={50}
     {...otherProps}

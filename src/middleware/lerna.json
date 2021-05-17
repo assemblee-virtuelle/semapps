@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0-alpha.11",
+  "version": "0.2.0-alpha.12",
   "packages": [
     "boilerplates/**",
     "packages/*",
@@ -9,7 +9,8 @@
     "version": {
       "allowBranch": [
         "master",
-        "next"
+        "next",
+        "improve-data-provider-sparql-query"
       ]
     }
   }

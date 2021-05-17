@@ -10,6 +10,8 @@ const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
 
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
+const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
@@ -246,6 +248,7 @@ async function sanitizeSPARQL(text) {
 
 module.exports = {
   getSlugFromUri,
+  getContainerFromUri,
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,

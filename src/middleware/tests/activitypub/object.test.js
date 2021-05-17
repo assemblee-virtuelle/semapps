@@ -21,7 +21,8 @@ describe('Create/Update/Delete objects', () => {
     const sebastienUri = await broker.call('webid.create', {
       nick: 'srosset81',
       name: 'Sébastien',
-      familyName: 'Rosset'
+      familyName: 'Rosset',
+      email: 'seb@test.com'
     });
 
     await broker.watchForEvent('activitypub.actor.created');
