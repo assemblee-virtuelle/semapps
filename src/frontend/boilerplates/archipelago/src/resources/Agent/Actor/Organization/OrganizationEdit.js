@@ -17,13 +17,11 @@ export const OrganizationEdit = props => {
           <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
-
           <ArrayInput label="liens" source="pair:homePage" >
             <SimpleFormIterator>
               <TextInput label="" fullWidth />
             </SimpleFormIterator>
-          </ArrayInput>
-
+          </ArrayInput>  
           <PairLocationInput source="pair:hasLocation" fullWidth />
           <ImageInput source="image" accept="image/*">
             <ImageField source="src" />

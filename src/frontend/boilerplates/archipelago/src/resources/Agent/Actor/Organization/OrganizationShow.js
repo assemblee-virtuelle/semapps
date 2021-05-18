@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
+import { TextField, ChipField, SingleFieldList, SimpleList, UrlField, List, ArrayField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   MainList,
@@ -24,24 +24,26 @@ import HomeIcon from '@material-ui/icons/Home';
 
 import Chip from '@material-ui/core/Chip'
 
-function handleClick (item)
-{
-  window.location.href = item;
-}
 
-const TextArrayField = ({ record, source }) => {
-  const array = record[source]
-  if (typeof array === 'undefined' || array === null || array.length === 0) {
-    return <div/>
-  } else {
-    return (
-      <>
-        {array.map(item => <Chip label={item} key={item} target="_blank" />)}
-      </>
-    )    
+const MyUrlArrayField = ({ record, source }) => {
+  var array = typeof(record[source]) === "string" ? [record[source]] : record[source]
+  for (var i=0; i < array.length ;i++) {
+    if (array[i].startsWith('https://')) {
+      array[i] = array[i].split('https://')[1]
+    }
   }
+
+  return record ? (
+    <>
+      {
+        array.map(item =>
+        <div><a href={"http://"+item} >{item} </a></div>
+        )
+      }
+    </>
+  ) : null;
 }
-TextArrayField.defaultProps = { addLabel: true }
+MyUrlArrayField.defaultProps = { addLabel: true }
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -49,13 +51,7 @@ const OrganizationShow = props => (
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-
-          <TextArrayField label="Liens utiles" source="pair:homePage" >
-            <SingleFieldList linkType="show" >
-              <ChipField />
-            </SingleFieldList>
-          </TextArrayField>
-
+          <MyUrlArrayField label="Liens utiles" source="pair:homePage" />
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
               <Chip source="pair:label" />
