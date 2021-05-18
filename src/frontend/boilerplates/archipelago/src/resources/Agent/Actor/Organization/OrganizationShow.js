@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, ChipField, SingleFieldList, SimpleList, UrlField, List, ArrayField } from 'react-admin';
+import { TextField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   MainList,
@@ -25,25 +25,20 @@ import HomeIcon from '@material-ui/icons/Home';
 import Chip from '@material-ui/core/Chip'
 
 
-const MyUrlArrayField = ({ record, source }) => {
-  var array = typeof(record[source]) === "string" ? [record[source]] : record[source]
-  for (var i=0; i < array.length ;i++) {
-    if (array[i].startsWith('https://')) {
-      array[i] = array[i].split('https://')[1]
+const MyLinkUrlArrayField = ({ record, source }) => {
+  let links = typeof(record[source]) === "string" ? [record[source]] : record[source]
+  let index = 0
+  for (let link of links) {
+    if (link.startsWith('https://')) {
+      links[index] = link.split('https://')[1]
+      console.log(links)
     }
+    index++
   }
 
-  return record ? (
-    <>
-      {
-        array.map(item =>
-        <div><a href={"http://"+item} >{item} </a></div>
-        )
-      }
-    </>
-  ) : null;
+  return record ? links.map(item =><div><a href={"http://"+item} target="_blank" >{item}</a></div>) : null
 }
-MyUrlArrayField.defaultProps = { addLabel: true }
+MyLinkUrlArrayField.defaultProps = { addLabel: true }
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -51,7 +46,7 @@ const OrganizationShow = props => (
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-          <MyUrlArrayField label="Liens utiles" source="pair:homePage" />
+          <MyLinkUrlArrayField label="Liens utiles" source="pair:homePage" />
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
               <Chip source="pair:label" />
