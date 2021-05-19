@@ -35,14 +35,20 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
-      contentType: { type: 'string' }
+      contentType: { type: 'string' },
+      disassembly: { type: 'array', optional: true },
     },
     async handler(ctx) {
-      const { resource, contentType } = ctx.params;
+      let { resource, contentType } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       const resourceUri = resource.id || resource['@id'];
+
+      const { disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...ctx.params
+      };
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
@@ -51,6 +57,10 @@ module.exports = {
         accept: MIME_TYPES.JSON,
         webId
       });
+
+      if (disassembly && contentType === MIME_TYPES.JSON) {
+        await this.updateDisassembly(ctx, disassembly, resource, oldData);
+      }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       let newTriples = await this.bodyToTriples(resource, contentType);

@@ -2,6 +2,7 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
@@ -73,46 +74,88 @@ module.exports = {
   bindNewBlankNodes(triples) {
     return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
   },
-  async createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId) {
-    for (let disassemblyItem of disassembly) {
-      if (resource[disassemblyItem.path]) {
-        let rawDisassemblyValue = resource[disassemblyItem.path];
-        if (!Array.isArray(rawDisassemblyValue)) {
-          rawDisassemblyValue = [rawDisassemblyValue];
+  async createDisassembly(ctx, disassembly, newData) {
+    for (let disassemblyConfig of disassembly) {
+      if (newData[disassemblyConfig.path]) {
+        let disassemblyValue = newData[disassemblyConfig.path];
+        if (!Array.isArray(disassemblyValue)) {
+          disassemblyValue = [disassemblyValue];
         }
-        const uriInserted = [];
-        for (let disassemblyValue of rawDisassemblyValue) {
-          let { id, ...usableValue } = disassemblyValue;
-          usableValue = {
-            '@context': resource['@context'],
-            ...usableValue
-          };
-
-          const disassemblyResourceUri = await ctx.call('ldp.resource.post', {
-            containerUri: disassemblyItem.container,
-            resource: usableValue,
+        const uriAdded = [];
+        for (let resource of disassemblyValue) {
+          let { id, ...resourceWithoutId } = resource;
+          const newResourceUri = await ctx.call('ldp.resource.post', {
+            containerUri: disassemblyConfig.container,
+            resource: {
+              '@context': newData['@context'],
+              ...resourceWithoutId
+            },
             contentType: MIME_TYPES.JSON,
-            webId
+            webId: 'system'
           });
-          uriInserted.push({ '@id': disassemblyResourceUri, '@type': '@id' });
+          uriAdded.push(newResourceUri);
         }
-        resource[disassemblyItem.path] = uriInserted;
+        newData[disassemblyConfig.path] = uriAdded;
       }
     }
-    return resource;
   },
-  async deleteDisassembly(ctx, resource, disassembly, webId) {
-    for (let disassemblyItem of disassembly) {
-      if (resource[disassemblyItem.path]) {
-        let rawDisassemblyValue = resource[disassemblyItem.path];
-        if (!Array.isArray(rawDisassemblyValue)) {
-          rawDisassemblyValue = [rawDisassemblyValue];
+  async updateDisassembly(ctx, disassembly, newData, oldData) {
+    for (let disassemblyConfig of disassembly) {
+      let uriAdded = [], uriRemoved = [], uriKept = [];
+
+      let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
+      let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
+
+      let resourcesToAdd = newDisassemblyValue.filter(t1 => !oldDisassemblyValue.some(t2 => t1.id === t2.id));
+      let resourcesToRemove = oldDisassemblyValue.filter(t1 => !newDisassemblyValue.some(t2 => t1.id === t2.id));
+      let resourcesToKeep = oldDisassemblyValue.filter(t1 => newDisassemblyValue.some(t2 => t1.id === t2.id));
+
+      if (resourcesToAdd) {
+        for (let resource of resourcesToAdd) {
+          delete resource.id;
+
+          const newResourceUri = await ctx.call('ldp.resource.post', {
+            containerUri: disassemblyConfig.container,
+            resource: {
+              '@context': newData['@context'],
+              ...resource
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+          uriAdded.push(newResourceUri);
         }
-        for (let disassemblyValue of rawDisassemblyValue) {
-          const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
+      }
+
+      if (resourcesToRemove) {
+        for (let resource of resourcesToRemove) {
           await ctx.call('ldp.resource.delete', {
-            resourceUri: idToDelete,
-            webId
+            resourceUri: resource['@id'] || resource['id'] || resource,
+            webId: 'system'
+          });
+          uriRemoved.push(resource['@id'] || resource['id'] || resource);
+        }
+      }
+
+      if (resourcesToKeep) {
+        uriKept = resourcesToKeep.map(r => r['@id'] || r.id || r);
+      }
+
+      oldData[disassemblyConfig.path] = [ ...uriRemoved, ...uriKept ];
+      newData[disassemblyConfig.path] = [ ...uriKept, ...uriAdded ];
+    }
+  },
+  async deleteDisassembly(ctx, disassembly, resource) {
+    for (let disassemblyConfig of disassembly) {
+      if (resource[disassemblyConfig.path]) {
+        let disassemblyValue = resource[disassemblyConfig.path];
+        if (!Array.isArray(disassemblyValue)) {
+          disassemblyValue = [disassemblyValue];
+        }
+        for (let resource of disassemblyValue) {
+          await ctx.call('ldp.resource.delete', {
+            resourceUri: resource['@id'] || resource['id'] || resource,
+            webId: 'system'
           });
         }
       }
