@@ -36,7 +36,7 @@ module.exports = {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
       contentType: { type: 'string' },
-      disassembly: { type: 'array', optional: true },
+      disassembly: { type: 'array', optional: true }
     },
     async handler(ctx) {
       let { resource, contentType } = ctx.params;

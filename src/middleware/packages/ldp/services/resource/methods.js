@@ -101,7 +101,9 @@ module.exports = {
   },
   async updateDisassembly(ctx, disassembly, newData, oldData) {
     for (let disassemblyConfig of disassembly) {
-      let uriAdded = [], uriRemoved = [], uriKept = [];
+      let uriAdded = [],
+        uriRemoved = [],
+        uriKept = [];
 
       let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
       let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
@@ -141,8 +143,8 @@ module.exports = {
         uriKept = resourcesToKeep.map(r => r['@id'] || r.id || r);
       }
 
-      oldData[disassemblyConfig.path] = [ ...uriRemoved, ...uriKept ];
-      newData[disassemblyConfig.path] = [ ...uriKept, ...uriAdded ];
+      oldData[disassemblyConfig.path] = [...uriRemoved, ...uriKept];
+      newData[disassemblyConfig.path] = [...uriKept, ...uriAdded];
     }
   },
   async deleteDisassembly(ctx, disassembly, resource) {
