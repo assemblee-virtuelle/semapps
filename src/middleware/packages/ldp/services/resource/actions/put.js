@@ -59,7 +59,7 @@ module.exports = {
       });
 
       if (disassembly && contentType === MIME_TYPES.JSON) {
-        await this.updateDisassembly(ctx, disassembly, resource, oldData);
+        await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PUT');
       }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);

@@ -173,7 +173,6 @@ describe('Container options', () => {
       resource: {
         ...orga1,
         'pair:hasLocation': {
-          ...orga1['pair:hasLocation'],
           '@type': 'pair:Place',
           'pair:description': 'myPlace2'
         },

@@ -40,7 +40,11 @@ module.exports = {
       },
       contentType: {
         type: 'string'
-      }
+      },
+      disassembly: {
+        type: 'array',
+        optional: true
+      },
     },
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
@@ -48,6 +52,11 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+
+      const { disassembly, jsonContext } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...ctx.params
+      };
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
@@ -59,11 +68,14 @@ module.exports = {
 
       // Adds a default context, if it is missing
       if (contentType === MIME_TYPES.JSON) {
-        const { jsonContext } = await ctx.call('ldp.container.getOptions', { uri: resourceUri });
         resource = {
           '@context': jsonContext,
           ...resource
         };
+      }
+
+      if (disassembly && contentType === MIME_TYPES.JSON) {
+        await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PATCH');
       }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
