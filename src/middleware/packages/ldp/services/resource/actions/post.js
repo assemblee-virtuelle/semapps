@@ -126,7 +126,7 @@ module.exports = {
       }
 
       if (disassembly && contentType === MIME_TYPES.JSON) {
-        resource = await this.createDisassemblyAndUpdateResource(ctx, resource, disassembly, webId);
+        await this.createDisassembly(ctx, disassembly, resource);
       }
 
       await ctx.call('triplestore.insert', {

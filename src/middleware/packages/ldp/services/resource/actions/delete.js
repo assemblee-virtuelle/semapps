@@ -52,7 +52,7 @@ module.exports = {
       });
 
       if (disassembly) {
-        await this.deleteDisassembly(ctx, oldData, disassembly, webId);
+        await this.deleteDisassembly(ctx, disassembly, oldData);
       }
 
       // TODO see why blank node deletion does not work (permission error)
