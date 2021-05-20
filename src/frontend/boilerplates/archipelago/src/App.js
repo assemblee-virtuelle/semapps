@@ -16,7 +16,7 @@ const App = () => (
   <Admin
     disableTelemetry
     history={history}
-    title="SemApps"
+    title="Archipel"
     authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
     dataProvider={dataProvider}
     i18nProvider={i18nProvider}
