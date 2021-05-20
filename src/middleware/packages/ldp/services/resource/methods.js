@@ -101,7 +101,9 @@ module.exports = {
   },
   async updateDisassembly(ctx, disassembly, newData, oldData, method) {
     for (let disassemblyConfig of disassembly) {
-      let uriAdded = [], uriRemoved = [], uriKept = [];
+      let uriAdded = [],
+        uriRemoved = [],
+        uriKept = [];
 
       let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
       let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
@@ -147,8 +149,8 @@ module.exports = {
         throw new Error('Unknown method ' + method);
       }
 
-      oldData[disassemblyConfig.path] = [ ...uriRemoved, ...uriKept ];
-      newData[disassemblyConfig.path] = [ ...uriKept, ...uriAdded ];
+      oldData[disassemblyConfig.path] = [...uriRemoved, ...uriKept];
+      newData[disassemblyConfig.path] = [...uriKept, ...uriAdded];
     }
   },
   async deleteDisassembly(ctx, disassembly, resource) {
