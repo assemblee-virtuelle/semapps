@@ -44,7 +44,7 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
-      },
+      }
     },
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;

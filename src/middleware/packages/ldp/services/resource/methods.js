@@ -108,9 +108,15 @@ module.exports = {
       let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
       let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
 
-      let resourcesToAdd = newDisassemblyValue.filter(t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id'])));
-      let resourcesToRemove = oldDisassemblyValue.filter(t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id'])));
-      let resourcesToKeep = oldDisassemblyValue.filter(t1 => newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id'])));
+      let resourcesToAdd = newDisassemblyValue.filter(
+        t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
+      let resourcesToRemove = oldDisassemblyValue.filter(
+        t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
+      let resourcesToKeep = oldDisassemblyValue.filter(t1 =>
+        newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
 
       if (resourcesToAdd) {
         for (let resource of resourcesToAdd) {
@@ -129,7 +135,7 @@ module.exports = {
         }
       }
 
-      if( method === 'PUT' ) {
+      if (method === 'PUT') {
         if (resourcesToRemove) {
           for (let resource of resourcesToRemove) {
             await ctx.call('ldp.resource.delete', {
@@ -143,7 +149,7 @@ module.exports = {
         if (resourcesToKeep) {
           uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
         }
-      } else if( method === 'PATCH' ) {
+      } else if (method === 'PATCH') {
         uriKept = oldDisassemblyValue.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
       } else {
         throw new Error('Unknown method ' + method);
