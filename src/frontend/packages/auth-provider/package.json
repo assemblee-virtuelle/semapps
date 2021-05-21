@@ -1,6 +1,6 @@
 {
   "name": "@semapps/auth-provider",
-  "version": "0.1.30",
+  "version": "0.1.34",
   "description": "React-Admin auth provider for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",

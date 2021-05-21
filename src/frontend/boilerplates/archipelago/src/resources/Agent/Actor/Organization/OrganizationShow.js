@@ -1,6 +1,6 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
+import { Box, Grid } from '@material-ui/core';
 import {
   MainList,
   SideList,
@@ -13,15 +13,20 @@ import {
   RightLabel
 } from '@semapps/archipelago-layout';
 import { MapField } from '@semapps/geo-components';
-import {
-  ReferenceArrayField,
-  ReferenceField,
-  GroupedArrayField,
-  FilteredArrayField
-} from '@semapps/semantic-data-provider';
+import { ReferenceArrayField, ReferenceField, GroupedReferenceHandler } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
+
+const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherProps }) => {
+  if (record?.[source] && (!Array.isArray(record[source]) || record[source].length > 0)) {
+    return React.Children.map(children, (child, i) => {
+      return React.cloneElement(child, { ...otherProps, record, source });
+    });
+  } else {
+    return <></>;
+  }
+};
 
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
@@ -60,19 +65,29 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <GroupedArrayField
+          <GroupedReferenceHandler
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupComponent={record => <RightLabel record={record} source="pair:label" label={record?.['pair:label']} />}
+            groupLabel="pair:label"
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-            <GridList xs={6} linkType={false}>
-              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
-              </ReferenceField>
-            </GridList>
-          </GroupedArrayField>
+            <ConditionalSourceDefinedHandler>
+              <RightLabel mb={0} />
+              <ArrayField source="pair:organizationOfMembership">
+                <Box mb={4}>
+                  <GridList xs={6} linkType={false}>
+                    <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                      <AvatarField
+                        label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
+                        image="image"
+                      />
+                    </ReferenceField>
+                  </GridList>
+                </Box>
+              </ArrayField>
+            </ConditionalSourceDefinedHandler>
+          </GroupedReferenceHandler>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">
