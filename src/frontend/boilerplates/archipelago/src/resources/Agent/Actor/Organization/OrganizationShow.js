@@ -31,7 +31,6 @@ const MyLinkUrlArrayField = ({ record, source }) => {
   for (let link of links) {
     if (link.startsWith('https://')) {
       links[index] = link.split('https://')[1]
-      console.log(links)
     }
     index++
   }
@@ -46,7 +45,7 @@ const OrganizationShow = props => (
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-          <MyLinkUrlArrayField label="Liens utiles" source="pair:homePage" />
+          <MyLinkUrlArrayField source="pair:homePage" />
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
               <Chip source="pair:label" />
