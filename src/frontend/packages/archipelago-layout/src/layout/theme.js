@@ -35,16 +35,9 @@ const theme = createMuiTheme({
       content: {
         padding: 25,
         [defaultTheme.breakpoints.down('xs')]: {
-          padding: 15
-        }
-      }
-    },
-    // Hide top actions bar in mobile for list pages
-    RaListToolbar: {
-      toolbar: {
-        [defaultTheme.breakpoints.down('xs')]: {
-          height: 0,
-          minHeight: 0
+          padding: 15,
+          paddingTop: 0,
+          marginTop: -8
         }
       }
     },

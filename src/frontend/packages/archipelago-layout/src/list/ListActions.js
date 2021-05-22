@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  TopToolbar,
   Button,
   CreateButton,
   ExportButton,
@@ -10,6 +9,7 @@ import {
 } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
+import { TopToolbar } from '@semapps/archipelago-layout';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActions = ({
@@ -33,7 +33,7 @@ const ListActions = ({
   const resourceDefinition = useResourceDefinition({});
   const query = new URLSearchParams(useLocation().search);
   return (
-    <TopToolbar>
+    <TopToolbar currentView={currentView}>
       {views &&
         Object.entries(views)
           .filter(([key]) => key !== currentView)
