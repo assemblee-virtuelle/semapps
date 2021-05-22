@@ -10,9 +10,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap : 'wrap',
+    flexWrap: 'wrap',
     marginTop: 8,
-    marginBottom: 8,
+    marginBottom: 8
   },
   titleContainer: props => ({
     maxWidth: props.sidebarOpen ? 'calc(100vw - 300px)' : 'calc(100vw - 100px)',
@@ -22,24 +22,24 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       top: 0,
       marginRight: 0,
-      maxWidth: '90vw',
-    },
+      maxWidth: '90vw'
+    }
   }),
   title: {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     [theme.breakpoints.down('xs')]: {
-        fontSize: '1.8rem'
+      fontSize: '1.8rem'
     }
   },
   actionsContainer: props => ({
     whiteSpace: 'nowrap',
     marginLeft: 'auto',
     [theme.breakpoints.down('xs')]: {
-      display: (props.currentView === 'list') ? 'none' : 'block',
+      display: props.currentView === 'list' ? 'none' : 'block'
     }
-  }),
+  })
 }));
 
 const TopToolbar = ({ children, currentView, ...otherProps }) => {
@@ -50,9 +50,7 @@ const TopToolbar = ({ children, currentView, ...otherProps }) => {
       <div className={classes.titleContainer}>
         <Typography className={classes.title} variant="h4" color="primary" id="react-admin-title" component="h1" />
       </div>
-      <div className={classes.actionsContainer}>
-        {children}
-      </div>
+      <div className={classes.actionsContainer}>{children}</div>
     </RaTopToolbar>
   );
 };
