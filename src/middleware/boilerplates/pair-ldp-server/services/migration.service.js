@@ -20,7 +20,7 @@ module.exports = {
           }
         );
 
-        console.log('Adding rights for container ' + container);
+        console.log('Adding rights for container', container);
 
         await ctx.call('webacl.resource.addRights', {
           webId: 'system',
