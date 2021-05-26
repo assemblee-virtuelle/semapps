@@ -36,13 +36,11 @@ module.exports = {
           }
         });
 
-        console.log('Rights added for container ' + container.id);
-
         if( container['ldp:contains'] && container['ldp:contains'].length > 0 ) {
           for (let resource of container['ldp:contains']) {
-            console.log('Adding rights for resource ' + resource.id, container);
+            if (resource && Object.keys(resource).length > 0) {
+              console.log('Adding rights for resource ' + resource.id);
 
-            if (resource)
               if (containerConfig.path === '/users') {
                 await ctx.call('webacl.resource.addRights', {
                   webId: 'system',
@@ -74,8 +72,7 @@ module.exports = {
                   }
                 });
               }
-
-            console.log('Rights added for resource ' + resource.id);
+            }
           }
         }
       }
