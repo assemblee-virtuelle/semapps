@@ -17,7 +17,7 @@ const App = () => (
   <Admin
     disableTelemetry
     history={history}
-    title="SemApps"
+    title="Archipel"
     authProvider={authProvider}
     dataProvider={dataProvider}
     i18nProvider={i18nProvider}

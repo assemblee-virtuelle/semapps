@@ -30,7 +30,15 @@ export default {
         'pair:assignedTo': 'Est assigné à',
         'pair:partOf': 'Fait partie de',
         'pair:hasType': 'Type',
-        'pair:hasStatus': 'Statut'
+        'pair:hasStatus': 'Statut',
+        'pair:dueDate': 'Date attendue',
+        'pair:endDate': 'Date de fin effective',
+        'pair:hasFollower': 'Suivie par',
+        'pair:involves': 'Implique',
+        'pair:inspiredBy': 'Inspiré par',
+        'pair:hasTopic': 'A pour thème',
+        'pair:needs': 'A besoin de',
+        'pair:uses': 'Utilise'
       }
     }
   }
