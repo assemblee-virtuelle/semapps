@@ -38,42 +38,45 @@ module.exports = {
 
         console.log('Rights added for container ' + container.id);
 
-        for (let resource of container['ldp:contains']) {
-          console.log('Adding rights for resource ' + resource.id, resource);
+        if( container['ldp:contains'] && container['ldp:contains'].length > 0 ) {
+          for (let resource of container['ldp:contains']) {
+            console.log('Adding rights for resource ' + resource.id, container);
 
-          if (containerConfig.path === '/users') {
-            await ctx.call('webacl.resource.addRights', {
-              webId: 'system',
-              resourceUri: resource.id,
-              additionalRights: {
-                anon: {
-                  read: true
-                },
-                user: {
-                  uri: resource.id,
-                  read: true,
-                  write: true,
-                  control: true
-                }
+            if (resource)
+              if (containerConfig.path === '/users') {
+                await ctx.call('webacl.resource.addRights', {
+                  webId: 'system',
+                  resourceUri: resource.id,
+                  additionalRights: {
+                    anon: {
+                      read: true
+                    },
+                    user: {
+                      uri: resource.id,
+                      read: true,
+                      write: true,
+                      control: true
+                    }
+                  }
+                });
+              } else {
+                await ctx.call('webacl.resource.addRights', {
+                  webId: 'system',
+                  resourceUri: resource.id,
+                  additionalRights: {
+                    anon: {
+                      read: true
+                    },
+                    anyUser: {
+                      read: true,
+                      write: true
+                    }
+                  }
+                });
               }
-            });
-          } else {
-            await ctx.call('webacl.resource.addRights', {
-              webId: 'system',
-              resourceUri: resource.id,
-              additionalRights: {
-                anon: {
-                  read: true
-                },
-                anyUser: {
-                  read: true,
-                  write: true
-                }
-              }
-            });
+
+            console.log('Rights added for resource ' + resource.id);
           }
-
-          console.log('Rights added for resource ' + resource.id);
         }
       }
     }
