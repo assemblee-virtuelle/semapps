@@ -6,6 +6,7 @@ const httpClient = (url, options = {}) => {
   switch (options.method) {
     case 'POST':
     case 'PATCH':
+    case 'PUT':
       if (!options.headers.has('Accept')) options.headers.set('Accept', 'application/ld+json');
       if (!options.headers.has('Content-Type')) options.headers.set('Content-Type', 'application/ld+json');
       break;

@@ -1,6 +1,6 @@
 # Permissions JAR file containing the ShiroEvaluator class for Fuseki Permissions implementation
 
-How to build the JAR file (optional, the last version is already built and present in the Docket image). 
+How to build the JAR file (optional, the last version is already built and present in the Docker image). 
 
 ### Install maven
 

@@ -1,12 +1,12 @@
 const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
 const {
   getPrefixRdf,
   getPrefixJSON,
   buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
+  isContainer,
   defaultToArray
 } = require('../../../utils');
 
@@ -18,8 +18,7 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.container.get', {
         containerUri,
-        accept,
-        webId: ctx.meta.webId
+        accept
       });
     } catch (e) {
       console.error(e);
@@ -39,10 +38,13 @@ module.exports = {
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
-      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext']
+      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
     },
     async handler(ctx) {
-      const { containerUri, filters, webId } = ctx.params;
+      const { containerUri, filters } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId || 'anon';
+
       const { accept, dereference, queryDepth, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
@@ -78,19 +80,28 @@ module.exports = {
         if (result && result.contains) {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
-              resources.push(
-                await ctx.call('ldp.resource.get', {
-                  resourceUri,
-                  webId,
-                  accept,
-                  queryDepth,
-                  dereference,
-                  jsonContext
-                })
-              );
+              let resource = await ctx.call('ldp.resource.get', {
+                resourceUri,
+                webId,
+                accept,
+                queryDepth,
+                dereference,
+                jsonContext
+              });
+
+              // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
+              // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
+              if (isContainer(resource)) {
+                delete resource['ldp:contains'];
+                resource.type = defaultToArray(resource.type);
+                resource.type.push('ldp:Resource');
+              }
+
+              resources.push(resource);
             } catch (e) {
+              console.log('error requesting resource: ', resourceUri, e);
               // Ignore a resource if it is not found
-              if (!(e instanceof MoleculerError)) throw e;
+              if (e.name !== 'MoleculerError') throw e;
             }
           }
         }

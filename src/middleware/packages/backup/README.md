@@ -2,4 +2,4 @@
 
 Backup of datasets and uploaded files for SemApps
 
-[Documentation](https://semapps.org/docs/packages/backup)
+[Documentation](https://semapps.org/docs/middleware/backup)

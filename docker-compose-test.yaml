@@ -1,9 +1,7 @@
 version: '3.5'
 services:
   fuseki_tests:
-    build:
-      context: ./src/jena/fuseki-docker
-      dockerfile: Dockerfile
+    image: semapps/jena-fuseki-webacl
     container_name: fuseki_tests
     restart: always
     volumes:
@@ -13,14 +11,28 @@ services:
       - "3040:3030"
     expose:
       - "3040"
-    networks:
-      - semapps
     environment:
       ADMIN_PASSWORD: "admin"
+
+#  fuseki_tests_no_acl:
+#    image: stain/jena-fuseki
+#    container_name: fuseki_tests_no_acl
+#    restart: always
+#    volumes:
+#      - rdf_data_no_acl:/fuseki
+#      - staging_no_acl:/staging
+#    ports:
+#      - "3050:3030"
+#    expose:
+#      - "3050"
+#    environment:
+#      ADMIN_PASSWORD: "admin"
 
 volumes:
   rdf_data:
   staging:
+  rdf_data_no_acl:
+  staging_no_acl:
 networks:
   semapps:
     name: semapps_network

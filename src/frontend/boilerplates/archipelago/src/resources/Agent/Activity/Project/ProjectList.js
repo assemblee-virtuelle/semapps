@@ -1,11 +1,12 @@
 import React from 'react';
-import { List, SimpleList } from '@semapps/archipelago-layout';
+import { SimpleList } from '@semapps/archipelago-layout';
+import { ListWithPermissions } from '@semapps/auth-provider';
 import ProjectFilterSidebar from './ProjectFilterSidebar';
 import { Avatar } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 const ProjectList = props => (
-  <List aside={<ProjectFilterSidebar />} {...props}>
+  <ListWithPermissions aside={<ProjectFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => record['pair:comment']}
@@ -16,7 +17,7 @@ const ProjectList = props => (
       )}
       linkType="show"
     />
-  </List>
+  </ListWithPermissions>
 );
 
 export default ProjectList;

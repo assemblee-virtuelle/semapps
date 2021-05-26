@@ -6,7 +6,7 @@ const { delay } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
-  dependencies: ['activitypub.collection', 'signature'],
+  dependencies: ['activitypub.collection', 'ldp.resource', 'ldp.container', 'signature'],
   settings: {
     actorsContainers: [],
     context: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
@@ -86,7 +86,6 @@ const ActorService = {
         resource: {
           '@id': actorUri,
           publicKey: {
-            '@id': actorUri + '#mainKey',
             owner: actorUri,
             publicKeyPem: publicKey
           }
@@ -119,12 +118,12 @@ const ActorService = {
         const containerData = await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
         for (let actor of containerData['ldp:contains']) {
           const actorUri = actor.id || actor['@id'];
-          await this.actions.appendActorData({ actorUri, userData: actor });
+          await this.actions.appendActorData({ actorUri, userData: actor }, { parentCtx: ctx });
           if (!actor.inbox) {
-            await this.actions.attachCollections({ actorUri });
+            await this.actions.attachCollections({ actorUri }, { parentCtx: ctx });
           }
           if (!actor.publicKey) {
-            await this.actions.generateKeyPair({ actorUri });
+            await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
           }
           console.log('Generated missing data for actor ' + actorUri);
         }
@@ -138,10 +137,10 @@ const ActorService = {
 
       if (this.settings.actorsContainers.includes(containerUri)) {
         if (!newData.preferredUsername || !newData.name) {
-          await this.actions.appendActorData({ actorUri: resourceUri, userData: newData });
+          await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
         }
-        await this.actions.attachCollections({ actorUri: resourceUri });
-        await this.actions.generateKeyPair({ actorUri: resourceUri });
+        await this.actions.attachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
+        await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
         ctx.emit('activitypub.actor.created', newData);
       }
     },
@@ -150,8 +149,8 @@ const ActorService = {
       const containerUri = getContainerFromUri(resourceUri);
 
       if (this.settings.actorsContainers.includes(containerUri)) {
-        await this.actions.detachCollections({ actorUri: resourceUri });
-        await this.actions.deleteKeyPair({ actorUri: resourceUri });
+        await this.actions.detachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
+        await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },
     'activitypub.actor.created'() {

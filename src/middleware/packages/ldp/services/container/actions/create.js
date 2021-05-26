@@ -6,7 +6,7 @@ module.exports = {
     containerUri: { type: 'string' }
   },
   async handler(ctx) {
-    return await ctx.call('triplestore.insert', {
+    await ctx.call('triplestore.insert', {
       resource: {
         '@context': 'http://www.w3.org/ns/ldp',
         '@id': ctx.params.containerUri,

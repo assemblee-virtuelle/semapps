@@ -6,12 +6,12 @@ import {
   SideList,
   Hero,
   GridList,
-  Show,
   MarkdownField,
   AvatarField,
   SeparatedListField,
   RightLabel
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { MapField } from '@semapps/geo-components';
 import { ReferenceArrayField, ReferenceField, GroupedReferenceHandler } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
@@ -29,7 +29,7 @@ const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherPro
 };
 
 const OrganizationShow = props => (
-  <Show title={<OrganizationTitle />} {...props}>
+  <ShowWithPermissions title={<OrganizationTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero image="image">
@@ -108,7 +108,7 @@ const OrganizationShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default OrganizationShow;

@@ -13,8 +13,7 @@ module.exports = {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
         resourceUri,
-        accept,
-        webId: ctx.meta.webId
+        accept
       });
     } catch (e) {
       console.error(e);
@@ -35,19 +34,21 @@ module.exports = {
         rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
         optional: true
       },
-      forceSemantic: { type: 'boolean', optional: true }
+      forceSemantic: { type: 'boolean', optional: true },
+      aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
     },
     async handler(ctx) {
-      const { resourceUri, webId, forceSemantic } = ctx.params;
+      const { resourceUri, forceSemantic, aclVerified } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
 
-      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri });
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
@@ -69,7 +70,8 @@ module.exports = {
             }
           `,
           accept,
-          webId
+          // Increase performance by using the 'system' bypass if ACL have already been verified
+          webId: aclVerified ? 'system' : webId
         });
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results

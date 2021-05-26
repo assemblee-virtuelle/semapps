@@ -31,8 +31,8 @@ const BackupService = {
   },
   actions: {
     async backupAll(ctx) {
-      await this.actions.backupDatasets();
-      await this.actions.backupOtherDirs();
+      await this.actions.backupDatasets({}, { parentCtx: ctx });
+      await this.actions.backupOtherDirs({}, { parentCtx: ctx });
     },
     async backupDatasets(ctx) {
       const { fusekiBackupsPath } = this.settings.localServer;
@@ -59,7 +59,7 @@ const BackupService = {
       }
 
       for (const [key, path] of Object.entries(otherDirsPaths)) {
-        await this.actions.syncWithRemoteServer({ path, subDir: key });
+        await this.actions.syncWithRemoteServer({ path, subDir: key }, { parentCtx: ctx });
       }
     },
     syncWithRemoteServer(ctx) {

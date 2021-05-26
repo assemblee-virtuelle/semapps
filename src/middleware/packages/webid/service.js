@@ -3,7 +3,6 @@ const getRoutes = require('./getRoutes');
 
 const WebIdService = {
   name: 'webid',
-  dependencies: ['ldp.resource', 'triplestore'],
   settings: {
     usersContainer: null,
     context: {
@@ -11,12 +10,23 @@ const WebIdService = {
     },
     defaultAccept: 'text/turtle'
   },
+  dependencies: ['ldp.resource', 'triplestore', 'api'],
+  async started() {
+    const routes = getRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
+    }
+  },
   actions: {
     /**
      * This should only be called after the user has been authenticated
      */
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
+
+      if (!email) {
+        throw new Error('The email field is required for webId profile creation');
+      }
 
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
@@ -36,7 +46,30 @@ const WebIdService = {
         },
         slug: nick,
         containerUri: this.settings.usersContainer,
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      // Manually add the permissions for the user resource now that we have the webId
+      // First delete the default permissions added by the middleware when we called ldp.resource.post
+      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: webId }, { meta: { webId: 'system' } });
+      await ctx.call('webacl.resource.addRights', {
+        webId: 'system',
+        resourceUri: webId,
+        newRights: {
+          user: {
+            uri: webId,
+            read: true,
+            write: true,
+            control: true
+          },
+          anon: {
+            read: true
+          },
+          anyUser: {
+            read: true
+          }
+        }
       });
 
       let newPerson = await ctx.call('ldp.resource.get', {
@@ -57,7 +90,7 @@ const WebIdService = {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
           jsonContext: this.settings.context,
-          webId: webId
+          webId
         });
       } else {
         ctx.meta.$statusCode = 404;
@@ -69,7 +102,7 @@ const WebIdService = {
       body['@id'] = webId;
       return await ctx.call('ldp.resource.patch', {
         resource: body,
-        webId: webId,
+        webId,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
       });
@@ -77,19 +110,18 @@ const WebIdService = {
     async list(ctx) {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const request = `
-      PREFIX ldp: <http://www.w3.org/ns/ldp#>
-      CONSTRUCT {
-        ?webId ?p ?o
-      }
-      WHERE{
-        <${this.settings.usersContainer}> ldp:contains ?webId .
-        ?webId ?p ?o.
-      }
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        CONSTRUCT {
+          ?webId ?p ?o
+        }
+        WHERE{
+          <${this.settings.usersContainer}> ldp:contains ?webId .
+          ?webId ?p ?o.
+        }
       `;
       return await ctx.call('triplestore.query', {
         query: request,
-        webId: ctx.meta.webId,
-        accept: accept
+        accept
       });
     },
     async findByEmail(ctx) {
@@ -104,16 +136,14 @@ const WebIdService = {
           ?webId foaf:email '${email}' .
         }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
       return results.length > 0 ? results[0].webId.value : null;
     },
     getUsersContainer(ctx) {
       return this.settings.usersContainer;
-    },
-    getApiRoutes(ctx) {
-      return getRoutes();
     }
   },
   methods: {

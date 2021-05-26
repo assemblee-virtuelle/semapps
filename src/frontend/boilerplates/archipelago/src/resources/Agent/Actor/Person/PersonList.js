@@ -2,6 +2,7 @@ import React from 'react';
 import { Avatar } from '@material-ui/core';
 import { AvatarField, GridList, MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
 import { MapList } from '@semapps/geo-components';
+import { ListWithPermissions } from '@semapps/auth-provider';
 import MapIcon from '@material-ui/icons/Map';
 import ListIcon from '@material-ui/icons/List';
 import PersonIcon from '@material-ui/icons/Person';
@@ -10,6 +11,7 @@ import PersonFilterSidebar from './PersonFilterSidebar';
 
 const PersonList = props => (
   <MultiViewsList
+    ListComponent={ListWithPermissions}
     aside={<PersonFilterSidebar />}
     views={{
       avatar: {
@@ -31,7 +33,7 @@ const PersonList = props => (
         perPage: 25,
         list: (
           <SimpleList
-            primaryText={record => `${record['pair:firstName']} ${record['pair:lastName'].toUpperCase()}`}
+            primaryText={record => record['pair:label']}
             secondaryText={record => record['pair:comment']}
             leftAvatar={record => (
               <Avatar src={record['image']} width="100%">
@@ -49,8 +51,8 @@ const PersonList = props => (
         pagination: false,
         list: (
           <MapList
-            latitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:latitude']}
-            longitude={record => record['pair:hasLocation'] && record['pair:hasLocation']['pair:longitude']}
+            latitude={record => record?.['pair:hasLocation']?.['pair:latitude']}
+            longitude={record => record?.['pair:hasLocation']?.['pair:longitude']}
             label={record => record['pair:label']}
             description={record => record['pair:comment']}
             scrollWheelZoom

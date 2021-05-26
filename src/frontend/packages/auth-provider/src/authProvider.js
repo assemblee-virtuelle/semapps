@@ -1,6 +1,7 @@
 import jwtDecode from 'jwt-decode';
+import { defaultToArray, getAclUri, getAclContext } from './utils';
 
-const authProvider = middlewareUri => ({
+const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
   login: params => {
     window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
     return Promise.resolve();
@@ -23,7 +24,67 @@ const authProvider = middlewareUri => ({
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: params => Promise.resolve(),
+  getPermissions: async resourceId => {
+    if (!checkPermissions) return true;
+
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+
+    const aclUri = getAclUri(middlewareUri, resourceUri);
+
+    let { json } = await httpClient(aclUri);
+
+    return json['@graph'];
+  },
+  addPermission: async (resourceId, agentId, predicate, mode) => {
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+
+    const aclUri = getAclUri(middlewareUri, resourceUri);
+
+    let authorization = {
+      '@id': '#' + mode.replace('acl:', ''),
+      '@type': 'acl:Authorization',
+      [predicate]: agentId,
+      'acl:accessTo': resourceUri,
+      'acl:mode': mode
+    };
+
+    await httpClient(aclUri, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        '@context': getAclContext(aclUri),
+        '@graph': [authorization]
+      })
+    });
+  },
+  removePermission: async (resourceId, agentId, predicate, mode) => {
+    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
+    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+    const aclUri = getAclUri(middlewareUri, resourceUri);
+
+    // Fetch current permissions
+    let { json } = await httpClient(aclUri);
+
+    const updatedPermissions = json['@graph']
+      .filter(authorization => !authorization['@id'].includes('#Default'))
+      .map(authorization => {
+        const modes = defaultToArray(authorization['acl:mode']);
+        let agents = defaultToArray(authorization[predicate]);
+        if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
+          agents = agents.filter(agent => agent !== agentId);
+        }
+        return { ...authorization, [predicate]: agents };
+      });
+
+    await httpClient(aclUri, {
+      method: 'PUT',
+      body: JSON.stringify({
+        '@context': getAclContext(aclUri),
+        '@graph': updatedPermissions
+      })
+    });
+  },
   getIdentity: () => {
     const token = localStorage.getItem('token');
     if (token) {

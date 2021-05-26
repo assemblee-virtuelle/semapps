@@ -31,7 +31,7 @@ const OutboxService = {
 
       // Process object create, update or delete
       // and return an activity with the object ID
-      activity = await ctx.call('activitypub.object.process', { activity });
+      activity = await ctx.call('activitypub.object.process', { activity, actorUri });
 
       // Use the current time for the activity's publish date
       // TODO use it to order the ordered collections

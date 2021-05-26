@@ -1,13 +1,11 @@
-const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../utils');
 
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
     context: 'https://www.w3.org/ns/activitystreams'
   },
-  dependencies: ['triplestore', 'ldp'],
+  dependencies: ['triplestore', 'ldp.resource'],
   actions: {
     /*
      * Create a persisted collection
@@ -15,15 +13,13 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      const collection = {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        id: ctx.params.collectionUri,
-        type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-        summary: ctx.params.summary
-      };
-
       return await ctx.call('triplestore.insert', {
-        resource: collection,
+        resource: {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          id: ctx.params.collectionUri,
+          type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+          summary: ctx.params.summary
+        },
         accept: MIME_TYPES.JSON,
         contentType: MIME_TYPES.JSON
       });

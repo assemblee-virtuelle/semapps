@@ -14,4 +14,4 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 JVM_ARGS=${JVM_ARGS:--Xmx1200M}
-exec java $JVM_ARGS -cp $FUSEKI_HOME/fuseki-server.jar tdb.tdbloader $@
+exec java $JVM_ARGS -cp $FUSEKI_HOME/fuseki-server.jar tdb2.tdbloader $@

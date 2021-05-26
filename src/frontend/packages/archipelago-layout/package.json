@@ -10,8 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "pre-publish": "rollup --config",
-    "dev": "rollup --watch --config"
+    "pre-publish": "rollup --sourcemap --config",
+    "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.57",

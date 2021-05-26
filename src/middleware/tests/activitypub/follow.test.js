@@ -1,18 +1,17 @@
-const { ServiceBroker } = require('moleculer');
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
-jest.setTimeout(50000);
+jest.setTimeout(100000);
 
-const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+let broker;
+
+beforeAll(async () => {
+  broker = await initialize();
 });
-beforeAll(initialize(broker));
 afterAll(async () => {
-  await broker.stop();
+  if (broker) await broker.stop();
 });
 
 describe('Posting to followers', () => {
@@ -22,7 +21,8 @@ describe('Posting to followers', () => {
     const sebastienUri = await broker.call('webid.create', {
       nick: 'srosset81',
       name: 'Sébastien',
-      familyName: 'Rosset'
+      familyName: 'Rosset',
+      email: 'seb@test.com'
     });
 
     await broker.watchForEvent('activitypub.actor.created');
@@ -30,14 +30,16 @@ describe('Posting to followers', () => {
     const simonUri = await broker.call('webid.create', {
       nick: 'simonlouvet',
       name: 'Simon',
-      familyName: 'Louvet'
+      familyName: 'Louvet',
+      email: 'sim@test.com'
     });
 
     await broker.watchForEvent('activitypub.actor.created');
 
     sebastien = await broker.call('ldp.resource.get', {
       resourceUri: sebastienUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: sebastienUri
     });
 
     expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
@@ -55,7 +57,8 @@ describe('Posting to followers', () => {
 
     simon = await broker.call('ldp.resource.get', {
       resourceUri: simonUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: simonUri
     });
   });
 
