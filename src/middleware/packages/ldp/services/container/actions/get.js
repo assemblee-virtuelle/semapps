@@ -86,7 +86,8 @@ module.exports = {
                 accept,
                 queryDepth,
                 dereference,
-                jsonContext
+                jsonContext,
+                forceSemantic: true
               });
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
