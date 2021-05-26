@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  CreateButton,
-  ExportButton,
-  RefreshButton,
-  useResourceDefinition,
-  Link
-} from 'react-admin';
+import { Button, CreateButton, ExportButton, RefreshButton, useResourceDefinition, Link } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
 import { TopToolbar } from '@semapps/archipelago-layout';
