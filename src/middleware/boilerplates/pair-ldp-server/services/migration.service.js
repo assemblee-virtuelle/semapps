@@ -20,6 +20,8 @@ module.exports = {
           }
         );
 
+        console.log('Adding rights for container ' + container.id);
+
         await ctx.call('webacl.resource.addRights', {
           webId: 'system',
           resourceUri: container.id,
@@ -37,6 +39,8 @@ module.exports = {
         console.log('Rights added for container ' + container.id);
 
         for (let resource of container['ldp:contains']) {
+          console.log('Adding rights for resource ' + resource.id, resource);
+
           if (containerConfig.path === '/users') {
             await ctx.call('webacl.resource.addRights', {
               webId: 'system',
