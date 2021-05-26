@@ -36,8 +36,9 @@ const useStyles = makeStyles(theme => ({
   actionsContainer: props => ({
     whiteSpace: 'nowrap',
     marginLeft: 'auto',
+    overflow: 'hidden',
     [theme.breakpoints.down('xs')]: {
-      display: (props.currentView === 'list') ? 'none' : 'block',
+      height: (props.currentView === 'list') ? 0 : 'auto',
     }
   }),
 }));
