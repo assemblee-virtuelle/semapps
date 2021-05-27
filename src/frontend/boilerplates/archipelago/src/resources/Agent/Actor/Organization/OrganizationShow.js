@@ -18,6 +18,20 @@ import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 
+const UrlArrayField = ({ record, source }) => {
+  let links = typeof(record[source]) === "string" ? [record[source]] : record[source]
+  let index = 0
+  for (let link of links) {
+    if (link.startsWith('https://')) {
+      links[index] = link.split('https://')[1]
+    }
+    index++
+  }
+
+  return record ? links.map(item =><div><a href={"https://"+item} target="_blank" >{item}</a></div>) : null
+}
+UrlArrayField.defaultProps = { addLabel: true }
+
 const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherProps }) => {
   if (record?.[source] && (!Array.isArray(record[source]) || record[source].length > 0)) {
     return React.Children.map(children, (child, i) => {
@@ -34,7 +48,7 @@ const OrganizationShow = props => (
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-          <UrlField source="pair:homePage" />
+          <UrlArrayField source="pair:homePage" />
           <ReferenceArrayField reference="Status" source="pair:hasStatus">
             <SeparatedListField linkType={false}>
               <TextField source="pair:label" />
@@ -78,10 +92,7 @@ const OrganizationShow = props => (
                 <Box mb={4}>
                   <GridList xs={6} linkType={false}>
                     <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                      <AvatarField
-                        label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
-                        image="image"
-                      />
+                      <AvatarField label="pair:label" image="image" />
                     </ReferenceField>
                   </GridList>
                 </Box>

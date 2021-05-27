@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab } from 'react-admin';
+import { TextInput, ImageInput, AutocompleteInput, SelectInput, TabbedForm, FormTab, ArrayInput, SimpleFormIterator } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import { EditWithPermissions } from '@semapps/auth-provider';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
@@ -20,7 +20,11 @@ export const OrganizationEdit = props => {
           <ReferenceInput reference="Type" source="pair:hasType" filter={{ a: 'pair:OrganizationType' }}>
             <SelectInput optionText="pair:label" />
           </ReferenceInput>
-          <TextInput source="pair:homePage" fullWidth />
+          <ArrayInput source="pair:homePage" >
+            <SimpleFormIterator>
+              <TextInput label="" fullWidth />
+            </SimpleFormIterator>
+          </ArrayInput>  
           <PairLocationInput source="pair:hasLocation" fullWidth />
           <ImageInput source="image" accept="image/*">
             <ImageField source="src" />
