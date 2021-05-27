@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     overflow: 'hidden',
     [theme.breakpoints.down('xs')]: {
-      height: (props.currentView === 'list') ? 0 : 'auto',
+      height: props.currentView === 'list' ? 0 : 'auto'
     }
   })
 }));

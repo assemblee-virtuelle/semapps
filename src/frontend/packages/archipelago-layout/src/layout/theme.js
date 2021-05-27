@@ -43,8 +43,8 @@ const theme = createMuiTheme({
     },
     RaListToolbar: {
       toolbar: {
-        paddingLeft: '0 !important',
-      },
+        paddingLeft: '0 !important'
+      }
     },
     RaSingleFieldList: {
       root: {
