@@ -19,18 +19,26 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 
 const UrlArrayField = ({ record, source }) => {
-  let links = typeof(record[source]) === "string" ? [record[source]] : record[source]
-  let index = 0
+  let links = typeof record[source] === 'string' ? [record[source]] : record[source];
+  let index = 0;
   for (let link of links) {
     if (link.startsWith('https://')) {
-      links[index] = link.split('https://')[1]
+      links[index] = link.split('https://')[1];
     }
-    index++
+    index++;
   }
 
-  return record ? links.map(item =><div><a href={"https://"+item} target="_blank" >{item}</a></div>) : null
-}
-UrlArrayField.defaultProps = { addLabel: true }
+  return record
+    ? links.map(item => (
+        <div>
+          <a href={'https://' + item} target="_blank">
+            {item}
+          </a>
+        </div>
+      ))
+    : null;
+};
+UrlArrayField.defaultProps = { addLabel: true };
 
 const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherProps }) => {
   if (record?.[source] && (!Array.isArray(record[source]) || record[source].length > 0)) {
