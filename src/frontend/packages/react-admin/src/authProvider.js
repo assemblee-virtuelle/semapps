@@ -1,27 +1,35 @@
-const authProvider = middlewareUri => ({
-  // TODO implement proper login screen
+const authProvider = (history, middlewareUri) => ({
   login: params => Promise.resolve(),
   logout: () => {
     localStorage.removeItem('token');
     window.location.href = `${middlewareUri}auth/logout?global=true`;
+    return Promise.resolve('/loggingout');
   },
   checkAuth: () => {
+    const url = new URL(window.location);
     if (localStorage.getItem('token')) {
       return Promise.resolve();
     } else {
-      const url = new URL(window.location);
       if (url.searchParams.has('token')) {
         localStorage.setItem('token', url.searchParams.get('token'));
         url.searchParams.delete('token');
-        window.location.href = url.toString();
+        //TODO: if other searchParams remain, we should add them here
+        history.push(url.pathname);
+        return Promise.resolve();
       } else {
-        window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURI(window.location.href);
+        if (window.location.pathname != '/loggingout')
+          window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
+
+        return Promise.resolve();
       }
-      return Promise.resolve();
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: params => Promise.resolve()
+  getPermissions: params => {
+    if (localStorage.getItem('token')) {
+      return Promise.resolve('user');
+    } else return Promise.resolve('');
+  }
 });
 
 export default authProvider;

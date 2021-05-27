@@ -176,7 +176,7 @@ Content-Type: application/json
 ```
 
 :::note
-We use https://framapiaf.org/users/bob to identify Bob's account, because that's the standard URL for Mastodon actors. However we could have found this information through the [Webfinger](../packages/webfinger.md) protocol. 
+We use https://framapiaf.org/users/bob to identify Bob's account, because that's the standard URL for Mastodon actors. However we could have found this information through the [Webfinger](../middleware/webfinger.md) protocol.
 If you fetch this URL with an `Accept: application/json` header, you should receive all the informations about Bob.
 :::
 

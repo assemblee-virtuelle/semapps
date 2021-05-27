@@ -1,11 +1,12 @@
 {
   "name": "@semapps/fuseki-admin",
-  "version": "0.1.49",
+  "version": "0.2.1",
   "description": "Fuseki administration module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "string-template": "^1.0.0"
   },
   "publishConfig": {
     "access": "public"

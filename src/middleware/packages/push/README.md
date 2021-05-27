@@ -2,4 +2,4 @@
 
 Mobile push notifications handler using Expo
 
-[Documentation](https://semapps.org/docs/packages/push)
+[Documentation](https://semapps.org/docs/middleware/push)

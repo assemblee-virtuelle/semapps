@@ -20,7 +20,6 @@ if [ ! -d "$FUSEKI_BASE/extra" ] ; then
   # First time
   echo "###################################"
   echo "Initializing Apache Jena Fuseki Secure"
-  echo "All your previous dataset will be lost !!!"
   echo ""
   rm -f "$FUSEKI_BASE/shiro.ini"
   rm -rf "$FUSEKI_BASE/databases"

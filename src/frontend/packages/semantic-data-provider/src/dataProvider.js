@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import buildSparqlQuery from './buildSparqlQuery';
+import { getEmbedFrame } from './dereference';
 const createSlug = require('speakingurl');
 
 const buildJsonContext = ontologies => {
@@ -133,9 +134,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           return { data: returnData, total: json.totalItems };
         }
       } else {
-        /*
-         * Do a SPARQL search
-         */
         const sparqlQuery = buildSparqlQuery({
           types: resources[resourceId].types,
           params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
@@ -148,10 +146,16 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           body: sparqlQuery
         });
 
-        const compactJson = await jsonld.frame(json, {
+        const frame = {
           '@context': jsonContext || buildJsonContext(ontologies),
-          '@type': resources[resourceId].types
-        });
+          '@type': resources[resourceId].types,
+          // Embed only what we explicitly asked to dereference
+          // Otherwise we may have same-type resources embedded in other resources
+          '@embed': '@never',
+          ...getEmbedFrame(resources[resourceId].dereference)
+        };
+
+        const compactJson = await jsonld.frame(json, frame);
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
@@ -169,7 +173,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           if (params.sort) {
             returnData = returnData.sort((a, b) => {
               if (params.sort && a[params.sort.field] && b[params.sort.field]) {
-                if (params.sort.order === 'DESC') {
+                if (params.sort.order === 'ASC') {
                   return a[params.sort.field].localeCompare(b[params.sort.field]);
                 } else {
                   return b[params.sort.field].localeCompare(a[params.sort.field]);
@@ -188,6 +192,38 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
           return { data: returnData, total: compactJson['@graph'].length };
         }
+
+        // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
+        // TODO compare the performance of the two methods, and eventually allow both of them
+        //
+        // const sparqlQuery = buildSparqlUriQuery({
+        //   types: resources[resourceId].types,
+        //   params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+        //   ontologies
+        // });
+        //
+        // let { json } = await httpClient(sparqlEndpoint, {
+        //   method: 'POST',
+        //   body: sparqlQuery
+        // });
+        //
+        // const total = json.length;
+        //
+        // if (params.pagination) {
+        //   json = json.slice(
+        //     (params.pagination.page - 1) * params.pagination.perPage,
+        //     params.pagination.page * params.pagination.perPage
+        //   );
+        // }
+        //
+        // let data = await Promise.allSettled(
+        //   json.map(result => httpClient(result.resource.value).then(result => result.json))
+        // );
+        //
+        // // Ignore resources we were not able to fetch
+        // data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
+        //
+        // return { data, total };
       }
     },
     getOne: async (resourceId, params) => {

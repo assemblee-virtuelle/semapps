@@ -1,10 +1,11 @@
 import React from 'react';
 import { Admin, Resource } from 'react-admin';
 import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
-import { authProvider, LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
+import { LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 import { createBrowserHistory as createHistory } from 'history';
 
 import i18nProvider from './config/i18nProvider';
+import authProvider from './config/authProvider';
 import dataProvider from './config/dataProvider';
 import * as resources from './resources';
 
@@ -17,7 +18,7 @@ const App = () => (
     disableTelemetry
     history={history}
     title="Archipel"
-    authProvider={authProvider(process.env.REACT_APP_MIDDLEWARE_URL)}
+    authProvider={authProvider}
     dataProvider={dataProvider}
     i18nProvider={i18nProvider}
     layout={LayoutWithUserMenu}

@@ -79,7 +79,7 @@ module.exports = {
       if (this.broker.cacher) {
         for (let triple of triples) {
           const resourceUri = triple.subject.id;
-          ctx.call('ldp.cache-cleaner.cleanResource', { resourceUri });
+          ctx.call('ldp.cache.invalidateResource', { resourceUri });
         }
       }
     },
@@ -98,7 +98,7 @@ module.exports = {
   },
   events: {
     async 'ldp.resource.created'(ctx) {
-      let { newData, webId } = ctx.params;
+      let { newData } = ctx.params;
       newData = await jsonld.expand(ctx.params.newData);
 
       let triplesToAdd = this.generateInverseTriples(newData[0]);
@@ -107,23 +107,23 @@ module.exports = {
       triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
 
       if (triplesToAdd.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId });
+        await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId: 'system' });
         this.cleanResourcesCache(ctx, triplesToAdd);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      let { oldData, webId } = ctx.params;
+      let { oldData } = ctx.params;
       oldData = await jsonld.expand(ctx.params.oldData);
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
       if (triplesToRemove.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId });
+        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId: 'system' });
         this.cleanResourcesCache(ctx, triplesToRemove);
       }
     },
     async 'ldp.resource.updated'(ctx) {
-      let { oldData, newData, webId } = ctx.params;
+      let { oldData, newData } = ctx.params;
       oldData = await jsonld.expand(ctx.params.oldData);
       newData = await jsonld.expand(ctx.params.newData);
 
@@ -138,12 +138,18 @@ module.exports = {
       filteredTriplesToAdd = await this.filterMissingResources(ctx, filteredTriplesToAdd);
 
       if (filteredTriplesToRemove.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(filteredTriplesToRemove), webId });
+        await ctx.call('triplestore.update', {
+          query: this.generateDeleteQuery(filteredTriplesToRemove),
+          webId: 'system'
+        });
         this.cleanResourcesCache(ctx, filteredTriplesToRemove);
       }
 
       if (filteredTriplesToAdd.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateInsertQuery(filteredTriplesToAdd), webId });
+        await ctx.call('triplestore.update', {
+          query: this.generateInsertQuery(filteredTriplesToAdd),
+          webId: 'system'
+        });
         this.cleanResourcesCache(ctx, filteredTriplesToAdd);
       }
     }

@@ -1,6 +1,10 @@
 # React-Admin auth provider for SemApps
 
-## Commands
+## Documentation
+
+See the [dedicated page on the SemApps website](https://semapps.org/docs/frontend/auth-provider).
+
+## Development
 
 ### `npm run pre-publish`
 

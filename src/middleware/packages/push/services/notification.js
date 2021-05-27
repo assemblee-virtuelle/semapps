@@ -18,9 +18,9 @@ const NotificationService = {
   },
   actions: {
     async send(ctx) {
-      await this.actions.queue(ctx.params);
+      await this.actions.queue(ctx.params, { parentCtx: ctx });
 
-      this.actions.processQueue();
+      this.actions.processQueue({}, { parentCtx: ctx });
     },
     async queue(ctx) {
       const { to, message, data } = ctx.params;
@@ -35,45 +35,51 @@ const NotificationService = {
           'semapps:deviceId': device['@id'],
           'semapps:addedAt': new Date().toISOString(),
           'semapps:status': 'queued',
-          'semapps:message': JSON.stringify({
-            to: device['semapps:pushToken'],
-            body: message,
-            data
-          })
+          'semapps:message': JSON.stringify(
+            {
+              to: device['semapps:pushToken'],
+              body: message,
+              data
+            },
+            { parentCtx: ctx }
+          )
         });
       }
     },
     async processQueue(ctx) {
-      const notifications = await this.findByStatus('queued');
+      const notifications = await this.findByStatus('queued', ctx);
 
       for (let notification of notifications) {
         const message = JSON.parse(notification['semapps:message']);
 
         if (!Expo.isExpoPushToken(message.to)) {
-          await this.markAsError(notification['@id'], `${message.to} is not a valid Expo push token`);
+          await this.markAsError(notification['@id'], `${message.to} is not a valid Expo push token`, ctx);
         } else {
           const receipt = await this.expo.sendPushNotificationsAsync([message]);
 
           // NOTE: Not all tickets have IDs; for example, tickets for notifications
           // that could not be enqueued will have error information and no receipt ID.
           if (receipt[0].id) {
-            await this.actions.update({
-              '@id': notification['@id'],
-              'semapps:status': 'processed',
-              'semapps:receiptId': receipt[0].id
-            });
+            await this.actions.update(
+              {
+                '@id': notification['@id'],
+                'semapps:status': 'processed',
+                'semapps:receiptId': receipt[0].id
+              },
+              { parentCtx: ctx }
+            );
           } else {
             // NOTE: If a ticket contains an error code in ticket.details.error, you
             // must handle it appropriately. The error codes are listed in the Expo
             // documentation:
             // https://docs.expo.io/versions/latest/guides/push-notifications#response-format
-            await this.markAsError(notification['@id'], receipt.details.error);
+            await this.markAsError(notification['@id'], receipt.details.error, ctx);
           }
         }
       }
     },
-    async checkReceipts() {
-      const notifications = await this.findByStatus('processed');
+    async checkReceipts(ctx) {
+      const notifications = await this.findByStatus('processed', ctx);
 
       if (notifications) {
         let receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
@@ -95,11 +101,14 @@ const NotificationService = {
               )['@id'];
 
               if (status === 'ok') {
-                await this.actions.update({
-                  '@id': notificationId,
-                  'semapps:status': 'checked',
-                  'semapps:receiptStatus': status
-                });
+                await this.actions.update(
+                  {
+                    '@id': notificationId,
+                    'semapps:status': 'checked',
+                    'semapps:receiptStatus': status
+                  },
+                  { parentCtx: ctx }
+                );
               } else if (status === 'error') {
                 // Append the error code to the message for easier debug
                 if (details && details.error) {
@@ -108,7 +117,7 @@ const NotificationService = {
                   message = `Error code ${details.error}. ${message}`;
                 }
 
-                await this.markAsError(notificationId, message);
+                await this.markAsError(notificationId, message, ctx);
               }
             }
           } catch (error) {
@@ -119,26 +128,36 @@ const NotificationService = {
     }
   },
   methods: {
-    async findByStatus(status) {
-      const collection = await this.actions.find({
-        query: {
-          'semapps:status': status
-        }
-      });
+    async findByStatus(status, ctx) {
+      const collection = await this.actions.find(
+        {
+          query: {
+            'semapps:status': status
+          }
+        },
+        { parentCtx: ctx }
+      );
       return collection['ldp:contains'] || [];
     },
-    async markAsError(notificationId, message) {
-      const notification = await this.actions.update({
-        '@id': notificationId,
-        'semapps:status': 'error',
-        'semapps:errorMessage': message
-      });
+    async markAsError(notificationId, message, ctx) {
+      const notification = await this.actions.update(
+        {
+          '@id': notificationId,
+          'semapps:status': 'error',
+          'semapps:errorMessage': message
+        },
+        { parentCtx: ctx }
+      );
 
       // Also mark device as error
-      await this.broker.call('push.device.update', {
-        '@id': notification['semapps:deviceId'],
-        'semapps:errorMessage': message
-      });
+      await ctx.call(
+        'push.device.update',
+        {
+          '@id': notification['semapps:deviceId'],
+          'semapps:errorMessage': message
+        },
+        { parentCtx: ctx }
+      );
     }
   }
 };

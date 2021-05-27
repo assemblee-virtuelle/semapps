@@ -1,6 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getContainerFromUri } = require('../../../utils');
-const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
 module.exports = {
@@ -9,8 +8,7 @@ module.exports = {
       const { typeURL, id, containerUri } = ctx.params;
       const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
       await ctx.call('ldp.resource.delete', {
-        resourceUri,
-        webId: ctx.meta.webId
+        resourceUri
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
@@ -34,9 +32,12 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const containerUri = getContainerFromUri(ctx.params.resourceUri);
-      const { resourceUri, webId, disassembly } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+      const { resourceUri } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId || 'anon';
+
+      const { disassembly } = {
+        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
 
@@ -46,24 +47,54 @@ module.exports = {
         resourceUri,
         accept: MIME_TYPES.JSON,
         queryDepth: 1,
-        forceSemantic: true
+        forceSemantic: true,
+        webId
       });
 
-      await ctx.call('ldp.container.detach', {
-        containerUri: containerUri,
-        resourceUri
-      });
+      if (disassembly) {
+        await this.deleteDisassembly(ctx, disassembly, oldData);
+      }
 
-      oldData = await this.deleteDisassembly(ctx, oldData, MIME_TYPES.JSON, disassembly, webId);
+      // TODO see why blank node deletion does not work (permission error)
+      // const blandNodeQuery = buildBlankNodesQuery(3);
+      //
+      // // The resource must be deleted after the blank node, otherwise the permissions will fail
+      // const query =  `
+      //   DELETE {
+      //     ${blandNodeQuery.construct}
+      //     <${resourceUri}> ?p1 ?dataProp1 .
+      //   }
+      //   WHERE {
+      //     {
+      //       ${blandNodeQuery.where}
+      //       <${resourceUri}> ?p1 ?o1 .
+      //     }
+      //     UNION
+      //     {
+      //       <${resourceUri}> ?p1 ?dataProp1 .
+      //     }
+      //   }
+      // `;
 
       await ctx.call('triplestore.update', {
         query: `
           DELETE
-          WHERE
-          { <${resourceUri}> ?p ?v }
+          WHERE { 
+            <${resourceUri}> ?p1 ?o1 .
+          }
         `,
         webId
       });
+
+      // We must detach the resource from the container after deletion, otherwise the permissions will fail
+      await ctx.call(
+        'ldp.container.detach',
+        {
+          containerUri: getContainerFromUri(resourceUri),
+          resourceUri
+        },
+        { meta: { webId } }
+      );
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);

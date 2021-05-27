@@ -1,12 +1,13 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { Hero, Show, MarkdownField, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
+import { Hero, MarkdownField, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import EventTitle from './EventTitle';
 
 const EventShow = props => (
-  <Show title={<EventTitle />} {...props}>
+  <ShowWithPermissions title={<EventTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero>
@@ -34,7 +35,7 @@ const EventShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default EventShow;

@@ -1,8 +1,8 @@
 // Actors
 export { default as Organization } from './Agent/Actor/Organization';
+export { default as Group } from './Agent/Actor/Group';
 export { default as Person } from './Agent/Actor/Person';
 export { default as Actor } from './Agent/Actor/Actor';
-export { default as Group } from './Agent/Actor/Group';
 
 // Activities
 export { default as Project } from './Agent/Activity/Project';

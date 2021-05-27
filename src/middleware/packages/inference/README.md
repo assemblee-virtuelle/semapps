@@ -2,4 +2,4 @@
 
 Inference engine for SemApps
 
-[Documentation](https://semapps.org/docs/packages/inference)
+[Documentation](https://semapps.org/docs/middleware/inference)

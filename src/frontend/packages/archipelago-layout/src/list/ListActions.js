@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, CreateButton, ExportButton, RefreshButton, useResourceDefinition, Link } from 'react-admin';
+import { Button, CreateButton, ExportButton, useResourceDefinition, Link } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
 import { TopToolbar } from '@semapps/archipelago-layout';
@@ -20,10 +20,11 @@ const ListActions = ({
   total,
   views,
   currentView,
-  setView
+  setView,
+  ...rest
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const resourceDefinition = useResourceDefinition({});
+  const resourceDefinition = useResourceDefinition(rest);
   const query = new URLSearchParams(useLocation().search);
   return (
     <TopToolbar currentView={currentView}>
@@ -46,14 +47,6 @@ const ListActions = ({
               </Link>
             );
           })}
-      {bulkActions &&
-        React.cloneElement(bulkActions, {
-          basePath,
-          filterValues,
-          resource,
-          selectedIds,
-          onUnselectItems
-        })}
       {filters &&
         React.cloneElement(filters, {
           resource,
@@ -72,7 +65,14 @@ const ListActions = ({
           exporter={exporter}
         />
       )}
-      {!xs && <RefreshButton />}
+      {bulkActions &&
+        React.cloneElement(bulkActions, {
+          basePath,
+          filterValues,
+          resource,
+          selectedIds,
+          onUnselectItems
+        })}
     </TopToolbar>
   );
 };

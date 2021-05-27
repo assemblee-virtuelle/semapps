@@ -1,17 +1,22 @@
-const ObjectID = require('bson').ObjectID;
+const urlJoin = require('url-join');
+
+function getAclUriFromResourceUri(baseUrl, resourceUri) {
+  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
+}
 
 const buildBlankNodesQuery = depth => {
   let construct = '',
     where = '';
   if (depth > 0) {
-    for (let i = 1; i <= depth; i++) {
+    for (let i = depth; i >= 1; i--) {
       construct += `
         ?o${i} ?p${i + 1} ?o${i + 1} .
       `;
-      where += `
+      where = `
         OPTIONAL {
           FILTER((isBLANK(?o${i}))) .
           ?o${i} ?p${i + 1} ?o${i + 1} .
+          ${where}
         }
       `;
     }
@@ -88,9 +93,6 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-// Generate a MongoDB-like object ID
-const generateId = () => new ObjectID().toString();
-
 const getPrefixRdf = ontologies => {
   return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
@@ -105,16 +107,20 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
+const isContainer = resource =>
+  Array.isArray(resource.type) ? resource.type.includes('ldp:Container') : resource.type === 'ldp:Container';
+
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
 module.exports = {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
-  generateId,
   getPrefixRdf,
   getPrefixJSON,
   getSlugFromUri,
   getContainerFromUri,
-  defaultToArray
+  isContainer,
+  defaultToArray,
+  getAclUriFromResourceUri
 };

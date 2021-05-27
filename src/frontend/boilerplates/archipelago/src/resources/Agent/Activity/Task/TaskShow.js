@@ -3,7 +3,6 @@ import { ChipField, SingleFieldList, TextField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   Hero,
-  Show,
   MarkdownField,
   GridList,
   MainList,
@@ -11,11 +10,12 @@ import {
   AvatarField,
   SeparatedListField
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import TaskTitle from './TaskTitle';
 
 const TaskShow = props => (
-  <Show title={<TaskTitle />} {...props}>
+  <ShowWithPermissions title={<TaskTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero>
@@ -78,7 +78,7 @@ const TaskShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default TaskShow;

@@ -3,6 +3,9 @@ const CONFIG = require('./config');
 
 module.exports = [
   {
+    path: '/'
+  },
+  {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress', 'pair:organizationOfMembership'],

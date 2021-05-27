@@ -2,22 +2,21 @@ import React from 'react';
 import { FormTab, TextInput, SelectInput, TabbedForm } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import frLocale from 'date-fns/locale/fr';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import {
   ActorsInput,
   ThemesInput,
-  AgentsInput,
   TasksInput,
   SkillsInput,
   DocumentsInput,
   ActivitiesInput
 } from '../../../../pair';
 import { ReferenceInput } from '@semapps/semantic-data-provider';
-import TaskTitle from './TaskTitle';
 import { DateTimeInput } from '@semapps/date-components';
+import TaskTitle from './TaskTitle';
 
 const TaskEdit = props => (
-  <Edit title={<TaskTitle />} {...props}>
+  <EditWithPermissions title={<TaskTitle />} {...props}>
     <TabbedForm redirect="show">
       <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
@@ -62,7 +61,7 @@ const TaskEdit = props => (
         <DocumentsInput source="pair:uses" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default TaskEdit;

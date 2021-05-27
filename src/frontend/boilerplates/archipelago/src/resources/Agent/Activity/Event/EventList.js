@@ -1,12 +1,13 @@
 import React from 'react';
 import { DateField } from 'react-admin';
-import { List, SimpleList } from '@semapps/archipelago-layout';
+import { SimpleList } from '@semapps/archipelago-layout';
+import { ListWithPermissions } from '@semapps/auth-provider';
 import EventFilterSidebar from './EventFilterSidebar';
 import { Avatar } from '@material-ui/core';
 import EventIcon from '@material-ui/icons/Event';
 
 const EventList = props => (
-  <List aside={<EventFilterSidebar />} {...props}>
+  <ListWithPermissions aside={<EventFilterSidebar />} {...props}>
     <SimpleList
       primaryText={record => record['pair:label']}
       secondaryText={record => (
@@ -24,7 +25,7 @@ const EventList = props => (
       )}
       linkType="show"
     />
-  </List>
+  </ListWithPermissions>
 );
 
 export default EventList;

@@ -10,7 +10,8 @@ module.exports = {
   },
   async started() {
     await this.actions.createDataset({
-      dataset: CONFIG.MAIN_DATASET
+      dataset: CONFIG.MAIN_DATASET,
+      secure: true
     });
   }
 };

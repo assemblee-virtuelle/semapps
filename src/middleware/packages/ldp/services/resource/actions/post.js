@@ -1,8 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const urlJoin = require('url-join');
-const createSlug = require('speakingurl');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { generateId } = require('../../../utils');
 const path = require('path');
 const fs = require('fs');
 
@@ -17,8 +14,7 @@ module.exports = {
           slug: ctx.meta.headers.slug,
           resource,
           contentType: ctx.meta.headers['content-type'],
-          accept: MIME_TYPES.JSON,
-          webId: ctx.meta.webId
+          accept: MIME_TYPES.JSON
         });
       } else {
         if (ctx.params.files) {
@@ -41,7 +37,6 @@ module.exports = {
             },
             contentType: MIME_TYPES.JSON,
             accept: MIME_TYPES.JSON,
-            webId: ctx.meta.webId,
             fileStream: file.readableStream
           });
         }
@@ -86,22 +81,18 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      const containerUri = ctx.params.containerUri;
-      const { slug, contentType, webId, fileStream, disassembly, ...otherParams } = {
+      let { resource, containerUri, slug, contentType, fileStream } = ctx.params;
+      let { webId } = ctx.params;
+      webId = webId || ctx.meta.webId || 'anon';
+
+      const { disassembly } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
-      let resource = otherParams.resource;
 
-      // Generate ID and make sure it doesn't exist already
-      resource['@id'] = urlJoin(
-        containerUri,
-        slug ? createSlug(slug, { lang: 'fr', custom: { '.': '.' } }) : generateId()
-      );
-      resource['@id'] = await this.findAvailableUri(ctx, resource['@id']);
+      resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
-
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId } });
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,
@@ -134,7 +125,10 @@ module.exports = {
         }
       }
 
-      resource = await this.createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId);
+      if (disassembly && contentType === MIME_TYPES.JSON) {
+        await this.createDisassembly(ctx, disassembly, resource);
+      }
+
       await ctx.call('triplestore.insert', {
         resource,
         contentType,
@@ -153,7 +147,8 @@ module.exports = {
           resourceUri: resource['@id'],
           accept: MIME_TYPES.JSON,
           queryDepth: 1,
-          forceSemantic: true
+          forceSemantic: true,
+          webId
         },
         { meta: { $cache: false } }
       );

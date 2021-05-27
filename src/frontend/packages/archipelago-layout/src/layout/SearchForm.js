@@ -12,7 +12,7 @@ const TypeSelect = ({ input, ...otherProps }) => {
   return (
     <Select {...input} {...otherProps}>
       {resources
-        .filter(resource => resource.hasList)
+        .filter(resource => resource.hasList || resource.name === input.value)
         .map(resource => (
           <MenuItem value={resource.name} key={resource.name}>
             {resource.options.label}

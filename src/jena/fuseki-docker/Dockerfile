@@ -25,8 +25,8 @@ MAINTAINER Niko PLP <info@parlepeuple.fr>
 
 # Update below according to https://jena.apache.org/download/ and
 # corresponding *.tar.gz.sha512 from https://www.apache.org/dist/jena/binaries/
-ENV FUSEKI_SHA512 62ac07f70c65a77fb90127635fa82f719fd5f4f10339c32702ebd664227d78f7414233d69d5b73f25b033f2fdea37b8221ea498755697eea3c1344819e4a527e
-ENV FUSEKI_VERSION 3.14.0
+ENV FUSEKI_SHA512 2b92f3304743da335f648c1be7b5d7c3a94725ed0a9b5123362c89a50986690114dcef0813e328126b14240f321f740b608cc353417e485c9235476f059bd380
+ENV FUSEKI_VERSION 3.17.0
 # Tip: No need for https as we've coded the sha512 above
 ENV ASF_MIRROR_EU http://www.eu.apache.org/dist/
 ENV ASF_MIRROR_US https://downloads.apache.org/
@@ -68,7 +68,7 @@ RUN chmod 755  /jena-fuseki/fuseki-server
 
 COPY shiro.ini /jena-fuseki/
 COPY extra/commons-collections4-4.4.jar /jena-fuseki/extra/commons-collections4-4.4.jar
-COPY extra/jena-permissions-3.14.0.jar /jena-fuseki/extra/jena-permissions-3.14.0.jar
+COPY extra/jena-permissions-3.17.0.jar /jena-fuseki/extra/jena-permissions-3.17.0.jar
 COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-permissions-1.0.0.jar
 COPY configuration/localData.ttl /jena-fuseki/configuration/localData.ttl
 COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl

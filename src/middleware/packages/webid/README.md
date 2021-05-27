@@ -2,4 +2,4 @@
 
 WebID service for SemApps
 
-[Documentation](https://semapps.org/docs/packages/webid)
+[Documentation](https://semapps.org/docs/middleware/webid)

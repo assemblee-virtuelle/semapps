@@ -1,133 +1,178 @@
 const rdfParser = require('rdf-parse').default;
-const urlJoin = require('url-join');
 const streamifyString = require('streamify-string');
-const N3 = require('n3');
-const { negotiateTypeN3, MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixJSON, getPrefixRdf } = require('../../utils');
+const { variable } = require('rdf-data-model');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
-  async findAvailableUri(ctx, preferredUri) {
-    let resourcesStartingWithUri = await ctx.call('triplestore.query', {
-      query: `
-        ${getPrefixRdf(this.settings.ontologies)}
-        SELECT distinct ?uri
-        WHERE {
-          ?uri ?predicate ?object.
-          FILTER regex(str(?uri), "^${preferredUri}")
-        }
-      `,
-      accept: MIME_TYPES.JSON
-    });
-    let counter = 0;
-    if (resourcesStartingWithUri.length > 0) {
-      // Parse the results
-      resourcesStartingWithUri = resourcesStartingWithUri.map(r => r.uri.value);
-      // If preferredUri is already used, start finding another available URI
-      if (resourcesStartingWithUri.includes(preferredUri)) {
-        do {
-          counter++;
-        } while (resourcesStartingWithUri.includes(preferredUri + counter));
-      }
-    }
-    return preferredUri + (counter > 0 ? counter : '');
-  },
-  async jsonldToTriples(jsonLdObject, outputContentType) {
+  async bodyToTriples(body, contentType) {
     return new Promise((resolve, reject) => {
-      const textStream = streamifyString(JSON.stringify(jsonLdObject));
-      const writer = new N3.Writer({
-        prefixes: getPrefixJSON(this.settings.ontologies),
-        format: negotiateTypeN3(outputContentType)
-      });
+      if (contentType === 'application/ld+json' && typeof body === 'object') body = JSON.stringify(body);
+      const textStream = streamifyString(body);
+      let res = [];
       rdfParser
-        .parse(textStream, {
-          contentType: MIME_TYPES.JSON
-        })
-        .on('data', quad => {
-          writer.addQuad(quad);
-        })
-        .on('error', error => console.error(error))
-        .on('end', () => {
-          writer.end((error, result) => {
-            resolve(result);
-          });
-        });
-    });
-  },
-  buildDeleteQueryFromResource(resource) {
-    return new Promise((resolve, reject) => {
-      let deleteSPARQL = '';
-      let counter = 0;
-      const text = typeof resource === 'string' || resource instanceof String ? resource : JSON.stringify(resource);
-      const textStream = streamifyString(text);
-      rdfParser
-        .parse(textStream, {
-          contentType: 'application/ld+json'
-        })
-        .on('data', quad => {
-          deleteSPARQL = deleteSPARQL.concat(
-            `DELETE WHERE  {<${quad.subject.value}> <${quad.predicate.value}> ?o};
-            `
-          );
-          counter++;
-        })
+        .parse(textStream, { contentType })
+        .on('data', quad => res.push(quad))
         .on('error', error => reject(error))
-        .on('end', () => {
-          resolve(deleteSPARQL);
-        });
+        .on('end', () => resolve(res));
     });
   },
-  async createDisassemblyAndUpdateResource(ctx, resource, contentType, disassembly, webId) {
-    if (disassembly && contentType == MIME_TYPES.JSON) {
-      for (const disassemblyItem of disassembly) {
-        if (resource[disassemblyItem.path]) {
-          let rawDisassemblyValue = resource[disassemblyItem.path];
-          if (!Array.isArray(rawDisassemblyValue)) {
-            rawDisassemblyValue = [rawDisassemblyValue];
-          }
-          const uriInserted = [];
-          for (let disassemblyValue of rawDisassemblyValue) {
-            // id is extract to not interfer whith @id if set
-            let { id, ...usableValue } = disassemblyValue;
-            usableValue = {
-              '@context': resource['@context'],
-              ...usableValue
-            };
-
-            disassemblyResourceUri = await ctx.call('ldp.resource.post', {
-              containerUri: disassemblyItem.container,
-              resource: usableValue,
-              contentType: MIME_TYPES.JSON,
-              accept: MIME_TYPES.JSON,
-              webId: webId
-            });
-            uriInserted.push({ '@id': disassemblyResourceUri, '@type': '@id' });
-          }
-          resource[disassemblyItem.path] = uriInserted;
-        }
+  convertBlankNodesToVars(triples, blankNodesVarsMap) {
+    return triples.map(triple => {
+      if (triple.subject.termType === 'BlankNode') {
+        triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
       }
-    }
-    return resource;
+      if (triple.object.termType === 'BlankNode') {
+        triple.object = variable(blankNodesVarsMap[triple.object.value]);
+      }
+      return triple;
+    });
   },
-  async deleteDisassembly(ctx, resource, contentType, disassembly, webId) {
-    if (disassembly) {
-      for (disassemblyItem of disassembly) {
-        if (resource[disassemblyItem.path]) {
-          let rawDisassemblyValue = resource[disassemblyItem.path];
-          if (!Array.isArray(rawDisassemblyValue)) {
-            rawDisassemblyValue = [rawDisassemblyValue];
-          }
-          for (let disassemblyValue of rawDisassemblyValue) {
-            const idToDelete = disassemblyValue['@id'] || disassemblyValue['id'] || disassemblyValue;
+  // Exclude from triples1 the triples which also exist in triples2
+  getTriplesDifference(triples1, triples2) {
+    return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
+  },
+  nodeToString(node) {
+    switch (node.termType) {
+      case 'Variable':
+        return `?${node.value}`;
+      case 'NamedNode':
+        return `<${node.value}>`;
+      case 'Literal':
+        if (node.datatype.value === 'http://www.w3.org/2001/XMLSchema#string') {
+          // Use triple quotes SPARQL notation to allow new lines and double quotes
+          // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
+          return `'''${node.value}'''`;
+        } else {
+          return `"${node.value}"^^<${node.datatype.value}>`;
+        }
+      default:
+        throw new Error('Unknown node type: ' + node.termType);
+    }
+  },
+  /*
+   * Go through all blank nodes in the provided triples, and map them using the last part of the predicate
+   * http://virtual-assembly.org/ontologies/pair#hasLocation -> ?hasLocation
+   * TODO: make it work with /
+   */
+  mapBlankNodesOnVars(triples) {
+    let blankNodesVars = {};
+    triples
+      .filter(triple => triple.object.termType === 'BlankNode')
+      .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
+    return blankNodesVars;
+  },
+  triplesToString(triples) {
+    return triples
+      .map(
+        triple =>
+          `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
+      )
+      .join('\n');
+  },
+  bindNewBlankNodes(triples) {
+    return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
+  },
+  async createDisassembly(ctx, disassembly, newData) {
+    for (let disassemblyConfig of disassembly) {
+      if (newData[disassemblyConfig.path]) {
+        let disassemblyValue = newData[disassemblyConfig.path];
+        if (!Array.isArray(disassemblyValue)) {
+          disassemblyValue = [disassemblyValue];
+        }
+        const uriAdded = [];
+        for (let resource of disassemblyValue) {
+          let { id, ...resourceWithoutId } = resource;
+          const newResourceUri = await ctx.call('ldp.resource.post', {
+            containerUri: disassemblyConfig.container,
+            resource: {
+              '@context': newData['@context'],
+              ...resourceWithoutId
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+          uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
+        }
+        newData[disassemblyConfig.path] = uriAdded;
+      }
+    }
+  },
+  async updateDisassembly(ctx, disassembly, newData, oldData, method) {
+    for (let disassemblyConfig of disassembly) {
+      let uriAdded = [],
+        uriRemoved = [],
+        uriKept = [];
+
+      let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
+      let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
+
+      let resourcesToAdd = newDisassemblyValue.filter(
+        t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
+      let resourcesToRemove = oldDisassemblyValue.filter(
+        t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
+      let resourcesToKeep = oldDisassemblyValue.filter(t1 =>
+        newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+      );
+
+      if (resourcesToAdd) {
+        for (let resource of resourcesToAdd) {
+          delete resource.id;
+
+          const newResourceUri = await ctx.call('ldp.resource.post', {
+            containerUri: disassemblyConfig.container,
+            resource: {
+              '@context': newData['@context'],
+              ...resource
+            },
+            contentType: MIME_TYPES.JSON,
+            webId: 'system'
+          });
+          uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
+        }
+      }
+
+      if (method === 'PUT') {
+        if (resourcesToRemove) {
+          for (let resource of resourcesToRemove) {
             await ctx.call('ldp.resource.delete', {
-              resourceUri: idToDelete,
-              webId: webId
+              resourceUri: resource['@id'] || resource['id'] || resource,
+              webId: 'system'
             });
+            uriRemoved.push({ '@id': resource['@id'] || resource['id'] || resource, '@type': '@id' });
           }
+        }
+
+        if (resourcesToKeep) {
+          uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
+        }
+      } else if (method === 'PATCH') {
+        uriKept = oldDisassemblyValue.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
+      } else {
+        throw new Error('Unknown method ' + method);
+      }
+
+      oldData[disassemblyConfig.path] = [...uriRemoved, ...uriKept];
+      newData[disassemblyConfig.path] = [...uriKept, ...uriAdded];
+    }
+  },
+  async deleteDisassembly(ctx, disassembly, resource) {
+    for (let disassemblyConfig of disassembly) {
+      if (resource[disassemblyConfig.path]) {
+        let disassemblyValue = resource[disassemblyConfig.path];
+        if (!Array.isArray(disassemblyValue)) {
+          disassemblyValue = [disassemblyValue];
+        }
+        for (let resource of disassemblyValue) {
+          await ctx.call('ldp.resource.delete', {
+            resourceUri: resource['@id'] || resource['id'] || resource,
+            webId: 'system'
+          });
         }
       }
     }
-    // resource[disassemblyItem.path]==undefined;
-    return resource;
   }
 };

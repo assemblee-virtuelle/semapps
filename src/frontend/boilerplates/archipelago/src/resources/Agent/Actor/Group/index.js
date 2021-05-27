@@ -2,7 +2,7 @@ import { PairResourceCreate } from '../../../../pair';
 import GroupEdit from './GroupEdit';
 import GroupList from './GroupList';
 import GroupShow from './GroupShow';
-import HomeIcon from '@material-ui/icons/Home';
+import GroupIcon from '@material-ui/icons/Group';
 
 export default {
   config: {
@@ -10,9 +10,9 @@ export default {
     show: GroupShow,
     create: PairResourceCreate,
     edit: GroupEdit,
-    icon: HomeIcon,
+    icon: GroupIcon,
     options: {
-      label: 'Groups',
+      label: 'Groupes',
       parent: 'Actor'
     }
   },
