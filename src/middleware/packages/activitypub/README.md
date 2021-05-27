@@ -2,4 +2,4 @@
 
 ActivityPub module for SemApps
 
-[Documentation](https://semapps.org/docs/packages/activitypub)
+[Documentation](https://semapps.org/docs/middleware/activitypub)

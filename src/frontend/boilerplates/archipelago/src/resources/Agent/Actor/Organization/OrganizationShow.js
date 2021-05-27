@@ -1,31 +1,24 @@
 import React from 'react';
-import { TextField, ChipField, SingleFieldList, SimpleList } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
+import { Box, Grid } from '@material-ui/core';
 import {
   MainList,
   SideList,
   Hero,
   GridList,
-  Show,
   MarkdownField,
   AvatarField,
   SeparatedListField,
   RightLabel
 } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { MapField } from '@semapps/geo-components';
-import {
-  ReferenceArrayField,
-  ReferenceField,
-  GroupedArrayField
-} from '@semapps/semantic-data-provider';
+import { ReferenceArrayField, ReferenceField, GroupedReferenceHandler } from '@semapps/semantic-data-provider';
 import OrganizationTitle from './OrganizationTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 import HomeIcon from '@material-ui/icons/Home';
 
-import Chip from '@material-ui/core/Chip'
-
-
-const MyLinkUrlArrayField = ({ record, source }) => {
+const UrlArrayField = ({ record, source }) => {
   let links = typeof(record[source]) === "string" ? [record[source]] : record[source]
   let index = 0
   for (let link of links) {
@@ -35,20 +28,35 @@ const MyLinkUrlArrayField = ({ record, source }) => {
     index++
   }
 
-  return record ? links.map(item =><div><a href={"http://"+item} target="_blank" >{item}</a></div>) : null
+  return record ? links.map(item =><div><a href={"https://"+item} target="_blank" >{item}</a></div>) : null
 }
-MyLinkUrlArrayField.defaultProps = { addLabel: true }
+UrlArrayField.defaultProps = { addLabel: true }
+
+const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherProps }) => {
+  if (record?.[source] && (!Array.isArray(record[source]) || record[source].length > 0)) {
+    return React.Children.map(children, (child, i) => {
+      return React.cloneElement(child, { ...otherProps, record, source });
+    });
+  } else {
+    return <></>;
+  }
+};
 
 const OrganizationShow = props => (
-  <Show title={<OrganizationTitle />} {...props}>
+  <ShowWithPermissions title={<OrganizationTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero image="image">
           <TextField source="pair:comment" />
-          <MyLinkUrlArrayField source="pair:homePage" />
+          <UrlArrayField source="pair:homePage" />
+          <ReferenceArrayField reference="Status" source="pair:hasStatus">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
           <ReferenceArrayField reference="Type" source="pair:hasType">
             <SeparatedListField linkType={false}>
-              <Chip source="pair:label" />
+              <TextField source="pair:label" />
             </SeparatedListField>
           </ReferenceArrayField>
         </Hero>
@@ -71,19 +79,26 @@ const OrganizationShow = props => (
       </Grid>
       <Grid item xs={12} sm={3}>
         <SideList>
-          <GroupedArrayField
+          <GroupedReferenceHandler
             source="pair:organizationOfMembership"
             groupReference="MembershipRole"
-            groupComponent={record => <RightLabel record={record} source="pair:label" label={record?.['pair:label']} />}
+            groupLabel="pair:label"
             filterProperty="pair:membershipRole"
             addLabel={false}
           >
-            <GridList xs={6} linkType={false}>
-              <ReferenceField reference="Person" source="pair:membershipActor" link="show">
-                <AvatarField label={record => `${record['pair:firstName']} ${record['pair:lastName']}`} image="image" />
-              </ReferenceField>
-            </GridList>
-          </GroupedArrayField>
+            <ConditionalSourceDefinedHandler>
+              <RightLabel mb={0} />
+              <ArrayField source="pair:organizationOfMembership">
+                <Box mb={4}>
+                  <GridList xs={6} linkType={false}>
+                    <ReferenceField reference="Person" source="pair:membershipActor" link="show">
+                      <AvatarField label="pair:label" image="image" />
+                    </ReferenceField>
+                  </GridList>
+                </Box>
+              </ArrayField>
+            </ConditionalSourceDefinedHandler>
+          </GroupedReferenceHandler>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
             <GridList xs={6} linkType="show">
               <AvatarField label="pair:label" image="image">
@@ -104,7 +119,7 @@ const OrganizationShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default OrganizationShow;

@@ -3,6 +3,9 @@ const CONFIG = require('./config');
 
 module.exports = [
   {
+    path: '/'
+  },
+  {
     path: '/organizations',
     acceptedTypes: ['pair:Organization', ACTOR_TYPES.ORGANIZATION],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress', 'pair:organizationOfMembership'],
@@ -11,6 +14,18 @@ module.exports = [
   {
     path: '/membership-associations',
     acceptedTypes: ['pair:MembershipAssociation']
+  },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
+  },
+
+  {
+    path: '/groups',
+    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    dereference: ['sec:publicKey']
   },
   {
     path: '/projects',
@@ -23,12 +38,16 @@ module.exports = [
   },
   {
     path: '/tasks',
-    acceptedTypes: ['pair:Task', OBJECT_TYPES.EVENT]
+    acceptedTypes: ['pair:Task']
   },
   {
     path: '/users',
     acceptedTypes: ['pair:Person', ACTOR_TYPES.PERSON],
     dereference: ['sec:publicKey', 'pair:hasLocation/pair:hasPostalAddress']
+  },
+  {
+    path: '/ideas',
+    acceptedTypes: 'pair:Idea'
   },
   {
     path: '/themes',

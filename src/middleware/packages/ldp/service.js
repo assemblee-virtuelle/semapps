@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
-const LdpCacheCleanerService = require('./services/cache-cleaner');
+const LdpCacheService = require('./services/cache');
 const getContainerRoutes = require('./routes/getContainerRoutes');
 const defaultContainerOptions = require('./services/container/defaultOptions');
 
@@ -13,6 +13,7 @@ module.exports = {
     containers: [],
     defaultContainerOptions
   },
+  dependencies: ['api'],
   async created() {
     const { baseUrl, ontologies, containers, defaultContainerOptions } = this.schema.settings;
 
@@ -35,20 +36,21 @@ module.exports = {
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
-      await this.broker.createService(LdpCacheCleanerService);
+      await this.broker.createService(LdpCacheService);
+    }
+  },
+  async started() {
+    const routes = await this.actions.getApiRoutes();
+    for (let route of routes) {
+      await this.broker.call('api.addRoute', { route });
     }
   },
   actions: {
-    async getApiRoutes(ctx) {
+    async getApiRoutes() {
       let routes = [];
-      await this.broker.waitForServices(['ldp.container']);
-      // Associate all containers in settings with the LDP service
       for (let container of this.settings.containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
-        const { allowAnonymousEdit, allowAnonymousDelete } = await ctx.call('ldp.container.getOptions', {
-          uri: containerUri
-        });
-        routes.push(...getContainerRoutes(containerUri, null, allowAnonymousEdit, allowAnonymousDelete));
+        routes.push(...getContainerRoutes(containerUri, null));
       }
       return routes;
     }

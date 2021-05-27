@@ -2,13 +2,13 @@ import React from 'react';
 import { FormTab, TextInput, TabbedForm } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
 import frLocale from 'date-fns/locale/fr';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { DateTimeInput } from '@semapps/date-components';
 import { ActorsInput, ThemesInput } from '../../../../pair';
 import EventTitle from './EventTitle';
 
 const EventEdit = props => (
-  <Edit title={<EventTitle />} {...props}>
+  <EditWithPermissions title={<EventTitle />} {...props}>
     <TabbedForm redirect="show">
       <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
@@ -43,7 +43,7 @@ const EventEdit = props => (
         <ThemesInput source="pair:hasTopic" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default EventEdit;

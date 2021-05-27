@@ -1,6 +1,6 @@
 {
   "name": "pair-ldp-server",
-  "version": "0.1.47",
+  "version": "0.2.1",
   "private": true,
   "description": "SemApps-based semantic application",
   "keywords": [
@@ -13,23 +13,24 @@
     "link-all": "npm link @semapps/activitypub && npm link @semapps/ldp && npm link @semapps/webhooks"
   },
   "dependencies": {
-    "@semapps/activitypub": "0.1.47",
-    "@semapps/backup": "0.1.47",
-    "@semapps/connector": "0.1.47",
-    "@semapps/fuseki-admin": "0.1.47",
-    "@semapps/inference": "0.1.47",
-    "@semapps/ldp": "0.1.47",
-    "@semapps/mime-types": "0.1.47",
-    "@semapps/signature": "0.1.47",
-    "@semapps/sparql-endpoint": "0.1.47",
-    "@semapps/triplestore": "0.1.47",
-    "@semapps/webfinger": "0.1.47",
-    "@semapps/webid": "0.1.47",
+    "@semapps/activitypub": "0.2.1",
+    "@semapps/auth": "0.2.1",
+    "@semapps/backup": "0.2.1",
+    "@semapps/fuseki-admin": "0.2.1",
+    "@semapps/inference": "0.2.1",
+    "@semapps/ldp": "0.2.1",
+    "@semapps/mime-types": "0.2.1",
+    "@semapps/signature": "0.2.1",
+    "@semapps/sparql-endpoint": "0.2.1",
+    "@semapps/triplestore": "0.2.1",
+    "@semapps/webacl": "0.2.1",
+    "@semapps/webfinger": "0.2.1",
+    "@semapps/webid": "0.2.1",
     "dotenv-flow": "^3.2.0",
     "ioredis": "^4.17.3",
     "moleculer": "^0.14.4",
     "moleculer-repl": "^0.6.3",
-    "moleculer-web": "^0.9.1",
+    "moleculer-web": "^0.10.0-beta1",
     "url-join": "^4.0.1"
   }
 }

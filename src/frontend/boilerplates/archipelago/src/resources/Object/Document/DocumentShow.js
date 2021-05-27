@@ -1,12 +1,13 @@
 import React from 'react';
 import { SingleFieldList, ChipField } from 'react-admin';
 import { Grid, Typography } from '@material-ui/core';
-import { MainList, SideList, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { MainList, SideList, MarkdownField } from '@semapps/archipelago-layout';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import DocumentTitle from './DocumentTitle';
 
 const DocumentShow = props => (
-  <Show title={<DocumentTitle />} {...props}>
+  <ShowWithPermissions title={<DocumentTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Typography variant="h3" color="primary" component="h1" id="react-admin-title" />
@@ -29,7 +30,7 @@ const DocumentShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default DocumentShow;

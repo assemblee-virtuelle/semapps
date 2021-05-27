@@ -1,7 +1,8 @@
 const CONFIG = require('./config');
+const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 
 // Use the cacher only if Redis is configured
-const cacher = CONFIG.REDIS_CACHE_URL
+const cacherConfig = CONFIG.REDIS_CACHE_URL
   ? {
       type: 'Redis',
       options: {
@@ -15,5 +16,8 @@ const cacher = CONFIG.REDIS_CACHE_URL
 module.exports = {
   // You can set all ServiceBroker configurations here
   // See https://moleculer.services/docs/0.14/configuration.html
-  cacher
+  middlewares: [
+    CacherMiddleware(cacherConfig), // Set the cacher before the WebAcl middleware
+    WebAclMiddleware
+  ]
 };

@@ -38,6 +38,12 @@ export const EventsInput = ({ label, source }) => (
   </ReferenceArrayInput>
 );
 
+export const TasksInput = ({ label, source }) => (
+  <ReferenceArrayInput label={label} reference="Task" source={source}>
+    <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />
+  </ReferenceArrayInput>
+);
+
 export const SkillsInput = ({ label, source }) => (
   <ReferenceArrayInput label={label} reference="Skill" source={source}>
     <AutocompleteArrayInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} fullWidth />

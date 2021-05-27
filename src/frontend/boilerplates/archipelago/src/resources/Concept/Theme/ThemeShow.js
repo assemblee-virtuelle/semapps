@@ -1,12 +1,13 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { MainList, SideList, Hero, Show, MarkdownField } from '@semapps/archipelago-layout';
+import { MainList, SideList, Hero, MarkdownField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { ShowWithPermissions } from '@semapps/auth-provider';
 import ThemeTitle from './ThemeTitle';
 
 const ThemeShow = props => (
-  <Show title={<ThemeTitle />} {...props}>
+  <ShowWithPermissions title={<ThemeTitle />} {...props}>
     <Grid container spacing={5}>
       <Grid item xs={12} sm={9}>
         <Hero>
@@ -26,7 +27,7 @@ const ThemeShow = props => (
         </SideList>
       </Grid>
     </Grid>
-  </Show>
+  </ShowWithPermissions>
 );
 
 export default ThemeShow;

@@ -3,6 +3,7 @@ import RedirectByType from './show/RedirectByType';
 
 export { default as Layout } from './layout/DefaultLayout/Layout';
 export { default as AppBar } from './layout/DefaultLayout/AppBar';
+export { default as TopToolbar } from './layout/DefaultLayout/TopToolbar';
 export { default as SimpleLayout } from './layout/SimpleLayout/Layout';
 export { default as SimpleAppBar } from './layout/SimpleLayout/AppBar';
 export { default as theme } from './layout/theme';

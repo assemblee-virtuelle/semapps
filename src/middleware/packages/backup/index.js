@@ -23,16 +23,16 @@ const BackupService = {
   },
   dependencies: ['fuseki-admin'],
   started() {
-    const { cronJob, remoteServer } = this.settings;
+    const { cronJob } = this.settings;
 
-    if (cronJob.time && remoteServer.host) {
+    if (cronJob.time) {
       this.cronJob = new CronJob(cronJob.time, this.actions.backupAll, null, true, cronJob.timeZone);
     }
   },
   actions: {
     async backupAll(ctx) {
-      await this.actions.backupDatasets();
-      await this.actions.backupOtherDirs();
+      await this.actions.backupDatasets({}, { parentCtx: ctx });
+      await this.actions.backupOtherDirs({}, { parentCtx: ctx });
     },
     async backupDatasets(ctx) {
       const { fusekiBackupsPath } = this.settings.localServer;
@@ -59,12 +59,17 @@ const BackupService = {
       }
 
       for (const [key, path] of Object.entries(otherDirsPaths)) {
-        await this.actions.syncWithRemoteServer({ path, subDir: key });
+        await this.actions.syncWithRemoteServer({ path, subDir: key }, { parentCtx: ctx });
       }
     },
     syncWithRemoteServer(ctx) {
       const { path, subDir } = ctx.params;
       const { remoteServer } = this.settings;
+
+      if (!remoteServer.host) {
+        console.log('No remove server defined, skipping remote backup...');
+        return;
+      }
 
       // Setup rsync to remote server
       const rsync = new Rsync()

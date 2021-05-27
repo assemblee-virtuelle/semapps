@@ -32,7 +32,7 @@ const ImporterService = {
       console.log(`Importing ${json.length} items...`);
 
       for (let data of json) {
-        await this.actions[action]({ data, ...otherParams });
+        await this.actions[action]({ data, ...otherParams }, { parentCtx: ctx });
       }
 
       console.log('Import finished !');

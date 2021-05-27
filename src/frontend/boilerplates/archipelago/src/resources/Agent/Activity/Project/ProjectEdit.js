@@ -1,13 +1,13 @@
 import React from 'react';
 import { ImageInput, SelectInput, TextInput, TabbedForm, FormTab } from 'react-admin';
 import MarkdownInput from 'ra-input-markdown';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ActorsInput, DocumentsInput, ThemesInput, ResourcesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
 import { ImageField, ReferenceInput } from '@semapps/semantic-data-provider';
 
 const ProjectEdit = props => (
-  <Edit title={<ProjectTitle />} {...props}>
+  <EditWithPermissions title={<ProjectTitle />} {...props}>
     <TabbedForm redirect="show">
       <FormTab label="Données">
         <TextInput source="pair:label" fullWidth />
@@ -28,7 +28,7 @@ const ProjectEdit = props => (
         <ThemesInput source="pair:hasTopic" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default ProjectEdit;

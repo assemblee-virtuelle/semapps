@@ -1,42 +1,17 @@
-const { ServiceBroker } = require('moleculer');
-const { LdpService, getPrefixJSON } = require('@semapps/ldp');
-const { TripleStoreService } = require('@semapps/triplestore');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
+const { getPrefixJSON } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const initialize = require('./initialize');
 
 jest.setTimeout(20000);
-const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
-});
+let broker;
 
 beforeAll(async () => {
-  await broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  await broker.createService(LdpService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL,
-      ontologies,
-      containers: ['/resources']
-    }
-  });
-
-  await broker.start();
-  await broker.call('triplestore.dropAll');
-
-  // Restart broker after dropAll, so that the default container is recreated
-  await broker.start();
+  broker = await initialize();
 });
-
 afterAll(async () => {
-  await broker.stop();
+  if (broker) await broker.stop();
 });
 
 describe('LDP container tests', () => {
@@ -53,7 +28,11 @@ describe('LDP container tests', () => {
       false
     );
 
-    await broker.call('ldp.container.create', { containerUri: CONFIG.HOME_URL + 'objects' });
+    await broker.call(
+      'ldp.container.create',
+      { containerUri: CONFIG.HOME_URL + 'objects' },
+      { meta: { webId: 'system' } }
+    );
 
     await expect(broker.call('ldp.container.exist', { containerUri: CONFIG.HOME_URL + 'objects' })).resolves.toBe(true);
 
@@ -113,7 +92,7 @@ describe('LDP container tests', () => {
           label: 'My project'
         }
       })
-    ).rejects.toThrow('Cannot create resource in non-existing container');
+    ).rejects.toThrow('Cannot create resource in non-existing container ' + CONFIG.HOME_URL + 'unknownContainer');
   });
 
   test('Attach a resource to a non-existing container', async () => {

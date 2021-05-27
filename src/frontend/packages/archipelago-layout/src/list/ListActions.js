@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  TopToolbar,
-  Button,
-  CreateButton,
-  ExportButton,
-  RefreshButton,
-  useResourceDefinition,
-  Link
-} from 'react-admin';
+import { Button, CreateButton, ExportButton, useResourceDefinition, Link } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
+import { TopToolbar } from '@semapps/archipelago-layout';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActions = ({
@@ -27,13 +20,14 @@ const ListActions = ({
   total,
   views,
   currentView,
-  setView
+  setView,
+  ...rest
 }) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const resourceDefinition = useResourceDefinition({});
+  const resourceDefinition = useResourceDefinition(rest);
   const query = new URLSearchParams(useLocation().search);
   return (
-    <TopToolbar>
+    <TopToolbar currentView={currentView}>
       {views &&
         Object.entries(views)
           .filter(([key]) => key !== currentView)
@@ -53,14 +47,6 @@ const ListActions = ({
               </Link>
             );
           })}
-      {bulkActions &&
-        React.cloneElement(bulkActions, {
-          basePath,
-          filterValues,
-          resource,
-          selectedIds,
-          onUnselectItems
-        })}
       {filters &&
         React.cloneElement(filters, {
           resource,
@@ -70,7 +56,7 @@ const ListActions = ({
           context: 'button'
         })}
       {resourceDefinition.hasCreate && <CreateButton basePath={basePath} />}
-      {!xs && (
+      {!xs && exporter !== false && (
         <ExportButton
           disabled={total === 0}
           resource={resource}
@@ -79,7 +65,14 @@ const ListActions = ({
           exporter={exporter}
         />
       )}
-      {!xs && <RefreshButton />}
+      {bulkActions &&
+        React.cloneElement(bulkActions, {
+          basePath,
+          filterValues,
+          resource,
+          selectedIds,
+          onUnselectItems
+        })}
     </TopToolbar>
   );
 };

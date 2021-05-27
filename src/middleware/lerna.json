@@ -1,8 +1,16 @@
 {
-  "version": "0.1.47",
+  "version": "0.2.1",
   "packages": [
     "boilerplates/**",
     "packages/*",
     "tests"
-  ]
+  ],
+  "command": {
+    "version": {
+      "allowBranch": [
+        "master",
+        "next"
+      ]
+    }
+  }
 }

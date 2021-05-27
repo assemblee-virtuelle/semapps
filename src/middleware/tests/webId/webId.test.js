@@ -1,17 +1,23 @@
 const { ServiceBroker } = require('moleculer');
+const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
+const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher]
+  middlewares: [EventsWatcher, WebAclMiddleware],
+  logger: false
 });
 
 beforeAll(async () => {
+  await broker.createService({
+    mixins: [ApiGatewayService]
+  });
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -27,17 +33,33 @@ beforeAll(async () => {
       containers: ['/users']
     }
   });
+  broker.createService(WebAclService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL
+    }
+  });
   broker.createService(WebIdService, {
     settings: {
       usersContainer: CONFIG.HOME_URL + 'users/'
     }
   });
 
+  // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
-  await broker.call('triplestore.dropAll');
+  await broker.call('triplestore.dropAll', { webId: 'system' });
+  await broker.stop();
+  await broker.start();
 
-  // Restart broker after dropAll, so that the default container is recreated
-  await broker.start();
+  // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'users',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
 });
 
 afterAll(async () => {
@@ -53,9 +75,8 @@ describe('WebId user creation', () => {
       familyName: 'do',
       homepage: 'http://example.org/myPage'
     };
-    const uri = `${CONFIG.HOME_URL}users/${profileData.nick}`;
 
     let webId = await broker.call('webid.create', profileData);
-    expect(webId).toBe(uri);
+    expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

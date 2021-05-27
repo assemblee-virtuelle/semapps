@@ -1,6 +1,6 @@
 {
   "name": "@semapps/date-components",
-  "version": "0.1.29",
+  "version": "0.2.0",
   "description": "React-Admin components for date display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -10,8 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "pre-publish": "rollup --config",
-    "dev": "rollup --watch --config"
+    "pre-publish": "rollup --sourcemap --config",
+    "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
     "@date-io/core": "^1.3.6",

@@ -1,12 +1,12 @@
 import React from 'react';
 import { ImageInput, TabbedForm, TextInput, FormTab } from 'react-admin';
-import { Edit } from '@semapps/archipelago-layout';
+import { EditWithPermissions } from '@semapps/auth-provider';
 import { ActivitiesInput, OrganizationsInput, PairLocationInput, SkillsInput, ThemesInput } from '../../../../pair';
 import { ImageField } from '@semapps/semantic-data-provider';
 import PersonTitle from './PersonTitle';
 
 export const PersonEdit = props => (
-  <Edit
+  <EditWithPermissions
     title={<PersonTitle />}
     transform={data => ({ ...data, 'pair:label': `${data['pair:firstName']} ${data['pair:lastName']?.toUpperCase()}` })}
     {...props}
@@ -28,7 +28,7 @@ export const PersonEdit = props => (
         <ThemesInput source="pair:hasTopic" />
       </FormTab>
     </TabbedForm>
-  </Edit>
+  </EditWithPermissions>
 );
 
 export default PersonEdit;

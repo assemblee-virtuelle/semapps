@@ -1,4 +1,7 @@
 const fetch = require('node-fetch');
+const fsPromises = require('fs').promises;
+const path = require('path');
+const format = require('string-template');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -35,18 +38,33 @@ const FusekiAdminService = {
       }
     },
     async createDataset(ctx) {
-      const { dataset } = ctx.params;
+      const { dataset, secure } = ctx.params;
       const exist = await this.actions.datasetExist({ dataset });
       if (!exist) {
         console.warn(`Data ${dataset} doesn't exist. Creating it...`);
-        const response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
-          method: 'POST',
-          headers: this.headers
-        });
-        if (response.status === 200) {
-          console.log(`Dataset ${dataset} created`);
+        let response;
+
+        if (secure) {
+          const templateFilePath = path.join(__dirname, 'templates', 'secure-dataset.ttl');
+          const template = await fsPromises.readFile(templateFilePath, 'utf8');
+          const assembler = format(template, { dataset: dataset });
+          response = await fetch(this.settings.url + '$/datasets', {
+            method: 'POST',
+            headers: { ...this.headers, 'Content-Type': 'text/turtle' },
+            body: assembler
+          });
         } else {
-          throw new Error(`Error when creating dataset ${dataset}`);
+          response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
+            method: 'POST',
+            headers: this.headers
+          });
+        }
+
+        if (response.status === 200) {
+          console.log(`Created ${secure ? 'secure ' : ''}dataset ${dataset}`);
+        } else {
+          console.log(await response.text());
+          throw new Error(`Error when creating ${secure ? 'secure ' : ''}dataset ${dataset}`);
         }
       }
     },
@@ -61,7 +79,7 @@ const FusekiAdminService = {
 
       // Wait for backup to complete
       const { taskId } = await response.json();
-      await this.actions.waitForTaskCompletion({ taskId });
+      await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
     },
     async waitForTaskCompletion(ctx) {
       const { taskId } = ctx.params;
