@@ -36,7 +36,7 @@ module.exports = {
           }
         });
 
-        if( container['ldp:contains'] && container['ldp:contains'].length > 0 ) {
+        if (container['ldp:contains'] && container['ldp:contains'].length > 0) {
           for (let resource of container['ldp:contains']) {
             if (resource && Object.keys(resource).length > 0) {
               console.log('Adding rights for resource ' + resource.id);
