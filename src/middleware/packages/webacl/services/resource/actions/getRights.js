@@ -17,35 +17,28 @@ const {
 } = require('../../../utils');
 
 const prefixes = {
-  //'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
   acl: 'http://www.w3.org/ns/auth/acl#',
   foaf: 'http://xmlns.com/foaf/0.1/'
 };
 
-const prefixesJsonLD = {
+const webAclContext = {
   ...prefixes,
   'acl:accessTo': {
-    '@id': 'http://www.w3.org/ns/auth/acl#accessTo',
     '@type': '@id'
   },
   'acl:agentClass': {
-    '@id': 'http://www.w3.org/ns/auth/acl#agentClass',
     '@type': '@id'
   },
   'acl:agent': {
-    '@id': 'http://www.w3.org/ns/auth/acl#agent',
     '@type': '@id'
   },
   'acl:agentGroup': {
-    '@id': 'http://www.w3.org/ns/auth/acl#agentGroup',
     '@type': '@id'
   },
   'acl:default': {
-    '@id': 'http://www.w3.org/ns/auth/acl#default',
     '@type': '@id'
   },
   'acl:mode': {
-    '@id': 'http://www.w3.org/ns/auth/acl#mode',
     '@type': '@id'
   }
 };
@@ -74,24 +67,29 @@ async function formatOutput(output, resourceAclUri, jsonLD) {
   if (!jsonLD) return turtle;
   else {
     const mySerializer = new JsonLdSerializer({
-      //space: '  ',
-      context: prefixesJsonLD,
+      context: webAclContext,
       baseIRI: resourceAclUri
     });
 
     output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
     mySerializer.end();
-    let jsonld1 = JSON.parse(await streamToString(mySerializer));
 
-    let jsonld2 = await jsonld.compact(jsonld1, prefixesJsonLD);
-    // trick to clean up the jsonld in case we have only one auth node and compact removed the @graph level
-    if (jsonld2['@id']) {
-      jsonld2 = { '@context': {}, '@graph': [jsonld2] };
-      delete jsonld2['@graph'][0]['@context'];
-    }
-    jsonld2['@context'] = { ...prefixes, '@base': resourceAclUri };
+    let jsonLd = JSON.parse(await streamToString(mySerializer));
 
-    return jsonld2;
+    let compactJsonLd = await jsonld.frame(
+      jsonLd,
+      {
+        '@context': webAclContext,
+        '@type': 'acl:Authorization'
+      },
+      // Force results to be in a @graph, even if we have a single result
+      { omitGraph: false }
+    );
+
+    // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
+    compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': resourceAclUri };
+
+    return compactJsonLd;
   }
 }
 
