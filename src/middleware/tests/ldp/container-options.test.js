@@ -39,7 +39,7 @@ describe('Container options', () => {
     ).resolves.toMatchObject({
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: 'Event',
-      location: '_:b0'
+      location: {}
     });
 
     // Get resource with queryDepth
@@ -98,7 +98,7 @@ describe('Container options', () => {
     ).resolves.toMatchObject({
       '@context': jsonContext,
       type: 'Event',
-      location: '_:b0'
+      location: {}
     });
 
     // Get resource with partial dereference

@@ -80,12 +80,6 @@ module.exports = {
             '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
             '@id': resourceUri
           });
-
-          // Remove the @graph as we have a single result
-          result = {
-            '@context': result['@context'],
-            ...result['@graph'][0]
-          };
         }
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {

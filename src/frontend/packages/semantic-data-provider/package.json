@@ -14,7 +14,7 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "jsonld": "^3.0.1",
+    "jsonld": "^5.2.0",
     "speakingurl": "^14.0.1"
   },
   "peerDependencies": {

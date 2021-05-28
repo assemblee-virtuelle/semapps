@@ -155,16 +155,14 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           ...getEmbedFrame(resources[resourceId].dereference)
         };
 
-        const compactJson = await jsonld.frame(json, frame);
+        // omitGraph option force results to be in a @graph, even if we have a single result
+        const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
           return { data: [], total: 0 };
-        } else if (!compactJson['@graph']) {
-          // If we have several fields but no @graph, there is a single match
-          compactJson.id = compactJson.id || compactJson['@id'];
-          return { data: [compactJson], total: 1 };
         } else {
+          // Add id in addition to @id, as this is what React-Admin expects
           let returnData = compactJson['@graph'].map(item => {
             item.id = item.id || item['@id'];
             return item;
