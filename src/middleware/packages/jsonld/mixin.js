@@ -30,11 +30,11 @@ module.exports = {
   },
   methods: {
     async documentLoaderWithCache(url, options) {
-      if(cache.has(url)) {
+      if (cache.has(url)) {
         return cache.get(url);
       } else {
         const contextJson = defaultDocumentLoader(url, options);
-        cache.set(url, contextJson)
+        cache.set(url, contextJson);
       }
     }
   }
