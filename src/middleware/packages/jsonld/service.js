@@ -79,7 +79,7 @@ module.exports = {
     },
     toRDF(ctx) {
       const { input, options } = ctx.params;
-      return this.jsonld.fromRDF(input, options);
+      return this.jsonld.toRDF(input, options);
     }
   },
   methods: {
