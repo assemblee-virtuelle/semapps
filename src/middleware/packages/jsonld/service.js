@@ -17,7 +17,7 @@ module.exports = {
     this.jsonld = jsonld;
     this.jsonld.documentLoader = this.documentLoaderWithCache;
 
-    for( let contextFile of this.settings.localContextFiles ) {
+    for (let contextFile of this.settings.localContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       const contextUri = urlJoin(this.settings.baseUri, contextFile.path);
@@ -29,16 +29,19 @@ module.exports = {
         document: contextJson
       });
 
-      this.broker.call('api.addRoute', { route:
-        {
+      this.broker.call('api.addRoute', {
+        route: {
           path: contextFile.path,
           bodyParsers: {
             json: true
           },
           aliases: {
-            "GET /": [
-              (req, res, next) => { req.$params.uri = contextUri; next(); },
-              "jsonld.getCachedContext"
+            'GET /': [
+              (req, res, next) => {
+                req.$params.uri = contextUri;
+                next();
+              },
+              'jsonld.getCachedContext'
             ]
           }
         }
@@ -81,7 +84,7 @@ module.exports = {
   },
   methods: {
     async documentLoaderWithCache(url, options) {
-      if(cache.has(url)) {
+      if (cache.has(url)) {
         return cache.get(url);
       } else {
         const context = await defaultDocumentLoader(url, options);
