@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer;
 const { DataFactory, Writer } = require('n3');
 const { quad } = DataFactory;
@@ -52,7 +51,7 @@ function streamToString(stream) {
   });
 }
 
-async function formatOutput(output, resourceAclUri, jsonLD) {
+async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
   let turtle = await new Promise((resolve, reject) => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': resourceAclUri + '#' },
@@ -76,15 +75,15 @@ async function formatOutput(output, resourceAclUri, jsonLD) {
 
     let jsonLd = JSON.parse(await streamToString(mySerializer));
 
-    let compactJsonLd = await jsonld.frame(
-      jsonLd,
-      {
+    let compactJsonLd = await ctx.call('jsonld.frame', {
+      input: jsonLd,
+      frame: {
         '@context': webAclContext,
         '@type': 'acl:Authorization'
       },
       // Force results to be in a @graph, even if we have a single result
-      { omitGraph: false }
-    );
+      options: { omitGraph: false }
+    });
 
     // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
     compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': resourceAclUri };
@@ -177,7 +176,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
     document.push(...(await filterAcls(hasControl, uaSearchParam, value.controls)));
   }
 
-  return await formatOutput(document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
+  return await formatOutput(ctx, document, resourceAclUri, ctx.meta.$responseType === MIME_TYPES.JSON);
 }
 
 module.exports = {

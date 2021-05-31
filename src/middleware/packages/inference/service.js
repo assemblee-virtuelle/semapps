@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const request = require('request');
 const N3 = require('n3');
 const { DataFactory } = N3;
@@ -10,7 +9,7 @@ module.exports = {
     baseUrl: null,
     ontologies: []
   },
-  dependencies: ['triplestore', 'ldp'],
+  dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
     this.inverseRelations = this.findInverseRelations();
   },
@@ -99,7 +98,7 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       let { newData } = ctx.params;
-      newData = await jsonld.expand(ctx.params.newData);
+      newData = await ctx.call('jsonld.expand', { input: newData });
 
       let triplesToAdd = this.generateInverseTriples(newData[0]);
 
@@ -113,7 +112,7 @@ module.exports = {
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
-      oldData = await jsonld.expand(ctx.params.oldData);
+      oldData = await ctx.call('jsonld.expand', { input: oldData });
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
@@ -124,8 +123,8 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
-      oldData = await jsonld.expand(ctx.params.oldData);
-      newData = await jsonld.expand(ctx.params.newData);
+      oldData = await ctx.call('jsonld.expand', { input: oldData });
+      oldData = await ctx.call('jsonld.expand', { input: newData });
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
       let triplesToAdd = this.generateInverseTriples(newData[0]);

@@ -15,7 +15,7 @@ module.exports = {
     ontologies: [],
     containers: []
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'jsonld'],
   actions: {
     exist: existAction,
     generateId: generateIdAction,

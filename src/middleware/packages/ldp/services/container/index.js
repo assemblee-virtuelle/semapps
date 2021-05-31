@@ -18,7 +18,7 @@ module.exports = {
     containers: [],
     defaultOptions
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'jsonld'],
   actions: {
     attach: attachAction,
     clear: clearAction,

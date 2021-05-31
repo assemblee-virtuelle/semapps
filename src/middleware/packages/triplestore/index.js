@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const fetch = require('node-fetch');
 const { SparqlJsonParser } = require('sparqljson-parse');
 const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
@@ -22,6 +21,7 @@ const TripleStoreService = {
     jenaUser: null,
     jenaPassword: null
   },
+  dependencies: ['jsonld'],
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
     this.Authorization =
@@ -55,8 +55,11 @@ const TripleStoreService = {
         if (contentType !== MIME_TYPES.JSON) {
           rdf = resource;
         } else {
-          rdf = await jsonld.toRDF(resource, {
-            format: 'application/n-quads'
+          rdf = await ctx.call('jsonld.toRDF', {
+            input: resource,
+            options: {
+              format: 'application/n-quads'
+            }
           });
         }
         const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
