@@ -1,5 +1,6 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
+const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
 const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -21,6 +22,7 @@ const broker = new ServiceBroker({
 let expressMocked = undefined;
 
 beforeAll(async () => {
+  broker.createService(JsonLdService);
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
