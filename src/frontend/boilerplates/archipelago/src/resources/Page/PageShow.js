@@ -21,6 +21,6 @@ const PageShow = props => {
       </MainList>
     </ShowWithPermissions>
   );
-}
+};
 
 export default PageShow;

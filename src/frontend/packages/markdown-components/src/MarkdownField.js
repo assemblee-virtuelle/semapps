@@ -3,26 +3,30 @@ import { LargeLabel } from '@semapps/archipelago-layout';
 import Markdown from 'markdown-to-jsx';
 
 const MarkdownField = ({ source, record, addons = [] }) =>
-  record && record[source] ? <Markdown options={{
-    createElement(type, props, children) {
-      if( props.label ) {
-        return (
-          <>
-            <LargeLabel>{props.label}</LargeLabel>
-            {React.createElement(type, props, children)}
-          </>
-        );
-      } else {
-        return React.createElement(type, props, children)
-      }
-    },
-    overrides: {
-      h1: LargeLabel,
-      ...addons
-    },
-  }}>
-    {record[source]}
-  </Markdown> : null;
+  record && record[source] ? (
+    <Markdown
+      options={{
+        createElement(type, props, children) {
+          if (props.label) {
+            return (
+              <>
+                <LargeLabel>{props.label}</LargeLabel>
+                {React.createElement(type, props, children)}
+              </>
+            );
+          } else {
+            return React.createElement(type, props, children);
+          }
+        },
+        overrides: {
+          h1: LargeLabel,
+          ...addons
+        }
+      }}
+    >
+      {record[source]}
+    </Markdown>
+  ) : null;
 
 MarkdownField.defaultProps = {
   addLabel: true

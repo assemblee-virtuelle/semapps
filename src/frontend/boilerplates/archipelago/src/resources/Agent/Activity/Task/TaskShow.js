@@ -1,14 +1,7 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import {
-  Hero,
-  GridList,
-  MainList,
-  SideList,
-  AvatarField,
-  SeparatedListField
-} from '@semapps/archipelago-layout';
+import { Hero, GridList, MainList, SideList, AvatarField, SeparatedListField } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import { MarkdownField } from '@semapps/markdown-components';

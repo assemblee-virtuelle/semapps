@@ -6,7 +6,9 @@ import { FormControl } from '@material-ui/core';
 
 const MarkdownInput = props => {
   const [tab, setTab] = useState('write');
-  const { input: { value, onChange } } = useInput(props);
+  const {
+    input: { value, onChange }
+  } = useInput(props);
 
   return (
     <FormControl fullWidth className="ra-input-mde">

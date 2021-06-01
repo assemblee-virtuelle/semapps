@@ -73,16 +73,16 @@ const AppBar = props => {
       color="primary"
     >
       <Link to="/">
-      <div className={classes.presContainer}>
-        <div className={classes.logoContainer}>
-          <Zoom in={true} timeout={2000}>
-            <img className={classes.logo} src={process.env.PUBLIC_URL + '/logo192.png'} alt="logo" />
-          </Zoom>
+        <div className={classes.presContainer}>
+          <div className={classes.logoContainer}>
+            <Zoom in={true} timeout={2000}>
+              <img className={classes.logo} src={process.env.PUBLIC_URL + '/logo192.png'} alt="logo" />
+            </Zoom>
+          </div>
+          <Typography className={classes.title} variant="h6" noWrap>
+            {props.title}
+          </Typography>
         </div>
-        <Typography className={classes.title} variant="h6" noWrap>
-          {props.title}
-        </Typography>
-      </div>
       </Link>
       <Hidden only="xs">
         <div className={classes.searchFormContainer}>

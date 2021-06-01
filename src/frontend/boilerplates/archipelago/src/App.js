@@ -4,7 +4,7 @@ import { Layout, AppBar, theme } from '@semapps/archipelago-layout';
 import { LoginPage, LogoutButton, UserMenu } from '@semapps/auth-provider';
 import { createBrowserHistory as createHistory } from 'history';
 
-import HomePage from "./HomePage";
+import HomePage from './HomePage';
 import i18nProvider from './config/i18nProvider';
 import authProvider from './config/authProvider';
 import dataProvider from './config/dataProvider';

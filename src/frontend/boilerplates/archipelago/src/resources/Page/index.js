@@ -25,7 +25,7 @@ export default {
       name: 'Page |||| Pages',
       fields: {
         'semapps:title': 'Titre',
-        'semapps:content': 'Contenu',
+        'semapps:content': 'Contenu'
       }
     }
   }

@@ -34,7 +34,8 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   // Open all submenus by default
   useEffect(() => {
     const currentResource = resources.find(resource => resource.name === currentResourceName);
-    const currentCategory = currentResource && categories.find(category => category.name === currentResource.options.parent);
+    const currentCategory =
+      currentResource && categories.find(category => category.name === currentResource.options.parent);
     const defaultValues = categories.reduce((acc, category) => {
       acc[category.name] = openAll || (currentCategory && category.name === currentCategory.name);
       return acc;
