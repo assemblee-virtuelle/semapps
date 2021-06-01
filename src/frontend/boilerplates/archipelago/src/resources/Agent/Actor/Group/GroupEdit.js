@@ -1,8 +1,8 @@
 import React from 'react';
 import { SimpleForm, TextInput, ImageInput } from 'react-admin';
-import MarkdownInput from 'ra-input-markdown';
 import { EditWithPermissions } from '@semapps/auth-provider';
 import { ImageField } from '@semapps/semantic-data-provider';
+import { MarkdownInput } from '@semapps/markdown-components';
 import { UsersInput, EventsInput, ThemesInput, DocumentsInput } from '../../../../pair';
 import GroupTitle from './GroupTitle';
 

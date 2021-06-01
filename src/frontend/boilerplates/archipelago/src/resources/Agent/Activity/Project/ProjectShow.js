@@ -7,11 +7,11 @@ import {
   Hero,
   AvatarField,
   GridList,
-  MarkdownField,
   SeparatedListField
 } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import ProjectTitle from './ProjectTitle';
 import DescriptionIcon from '@material-ui/icons/Description';
 

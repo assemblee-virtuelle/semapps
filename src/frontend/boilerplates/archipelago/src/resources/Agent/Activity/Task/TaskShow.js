@@ -3,7 +3,6 @@ import { ChipField, SingleFieldList, TextField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import {
   Hero,
-  MarkdownField,
   GridList,
   MainList,
   SideList,
@@ -12,6 +11,7 @@ import {
 } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import TaskTitle from './TaskTitle';
 
 const TaskShow = props => (

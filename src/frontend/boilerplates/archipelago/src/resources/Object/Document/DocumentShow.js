@@ -1,9 +1,10 @@
 import React from 'react';
 import { SingleFieldList, ChipField } from 'react-admin';
 import { Grid, Typography } from '@material-ui/core';
-import { MainList, SideList, MarkdownField } from '@semapps/archipelago-layout';
+import { MainList, SideList } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import DocumentTitle from './DocumentTitle';
 
 const DocumentShow = props => (

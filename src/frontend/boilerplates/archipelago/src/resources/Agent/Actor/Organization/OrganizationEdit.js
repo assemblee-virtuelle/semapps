@@ -9,9 +9,9 @@ import {
   ArrayInput,
   SimpleFormIterator
 } from 'react-admin';
-import MarkdownInput from 'ra-input-markdown';
 import { EditWithPermissions } from '@semapps/auth-provider';
 import { ImageField, ReferenceInput, ReificationArrayInput } from '@semapps/semantic-data-provider';
+import { MarkdownInput } from '@semapps/markdown-components';
 import { OrganizationsInput, EventsInput, ThemesInput, DocumentsInput, PairLocationInput } from '../../../../pair';
 import OrganizationTitle from './OrganizationTitle';
 

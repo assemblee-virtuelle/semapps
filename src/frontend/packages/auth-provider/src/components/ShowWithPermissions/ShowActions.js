@@ -1,5 +1,6 @@
 import React from 'react';
-import { TopToolbar, EditButton, ListButton } from 'react-admin';
+import { EditButton, ListButton } from 'react-admin';
+import { TopToolbar } from '@semapps/archipelago-layout';
 import PermissionsButton from '../PermissionsButton/PermissionsButton';
 
 const ShowActions = ({ basePath, className, data, hasList, hasEdit, hasControl, ...otherProps }) => (

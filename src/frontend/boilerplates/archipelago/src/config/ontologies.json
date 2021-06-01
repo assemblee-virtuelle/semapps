@@ -35,13 +35,13 @@
     "url": "http://virtual-assembly.org/ontologies/pair#"
   },
   {
-    "prefix": "pairv1",
-    "owl": "",
-    "url": "http://virtual-assembly.org/pair#"
-  },
-  {
     "prefix": "skos",
     "owl": "",
     "url": "http://www.w3.org/2004/02/skos/core#"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/core#"
   }
 ]

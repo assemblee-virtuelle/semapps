@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageInput, SelectInput, TextInput, TabbedForm, FormTab } from 'react-admin';
-import MarkdownInput from 'ra-input-markdown';
 import { EditWithPermissions } from '@semapps/auth-provider';
+import { MarkdownInput } from '@semapps/markdown-components';
 import { ActorsInput, DocumentsInput, ThemesInput, ResourcesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
 import { ImageField, ReferenceInput } from '@semapps/semantic-data-provider';

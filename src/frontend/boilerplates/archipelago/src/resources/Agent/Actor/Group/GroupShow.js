@@ -1,8 +1,9 @@
 import React from 'react';
 import { TextField, ChipField, SingleFieldList } from 'react-admin';
-import { Column, ColumnShowLayout, Hero, GridList, MarkdownField, AvatarField } from '@semapps/archipelago-layout';
+import { Column, ColumnShowLayout, Hero, GridList, AvatarField } from '@semapps/archipelago-layout';
 import { ShowWithPermissions } from '@semapps/auth-provider';
 import { UriArrayField } from '@semapps/semantic-data-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import GroupTitle from './GroupTitle';
 
 const GroupShow = props => (
