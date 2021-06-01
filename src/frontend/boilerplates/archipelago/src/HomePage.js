@@ -1,6 +1,6 @@
 import React from 'react';
 import { useShowController, ShowContextProvider } from 'react-admin';
-import PageShow from "./resources/Page/PageShow";
+import PageShow from './resources/Page/PageShow';
 
 const HomePage = () => {
   const config = {
@@ -9,7 +9,7 @@ const HomePage = () => {
     resource: 'Page'
   };
 
-  return(
+  return (
     <ShowContextProvider value={useShowController(config)}>
       <PageShow {...config} />
     </ShowContextProvider>
