@@ -6,22 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
-const external = createFilter(
-  [
-    'leaflet',
-    'leaflet.markercluster',
-    'react',
-    'react-admin',
-    'react-dom',
-    'react-router-dom',
-    'react-final-form',
-    'react-router',
-    'react-redux',
-    '@material-ui/**'
-  ],
-  null,
-  { resolve: false }
-);
+const external = createFilter(['react', 'react-admin', '@material-ui/**', '@semapps/**'], null, { resolve: false });
 
 export default {
   input: './src/index.js',
