@@ -42,7 +42,8 @@ module.exports = {
     'Frontend packages': [
       'frontend/auth-provider',
       'frontend/date-components',
-      'frontend/geo-components'
+      'frontend/geo-components',
+      'frontend/markdown-components'
     ]
   },
   contribute: {
