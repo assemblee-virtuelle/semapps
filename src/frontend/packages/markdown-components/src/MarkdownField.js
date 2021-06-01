@@ -2,7 +2,7 @@ import React from 'react';
 import { LargeLabel } from '@semapps/archipelago-layout';
 import Markdown from 'markdown-to-jsx';
 
-const MarkdownField = ({ source, record, addons = [] }) =>
+const MarkdownField = ({ source, record, overrides = {}, ...rest }) =>
   record && record[source] ? <Markdown options={{
     createElement(type, props, children) {
       if( props.label ) {
@@ -18,8 +18,9 @@ const MarkdownField = ({ source, record, addons = [] }) =>
     },
     overrides: {
       h1: LargeLabel,
-      ...addons
+      ...overrides
     },
+    ...rest
   }}>
     {record[source]}
   </Markdown> : null;

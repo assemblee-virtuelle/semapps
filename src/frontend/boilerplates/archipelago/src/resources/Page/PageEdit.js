@@ -5,12 +5,12 @@ import { MarkdownInput, useLoadLinks } from '@semapps/markdown-components'
 import PageTitle from './PageTitle';
 
 export const PageEdit = props => {
-  const loadLinks = useLoadLinks('Page', 'id', 'semapps:title');
+  const loadLinks = useLoadLinks('Page', 'semapps:title');
   return (
     <EditWithPermissions title={<PageTitle />} {...props}>
       <SimpleForm redirect="show">
         <TextInput source="semapps:title" fullWidth />
-        <MarkdownInput multiline source="semapps:content" loadSuggestions={loadLinks} suggestionTriggerCharacters="[" fullWidth />
+        <MarkdownInput source="semapps:content" loadSuggestions={loadLinks} suggestionTriggerCharacters="[" fullWidth />
       </SimpleForm>
     </EditWithPermissions>
   );

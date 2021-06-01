@@ -1,6 +1,6 @@
 import { useDataProvider, useTranslate } from 'react-admin';
 
-const useLoadLinks = (resourceType, idProp, labelProp) => {
+const useLoadLinks = (resourceType, labelProp) => {
   const dataProvider = useDataProvider();
   const translate = useTranslate();
   return async keyword => {
@@ -15,7 +15,7 @@ const useLoadLinks = (resourceType, idProp, labelProp) => {
       if (results.total > 0) {
         return results.data.map(record => ({
           preview: record[labelProp],
-          value: `[${record[labelProp]}](/${resourceType}/${encodeURIComponent(record[idProp])}/show)`
+          value: `[${record[labelProp]}](/${resourceType}/${encodeURIComponent(record.id)}/show)`
         }));
       } else {
         return [{ preview: translate('ra.navigation.no_results'), value: '[' + keyword }];
