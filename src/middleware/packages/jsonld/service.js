@@ -50,6 +50,7 @@ module.exports = {
   },
   actions: {
     getCachedContext(ctx) {
+      ctx.meta.$responseType = "application/ld+json";
       const context = cache.get(ctx.params.uri);
       return context.document;
     },

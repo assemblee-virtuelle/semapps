@@ -124,7 +124,7 @@ module.exports = {
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
-      oldData = await ctx.call('jsonld.expand', { input: newData });
+      newData = await ctx.call('jsonld.expand', { input: newData });
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
       let triplesToAdd = this.generateInverseTriples(newData[0]);
