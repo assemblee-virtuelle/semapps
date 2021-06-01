@@ -1,7 +1,7 @@
 import React from 'react';
 import { SimpleForm, TextInput } from 'react-admin';
 import { EditWithPermissions } from '@semapps/auth-provider';
-import { MarkdownInput, useLoadLinks } from '@semapps/markdown-components'
+import { MarkdownInput, useLoadLinks } from '@semapps/markdown-components';
 import PageTitle from './PageTitle';
 
 export const PageEdit = props => {
@@ -14,6 +14,6 @@ export const PageEdit = props => {
       </SimpleForm>
     </EditWithPermissions>
   );
-}
+};
 
 export default PageEdit;
