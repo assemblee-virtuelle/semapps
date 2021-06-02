@@ -9,6 +9,7 @@ const getAction = require('./actions/get');
 const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
 const getOptionsAction = require('./actions/getOptions');
+const { getContainerFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.container',
@@ -51,7 +52,7 @@ module.exports = {
       // Find all children containers for this container
       const childContainersUris = this.settings.containers
         .map(childContainer => this.getContainerUri(childContainer))
-        .filter(childContainerUri => childContainerUri !== containerUri && childContainerUri.startsWith(containerUri));
+        .filter(childContainerUri => containerUri !== childContainerUri && getContainerFromUri(childContainerUri) === containerUri.replace(/\/$/, ''));
 
       for (let childContainerUri of childContainersUris) {
         await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });

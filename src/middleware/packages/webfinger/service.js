@@ -13,10 +13,14 @@ const WebfingerService = {
       this.settings.domainName = new URL(this.settings.baseUrl).host;
     }
 
-    const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
-      await this.broker.call('api.addRoute', { route });
-    }
+    await this.broker.call('api.addRoute', {
+      route: {
+        bodyParsers: { json: true },
+        aliases: {
+          'GET .well-known/webfinger': 'webfinger.get'
+        }
+      }
+    });
   },
   actions: {
     async get(ctx) {
@@ -85,12 +89,7 @@ const WebfingerService = {
     },
     getApiRoutes() {
       return [
-        {
-          bodyParsers: { json: true },
-          aliases: {
-            'GET .well-known/webfinger': 'webfinger.get'
-          }
-        }
+
       ];
     }
   }
