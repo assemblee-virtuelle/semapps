@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar as RaAppBar } from 'react-admin';
+import { AppBar as RaAppBar, Link } from 'react-admin';
 import { Zoom, Hidden, makeStyles } from '@material-ui/core';
 import SearchForm from '../SearchForm';
 import Typography from '@material-ui/core/Typography';
@@ -54,6 +54,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     display: 'block',
+    color: theme.palette.common.white,
     [theme.breakpoints.up('sm')]: {
       display: 'none'
     },
@@ -71,16 +72,18 @@ const AppBar = props => {
       classes={{ toolbar: classes.toolbar, menuButton: classes.menuButton, ...props.classes }}
       color="primary"
     >
-      <div className={classes.presContainer}>
-        <div className={classes.logoContainer}>
-          <Zoom in={true} timeout={2000}>
-            <img className={classes.logo} src={process.env.PUBLIC_URL + '/logo192.png'} alt="logo" />
-          </Zoom>
+      <Link to="/">
+        <div className={classes.presContainer}>
+          <div className={classes.logoContainer}>
+            <Zoom in={true} timeout={2000}>
+              <img className={classes.logo} src={process.env.PUBLIC_URL + '/logo192.png'} alt="logo" />
+            </Zoom>
+          </div>
+          <Typography className={classes.title} variant="h6" noWrap>
+            {props.title}
+          </Typography>
         </div>
-        <Typography className={classes.title} variant="h6" noWrap>
-          {props.title}
-        </Typography>
-      </div>
+      </Link>
       <Hidden only="xs">
         <div className={classes.searchFormContainer}>
           <div className={classes.searchFormWrapper}>

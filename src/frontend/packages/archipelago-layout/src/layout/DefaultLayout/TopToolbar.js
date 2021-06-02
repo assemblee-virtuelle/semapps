@@ -11,8 +11,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginTop: 8,
-    marginBottom: 8
+    [theme.breakpoints.down('xs')]: {
+      marginTop: 8,
+      marginBottom: 8
+    }
   },
   titleContainer: props => ({
     maxWidth: props.sidebarOpen ? 'calc(100vw - 300px)' : 'calc(100vw - 100px)',

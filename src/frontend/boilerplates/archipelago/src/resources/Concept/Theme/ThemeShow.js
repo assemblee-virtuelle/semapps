@@ -1,9 +1,10 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { MainList, SideList, Hero, MarkdownField } from '@semapps/archipelago-layout';
+import { MainList, SideList, Hero } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import { ShowWithPermissions } from '@semapps/auth-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import ThemeTitle from './ThemeTitle';
 
 const ThemeShow = props => (

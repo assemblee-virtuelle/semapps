@@ -9,7 +9,7 @@ import ResourceMenuLink from './ResourceMenuLink';
 
 const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const open = useSelector(state => state.admin.ui.sidebarOpen);
+  // const open = useSelector(state => state.admin.ui.sidebarOpen);
   const resources = useSelector(getResources);
 
   // TODO create a specialized hook, as this is used several times in the layout (which cannot use useResourceDefinition)
@@ -34,7 +34,8 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   // Open all submenus by default
   useEffect(() => {
     const currentResource = resources.find(resource => resource.name === currentResourceName);
-    const currentCategory = categories.find(category => category.name === currentResource.options.parent);
+    const currentCategory =
+      currentResource && categories.find(category => category.name === currentResource.options.parent);
     const defaultValues = categories.reduce((acc, category) => {
       acc[category.name] = openAll || (currentCategory && category.name === currentCategory.name);
       return acc;
@@ -49,7 +50,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
           key={category.name}
           handleToggle={() => handleToggle(category.name)}
           isOpen={openSubMenus[category.name]}
-          sidebarIsOpen={open}
+          sidebarIsOpen
           name={(category.options && category.options.label) || category.name}
           icon={category.icon ? <category.icon /> : <DefaultIcon />}
           dense={dense}
@@ -57,14 +58,14 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
           {resources
             .filter(resource => resource.hasList && resource.options.parent === category.name)
             .map(resource => (
-              <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={open} />
+              <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
             ))}
         </SubMenu>
       ))}
       {resources
         .filter(resource => resource.hasList && (!resource.options || !resource.options.parent))
         .map(resource => (
-          <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={open} />
+          <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
         ))}
       {isXSmall && logout}
     </Box>

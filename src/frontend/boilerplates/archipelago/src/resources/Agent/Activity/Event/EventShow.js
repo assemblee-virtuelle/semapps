@@ -1,9 +1,10 @@
 import React from 'react';
 import { ChipField, SingleFieldList, TextField, UrlField, DateField } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { Hero, MarkdownField, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
+import { Hero, GridList, MainList, SideList, AvatarField } from '@semapps/archipelago-layout';
 import { ReferenceArrayField } from '@semapps/semantic-data-provider';
 import { ShowWithPermissions } from '@semapps/auth-provider';
+import { MarkdownField } from '@semapps/markdown-components';
 import EventTitle from './EventTitle';
 
 const EventShow = props => (

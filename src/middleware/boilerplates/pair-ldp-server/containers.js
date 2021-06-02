@@ -104,6 +104,10 @@ module.exports = [
     acceptedTypes: [OBJECT_TYPES.NOTE]
   },
   {
+    path: '/pages',
+    acceptedTypes: ['semapps:Page']
+  },
+  {
     path: '/files'
   }
 ];
