@@ -1,0 +1,42 @@
+{
+  "link.title.Guides": {
+    "message": "Guides",
+    "description": "The title of the footer links column with title=Guides in the footer"
+  },
+  "link.title.Community": {
+    "message": "Community",
+    "description": "The title of the footer links column with title=Community in the footer"
+  },
+  "link.title.Social": {
+    "message": "Social",
+    "description": "The title of the footer links column with title=Social in the footer"
+  },
+  "link.item.label.Create your first LDP server": {
+    "message": "Create your first LDP server",
+    "description": "The label of footer link with label=Create your first LDP server linking to docs/guides/ldp-server"
+  },
+  "link.item.label.Add a Data Management System": {
+    "message": "Add a Data Management System",
+    "description": "The label of footer link with label=Add a Data Management System linking to docs/guides/dms"
+  },
+  "link.item.label.Create an ActivityPub server": {
+    "message": "Create an ActivityPub server",
+    "description": "The label of footer link with label=Create an ActivityPub server linking to docs/guides/activitypub"
+  },
+  "link.item.label.Riot": {
+    "message": "Riot",
+    "description": "The label of footer link with label=Riot linking to https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org"
+  },
+  "link.item.label.Contact": {
+    "message": "Contact",
+    "description": "The label of footer link with label=Contact linking to https://www.virtual-assembly.org/contact/"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=GitHub linking to https://github.com/assemblee-virtuelle/semapps"
+  },
+  "copyright": {
+    "message": "Copyright © 2021 Virtual Assembly",
+    "description": "The footer copyright"
+  }
+}
