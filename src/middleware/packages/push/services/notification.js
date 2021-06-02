@@ -40,10 +40,9 @@ const NotificationService = {
               to: device['semapps:pushToken'],
               body: message,
               data
-            },
-            { parentCtx: ctx }
+            }
           )
-        });
+        }, { parentCtx: ctx });
       }
     },
     async processQueue(ctx) {
@@ -155,8 +154,7 @@ const NotificationService = {
         {
           '@id': notification['semapps:deviceId'],
           'semapps:errorMessage': message
-        },
-        { parentCtx: ctx }
+        }
       );
     }
   }
