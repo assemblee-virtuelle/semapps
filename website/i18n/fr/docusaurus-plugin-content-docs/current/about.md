@@ -2,16 +2,16 @@
 title: A propos de SemApps
 ---
 
-SemApps is an open-source software project whose development is coordinated by the Virtual Assembly (VA), a French-based non-profit organization bringing together about fifty developers and activists.
+SemApps est un logiciel open-source développé par l'[Assemblée-virtuelle](http://virtual-assembly.org) (AV), une organisation française réunissant une cinquantaine de développeurs et militants.
 
-In a context of strong fragmentation of dynamics in the field of transition, VA aims to develop commons (digital tools, methodologies and projects) to promote the interconnection of transition movements.
+Dans un contexte de forte fragmentation des dynamiques dans le domaine de la transition, l'AV vise à développer des communs (outils numériques, méthodologies et projets) pour favoriser l'interconnexion des mouvements de transition.
 
-SemApps is one of the Virtual Assembly's core projects. Its mission is to foster interconnections between communities by creating synergies between their information systems.
+SemApps est l'un des projets phares de l'AV. Sa mission est de favoriser les interconnexions entre les collectivités en créant des synergies entre leurs systèmes d'information.
 
-SemApps is a collaborative, interoperable, generic and modular knowledge management system :
+SemApps est un système de gestion des connaissances collaboratif, interopérable, générique et modulaire :
 
-- Based on linked & data semantic web technologies, it allows the co-production of knowledge graphs.
-- Built on open standards, it enables the development of interoperable information systems.
-- Designed on a modular architecture, it gives everyone the opportunity to build and customize platforms on demand.
+- Basé sur des technologies web liées et sémantiques de données, il permet la coproduction de graphes de connaissances.
+- Construit sur des standards ouverts, il permet le développement de systèmes d'information interopérables.
+- Conçu sur une architecture modulaire, il donne à chacun la possibilité de construire et personnaliser des plateformes à la demande.
 
-Its code is released under the Apache 2.0 free license.
+Son code est publié sous la licence libre Apache 2.0.
