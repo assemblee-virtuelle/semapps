@@ -1,13 +1,13 @@
 {
   "name": "@semapps/ldp",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "LDP module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/middlewares": "0.3.2",
-    "@semapps/mime-types": "0.3.2",
-    "@semapps/triplestore": "0.3.2",
+    "@semapps/middlewares": "0.3.3",
+    "@semapps/mime-types": "0.3.3",
+    "@semapps/triplestore": "0.3.3",
     "bson": "^4.0.4",
     "moleculer": "^0.14.3",
     "n3": "^1.3.5",
