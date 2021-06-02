@@ -4,15 +4,15 @@
     "description": "The title in the navbar"
   },
   "item.label.About": {
-    "message": "About",
+    "message": "A propos de",
     "description": "Navbar item with label About"
   },
   "item.label.Team": {
-    "message": "Team",
+    "message": "Equipe",
     "description": "Navbar item with label Team"
   },
   "item.label.Governance": {
-    "message": "Governance",
+    "message": "Gouvernance",
     "description": "Navbar item with label Governance"
   },
   "item.label.Documentation": {
@@ -20,7 +20,7 @@
     "description": "Navbar item with label Documentation"
   },
   "item.label.How to contribute": {
-    "message": "How to contribute",
+    "message": "Contribuer",
     "description": "Navbar item with label How to contribute"
   },
   "item.label.Blog": {
