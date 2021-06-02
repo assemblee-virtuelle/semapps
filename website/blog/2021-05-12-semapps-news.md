@@ -20,6 +20,12 @@ La petite surprise, c'est qu'il n'est pas forcément nécessaire de se crééer 
 
 ### Intégration des WebACL
 
+Depuis la [version 0.2.0](https://github.com/assemblee-virtuelle/semapps/pull/653) sortie il y a quelques jours, SemApps intègre le [protocole WebACL](https://github.com/solid/web-access-control-spec) au niveau du triple store (Jena Fuseki), du backend et du frontend.
+
+Les WebACL sont optionnels. Ils ont été activés sur https://archipel.assemblee-virtuelle.org.
+
+Côté Jena Fuseki, nous avons créé une [image Docker](https://hub.docker.com/r/semapps/jena-fuseki-webacl) disponible publiquement. Cela permetra potentiellement à d'autres logiciels de profiter de ce développement.
+
 ### Archipel
 
 Intégration de l'ontologie PAIR et refonte de l'interface => ce serait super d'envoyer la newsletter à l'issue de ce chantier, ce qui permettrait de témoigner d'une avancée substantielle et nous fixerait un objectif ? 
