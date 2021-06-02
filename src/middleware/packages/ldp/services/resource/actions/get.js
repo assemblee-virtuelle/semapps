@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const jsonld = require('jsonld');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery } = require('../../../utils');
 const fs = require('fs');
 
@@ -76,9 +75,12 @@ module.exports = {
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          result = await jsonld.frame(result, {
-            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-            '@id': resourceUri
+          result = await ctx.call('jsonld.frame', {
+            input: result,
+            frame: {
+              '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+              '@id': resourceUri
+            }
           });
         }
 

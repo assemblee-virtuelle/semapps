@@ -1,6 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
+const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
@@ -18,6 +19,7 @@ beforeAll(async () => {
   await broker.createService({
     mixins: [ApiGatewayService]
   });
+  broker.createService(JsonLdService);
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,

@@ -1,11 +1,13 @@
 {
-  "name": "@semapps/inference",
+  "name": "@semapps/jsonld",
   "version": "0.2.1",
-  "description": "Inference engine for SemApps",
+  "description": "JsonLD utils for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "n3": "^1.6.3"
+    "jsonld": "^5.2.0",
+    "lru-cache": "^6.0.0",
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
