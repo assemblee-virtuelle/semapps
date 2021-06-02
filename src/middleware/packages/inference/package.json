@@ -5,7 +5,8 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "n3": "^1.6.3"
+    "n3": "^1.6.3",
+    "request": "^2.88.2"
   },
   "publishConfig": {
     "access": "public"
