@@ -19,7 +19,7 @@ const SignatureService = {
       const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
 
       try {
-        return await fs.promises.readFile(publicKeyPath);
+        return await fs.promises.readFile(publicKeyPath, { encoding: 'utf8' });
       } catch (e) {
         return null;
       }

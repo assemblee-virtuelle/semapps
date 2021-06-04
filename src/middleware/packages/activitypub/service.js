@@ -9,7 +9,7 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
-const { parseHeader, parseBody, parseJson, addContainerUriMiddleware } = require('@semapps/middlewares');
+const { parseHeader, parseJson, addContainerUriMiddleware } = require('@semapps/middlewares');
 const { ACTOR_TYPES } = require('./constants');
 const defaultContainers = require('./containers');
 
@@ -100,7 +100,7 @@ const ActivityPubService = {
   actions: {
     getApiRoutes() {
       // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
-      const middlewares = [parseHeader, parseBody, parseJson];
+      const middlewares = [parseHeader, parseJson];
 
       const securedAliases = {},
         unsecuredAliases = {};
@@ -145,12 +145,14 @@ const ActivityPubService = {
         {
           authorization: false,
           authentication: true,
+          bodyParsers: false,
           aliases: unsecuredAliases
         },
         // Secured routes
         {
           authorization: true,
           authentication: false,
+          bodyParsers: false,
           aliases: securedAliases
         }
       ];

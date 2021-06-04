@@ -13,10 +13,7 @@ function getContainerRoutes(containerUri, serviceName) {
     path: new URL(containerUri).pathname,
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
-    bodyParsers: {
-      json: false,
-      urlencoded: false
-    }
+    bodyParsers: false
   };
 
   const middlewares = [
