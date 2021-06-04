@@ -8,7 +8,8 @@ const handledActions = [
   'ldp.resource.delete',
   'ldp.resource.post',
   'ldp.container.create',
-  'activitypub.collection.create'
+  'activitypub.collection.create',
+  'webid.create'
 ];
 
 // TODO add different permissions depending on the webId ?
@@ -67,6 +68,30 @@ const addRightsToNewResource = async (ctx, resourceUri, webId) => {
     newRights
   });
 };
+
+const addRightsToNewUser = async (ctx, userUri) => {
+  // Manually add the permissions for the user resource now that we have its webId
+  // First delete the default permissions added by the middleware when we called ldp.resource.post
+  await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
+  await ctx.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: userUri,
+    newRights: {
+      user: {
+        uri: userUri,
+        read: true,
+        write: true,
+        control: true
+      },
+      anon: {
+        read: true
+      },
+      anyUser: {
+        read: true
+      }
+    }
+  });
+}
 
 const addRightsToNewContainer = async (ctx, containerUri, webId) => {
   let newRights = {};
@@ -233,6 +258,10 @@ const WebAclMiddleware = {
 
             case 'ldp.container.create':
               await addRightsToNewContainer(ctx, ctx.params.containerUri, webId);
+              break;
+
+            case 'webid.create':
+              await addRightsToNewUser(ctx, actionReturnValue);
               break;
           }
 
