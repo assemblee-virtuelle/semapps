@@ -31,7 +31,7 @@ const ConditionalSourceDefinedHandler = ({ record, source, children, ...otherPro
 const OrganizationShow = props => (
   <Show title={<OrganizationTitle />} {...props}>
     <Grid container spacing={5}>
-      <Grid item xs={12} sm={9}>
+      <Grid item xs={12} sm={8}>
         <Hero image="image">
           <TextField source="pair:comment" />
           <UrlField source="pair:homePage" />
@@ -63,7 +63,7 @@ const OrganizationShow = props => (
           />
         </MainList>
       </Grid>
-      <Grid item xs={12} sm={3}>
+      <Grid item xs={12} sm={4}>
         <SideList>
           <GroupedReferenceHandler
             source="pair:organizationOfMembership"
@@ -76,7 +76,7 @@ const OrganizationShow = props => (
               <RightLabel mb={0} />
               <ArrayField source="pair:organizationOfMembership">
                 <Box mb={4}>
-                  <GridList xs={6} linkType={false}>
+                  <GridList xs={4} linkType={false}>
                     <ReferenceField reference="Person" source="pair:membershipActor" link="show">
                       <AvatarField
                         label={record => `${record['pair:firstName']} ${record['pair:lastName']}`}
@@ -89,7 +89,7 @@ const OrganizationShow = props => (
             </ConditionalSourceDefinedHandler>
           </GroupedReferenceHandler>
           <ReferenceArrayField reference="Organization" source="pair:partnerOf">
-            <GridList xs={6} linkType="show">
+            <GridList xs={4} linkType="show">
               <AvatarField label="pair:label" image="image">
                 <HomeIcon />
               </AvatarField>
