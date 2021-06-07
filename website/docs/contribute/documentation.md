@@ -13,6 +13,8 @@ We use [Docusaurus](https://docusaurus.io/) to document the SemApps project. Doc
 
 - The **configurations** to customize the  **menu** (navbar), the **header** (title and tagline) and the **footer** are in the [/website/docusaurus.config.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js) file.
 
+- the **translation** files (for exemple 'fr') are in the [/website/i18n/fr/<plugin>](https://github.com/assemblee-virtuelle/semapps/blob/master/website/i18n/fr/) folder.
+
 - The **content of the homepage** (coded in React) is in [/website/src/pages/index.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js)
 
 - The **sidebars** can be customized by modifying the [/website/sidebars.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js) file.
@@ -59,4 +61,4 @@ If the initiative seems relevant:
 
 ## Getting help
 
-Our [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org) is the main entry point for all people who want to contribute.
+Our [Semapps dev channel](https://chat.lescommuns.org/channel/semapps_dev) is the main entry point for all people who want to contribute.
