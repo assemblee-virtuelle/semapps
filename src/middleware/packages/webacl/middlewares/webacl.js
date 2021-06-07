@@ -91,7 +91,7 @@ const addRightsToNewUser = async (ctx, userUri) => {
       }
     }
   });
-}
+};
 
 const addRightsToNewContainer = async (ctx, containerUri, webId) => {
   let newRights = {};

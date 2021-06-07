@@ -30,19 +30,20 @@ const NotificationService = {
       });
 
       for (let device of devices) {
-        await this.actions.create({
-          '@type': 'semapps:PushNotification',
-          'semapps:deviceId': device['@id'],
-          'semapps:addedAt': new Date().toISOString(),
-          'semapps:status': 'queued',
-          'semapps:message': JSON.stringify(
-            {
+        await this.actions.create(
+          {
+            '@type': 'semapps:PushNotification',
+            'semapps:deviceId': device['@id'],
+            'semapps:addedAt': new Date().toISOString(),
+            'semapps:status': 'queued',
+            'semapps:message': JSON.stringify({
               to: device['semapps:pushToken'],
               body: message,
               data
-            }
-          )
-        }, { parentCtx: ctx });
+            })
+          },
+          { parentCtx: ctx }
+        );
       }
     },
     async processQueue(ctx) {
@@ -149,13 +150,10 @@ const NotificationService = {
       );
 
       // Also mark device as error
-      await ctx.call(
-        'push.device.update',
-        {
-          '@id': notification['semapps:deviceId'],
-          'semapps:errorMessage': message
-        }
-      );
+      await ctx.call('push.device.update', {
+        '@id': notification['semapps:deviceId'],
+        'semapps:errorMessage': message
+      });
     }
   }
 };

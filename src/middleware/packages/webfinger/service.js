@@ -88,9 +88,7 @@ const WebfingerService = {
       }
     },
     getApiRoutes() {
-      return [
-
-      ];
+      return [];
     }
   }
 };

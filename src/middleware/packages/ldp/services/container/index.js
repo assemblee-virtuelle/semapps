@@ -52,7 +52,11 @@ module.exports = {
       // Find all children containers for this container
       const childContainersUris = this.settings.containers
         .map(childContainer => this.getContainerUri(childContainer))
-        .filter(childContainerUri => containerUri !== childContainerUri && getContainerFromUri(childContainerUri) === containerUri.replace(/\/$/, ''));
+        .filter(
+          childContainerUri =>
+            containerUri !== childContainerUri &&
+            getContainerFromUri(childContainerUri) === containerUri.replace(/\/$/, '')
+        );
 
       for (let childContainerUri of childContainersUris) {
         await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
