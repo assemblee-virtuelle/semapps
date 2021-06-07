@@ -1,62 +1,65 @@
 ---
-title: Contribute to the documentation
+title: Contributer à la documentation
 ---
 
-We use [Docusaurus](https://docusaurus.io/) to document the SemApps project. Docusaurus is used to generate documentation from Github : 
-- We benefit from the collaborative environment of Github (markdown editing, versioning, commits, pull requests, reviews, etc.).
-- You can preview the changes
-- The code can be easily deployed
+Nous utilisons [Docusaurus](https://docusaurus.io/) pour documenter le projet SemApps. Docusaurus est utilisé pour générer de la documentation depuis Github :
+- Nous bénéficions de l'environnement collaboratif de Github (édition de démarques, versioning, commits, pull request, reviews, etc.).
+- Vous pouvez prévisualiser les modifications
+- Le code peut être facilement déployé
 
-## Where to find the Docusaurus files
+## Où trouver les fichiers de documentation Docusaurus ?
 
-- The **documentation files** in markdown are in the [/website/docs](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs) folder.
+- Les **fichiers de documentation** en syntaxe **markdown** sont dans le dossier [/website/docs](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs).
 
-- The **configurations** to customize the  **menu** (navbar), the **header** (title and tagline) and the **footer** are in the [/website/docusaurus.config.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js) file.
+- Les **fichiers traduits en français** sont dans le dossier [/website/i18n/fr/<plugin>](https://github.com/assemblee-virtuelle/semapps/tree/master/website/i18n/fr/).
 
-- The **content of the homepage** (coded in React) is in [/website/src/pages/index.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js)
+- La configuration du **menu** (navbar), l' **en-tête** (title and tagline) et le **bas de page**, se trouve dans le fichier [/website/docusaurus.config.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js).
 
-- The **sidebars** can be customized by modifying the [/website/sidebars.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js) file.
+- Pour modifier **le contenu de la page d'accueil**, le code est en React, dans [/website/src/pages/index.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js)
 
-## How to contribute to the documentation
+- Le **menu latéral** est lui personnalisé grâce au fichier [/website/sidebars.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/sidebars.js).
 
-### General scheme
-- Until there is a decision/consent from the documentation circle: **Create an issue**
-- If the content of what you want to publish has been approved by the documentation group : 
-    - **Create a pull request on a dedicated branch.**  
-    - As long as it's in draft or draft form, **don't request a review**.
-- When our proposal for a contribution appears to be complete, **a review is requested**.
+## Comment contribuer à la documentation ?
 
-### Propose topics or improvements by creating an "issue"
-- Go to https://github.com/assemblee-virtuelle/semapps/issues
-- Detail your request/proposal, put links if necessary to clarify your intention as much as possible.  
-- Fill in the external / internal / technical documentation label from the "Labels" tab of the menu on the right-hand side of the screen. 
-- And let's discuss it!
+### Gouvernance
+- Jusqu'à ce qu'il y ait une décision/un consentement du cercle de documentation : **Créer une issue**
+- Si le contenu de ce que vous souhaitez publier a été approuvé par le groupe de documentation : 
+    - **Créer une pull request sur une branche dédiée.**  
+    - Tant qu'il s'agit d'un brouillon ou d'un brouillon, **ne demandez pas de révision**.
+- Lorsque notre proposition de contribution semble complète, **une review est demandé**.
 
-### Modify a page of Docusaurus
-Go to the relevant place by referring to the previous chapter. 
-- If it is a minor modification, a spelling mistake for example, make the change by editing the page (edit file), then "commit" to the __Master__ branch. Describe your change in the space provided. 
-- If it is a substantial change : 
-  - make the change by editing the page, 
-  - then "commit" to a new branch that you can explicitly name.
-  - Fill in a __Label__ and identify __Reviewers__ who will be invited to comment / approve / propose changes to your pull request. 
-  - At the end of this collective process, it will be time to __merger__ the pull request on the __Master__ branch.
+### Proposer des sujets ou des améliorations en créant une "issue"
 
-### Create a new page on Docusaurus
-- Propose an issue ; 
+- Aller sur : https://github.com/assemblee-virtuelle/semapps/issues
+- Détaillez votre demande/proposition, mettez des liens si besoin pour clarifier au maximum votre intention.
+- Remplir l'étiquette de documentation externe / interne / technique depuis l'onglet "Etiquettes" du menu à droite de l'écran.
+- Et discutons-en !
 
-If the initiative seems relevant: 
-- Create a markdown file in the desired location, remembering to fill in the extension: ".md". It must necessarily begin with :
+### Modifier une page sur le Docusaurus de Semapps
+Rendez-vous à l'endroit approprié en vous référant au chapitre précédent.
+- S'il s'agit d'une modification mineure, une faute d'orthographe par exemple, effectuez la modification en éditant la page (éditez le fichier), puis "validez" dans la branche __Master__. Décrivez votre changement dans l'espace prévu.
+- S'il s'agit d'un changement substantiel :
+  - faire le changement en éditant la page,
+  - puis "s'engager" dans une nouvelle branche que vous pouvez nommer explicitement.
+  - Remplissez un __Label__ et identifiez les __Reviewers__ qui seront invités à commenter / approuver / proposer des modifications à votre pull request.
+  - A la fin de ce processus collectif, il sera temps de __merger__ la pull request sur la branche __Master__.
+
+### Créer une nouvelle page sur Docusaurus
+- Créer une issue ; 
+
+Si l'initiative semble pertinente :
+- Créez un fichier de démarques à l'emplacement souhaité en n'oubliant pas de renseigner l'extension : ".md". Il doit nécessairement commencer par :
   ```
   ---
-  title: [your page title]
+  title: [titre de votre page]
   ---
   ```
 
-  NB: The page title may have spaces. On the other hand, the name of the .md file must not have spaces, and must be written in lower case.
+  NB: Le titre de la page peut contenir des espaces. En revanche, le nom du fichier .md ne doit pas comporter d'espaces, et doit être écrit en minuscules.
 
-- Commit and make a pull request on a dedicated branch. 
-- Once the reviewers you've identified have validated it, merge the pull request on the master branch. 
+- S'engager et faire une pull request sur une branche dédiée.
+- Une fois que les reviewers que vous avez identifiés l'ont validé, fusionnez la pull request sur la branche master.
 
-## Getting help
+## Demander de l'aide : 
 
-Our [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org) is the main entry point for all people who want to contribute.
+Our [Semapps Chat](https://chat.lescommuns.org/channel/semapps_dev) est le principal point d'entrée pour toutes les personnes qui veulent contribuer.
