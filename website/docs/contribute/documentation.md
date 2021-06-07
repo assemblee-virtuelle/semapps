@@ -9,11 +9,11 @@ We use [Docusaurus](https://docusaurus.io/) to document the SemApps project. Doc
 
 ## Where to find the Docusaurus files
 
-- The **documentation files** in markdown are in the [/website/docs](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs) folder.
+- The **documentation files** in markdown are in the [/website/docs/](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs) folder.
 
 - The **configurations** to customize the  **menu** (navbar), the **header** (title and tagline) and the **footer** are in the [/website/docusaurus.config.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js) file.
 
-- the **translation** files (for exemple 'fr') are in the [/website/i18n/fr/<plugin>](https://github.com/assemblee-virtuelle/semapps/blob/master/website/i18n/fr/) folder.
+- the **translation** files (for exemple 'fr') are in the [/website/i18n/fr/](https://github.com/assemblee-virtuelle/semapps/blob/master/website/i18n/fr/) folder.
 
 - The **content of the homepage** (coded in React) is in [/website/src/pages/index.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/src/pages/index.js)
 

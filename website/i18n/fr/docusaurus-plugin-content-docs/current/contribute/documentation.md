@@ -9,9 +9,9 @@ Nous utilisons [Docusaurus](https://docusaurus.io/) pour documenter le projet Se
 
 ## Où trouver les fichiers de documentation Docusaurus ?
 
-- Les **fichiers de documentation** en syntaxe **markdown** sont dans le dossier [/website/docs](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs).
+- Les **fichiers de documentation** en syntaxe **markdown** sont dans le dossier [/website/docs/](https://github.com/assemblee-virtuelle/semapps/tree/master/website/docs).
 
-- Les **fichiers traduits en français** sont dans le dossier [/website/i18n/fr/<plugin>](https://github.com/assemblee-virtuelle/semapps/tree/master/website/i18n/fr/).
+- Les **fichiers traduits en français** sont dans le dossier [/website/i18n/fr/](https://github.com/assemblee-virtuelle/semapps/tree/master/website/i18n/fr/).
 
 - La configuration du **menu** (navbar), l' **en-tête** (title and tagline) et le **bas de page**, se trouve dans le fichier [/website/docusaurus.config.js](https://github.com/assemblee-virtuelle/semapps/blob/master/website/docusaurus.config.js).
 
