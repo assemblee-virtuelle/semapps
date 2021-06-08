@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
+import css from "rollup-plugin-import-css";
 import nodeResolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
@@ -40,6 +41,7 @@ export default {
     // Resolve but don't compile the node_modules directory
     nodeResolve(),
     commonjs(),
+    css(),
     // Minify the result
     terser()
   ]
