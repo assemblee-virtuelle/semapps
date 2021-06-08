@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import frLocale from '@fullcalendar/core/locales/fr';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CalendarList = ({ linkType  }) => {
+const CalendarList = ({ linkType }) => {
   const theme = useTheme();
   const history = useHistory();
   const { ids, data, basePath } = useListContext();
@@ -29,20 +29,24 @@ const CalendarList = ({ linkType  }) => {
     history.push(event.url);
   }, []);
 
-  const events = useMemo(() => ids.map(id => ({
-      id,
-      title: data[id]['pair:label'],
-      start: data[id]['pair:startDate'],
-      end: data[id]['pair:endDate'],
-      url: linkToRecord(basePath, id) + '/' + linkType
-  })), [data, ids]);
+  const events = useMemo(
+    () =>
+      ids.map(id => ({
+        id,
+        title: data[id]['pair:label'],
+        start: data[id]['pair:startDate'],
+        end: data[id]['pair:endDate'],
+        url: linkToRecord(basePath, id) + '/' + linkType
+      })),
+    [data, ids]
+  );
 
-  return(
+  return (
     <FullCalendar
-      plugins={[ dayGridPlugin, timeGridPlugin ]}
+      plugins={[dayGridPlugin, timeGridPlugin]}
       locale={frLocale}
       // headerToolbar={false}
-      initialView='dayGridMonth'
+      initialView="dayGridMonth"
       events={events}
       eventBackgroundColor={theme.palette.primary.main}
       eventClick={eventClick}

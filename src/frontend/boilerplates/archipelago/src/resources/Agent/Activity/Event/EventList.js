@@ -2,9 +2,9 @@ import React from 'react';
 import { DateField } from 'react-admin';
 import { MultiViewsList, SimpleList } from '@semapps/archipelago-layout';
 import { ListWithPermissions } from '@semapps/auth-provider';
-import { CalendarList } from "@semapps/date-components";
+import { CalendarList } from '@semapps/date-components';
 import { Avatar } from '@material-ui/core';
-import ListIcon from "@material-ui/icons/List";
+import ListIcon from '@material-ui/icons/List';
 import EventIcon from '@material-ui/icons/Event';
 import EventFilterSidebar from './EventFilterSidebar';
 
@@ -20,9 +20,7 @@ const EventList = props => (
         icon: EventIcon,
         perPage: 500,
         pagination: false,
-        list: (
-          <CalendarList />
-        )
+        list: <CalendarList />
       },
       list: {
         label: 'Liste',
