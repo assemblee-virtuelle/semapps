@@ -21,7 +21,7 @@ const EventList = props => (
         perPage: 500,
         pagination: false,
         list: (
-          <CalendarList />
+          <CalendarList linkType="show" />
         )
       },
       list: {

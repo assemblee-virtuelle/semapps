@@ -23,11 +23,19 @@ const CalendarList = ({ linkType  }) => {
   const { ids, data, basePath } = useListContext();
   useStyles();
 
+  let query = new URLSearchParams(history.location.search);
+
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
     jsEvent.preventDefault();
     history.push(event.url);
   }, []);
+
+  const datesSet = useCallback(({ view }) => {
+    query.set('month', view.currentStart.getMonth() + 1);
+    query.set('year', view.currentStart.getFullYear());
+    history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
+  }, [query])
 
   const events = useMemo(() => ids.map(id => ({
       id,
@@ -39,11 +47,12 @@ const CalendarList = ({ linkType  }) => {
 
   return(
     <FullCalendar
-      plugins={[ dayGridPlugin, timeGridPlugin ]}
+      plugins={[ dayGridPlugin ]}
       locale={frLocale}
-      // headerToolbar={false}
       initialView='dayGridMonth'
+      initialDate={query.has('month') ? new Date(query.get('year'), query.get('month')-1) : undefined}
       events={events}
+      datesSet={datesSet}
       eventBackgroundColor={theme.palette.primary.main}
       eventClick={eventClick}
     />
@@ -51,7 +60,7 @@ const CalendarList = ({ linkType  }) => {
 };
 
 CalendarList.defaultProps = {
-  linkType: 'show'
+  linkType: 'edit'
 };
 
 export default CalendarList;
