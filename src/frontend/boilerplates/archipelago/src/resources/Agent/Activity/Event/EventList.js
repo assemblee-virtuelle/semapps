@@ -7,8 +7,6 @@ import ListIcon from "@material-ui/icons/List";
 import EventIcon from '@material-ui/icons/Event';
 import EventFilterSidebar from './EventFilterSidebar';
 
-import '@semapps/date-components/dist/index.cjs.css';
-
 const EventList = props => (
   <MultiViewsList
     ListComponent={ListWithPermissions}
