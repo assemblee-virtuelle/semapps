@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import FullCalendar from '@fullcalendar/react';
 import frLocale from '@fullcalendar/core/locales/fr';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const CalendarList = ({ label, startDate, endDate, linkType  }) => {
+const CalendarList = ({ label, startDate, endDate, linkType }) => {
   const theme = useTheme();
   const history = useHistory();
   const { ids, data, basePath } = useListContext();
@@ -39,26 +39,33 @@ const CalendarList = ({ label, startDate, endDate, linkType  }) => {
   }, []);
 
   // Change the query string when month change
-  const datesSet = useCallback(({ view }) => {
-    query.set('month', view.currentStart.getMonth() + 1);
-    query.set('year', view.currentStart.getFullYear());
-    history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
-  }, [query])
+  const datesSet = useCallback(
+    ({ view }) => {
+      query.set('month', view.currentStart.getMonth() + 1);
+      query.set('year', view.currentStart.getFullYear());
+      history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
+    },
+    [query]
+  );
 
-  const events = useMemo(() => ids.map(id => ({
-      id,
-      title: label && label(data[id]),
-      start: startDate && startDate(data[id]),
-      end: endDate && endDate(data[id]),
-      url: linkToRecord(basePath, id) + '/' + linkType
-  })), [data, ids, basePath]);
+  const events = useMemo(
+    () =>
+      ids.map(id => ({
+        id,
+        title: label && label(data[id]),
+        start: startDate && startDate(data[id]),
+        end: endDate && endDate(data[id]),
+        url: linkToRecord(basePath, id) + '/' + linkType
+      })),
+    [data, ids, basePath]
+  );
 
-  return(
+  return (
     <FullCalendar
-      plugins={[ dayGridPlugin ]}
+      plugins={[dayGridPlugin]}
       locale={frLocale}
-      initialView='dayGridMonth'
-      initialDate={query.has('month') ? new Date(query.get('year'), query.get('month')-1) : new Date()}
+      initialView="dayGridMonth"
+      initialDate={query.has('month') ? new Date(query.get('year'), query.get('month') - 1) : new Date()}
       events={events}
       datesSet={datesSet}
       eventBackgroundColor={theme.palette.primary.main}
