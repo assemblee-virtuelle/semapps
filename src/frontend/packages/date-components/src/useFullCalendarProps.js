@@ -1,29 +1,10 @@
 import React, { useMemo, useCallback } from 'react';
 import { useHistory } from "react-router-dom";
 import { useListContext, linkToRecord } from 'react-admin';
-import { makeStyles } from '@material-ui/core';
-
-const useStyles = makeStyles(theme => ({
-  '@global': {
-    '.fc-button': {
-      backgroundColor: theme.palette.primary.main + ' !important',
-      border: 'none !important',
-      opacity: '1 !important'
-    },
-    '.fc-day-today': {
-      backgroundColor: theme.palette.secondary.light + ' !important'
-    },
-    // Overwrite violet color of links
-    'a.fc-daygrid-dot-event': {
-      color: 'black !important'
-    }
-  }
-}));
 
 const useFullCalendarProps = ({ label, startDate, endDate, linkType  }) => {
   const history = useHistory();
   const { ids, data, basePath } = useListContext();
-  useStyles();
 
   let query = new URLSearchParams(history.location.search);
 
@@ -42,9 +23,9 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType  }) => {
 
   const events = useMemo(() => ids.map(id => ({
     id,
-    title: label && label(data[id]),
-    start: startDate && startDate(data[id]),
-    end: endDate && endDate(data[id]),
+    title: typeof label === 'string' ? data[id][label] : label(data[id]),
+    start: typeof startDate === 'string' ? data[id][startDate] : startDate(data[id]),
+    end: typeof endDate === 'string' ? data[id][endDate] : endDate(data[id]),
     url: linkToRecord(basePath, id) + '/' + linkType
   })), [data, ids, basePath]);
 

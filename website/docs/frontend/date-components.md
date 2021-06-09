@@ -27,9 +27,9 @@ import { CalendarList } from '@semapps/date-components';
 const MyList = props => (
   <List pagination={false} perPage={1000} {...props}>
     <CalendarList
-      label={record => record.label}
-      startDate={record => record.startDate}
-      endDate={record => record.endDate}
+      label="label"
+      startDate="startDate"
+      endDate="endDate"
     />
   </List>
 );
@@ -37,9 +37,9 @@ const MyList = props => (
 
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `label` | `Function` | **required** | A function which takes a record and returns a label |
-| `latitude` | `Function` | **required** | A function which takes a record and returns a latitude |
-| `longitude` | `Function` | **required** | A function which takes a record and returns a longitude |
+| `label` | `Function` or `String` | **required** | A function which takes a record and returns a label, or the property to use |
+| `startDate` | `Function` or `String` | **required** | A function which takes a record and returns a start date, or the property to use |
+| `endDate` | `Function` or `String` | **required** | A function which takes a record and returns an end date, or the property to use |
 | `locale` | `Object` | (English) | The [locale](https://fullcalendar.io/docs/locale) to be used by FullCalendar |
 | `linkType` | `String` | "edit" | What kind of link to use. Available options: "show" or "edit" |
 

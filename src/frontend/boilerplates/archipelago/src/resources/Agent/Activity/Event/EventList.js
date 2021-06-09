@@ -20,9 +20,9 @@ const EventList = props => (
         list: (
           <CalendarList
             locale={frLocale}
-            startDate={record => record['pair:startDate']}
-            endDate={record => record['pair:endDate']}
-            label={record => record['pair:label']}
+            label="pair:label"
+            startDate="pair:startDate"
+            endDate="pair:endDate"
             linkType="show"
           />
         )
@@ -35,9 +35,9 @@ const EventList = props => (
         list: (
           <DaysList
             locale={frLocale}
-            startDate={record => record['pair:startDate']}
-            endDate={record => record['pair:endDate']}
-            label={record => record['pair:label']}
+            label="pair:label"
+            startDate="pair:startDate"
+            endDate="pair:endDate"
             linkType="show"
           />
         )

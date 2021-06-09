@@ -10,12 +10,9 @@ import { createFilter } from 'rollup-pluginutils';
 const external = createFilter(
   [
     'react',
+    'react-dom',
     'react-admin',
-    'react-markdown',
     'react-router-dom',
-    'react-final-form',
-    'react-router',
-    'react-redux',
     '@material-ui/**'
   ],
   null,
@@ -41,6 +38,7 @@ export default {
     // Resolve but don't compile the node_modules directory
     nodeResolve(),
     commonjs(),
+    // CSS is not used but the compilation breaks if this plugin is not used
     css(),
     // Minify the result
     terser()
