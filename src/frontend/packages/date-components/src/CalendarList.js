@@ -13,11 +13,18 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.primary.main + ' !important',
       border: 'none !important',
       opacity: '1 !important'
+    },
+    '.fc-day-today': {
+      backgroundColor: theme.palette.secondary.light + ' !important'
+    },
+    // Overwrite violet color of links
+    'a.fc-daygrid-dot-event': {
+      color: 'black !important'
     }
   }
 }));
 
-const CalendarList = ({ linkType  }) => {
+const CalendarList = ({ label, startDate, endDate, linkType  }) => {
   const theme = useTheme();
   const history = useHistory();
   const { ids, data, basePath } = useListContext();
@@ -31,6 +38,7 @@ const CalendarList = ({ linkType  }) => {
     history.push(event.url);
   }, []);
 
+  // Change the query string when month change
   const datesSet = useCallback(({ view }) => {
     query.set('month', view.currentStart.getMonth() + 1);
     query.set('year', view.currentStart.getFullYear());
@@ -39,22 +47,23 @@ const CalendarList = ({ linkType  }) => {
 
   const events = useMemo(() => ids.map(id => ({
       id,
-      title: data[id]['pair:label'],
-      start: data[id]['pair:startDate'],
-      end: data[id]['pair:endDate'],
+      title: label && label(data[id]),
+      start: startDate && startDate(data[id]),
+      end: endDate && endDate(data[id]),
       url: linkToRecord(basePath, id) + '/' + linkType
-  })), [data, ids]);
+  })), [data, ids, basePath]);
 
   return(
     <FullCalendar
       plugins={[ dayGridPlugin ]}
       locale={frLocale}
       initialView='dayGridMonth'
-      initialDate={query.has('month') ? new Date(query.get('year'), query.get('month')-1) : undefined}
+      initialDate={query.has('month') ? new Date(query.get('year'), query.get('month')-1) : new Date()}
       events={events}
       datesSet={datesSet}
       eventBackgroundColor={theme.palette.primary.main}
       eventClick={eventClick}
+      nowIndicator
     />
   );
 };

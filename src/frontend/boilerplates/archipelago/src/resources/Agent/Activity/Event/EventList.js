@@ -21,7 +21,12 @@ const EventList = props => (
         perPage: 500,
         pagination: false,
         list: (
-          <CalendarList linkType="show" />
+          <CalendarList
+            startDate={record => record['pair:startDate']}
+            endDate={record => record['pair:endDate']}
+            label={record => record['pair:label']}
+            linkType="show"
+          />
         )
       },
       list: {
