@@ -9,6 +9,7 @@
     "@semapps/geo-components": "0.3.0",
     "@semapps/markdown-components": "0.3.0",
     "@semapps/semantic-data-provider": "0.3.0",
+    "@fullcalendar/core": "^5.7.2",
     "date-fns": "~2.8.1",
     "history": "4.10.1",
     "leaflet": "^1.7.1",

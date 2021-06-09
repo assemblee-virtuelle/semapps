@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField, UrlField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
+import { TextField, ChipField, SingleFieldList, SimpleList, ArrayField } from 'react-admin';
 import { Box, Grid } from '@material-ui/core';
 import {
   MainList,
@@ -31,7 +31,7 @@ const UrlArrayField = ({ record, source }) => {
   return record
     ? links.map(item => (
         <div>
-          <a href={'https://' + item} target="_blank">
+          <a href={'https://' + item} target="_blank" rel="noopener noreferrer">
             {item}
           </a>
         </div>
