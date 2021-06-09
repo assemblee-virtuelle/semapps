@@ -2,16 +2,16 @@ import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { useTheme } from '@material-ui/core';
-import useFullCalendarProps from "./useFullCalendarProps";
+import useFullCalendarProps from './useFullCalendarProps';
 
-const CalendarList = (props) => {
+const CalendarList = props => {
   const theme = useTheme();
   const fullCalendarProps = useFullCalendarProps(props);
-  return(
+  return (
     <FullCalendar
-      plugins={[ dayGridPlugin ]}
+      plugins={[dayGridPlugin]}
       locale={props.locale}
-      initialView='dayGridMonth'
+      initialView="dayGridMonth"
       eventBackgroundColor={theme.palette.primary.main}
       {...fullCalendarProps}
     />
