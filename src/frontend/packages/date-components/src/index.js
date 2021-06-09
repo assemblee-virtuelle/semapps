@@ -19,3 +19,5 @@ const KeyboardTimeInput = props => <Picker PickerComponent={KeyboardTimePicker} 
 export { DateInput, TimeInput, DateTimeInput, KeyboardDateInput, KeyboardDateTimeInput, KeyboardTimeInput };
 
 export { default as CalendarList } from './CalendarList';
+export { default as DaysList } from './DaysList';
+export { default as useFullCalendarProps } from './useFullCalendarProps';
