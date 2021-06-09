@@ -2,7 +2,7 @@ import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
 import { makeStyles } from '@material-ui/core';
-import useFullCalendarProps from "./useFullCalendarProps";
+import useFullCalendarProps from './useFullCalendarProps';
 
 const useGlobalStyles = makeStyles(theme => ({
   '@global': {
@@ -14,18 +14,11 @@ const useGlobalStyles = makeStyles(theme => ({
   }
 }));
 
-const DaysList = (props) => {
+const DaysList = props => {
   const fullCalendarProps = useFullCalendarProps(props);
   useGlobalStyles();
 
-  return(
-    <FullCalendar
-      plugins={[ listPlugin ]}
-      locale={props.locale}
-      initialView='listMonth'
-      {...fullCalendarProps}
-    />
-  );
+  return <FullCalendar plugins={[listPlugin]} locale={props.locale} initialView="listMonth" {...fullCalendarProps} />;
 };
 
 DaysList.defaultProps = {
