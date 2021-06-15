@@ -69,8 +69,12 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Riot',
-              href: 'https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org',
+              label: 'Discourse (French)',
+              href: 'https://forums.assemblee-virtuelle.org/c/projets/semapps/11',
+            },
+            {
+              label: 'Chat (French and English)',
+              href: 'https://chat.lescommuns.org/channel/semapps_dev',
             },
             {
               label: 'Contact',
