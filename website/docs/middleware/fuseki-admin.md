@@ -75,6 +75,7 @@ Create a dataset if it doesn't already exist.
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `dataset` | `String` | **required** | Name of the dataset |
+| `secure` | `Boolean` | false | If true, Fuseki will check permissions with WebACL for this dataset. Only works with the [semapps/jena-fuseki-webacl](https://hub.docker.com/repository/docker/semapps/jena-fuseki-webacl) Docker image |
 
 ### `backupDataset`
 
