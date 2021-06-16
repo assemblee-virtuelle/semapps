@@ -49,6 +49,7 @@ const TaskEdit = props => (
         <ActorsInput source="pair:hasFollower" />
         <ActorsInput source="pair:involves" />
         <TasksInput source="pair:inspiredBy" />
+        <TasksInput source="pair:requires" />
         <ThemesInput source="pair:hasTopic" />
         <SkillsInput source="pair:needs" />
         <DocumentsInput source="pair:uses" />

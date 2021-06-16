@@ -22,6 +22,12 @@ const ProjectShow = props => (
             </SingleFieldList>
           </ReferenceArrayField>
 
+          <ReferenceArrayField reference="Activity" source="pair:hasPart">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
+
           <ReferenceArrayField reference="Status" source="pair:hasStatus">
             <SeparatedListField linkType={false}>
               <TextField source="pair:label" />

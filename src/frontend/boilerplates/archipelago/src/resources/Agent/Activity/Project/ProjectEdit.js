@@ -23,6 +23,7 @@ const ProjectEdit = props => (
       </FormTab>
       <FormTab label="Relations">
         <ActivitiesInput source="pair:partOf" />
+        <ActivitiesInput source="pair:hasPart" />
         <ActorsInput source="pair:involves" />
         <ResourcesInput source="pair:needs" />
         <DocumentsInput source="pair:documentedBy" />

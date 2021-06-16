@@ -32,9 +32,10 @@ export default {
         'pair:homePage': 'Site web',
         'pair:involves': 'Implique les acteurs',
         'pair:needs': 'Compétences requises',
-        'pair:documentedBy': 'Documenté par',
+        'pair:documentedBy': 'Documents liés',
         'pair:hasTopic': 'A pour thème',
-        'pair:partOf': 'Fait partie du projet...'
+        'pair:partOf': 'Fait partie du projet',
+        'pair:hasPart': 'Contient les activités'
       }
     }
   }
