@@ -2,7 +2,7 @@ import React from 'react';
 import { ImageInput, SelectInput, TextInput, TabbedForm, FormTab } from 'react-admin';
 import { EditWithPermissions } from '@semapps/auth-provider';
 import { MarkdownInput } from '@semapps/markdown-components';
-import { ActorsInput, DocumentsInput, ThemesInput, ResourcesInput } from '../../../../pair';
+import { ActorsInput, DocumentsInput, ThemesInput, ResourcesInput, ActivitiesInput } from '../../../../pair';
 import ProjectTitle from './ProjectTitle';
 import { ImageField, ReferenceInput } from '@semapps/semantic-data-provider';
 
@@ -22,6 +22,7 @@ const ProjectEdit = props => (
         </ImageInput>
       </FormTab>
       <FormTab label="Relations">
+        <ActivitiesInput source="pair:partOf" />
         <ActorsInput source="pair:involves" />
         <ResourcesInput source="pair:needs" />
         <DocumentsInput source="pair:documentedBy" />

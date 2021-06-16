@@ -30,10 +30,11 @@ export default {
         'pair:description': 'Description',
         'pair:hasStatus': 'Statut',
         'pair:homePage': 'Site web',
-        'pair:involves': 'Implique',
+        'pair:involves': 'Implique les acteurs',
         'pair:needs': 'Compétences requises',
         'pair:documentedBy': 'Documenté par',
-        'pair:hasTopic': 'A pour thème'
+        'pair:hasTopic': 'A pour thème',
+        'pair:partOf': 'Fait partie du projet...'
       }
     }
   }
