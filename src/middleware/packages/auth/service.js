@@ -66,6 +66,7 @@ module.exports = {
         webId = await this.broker.call('webid.create', profileData);
         await this.broker.emit('auth.registered', { webId, profileData, authData });
       } else {
+        await this.broker.call('webid.edit', { userId: webId, ...profileData });
         await this.broker.emit('auth.connected', { webId, profileData, authData });
       }
 
