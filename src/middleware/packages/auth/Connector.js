@@ -46,7 +46,7 @@ class Connector {
     next();
   }
   async generateToken(req, res, next) {
-    // If token is already provided by the connector, skip this step. OIDC and CAS not provide Token
+    // If token is already provided by the connector, skip this step.
     if (!req.user.token) {
       const profileData = await this.settings.selectProfileData(req.user);
       const payload = { webId: req.user.webId, ...profileData };
