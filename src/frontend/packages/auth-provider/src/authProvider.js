@@ -1,28 +1,32 @@
 import jwtDecode from 'jwt-decode';
 import { defaultToArray, getAclUri, getAclContext } from './utils';
 
-const authProvider = ({ middlewareUri, httpClient, checkPermissions, resources }) => ({
-  login: params => {
-    window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(window.location.href);
-    return Promise.resolve();
-  },
-  logout: () => {
-    // Redirect to login page after disconnecting from SSO
-    // The login page will remove the token, display a notification and redirect to the homepage
+const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser = userData => true, httpClient, checkPermissions, resources }) => ({
+  login: async params => {
     const url = new URL(window.location.href);
-    window.location.href =
-      `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout');
-
-    // Avoid displaying immediately the login page
-    return Promise.resolve('/');
+    window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true')
   },
-  checkAuth: () => {
-    if (localStorage.getItem('token')) {
-      return Promise.resolve();
+  logout: async () => {
+    const url = new URL(window.location.href);
+    if( !allowAnonymous ) {
+      localStorage.removeItem('token');
+      window.location.href =
+        `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login')
     } else {
-      return Promise.resolve();
+      // Redirect to login page after disconnecting from SSO
+      // The login page will remove the token, display a notification and redirect to the homepage
+      window.location.href =
+        `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
+
+      // Avoid displaying immediately the login page
+      return '/';
     }
   },
+  checkAuth: async () => {
+    const token = localStorage.getItem('token');
+    if( !token && !allowAnonymous ) throw new Error();
+  },
+  checkUser,
   checkError: error => Promise.resolve(),
   getPermissions: async resourceId => {
     if (!checkPermissions) return true;

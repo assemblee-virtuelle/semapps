@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { useLogin, useNotify, Notification } from 'react-admin';
+import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Avatar, Button, Card, CardActions } from '@material-ui/core';
@@ -33,25 +33,42 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
+  const dataProvider = useDataProvider();
+  const authProvider = useAuthProvider();
 
-  const searchParams = new URLSearchParams(location.search);
-  if (searchParams.has('token')) {
-    localStorage.setItem('token', searchParams.get('token'));
-    if (searchParams.has('new') && searchParams.get('new') === 'true') {
-      notify('Votre compte a été créé, vous pouvez maintenant le compléter', 'info');
-      const { webId } = jwtDecode(searchParams.get('token'));
-      history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
-    } else {
-      notify('Vous êtes maintenant connecté', 'info');
-      history.push('/');
-    }
-  }
+  useEffect(() => {
+    (async () => {
+      const searchParams = new URLSearchParams(location.search);
 
-  if (searchParams.has('logout')) {
-    localStorage.removeItem('token');
-    notify('Vous êtes maintenant déconnecté', 'info');
-    history.push('/');
-  }
+      if (searchParams.has('login')) {
+        if (searchParams.has('token')) {
+          const token = searchParams.get('token');
+          const { webId } = jwtDecode(token);
+          const { data } = await dataProvider.getOne('Person', { id: webId });
+
+          if( !authProvider.checkUser(data) ) {
+            notify('auth.message.user_not_allowed_to_login', 'error');
+            history.replace('/login');
+          } else {
+            localStorage.setItem('token', token);
+            if (searchParams.has('new') && searchParams.get('new') === 'true') {
+              notify('auth.message.new_user_created', 'info');
+              history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
+            } else {
+              notify('auth.message.user_connected', 'info');
+              history.push('/');
+            }
+          }
+        }
+      }
+
+      if (searchParams.has('logout')) {
+        localStorage.removeItem('token');
+        notify('auth.message.user_disconnected', 'info');
+        history.push('/');
+      }
+    })();
+  }, [location.search]);
 
   return (
     <ThemeProvider theme={createMuiTheme(theme)}>
@@ -63,8 +80,8 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
             </Avatar>
           </div>
           {buttons &&
-            buttons.map(button => (
-              <CardActions>
+            buttons.map((button, i) => (
+              <CardActions key={i}>
                 {React.cloneElement(button, {
                   fullWidth: true,
                   variant: 'outlined',
