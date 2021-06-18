@@ -33,9 +33,9 @@ const frenchMessages = {
     message: {
       resource_edit_forbidden: "Vous n'avez pas la permission d'éditer cette ressource",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
-      new_user_created: "Votre compte a été créé, vous pouvez maintenant le compléter",
-      user_connected: "Vous êtes maintenant connecté",
-      user_disconnected: "Vous êtes maintenant déconnecté"
+      new_user_created: 'Votre compte a été créé, vous pouvez maintenant le compléter',
+      user_connected: 'Vous êtes maintenant connecté',
+      user_disconnected: 'Vous êtes maintenant déconnecté'
     }
   }
 };

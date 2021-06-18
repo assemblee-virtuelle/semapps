@@ -46,7 +46,7 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
           const { webId } = jwtDecode(token);
           const { data } = await dataProvider.getOne('Person', { id: webId });
 
-          if( !authProvider.checkUser(data) ) {
+          if (!authProvider.checkUser(data)) {
             notify('auth.message.user_not_allowed_to_login', 'error');
             history.replace('/login');
           } else {
