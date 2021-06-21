@@ -93,7 +93,9 @@ module.exports = {
       // We want to remove in old triples only the triples for which we have provided a new literal value
       const literalTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Literal');
       const triplesToRemove = oldTriples.filter(ot =>
-        literalTriplesToAdd.some(nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value)
+        literalTriplesToAdd.some(
+          nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
+        )
       );
 
       // The exact same data have been posted, skip

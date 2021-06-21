@@ -67,7 +67,7 @@ class Connector {
     let redirectUrl = new URL(req.session.redirectUrl);
     if (req.user) {
       // If a token was stored, add it to the URL so that the client may use it
-      if( req.user.token ) redirectUrl.searchParams.set('token', req.user.token);
+      if (req.user.token) redirectUrl.searchParams.set('token', req.user.token);
       redirectUrl.searchParams.set('new', req.user.newUser ? 'true' : 'false');
     }
     // Redirect using NodeJS HTTP
