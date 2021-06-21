@@ -59,17 +59,19 @@ class Connector {
     next();
   }
   globalLogout(req, res, next) {
-    //have to be implemented in extended class
+    // Must be implemented in extended class
     next();
   }
   redirectToFront(req, res, next) {
     // Redirect browser to the redirect URL pushed in session
-    let redirectUrl = req.session.redirectUrl;
-    // If a token was stored, add it to the URL so that the client may use it
-    if (req.user && req.user.token)
-      redirectUrl += '?token=' + req.user.token + '&new=' + (req.user.newUser ? 'true' : 'false');
+    let redirectUrl = new URL(req.session.redirectUrl);
+    if (req.user) {
+      // If a token was stored, add it to the URL so that the client may use it
+      if (req.user.token) redirectUrl.searchParams.set('token', req.user.token);
+      redirectUrl.searchParams.set('new', req.user.newUser ? 'true' : 'false');
+    }
     // Redirect using NodeJS HTTP
-    res.writeHead(302, { Location: redirectUrl });
+    res.writeHead(302, { Location: redirectUrl.toString() });
     res.end();
     next();
   }
