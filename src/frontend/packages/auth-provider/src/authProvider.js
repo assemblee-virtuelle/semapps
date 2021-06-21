@@ -1,7 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import { defaultToArray, getAclUri, getAclContext } from './utils';
 
-const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser = userData => true, httpClient, checkPermissions, resources }) => ({
+const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser, httpClient, checkPermissions, resources }) => ({
   login: async params => {
     const url = new URL(window.location.href);
     window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true')
@@ -26,7 +26,13 @@ const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser = userDa
     const token = localStorage.getItem('token');
     if( !token && !allowAnonymous ) throw new Error();
   },
-  checkUser,
+  checkUser: userData => {
+    if( checkUser ) {
+      return checkUser(userData);
+    } else {
+      return true;
+    }
+  },
   checkError: error => Promise.resolve(),
   getPermissions: async resourceId => {
     if (!checkPermissions) return true;

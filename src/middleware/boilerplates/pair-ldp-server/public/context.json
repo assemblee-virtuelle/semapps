@@ -14,7 +14,6 @@
     "foaf": "http://xmlns.com/foaf/0.1/",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "semapps": "http://semapps.org/ns/core#",
-    "oasis": "http://cooperative-oasis.org/ns/core#",
 
     "id": "@id",
     "type": "@type",
