@@ -75,11 +75,17 @@ const WebIdService = {
       }
     },
     async edit(ctx) {
-      let { userId, ...body } = ctx.params;
+      let { userId, ...profileData } = ctx.params;
       const webId = await this.getWebId(ctx);
-      body['@id'] = webId;
       return await ctx.call('ldp.resource.patch', {
-        resource: body,
+        resource: {
+          '@context': {
+            '@vocab': 'http://xmlns.com/foaf/0.1/'
+          },
+          '@type': 'Person',
+          '@id': webId,
+          ...profileData
+        },
         webId,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
@@ -133,7 +139,7 @@ const WebIdService = {
         return ctx.meta.webId || ctx.meta.tokenPayload.webId;
       } else {
         throw new Error(
-          'webid.getWebId have to be call whith ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
+          'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
         );
       }
     }

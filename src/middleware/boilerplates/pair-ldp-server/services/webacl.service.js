@@ -10,7 +10,7 @@ module.exports = {
       CONFIG.HOME_URL + 'users/guillaume.rouyer',
       CONFIG.HOME_URL + 'users/simon.louvet.zen',
       CONFIG.HOME_URL + 'users/pierre',
-      CONFIG.HOME_URL + 'users/yannick-duthe',
+      CONFIG.HOME_URL + 'users/yannickduthe',
       CONFIG.HOME_URL + 'users/jeremy.dufraisse',
       CONFIG.HOME_URL + 'users/info'
     ]
