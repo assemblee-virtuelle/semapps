@@ -1,17 +1,23 @@
 import jwtDecode from 'jwt-decode';
 import { defaultToArray, getAclUri, getAclContext } from './utils';
 
-const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser, httpClient, checkPermissions, resources }) => ({
+const authProvider = ({
+  middlewareUri,
+  allowAnonymous = true,
+  checkUser,
+  httpClient,
+  checkPermissions,
+  resources
+}) => ({
   login: async params => {
     const url = new URL(window.location.href);
-    window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true')
+    window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
   },
   logout: async () => {
     const url = new URL(window.location.href);
-    if( !allowAnonymous ) {
+    if (!allowAnonymous) {
       localStorage.removeItem('token');
-      window.location.href =
-        `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login')
+      window.location.href = `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
     } else {
       // Redirect to login page after disconnecting from SSO
       // The login page will remove the token, display a notification and redirect to the homepage
@@ -24,10 +30,10 @@ const authProvider = ({ middlewareUri, allowAnonymous = true, checkUser, httpCli
   },
   checkAuth: async () => {
     const token = localStorage.getItem('token');
-    if( !token && !allowAnonymous ) throw new Error();
+    if (!token && !allowAnonymous) throw new Error();
   },
   checkUser: userData => {
-    if( checkUser ) {
+    if (checkUser) {
       return checkUser(userData);
     } else {
       return true;
