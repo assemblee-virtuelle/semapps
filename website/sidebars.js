@@ -33,6 +33,7 @@ module.exports = {
           'middleware/webacl/index',
           'middleware/webacl/resource',
           'middleware/webacl/group',
+          'middleware/webacl/groups-manager',
         ],
       },
       'middleware/webfinger',
