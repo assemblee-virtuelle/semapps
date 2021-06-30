@@ -199,7 +199,7 @@ describe('Resource CRUD operations', () => {
     expect(theme).toMatchObject({
       '@id': themeUri,
       '@type': 'pair:Theme',
-      'pair:label': 'Permaculture',
+      'pair:label': 'Permaculture'
     });
   }, 20000);
 
@@ -208,9 +208,11 @@ describe('Resource CRUD operations', () => {
       resourceUri: project1['@id']
     });
 
-    expect(broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    })).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${project1['@id']}`);
+    expect(
+      broker.call('ldp.resource.get', {
+        resourceUri: project1['@id'],
+        accept: MIME_TYPES.JSON
+      })
+    ).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${project1['@id']}`);
   }, 20000);
 });
