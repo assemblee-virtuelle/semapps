@@ -47,8 +47,7 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
           } else {
             notify('auth.message.bad_request', 'error', { error: searchParams.get('error') });
           }
-        }
-        else if (searchParams.has('token')) {
+        } else if (searchParams.has('token')) {
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
           const { data } = await dataProvider.getOne('Person', { id: webId });

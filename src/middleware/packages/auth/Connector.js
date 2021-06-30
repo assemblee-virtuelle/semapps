@@ -45,7 +45,7 @@ class Connector {
       req.user.webId = webId;
       req.user.newUser = newUser;
       next();
-    } catch(e) {
+    } catch (e) {
       this.sendError(res, req, e);
     }
   }
