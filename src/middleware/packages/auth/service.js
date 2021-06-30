@@ -64,8 +64,8 @@ module.exports = {
       const newUser = !webId;
 
       if (newUser) {
-        if( !this.settings.registrationAllowed ) {
-          throw new Error('registration.not-allowed')
+        if (!this.settings.registrationAllowed) {
+          throw new Error('registration.not-allowed');
         }
         webId = await this.broker.call('webid.create', profileData);
         await this.broker.emit('auth.registered', { webId, profileData, authData });
