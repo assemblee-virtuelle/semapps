@@ -40,10 +40,14 @@ class Connector {
   async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
     const profileData = await this.settings.selectProfileData(req.user);
-    const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
-    req.user.webId = webId;
-    req.user.newUser = newUser;
-    next();
+    try {
+      const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
+      req.user.webId = webId;
+      req.user.newUser = newUser;
+      next();
+    } catch (e) {
+      this.sendError(res, req, e);
+    }
   }
   async generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step.
@@ -74,6 +78,12 @@ class Connector {
     res.writeHead(302, { Location: redirectUrl.toString() });
     res.end();
     next();
+  }
+  sendError(res, req, error) {
+    let redirectUrl = new URL(req.session.redirectUrl);
+    redirectUrl.searchParams.set('error', error.message);
+    res.writeHead(302, { Location: redirectUrl.toString() });
+    res.end();
   }
   login() {
     return async (req, res) => {

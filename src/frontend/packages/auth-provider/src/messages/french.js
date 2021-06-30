@@ -33,9 +33,11 @@ const frenchMessages = {
     message: {
       resource_edit_forbidden: "Vous n'avez pas la permission d'éditer cette ressource",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
+      user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       new_user_created: 'Votre compte a été créé, vous pouvez maintenant le compléter',
       user_connected: 'Vous êtes maintenant connecté',
-      user_disconnected: 'Vous êtes maintenant déconnecté'
+      user_disconnected: 'Vous êtes maintenant déconnecté',
+      bad_request: "Requête erronée (Message d'erreur renvoyé par le serveur: %{error})"
     }
   }
 };

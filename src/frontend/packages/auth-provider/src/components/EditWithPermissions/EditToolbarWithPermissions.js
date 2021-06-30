@@ -1,6 +1,7 @@
 import React from 'react';
-import { SaveButton, Toolbar, DeleteButton } from 'react-admin';
+import { SaveButton, Toolbar } from 'react-admin';
 import { makeStyles } from '@material-ui/core';
+import DeleteButtonWithPermissions from './DeleteButtonWithPermissions';
 
 const useStyles = makeStyles(() => ({
   toolbar: {
@@ -10,12 +11,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const EditToolbarWithPermissions = ({ hasDelete, ...rest }) => {
+const EditToolbarWithPermissions = props => {
   const classes = useStyles();
   return (
-    <Toolbar {...rest} className={classes.toolbar}>
+    <Toolbar {...props} className={classes.toolbar}>
       <SaveButton />
-      {hasDelete && <DeleteButton undoable={false} />}
+      <DeleteButtonWithPermissions undoable={false} />}
     </Toolbar>
   );
 };
