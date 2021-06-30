@@ -18,6 +18,11 @@ module.exports = {
         .on('end', () => resolve(res));
     });
   },
+  // Filter out triples whose subject is not the resource itself
+  // We don't want to update or delete resources with IDs
+  filterOtherNamedNodes(triples, resourceUri) {
+    return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
+  },
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
