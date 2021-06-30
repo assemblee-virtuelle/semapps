@@ -41,7 +41,14 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
       const searchParams = new URLSearchParams(location.search);
 
       if (searchParams.has('login')) {
-        if (searchParams.has('token')) {
+        if (searchParams.has('error')) {
+          if (searchParams.get('error') === 'registration.not-allowed') {
+            notify('auth.message.user_email_not_found', 'error');
+          } else {
+            notify('auth.message.bad_request', 'error', { error: searchParams.get('error') });
+          }
+        }
+        else if (searchParams.has('token')) {
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
           const { data } = await dataProvider.getOne('Person', { id: webId });

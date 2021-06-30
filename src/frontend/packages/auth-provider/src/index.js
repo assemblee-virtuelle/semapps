@@ -1,6 +1,8 @@
 export { default as authProvider } from './authProvider';
 
 export { default as EditWithPermissions } from './components/EditWithPermissions/EditWithPermissions';
+export { default as DeleteButtonWithPermissions } from './components/EditWithPermissions/DeleteButtonWithPermissions';
+export { default as EditToolbarWithPermissions } from './components/EditWithPermissions/EditToolbarWithPermissions';
 export { default as EditActions } from './components/EditWithPermissions/EditActions';
 export { default as ListWithPermissions } from './components/ListWithPermissions/ListWithPermissions';
 export { default as PermissionsButton } from './components/PermissionsButton/PermissionsButton';

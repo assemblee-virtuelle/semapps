@@ -16,7 +16,8 @@ module.exports = {
     cas: {
       url: null
     },
-    selectProfileData: null
+    selectProfileData: null,
+    registrationAllowed: true
   },
   dependencies: ['api', 'webid'],
   async started() {
@@ -63,6 +64,9 @@ module.exports = {
       const newUser = !webId;
 
       if (newUser) {
+        if( !this.settings.registrationAllowed ) {
+          throw new Error('registration.not-allowed')
+        }
         webId = await this.broker.call('webid.create', profileData);
         await this.broker.emit('auth.registered', { webId, profileData, authData });
       } else {
