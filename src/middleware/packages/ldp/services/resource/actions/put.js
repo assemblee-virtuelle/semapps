@@ -67,6 +67,11 @@ module.exports = {
 
       const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
+      // Filter out triples whose subject is not the resource itself
+      // We don't want to update or delete resources with IDs
+      oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
+      newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+
       oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
       newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
 
