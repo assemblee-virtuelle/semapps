@@ -148,21 +148,69 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
   }, 20000);
 
+  // Ensure dereferenced resources with IDs are not deleted by PUT
+  test('PUT resource with ID', async () => {
+    const themeUri = await broker.call('ldp.resource.post', {
+      containerUri: 'http://localhost:3000/themes',
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'pair:Theme',
+        label: 'Permaculture'
+      },
+      contentType: MIME_TYPES.JSON,
+      slug: 'Permaculture'
+    });
+
+    // Add a relation to the theme
+    await broker.call('ldp.resource.put', {
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Project',
+        '@id': project1['@id'],
+        label: 'myTitle',
+        hasTopic: { '@id': themeUri }
+      },
+      contentType: MIME_TYPES.JSON
+    });
+
+    // Remove the relation to the theme
+    await broker.call('ldp.resource.put', {
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Project',
+        '@id': project1['@id'],
+        label: 'myTitle'
+      },
+      contentType: MIME_TYPES.JSON
+    });
+
+    // Ensure the theme has not been deleted
+    const theme = await broker.call('ldp.resource.get', {
+      resourceUri: themeUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(theme).toMatchObject({
+      '@id': themeUri,
+      '@type': 'pair:Theme',
+      'pair:label': 'Permaculture',
+    });
+  }, 20000);
+
   test('Delete resource', async () => {
     await broker.call('ldp.resource.delete', {
       resourceUri: project1['@id']
     });
 
-    let error;
-    try {
-      await broker.call('ldp.resource.get', {
-        resourceUri: project1['@id'],
-        accept: MIME_TYPES.JSON
-      });
-    } catch (e) {
-      error = e;
-    } finally {
-      expect(error && error.code).toBe(404);
-    }
+    expect(broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    })).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${project1['@id']}`);
   }, 20000);
 });
