@@ -46,12 +46,14 @@ module.exports = {
           additionalRights: {
             group: {
               uri: groupUri,
+              read: true,
               write: true,
               control: true
             },
             default: {
               group: {
                 uri: groupUri,
+                read: true,
                 write: true,
                 control: true
               }
