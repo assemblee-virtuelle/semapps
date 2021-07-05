@@ -7,14 +7,14 @@ module.exports = {
     switch (webId) {
       case 'anon':
         return {
-          anon : {
+          anon: {
             read: true,
             write: true
           }
         };
       case 'system':
         return {
-          anon : {
+          anon: {
             read: true
           },
           anyUser: {
@@ -24,7 +24,7 @@ module.exports = {
         };
       default:
         return {
-          anon : {
+          anon: {
             read: true
           },
           anyUser: {

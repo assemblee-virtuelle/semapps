@@ -26,11 +26,10 @@ const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
 };
 
 const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => {
-  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: containerUri })
+  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: containerUri });
 
-  const newRights = typeof newResourcesPermissions === 'function'
-    ? newResourcesPermissions(webId)
-    : newResourcesPermissions;
+  const newRights =
+    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId) : newResourcesPermissions;
 
   await ctx.call('webacl.resource.addRights', {
     webId: 'system',
