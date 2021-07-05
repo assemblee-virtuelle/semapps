@@ -17,10 +17,7 @@ const {
   ACL_NS
 } = require('../../utils');
 
-const filterAclsOnlyAgent = acl => {
-  if (agentPredicates.includes(acl.p.value)) return true;
-  return false;
-};
+const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
 module.exports = {
   name: 'webacl.resource',
