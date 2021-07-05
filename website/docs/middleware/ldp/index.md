@@ -74,7 +74,7 @@ module.exports = {
 | `jsonContext` | `[Any]` |  | JSON context to use to format results |
 | `dereference`| `[Array]` | `[]` | Properties to dereference, prefixed with their ontology. You can define sub-predicates separated by `/` |
 | `queryDepth` | `Integer` | 0 | Depth of blank nodes to dereference (Deprecated. Will be removed in a future minor release.) |
-| `newResourcesPermissions` | `Object` or `Function` |  | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md) |
+| `newResourcesPermissions` | `Object` or `Function` |  | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources) |
 
 ## API routes
 

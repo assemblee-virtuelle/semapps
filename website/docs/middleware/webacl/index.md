@@ -97,7 +97,7 @@ By default, new resources are created with these rights:
   - `acl:Read` permission is granted to anonymous users
   - `acl:Write` permission is granted to authenticated users
 
-If you wish to change these options, you can set the `newResourcesPermissions` parameter in [LdpService's `defaultContainerOptions`](../ldp/index.md), or to a particular container.
+If you wish to change these options, you can set the `newResourcesPermissions` parameter in [LdpService's `defaultContainerOptions`](../ldp/index.md#settings), or to a particular container.
 
 This `newResourcesPermissions` parameter can be:
 - An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights` action](resource.md) (with keys "anon", "anyUser", "user", "group")
