@@ -140,7 +140,7 @@ module.exports = {
           contentType,
           webId
         });
-      } catch(e) {
+      } catch (e) {
         // If there was an error inserting the resource, detach it from the container
         await ctx.call('triplestore.update', {
           query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resource['@id']}> }`,
