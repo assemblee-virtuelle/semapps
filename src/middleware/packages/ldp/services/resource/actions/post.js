@@ -130,16 +130,26 @@ module.exports = {
       }
 
       await ctx.call('triplestore.insert', {
-        resource,
-        contentType,
+        resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resource['@id']}>`,
         webId
       });
 
-      await ctx.call('ldp.container.attach', {
-        resourceUri: resource['@id'],
-        containerUri,
-        webId
-      });
+      try {
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType,
+          webId
+        });
+      } catch(e) {
+        // If there was an error inserting the resource, detach it from the container
+        await ctx.call('triplestore.update', {
+          query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resource['@id']}> }`,
+          webId
+        });
+
+        // Re-throw the error so that it's displayed by the API function
+        throw e;
+      }
 
       const newData = await ctx.call(
         'ldp.resource.get',
@@ -157,6 +167,11 @@ module.exports = {
         resourceUri: resource['@id'],
         newData,
         webId
+      });
+
+      ctx.emit('ldp.container.attached', {
+        containerUri,
+        resourceUri: resource['@id']
       });
 
       return resource['@id'];
