@@ -100,7 +100,7 @@ By default, new resources are created with these rights:
 If you wish to change these options, you can set the `newResourcesPermissions` parameter in [LdpService's `defaultContainerOptions`](../ldp/index.md#settings), or to a particular container.
 
 This `newResourcesPermissions` parameter can be:
-- An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights` action](resource.md) (with keys "anon", "anyUser", "user", "group")
+- An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights`](resource.md#webaclresourceaddrights) action (with keys "anon", "anyUser", "user", "group")
 - A function which receives the WebID of the creator (or "anon" if the user is not authenticated, or "system") and returns an object in the same shape
 
 
