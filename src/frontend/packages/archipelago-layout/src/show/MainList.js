@@ -1,10 +1,22 @@
 import React from 'react';
 import { useTranslate, getFieldLabelTranslationArgs, useShowContext } from 'react-admin';
-import { Box } from '@material-ui/core';
+import { Box, makeStyles } from '@material-ui/core';
 import LargeLabel from './LargeLabel';
 
-const MainList = ({ children }) => {
+const useStyles = makeStyles(theme => ({
+  divider: {
+    paddingTop: 5,
+    paddingBottom: 20,
+    borderBottom: '1px lightgrey solid',
+    '&:last-child': {
+      borderBottom: 'none'
+    }
+  }
+}));
+
+const MainList = ({ children, divider, Label }) => {
   const translate = useTranslate();
+  const classes = useStyles();
   const { basePath, loaded, record, resource } = useShowContext();
   if (!loaded) return null;
 
@@ -12,10 +24,10 @@ const MainList = ({ children }) => {
     <Box>
       {React.Children.map(children, field =>
         field && record[field.props.source] && React.isValidElement(field) ? (
-          <div key={field.props.source}>
+          <div key={field.props.source} className={divider ? classes.divider : null}>
             {field.props.addLabel ? (
               <>
-                <LargeLabel>
+                <Label>
                   {translate(
                     ...getFieldLabelTranslationArgs({
                       label: field.props.label,
@@ -23,7 +35,7 @@ const MainList = ({ children }) => {
                       source: field.props.source
                     })
                   )}
-                </LargeLabel>
+                </Label>
                 {React.cloneElement(field, {
                   record,
                   resource,
@@ -44,6 +56,10 @@ const MainList = ({ children }) => {
       )}
     </Box>
   );
+};
+
+MainList.defaultProps = {
+  Label: LargeLabel
 };
 
 export default MainList;
