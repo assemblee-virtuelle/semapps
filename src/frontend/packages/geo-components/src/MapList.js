@@ -80,11 +80,11 @@ const MapList = ({
           eventHandlers={
             xs
               ? {
-                click: () => {
-                  map.setView([record.latitude, record.longitude]);
-                  setDrawerRecord(record);
+                  click: () => {
+                    map.setView([record.latitude, record.longitude]);
+                    setDrawerRecord(record);
+                  }
                 }
-              }
               : undefined
           }
         >
@@ -125,13 +125,7 @@ const MapList = ({
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
-      {groupClusters ?
-        <MarkerClusterGroup showCoverageOnHover={false}>
-          {markers}
-        </MarkerClusterGroup>
-        :
-        markers
-      }
+      {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
       <Drawer anchor="bottom" open={!!drawerRecord} onClose={() => setDrawerRecord(null)}>
         <Box p={1} position="relative">
