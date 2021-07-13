@@ -38,6 +38,7 @@ const MapList = ({
   height,
   center,
   zoom,
+  groupClusters,
   boundToMarkers,
   connectMarkers,
   ...otherProps
@@ -71,6 +72,41 @@ const MapList = ({
   // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
   if (boundToMarkers && !bounds) return null;
 
+  const markers = records.map((record, i) => {
+    const marker = (
+      <React.Fragment key={i}>
+        <Marker
+          position={[record.latitude, record.longitude]}
+          eventHandlers={
+            xs
+              ? {
+                click: () => {
+                  map.setView([record.latitude, record.longitude]);
+                  setDrawerRecord(record);
+                }
+              }
+              : undefined
+          }
+        >
+          {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
+        </Marker>
+        {connectMarkers && previousRecord && (
+          <Polyline
+            positions={[
+              [previousRecord.latitude, previousRecord.longitude],
+              [record.latitude, record.longitude]
+            ]}
+          />
+        )}
+      </React.Fragment>
+    );
+
+    // Save record so that we can trace lines
+    previousRecord = record;
+
+    return marker;
+  });
+
   return (
     <MapContainer
       style={{ height }}
@@ -89,42 +125,13 @@ const MapList = ({
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
-      <MarkerClusterGroup showCoverageOnHover={false}>
-        {records.map((record, i) => {
-          const marker = (
-            <React.Fragment key={i}>
-              <Marker
-                position={[record.latitude, record.longitude]}
-                eventHandlers={
-                  xs
-                    ? {
-                        click: () => {
-                          map.setView([record.latitude, record.longitude]);
-                          setDrawerRecord(record);
-                        }
-                      }
-                    : undefined
-                }
-              >
-                {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
-              </Marker>
-              {connectMarkers && previousRecord && (
-                <Polyline
-                  positions={[
-                    [previousRecord.latitude, previousRecord.longitude],
-                    [record.latitude, record.longitude]
-                  ]}
-                />
-              )}
-            </React.Fragment>
-          );
-
-          // Save record so that we can trace lines
-          previousRecord = record;
-
-          return marker;
-        })}
-      </MarkerClusterGroup>
+      {groupClusters ?
+        <MarkerClusterGroup showCoverageOnHover={false}>
+          {markers}
+        </MarkerClusterGroup>
+        :
+        markers
+      }
       <QueryStringUpdater />
       <Drawer anchor="bottom" open={!!drawerRecord} onClose={() => setDrawerRecord(null)}>
         <Box p={1} position="relative">
@@ -142,6 +149,7 @@ MapList.defaultProps = {
   height: 700,
   center: [47, 2.213749],
   zoom: 6,
+  groupClusters: true,
   connectMarkers: false,
   scrollWheelZoom: false,
   popupContent: DefaultPopupContent
