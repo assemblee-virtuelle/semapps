@@ -14,4 +14,8 @@ export { default as LogoutButton } from './components/LogoutButton';
 export { default as ResourceWithPermissions } from './components/ResourceWithPermissions';
 export { default as UserMenu } from './components/UserMenu';
 
+export { default as useAgents } from './hooks/useAgents';
+export { default as useCheckPermissions } from './hooks/useCheckPermissions';
+export { default as usePermissionsWithRefetch } from './hooks/usePermissionsWithRefetch';
+
 export { default as frenchMessages } from './messages/french';

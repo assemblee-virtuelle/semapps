@@ -2,18 +2,11 @@ import React, { useEffect } from 'react';
 import { Edit as RaEdit, usePermissionsOptimized, useRedirect, useNotify } from 'react-admin';
 import EditActions from './EditActions';
 import EditToolbarWithPermissions from './EditToolbarWithPermissions';
-import { rightsToEdit, rightsToControl, rightsToDelete } from '../../constants';
+import useCheckPermissions from "../../hooks/useCheckPermissions";
+import { rightsToControl } from '../../constants';
 
 const EditWithPermissions = props => {
-  const { permissions } = usePermissionsOptimized(props.id);
-  const notify = useNotify();
-  const redirect = useRedirect();
-  useEffect(() => {
-    if (permissions && !permissions.some(p => rightsToEdit.includes(p['acl:mode']))) {
-      notify('auth.message.resource_edit_forbidden', 'error');
-      redirect(props.basePath);
-    }
-  }, [permissions, redirect, notify]);
+  const permissions = useCheckPermissions(props.id, 'edit');
   return (
     <RaEdit
       actions={
