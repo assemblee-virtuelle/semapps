@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Edit as RaEdit, usePermissionsOptimized, useRedirect, useNotify } from 'react-admin';
 import EditActions from './EditActions';
 import EditToolbarWithPermissions from './EditToolbarWithPermissions';
-import useCheckPermissions from "../../hooks/useCheckPermissions";
+import useCheckPermissions from '../../hooks/useCheckPermissions';
 import { rightsToControl } from '../../constants';
 
 const EditWithPermissions = props => {

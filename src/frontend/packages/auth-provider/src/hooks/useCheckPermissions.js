@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { usePermissionsOptimized, useRedirect, useNotify } from 'react-admin';
-import { rights, forbiddenErrors } from "../constants";
+import { rights, forbiddenErrors } from '../constants';
 
 const useCheckPermissions = (resourceId, mode, redirectUrl = '/') => {
   const { permissions } = usePermissionsOptimized(resourceId);
