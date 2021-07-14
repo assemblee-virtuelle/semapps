@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, CreateButton, ExportButton, useResourceDefinition, Link } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery } from '@material-ui/core';
-import { TopToolbar } from '@semapps/archipelago-layout';
+import TopToolbar from '../layout/DefaultLayout/TopToolbar';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActions = ({
