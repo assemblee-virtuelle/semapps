@@ -3,7 +3,7 @@ const { getContainerFromUri } = require('../utils');
 module.exports = {
   name: 'resources-watcher',
   settings: {
-    containerUri: null,
+    containerUri: null
   },
   methods: {
     created(resourceUri, newData) {
