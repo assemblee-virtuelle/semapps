@@ -18,11 +18,11 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
 
   return (
     <Box addLabel={addLabel}>
-      {address &&
+      {address && (
         <Box mt={1} mb={1}>
           <Typography {...typographyProps}>{address(record)}</Typography>
         </Box>
-      }
+      )}
       <MapContainer style={{ height }} center={position} {...rest}>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
