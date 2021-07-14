@@ -71,6 +71,7 @@ const MyList = props => (
 | `description` | `Function` | | A function which takes a record and returns a description to be displayed in the popup. This is not used if `popupContent` is provided. |
 | `popupContent` | `React Component` |  | A React component to customize the content of the popup (see above) |
 | `height` | `Number` | 700 | The height in pixel of the map |
+| `groupClusters` | `Boolean` | true | If true, markers which are close will be grouped in a cluster. |
 | `boundToMarkers` | `Boolean` | false | If true, center the map around the markers. |
 | `connectMarkers` | `Boolean` | false | If true, trace lines between the markers. The order depends on the list parameters |
 
@@ -102,6 +103,8 @@ export const MyShow = (props) => (
 | -------- | ---- | ------- | ----------- |
 | `latitude` | `Function` | **required** | A function which takes a record and returns a latitude |
 | `longitude` | `Function` | **required** | A function which takes a record and returns a longitude |
+| `address` | `Function` | **required** | A function which takes a record and returns a text to display above the map |
+| `typographyProps` | `Object` | | Props passed down to the Typography element used to display the text above the map |
 | `height` | `Number` | 400 | The height in pixel of the map |
 
 You can also provide all the options of [LeafletJS Map](https://leafletjs.com/reference-1.7.1.html#map) (`center`, `zoom`, `scrollWheelZoom`...).
