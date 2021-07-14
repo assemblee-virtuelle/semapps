@@ -1,6 +1,6 @@
 import React from 'react';
 import { ListButton } from 'react-admin';
-import { TopToolbar } from '@semapps/archipelago-layout';
+import TopToolbar from "../layout/DefaultLayout/TopToolbar";
 
 const CreateActions = ({ basePath, className, data, hasList, ...otherProps }) => (
   <TopToolbar className={className} {...otherProps}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShowButton, ListButton } from 'react-admin';
-import { TopToolbar } from '@semapps/archipelago-layout';
+import TopToolbar from "../layout/DefaultLayout/TopToolbar";
 
 const EditActions = ({ basePath, className, data, hasList, hasShow, ...otherProps }) => (
   <TopToolbar className={className} {...otherProps}>
