@@ -14,6 +14,6 @@ const useCheckAuthenticated = () => {
   }, [loading, identity, redirect, notify]);
 
   return { identity, loading };
-}
+};
 
 export default useCheckAuthenticated;
