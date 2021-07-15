@@ -15,6 +15,7 @@ export { default as ResourceWithPermissions } from './components/ResourceWithPer
 export { default as UserMenu } from './components/UserMenu';
 
 export { default as useAgents } from './hooks/useAgents';
+export { default as useCheckAuthenticated } from './hooks/useCheckAuthenticated';
 export { default as useCheckPermissions } from './hooks/useCheckPermissions';
 export { default as usePermissionsWithRefetch } from './hooks/usePermissionsWithRefetch';
 
