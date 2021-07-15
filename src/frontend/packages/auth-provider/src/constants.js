@@ -32,7 +32,7 @@ export const forbiddenErrors = {
   delete: 'auth.message.resource_delete_forbidden',
   control: 'auth.message.resource_control_forbidden',
   list: 'auth.message.container_list_forbidden',
-  create: 'auth.message.container_create_forbidden',
+  create: 'auth.message.container_create_forbidden'
 };
 
 export const resourceRightsLabels = {
