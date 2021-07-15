@@ -17,7 +17,7 @@ const GridList = ({ children, linkType, spacing, ...otherProps }) => {
       {ids.map(id => (
         <Grid item key={id} {...otherProps}>
           {linkType ? (
-            <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation} t>
+            <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 record: data[id],
                 basePath,

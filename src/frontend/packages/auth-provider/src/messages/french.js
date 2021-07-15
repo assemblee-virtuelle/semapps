@@ -31,7 +31,12 @@ const frenchMessages = {
       agent_select: 'Ajouter un utilisateur...'
     },
     message: {
+      resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
       resource_edit_forbidden: "Vous n'avez pas la permission d'éditer cette ressource",
+      resource_delete_forbidden: "Vous n'avez pas la permission d'effacer cette ressource",
+      resource_control_forbidden: "Vous n'avez pas la permission d'administrer cette ressource",
+      container_create_forbidden: "Vous n'avez pas la permission de créer des ressources",
+      container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       new_user_created: 'Votre compte a été créé, vous pouvez maintenant le compléter',

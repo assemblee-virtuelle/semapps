@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const MapField = ({ record, latitude, longitude, address, height, addLabel, ...otherProps }) => {
+const MapField = ({ record, latitude, longitude, address, height, addLabel, typographyProps, ...rest }) => {
   const classes = useStyles();
 
   // Do not display the component if it has no latitude or longitude
@@ -18,8 +18,12 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, ...o
 
   return (
     <Box addLabel={addLabel}>
-      {address && <Typography className={classes.address}>{address(record)}</Typography>}
-      <MapContainer style={{ height }} center={position} {...otherProps}>
+      {address && (
+        <Box mt={1} mb={1}>
+          <Typography {...typographyProps}>{address(record)}</Typography>
+        </Box>
+      )}
+      <MapContainer style={{ height }} center={position} {...rest}>
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
