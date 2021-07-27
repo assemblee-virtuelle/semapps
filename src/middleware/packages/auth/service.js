@@ -51,7 +51,19 @@ module.exports = {
 
     await this.connector.initialize();
 
-    await this.broker.call('api.addRoute', { route: this.getApiRoute() });
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/auth',
+        use: this.connector.getRouteMiddlewares(),
+        aliases: {
+          'GET /logout': this.connector.logout(),
+          'GET /': this.connector.login()
+        },
+        onError(req, res, err) {
+          console.error(err);
+        }
+      }
+    });
   },
   methods: {
     async findOrCreateProfile(profileData, authData) {
@@ -75,18 +87,6 @@ module.exports = {
       }
 
       return { webId, newUser };
-    },
-    getApiRoute() {
-      return {
-        use: this.connector.getRouteMiddlewares(),
-        aliases: {
-          'GET auth/logout': this.connector.logout(),
-          'GET auth': this.connector.login()
-        },
-        onError(req, res, err) {
-          console.error(err);
-        }
-      };
     }
   },
   actions: {

@@ -15,9 +15,10 @@ const WebfingerService = {
 
     await this.broker.call('api.addRoute', {
       route: {
+        path: '/.well-known',
         bodyParsers: { json: true },
         aliases: {
-          'GET .well-known/webfinger': 'webfinger.get'
+          'GET /webfinger': 'webfinger.get'
         }
       }
     });
@@ -86,9 +87,6 @@ const WebfingerService = {
           return link.href;
         }
       }
-    },
-    getApiRoutes() {
-      return [];
     }
   }
 };
