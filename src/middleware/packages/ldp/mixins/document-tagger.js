@@ -29,7 +29,7 @@ module.exports = {
       ctx.call('ldp.resource.patch', {
         resource: {
           '@id': resourceUri,
-          [this.settings.documentPredicates.updated]: now.toISOString(),
+          [this.settings.documentPredicates.updated]: now.toISOString()
         },
         contentType: MIME_TYPES.JSON,
         webId
@@ -42,7 +42,7 @@ module.exports = {
       this.actions.tagCreatedResource(
         {
           resourceUri,
-          webId,
+          webId
         },
         { parentCtx: ctx }
       );
@@ -51,11 +51,11 @@ module.exports = {
       const { resourceUri, newData, oldData, webId } = ctx.params;
 
       // Do not update modified date if it is being changed here (prevent infinite loop)
-      if( newData[this.settings.documentPredicates.updated] === oldData[this.settings.documentPredicates.updated] ) {
+      if (newData[this.settings.documentPredicates.updated] === oldData[this.settings.documentPredicates.updated]) {
         this.actions.tagUpdatedResource(
           {
             resourceUri,
-            webId,
+            webId
           },
           { parentCtx: ctx }
         );
