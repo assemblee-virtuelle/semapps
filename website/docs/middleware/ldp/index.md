@@ -18,6 +18,9 @@ This package allows you to setup LDP direct containers in which LDP resources ca
 - [LdpContainerService](container.md)
 - LdpCacheCleanerService
 
+## Mixins
+- [DocumentTaggerMixin]
+
 ## Install
 
 ```bash
