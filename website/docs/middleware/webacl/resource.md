@@ -137,6 +137,20 @@ Null
 Null
 
 
+### `webacl.resource.removeRights`
+- This action can only be called by other Moleculer services.
+- If you remove a right which doesn't exist, no error will be thrown.
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `resourceUri` | `String` | **required** | URI of the resource |
+| `rights` | `Object` | **required** | Object with the rights to remove (see above) |
+
+##### Return
+Null
+
+
 ### `webacl.resource.deleteAllRights`
 - Remove all rights on a given resource.
 - Only the `system` webId can call this action
@@ -174,7 +188,7 @@ Sent when the ACL for a resource or container are updated.
 
 ### `webacl.resource.deleted`
 
-Sent when the ACL for a resource or container are updated.
+Sent when the ACL for a resource or container are deleted.
 
 ##### Parameters
 | Property | Type | Description |
