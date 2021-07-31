@@ -1,4 +1,4 @@
-const { getAclUriFromResourceUri, processRights } = require("../../../utils");
+const { getAclUriFromResourceUri, processRights } = require('../../../utils');
 
 module.exports = {
   action: {
@@ -8,7 +8,7 @@ module.exports = {
       rights: { type: 'object', optional: false }
     },
     async handler(ctx) {
-      let { resourceUri , rights} = ctx.params;
+      let { resourceUri, rights } = ctx.params;
 
       let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
