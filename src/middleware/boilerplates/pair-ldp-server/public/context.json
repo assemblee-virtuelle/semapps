@@ -2,6 +2,7 @@
   "@context": {
     "@vocab": "_:",
     "pair": "http://virtual-assembly.org/ontologies/pair#",
+    "og": "http://virtual-assembly.org/ontologies/organigraph#",
 
     "as": "https://www.w3.org/ns/activitystreams#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -330,6 +331,13 @@
     },
     "pair:dueDate": {
       "@type": "xsd:dateTime"
+    },
+
+    "og:leads": {
+      "@type": "@id"
+    },
+    "og:leadBy": {
+      "@type": "@id"
     },
 
     "Accept": "as:Accept",
