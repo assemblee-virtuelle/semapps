@@ -12,8 +12,8 @@ module.exports = {
       const now = new Date();
 
       let triples = [];
-      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.created}> "${now.toISOString()}"^^xsd:dateTime .`);
-      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^xsd:dateTime .`);
+      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.created}> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`);
+      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`);
       if( webId && webId.startsWith('http') ) triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
 
       await ctx.call('triplestore.insert', {
@@ -27,7 +27,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
-          INSERT { <${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^xsd:dateTime }
+          INSERT { <${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
           WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
         `,
         webId: 'system'
