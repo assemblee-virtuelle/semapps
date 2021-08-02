@@ -12,26 +12,31 @@ const useStyles = makeStyles(theme => ({
   image: {
     width: '100%',
     maxHeight: 'none',
+    margin: '0.5rem',
     [theme.breakpoints.down('sm')]: {
       margin: 0
     }
   }
 }));
 
-const MainImage = ({ record, source, defaultImage, ...otherProps }) => {
+const MainImage = ({ record, source, defaultImage, ...rest }) => {
   const classes = useStyles();
 
   if (!record[source]) {
     record[source] = defaultImage;
-  } else if (record[source].rawFile instanceof File) {
+  }
+
+  const image = Array.isArray(record[source]) ? record[source][0] : record[source];
+
+  if (image.rawFile instanceof File) {
     return (
       <Box align="center" className={classes.loader}>
         <CircularProgress />
       </Box>
     );
+  } else {
+    return <img src={image} className={classes.image} alt={record['pair:label']} {...rest} />;
   }
-
-  return <RaImageField record={record} source={source} classes={{ image: classes.image }} {...otherProps} />;
 };
 
 export default MainImage;
