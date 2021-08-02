@@ -246,6 +246,35 @@ async function sanitizeSPARQL(text) {
     throw new MoleculerError('sparql injection detected. go away', 400, 'SPARQL_INJECTION');
 }
 
+const processRights = (rights, aclUri) => {
+  let list = [];
+  if (rights.anon) {
+    if (rights.anon.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+  }
+  if (rights.user && rights.user.uri) {
+    if (rights.user.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENT_URI, o: rights.user.uri });
+  }
+  if (rights.anyUser) {
+    if (rights.anyUser.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+  }
+  if (rights.group && rights.group.uri) {
+    if (rights.group.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENT_GROUP, o: rights.group.uri });
+  }
+  return list;
+};
+
 module.exports = {
   getSlugFromUri,
   getContainerFromUri,
@@ -262,6 +291,7 @@ module.exports = {
   aclGroupExists,
   removeAgentGroupOrAgentFromAuthorizations,
   sanitizeSPARQL,
+  processRights,
   FULL_TYPE_URI,
   FULL_ACCESSTO_URI,
   FULL_DEFAULT_URI,

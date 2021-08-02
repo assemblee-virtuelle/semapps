@@ -34,6 +34,7 @@ module.exports = {
           'middleware/webacl/index',
           'middleware/webacl/resource',
           'middleware/webacl/group',
+          'middleware/webacl/authorizer',
           'middleware/webacl/groups-manager',
         ],
       },

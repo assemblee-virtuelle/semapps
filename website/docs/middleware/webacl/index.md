@@ -16,8 +16,11 @@ This package allows you to handle rights through the [WebACL standard](https://g
 ## Sub-services
 - [WebAclResourceService](resource.md)
 - [WebAclGroupService](group.md)
-- [GroupsManagerBot](groups-manager.md) (optional)
 - WebAclCacheCleanerService
+
+## Bots
+- [AuthorizerBot](authorizer.md)
+- [GroupsManagerBot](groups-manager.md)
 
 ## Install
 
