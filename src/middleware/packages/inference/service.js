@@ -10,36 +10,43 @@ module.exports = {
     ontologies: []
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
-  created() {
-    this.inverseRelations = this.findInverseRelations();
+  async created() {
+    this.inverseRelations = await this.findInverseRelations();
   },
   methods: {
-    findInverseRelations() {
+    async findInverseRelations() {
       const parser = new N3.Parser({ format: 'Turtle' });
-      const inverseRelations = {};
+      let inverseRelations = {};
 
-      this.settings.ontologies.forEach(ontology => {
+      for( let ontology of this.settings.ontologies ) {
         if (ontology.owl) {
-          const stream = request(ontology.owl);
-          parser.parse(stream, (err, quad) => {
-            if (err) throw err;
-            if (quad) {
-              if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
-                inverseRelations[quad.object.id] = quad.subject.id;
-                inverseRelations[quad.subject.id] = quad.object.id;
-              } else if (
-                quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-                quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
-              ) {
-                // SymmetricProperty implies an inverse relation with the same properties
-                inverseRelations[quad.subject.id] = quad.subject.id;
+          const result = await (new Promise((resolve, reject) => {
+            const stream = request(ontology.owl);
+            const rel = {};
+            parser.parse(stream, (err, quad) => {
+              if (err) reject(err);
+              if (quad) {
+                if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
+                  rel[quad.object.id] = quad.subject.id;
+                  rel[quad.subject.id] = quad.object.id;
+                } else if (
+                  quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+                  quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
+                ) {
+                  // SymmetricProperty implies an inverse relation with the same properties
+                  rel[quad.subject.id] = quad.subject.id;
+                }
+              } else {
+
+                resolve(rel);
               }
-            } else {
-              console.log(`Found ${Object.keys(inverseRelations).length} inverse relations in ${ontology.owl}`);
-            }
-          });
+            });
+          }));
+
+          console.log(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
+          inverseRelations = { ...inverseRelations, ...result };
         }
-      });
+      }
 
       return inverseRelations;
     },
