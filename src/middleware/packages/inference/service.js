@@ -12,7 +12,7 @@ module.exports = {
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   async created() {
     this.inverseRelations = {};
-    for( let ontology of this.settings.ontologies ) {
+    for (let ontology of this.settings.ontologies) {
       if (ontology.owl) {
         const result = await this.findInverseRelations(ontology.owl);
         console.log(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
