@@ -11,44 +11,39 @@ module.exports = {
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   async created() {
-    this.inverseRelations = await this.findInverseRelations();
+    this.inverseRelations = {};
+    for( let ontology of this.settings.ontologies ) {
+      if (ontology.owl) {
+        const result = await this.findInverseRelations(ontology.owl);
+        console.log(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
+        this.inverseRelations = { ...this.inverseRelations, ...result };
+      }
+    }
   },
   methods: {
-    async findInverseRelations() {
+    findInverseRelations(owlFile) {
       const parser = new N3.Parser({ format: 'Turtle' });
-      let inverseRelations = {};
-
-      for( let ontology of this.settings.ontologies ) {
-        if (ontology.owl) {
-          const result = await (new Promise((resolve, reject) => {
-            const stream = request(ontology.owl);
-            const rel = {};
-            parser.parse(stream, (err, quad) => {
-              if (err) reject(err);
-              if (quad) {
-                if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
-                  rel[quad.object.id] = quad.subject.id;
-                  rel[quad.subject.id] = quad.object.id;
-                } else if (
-                  quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-                  quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
-                ) {
-                  // SymmetricProperty implies an inverse relation with the same properties
-                  rel[quad.subject.id] = quad.subject.id;
-                }
-              } else {
-
-                resolve(rel);
-              }
-            });
-          }));
-
-          console.log(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
-          inverseRelations = { ...inverseRelations, ...result };
-        }
-      }
-
-      return inverseRelations;
+      return new Promise((resolve, reject) => {
+        const stream = request(owlFile);
+        const rel = {};
+        parser.parse(stream, (err, quad) => {
+          if (err) reject(err);
+          if (quad) {
+            if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
+              rel[quad.object.id] = quad.subject.id;
+              rel[quad.subject.id] = quad.object.id;
+            } else if (
+              quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+              quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
+            ) {
+              // SymmetricProperty implies an inverse relation with the same properties
+              rel[quad.subject.id] = quad.subject.id;
+            }
+          } else {
+            resolve(rel);
+          }
+        });
+      });
     },
     generateInverseTriples(resource) {
       let inverseTriples = [];
