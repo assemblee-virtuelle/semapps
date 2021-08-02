@@ -12,9 +12,14 @@ module.exports = {
       const now = new Date();
 
       let triples = [];
-      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.created}> "${now.toISOString()}"^^xsd:dateTime .`);
-      triples.push(`<${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^xsd:dateTime .`);
-      if( webId && webId.startsWith('http') ) triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
+      triples.push(
+        `<${resourceUri}> <${this.settings.documentPredicates.created}> "${now.toISOString()}"^^xsd:dateTime .`
+      );
+      triples.push(
+        `<${resourceUri}> <${this.settings.documentPredicates.updated}> "${now.toISOString()}"^^xsd:dateTime .`
+      );
+      if (webId && webId.startsWith('http'))
+        triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
 
       await ctx.call('triplestore.insert', {
         resource: triples.join('\n'),
@@ -31,23 +36,17 @@ module.exports = {
           WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
         `,
         webId: 'system'
-      })
+      });
     }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, webId } = ctx.params;
-      this.actions.tagCreatedResource(
-        { resourceUri, webId },
-        { parentCtx: ctx }
-      );
+      this.actions.tagCreatedResource({ resourceUri, webId }, { parentCtx: ctx });
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;
-      this.actions.tagUpdatedResource(
-        { resourceUri },
-        { parentCtx: ctx }
-      );
+      this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
     }
   }
 };
