@@ -18,6 +18,16 @@
     "id": "@id",
     "type": "@type",
 
+    "dc:created": {
+      "@type": "xsd:dateTime"
+    },
+    "dc:modified": {
+      "@type": "xsd:dateTime"
+    },
+    "dc:creator" : {
+      "@type" : "@id"
+    },
+
     "pair:about": {
       "@type": "@id"
     },
