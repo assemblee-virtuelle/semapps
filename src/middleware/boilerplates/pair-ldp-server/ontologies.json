@@ -35,19 +35,24 @@
     "url": "https://w3id.org/security#"
   },
   {
+    "prefix": "skos",
+    "owl": "",
+    "url": "http://www.w3.org/2004/02/skos/core#"
+  },
+  {
     "prefix": "foaf",
     "owl": "",
     "url": "http://xmlns.com/foaf/0.1/"
   },
   {
+    "prefix": "dc",
+    "owl": "",
+    "url": "http://purl.org/dc/terms/"
+  },
+  {
     "prefix": "pair",
     "owl": "http://virtual-assembly.org/ontologies/pair-2020-winter/ontology.ttl",
     "url": "http://virtual-assembly.org/ontologies/pair#"
-  },
-  {
-    "prefix": "skos",
-    "owl": "",
-    "url": "http://www.w3.org/2004/02/skos/core#"
   },
   {
     "prefix": "semapps",

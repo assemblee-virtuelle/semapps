@@ -22,6 +22,7 @@ module.exports = {
           'middleware/ldp/index',
           'middleware/ldp/resource',
           'middleware/ldp/container',
+          'middleware/ldp/document-tagger',
         ],
       },
       'middleware/signature',
