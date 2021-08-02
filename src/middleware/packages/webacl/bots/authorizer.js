@@ -25,7 +25,7 @@ module.exports = {
       } else {
         users = rule.users;
       }
-      if( !users ) return [];
+      if (!users) return [];
       return Array.isArray(users) ? users : [users];
     }
   },
@@ -35,7 +35,7 @@ module.exports = {
       for (let rule of this.settings.rules) {
         if (this.matchRule(rule, newData)) {
           const users = this.getUsers(rule, newData);
-          for( let user of users ) {
+          for (let user of users) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri,
               additionalRights: {
@@ -59,7 +59,7 @@ module.exports = {
           const oldUsers = this.getUsers(rule, oldData);
 
           const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
-          for( let userUri of usersToAdd ) {
+          for (let userUri of usersToAdd) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri,
               additionalRights: {
@@ -73,7 +73,7 @@ module.exports = {
           }
 
           const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
-          for( let userUri of usersToRemove ) {
+          for (let userUri of usersToRemove) {
             await ctx.call('webacl.resource.removeRights', {
               resourceUri,
               rights: {

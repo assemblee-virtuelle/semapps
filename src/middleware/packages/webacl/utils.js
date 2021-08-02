@@ -264,8 +264,7 @@ const processRights = (rights, aclUri) => {
     if (rights.anyUser.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
     if (rights.anyUser.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
     if (rights.anyUser.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
-    if (rights.anyUser.control)
-      list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
   }
   if (rights.group && rights.group.uri) {
     if (rights.group.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENT_GROUP, o: rights.group.uri });
