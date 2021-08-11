@@ -15,6 +15,19 @@ const ProjectShow = props => (
         <Hero image="image">
           <TextField label="Courte description" source="pair:comment" />
           <UrlField label="Site web" source="pair:homePage" />
+
+          <ReferenceArrayField reference="Project" source="pair:partOf">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
+
+          <ReferenceArrayField reference="Activity" source="pair:hasPart">
+            <SingleFieldList linkType="show">
+              <ChipField source="pair:label" color="secondary" />
+            </SingleFieldList>
+          </ReferenceArrayField>
+
           <ReferenceArrayField reference="Status" source="pair:hasStatus">
             <SeparatedListField linkType={false}>
               <TextField source="pair:label" />

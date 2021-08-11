@@ -44,6 +44,18 @@ const TaskShow = props => (
               <TextField source="pair:label" />
             </SeparatedListField>
           </ReferenceArrayField>
+
+          <ReferenceArrayField reference="Task" source="pair:inspiredBy">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
+
+          <ReferenceArrayField reference="Task" source="pair:requires">
+            <SeparatedListField linkType={false}>
+              <TextField source="pair:label" />
+            </SeparatedListField>
+          </ReferenceArrayField>
         </Hero>
 
         <MainList>

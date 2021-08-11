@@ -27,18 +27,19 @@ export default {
       fields: {
         'pair:label': 'Titre',
         'pair:description': 'Description',
-        'pair:assignedTo': 'Est assigné à',
-        'pair:partOf': 'Fait partie de',
+        'pair:assignedTo': 'Est assigné à la personne',
+        'pair:partOf': 'Fait partie du projet',
         'pair:hasType': 'Type',
         'pair:hasStatus': 'Statut',
         'pair:dueDate': 'Date attendue',
         'pair:endDate': 'Date de fin effective',
-        'pair:hasFollower': 'Suivie par',
-        'pair:involves': 'Implique',
-        'pair:inspiredBy': 'Inspiré par',
+        'pair:hasFollower': 'Suivie par la personne',
+        'pair:involves': 'Implique la personne',
+        'pair:inspiredBy': 'Inspiré par la tâche',
         'pair:hasTopic': 'A pour thème',
-        'pair:needs': 'A besoin de',
-        'pair:uses': 'Utilise'
+        'pair:needs': 'A besoin de la compétence',
+        'pair:uses': 'Utilise le doc',
+        'pair:requires': 'Est dépendant de la tâche'
       }
     }
   }
