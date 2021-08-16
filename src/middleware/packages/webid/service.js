@@ -24,9 +24,9 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
-      if (!email) {
-        throw new Error('The email field is required for webId profile creation');
-      }
+      // if (!email) {
+      //   throw new Error('The email field is required for webId profile creation');
+      // }
 
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();

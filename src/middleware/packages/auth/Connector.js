@@ -39,7 +39,7 @@ class Connector {
   }
   async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    const profileData = await this.settings.selectProfileData(req.user);
+    const profileData = this.settings.selectProfileData ? await this.settings.selectProfileData(req.user) : req.user;
     try {
       const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
       req.user.webId = webId;
@@ -52,7 +52,7 @@ class Connector {
   async generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step.
     if (!req.user.token) {
-      const profileData = await this.settings.selectProfileData(req.user);
+      const profileData = this.settings.selectProfileData ? await this.settings.selectProfileData(req.user) : req.user;
       const payload = { webId: req.user.webId, ...profileData };
       req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
@@ -100,6 +100,10 @@ class Connector {
       await this.runMiddlewares(middlewares, req, res);
     };
   }
+  signup() {
+    // By default, signup and login are the same.
+    return this.login();
+  }
   logout() {
     return async (req, res) => {
       let middlewares = [
@@ -122,7 +126,9 @@ class Connector {
           resolve(e);
         }
       });
-      if (error) throw new MoleculerError(error);
+      if (error) {
+        this.sendError(res, req, error)
+      }
       await asyncRes;
     }
   }
