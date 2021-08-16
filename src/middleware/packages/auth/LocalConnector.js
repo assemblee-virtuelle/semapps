@@ -22,7 +22,7 @@ class LocalConnector extends Connector {
               webId: 'system'
             })
           )
-          .then(userData => done(null, userData))
+          .then(userData => done(null, { ...userData, webId: userData.id }))
           .catch(() => done(null, false));
       }
     );
@@ -32,12 +32,12 @@ class LocalConnector extends Connector {
   login() {
     return async (req, res) => {
       const middlewares = [
-        this.saveRedirectUrl.bind(this),
+        // this.saveRedirectUrl.bind(this),
         this.passport.authenticate(this.passportId, {
           session: false
         }),
         this.generateToken.bind(this),
-        this.redirectToFront.bind(this)
+        this.sendToken.bind(this)
       ];
 
       await this.runMiddlewares(middlewares, req, res);
@@ -49,7 +49,7 @@ class LocalConnector extends Connector {
         this.saveRedirectUrl.bind(this),
         this.createAccount.bind(this),
         this.generateToken.bind(this),
-        this.redirectToFront.bind(this)
+        this.sendToken.bind(this)
       ];
 
       await this.runMiddlewares(middlewares, req, res);
@@ -76,7 +76,16 @@ class LocalConnector extends Connector {
         });
       })
       .then(() => next())
-      .catch(e => this.sendError(res, req, e));
+      .catch(e => this.sendError(res, e.message));
+  }
+  sendToken(req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ token: req.user.token, newUser: req.user.newUser }));
+    next();
+  }
+  sendError(res, message, statusCode = 400) {
+    res.writeHead(statusCode, message);
+    res.end();
   }
 }
 

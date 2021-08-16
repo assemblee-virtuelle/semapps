@@ -46,7 +46,7 @@ class Connector {
       req.user.newUser = newUser;
       next();
     } catch (e) {
-      this.sendError(res, req, e);
+      this.redirectWithError(res, req, e);
     }
   }
   async generateToken(req, res, next) {
@@ -79,7 +79,7 @@ class Connector {
     res.end();
     next();
   }
-  sendError(res, req, error) {
+  redirectWithError(res, req, error) {
     let redirectUrl = new URL(req.session.redirectUrl);
     redirectUrl.searchParams.set('error', error.message);
     res.writeHead(302, { Location: redirectUrl.toString() });
@@ -127,7 +127,7 @@ class Connector {
         }
       });
       if (error) {
-        this.sendError(res, req, error)
+        this.redirectWithError(res, req, error)
       }
       await asyncRes;
     }
