@@ -26,7 +26,7 @@ const isType = (type, resource) => {
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri }) => {
+const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri, returnFailedResources = false }) => {
   const uploadFile = async rawFile => {
     if (!uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
 
@@ -252,12 +252,18 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         try {
           let { json } = await httpClient(id);
-          json.id = json.id || json['@id'];
+          json.id = id;
           returnData.push(json);
         } catch (e) {
-          // Do nothing if one resource fails to load
+          // Catch if one resource fails to load
           // Otherwise no references will be show if only one is missing
           // See https://github.com/marmelab/react-admin/issues/5190
+          if( returnFailedResources ) {
+            // Return only the ID of the resource
+            returnData.push({ id });
+          } else {
+            // Do nothing. The resource will not appear in the results.
+          }
         }
       }
 
@@ -311,7 +317,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
       return { data: params.data };
     },
-
     updateMany: (resourceId, params) => {
       throw new Error('updateMany is not implemented yet');
     },
@@ -319,7 +324,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       await httpClient(params.id, {
         method: 'DELETE'
       });
-
       return { data: { id: params.id } };
     },
     deleteMany: (resourceId, params) => {
