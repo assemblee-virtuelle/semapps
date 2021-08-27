@@ -1,6 +1,6 @@
 const path = require('path');
 const urlJoin = require('url-join');
-const AuthAccountService = require("./account");
+const AuthAccountService = require('./account');
 const OidcConnector = require('../OidcConnector');
 const CasConnector = require('../CasConnector');
 const LocalConnector = require('../LocalConnector');

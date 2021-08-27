@@ -12,7 +12,7 @@ const authProvider = ({
 }) => ({
   login: async params => {
     const url = new URL(window.location.href);
-    if( localAccounts ) {
+    if (localAccounts) {
       const { username, password } = params;
       try {
         const { json } = await httpClient(`${middlewareUri}auth`, {
@@ -22,7 +22,7 @@ const authProvider = ({
         });
         const { token } = json;
         localStorage.setItem('token', token);
-      } catch(e) {
+      } catch (e) {
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
@@ -30,7 +30,7 @@ const authProvider = ({
     }
   },
   signup: async params => {
-    if( localAccounts ) {
+    if (localAccounts) {
       const { email, password, ...profileData } = params;
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
@@ -42,8 +42,8 @@ const authProvider = ({
         localStorage.setItem('token', token);
         const { webId } = jwtDecode(token);
         return webId;
-      } catch(e) {
-        if( e.message==='email.already.exists' ) {
+      } catch (e) {
+        if (e.message === 'email.already.exists') {
           throw new Error('auth.message.user_email_exist');
         } else {
           throw new Error(e.message || 'ra.auth.sign_in_error');
@@ -55,7 +55,7 @@ const authProvider = ({
   },
   logout: async () => {
     localStorage.removeItem('token');
-    if( !localAccounts ) {
+    if (!localAccounts) {
       const url = new URL(window.location.href);
       if (!allowAnonymous) {
         window.location.href = `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');

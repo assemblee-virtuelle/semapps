@@ -35,18 +35,13 @@ const UserMenu = ({ logout, ...otherProps }) => {
   const { identity } = useGetIdentity();
   return (
     <RaUserMenu {...otherProps}>
-      {identity && identity.id !== '' ? (
-        [
-          <ViewProfileMenu webId={identity.id} key="view" />,
-          <EditProfileMenu webId={identity.id} key="edit" />,
-          React.cloneElement(logout, { key: 'logout' })
-        ]
-      ) : (
-        [
-          <SignupMenu key="signup" />,
-          <LoginMenu key="login" />
-        ]
-      )}
+      {identity && identity.id !== ''
+        ? [
+            <ViewProfileMenu webId={identity.id} key="view" />,
+            <EditProfileMenu webId={identity.id} key="edit" />,
+            React.cloneElement(logout, { key: 'logout' })
+          ]
+        : [<SignupMenu key="signup" />, <LoginMenu key="login" />]}
     </RaUserMenu>
   );
 };

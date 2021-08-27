@@ -14,7 +14,8 @@ class LocalConnector extends Connector {
         passReqToCallback: true // We want to have access to req below
       },
       (req, email, password, done) => {
-        req.$ctx.call('auth.account.verify', { email, password })
+        req.$ctx
+          .call('auth.account.verify', { email, password })
           .then(({ webId }) =>
             req.$ctx.call('ldp.resource.get', {
               resourceUri: webId,
@@ -28,7 +29,7 @@ class LocalConnector extends Connector {
           })
           .catch(e => {
             console.error(e);
-            done(null, false)
+            done(null, false);
           });
       }
     );
@@ -50,26 +51,23 @@ class LocalConnector extends Connector {
   }
   signup() {
     return async (req, res) => {
-      const middlewares = [
-        this.createAccount.bind(this),
-        this.generateToken.bind(this),
-        this.sendToken.bind(this)
-      ];
+      const middlewares = [this.createAccount.bind(this), this.generateToken.bind(this), this.sendToken.bind(this)];
 
       await this.runMiddlewares(middlewares, req, res);
     };
   }
   createAccount(req, res, next) {
     const { email, password, ...profileData } = req.$params;
-    req.$ctx.call('auth.account.findByEmail', { email })
+    req.$ctx
+      .call('auth.account.findByEmail', { email })
       .then(webId => {
-        if( !webId ) {
+        if (!webId) {
           return req.$ctx.call('webid.create', profileData);
         } else {
-          throw new Error('email.already.exists')
+          throw new Error('email.already.exists');
         }
       })
-      .then((webId) =>
+      .then(webId =>
         req.$ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
@@ -87,7 +85,7 @@ class LocalConnector extends Connector {
         });
       })
       .then(accountData => {
-        req.$ctx.emit('auth.registered', { webId: accountData['semapps:webId'], profileData, accountData })
+        req.$ctx.emit('auth.registered', { webId: accountData['semapps:webId'], profileData, accountData });
         next();
       })
       .catch(e => this.sendError(res, e.message));

@@ -3,39 +3,26 @@ import PropTypes from 'prop-types';
 import { Field, Form } from 'react-final-form';
 import { useTranslate, useAuthProvider, useNotify, useSafeSetState } from 'react-admin';
 import { useHistory } from 'react-router-dom';
-import {
-  Button,
-  CardActions,
-  CircularProgress,
-  TextField,
-} from '@material-ui/core';
+import { Button, CardActions, CircularProgress, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(
-  (theme) => ({
-    form: {
-      padding: '0 1em 1em 1em',
-    },
-    input: {
-      marginTop: '1em',
-    },
-    button: {
-      width: '100%',
-    },
-    icon: {
-      marginRight: theme.spacing(1),
-    },
-  })
-);
+const useStyles = makeStyles(theme => ({
+  form: {
+    padding: '0 1em 1em 1em'
+  },
+  input: {
+    marginTop: '1em'
+  },
+  button: {
+    width: '100%'
+  },
+  icon: {
+    marginRight: theme.spacing(1)
+  }
+}));
 
 const Input = ({ meta: { touched, error }, input: inputProps, ...props }) => (
-  <TextField
-    error={!!(touched && error)}
-    helperText={touched && error}
-    {...inputProps}
-    {...props}
-    fullWidth
-  />
+  <TextField error={!!(touched && error)} helperText={touched && error} {...inputProps} {...props} fullWidth />
 );
 
 const SignupForm = props => {
@@ -47,7 +34,7 @@ const SignupForm = props => {
   const history = useHistory();
   const classes = useStyles(props);
 
-  const validate = (values) => {
+  const validate = values => {
     const errors = { email: undefined, password: undefined };
 
     if (!values.email) {
@@ -61,7 +48,8 @@ const SignupForm = props => {
 
   const submit = values => {
     setLoading(true);
-    authProvider.signup(values, redirectTo)
+    authProvider
+      .signup(values, redirectTo)
       .then(webId => {
         setLoading(false);
         notify('auth.message.new_user_created', 'info');
@@ -73,16 +61,11 @@ const SignupForm = props => {
           typeof error === 'string'
             ? error
             : typeof error === 'undefined' || !error.message
-              ? 'ra.auth.sign_in_error'
-              : error.message,
+            ? 'ra.auth.sign_in_error'
+            : error.message,
           'warning',
           {
-            _:
-              typeof error === 'string'
-                ? error
-                : error && error.message
-                  ? error.message
-                  : undefined,
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
           }
         );
       });
@@ -126,20 +109,8 @@ const SignupForm = props => {
             </div>
           </div>
           <CardActions>
-            <Button
-              variant="contained"
-              type="submit"
-              color="primary"
-              disabled={loading}
-              className={classes.button}
-            >
-              {loading && (
-                <CircularProgress
-                  className={classes.icon}
-                  size={18}
-                  thickness={2}
-                />
-              )}
+            <Button variant="contained" type="submit" color="primary" disabled={loading} className={classes.button}>
+              {loading && <CircularProgress className={classes.icon} size={18} thickness={2} />}
               {translate('auth.action.signup')}
             </Button>
           </CardActions>
@@ -150,7 +121,7 @@ const SignupForm = props => {
 };
 
 SignupForm.propTypes = {
-  redirectTo: PropTypes.string,
+  redirectTo: PropTypes.string
 };
 
 export default SignupForm;

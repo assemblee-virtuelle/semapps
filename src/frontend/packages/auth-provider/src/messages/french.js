@@ -6,7 +6,7 @@ const frenchMessages = {
     },
     action: {
       permissions: 'Permissions',
-      signup: 'S\'inscrire',
+      signup: "S'inscrire"
     },
     right: {
       resource: {

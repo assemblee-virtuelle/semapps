@@ -4,7 +4,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 module.exports = {
   name: 'auth.account',
   settings: {
-    containerUri: null,
+    containerUri: null
   },
   dependencies: ['ldp', 'triplestore'],
   actions: {
@@ -20,7 +20,7 @@ module.exports = {
           '@type': 'semapps:Account',
           'semapps:email': email,
           'semapps:password': hashedPassword,
-          'semapps:webId': webId,
+          'semapps:webId': webId
         },
         contentType: MIME_TYPES.JSON,
         webId
@@ -101,18 +101,18 @@ module.exports = {
     async hashPassword(password) {
       return new Promise((resolve, reject) => {
         bcrypt.hash(password, 10, (err, hash) => {
-          if( err ) {
+          if (err) {
             reject(err);
           } else {
             resolve(hash);
           }
         });
-      })
+      });
     },
     async comparePassword(password, hash) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         bcrypt.compare(password, hash, (err, res) => {
-          if( res === true ) {
+          if (res === true) {
             resolve(true);
           } else {
             resolve(false);
