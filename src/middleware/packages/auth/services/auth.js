@@ -1,12 +1,15 @@
-const OidcConnector = require('./OidcConnector');
-const CasConnector = require('./CasConnector');
 const path = require('path');
 const urlJoin = require('url-join');
+const AuthAccountService = require('./account');
+const OidcConnector = require('../OidcConnector');
+const CasConnector = require('../CasConnector');
+const LocalConnector = require('../LocalConnector');
 
 module.exports = {
   name: 'auth',
   settings: {
     baseUrl: null,
+    accountsContainer: null,
     jwtPath: null,
     oidc: {
       issuer: null,
@@ -20,8 +23,8 @@ module.exports = {
     registrationAllowed: true
   },
   dependencies: ['api', 'webid'],
-  async started() {
-    const { baseUrl, jwtPath, selectProfileData, oidc, cas } = this.settings;
+  async created() {
+    const { baseUrl, accountsContainer, jwtPath, selectProfileData, oidc, cas } = this.settings;
 
     const privateKeyPath = path.resolve(jwtPath, 'jwtRS256.key');
     const publicKeyPath = path.resolve(jwtPath, 'jwtRS256.key.pub');
@@ -46,18 +49,42 @@ module.exports = {
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else {
-      throw new Error('The OIDC or CAS config are missing');
-    }
+      await this.broker.createService(AuthAccountService, {
+        settings: {
+          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
+        }
+      });
 
+      this.connector = new LocalConnector({
+        privateKeyPath,
+        publicKeyPath
+      });
+    }
+  },
+  async started() {
     await this.connector.initialize();
 
     await this.broker.call('api.addRoute', {
       route: {
         path: '/auth',
-        use: this.connector.getRouteMiddlewares(),
+        use: this.connector.getRouteMiddlewares(true),
         aliases: {
           'GET /logout': this.connector.logout(),
-          'GET /': this.connector.login()
+          'GET /': this.connector.login(),
+          'POST /': this.connector.login()
+        },
+        onError(req, res, err) {
+          console.error(err);
+        }
+      }
+    });
+
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/auth',
+        use: this.connector.getRouteMiddlewares(false),
+        aliases: {
+          'POST /signup': this.connector.signup()
         },
         onError(req, res, err) {
           console.error(err);

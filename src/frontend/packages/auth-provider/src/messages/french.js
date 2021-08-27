@@ -1,5 +1,3 @@
-import { ACL_APPEND, ACL_CONTROL, ACL_READ, ACL_WRITE } from '../constants';
-
 const frenchMessages = {
   auth: {
     dialog: {
@@ -7,7 +5,8 @@ const frenchMessages = {
       resource_permissions: 'Permissions sur la resource'
     },
     action: {
-      permissions: 'Permissions'
+      permissions: 'Permissions',
+      signup: "S'inscrire"
     },
     right: {
       resource: {
@@ -28,7 +27,9 @@ const frenchMessages = {
       authenticated: 'Utilisateurs connectés'
     },
     input: {
-      agent_select: 'Ajouter un utilisateur...'
+      agent_select: 'Ajouter un utilisateur...',
+      name: 'Prénom',
+      email: 'Adresse e-mail'
     },
     message: {
       resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
@@ -39,6 +40,7 @@ const frenchMessages = {
       container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
+      user_email_exist: 'Un compte existe déjà avec cette adresse mail',
       new_user_created: 'Votre compte a été créé, vous pouvez maintenant le compléter',
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',

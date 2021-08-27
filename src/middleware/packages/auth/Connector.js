@@ -34,25 +34,26 @@ class Connector {
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
-    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer || '/';
+    req.session.redirectUrl =
+      req.query.redirectUrl || (req.session && req.session.redirectUrl) || req.headers.referer || '/';
     next();
   }
   async findOrCreateProfile(req, res, next) {
     // Select profile data amongst all the data returned by the connector
-    const profileData = await this.settings.selectProfileData(req.user);
+    const profileData = this.settings.selectProfileData ? await this.settings.selectProfileData(req.user) : req.user;
     try {
       const { webId, newUser } = await this.settings.findOrCreateProfile(profileData, req.user);
       req.user.webId = webId;
       req.user.newUser = newUser;
       next();
     } catch (e) {
-      this.sendError(res, req, e);
+      this.redirectWithError(res, req, e);
     }
   }
   async generateToken(req, res, next) {
     // If token is already provided by the connector, skip this step.
     if (!req.user.token) {
-      const profileData = await this.settings.selectProfileData(req.user);
+      const profileData = this.settings.selectProfileData ? await this.settings.selectProfileData(req.user) : req.user;
       const payload = { webId: req.user.webId, ...profileData };
       req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
     }
@@ -79,7 +80,7 @@ class Connector {
     res.end();
     next();
   }
-  sendError(res, req, error) {
+  redirectWithError(res, req, error) {
     let redirectUrl = new URL(req.session.redirectUrl);
     redirectUrl.searchParams.set('error', error.message);
     res.writeHead(302, { Location: redirectUrl.toString() });
@@ -99,6 +100,10 @@ class Connector {
 
       await this.runMiddlewares(middlewares, req, res);
     };
+  }
+  signup() {
+    // By default, signup and login are the same.
+    return this.login();
   }
   logout() {
     return async (req, res) => {
@@ -122,22 +127,26 @@ class Connector {
           resolve(e);
         }
       });
-      if (error) throw new MoleculerError(error);
+      if (error) {
+        this.redirectWithError(res, req, error);
+      }
       await asyncRes;
     }
   }
   async getWebId(ctx) {
     return ctx.meta.tokenPayload.webId;
   }
-  getRouteMiddlewares() {
-    return [
-      session({
-        secret: this.settings.sessionSecret,
-        maxAge: null
-      }),
-      this.passport.initialize(),
-      this.passport.session()
-    ];
+  getRouteMiddlewares(passport) {
+    const sessionMiddleware = session({
+      secret: this.settings.sessionSecret,
+      maxAge: null
+    });
+
+    if (passport) {
+      return [sessionMiddleware, this.passport.initialize(), this.passport.session()];
+    } else {
+      return [sessionMiddleware];
+    }
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {

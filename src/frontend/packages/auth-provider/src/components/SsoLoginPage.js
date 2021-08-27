@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LoginPage = ({ theme, history, location, buttons, userResource }) => {
+const SsoLoginPage = ({ theme, history, location, buttons, userResource }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
@@ -104,9 +104,9 @@ const LoginPage = ({ theme, history, location, buttons, userResource }) => {
 };
 
 // TODO deprecate this
-LoginPage.defaultProps = {
+SsoLoginPage.defaultProps = {
   buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>],
   userResource: 'Person'
 };
 
-export default LoginPage;
+export default SsoLoginPage;
