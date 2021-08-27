@@ -67,11 +67,23 @@ module.exports = {
     await this.broker.call('api.addRoute', {
       route: {
         path: '/auth',
-        use: this.connector.getRouteMiddlewares(),
+        use: this.connector.getRouteMiddlewares(true),
         aliases: {
           'GET /logout': this.connector.logout(),
           'GET /': this.connector.login(),
-          'POST /': this.connector.login(),
+          'POST /': this.connector.login()
+        },
+        onError(req, res, err) {
+          console.error(err);
+        }
+      }
+    });
+
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/auth',
+        use: this.connector.getRouteMiddlewares(false),
+        aliases: {
           'POST /signup': this.connector.signup()
         },
         onError(req, res, err) {

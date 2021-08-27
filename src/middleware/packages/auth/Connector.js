@@ -34,7 +34,7 @@ class Connector {
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
     // If the redirectUrl is already in the session, use it as default value
-    req.session.redirectUrl = req.query.redirectUrl || req.session.redirectUrl || req.headers.referer || '/';
+    req.session.redirectUrl = req.query.redirectUrl || (req.session && req.session.redirectUrl) || req.headers.referer || '/';
     next();
   }
   async findOrCreateProfile(req, res, next) {
@@ -135,15 +135,24 @@ class Connector {
   async getWebId(ctx) {
     return ctx.meta.tokenPayload.webId;
   }
-  getRouteMiddlewares() {
-    return [
+  getRouteMiddlewares(passport) {
+    const sessionMiddleware =
       session({
         secret: this.settings.sessionSecret,
         maxAge: null
-      }),
-      this.passport.initialize(),
-      this.passport.session()
-    ];
+      });
+
+    if( passport ) {
+      return [
+        sessionMiddleware,
+        this.passport.initialize(),
+        this.passport.session()
+      ];
+    } else {
+      return [
+        sessionMiddleware
+      ];
+    }
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {

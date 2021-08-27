@@ -14,7 +14,7 @@ class LocalConnector extends Connector {
         passReqToCallback: true // We want to have access to req below
       },
       (req, email, password, done) => {
-        req.$ctx.call('auth.account.get', { email, password })
+        req.$ctx.call('auth.account.verify', { email, password })
           .then(({ webId }) =>
             req.$ctx.call('ldp.resource.get', {
               resourceUri: webId,
@@ -22,8 +22,14 @@ class LocalConnector extends Connector {
               webId: 'system'
             })
           )
-          .then(userData => done(null, { ...userData, webId: userData.id }))
-          .catch(() => done(null, false));
+          .then(userData => {
+            req.$ctx.emit('auth.connected', { webId: userData.id, profileData: userData });
+            done(null, { ...userData, webId: userData.id });
+          })
+          .catch(e => {
+            console.error(e);
+            done(null, false)
+          });
       }
     );
 
@@ -32,7 +38,6 @@ class LocalConnector extends Connector {
   login() {
     return async (req, res) => {
       const middlewares = [
-        // this.saveRedirectUrl.bind(this),
         this.passport.authenticate(this.passportId, {
           session: false
         }),
@@ -46,7 +51,6 @@ class LocalConnector extends Connector {
   signup() {
     return async (req, res) => {
       const middlewares = [
-        this.saveRedirectUrl.bind(this),
         this.createAccount.bind(this),
         this.generateToken.bind(this),
         this.sendToken.bind(this)
@@ -57,25 +61,35 @@ class LocalConnector extends Connector {
   }
   createAccount(req, res, next) {
     const { email, password, ...profileData } = req.$params;
-    req.$ctx.call('auth.account.exist', { email })
-      .then(emailExist => {
-        if( !emailExist ) {
+    req.$ctx.call('auth.account.findByEmail', { email })
+      .then(webId => {
+        if( !webId ) {
           return req.$ctx.call('webid.create', profileData);
         } else {
           throw new Error('email.already.exists')
         }
       })
-      .then(webId => {
-        req.user = profileData;
-        req.user.webId = webId;
+      .then((webId) =>
+        req.$ctx.call('ldp.resource.get', {
+          resourceUri: webId,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
+        })
+      )
+      .then(userData => {
+        req.user = userData;
+        req.user.webId = userData.id;
         req.user.newUser = true;
         return req.$ctx.call('auth.account.create', {
           email,
           password,
-          webId
+          webId: userData.id
         });
       })
-      .then(() => next())
+      .then(accountData => {
+        req.$ctx.emit('auth.registered', { webId: accountData['semapps:webId'], profileData, accountData })
+        next();
+      })
       .catch(e => this.sendError(res, e.message));
   }
   sendToken(req, res, next) {
