@@ -27,7 +27,6 @@ const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
 
 const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => {
   const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: containerUri });
-
   const newRights =
     typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId) : newResourcesPermissions;
 
@@ -42,23 +41,16 @@ const addRightsToNewUser = async (ctx, userUri) => {
   // Manually add the permissions for the user resource now that we have its webId
   // First delete the default permissions added by the middleware when we called ldp.resource.post
   await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
+
+  // Find the permissions to set from the users container
+  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: userUri });
+  const newRights =
+    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
+
   await ctx.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: userUri,
-    newRights: {
-      user: {
-        uri: userUri,
-        read: true,
-        write: true,
-        control: true
-      },
-      anon: {
-        read: true
-      },
-      anyUser: {
-        read: true
-      }
-    }
+    newRights
   });
 };
 

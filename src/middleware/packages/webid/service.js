@@ -32,6 +32,7 @@ const WebIdService = {
         nick = email.split('@')[0].toLowerCase();
       }
 
+      // Create profile with system webId
       const webId = await ctx.call('ldp.resource.post', {
         resource: {
           '@context': {
@@ -54,7 +55,7 @@ const WebIdService = {
         resourceUri: webId,
         accept: MIME_TYPES.JSON,
         jsonContext: this.settings.context,
-        webId
+        webId: 'system'
       });
 
       ctx.emit('webid.created', newPerson);
