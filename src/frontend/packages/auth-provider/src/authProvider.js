@@ -64,11 +64,11 @@ const authProvider = ({
         // The login page will remove the token, display a notification and redirect to the homepage
         window.location.href =
           `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
-
-        // Avoid displaying immediately the login page
-        return '/';
       }
     }
+
+    // Avoid displaying immediately the login page
+    return '/';
   },
   checkAuth: async () => {
     const token = localStorage.getItem('token');
