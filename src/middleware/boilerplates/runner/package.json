@@ -9,20 +9,20 @@
     "start": "moleculer-runner --instances=max services"
   },
   "dependencies": {
-    "@semapps/activitypub": "0.3.11",
-    "@semapps/auth": "0.3.11",
-    "@semapps/fuseki-admin": "0.3.11",
-    "@semapps/inference": "0.3.11",
-    "@semapps/ldp": "0.3.11",
-    "@semapps/signature": "0.3.11",
-    "@semapps/sparql-endpoint": "0.3.11",
-    "@semapps/triplestore": "0.3.11",
-    "@semapps/webacl": "0.3.11",
-    "@semapps/webid": "0.3.11",
+    "@semapps/activitypub": "0.3.12",
+    "@semapps/auth": "0.3.12",
+    "@semapps/fuseki-admin": "0.3.12",
+    "@semapps/inference": "0.3.12",
+    "@semapps/ldp": "0.3.12",
+    "@semapps/signature": "0.3.12",
+    "@semapps/sparql-endpoint": "0.3.12",
+    "@semapps/triplestore": "0.3.12",
+    "@semapps/webacl": "0.3.12",
+    "@semapps/webid": "0.3.12",
     "dotenv-flow": "^3.1.0",
     "moleculer": "^0.14.3",
     "moleculer-repl": "^0.6.3",
     "moleculer-web": "^0.10.0-beta1"
   },
-  "version": "0.3.11"
+  "version": "0.3.12"
 }
