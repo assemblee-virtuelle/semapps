@@ -12,8 +12,15 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const SeparatedListField = props => {
-  const { classes: classesOverride, className, children, linkType = 'edit', separator = ',\u00A0' } = props;
+  let { classes: classesOverride, className, children, link = 'edit', linkType, separator = ',\u00A0' } = props;
   const { ids, data, loaded, resource, basePath } = useListContext(props);
+
+  if (linkType !== undefined) {
+    console.warn(
+      "The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />"
+    );
+    link = linkType;
+  }
 
   if (loaded === false) {
     return <LinearProgress />;
@@ -22,7 +29,7 @@ const SeparatedListField = props => {
   return (
     <React.Fragment>
       {ids.map((id, i) => {
-        const resourceLinkPath = !linkType ? false : linkToRecord(basePath, id, linkType);
+        const resourceLinkPath = typeof link === 'function' ? link(data[id]) : linkToRecord(basePath, id, link);
 
         if (resourceLinkPath) {
           return (
