@@ -3,7 +3,7 @@ import jwtDecode from 'jwt-decode';
 import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Card, CardActions } from '@material-ui/core';
+import { Avatar, Button, Card, CardActions, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 
 const useStyles = makeStyles(theme => ({
@@ -13,7 +13,12 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100vh',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundColor: theme.palette.primary[500]
+    backgroundColor: theme.palette.grey['300']
+  },
+  text: {
+    maxWidth: 300,
+    textAlign: 'center',
+    padding: '4px 8px 8px',
   },
   card: {
     minWidth: 300,
@@ -25,11 +30,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center'
   },
   lockIcon: {
-    backgroundColor: theme.palette.secondary[500]
+    backgroundColor: theme.palette.grey['500']
   }
 }));
 
-const SsoLoginPage = ({ theme, history, location, buttons, userResource }) => {
+const SsoLoginPage = ({ theme, history, location, buttons, userResource, text }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
@@ -85,6 +90,7 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource }) => {
               <LockIcon />
             </Avatar>
           </div>
+          {text && <Typography variant="body2" className={classes.text}>{text}</Typography>}
           {buttons &&
             buttons.map((button, i) => (
               <CardActions key={i}>
