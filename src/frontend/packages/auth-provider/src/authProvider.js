@@ -147,7 +147,7 @@ const authProvider = ({
     const token = localStorage.getItem('token');
     if (token) {
       const payload = jwtDecode(token);
-      return { id: payload.webId, fullName: payload['foaf:name'] };
+      return { id: payload.webId, fullName: payload.name || payload['foaf:name'] };
     }
   }
 });
