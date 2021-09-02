@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { LoginForm, Notification, createMuiTheme } from 'react-admin';
+import { LoginForm, Notification, createMuiTheme, useGetIdentity } from 'react-admin';
 import { Card, Avatar, makeStyles, ThemeProvider, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
 
 const useStyles = makeStyles(theme => ({
@@ -45,33 +45,40 @@ const LocalLoginPage = props => {
   const muiTheme = useMemo(() => createMuiTheme(theme), [theme]);
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
+  const redirectTo = searchParams.get('redirect');
+  const { identity } = useGetIdentity();
 
-  return (
-    <ThemeProvider theme={muiTheme}>
-      <div className={classnames(classes.main, className)} {...rest}>
-        <Card className={classes.card}>
-          <div className={classes.avatar}>
-            <Avatar className={classes.icon}>
-              <LockIcon />
-            </Avatar>
-          </div>
-          {isSignup ? <SignupForm /> : <LoginForm />}
-          <div className={classes.switch}>
-            {isSignup ? (
-              <Link to="/login">
-                <Typography variant="body2">Se connecter avec un compte</Typography>
-              </Link>
-            ) : (
-              <Link to="/login?signup=true">
-                <Typography variant="body2">Créer un nouveau compte</Typography>
-              </Link>
-            )}
-          </div>
-        </Card>
-        <Notification />
-      </div>
-    </ThemeProvider>
-  );
+  if( identity?.id ) {
+    // Do not show login page if user is already connected
+    return( <Redirect to={redirectTo || '/'} /> );
+  } else {
+    return (
+      <ThemeProvider theme={muiTheme}>
+        <div className={classnames(classes.main, className)} {...rest}>
+          <Card className={classes.card}>
+            <div className={classes.avatar}>
+              <Avatar className={classes.icon}>
+                <LockIcon />
+              </Avatar>
+            </div>
+            {isSignup ? <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} /> : <LoginForm redirectTo={redirectTo} />}
+            <div className={classes.switch}>
+              {isSignup ? (
+                <Link to="/login">
+                  <Typography variant="body2">Se connecter avec un compte</Typography>
+                </Link>
+              ) : (
+                <Link to="/login?signup=true">
+                  <Typography variant="body2">Créer un nouveau compte</Typography>
+                </Link>
+              )}
+            </div>
+          </Card>
+          <Notification />
+        </div>
+      </ThemeProvider>
+    );
+  }
 };
 
 LocalLoginPage.propTypes = {

@@ -19,5 +19,6 @@ export { default as useAgents } from './hooks/useAgents';
 export { default as useCheckAuthenticated } from './hooks/useCheckAuthenticated';
 export { default as useCheckPermissions } from './hooks/useCheckPermissions';
 export { default as usePermissionsWithRefetch } from './hooks/usePermissionsWithRefetch';
+export { default as useSignup } from './hooks/useSignup';
 
 export { default as frenchMessages } from './messages/french';

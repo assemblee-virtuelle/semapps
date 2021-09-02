@@ -1,10 +1,10 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Field, Form } from 'react-final-form';
-import { useTranslate, useAuthProvider, useNotify, useSafeSetState } from 'react-admin';
-import { useHistory } from 'react-router-dom';
-import { Button, CardActions, CircularProgress, TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import { useTranslate, useNotify, useSafeSetState } from 'react-admin';
+import { useLocation, useHistory } from 'react-router-dom';
+import { Button, CardActions, CircularProgress, TextField, makeStyles } from '@material-ui/core';
+import { useSignup } from '@semapps/auth-provider';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -25,14 +25,15 @@ const Input = ({ meta: { touched, error }, input: inputProps, ...props }) => (
   <TextField error={!!(touched && error)} helperText={touched && error} {...inputProps} {...props} fullWidth />
 );
 
-const SignupForm = props => {
-  const { redirectTo } = props;
+const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const [loading, setLoading] = useSafeSetState(false);
-  const authProvider = useAuthProvider();
+  const signup = useSignup();
   const translate = useTranslate();
   const notify = useNotify();
+  const classes = useStyles();
+  const location = useLocation();
   const history = useHistory();
-  const classes = useStyles(props);
+  const searchParams = new URLSearchParams(location.search);
 
   const validate = values => {
     const errors = { email: undefined, password: undefined };
@@ -48,12 +49,18 @@ const SignupForm = props => {
 
   const submit = values => {
     setLoading(true);
-    authProvider
-      .signup(values, redirectTo)
+    signup(values)
       .then(webId => {
-        setLoading(false);
+        if(delayBeforeRedirect) {
+          setTimeout(() => {
+            history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+            setLoading(false);
+          }, delayBeforeRedirect);
+        } else {
+          history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+          setLoading(false);
+        }
         notify('auth.message.new_user_created', 'info');
-        history.push('/Person/' + encodeURIComponent(webId) + '/edit');
       })
       .catch(error => {
         setLoading(false);
@@ -75,6 +82,10 @@ const SignupForm = props => {
     <Form
       onSubmit={submit}
       validate={validate}
+      initialValues={{
+        name: searchParams.get('name'),
+        email: searchParams.get('email')
+      }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit} noValidate>
           <div className={classes.form}>
