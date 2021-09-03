@@ -66,8 +66,8 @@ module.exports = {
         webId
       });
 
-      // Adds a default context, if it is missing
-      if (contentType === MIME_TYPES.JSON) {
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
         resource = {
           '@context': jsonContext,
           ...resource

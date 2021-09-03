@@ -45,7 +45,7 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
-      const { disassembly } = {
+      const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
         ...ctx.params
       };
@@ -57,6 +57,14 @@ module.exports = {
         accept: MIME_TYPES.JSON,
         webId
       });
+
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
+      }
 
       if (disassembly && contentType === MIME_TYPES.JSON) {
         await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PUT');

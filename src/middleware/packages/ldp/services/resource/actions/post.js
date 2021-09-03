@@ -85,7 +85,7 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      const { disassembly } = {
+      const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
@@ -101,8 +101,12 @@ module.exports = {
         );
       }
 
-      if (!resource['@context']) {
-        throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
       }
 
       if (fileStream) {
