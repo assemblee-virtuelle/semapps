@@ -69,7 +69,7 @@ Jena Fuseki is now available at the URL http://localhost:3030.
 
 Please login - By default the login is `admin` and the password is also `admin`.
 
-Please start by create a new dataset and name it `localData` (case sensitive).
+Please start by create a new dataset and name it `localData` (case sensitive), and choose a persistant storage.
 Your triples will be stored there.
 
 You should get something like this:
