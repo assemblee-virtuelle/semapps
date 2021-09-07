@@ -65,6 +65,18 @@ In the "my-project" directory, runs the following command :
 docker-compose up
 ```
 
+:::note
+If you get this error message:
+```
+ERROR: Couldn't connect to Docker daemon at http+docker://localhost - is it running?
+If it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.
+```
+Run the following command ([taken from here](https://stackoverflow.com/questions/34532696/docker-compose-cant-connect-to-docker-daemon)):
+```
+sudo chown $USER /var/run/docker.sock
+```
+:::
+
 Jena Fuseki is now available at the URL http://localhost:3030.
 
 Please login - By default the login is `admin` and the password is also `admin`.
