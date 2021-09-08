@@ -728,8 +728,6 @@
     "cipherAlgorithm": "sec:cipherAlgorithm",
     "cipherData": "sec:cipherData",
     "cipherKey": "sec:cipherKey",
-    "created": {"@id": "dc:created", "@type": "xsd:dateTime"},
-    "creator": {"@id": "dc:creator", "@type": "@id"},
     "digestAlgorithm": "sec:digestAlgorithm",
     "digestValue": "sec:digestValue",
     "domain": "sec:domain",
