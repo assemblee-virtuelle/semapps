@@ -61,7 +61,7 @@
   },
   {
     "prefix": "og",
-    "owl": "https://gist.githubusercontent.com/srosset81/2baa67ab8178d0c25d24263a64f45a26/raw/3ff2d9653213f266767106bb23f9b67e7ba1d454/organigraph.owl",
+    "owl": "https://raw.githubusercontent.com/assemblee-virtuelle/organigraph/master/ontology/organigraph.owl",
     "url": "http://virtual-assembly.org/ontologies/organigraph#"
   }
 ]
