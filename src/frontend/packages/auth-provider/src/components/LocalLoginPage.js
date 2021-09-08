@@ -48,9 +48,9 @@ const LocalLoginPage = props => {
   const redirectTo = searchParams.get('redirect');
   const { identity } = useGetIdentity();
 
-  if( identity?.id ) {
+  if (identity?.id) {
     // Do not show login page if user is already connected
-    return( <Redirect to={redirectTo || '/'} /> );
+    return <Redirect to={redirectTo || '/'} />;
   } else {
     return (
       <ThemeProvider theme={muiTheme}>
@@ -61,7 +61,11 @@ const LocalLoginPage = props => {
                 <LockIcon />
               </Avatar>
             </div>
-            {isSignup ? <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} /> : <LoginForm redirectTo={redirectTo} />}
+            {isSignup ? (
+              <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />
+            ) : (
+              <LoginForm redirectTo={redirectTo} />
+            )}
             <div className={classes.switch}>
               {isSignup ? (
                 <Link to="/login">

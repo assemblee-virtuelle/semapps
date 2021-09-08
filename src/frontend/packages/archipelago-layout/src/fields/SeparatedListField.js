@@ -16,9 +16,7 @@ const SeparatedListField = props => {
   const { ids, data, loaded, resource, basePath } = useListContext(props);
 
   if (linkType !== undefined) {
-    console.warn(
-      "The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />"
-    );
+    console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
     link = linkType;
   }
 

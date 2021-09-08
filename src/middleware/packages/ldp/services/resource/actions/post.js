@@ -123,7 +123,7 @@ module.exports = {
         resource['semapps:fileName'] = filename;
 
         try {
-          await this.streamToFile(fileStream,resource['semapps:localPath'])
+          await this.streamToFile(fileStream, resource['semapps:localPath']);
         } catch (e) {
           throw new MoleculerError(e, 500, 'Server Error');
         }
