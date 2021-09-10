@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   text: {
     maxWidth: 300,
     textAlign: 'center',
-    padding: '4px 8px 8px',
+    padding: '4px 8px 8px'
   },
   card: {
     minWidth: 300,
@@ -90,7 +90,11 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
               <LockIcon />
             </Avatar>
           </div>
-          {text && <Typography variant="body2" className={classes.text}>{text}</Typography>}
+          {text && (
+            <Typography variant="body2" className={classes.text}>
+              {text}
+            </Typography>
+          )}
           {buttons &&
             buttons.map((button, i) => (
               <CardActions key={i}>

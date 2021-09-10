@@ -81,7 +81,9 @@ const buildFiltersQuery = filters => {
     Object.keys(filters).forEach((predicate, i) => {
       if (filters[predicate]) {
         where += `
-          FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`} } .
+          FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
+          filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+        } } .
         `;
       } else {
         where += `

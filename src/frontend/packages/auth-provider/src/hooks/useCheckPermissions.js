@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { usePermissionsOptimized, useRedirect, useNotify, useGetIdentity } from 'react-admin';
 import { rights, forbiddenErrors } from '../constants';
-import useCheckAuthenticated from "./useCheckAuthenticated";
+import useCheckAuthenticated from './useCheckAuthenticated';
 
 const useCheckPermissions = (resourceId, mode, redirectUrl = '/') => {
   const { identity } = useCheckAuthenticated();
