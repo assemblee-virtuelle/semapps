@@ -36,7 +36,8 @@ const { WebAclService } = require('@semapps/webacl');
 module.exports = {
   mixins: [WebAclService],
   settings: {
-    baseUrl: 'http://localhost:3000/'
+    baseUrl: 'http://localhost:3000/',
+    superAdmins: ['http://localhost:3000/users/myself']
   }
 };
 ```
@@ -85,6 +86,7 @@ See the [Moleculer caching documentation](https://moleculer.services/docs/0.14/c
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `baseUrl`|`String` | **required**| Base URL of the LDP server |
+| `superAdmins`|`Array` | | Array of users' URIs you want to give superadmins rights (all permissions on all resources). This only works if you have a root LDP container. |
 
 
 ## Default permissions for new resources
