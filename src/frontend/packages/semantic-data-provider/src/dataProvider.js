@@ -26,7 +26,15 @@ const isType = (type, resource) => {
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri, returnFailedResources = false }) => {
+const dataProvider = ({
+  sparqlEndpoint,
+  httpClient,
+  resources,
+  ontologies,
+  jsonContext,
+  uploadsContainerUri,
+  returnFailedResources = false
+}) => {
   const uploadFile = async rawFile => {
     if (!uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
 
@@ -258,7 +266,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           // Catch if one resource fails to load
           // Otherwise no references will be show if only one is missing
           // See https://github.com/marmelab/react-admin/issues/5190
-          if( returnFailedResources ) {
+          if (returnFailedResources) {
             // Return only the ID of the resource
             returnData.push({ id });
           } else {

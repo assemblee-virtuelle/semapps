@@ -51,7 +51,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
     setLoading(true);
     signup(values)
       .then(webId => {
-        if(delayBeforeRedirect) {
+        if (delayBeforeRedirect) {
           setTimeout(() => {
             history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
             setLoading(false);

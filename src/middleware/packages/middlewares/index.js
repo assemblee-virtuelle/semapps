@@ -98,7 +98,7 @@ const parseJson = async (req, res, next) => {
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$ctx.meta.parser) {
+  if (!req.$ctx.meta.parser && (req.method == 'POST' || req.method == 'PUT')) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
       let files = [];

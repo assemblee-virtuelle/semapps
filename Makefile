@@ -16,16 +16,13 @@ docker-up:
 	$(DOCKER_COMPOSE) up -d
 
 docker-stop:
-	$(DOCKER_COMPOSE) kill
-	$(DOCKER_COMPOSE) rm -fv
+	$(DOCKER_COMPOSE) down
 
 docker-stop-prod:
-		$(DOCKER_COMPOSE_PROD) kill
-		$(DOCKER_COMPOSE_PROD) rm -fv
+		$(DOCKER_COMPOSE_PROD) down
 
 docker-clean:
-	$(DOCKER_COMPOSE) kill
-	$(DOCKER_COMPOSE) rm -fv
+	$(DOCKER_COMPOSE) down
 
 docker-start:
 	$(DOCKER_COMPOSE) up -d --force-recreate

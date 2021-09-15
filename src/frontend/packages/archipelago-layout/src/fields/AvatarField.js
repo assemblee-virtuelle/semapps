@@ -45,7 +45,7 @@ const AvatarField = ({ record, label, defaultLabel, image, fallback, variant, la
   classes = useStyles(classes);
   if (!record) return null;
 
-  const computedLabel = ( typeof label === 'function' ? label(record) : record[label] ) || defaultLabel;
+  const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
   const computedImage = typeof image === 'function' ? image(record) : record[image];
   const computedFallback = typeof fallback === 'function' ? fallback(record) : fallback;
 
