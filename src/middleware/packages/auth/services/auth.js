@@ -81,10 +81,10 @@ module.exports = {
 
     await this.broker.call('api.addRoute', {
       route: {
-        path: '/auth',
+        path: '/auth/signup',
         use: this.connector.getRouteMiddlewares(false),
         aliases: {
-          'POST /signup': this.connector.signup()
+          'POST /': this.connector.signup()
         },
         onError(req, res, err) {
           console.error(err);
