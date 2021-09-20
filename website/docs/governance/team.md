@@ -8,7 +8,7 @@ title: The SemApps team
     - [Simon Louvet](https://www.linkedin.com/in/simon-louvet-a9842018/) : Software developer 
         - _Expertises_ : Semantic web, SOLID spécification, Moleculer.js. 
     - [Niko Bonnieure](https://github.com/nikoPLP) : Software developer 
-        - _Expertises_ : Java/J2EE, web-ACL, Moleculer.js, React.js
+        - _Expertises_ : Semantic web, SOLID, Java/J2EE, web-ACL, Moleculer.js, React.js
         
 - **Scrum master**
     - [Pierre Bouvier-Muller](https://www.linkedin.com/in/bouviermullerp/) : Agile project manager
