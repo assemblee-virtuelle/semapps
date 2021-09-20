@@ -17,7 +17,7 @@ const authProvider = ({
       try {
         const { json } = await httpClient(`${middlewareUri}auth`, {
           method: 'POST',
-          body: JSON.stringify({ email: username, password }),
+          body: JSON.stringify({ email: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -35,7 +35,7 @@ const authProvider = ({
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ email, password, ...profileData }),
+          body: JSON.stringify({ email: email.trim(), password: password.trim(), ...profileData }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
