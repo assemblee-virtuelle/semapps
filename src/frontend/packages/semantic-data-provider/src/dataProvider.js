@@ -334,8 +334,14 @@ const dataProvider = ({
       });
       return { data: { id: params.id } };
     },
-    deleteMany: (resourceId, params) => {
-      throw new Error('deleteMany is not implemented yet');
+    deleteMany: async (resourceId, params) => {
+      console.log("-------------------------------")
+      for (let id of params.ids) {
+        await httpClient(id, {
+          method: 'DELETE'
+        });
+      }
+      return { data: [params.ids] };
     }
   };
 };
