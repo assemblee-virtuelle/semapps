@@ -24,7 +24,7 @@ const EditProfileMenu = forwardRef(({ onClick, webId }, ref) => (
 ));
 
 const LoginMenu = forwardRef(({ onClick }, ref) => (
-  <MenuItemLink ref={ref} to="/login" primaryText="Se connecter!!" onClick={onClick} />
+  <MenuItemLink ref={ref} to="/login" primaryText="Se connecter" onClick={onClick} />
 ));
 
 const SignupMenu = forwardRef(({ onClick }, ref) => (
