@@ -105,7 +105,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
                 name="email"
                 component={Input}
                 label={translate('auth.input.email')}
-                disabled={loading}
+                disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
               />
             </div>
             <div className={classes.input}>
