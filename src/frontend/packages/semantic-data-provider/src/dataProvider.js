@@ -335,7 +335,7 @@ const dataProvider = ({
       return { data: { id: params.id } };
     },
     deleteMany: async (resourceId, params) => {
-      console.log("-------------------------------")
+      console.log('-------------------------------');
       for (let id of params.ids) {
         await httpClient(id, {
           method: 'DELETE'
