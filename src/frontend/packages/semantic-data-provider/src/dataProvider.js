@@ -82,7 +82,7 @@ const dataProvider = ({
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-      if (params.id || params['@id'] || !resources[resourceId].types) {
+      if (params.id || params['@id'] || resources[resourceId].fetchContainer) {
         const url = params.id || params['@id'] || resources[resourceId].containerUri;
         let { json } = await httpClient(url);
 
@@ -110,6 +110,19 @@ const dataProvider = ({
             }
           }
 
+          if (params.sort) {
+            returnData = returnData.sort((a, b) => {
+              if (a[params.sort.field] && b[params.sort.field]) {
+                if (params.sort.order === 'ASC') {
+                  return a[params.sort.field].localeCompare(b[params.sort.field]);
+                } else {
+                  return b[params.sort.field].localeCompare(a[params.sort.field]);
+                }
+              } else {
+                return true;
+              }
+            });
+          }
           if (params.pagination) {
             returnData = returnData.slice(
               (params.pagination.page - 1) * params.pagination.perPage,
@@ -178,7 +191,7 @@ const dataProvider = ({
 
           if (params.sort) {
             returnData = returnData.sort((a, b) => {
-              if (params.sort && a[params.sort.field] && b[params.sort.field]) {
+              if (a[params.sort.field] && b[params.sort.field]) {
                 if (params.sort.order === 'ASC') {
                   return a[params.sort.field].localeCompare(b[params.sort.field]);
                 } else {
