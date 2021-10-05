@@ -1,47 +1,40 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const {
-  variable
-} = require('rdf-data-model');
-const {
-  MIME_TYPES
-} = require('@semapps/mime-types');
+const { variable } = require('rdf-data-model');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const fs = require('fs');
 
-const {
-  defaultToArray
-} = require('../../utils');
+const { defaultToArray } = require('../../utils');
 
 const cleanDisassemblyPerdicate = v => {
-  if(typeof v.origin === 'string' || v.origin instanceof String){
+  if (typeof v.origin === 'string' || v.origin instanceof String) {
     return {
       origin: v,
       clean: {
-        "@id": v,
-        "@type": "@id"
+        '@id': v,
+        '@type': '@id'
       }
-    }
-  }
-  else{
+    };
+  } else {
     if (v.id != undefined) {
       const out = {
         origin: v,
         clean: {
           ...v,
-          "@id": v.id
+          '@id': v.id
         }
-      }
+      };
 
       delete out.clean.id;
       return out;
-    }else{
+    } else {
       return {
         origin: v,
         clean: v
-      }
+      };
     }
   }
-}
+};
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
@@ -123,7 +116,7 @@ module.exports = {
     return triples
       .map(
         triple =>
-        `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
+          `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
       )
       .join('\n');
   },
@@ -139,10 +132,7 @@ module.exports = {
         }
         const uriAdded = [];
         for (let resource of disassemblyValue) {
-          let {
-            id,
-            ...resourceWithoutId
-          } = resource;
+          let { id, ...resourceWithoutId } = resource;
           const newResourceUri = await ctx.call('ldp.resource.post', {
             containerUri: disassemblyConfig.container,
             resource: {
@@ -173,14 +163,14 @@ module.exports = {
       newDisassemblyValue = newDisassemblyValue.map(v => cleanDisassemblyPerdicate(v));
 
       let resourcesToAdd = newDisassemblyValue.filter(
-        t1 => !oldDisassemblyValue.some(t2 => (t1.clean['@id']) === (t2.clean['@id']))
+        t1 => !oldDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
       let resourcesToRemove = oldDisassemblyValue.filter(
-        t1 => !newDisassemblyValue.some(t2 => (t1.clean['@id']) === (t2.clean['@id']))
+        t1 => !newDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
 
       let resourcesToKeep = newDisassemblyValue.filter(t1 =>
-        oldDisassemblyValue.some(t2 => (t1.clean['@id']) === (t2.clean['@id']))
+        oldDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
 
       if (resourcesToAdd) {
@@ -199,8 +189,8 @@ module.exports = {
               '@id': newResourceUri,
               '@type': '@id'
             });
-          }else {
-            throw new Error('disassembly can not create resource from string')
+          } else {
+            throw new Error('disassembly can not create resource from string');
           }
         }
       }
