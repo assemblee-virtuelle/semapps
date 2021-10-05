@@ -13,28 +13,31 @@ const {
 } = require('../../utils');
 
 const cleanDisassemblyPerdicate = v => {
-  if (v['@id'] != undefined) {
-    return {
-      origin: v,
-      clean: v
-    }
-  } else if (v.id != undefined) {
-    const out = {
-      origin: v,
-      clean: {
-        ...v,
-        "@id": v.id
-      }
-    }
-
-    delete out.clean.id;
-    return out;
-  } else {
+  if(typeof v.origin === 'string' || v.origin instanceof String){
     return {
       origin: v,
       clean: {
         "@id": v,
         "@type": "@id"
+      }
+    }
+  }
+  else{
+    if (v.id != undefined) {
+      const out = {
+        origin: v,
+        clean: {
+          ...v,
+          "@id": v.id
+        }
+      }
+
+      delete out.clean.id;
+      return out;
+    }else{
+      return {
+        origin: v,
+        clean: v
       }
     }
   }
@@ -210,7 +213,7 @@ module.exports = {
               webId: 'system'
             });
             uriRemoved.push({
-              '@id': resource['@id'],
+              '@id': resource.clean['@id'],
               '@type': '@id'
             });
           }
