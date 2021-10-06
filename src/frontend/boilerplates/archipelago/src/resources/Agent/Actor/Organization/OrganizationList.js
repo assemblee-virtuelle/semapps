@@ -7,6 +7,16 @@ import MapIcon from '@material-ui/icons/Map';
 import ListIcon from '@material-ui/icons/List';
 import HomeIcon from '@material-ui/icons/Home';
 import OrganizationFilterSidebar from './OrganizationFilterSidebar';
+import { Fragment } from 'react';
+import { BulkDeleteButton } from 'react-admin';
+import { List, Datagrid, TextField, DateField, BooleanField } from 'react-admin';
+
+
+const PostBulkActionButtons = ({ basePath }) => (
+  <Fragment>
+      <BulkDeleteButton basePath={basePath} />
+  </Fragment>
+);
 
 const OrganizationList = props => (
   <MultiViewsList
@@ -19,16 +29,9 @@ const OrganizationList = props => (
         sort: { field: 'pair:label', order: 'ASC' },
         perPage: 25,
         list: (
-          <SimpleList
-            primaryText={record => record['pair:label']}
-            secondaryText={record => record['pair:comment']}
-            leftAvatar={record => (
-              <Avatar src={record['image']} width="100%">
-                <HomeIcon />
-              </Avatar>
-            )}
-            linkType="show"
-          />
+            <Datagrid >
+              <TextField source="id" />
+            </Datagrid>
         )
       },
       map: {
