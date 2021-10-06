@@ -335,15 +335,27 @@ const dataProvider = ({
       return { data: { id: params.id } };
     },
     deleteMany: async (resourceId, params) => {
-      console.log('-------------------------------');
+      let ids = [];
       for (let id of params.ids) {
-        await httpClient(id, {
-          method: 'DELETE'
-        });
+        try {
+          await httpClient(id, {
+            method: 'DELETE'
+          });
+          ids.push(id);
+        } catch (e) {
+          
+          if (returnFailedResources) {
+            // Return only the ID of the resource
+            returnData.push({ id });
+          } else {
+            // Do nothing. The resource will not be deleted.
+          }
+        }
       }
-      return { data: [params.ids] };
+      return { data: ids };
     }
   };
 };
 
 export default dataProvider;
+
