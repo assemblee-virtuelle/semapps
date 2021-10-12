@@ -4,8 +4,7 @@ import { Field, Form } from 'react-final-form';
 import { useTranslate, useNotify, useSafeSetState } from 'react-admin';
 import { useLocation, useHistory } from 'react-router-dom';
 import { Button, CardActions, CircularProgress, TextField, makeStyles } from '@material-ui/core';
-// import { useSignup } from '@semapps/auth-provider';
-import { default as useSignup } from './../hooks/useSignup';
+import { default as useSignup } from '../hooks/useSignup';
 
 const useStyles = makeStyles(theme => ({
   form: {
