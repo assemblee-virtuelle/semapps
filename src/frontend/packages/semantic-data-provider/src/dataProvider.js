@@ -294,7 +294,7 @@ const dataProvider = ({
       return { data: returnData };
     },
     getManyReference: async (resourceId, params) => {
-      params.filter = { ...params.filter, ...{ [params.target]: params.id } };
+      params.filter = { ...params.filter, [params.target]: params.id };
       return await ExecuteSparql(resourceId, params);
     },
     create: async (resourceId, params) => {
