@@ -85,7 +85,6 @@ const dataProvider = ({
       dereference: resources[resourceId].dereference,
       ontologies
     });
-    console.log('sparqlQuery', sparqlQuery);
 
     const { json } = await httpClient(sparqlEndpoint, {
       method: 'POST',
