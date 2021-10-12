@@ -1,6 +1,4 @@
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-};
+import getRdfPrefixes from "./getRdfPrefixes";
 
 const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) => {
   let whereQuery = '';
@@ -23,7 +21,7 @@ const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) =>
   }
 
   return `
-    ${getPrefixRdf(ontologies)}
+    ${getRdfPrefixes(ontologies)}
     SELECT DISTINCT ?resource
     WHERE {
       ?resource a ?type .

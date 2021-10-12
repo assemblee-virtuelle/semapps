@@ -1,8 +1,5 @@
 import { buildDereferenceQuery } from './dereference';
-
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
-};
+import getRdfPrefixes from "./getRdfPrefixes";
 
 const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }) => {
   let whereQuery = '';
@@ -32,7 +29,7 @@ const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }
   const dereferenceQuery = buildDereferenceQuery(dereference);
 
   return `
-    ${getPrefixRdf(ontologies)}
+    ${getRdfPrefixes(ontologies)}
     CONSTRUCT {
       ?s1 ?p2 ?o2 .
       ${dereferenceQuery.construct}

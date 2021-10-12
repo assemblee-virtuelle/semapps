@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ArrayField } from 'react-admin';
 
 /**
  * @example
