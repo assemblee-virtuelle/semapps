@@ -78,14 +78,14 @@ const dataProvider = ({
     return resource;
   };
 
-  const ExecuteSparql = async (resourceId,params)=>{
+  const ExecuteSparql = async (resourceId, params) => {
     const sparqlQuery = buildSparqlQuery({
       types: resources[resourceId].types,
-      params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter} },
+      params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
       dereference: resources[resourceId].dereference,
       ontologies
     });
-    console.log('sparqlQuery',sparqlQuery);
+    console.log('sparqlQuery', sparqlQuery);
 
     const { json } = await httpClient(sparqlEndpoint, {
       method: 'POST',
@@ -136,8 +136,7 @@ const dataProvider = ({
 
       return { data: returnData, total: compactJson['@graph'].length };
     }
-  }
-
+  };
 
   return {
     getList: async (resourceId, params) => {
@@ -216,7 +215,7 @@ const dataProvider = ({
           return { data: returnData, total: json.totalItems };
         }
       } else {
-        return await ExecuteSparql(resourceId,params)
+        return await ExecuteSparql(resourceId, params);
         // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
         // TODO compare the performance of the two methods, and eventually allow both of them
         //
@@ -297,9 +296,9 @@ const dataProvider = ({
     },
     getManyReference: async (resourceId, params) => {
       let manyReferenceFilter = {};
-      manyReferenceFilter[params.target]=params.id;
+      manyReferenceFilter[params.target] = params.id;
       params.filter = manyReferenceFilter;
-      return await ExecuteSparql(resourceId,params)
+      return await ExecuteSparql(resourceId, params);
     },
     create: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
