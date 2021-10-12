@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const request = require('request');
 const N3 = require('n3');
 const { DataFactory } = N3;
@@ -10,39 +9,41 @@ module.exports = {
     baseUrl: null,
     ontologies: []
   },
-  dependencies: ['triplestore', 'ldp'],
-  created() {
-    this.inverseRelations = this.findInverseRelations();
+  dependencies: ['triplestore', 'ldp', 'jsonld'],
+  async created() {
+    this.inverseRelations = {};
+    for (let ontology of this.settings.ontologies) {
+      if (ontology.owl) {
+        const result = await this.findInverseRelations(ontology.owl);
+        console.log(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
+        this.inverseRelations = { ...this.inverseRelations, ...result };
+      }
+    }
   },
   methods: {
-    findInverseRelations() {
+    findInverseRelations(owlFile) {
       const parser = new N3.Parser({ format: 'Turtle' });
-      const inverseRelations = {};
-
-      this.settings.ontologies.forEach(ontology => {
-        if (ontology.owl) {
-          const stream = request(ontology.owl);
-          parser.parse(stream, (err, quad) => {
-            if (err) throw err;
-            if (quad) {
-              if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
-                inverseRelations[quad.object.id] = quad.subject.id;
-                inverseRelations[quad.subject.id] = quad.object.id;
-              } else if (
-                quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
-                quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
-              ) {
-                // SymmetricProperty implies an inverse relation with the same properties
-                inverseRelations[quad.subject.id] = quad.subject.id;
-              }
-            } else {
-              console.log(`Found ${Object.keys(inverseRelations).length} inverse relations in ${ontology.owl}`);
+      return new Promise((resolve, reject) => {
+        const stream = request(owlFile);
+        const rel = {};
+        parser.parse(stream, (err, quad) => {
+          if (err) reject(err);
+          if (quad) {
+            if (quad.predicate.id === 'http://www.w3.org/2002/07/owl#inverseOf') {
+              rel[quad.object.id] = quad.subject.id;
+              rel[quad.subject.id] = quad.object.id;
+            } else if (
+              quad.predicate.id === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' &&
+              quad.object.id === 'http://www.w3.org/2002/07/owl#SymmetricProperty'
+            ) {
+              // SymmetricProperty implies an inverse relation with the same properties
+              rel[quad.subject.id] = quad.subject.id;
             }
-          });
-        }
+          } else {
+            resolve(rel);
+          }
+        });
       });
-
-      return inverseRelations;
     },
     generateInverseTriples(resource) {
       let inverseTriples = [];
@@ -99,7 +100,7 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       let { newData } = ctx.params;
-      newData = await jsonld.expand(ctx.params.newData);
+      newData = await ctx.call('jsonld.expand', { input: newData });
 
       let triplesToAdd = this.generateInverseTriples(newData[0]);
 
@@ -113,7 +114,7 @@ module.exports = {
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
-      oldData = await jsonld.expand(ctx.params.oldData);
+      oldData = await ctx.call('jsonld.expand', { input: oldData });
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
@@ -124,8 +125,8 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
-      oldData = await jsonld.expand(ctx.params.oldData);
-      newData = await jsonld.expand(ctx.params.newData);
+      oldData = await ctx.call('jsonld.expand', { input: oldData });
+      newData = await ctx.call('jsonld.expand', { input: newData });
 
       let triplesToRemove = this.generateInverseTriples(oldData[0]);
       let triplesToAdd = this.generateInverseTriples(newData[0]);

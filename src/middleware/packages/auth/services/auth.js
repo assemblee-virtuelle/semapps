@@ -1,12 +1,15 @@
-const OidcConnector = require('./OidcConnector');
-const CasConnector = require('./CasConnector');
 const path = require('path');
 const urlJoin = require('url-join');
+const AuthAccountService = require('./account');
+const OidcConnector = require('../OidcConnector');
+const CasConnector = require('../CasConnector');
+const LocalConnector = require('../LocalConnector');
 
 module.exports = {
   name: 'auth',
   settings: {
     baseUrl: null,
+    accountsContainer: null,
     jwtPath: null,
     oidc: {
       issuer: null,
@@ -16,11 +19,12 @@ module.exports = {
     cas: {
       url: null
     },
-    selectProfileData: null
+    selectProfileData: null,
+    registrationAllowed: true
   },
   dependencies: ['api', 'webid'],
-  async started() {
-    const { baseUrl, jwtPath, selectProfileData, oidc, cas } = this.settings;
+  async created() {
+    const { baseUrl, accountsContainer, jwtPath, selectProfileData, oidc, cas } = this.settings;
 
     const privateKeyPath = path.resolve(jwtPath, 'jwtRS256.key');
     const publicKeyPath = path.resolve(jwtPath, 'jwtRS256.key.pub');
@@ -45,12 +49,48 @@ module.exports = {
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else {
-      throw new Error('The OIDC or CAS config are missing');
-    }
+      await this.broker.createService(AuthAccountService, {
+        settings: {
+          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
+        }
+      });
 
+      this.connector = new LocalConnector({
+        privateKeyPath,
+        publicKeyPath
+      });
+    }
+  },
+  async started() {
     await this.connector.initialize();
 
-    await this.broker.call('api.addRoute', { route: this.getApiRoute() });
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/auth',
+        use: this.connector.getRouteMiddlewares(true),
+        aliases: {
+          'GET /logout': this.connector.logout(),
+          'GET /': this.connector.login(),
+          'POST /': this.connector.login()
+        },
+        onError(req, res, err) {
+          console.error(err);
+        }
+      }
+    });
+
+    await this.broker.call('api.addRoute', {
+      route: {
+        path: '/auth/signup',
+        use: this.connector.getRouteMiddlewares(false),
+        aliases: {
+          'POST /': this.connector.signup()
+        },
+        onError(req, res, err) {
+          console.error(err);
+        }
+      }
+    });
   },
   methods: {
     async findOrCreateProfile(profileData, authData) {
@@ -63,25 +103,17 @@ module.exports = {
       const newUser = !webId;
 
       if (newUser) {
+        if (!this.settings.registrationAllowed) {
+          throw new Error('registration.not-allowed');
+        }
         webId = await this.broker.call('webid.create', profileData);
         await this.broker.emit('auth.registered', { webId, profileData, authData });
       } else {
+        await this.broker.call('webid.edit', profileData, { meta: { webId } });
         await this.broker.emit('auth.connected', { webId, profileData, authData });
       }
 
       return { webId, newUser };
-    },
-    getApiRoute() {
-      return {
-        use: this.connector.getRouteMiddlewares(),
-        aliases: {
-          'GET auth/logout': this.connector.logout(),
-          'GET auth': this.connector.login()
-        },
-        onError(req, res, err) {
-          console.error(err);
-        }
-      };
     }
   },
   actions: {

@@ -90,7 +90,7 @@ const WebhooksService = {
     webhooks: {
       name: '*',
       async process(job) {
-        const result = await this.actions[job.name](job.data, { parentCtx: ctx });
+        const result = await this.actions[job.name](job.data);
 
         job.progress(100);
 

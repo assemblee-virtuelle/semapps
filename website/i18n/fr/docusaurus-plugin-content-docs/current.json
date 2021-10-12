@@ -1,0 +1,34 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Guides": {
+    "message": "Guides",
+    "description": "The label for category Guides in sidebar docs"
+  },
+  "sidebar.docs.category.Middleware packages": {
+    "message": "Middleware packages",
+    "description": "The label for category Middleware packages in sidebar docs"
+  },
+  "sidebar.docs.category.LDP": {
+    "message": "LDP",
+    "description": "The label for category LDP in sidebar docs"
+  },
+  "sidebar.docs.category.WebACL": {
+    "message": "WebACL",
+    "description": "The label for category WebACL in sidebar docs"
+  },
+  "sidebar.docs.category.Frontend packages": {
+    "message": "Frontend packages",
+    "description": "The label for category Frontend packages in sidebar docs"
+  },
+  "sidebar.contribute.category.SemApps core": {
+    "message": "SemApps core",
+    "description": "The label for category SemApps core in sidebar contribute"
+  },
+  "sidebar.contribute.category.Documentation": {
+    "message": "Documentation",
+    "description": "The label for category Documentation in sidebar contribute"
+  }
+}

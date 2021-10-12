@@ -22,6 +22,7 @@ module.exports = {
           'middleware/ldp/index',
           'middleware/ldp/resource',
           'middleware/ldp/container',
+          'middleware/ldp/document-tagger',
         ],
       },
       'middleware/signature',
@@ -33,6 +34,8 @@ module.exports = {
           'middleware/webacl/index',
           'middleware/webacl/resource',
           'middleware/webacl/group',
+          'middleware/webacl/authorizer',
+          'middleware/webacl/groups-manager',
         ],
       },
       'middleware/webfinger',
@@ -42,7 +45,8 @@ module.exports = {
     'Frontend packages': [
       'frontend/auth-provider',
       'frontend/date-components',
-      'frontend/geo-components'
+      'frontend/geo-components',
+      'frontend/markdown-components'
     ]
   },
   contribute: {

@@ -1,5 +1,6 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
+const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -16,6 +17,7 @@ const initialize = async () => {
   await broker.createService({
     mixins: [ApiGatewayService]
   });
+  await broker.createService(JsonLdService);
   await broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -31,7 +33,7 @@ const initialize = async () => {
       containers: [
         {
           path: '/resources',
-          dereference: ['pair:hasLocation']
+          dereference: ['pair:hasLocation', 'pair:hasTopic']
         },
         {
           path: '/organizations',
@@ -40,6 +42,9 @@ const initialize = async () => {
         },
         {
           path: '/places'
+        },
+        {
+          path: '/themes'
         }
       ]
     }
@@ -80,6 +85,16 @@ const initialize = async () => {
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: CONFIG.HOME_URL + 'places',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'themes',
     additionalRights: {
       anon: {
         write: true

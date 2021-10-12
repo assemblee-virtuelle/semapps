@@ -6,6 +6,20 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'assemblee-virtuelle', // Usually your GitHub org/user name.
   projectName: 'semapps', // Usually your repo name.
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr'],
+    localeConfigs: {
+      'en': {
+        label: 'English',
+        direction: 'ltr'
+      },
+      'fr': {
+        label: 'Français',
+        direction: 'ltr'
+      }
+    }
+  },
   themeConfig: {
     navbar: {
       title: 'SemApps',
@@ -23,6 +37,10 @@ module.exports = {
         {
           href: 'https://github.com/assemblee-virtuelle/semapps',
           label: 'GitHub',
+          position: 'right',
+        },
+        {
+          type: 'localeDropdown',
           position: 'right',
         },
       ],
@@ -51,8 +69,12 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Riot',
-              href: 'https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org',
+              label: 'Discourse (French)',
+              href: 'https://forums.assemblee-virtuelle.org/c/projets/semapps/11',
+            },
+            {
+              label: 'Chat (French and English)',
+              href: 'https://chat.lescommuns.org/channel/semapps_dev',
             },
             {
               label: 'Contact',

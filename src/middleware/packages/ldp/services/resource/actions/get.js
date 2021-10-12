@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const jsonld = require('jsonld');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery } = require('../../../utils');
 const fs = require('fs');
 
@@ -38,7 +37,7 @@ module.exports = {
       aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext']
+      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },
     async handler(ctx) {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
@@ -76,16 +75,13 @@ module.exports = {
 
         // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
         if (accept === MIME_TYPES.JSON) {
-          result = await jsonld.frame(result, {
-            '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-            '@id': resourceUri
+          result = await ctx.call('jsonld.frame', {
+            input: result,
+            frame: {
+              '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
+              '@id': resourceUri
+            }
           });
-
-          // Remove the @graph as we have a single result
-          result = {
-            '@context': result['@context'],
-            ...result['@graph'][0]
-          };
         }
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {

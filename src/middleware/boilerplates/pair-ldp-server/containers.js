@@ -15,21 +15,14 @@ module.exports = [
     path: '/membership-associations',
     acceptedTypes: ['pair:MembershipAssociation']
   },
-
   {
     path: '/groups',
-    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
-    dereference: ['sec:publicKey']
-  },
-
-  {
-    path: '/groups',
-    acceptedTypes: ['pair:Group', ACTOR_TYPES.GROUP],
+    acceptedTypes: ['pair:Group', 'og:Circle', ACTOR_TYPES.GROUP],
     dereference: ['sec:publicKey']
   },
   {
     path: '/projects',
-    acceptedTypes: ['pair:Project', ACTOR_TYPES.GROUP],
+    acceptedTypes: ['pair:Project', 'og:Circle', ACTOR_TYPES.GROUP],
     dereference: ['sec:publicKey']
   },
   {
@@ -102,6 +95,10 @@ module.exports = [
   {
     path: '/notes',
     acceptedTypes: [OBJECT_TYPES.NOTE]
+  },
+  {
+    path: '/pages',
+    acceptedTypes: ['semapps:Page']
   },
   {
     path: '/files'

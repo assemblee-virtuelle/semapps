@@ -2,10 +2,22 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const fs = require('fs');
+
 const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
+  async streamToFile(inputStream, filePath) {
+    return new Promise((resolve, reject) => {
+      const fileWriteStream = fs.createWriteStream(filePath);
+      inputStream
+        .pipe(fileWriteStream)
+        .on('finish', resolve)
+        .on('error', reject);
+    });
+  },
+
   async bodyToTriples(body, contentType) {
     return new Promise((resolve, reject) => {
       if (contentType === 'application/ld+json' && typeof body === 'object') body = JSON.stringify(body);
@@ -17,6 +29,11 @@ module.exports = {
         .on('error', error => reject(error))
         .on('end', () => resolve(res));
     });
+  },
+  // Filter out triples whose subject is not the resource itself
+  // We don't want to update or delete resources with IDs
+  filterOtherNamedNodes(triples, resourceUri) {
+    return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
   },
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {

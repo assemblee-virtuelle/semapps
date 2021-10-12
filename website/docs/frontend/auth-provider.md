@@ -68,6 +68,19 @@ const App = () => (
 );
 ```
 
+## Forcing user to login
+
+By default your app will be accessible to anonymous users.
+
+If you wish to force all users to login, you can pass a `allowAnonymous: false` param to the auth provider.
+
+## Checking allowed users
+
+If you only want certain types of users to access your app, you can pass a `checkUser` function to the authProvider.
+
+This function receives user data and must return true or false, depending on whether the user is granted access or not.
+
+> This `checkUser` function is also available to any of your components using the React-Admin's `useAuthProvider` hook.
 
 ## Checking permissions
 

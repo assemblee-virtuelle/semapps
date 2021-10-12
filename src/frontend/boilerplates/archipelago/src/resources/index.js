@@ -28,5 +28,8 @@ export { default as Object } from './Object/Object';
 // Ideas
 export { default as Idea } from './Idea';
 
+// Pages
+export { default as Page } from './Page';
+
 // Put this at the end, otherwise it will load as the homepage
 export { default as Agent } from './Agent/Agent';

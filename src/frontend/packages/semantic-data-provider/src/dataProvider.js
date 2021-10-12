@@ -26,7 +26,15 @@ const isType = (type, resource) => {
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonContext, uploadsContainerUri }) => {
+const dataProvider = ({
+  sparqlEndpoint,
+  httpClient,
+  resources,
+  ontologies,
+  jsonContext,
+  uploadsContainerUri,
+  returnFailedResources = false
+}) => {
   const uploadFile = async rawFile => {
     if (!uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
 
@@ -74,7 +82,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-      if (params.id || params['@id'] || !resources[resourceId].types) {
+      if (params.id || params['@id'] || resources[resourceId].fetchContainer) {
         const url = params.id || params['@id'] || resources[resourceId].containerUri;
         let { json } = await httpClient(url);
 
@@ -102,6 +110,19 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
             }
           }
 
+          if (params.sort) {
+            returnData = returnData.sort((a, b) => {
+              if (a[params.sort.field] && b[params.sort.field]) {
+                if (params.sort.order === 'ASC') {
+                  return a[params.sort.field].localeCompare(b[params.sort.field]);
+                } else {
+                  return b[params.sort.field].localeCompare(a[params.sort.field]);
+                }
+              } else {
+                return true;
+              }
+            });
+          }
           if (params.pagination) {
             returnData = returnData.slice(
               (params.pagination.page - 1) * params.pagination.perPage,
@@ -155,16 +176,14 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
           ...getEmbedFrame(resources[resourceId].dereference)
         };
 
-        const compactJson = await jsonld.frame(json, frame);
+        // omitGraph option force results to be in a @graph, even if we have a single result
+        const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
 
         if (Object.keys(compactJson).length === 1) {
           // If we have only the context, it means there is no match
           return { data: [], total: 0 };
-        } else if (!compactJson['@graph']) {
-          // If we have several fields but no @graph, there is a single match
-          compactJson.id = compactJson.id || compactJson['@id'];
-          return { data: [compactJson], total: 1 };
         } else {
+          // Add id in addition to @id, as this is what React-Admin expects
           let returnData = compactJson['@graph'].map(item => {
             item.id = item.id || item['@id'];
             return item;
@@ -172,7 +191,7 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
           if (params.sort) {
             returnData = returnData.sort((a, b) => {
-              if (params.sort && a[params.sort.field] && b[params.sort.field]) {
+              if (a[params.sort.field] && b[params.sort.field]) {
                 if (params.sort.order === 'ASC') {
                   return a[params.sort.field].localeCompare(b[params.sort.field]);
                 } else {
@@ -254,12 +273,18 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
         try {
           let { json } = await httpClient(id);
-          json.id = json.id || json['@id'];
+          json.id = id;
           returnData.push(json);
         } catch (e) {
-          // Do nothing if one resource fails to load
+          // Catch if one resource fails to load
           // Otherwise no references will be show if only one is missing
           // See https://github.com/marmelab/react-admin/issues/5190
+          if (returnFailedResources) {
+            // Return only the ID of the resource
+            returnData.push({ id });
+          } else {
+            // Do nothing. The resource will not appear in the results.
+          }
         }
       }
 
@@ -313,7 +338,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
 
       return { data: params.data };
     },
-
     updateMany: (resourceId, params) => {
       throw new Error('updateMany is not implemented yet');
     },
@@ -321,7 +345,6 @@ const dataProvider = ({ sparqlEndpoint, httpClient, resources, ontologies, jsonC
       await httpClient(params.id, {
         method: 'DELETE'
       });
-
       return { data: { id: params.id } };
     },
     deleteMany: (resourceId, params) => {

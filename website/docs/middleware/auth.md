@@ -57,7 +57,9 @@ module.exports = {
       email: authData.email,
       name: authData.given_name,
       familyName: authData.family_name
-    })
+    }),
+    // If false, user account must be created manually with a foaf:email field. True by default.
+    registrationAllowed: true
   }
 };
 ```

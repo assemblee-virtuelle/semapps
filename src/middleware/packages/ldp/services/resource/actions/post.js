@@ -85,7 +85,7 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      const { disassembly } = {
+      const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
         ...ctx.params
       };
@@ -101,8 +101,12 @@ module.exports = {
         );
       }
 
-      if (!resource['@context']) {
-        throw new MoleculerError(`No @context is provided for the resource ${resource['@id']}`, 400, 'BAD_REQUEST');
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
       }
 
       if (fileStream) {
@@ -119,7 +123,7 @@ module.exports = {
         resource['semapps:fileName'] = filename;
 
         try {
-          fileStream.pipe(fs.createWriteStream(resource['semapps:localPath']));
+          await this.streamToFile(fileStream, resource['semapps:localPath']);
         } catch (e) {
           throw new MoleculerError(e, 500, 'Server Error');
         }
@@ -130,16 +134,26 @@ module.exports = {
       }
 
       await ctx.call('triplestore.insert', {
-        resource,
-        contentType,
+        resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resource['@id']}>`,
         webId
       });
 
-      await ctx.call('ldp.container.attach', {
-        resourceUri: resource['@id'],
-        containerUri,
-        webId
-      });
+      try {
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType,
+          webId
+        });
+      } catch (e) {
+        // If there was an error inserting the resource, detach it from the container
+        await ctx.call('triplestore.update', {
+          query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resource['@id']}> }`,
+          webId
+        });
+
+        // Re-throw the error so that it's displayed by the API function
+        throw e;
+      }
 
       const newData = await ctx.call(
         'ldp.resource.get',
@@ -157,6 +171,11 @@ module.exports = {
         resourceUri: resource['@id'],
         newData,
         webId
+      });
+
+      ctx.emit('ldp.container.attached', {
+        containerUri,
+        resourceUri: resource['@id']
       });
 
       return resource['@id'];

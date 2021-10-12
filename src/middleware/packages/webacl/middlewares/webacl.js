@@ -8,7 +8,8 @@ const handledActions = [
   'ldp.resource.delete',
   'ldp.resource.post',
   'ldp.container.create',
-  'activitypub.collection.create'
+  'activitypub.collection.create',
+  'webid.create'
 ];
 
 // TODO add different permissions depending on the webId ?
@@ -24,46 +25,31 @@ const addRightsToNewCollection = async (ctx, collectionUri, webId) => {
   });
 };
 
-const addRightsToNewResource = async (ctx, resourceUri, webId) => {
-  let newRights = {};
-
-  switch (webId) {
-    case 'anon':
-      newRights.anon = {
-        read: true,
-        write: true
-      };
-      break;
-
-    case 'system':
-      newRights.anon = {
-        read: true
-      };
-      newRights.anyUser = {
-        read: true,
-        write: true
-      };
-      break;
-
-    default:
-      newRights.anon = {
-        read: true
-      };
-      newRights.anyUser = {
-        read: true
-      };
-      newRights.user = {
-        uri: webId,
-        read: true,
-        write: true,
-        control: true
-      };
-      break;
-  }
+const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => {
+  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: containerUri });
+  const newRights =
+    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId) : newResourcesPermissions;
 
   await ctx.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri,
+    newRights
+  });
+};
+
+const addRightsToNewUser = async (ctx, userUri) => {
+  // Manually add the permissions for the user resource now that we have its webId
+  // First delete the default permissions added by the middleware when we called ldp.resource.post
+  await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
+
+  // Find the permissions to set from the users container
+  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { uri: userUri });
+  const newRights =
+    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
+
+  await ctx.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: userUri,
     newRights
   });
 };
@@ -184,7 +170,7 @@ const WebAclMiddleware = {
               // Ensure the action will use the same slug (this is necessary if the slug was generated automatically)
               ctx.params.slug = getSlugFromUri(newResourceUri);
               // We must add the permissions before inserting the resource
-              await addRightsToNewResource(ctx, newResourceUri, webId);
+              await addRightsToNewResource(ctx, ctx.params.containerUri, newResourceUri, webId);
               break;
 
             case 'activitypub.collection.create':
@@ -233,6 +219,10 @@ const WebAclMiddleware = {
 
             case 'ldp.container.create':
               await addRightsToNewContainer(ctx, ctx.params.containerUri, webId);
+              break;
+
+            case 'webid.create':
+              await addRightsToNewUser(ctx, actionReturnValue);
               break;
           }
 

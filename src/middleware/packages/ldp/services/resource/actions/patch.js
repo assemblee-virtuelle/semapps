@@ -66,8 +66,8 @@ module.exports = {
         webId
       });
 
-      // Adds a default context, if it is missing
-      if (contentType === MIME_TYPES.JSON) {
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
         resource = {
           '@context': jsonContext,
           ...resource
@@ -91,9 +91,11 @@ module.exports = {
       const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
 
       // We want to remove in old triples only the triples for which we have provided a new literal value
-      const literalNewTriples = newTriples.filter(t => t.object.termType === 'Literal');
+      const literalTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Literal');
       const triplesToRemove = oldTriples.filter(ot =>
-        literalNewTriples.some(nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value)
+        literalTriplesToAdd.some(
+          nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
+        )
       );
 
       // The exact same data have been posted, skip

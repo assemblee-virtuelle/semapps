@@ -1,4 +1,3 @@
-const jsonld = require('jsonld');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const {
   getPrefixRdf,
@@ -86,7 +85,8 @@ module.exports = {
                 accept,
                 queryDepth,
                 dereference,
-                jsonContext
+                jsonContext,
+                forceSemantic: true
               });
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
@@ -106,14 +106,14 @@ module.exports = {
           }
         }
 
-        result = await jsonld.compact(
-          {
+        result = await ctx.call('jsonld.compact', {
+          input: {
             '@id': containerUri,
             '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
             'http://www.w3.org/ns/ldp#contains': resources
           },
-          jsonContext || getPrefixJSON(this.settings.ontologies)
-        );
+          context: jsonContext || getPrefixJSON(this.settings.ontologies)
+        });
 
         // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
         const ldpContainsKey = Object.keys(result).find(key =>

@@ -27,19 +27,21 @@ const LoginMenu = forwardRef(({ onClick }, ref) => (
   <MenuItemLink ref={ref} to="/login" primaryText="Se connecter" onClick={onClick} />
 ));
 
+const SignupMenu = forwardRef(({ onClick }, ref) => (
+  <MenuItemLink ref={ref} to="/login?signup=true" primaryText="Créer un compte" onClick={onClick} />
+));
+
 const UserMenu = ({ logout, ...otherProps }) => {
   const { identity } = useGetIdentity();
   return (
     <RaUserMenu {...otherProps}>
-      {identity && identity.id !== '' ? (
-        [
-          <ViewProfileMenu webId={identity.id} key="view" />,
-          <EditProfileMenu webId={identity.id} key="edit" />,
-          React.cloneElement(logout, { key: 'logout' })
-        ]
-      ) : (
-        <LoginMenu />
-      )}
+      {identity && identity.id !== ''
+        ? [
+            <ViewProfileMenu webId={identity.id} key="view" />,
+            <EditProfileMenu webId={identity.id} key="edit" />,
+            React.cloneElement(logout, { key: 'logout' })
+          ]
+        : [<SignupMenu key="signup" />, <LoginMenu key="login" />]}
     </RaUserMenu>
   );
 };

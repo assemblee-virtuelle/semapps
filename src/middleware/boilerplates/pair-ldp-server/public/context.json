@@ -2,6 +2,7 @@
   "@context": {
     "@vocab": "_:",
     "pair": "http://virtual-assembly.org/ontologies/pair#",
+    "og": "http://virtual-assembly.org/ontologies/organigraph#",
 
     "as": "https://www.w3.org/ns/activitystreams#",
     "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
@@ -14,10 +15,19 @@
     "foaf": "http://xmlns.com/foaf/0.1/",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "semapps": "http://semapps.org/ns/core#",
-    "oasis": "http://cooperative-oasis.org/ns/core#",
 
     "id": "@id",
     "type": "@type",
+
+    "dc:created": {
+      "@type": "xsd:dateTime"
+    },
+    "dc:modified": {
+      "@type": "xsd:dateTime"
+    },
+    "dc:creator" : {
+      "@type" : "@id"
+    },
 
     "pair:about": {
       "@type": "@id"
@@ -331,6 +341,13 @@
     },
     "pair:dueDate": {
       "@type": "xsd:dateTime"
+    },
+
+    "og:leads": {
+      "@type": "@id"
+    },
+    "og:leadBy": {
+      "@type": "@id"
     },
 
     "Accept": "as:Accept",
@@ -711,8 +728,6 @@
     "cipherAlgorithm": "sec:cipherAlgorithm",
     "cipherData": "sec:cipherData",
     "cipherKey": "sec:cipherKey",
-    "created": {"@id": "dc:created", "@type": "xsd:dateTime"},
-    "creator": {"@id": "dc:creator", "@type": "@id"},
     "digestAlgorithm": "sec:digestAlgorithm",
     "digestValue": "sec:digestValue",
     "domain": "sec:domain",

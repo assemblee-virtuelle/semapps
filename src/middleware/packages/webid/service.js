@@ -24,14 +24,15 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
-      if (!email) {
-        throw new Error('The email field is required for webId profile creation');
-      }
+      // if (!email) {
+      //   throw new Error('The email field is required for webId profile creation');
+      // }
 
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
       }
 
+      // Create profile with system webId
       const webId = await ctx.call('ldp.resource.post', {
         resource: {
           '@context': {
@@ -50,33 +51,11 @@ const WebIdService = {
         webId: 'system'
       });
 
-      // Manually add the permissions for the user resource now that we have the webId
-      // First delete the default permissions added by the middleware when we called ldp.resource.post
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: webId }, { meta: { webId: 'system' } });
-      await ctx.call('webacl.resource.addRights', {
-        webId: 'system',
-        resourceUri: webId,
-        newRights: {
-          user: {
-            uri: webId,
-            read: true,
-            write: true,
-            control: true
-          },
-          anon: {
-            read: true
-          },
-          anyUser: {
-            read: true
-          }
-        }
-      });
-
       let newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
         accept: MIME_TYPES.JSON,
         jsonContext: this.settings.context,
-        webId
+        webId: 'system'
       });
 
       ctx.emit('webid.created', newPerson);
@@ -97,11 +76,17 @@ const WebIdService = {
       }
     },
     async edit(ctx) {
-      let { userId, ...body } = ctx.params;
+      let { userId, ...profileData } = ctx.params;
       const webId = await this.getWebId(ctx);
-      body['@id'] = webId;
       return await ctx.call('ldp.resource.patch', {
-        resource: body,
+        resource: {
+          '@context': {
+            '@vocab': 'http://xmlns.com/foaf/0.1/'
+          },
+          '@type': 'Person',
+          '@id': webId,
+          ...profileData
+        },
         webId,
         contentType: MIME_TYPES.JSON,
         accept: MIME_TYPES.JSON
@@ -155,7 +140,7 @@ const WebIdService = {
         return ctx.meta.webId || ctx.meta.tokenPayload.webId;
       } else {
         throw new Error(
-          'webid.getWebId have to be call whith ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
+          'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
         );
       }
     }

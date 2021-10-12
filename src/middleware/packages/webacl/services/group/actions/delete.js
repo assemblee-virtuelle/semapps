@@ -3,8 +3,6 @@ const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 const { removeAgentGroupOrAgentFromAuthorizations, sanitizeSPARQL } = require('../../../utils');
 
-removeAgentGroupOrAgentFromAuthorizations;
-
 module.exports = {
   api: async function api(ctx) {
     await ctx.call('webacl.group.delete', {

@@ -1,11 +1,13 @@
 module.exports = {
   visibility: 'public',
   params: {
-    containerUri: { type: 'string' }
+    containerUri: { type: 'string' },
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
+    let { containerUri, webId } = ctx.params;
     // Matches container with or without trailing slash
-    const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
+    containerUri = containerUri.replace(/\/+$/, '');
     return await ctx.call('triplestore.update', {
       query: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#> 
@@ -19,7 +21,8 @@ module.exports = {
           ?container ldp:contains ?s1 .
           OPTIONAL { ?s1 ?p1 ?o1 . } 
         } 
-      `
+      `,
+      webId
     });
   }
 };

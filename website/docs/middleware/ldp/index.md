@@ -18,6 +18,9 @@ This package allows you to setup LDP direct containers in which LDP resources ca
 - [LdpContainerService](container.md)
 - LdpCacheCleanerService
 
+## Mixins
+- [DocumentTaggerMixin]
+
 ## Install
 
 ```bash
@@ -73,7 +76,8 @@ module.exports = {
 | `accept` | `String` | `text/turtle` | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
 | `jsonContext` | `[Any]` |  | JSON context to use to format results |
 | `dereference`| `[Array]` | `[]` | Properties to dereference, prefixed with their ontology. You can define sub-predicates separated by `/` |
-| `queryDepth` | `Integer` | 0 | Depth of blank nodes to dereference |
+| `queryDepth` | `Integer` | 0 | Depth of blank nodes to dereference (Deprecated. Will be removed in a future minor release.) |
+| `newResourcesPermissions` | `Object` or `Function` |  | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources) |
 
 ## API routes
 

@@ -1,20 +1,20 @@
-const urlJoin = require('url-join');
+const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
   params: {
     uri: { type: 'string' }
   },
-  cache: true,
   async handler(ctx) {
     const { uri } = ctx.params;
-    const options =
-      this.settings.containers.find(
-        container =>
-          typeof container !== 'string' &&
-          container.path !== '/' &&
-          uri.startsWith(urlJoin(this.settings.baseUrl, container.path))
-      ) || {};
-    return { ...this.settings.defaultOptions, ...options };
+
+    const containerOptions =
+      // Try to find a matching container
+      this.settings.containers.find(container => this.getContainerUri(container) === uri) ||
+      // If no container was found, assume the URI passed is a resource
+      this.settings.containers.find(container => this.getContainerUri(container) === getContainerFromUri(uri)) ||
+      {};
+
+    return { ...this.settings.defaultOptions, ...containerOptions };
   }
 };

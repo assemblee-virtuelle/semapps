@@ -4,6 +4,7 @@ const setRightsAction = require('./actions/setRights');
 const addRightsAction = require('./actions/addRights');
 const hasRightsAction = require('./actions/hasRights');
 const deleteAllRightsAction = require('./actions/deleteAllRights');
+const removeRightsAction = require('./actions/removeRights');
 const { MoleculerError } = require('moleculer').Errors;
 const {
   getAuthorizationNode,
@@ -17,10 +18,7 @@ const {
   ACL_NS
 } = require('../../utils');
 
-const filterAclsOnlyAgent = acl => {
-  if (agentPredicates.includes(acl.p.value)) return true;
-  return false;
-};
+const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
 
 module.exports = {
   name: 'webacl.resource',
@@ -28,9 +26,10 @@ module.exports = {
     baseUrl: null,
     graphName: null
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore', 'jsonld'],
   actions: {
     deleteAllRights: deleteAllRightsAction.action,
+    removeRights: removeRightsAction.action,
     // Actions accessible through the API
     api_hasRights: hasRightsAction.api,
     hasRights: hasRightsAction.action,
@@ -73,7 +72,6 @@ module.exports = {
         return false;
       } else return true;
     },
-
     async getExistingPerms(ctx, resourceUri, baseUrl, graphName, isContainer) {
       let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
 
@@ -97,7 +95,6 @@ module.exports = {
           return { auth: a.auth.value, p: a.p.value, o: a.o.value };
         });
     },
-
     compileAuthorizationNodesMap(nodes) {
       let result = {};
       for (const node of nodes) {
@@ -105,7 +102,6 @@ module.exports = {
       }
       return result;
     },
-
     generateNewAuthNode(auth) {
       let split = auth.split('#');
       let resUrl = split[0].replace('/_acl', '');

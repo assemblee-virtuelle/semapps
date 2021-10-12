@@ -41,11 +41,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const AvatarField = ({ record, label, image, fallback, variant, labelColor, classes, children }) => {
+const AvatarField = ({ record, label, defaultLabel, image, fallback, variant, labelColor, classes, children }) => {
   classes = useStyles(classes);
   if (!record) return null;
 
-  const computedLabel = typeof label === 'function' ? label(record) : record[label];
+  const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
   const computedImage = typeof image === 'function' ? image(record) : record[image];
   const computedFallback = typeof fallback === 'function' ? fallback(record) : fallback;
 

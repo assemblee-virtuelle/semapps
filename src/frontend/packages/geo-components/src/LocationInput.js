@@ -48,7 +48,7 @@ const LocationInput = ({
     input: { value, onChange, onBlur, onFocus },
     isRequired,
     meta: { error, submitError, touched }
-  } = useInput({ resource, source });
+  } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
     () =>

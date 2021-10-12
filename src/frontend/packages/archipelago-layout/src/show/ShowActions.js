@@ -1,5 +1,6 @@
 import React from 'react';
-import { TopToolbar, EditButton, ListButton } from 'react-admin';
+import { EditButton, ListButton } from 'react-admin';
+import TopToolbar from '../layout/DefaultLayout/TopToolbar';
 
 const ShowActions = ({ basePath, className, data, hasList, hasEdit, ...otherProps }) => (
   <TopToolbar className={className} {...otherProps}>

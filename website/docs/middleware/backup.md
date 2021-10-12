@@ -35,7 +35,7 @@ ssh-keyscan REMOTE_SERVER_DOMAIN_NAME >> ~/.ssh/known_hosts
 ## Usage
 
 ```js
-const { BackupService } = require('@semapps/backup');
+const BackupService = require('@semapps/backup');
 const path = require('path');
 
 module.exports = {

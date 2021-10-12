@@ -32,7 +32,8 @@ module.exports = {
           FILTER regex(str(?uri), "^${preferredUri}")
         }
       `,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: 'system'
     });
 
     let counter = 0;

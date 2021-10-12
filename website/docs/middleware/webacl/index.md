@@ -18,6 +18,10 @@ This package allows you to handle rights through the [WebACL standard](https://g
 - [WebAclGroupService](group.md)
 - WebAclCacheCleanerService
 
+## Bots
+- [AuthorizerBot](authorizer.md)
+- [GroupsManagerBot](groups-manager.md)
+
 ## Install
 
 ```bash
@@ -32,7 +36,8 @@ const { WebAclService } = require('@semapps/webacl');
 module.exports = {
   mixins: [WebAclService],
   settings: {
-    baseUrl: 'http://localhost:3000/'
+    baseUrl: 'http://localhost:3000/',
+    superAdmins: ['http://localhost:3000/users/myself']
   }
 };
 ```
@@ -81,6 +86,27 @@ See the [Moleculer caching documentation](https://moleculer.services/docs/0.14/c
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `baseUrl`|`String` | **required**| Base URL of the LDP server |
+| `superAdmins`|`Array` | | Array of users' URIs you want to give superadmins rights (all permissions on all resources). This only works if you have a root LDP container. |
+
+
+## Default permissions for new resources
+
+By default, new resources are created with these rights:
+
+- If the resource is created by an anonymous user:
+  - `acl:Read` and `acl:Write` permissions are granted to all users
+- If the resource is created by an authenticated user:
+  - `acl:Read` permission is granted to anonymous users
+  - `acl:Write` and `acl:Control` permissions are granted to the creator
+- If the resource is created by the system (direct calls from other services):
+  - `acl:Read` permission is granted to anonymous users
+  - `acl:Write` permission is granted to authenticated users
+
+If you wish to change these options, you can set the `newResourcesPermissions` parameter in [LdpService's `defaultContainerOptions`](../ldp/index.md#settings), or to a particular container.
+
+This `newResourcesPermissions` parameter can be:
+- An object in the form expected by the `additionalRights` parameters of the [`webacl.resource.addRights`](resource.md#webaclresourceaddrights) action (with keys "anon", "anyUser", "user", "group")
+- A function which receives the WebID of the creator (or "anon" if the user is not authenticated, or "system") and returns an object in the same shape
 
 
 ## General notes

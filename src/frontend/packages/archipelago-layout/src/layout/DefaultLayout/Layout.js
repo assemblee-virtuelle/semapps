@@ -21,7 +21,6 @@ const Layout = ({ appBar, menu, userMenu, children, ...otherProps }) => {
   const classes = useStyles();
   return (
     <RaLayout {...otherProps} classes={{ appFrame: classes.appFrame }} appBar={appBar} menu={menu}>
-      <Typography variant="h4" color="primary" className={classes.title} id="react-admin-title" component="h1" />
       {children}
     </RaLayout>
   );
