@@ -78,6 +78,67 @@ const dataProvider = ({
     return resource;
   };
 
+  const ExecuteSparql = async (resourceId,params)=>{
+    const sparqlQuery = buildSparqlQuery({
+      types: resources[resourceId].types,
+      params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter} },
+      dereference: resources[resourceId].dereference,
+      ontologies
+    });
+    console.log('sparqlQuery',sparqlQuery);
+
+    const { json } = await httpClient(sparqlEndpoint, {
+      method: 'POST',
+      body: sparqlQuery
+    });
+
+    const frame = {
+      '@context': jsonContext || buildJsonContext(ontologies),
+      '@type': resources[resourceId].types,
+      // Embed only what we explicitly asked to dereference
+      // Otherwise we may have same-type resources embedded in other resources
+      '@embed': '@never',
+      ...getEmbedFrame(resources[resourceId].dereference)
+    };
+
+    // omitGraph option force results to be in a @graph, even if we have a single result
+    const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
+
+    if (Object.keys(compactJson).length === 1) {
+      // If we have only the context, it means there is no match
+      return { data: [], total: 0 };
+    } else {
+      // Add id in addition to @id, as this is what React-Admin expects
+      let returnData = compactJson['@graph'].map(item => {
+        item.id = item.id || item['@id'];
+        return item;
+      });
+
+      if (params.sort) {
+        returnData = returnData.sort((a, b) => {
+          if (a[params.sort.field] && b[params.sort.field]) {
+            if (params.sort.order === 'ASC') {
+              return a[params.sort.field].localeCompare(b[params.sort.field]);
+            } else {
+              return b[params.sort.field].localeCompare(a[params.sort.field]);
+            }
+          } else {
+            return true;
+          }
+        });
+      }
+      if (params.pagination) {
+        returnData = returnData.slice(
+          (params.pagination.page - 1) * params.pagination.perPage,
+          params.pagination.page * params.pagination.perPage
+        );
+      }
+
+      return { data: returnData, total: compactJson['@graph'].length };
+    }
+  }
+
+
   return {
     getList: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
@@ -155,63 +216,7 @@ const dataProvider = ({
           return { data: returnData, total: json.totalItems };
         }
       } else {
-        const sparqlQuery = buildSparqlQuery({
-          types: resources[resourceId].types,
-          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
-          dereference: resources[resourceId].dereference,
-          ontologies
-        });
-
-        const { json } = await httpClient(sparqlEndpoint, {
-          method: 'POST',
-          body: sparqlQuery
-        });
-
-        const frame = {
-          '@context': jsonContext || buildJsonContext(ontologies),
-          '@type': resources[resourceId].types,
-          // Embed only what we explicitly asked to dereference
-          // Otherwise we may have same-type resources embedded in other resources
-          '@embed': '@never',
-          ...getEmbedFrame(resources[resourceId].dereference)
-        };
-
-        // omitGraph option force results to be in a @graph, even if we have a single result
-        const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
-
-        if (Object.keys(compactJson).length === 1) {
-          // If we have only the context, it means there is no match
-          return { data: [], total: 0 };
-        } else {
-          // Add id in addition to @id, as this is what React-Admin expects
-          let returnData = compactJson['@graph'].map(item => {
-            item.id = item.id || item['@id'];
-            return item;
-          });
-
-          if (params.sort) {
-            returnData = returnData.sort((a, b) => {
-              if (a[params.sort.field] && b[params.sort.field]) {
-                if (params.sort.order === 'ASC') {
-                  return a[params.sort.field].localeCompare(b[params.sort.field]);
-                } else {
-                  return b[params.sort.field].localeCompare(a[params.sort.field]);
-                }
-              } else {
-                return true;
-              }
-            });
-          }
-          if (params.pagination) {
-            returnData = returnData.slice(
-              (params.pagination.page - 1) * params.pagination.perPage,
-              params.pagination.page * params.pagination.perPage
-            );
-          }
-
-          return { data: returnData, total: compactJson['@graph'].length };
-        }
-
+        return await ExecuteSparql(resourceId,params)
         // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
         // TODO compare the performance of the two methods, and eventually allow both of them
         //
@@ -290,8 +295,11 @@ const dataProvider = ({
 
       return { data: returnData };
     },
-    getManyReference: (resourceId, params) => {
-      throw new Error('getManyReference is not implemented yet');
+    getManyReference: async (resourceId, params) => {
+      let manyReferenceFilter = {};
+      manyReferenceFilter[params.target]=params.id;
+      params.filter = manyReferenceFilter;
+      return await ExecuteSparql(resourceId,params)
     },
     create: async (resourceId, params) => {
       if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
