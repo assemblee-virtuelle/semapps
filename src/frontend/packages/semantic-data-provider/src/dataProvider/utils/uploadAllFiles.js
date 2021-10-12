@@ -1,4 +1,4 @@
-import createSlug from "speakingurl";
+import createSlug from 'speakingurl';
 
 export const getSlugWithExtension = fileName => {
   let fileExtension = '';
@@ -36,7 +36,7 @@ const uploadFile = async (rawFile, config) => {
  */
 const uploadAllFiles = async (record, config) => {
   if (!config.uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
-  
+
   for (let property in record) {
     if (record.hasOwnProperty(property)) {
       if (Array.isArray(record[property])) {

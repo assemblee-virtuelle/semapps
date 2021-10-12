@@ -1,5 +1,5 @@
 import { buildDereferenceQuery } from './dereference';
-import getRdfPrefixes from "./getRdfPrefixes";
+import getRdfPrefixes from './getRdfPrefixes';
 
 const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }) => {
   let whereQuery = '';

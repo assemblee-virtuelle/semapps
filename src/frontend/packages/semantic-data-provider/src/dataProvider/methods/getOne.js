@@ -1,4 +1,4 @@
-import jsonld from "jsonld";
+import jsonld from 'jsonld';
 
 const getOneMethod = config => async (resourceId, params) => {
   const { resources, httpClient, jsonContext } = config;
@@ -14,7 +14,7 @@ const getOneMethod = config => async (resourceId, params) => {
 
   // We compact only if the context is different between the frontend and the middleware
   // TODO deep compare if the context is an object
-  if( data['@context'] !== jsonContext ) {
+  if (data['@context'] !== jsonContext) {
     data = await jsonld.compact(data, jsonContext);
   }
 

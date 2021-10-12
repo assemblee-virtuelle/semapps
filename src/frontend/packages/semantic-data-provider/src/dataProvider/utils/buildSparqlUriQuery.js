@@ -1,4 +1,4 @@
-import getRdfPrefixes from "./getRdfPrefixes";
+import getRdfPrefixes from './getRdfPrefixes';
 
 const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) => {
   let whereQuery = '';

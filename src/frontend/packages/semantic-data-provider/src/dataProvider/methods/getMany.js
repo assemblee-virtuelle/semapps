@@ -1,4 +1,4 @@
-import getOne from "./getOne";
+import getOne from './getOne';
 
 const getManyMethod = config => async (resourceId, params) => {
   const { returnFailedResources } = config;

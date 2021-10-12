@@ -1,4 +1,4 @@
-import uploadAllFiles from "../utils/uploadAllFiles";
+import uploadAllFiles from '../utils/uploadAllFiles';
 
 const updateMethod = config => async (resourceId, params) => {
   const { httpClient, jsonContext } = config;

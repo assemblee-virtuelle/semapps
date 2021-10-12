@@ -1,5 +1,5 @@
-import uploadAllFiles from "../utils/uploadAllFiles";
-import getOne from "./getOne";
+import uploadAllFiles from '../utils/uploadAllFiles';
+import getOne from './getOne';
 
 const createMethod = config => async (resourceId, params) => {
   const { resources, httpClient, jsonContext } = config;

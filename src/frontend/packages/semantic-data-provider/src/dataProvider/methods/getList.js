@@ -1,6 +1,6 @@
-import buildSparqlQuery from "../utils/buildSparqlQuery";
-import getEmbedFrame from "../utils/getEmbedFrame";
-import jsonld from "jsonld";
+import buildSparqlQuery from '../utils/buildSparqlQuery';
+import getEmbedFrame from '../utils/getEmbedFrame';
+import jsonld from 'jsonld';
 
 export const isType = (type, resource) => {
   const resourceType = resource.type || resource['@type'];
@@ -8,13 +8,7 @@ export const isType = (type, resource) => {
 };
 
 const getListMethod = config => async (resourceId, params) => {
-  let {
-    sparqlEndpoint,
-    httpClient,
-    resources,
-    ontologies,
-    jsonContext
-  } = config;
+  let { sparqlEndpoint, httpClient, resources, ontologies, jsonContext } = config;
 
   if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
 
