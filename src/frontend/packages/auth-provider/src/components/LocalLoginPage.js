@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { LoginForm, Notification, createMuiTheme, useGetIdentity } from 'react-admin';
-import { Card, Avatar, makeStyles, ThemeProvider, Typography } from '@material-ui/core';
+import { LoginForm, Notification, useGetIdentity } from 'react-admin';
+import { Card, Avatar, makeStyles, createMuiTheme, ThemeProvider, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
