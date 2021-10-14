@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles, Box, CircularProgress } from '@material-ui/core';
-import { ImageField as RaImageField } from 'react-admin';
 
 const useStyles = makeStyles(theme => ({
   loader: {
@@ -15,6 +14,10 @@ const useStyles = makeStyles(theme => ({
     margin: '0.5rem',
     [theme.breakpoints.down('sm')]: {
       margin: 0
+    },
+    '@media print': {
+      maxWidth: 250,
+      height: 'auto'
     }
   }
 }));
