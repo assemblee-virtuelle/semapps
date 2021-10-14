@@ -1,9 +1,9 @@
 {
   "name": "dms",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "private": true,
   "dependencies": {
-    "@semapps/react-admin": "0.3.8",
+    "@semapps/react-admin": "0.3.9",
     "history": "4.10.1",
     "jwt-decode": "^2.2.0",
     "ra-input-markdown": "^1.1.5",
