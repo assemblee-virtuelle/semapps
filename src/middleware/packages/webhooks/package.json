@@ -6,8 +6,8 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/ldp": "0.3.14",
-    "moleculer": "^0.14.3",
-    "moleculer-db": "^0.8.7",
+    "moleculer": "^0.14.17",
+    "moleculer-db": "^0.8.15",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

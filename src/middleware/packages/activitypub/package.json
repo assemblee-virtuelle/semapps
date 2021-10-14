@@ -10,9 +10,9 @@
     "@semapps/mime-types": "0.3.14",
     "@semapps/triplestore": "0.3.14",
     "bull-board": "^0.7.0",
-    "moleculer": "^0.14.3",
+    "moleculer": "^0.14.17",
     "moleculer-bull": "^0.2.5",
-    "moleculer-db": "^0.8.7",
+    "moleculer-db": "^0.8.15",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
