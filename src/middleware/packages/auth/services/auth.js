@@ -1,6 +1,6 @@
-const path = require('path');
 const urlJoin = require('url-join');
 const AuthAccountService = require('./account');
+const AuthJWTService = require('./jwt');
 const OidcConnector = require('../OidcConnector');
 const CasConnector = require('../CasConnector');
 const LocalConnector = require('../LocalConnector');
@@ -26,8 +26,9 @@ module.exports = {
   async created() {
     const { baseUrl, accountsContainer, jwtPath, selectProfileData, oidc, cas } = this.settings;
 
-    const privateKeyPath = path.resolve(jwtPath, 'jwtRS256.key');
-    const publicKeyPath = path.resolve(jwtPath, 'jwtRS256.key.pub');
+    await this.broker.createService(AuthJWTService, {
+      settings: { jwtPath }
+    });
 
     if (oidc.issuer) {
       this.connector = new OidcConnector({
@@ -35,16 +36,12 @@ module.exports = {
         clientId: oidc.clientId,
         clientSecret: oidc.clientSecret,
         redirectUri: urlJoin(baseUrl, 'auth'),
-        privateKeyPath,
-        publicKeyPath,
         selectProfileData,
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else if (cas.url) {
       this.connector = new CasConnector({
         casUrl: cas.url,
-        privateKeyPath,
-        publicKeyPath,
         selectProfileData,
         findOrCreateProfile: this.findOrCreateProfile
       });
@@ -55,10 +52,7 @@ module.exports = {
         }
       });
 
-      this.connector = new LocalConnector({
-        privateKeyPath,
-        publicKeyPath
-      });
+      this.connector = new LocalConnector();
     }
   },
   async started() {

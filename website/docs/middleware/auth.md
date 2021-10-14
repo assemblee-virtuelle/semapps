@@ -2,7 +2,7 @@
 title: Auth
 ---
 
-This service allows you to authentify users with an OIDC or CAS server.
+This service allows you to authenticate users with an OIDC or CAS server.
 
 ## Features
 
@@ -19,15 +19,6 @@ This service allows you to authentify users with an OIDC or CAS server.
 
 ```bash
 $ npm install @semapps/auth --save
-```
-
-## Generating JWT token
-
-First generate a public and private keys for the JWT token that will be automatically generated.
-
-```bash
-ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key -P ""
-openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 ```
 
 ## Usage
@@ -50,7 +41,7 @@ module.exports = {
     // To set if you want to use a CAS server
     cas: {
       url: "https://my-cas-server.com/cas",
-    }
+    },
     // Return data for the creation of the webId profile (FOAF Person).
     // Available fields: email (required), name, familyName, nick, homepage
     selectProfileData: authData => ({
