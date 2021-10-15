@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 const AuthAccountService = require('./account');
 const AuthJWTService = require('./jwt');
 const OidcConnector = require('../OidcConnector');
@@ -134,7 +134,7 @@ module.exports = {
           name: userData['foaf:name'],
           familyName: userData['foaf:familyName']
         }
-      })
+      });
     }
   }
 };
