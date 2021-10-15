@@ -104,6 +104,21 @@ If you wish to logout the user remotely (on the SSO), you can do:
 
 http://localhost:3000/auth/logout?global=true&redirectUrl...
 
+## Actions 
+
+The following service actions are available:
+
+### `impersonate`
+
+Generate a JWT token for a given user.
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `webId` | `String`| **required** | URI of the user to impersonate |
+
+##### Return
+A JWT token you can use in your app.
 
 ## Events
 

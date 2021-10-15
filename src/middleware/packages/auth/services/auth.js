@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const { MIME_TYPES } = require("@semapps/mime-types");
 const AuthAccountService = require('./account');
 const AuthJWTService = require('./jwt');
 const OidcConnector = require('../OidcConnector');
@@ -118,6 +119,22 @@ module.exports = {
     async authorize(ctx) {
       const { route, req, res } = ctx.params;
       return await this.connector.authorize(ctx, route, req, res);
+    },
+    async impersonate(ctx) {
+      const { webId } = ctx.params;
+      const userData = await ctx.call('ldp.resource.get', {
+        resourceUri: webId,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+      return await ctx.call('auth.jwt.generateToken', {
+        payload: {
+          webId,
+          email: userData['foaf:email'],
+          name: userData['foaf:name'],
+          familyName: userData['foaf:familyName']
+        }
+      })
     }
   }
 };
