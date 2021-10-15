@@ -4,7 +4,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 class LocalConnector extends Connector {
   constructor(settings) {
-    super('local', settings);
+    super('local', settings || {});
   }
   async initialize() {
     this.localStrategy = new Strategy(
