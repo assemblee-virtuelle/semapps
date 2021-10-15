@@ -25,12 +25,23 @@ module.exports = {
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { baseUrl, accountsContainer, jwtPath, selectProfileData, oidc, cas } = this.settings;
+    const { baseUrl, accountsContainer, jwtPath, oidc, cas } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
     });
 
+    if (!oidc.issuer && !cas.url) {
+      await this.broker.createService(AuthAccountService, {
+        settings: {
+          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
+        }
+      });
+    }
+  },
+  async started() {
+    const { baseUrl, selectProfileData, oidc, cas } = this.settings;
+    
     if (oidc.issuer) {
       this.connector = new OidcConnector({
         issuer: oidc.issuer,
@@ -47,16 +58,9 @@ module.exports = {
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else {
-      await this.broker.createService(AuthAccountService, {
-        settings: {
-          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
-        }
-      });
-
       this.connector = new LocalConnector();
     }
-  },
-  async started() {
+
     await this.connector.initialize();
 
     await this.broker.call('api.addRoute', {
