@@ -65,7 +65,7 @@ const theme = createMuiTheme({
     MuiCard: {
       root: {
         '@media print': {
-          boxShadow: 'none !important',
+          boxShadow: 'none !important'
         }
       }
     }
