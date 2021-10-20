@@ -1,4 +1,4 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 
 module.exports = {
   visibility: 'public',
