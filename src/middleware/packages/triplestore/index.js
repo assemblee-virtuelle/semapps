@@ -1,4 +1,5 @@
 const { SparqlJsonParser } = require('sparqljson-parse');
+const fetch = require("node-fetch");
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
 const dropAll = require('./actions/dropAll');
@@ -17,8 +18,6 @@ const TripleStoreService = {
   dependencies: ['jsonld'],
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
-    this.Authorization =
-      'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64');
   },
   actions: {
     insert,
@@ -28,15 +27,27 @@ const TripleStoreService = {
     dropAll
   },
   methods: {
-    async handleError(url, response) {
-      let text = await response.text();
-      if (response.status === 403) throw403(text);
-      else {
+    async fetch(url, { method = "POST", body, headers }) {
+      const response = fetch(url, {
+        method,
+        body,
+        headers: {
+          ...headers,
+          Authorization: 'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64'),
+        }
+      });
+
+      if (response.status === 403) {
+        throw403(text);
+      } else {
+        let text = await response.text();
         console.log(text);
         // the 3 lines below (until the else) can be removed once we switch to jena-fuseki version 4.0.0 or above
         if (response.status === 500 && text.includes('permissions violation')) throw403(text);
         else throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
       }
+
+      return response;
     }
   }
 };

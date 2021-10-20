@@ -1,5 +1,6 @@
-const {MIME_TYPES} = require("@semapps/mime-types");
-const fetch = require("node-fetch");
+const urlJoin = require("url-join");
+const { MIME_TYPES } = require("@semapps/mime-types");
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -18,10 +19,16 @@ module.exports = {
     graphName: {
       type: 'string',
       optional: true
+    },
+    dataset: {
+      type: 'string',
+      optional: true
     }
   },
   async handler(ctx) {
-    const { resource, contentType, webId, graphName } = ctx.params;
+    const { resource, contentType, graphName } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     let rdf;
     if (contentType !== MIME_TYPES.JSON) {
@@ -34,19 +41,14 @@ module.exports = {
         }
       });
     }
-    const url = this.settings.sparqlEndpoint + this.settings.mainDataset + '/update';
-    const response = await fetch(url, {
-      method: 'POST',
+
+    return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
       body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
       headers: {
         'Content-Type': 'application/sparql-update',
-        'X-SemappsUser': webId || ctx.meta.webId || 'anon',
+        'X-SemappsUser': webId,
         Authorization: this.Authorization
       }
     });
-
-    if (!response.ok) {
-      await this.handleError(url, response);
-    }
   }
 };
