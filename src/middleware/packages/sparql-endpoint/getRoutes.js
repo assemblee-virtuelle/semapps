@@ -2,7 +2,7 @@ const { negotiateAccept, parseSparql } = require('@semapps/middlewares');
 
 const addDatasetMiddleware = dataset => (req, res, next) => {
   // If dataset is not set, we will use the default dataset
-  if( dataset ) req.$meta.dataset = dataset;
+  if (dataset) req.$meta.dataset = dataset;
   next();
 };
 
@@ -14,11 +14,11 @@ const commonRouteConfig = {
     urlencoded: false
   },
   onError(req, res, err) {
-    let {type, code, message, data, name} = err;
+    let { type, code, message, data, name } = err;
     res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
       'Content-Type': 'application/json'
     });
-    res.end(JSON.stringify({type, code, message, data, name}));
+    res.end(JSON.stringify({ type, code, message, data, name }));
   }
 };
 

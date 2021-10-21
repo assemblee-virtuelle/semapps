@@ -60,10 +60,9 @@ class LocalConnector extends Connector {
   createAccount(req, res, next) {
     const { username, email, password, ...profileData } = req.$params;
     const ctx = req.$ctx;
-    ctx.call('auth.account.create', { username, email, password })
-      .then(accountData =>
-        this.settings.createProfile({ ...profileData, nick: username }, accountData)
-      )
+    ctx
+      .call('auth.account.create', { username, email, password })
+      .then(accountData => this.settings.createProfile({ ...profileData, nick: username }, accountData))
       .then(webId =>
         ctx.call('ldp.resource.get', {
           resourceUri: webId,

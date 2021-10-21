@@ -10,10 +10,10 @@ module.exports = {
   dependencies: ['ldp.resource', 'ldp.container', 'triplestore'],
   async started() {
     const { containerUri } = this.settings;
-    const exists = await this.broker.call('ldp.container.exist', { containerUri }, { meta: { dataset: 'config' }});
+    const exists = await this.broker.call('ldp.container.exist', { containerUri }, { meta: { dataset: 'config' } });
     if (!exists) {
       console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call('ldp.container.create', { containerUri }, { meta: { dataset: 'config' }});
+      await this.broker.call('ldp.container.create', { containerUri }, { meta: { dataset: 'config' } });
     }
   },
   actions: {
@@ -22,44 +22,52 @@ module.exports = {
       const hashedPassword = await this.hashPassword(password);
 
       // Ensure the username has no space or special characters
-      if( !this.isValidUsername(username) ) {
+      if (!this.isValidUsername(username)) {
         throw new Error('username.invalid');
       }
 
       // Ensure we don't use reservedUsernames
-      if( this.settings.reservedUsernames.includes(username) ) {
+      if (this.settings.reservedUsernames.includes(username)) {
         throw new Error('username.already.exists');
       }
 
       // Ensure email or username doesn't already exist
-      if( await ctx.call('auth.account.usernameExists', { username }) ) {
+      if (await ctx.call('auth.account.usernameExists', { username })) {
         throw new Error('username.already.exists');
       }
-      if( await ctx.call('auth.account.emailExists', { email }) ) {
+      if (await ctx.call('auth.account.emailExists', { email })) {
         throw new Error('email.already.exists');
       }
 
-      const accountUri = await ctx.call('ldp.resource.post', {
-        containerUri: this.settings.containerUri,
-        resource: {
-          '@context': {
-            semapps: 'http://semapps.org/ns/core#'
+      const accountUri = await ctx.call(
+        'ldp.resource.post',
+        {
+          containerUri: this.settings.containerUri,
+          resource: {
+            '@context': {
+              semapps: 'http://semapps.org/ns/core#'
+            },
+            '@type': 'semapps:Account',
+            'semapps:username': username,
+            'semapps:email': email,
+            'semapps:password': hashedPassword,
+            'semapps:webId': webId
           },
-          '@type': 'semapps:Account',
-          'semapps:username': username,
-          'semapps:email': email,
-          'semapps:password': hashedPassword,
-          'semapps:webId': webId
+          contentType: MIME_TYPES.JSON,
+          webId
         },
-        contentType: MIME_TYPES.JSON,
-        webId
-      }, { meta: { dataset: 'config' }});
+        { meta: { dataset: 'config' } }
+      );
 
-      return await ctx.call('ldp.resource.get', {
-        resourceUri: accountUri,
-        accept: MIME_TYPES.JSON,
-        webId
-      }, { meta: { dataset: 'config' }});
+      return await ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: accountUri,
+          accept: MIME_TYPES.JSON,
+          webId
+        },
+        { meta: { dataset: 'config' } }
+      );
     },
     async attachWebId(ctx) {
       const { accountUri, webId } = ctx.params;

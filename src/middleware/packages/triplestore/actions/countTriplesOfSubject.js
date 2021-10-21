@@ -1,4 +1,4 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
