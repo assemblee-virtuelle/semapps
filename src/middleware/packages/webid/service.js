@@ -5,6 +5,8 @@ const WebIdService = {
   name: 'webid',
   settings: {
     usersContainer: null,
+    baseUrl: null, // Required only if podProvider is true
+    podProvider: false,
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
@@ -24,13 +26,17 @@ const WebIdService = {
     async create(ctx) {
       let { email, nick, name, familyName, homepage } = ctx.params;
 
-      // if (!email) {
-      //   throw new Error('The email field is required for webId profile creation');
-      // }
-
       if (!nick && email) {
         nick = email.split('@')[0].toLowerCase();
       }
+
+      const containerUri = this.settings.podProvider
+        ? this.settings.baseUrl + nick
+        : this.settings.usersContainer;
+
+      const slug = this.settings.podProvider
+        ? 'profile'
+        : nick;
 
       // Create profile with system webId
       const webId = await ctx.call('ldp.resource.post', {
@@ -45,8 +51,8 @@ const WebIdService = {
           familyName,
           homepage
         },
-        slug: nick,
-        containerUri: this.settings.usersContainer,
+        slug,
+        containerUri,
         contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
@@ -92,23 +98,23 @@ const WebIdService = {
         accept: MIME_TYPES.JSON
       });
     },
-    async list(ctx) {
-      const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
-      const request = `
-        PREFIX ldp: <http://www.w3.org/ns/ldp#>
-        CONSTRUCT {
-          ?webId ?p ?o
-        }
-        WHERE{
-          <${this.settings.usersContainer}> ldp:contains ?webId .
-          ?webId ?p ?o.
-        }
-      `;
-      return await ctx.call('triplestore.query', {
-        query: request,
-        accept
-      });
-    },
+    // async list(ctx) {
+    //   const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+    //   const request = `
+    //     PREFIX ldp: <http://www.w3.org/ns/ldp#>
+    //     CONSTRUCT {
+    //       ?webId ?p ?o
+    //     }
+    //     WHERE{
+    //       <${this.settings.usersContainer}> ldp:contains ?webId .
+    //       ?webId ?p ?o.
+    //     }
+    //   `;
+    //   return await ctx.call('triplestore.query', {
+    //     query: request,
+    //     accept
+    //   });
+    // },
     async findByEmail(ctx) {
       const { email } = ctx.params;
       const results = await ctx.call('triplestore.query', {

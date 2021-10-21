@@ -13,7 +13,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: []
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -31,6 +31,20 @@ module.exports = {
     api_put: putAction.api,
     put: putAction.action,
     api_head: headAction.api
+  },
+  hooks: {
+    before: {
+      "*"(ctx) {
+        // If we have a pod provider, guess the dataset from the container URI
+        if( this.settings.podProvider && !ctx.meta.dataset && ctx.params.containerUri ) {
+          const containerPath = new URL(ctx.params.containerUri).pathname;
+          const parts = containerPath.split('/');
+          if( parts.length > 1 ) {
+            ctx.meta.dataset = parts[1];
+          }
+        }
+      }
+    }
   },
   methods
 };

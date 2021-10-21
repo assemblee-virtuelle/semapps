@@ -21,11 +21,12 @@ module.exports = {
       url: null
     },
     selectProfileData: null,
-    registrationAllowed: true
+    registrationAllowed: true,
+    reservedUsernames: ['sparql', 'auth', 'common', 'data']
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { baseUrl, accountsContainer, jwtPath, oidc, cas } = this.settings;
+    const { baseUrl, accountsContainer, jwtPath, oidc, cas, reservedUsernames } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
@@ -34,7 +35,8 @@ module.exports = {
     if (!oidc.issuer && !cas.url) {
       await this.broker.createService(AuthAccountService, {
         settings: {
-          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
+          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts'),
+          reservedUsernames
         }
       });
     }
@@ -58,7 +60,9 @@ module.exports = {
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else {
-      this.connector = new LocalConnector();
+      this.connector = new LocalConnector({
+        createProfile: this.createProfile
+      });
     }
 
     await this.connector.initialize();
@@ -92,6 +96,7 @@ module.exports = {
     });
   },
   methods: {
+    // TODO refactor this to use Account
     async findOrCreateProfile(profileData, authData) {
       let webId = await this.broker.call(
         'webid.findByEmail',
@@ -113,6 +118,19 @@ module.exports = {
       }
 
       return { webId, newUser };
+    },
+    async createProfile(profileData, accountData) {
+      if( this.beforeCreateProfile ) await this.beforeCreateProfile(profileData, accountData);
+
+      // Create the webId with the profile information we have
+      const webId = await this.broker.call('webid.create', profileData);
+
+      // Link the profile with the account
+      await this.broker.call('auth.account.attachWebId', { accountUri: accountData.id, webId });
+
+      this.broker.emit('auth.registered', { webId, profileData, accountData });
+
+      return webId;
     }
   },
   actions: {

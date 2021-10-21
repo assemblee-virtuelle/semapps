@@ -3,27 +3,28 @@ const defaultOptions = require('./defaultOptions');
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
+const createManyAction = require('./actions/createMany');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
 const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
 const getOptionsAction = require('./actions/getOptions');
-const { getContainerFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.container',
   settings: {
     baseUrl: null,
     ontologies: [],
-    containers: [],
-    defaultOptions
+    defaultOptions,
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
     attach: attachAction,
     clear: clearAction,
     create: createAction,
+    createMany: createManyAction,
     detach: detachAction,
     exist: existAction,
     getOptions: getOptionsAction,
@@ -33,33 +34,20 @@ module.exports = {
     api_head: headAction.api,
     get: getAction.action
   },
-  async started() {
-    // 1st loop: Create all containers defined in configurations
-    for (let container of this.settings.containers) {
-      const containerUri = this.getContainerUri(container);
-      const exists = await this.actions.exist({ containerUri }, { meta: { webId: 'system' } });
-      if (!exists) {
-        console.log(`Container ${containerUri} doesn't exist, creating it...`);
-        await this.actions.create({ containerUri }, { meta: { webId: 'system' } });
-      }
-    }
-
-    // 2nd loop: Attach child containers to parent containers
-    // Child containers must have been created first, or the attach action will fail
-    for (let container of this.settings.containers) {
-      const containerUri = this.getContainerUri(container);
-
-      // Find all children containers for this container
-      const childContainersUris = this.settings.containers
-        .map(childContainer => this.getContainerUri(childContainer))
-        .filter(
-          childContainerUri =>
-            containerUri !== childContainerUri &&
-            getContainerFromUri(childContainerUri) === containerUri.replace(/\/$/, '')
-        );
-
-      for (let childContainerUri of childContainersUris) {
-        await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
+  hooks: {
+    before: {
+      "*"(ctx) {
+        // If we have a pod provider, guess the dataset from the URI
+        if( this.settings.podProvider && !ctx.meta.dataset ) {
+          const uri = ctx.params.resourceUri || ctx.params.containerUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          if( uri ) {
+            const containerPath = new URL(uri).pathname;
+            const parts = containerPath.split('/');
+            if( parts.length > 1 ) {
+              ctx.meta.dataset = parts[1];
+            }
+          }
+        }
       }
     }
   },

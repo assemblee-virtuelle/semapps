@@ -7,6 +7,6 @@ module.exports = {
   ResourcesWatcherBot: require('./bots/resources-watcher'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   TripleStoreAdapter: require('./adapter'),
-  getContainerRoutes: require('./routes/getContainerRoutes'),
+  getContainerRoutes: require('./routes/getContainerRoute'),
   ...utils
 };

@@ -4,18 +4,19 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 class LocalConnector extends Connector {
   constructor(settings) {
-    super('local', settings || {});
+    const { createProfile } = settings;
+    super('local', { createProfile });
   }
   async initialize() {
     this.localStrategy = new Strategy(
       {
-        usernameField: 'email',
+        usernameField: 'username', // or username ??
         passwordField: 'password',
         passReqToCallback: true // We want to have access to req below
       },
-      (req, email, password, done) => {
+      (req, username, password, done) => {
         req.$ctx
-          .call('auth.account.verify', { email, password })
+          .call('auth.account.verify', { username, password })
           .then(({ webId }) =>
             req.$ctx.call('ldp.resource.get', {
               resourceUri: webId,
@@ -57,35 +58,24 @@ class LocalConnector extends Connector {
     };
   }
   createAccount(req, res, next) {
-    const { email, password, ...profileData } = req.$params;
-    req.$ctx
-      .call('auth.account.findByEmail', { email })
-      .then(webId => {
-        if (!webId) {
-          return req.$ctx.call('webid.create', profileData);
-        } else {
-          throw new Error('email.already.exists');
-        }
-      })
+    const { username, email, password, ...profileData } = req.$params;
+    const ctx = req.$ctx;
+    ctx.call('auth.account.create', { username, email, password })
+      .then(accountData =>
+        this.settings.createProfile({ ...profileData, nick: username }, accountData)
+      )
       .then(webId =>
-        req.$ctx.call('ldp.resource.get', {
+        ctx.call('ldp.resource.get', {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
           webId: 'system'
         })
       )
       .then(userData => {
+        // We need these data to generate the token
         req.user = userData;
         req.user.webId = userData.id;
         req.user.newUser = true;
-        return req.$ctx.call('auth.account.create', {
-          email,
-          password,
-          webId: userData.id
-        });
-      })
-      .then(accountData => {
-        req.$ctx.emit('auth.registered', { webId: accountData['semapps:webId'], profileData, accountData });
         next();
       })
       .catch(e => this.sendError(res, e.message));

@@ -2,7 +2,7 @@ const urlJoin = require('url-join');
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
-const getContainerRoutes = require('./routes/getContainerRoutes');
+const getContainerRoute = require('./routes/getContainerRoute');
 const defaultContainerOptions = require('./services/container/defaultOptions');
 
 module.exports = {
@@ -11,17 +11,18 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     containers: [],
+    podProvider: false,
     defaultContainerOptions
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, ontologies, containers, defaultContainerOptions } = this.schema.settings;
+    const { baseUrl, ontologies, podProvider, defaultContainerOptions } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
-        containers,
+        podProvider,
         defaultOptions: defaultContainerOptions
       }
     });
@@ -30,7 +31,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        containers
+        podProvider,
       }
     });
 
@@ -40,19 +41,21 @@ module.exports = {
     }
   },
   async started() {
-    const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
-      await this.broker.call('api.addRoute', { route });
+    if( this.settings.containers.length > 0 ) {
+      await this.broker.call('ldp.container.createMany', {
+        containers: this.settings.containers
+      });
+
+      await this.broker.call('ldp.addApiRoutes', { containers: this.settings.containers });
     }
   },
   actions: {
-    async getApiRoutes() {
-      let routes = [];
-      for (let container of this.settings.containers) {
+    async addApiRoutes(ctx) {
+      const { containers } = ctx.params;
+      for (let container of containers) {
         const containerUri = urlJoin(this.settings.baseUrl, typeof container === 'string' ? container : container.path);
-        routes.push(...getContainerRoutes(containerUri, null));
+        await this.broker.call('api.addRoute', { route: getContainerRoute(containerUri) });
       }
-      return routes;
     }
   }
 };
