@@ -41,7 +41,7 @@ module.exports = {
   },
   async started() {
     const { baseUrl, selectProfileData, oidc, cas } = this.settings;
-    
+
     if (oidc.issuer) {
       this.connector = new OidcConnector({
         issuer: oidc.issuer,
