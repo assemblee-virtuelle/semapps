@@ -1,3 +1,4 @@
+const urlJoin = require("url-join");
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -7,7 +8,7 @@ module.exports = {
 
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
-    resource['@id'] = `${containerUri}/${id}`;
+    resource['@id'] = urlJoin(containerUri, id);
     if (ctx.meta.parser === 'file') {
       throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
     }

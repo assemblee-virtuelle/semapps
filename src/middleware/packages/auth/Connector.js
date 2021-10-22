@@ -30,6 +30,7 @@ class Connector {
       req.user.newUser = newUser;
       next();
     } catch (e) {
+      console.error(e);
       this.redirectWithError(res, req, e);
     }
   }
@@ -106,7 +107,7 @@ class Connector {
         try {
           asyncRes = middleware(req, res, resolve);
         } catch (e) {
-          console.log(e);
+          console.error(e);
           resolve(e);
         }
       });

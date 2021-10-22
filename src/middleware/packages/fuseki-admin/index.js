@@ -23,6 +23,8 @@ const FusekiAdminService = {
       const response = await fetch(this.settings.url + '$/datasets/' + dataset, {
         headers: this.headers
       });
+      // const json = await response.json();
+      // console.log('json', json);
       return response.status === 200;
     },
     async listAllDatasets(ctx) {
@@ -53,6 +55,7 @@ const FusekiAdminService = {
             headers: { ...this.headers, 'Content-Type': 'text/turtle' },
             body: assembler
           });
+          console.log('response', response.headers);
         } else {
           response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
             method: 'POST',

@@ -10,16 +10,16 @@ class LocalConnector extends Connector {
   async initialize() {
     this.localStrategy = new Strategy(
       {
-        usernameField: 'username', // or username ??
+        usernameField: 'username',
         passwordField: 'password',
         passReqToCallback: true // We want to have access to req below
       },
       (req, username, password, done) => {
         req.$ctx
           .call('auth.account.verify', { username, password })
-          .then(({ webId }) =>
+          .then(accountData =>
             req.$ctx.call('ldp.resource.get', {
-              resourceUri: webId,
+              resourceUri: accountData.webId,
               accept: MIME_TYPES.JSON,
               webId: 'system'
             })
@@ -78,7 +78,10 @@ class LocalConnector extends Connector {
         req.user.newUser = true;
         next();
       })
-      .catch(e => this.sendError(res, e.message));
+      .catch(e => {
+        console.error(e);
+        this.sendError(res, e.message)
+      });
   }
   sendToken(req, res, next) {
     res.setHeader('Content-Type', 'application/json');

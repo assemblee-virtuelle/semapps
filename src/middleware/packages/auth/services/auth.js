@@ -74,12 +74,16 @@ module.exports = {
         aliases: {
           'GET /logout': this.connector.logout(),
           'GET /': this.connector.login(),
-          'POST /': this.connector.login()
+          'POST /': this.connector.login(),
+          'GET /login': this.connector.login(),
+          'POST /login': this.connector.login()
         },
         onError(req, res, err) {
           console.error(err);
         }
-      }
+      },
+      // Try to put this in priority (it doesn't work)
+      toBottom: false
     });
 
     await this.broker.call('api.addRoute', {
@@ -126,7 +130,7 @@ module.exports = {
       const webId = await this.broker.call('webid.create', profileData);
 
       // Link the profile with the account
-      await this.broker.call('auth.account.attachWebId', { accountUri: accountData.id, webId });
+      await this.broker.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
       this.broker.emit('auth.registered', { webId, profileData, accountData });
 

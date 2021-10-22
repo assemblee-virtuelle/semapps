@@ -29,6 +29,7 @@ const frenchMessages = {
     input: {
       agent_select: 'Ajouter un utilisateur...',
       name: 'Prénom',
+      username: 'Nom utilisateur',
       email: 'Adresse e-mail'
     },
     message: {

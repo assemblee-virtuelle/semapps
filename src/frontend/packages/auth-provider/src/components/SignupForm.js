@@ -101,6 +101,15 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
             </div>
             <div className={classes.input}>
               <Field
+                id="username"
+                name="username"
+                component={Input}
+                label={translate('auth.input.username')}
+                disabled={loading}
+              />
+            </div>
+            <div className={classes.input}>
+              <Field
                 id="email"
                 name="email"
                 component={Input}

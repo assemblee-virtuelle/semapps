@@ -1,21 +1,16 @@
 const bcrypt = require('bcrypt');
-const { MIME_TYPES } = require('@semapps/mime-types');
+const DbService = require('moleculer-db');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
 module.exports = {
   name: 'auth.account',
+  mixins: [DbService],
+  adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
   settings: {
-    containerUri: null,
+    idField: '@id',
     reservedUsernames: []
   },
-  dependencies: ['ldp.resource', 'ldp.container', 'triplestore'],
-  async started() {
-    const { containerUri } = this.settings;
-    const exists = await this.broker.call('ldp.container.exist', { containerUri }, { meta: { dataset: 'config' }});
-    if (!exists) {
-      console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call('ldp.container.create', { containerUri }, { meta: { dataset: 'config' }});
-    }
-  },
+  dependencies: ['triplestore'],
   actions: {
     async create(ctx) {
       const { username, password, email, webId } = ctx.params;
@@ -32,67 +27,43 @@ module.exports = {
       }
 
       // Ensure email or username doesn't already exist
-      if( await ctx.call('auth.account.usernameExists', { username }) ) {
+      const usernameExists = await ctx.call('auth.account.usernameExists', { username });
+      if( usernameExists ) {
         throw new Error('username.already.exists');
       }
-      if( await ctx.call('auth.account.emailExists', { email }) ) {
+      const emailExists = await ctx.call('auth.account.emailExists', { email });
+      if( emailExists ) {
         throw new Error('email.already.exists');
       }
 
-      const accountUri = await ctx.call('ldp.resource.post', {
-        containerUri: this.settings.containerUri,
-        resource: {
-          '@context': {
-            semapps: 'http://semapps.org/ns/core#'
-          },
-          '@type': 'semapps:Account',
-          'semapps:username': username,
-          'semapps:email': email,
-          'semapps:password': hashedPassword,
-          'semapps:webId': webId
-        },
-        contentType: MIME_TYPES.JSON,
+      return await this._create(ctx, {
+        username,
+        email,
+        hashedPassword,
         webId
-      }, { meta: { dataset: 'config' }});
-
-      return await ctx.call('ldp.resource.get', {
-        resourceUri: accountUri,
-        accept: MIME_TYPES.JSON,
-        webId
-      }, { meta: { dataset: 'config' }});
+      });
     },
     async attachWebId(ctx) {
       const { accountUri, webId } = ctx.params;
 
-      await ctx.call('triplestore.insert', {
-        resource: `<${accountUri}> <http://semapps.org/ns/core#webId> <${webId}>`,
-        webId: 'system',
-        dataset: 'config'
+      await this._update(ctx, {
+        '@id': accountUri,
+        webId
       });
     },
     async verify(ctx) {
       const { username, password } = ctx.params;
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          SELECT ?accountUri ?passwordHash ?webId
-          WHERE {
-            <${this.settings.containerUri}> ldp:contains ?accountUri .
-            ?accountUri semapps:username '${username}' .
-            ?accountUri semapps:password ?passwordHash .
-            ?accountUri semapps:webId ?webId .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset: 'config'
+
+      const accounts = await this._find(ctx, {
+        query: {
+          username,
+        },
       });
 
-      if (results.length > 0) {
-        const passwordMatch = await this.comparePassword(password, results[0].passwordHash.value);
+      if (accounts.length > 0) {
+        const passwordMatch = await this.comparePassword(password, accounts[0].hashedPassword);
         if (passwordMatch) {
-          return { accountUri: results[0].accountUri.value, webId: results[0].webId.value };
+          return accounts[0];
         } else {
           throw new Error('account.not-found');
         }
@@ -100,72 +71,19 @@ module.exports = {
         throw new Error('account.not-found');
       }
     },
-    async list(ctx) {
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          SELECT ?username
-          WHERE {
-            <${this.settings.containerUri}> ldp:contains ?accountUri .
-            ?accountUri semapps:username ?username .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset: 'config'
-      });
-      return results.length > 0 ? results.map(r => r.username.value) : [];
-    },
     async usernameExists(ctx) {
       const { username } = ctx.params;
-      return await ctx.call('triplestore.query', {
-        query: `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          ASK {
-            <${this.settings.containerUri}> ldp:contains ?accountUri .
-            ?accountUri semapps:username '${username}' .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset: 'config'
-      });
+      const accounts = await this._find(ctx, { query: { username } });
+      return accounts.length > 0;
     },
     async emailExists(ctx) {
       const { email } = ctx.params;
-      return await ctx.call('triplestore.query', {
-        query: `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          ASK {
-            <${this.settings.containerUri}> ldp:contains ?accountUri .
-            ?accountUri semapps:email '${email}' .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset: 'config'
-      });
+      const accounts = await this._find(ctx, { query: { email } });
+      return accounts.length > 0;
     },
     async findByWebId(ctx) {
       const { webId } = ctx.params;
-      const results = await ctx.call('triplestore.query', {
-        query: `
-          PREFIX semapps: <http://semapps.org/ns/core#>
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          SELECT ?accountUri 
-          WHERE {
-            <${this.settings.containerUri}> ldp:contains ?accountUri .
-            ?accountUri semapps:webId "${webId}" .
-          }
-        `,
-        accept: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset: 'config'
-      });
-      return results.length > 0 ? results[0].accountUri.value : null;
+      return this._find(ctx, { query: { webId } });
     }
   },
   methods: {

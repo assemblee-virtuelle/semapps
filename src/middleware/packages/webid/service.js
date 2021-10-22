@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const getRoutes = require('./getRoutes');
+const getRoute = require('./getRoute');
 
 const WebIdService = {
   name: 'webid',
@@ -14,10 +14,7 @@ const WebIdService = {
   },
   dependencies: ['ldp.resource', 'triplestore', 'api'],
   async started() {
-    const routes = getRoutes();
-    for (let route of routes) {
-      await this.broker.call('api.addRoute', { route });
-    }
+    await this.broker.call('api.addRoute', { route: getRoute() });
   },
   actions: {
     /**

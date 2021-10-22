@@ -8,16 +8,18 @@ module.exports = {
   settings: {
     baseUrl: null,
     graphName: '<http://semapps.org/webacl>',
+    podProvider: false,
     superAdmins: []
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, graphName, superAdmins } = this.schema.settings;
+    const { baseUrl, graphName, podProvider, superAdmins } = this.schema.settings;
 
     await this.broker.createService(WebAclResourceService, {
       settings: {
         baseUrl,
-        graphName
+        graphName,
+        podProvider
       }
     });
 
@@ -25,6 +27,7 @@ module.exports = {
       settings: {
         baseUrl,
         graphName,
+        podProvider,
         superAdmins
       }
     });

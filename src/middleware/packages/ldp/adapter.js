@@ -2,7 +2,7 @@ const urlJoin = require('url-join');
 const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-class TripleStoreAdapter {
+class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
     this.resourceService = resourceService;
     this.containerService = containerService;
@@ -217,4 +217,4 @@ class TripleStoreAdapter {
   }
 }
 
-module.exports = TripleStoreAdapter;
+module.exports = LdpAdapter;

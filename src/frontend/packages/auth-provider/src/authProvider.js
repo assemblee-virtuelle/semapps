@@ -15,9 +15,9 @@ const authProvider = ({
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth`, {
+        const { json } = await httpClient(`${middlewareUri}auth/login`, {
           method: 'POST',
-          body: JSON.stringify({ email: username.trim(), password: password.trim() }),
+          body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -26,16 +26,16 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${middlewareUri}auth/login?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
     if (localAccounts) {
-      const { email, password, ...profileData } = params;
+      const { username, email, password, ...profileData } = params;
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ email: email.trim(), password: password.trim(), ...profileData }),
+          body: JSON.stringify({ username: username.trim(), email: email.trim(), password: password.trim(), ...profileData }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
