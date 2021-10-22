@@ -1,5 +1,5 @@
-const urlJoin = require("url-join");
-const { MIME_TYPES, negotiateType } = require("@semapps/mime-types");
+const urlJoin = require('url-join');
+const { MIME_TYPES, negotiateType } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',

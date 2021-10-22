@@ -27,13 +27,9 @@ const WebIdService = {
         nick = email.split('@')[0].toLowerCase();
       }
 
-      const containerUri = this.settings.podProvider
-        ? this.settings.baseUrl + nick
-        : this.settings.usersContainer;
+      const containerUri = this.settings.podProvider ? this.settings.baseUrl + nick : this.settings.usersContainer;
 
-      const slug = this.settings.podProvider
-        ? 'profile'
-        : nick;
+      const slug = this.settings.podProvider ? 'profile' : nick;
 
       // Create profile with system webId
       const webId = await ctx.call('ldp.resource.post', {

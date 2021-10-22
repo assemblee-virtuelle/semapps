@@ -135,7 +135,7 @@ class Connector {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
     if (token) {
       const payload = await ctx.call('auth.jwt.verifyToken', { token });
-      if( payload ) {
+      if (payload) {
         ctx.meta.tokenPayload = payload;
         ctx.meta.webId = payload.webId;
         return Promise.resolve(payload);
@@ -157,7 +157,7 @@ class Connector {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
     if (token) {
       const payload = await ctx.call('auth.jwt.verifyToken', { token });
-      if( payload ) {
+      if (payload) {
         ctx.meta.tokenPayload = payload;
         ctx.meta.webId = payload.webId;
         return Promise.resolve(payload);

@@ -4,13 +4,13 @@ const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
     podProvider: false,
-    defaultAccept: 'text/turtle',
+    defaultAccept: 'text/turtle'
   },
   dependencies: ['triplestore', 'api', 'auth.account'],
   async started() {
     let datasetsMapping;
 
-    if( this.settings.podProvider ) {
+    if (this.settings.podProvider) {
       const accounts = await this.broker.call('auth.account.list');
       datasetsMapping = Object.fromEntries(accounts.map(username => ['/' + username + '/sparql', username]));
     } else {

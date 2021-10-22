@@ -31,7 +31,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        podProvider,
+        podProvider
       }
     });
 
@@ -41,7 +41,7 @@ module.exports = {
     }
   },
   async started() {
-    if( this.settings.containers.length > 0 ) {
+    if (this.settings.containers.length > 0) {
       await this.broker.call('ldp.container.createMany', {
         containers: this.settings.containers
       });

@@ -43,7 +43,7 @@ module.exports = {
   },
   async started() {
     const { baseUrl, selectProfileData, oidc, cas } = this.settings;
-    
+
     if (oidc.issuer) {
       this.connector = new OidcConnector({
         issuer: oidc.issuer,
@@ -124,7 +124,7 @@ module.exports = {
       return { webId, newUser };
     },
     async createProfile(profileData, accountData) {
-      if( this.beforeCreateProfile ) await this.beforeCreateProfile(profileData, accountData);
+      if (this.beforeCreateProfile) await this.beforeCreateProfile(profileData, accountData);
 
       // Create the webId with the profile information we have
       const webId = await this.broker.call('webid.create', profileData);
