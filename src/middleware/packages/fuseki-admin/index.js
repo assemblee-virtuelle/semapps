@@ -43,7 +43,7 @@ const FusekiAdminService = {
       const { dataset, secure } = ctx.params;
       const exist = await this.actions.datasetExist({ dataset });
       if (!exist) {
-        console.warn(`Data ${dataset} doesn't exist. Creating it...`);
+        console.warn(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
 
         if (secure) {
@@ -55,7 +55,6 @@ const FusekiAdminService = {
             headers: { ...this.headers, 'Content-Type': 'text/turtle' },
             body: assembler
           });
-          console.log('response', response.headers);
         } else {
           response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
             method: 'POST',

@@ -9,8 +9,6 @@ module.exports = {
   async handler(ctx) {
     const { uri } = ctx.params;
 
-    console.log('get container options', uri, ctx.$params);
-
     return this.settings.defaultOptions;
 
     // const containerOptions =
