@@ -2,7 +2,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const ObjectID = require('bson').ObjectID;
 
 class TripleStoreAdapter {
-  constructor({ type, dataset, baseUri, ontology = "http://semapps.org/ns/core#" }) {
+  constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
     this.type = type;
     this.baseUri = baseUri || 'urn:' + type + ':';
     this.dataset = dataset;
@@ -40,7 +40,8 @@ class TripleStoreAdapter {
    */
   find(params) {
     const { query } = params;
-    return this.broker.call('triplestore.query', {
+    return this.broker
+      .call('triplestore.query', {
         query: `
           CONSTRUCT {
             ?s ?p ?o
@@ -48,7 +49,13 @@ class TripleStoreAdapter {
           WHERE {
             ?s a <${this.ontology + this.type}> .
             ?s ?p ?o .
-            ${query ? Object.keys(query).map(predicate => `?s <${this.ontology + predicate}> "${query[predicate]}"`).join(' . ') : ''}
+            ${
+              query
+                ? Object.keys(query)
+                    .map(predicate => `?s <${this.ontology + predicate}> "${query[predicate]}"`)
+                    .join(' . ')
+                : ''
+            }
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -63,10 +70,10 @@ class TripleStoreAdapter {
         });
       })
       .then(result => {
-        if( result['@graph'] ) {
+        if (result['@graph']) {
           // Several results
           return result['@graph'];
-        } else if( result['@id'] ) {
+        } else if (result['@id']) {
           // Single result
           return [result];
         } else {
@@ -172,17 +179,24 @@ class TripleStoreAdapter {
     _id = _id || id || arobaseId;
     if (!_id) throw new Error('An ID must be specified to update resources');
 
-    return this.findById(_id).then(oldData => {
-      newData = { ...oldData, ...newData, '@id': null, '@type': null, '@context': null };
-      return this.broker
-        .call('triplestore.update', {
+    return this.findById(_id)
+      .then(oldData => {
+        newData = { ...oldData, ...newData, '@id': null, '@type': null, '@context': null };
+        return this.broker.call('triplestore.update', {
           query: `
             DELETE {
               <${_id}> ?p ?o .
             }
             INSERT {
               <${_id}> a <${this.ontology + this.type}> .
-              ${newData ? Object.keys(newData).filter(predicate => newData[predicate]).map(predicate => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`).join(' . ') : ''}
+              ${
+                newData
+                  ? Object.keys(newData)
+                      .filter(predicate => newData[predicate])
+                      .map(predicate => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`)
+                      .join(' . ')
+                  : ''
+              }
             } 
             WHERE {
               <${_id}> ?p ?o .
@@ -190,8 +204,9 @@ class TripleStoreAdapter {
           `,
           contentType: MIME_TYPES.JSON,
           dataset: this.dataset
-        })
-    }).then(() => newData);
+        });
+      })
+      .then(() => newData);
   }
 
   /**

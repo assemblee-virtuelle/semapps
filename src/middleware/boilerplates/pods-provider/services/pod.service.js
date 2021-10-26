@@ -10,7 +10,7 @@ module.exports = {
   dependencies: ['fuseki-admin', 'ldp', 'auth.account'],
   async started() {
     await this.broker.call('ldp.addApiRoutes', {
-      containers: this.settings.containers.map(config => ({ ...config, path: '/:username' + config.path })),
+      containers: this.settings.containers.map(config => ({ ...config, path: '/:username' + config.path }))
     });
 
     // Keep a list of pods in cache
@@ -19,7 +19,7 @@ module.exports = {
   actions: {
     async create(ctx) {
       const { username } = ctx.params;
-      if( !username ) throw new Error('Cannot create pod without a username');
+      if (!username) throw new Error('Cannot create pod without a username');
 
       await ctx.call('fuseki-admin.createDataset', {
         dataset: username,
@@ -33,10 +33,10 @@ module.exports = {
         datasetExist = await ctx.call('fuseki-admin.datasetExist', {
           dataset: username
         });
-      } while( !datasetExist );
+      } while (!datasetExist);
 
       await ctx.call('ldp.container.createMany', {
-        containers: this.settings.containers.map(config => ({ ...config, path: '/' + username + config.path })),
+        containers: this.settings.containers.map(config => ({ ...config, path: '/' + username + config.path }))
       });
     },
     async list(ctx) {
