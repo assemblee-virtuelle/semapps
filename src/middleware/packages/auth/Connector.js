@@ -129,47 +129,6 @@ class Connector {
       return [sessionMiddleware];
     }
   }
-  // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
-  async authenticate(ctx, route, req, res) {
-    // Extract token from authorization header (do not take the Bearer part)
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-    if (token) {
-      const payload = await ctx.call('auth.jwt.verifyToken', { token });
-      if (payload) {
-        ctx.meta.tokenPayload = payload;
-        ctx.meta.webId = payload.webId;
-        return Promise.resolve(payload);
-      } else {
-        // Invalid token
-        // TODO make sure token is deleted client-side
-        ctx.meta.webId = 'anon';
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      }
-    } else {
-      // No token, anonymous error
-      ctx.meta.webId = 'anon';
-      return Promise.resolve(null);
-    }
-  }
-  // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
-  async authorize(ctx, route, req, res) {
-    // Extract token from authorization header (do not take the Bearer part)
-    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-    if (token) {
-      const payload = await ctx.call('auth.jwt.verifyToken', { token });
-      if (payload) {
-        ctx.meta.tokenPayload = payload;
-        ctx.meta.webId = payload.webId;
-        return Promise.resolve(payload);
-      } else {
-        ctx.meta.webId = 'anon';
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      }
-    } else {
-      ctx.meta.webId = 'anon';
-      return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
-    }
-  }
 }
 
 module.exports = Connector;

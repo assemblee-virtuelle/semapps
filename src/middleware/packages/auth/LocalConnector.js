@@ -52,17 +52,17 @@ class LocalConnector extends Connector {
   }
   signup() {
     return async (req, res) => {
-      const middlewares = [this.createAccount.bind(this), this.generateToken.bind(this), this.sendToken.bind(this)];
+      const middlewares = [this.createWebId.bind(this), this.generateToken.bind(this), this.sendToken.bind(this)];
 
       await this.runMiddlewares(middlewares, req, res);
     };
   }
-  createAccount(req, res, next) {
+  createWebId(req, res, next) {
     const { username, email, password, ...profileData } = req.$params;
     const ctx = req.$ctx;
     ctx
       .call('auth.account.create', { username, email, password })
-      .then(accountData => this.settings.createProfile({ ...profileData, nick: username }, accountData))
+      .then(accountData => this.settings.createWebId({ ...profileData, nick: username }, accountData))
       .then(webId =>
         ctx.call('ldp.resource.get', {
           resourceUri: webId,
