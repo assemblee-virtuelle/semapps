@@ -2,13 +2,11 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const AuthAccountService = require('./account');
 const AuthJWTService = require('./jwt');
-// const OidcConnector = require('../OidcConnector');
-// const CasConnector = require('../CasConnector');
-// const LocalConnector = require('../LocalConnector');
 const {Errors: E} = require("moleculer-web");
 const session = require("express-session");
 const {Strategy} = require("passport-local");
 const passport = require("passport");
+const getOidcStrategy = require("../getOidcStrategy");
 
 module.exports = {
   name: 'auth',
@@ -42,55 +40,44 @@ module.exports = {
     });
   },
   async started() {
-    const { baseUrl, selectProfileData, oidc, cas } = this.settings;
-
-    // if (oidc.issuer) {
-    //   this.connector = new OidcConnector({
-    //     issuer: oidc.issuer,
-    //     clientId: oidc.clientId,
-    //     clientSecret: oidc.clientSecret,
-    //     redirectUri: urlJoin(baseUrl, 'auth'),
-    //     selectProfileData,
-    //     findOrCreateProfile: this.findOrCreateProfile
-    //   });
-    // } else if (cas.url) {
-    //   this.connector = new CasConnector({
-    //     casUrl: cas.url,
-    //     selectProfileData,
-    //     findOrCreateProfile: this.findOrCreateProfile
-    //   });
-    // } else {
-    //   this.connector = new LocalConnector({
-    //     createProfile: this.createProfile
-    //   });
-    // }
-    //
-    // await this.connector.initialize();
+    const { baseUrl, oidc, cas } = this.settings;
 
     this.passport = passport;
-    this.passportId = 'local';
 
-    this.passport.use(new Strategy(
-      {
-        usernameField: 'username',
-        passwordField: 'password',
-        passReqToCallback: true // We want to have access to req below
-      },
-      (req, username, password, done) => {
-        req.$ctx.call('auth.login', { username, password }).then(returnedData => {
-          done(null, returnedData);
-        }).catch(e => {
-          console.error(e);
-          done(null, false);
-        });
-      }
-    ));
+    if( oidc.issuer ) {
+      const oidcStrategy = await getOidcStrategy({ ...oidc, redirectUri: urlJoin(baseUrl, 'auth/login') });
+
+      this.passportId = 'oidc';
+      this.passport.use('oidc', oidcStrategy);
+    } else {
+      const localStrategy = new Strategy(
+        {
+          usernameField: 'username',
+          passwordField: 'password',
+          passReqToCallback: true // We want to have access to req below
+        },
+        (req, username, password, done) => {
+          req.$ctx.call('auth.login', { username, password })
+            .then(returnedData => {
+              done(null, returnedData);
+            })
+            .catch(e => {
+              console.error(e);
+              done(null, false);
+            });
+        }
+      );
+
+      this.passportId = 'local';
+      this.passport.use(localStrategy);
+    }
 
     const saveRedirectUrlMiddleware = (req, res, next) => {
       // Persist referer on the session to get it back after redirection
       // If the redirectUrl is already in the session, use it as default value
       req.session.redirectUrl =
         req.query.redirectUrl || (req.session && req.session.redirectUrl) || req.headers.referer || '/';
+      console.log('saveRedirectUrlMiddleware', req.session.redirectUrl);
       next();
     };
 
@@ -99,17 +86,30 @@ module.exports = {
       maxAge: null
     });
 
+    const redirectToFront = (req, res) => {
+      console.log('redirecttofront', req.user);
+      // Redirect browser to the redirect URL pushed in session
+      let redirectUrl = new URL(req.session.redirectUrl);
+      if (req.user) {
+        // If a token was stored, add it to the URL so that the client may use it
+        if (req.user.token) redirectUrl.searchParams.set('token', req.user.token);
+        redirectUrl.searchParams.set('new', req.user.newUser ? 'true' : 'false');
+      }
+      // Redirect using NodeJS HTTP
+      res.writeHead(302, { Location: redirectUrl.toString() });
+      res.end();
+    }
+
     await this.broker.call('api.addRoute', {
       route: {
-        path: '/auth/login',
+        path: '/auth/login', // Force to use this path ?
         use: [
           sessionMiddleware,
           this.passport.initialize(),
           this.passport.session(),
-          saveRedirectUrlMiddleware,
         ],
         aliases: {
-          'GET /': [this.passport.authenticate(this.passportId, { session: false }), 'auth.login'],
+          'GET /': [saveRedirectUrlMiddleware, this.passport.authenticate(this.passportId, { session: false }), redirectToFront],
           'POST /': [this.passport.authenticate(this.passportId, { session: false }), 'auth.login'],
           // 'GET /login': 'auth.login',
           // 'POST /login': 'auth.login'
@@ -135,42 +135,6 @@ module.exports = {
         }
       }
     });
-  },
-  methods: {
-    // TODO refactor this to use Account
-    // async findOrCreateProfile(profileData, authData) {
-    //   let webId = await this.broker.call(
-    //     'webid.findByEmail',
-    //     { email: profileData.email },
-    //     { meta: { webId: 'system' } }
-    //   );
-    //
-    //   const newUser = !webId;
-    //
-    //   if (newUser) {
-    //     if (!this.settings.registrationAllowed) {
-    //       throw new Error('registration.not-allowed');
-    //     }
-    //     webId = await this.broker.call('webid.create', profileData);
-    //     await this.broker.emit('auth.registered', { webId, profileData, authData });
-    //   } else {
-    //     await this.broker.call('webid.edit', profileData, { meta: { webId } });
-    //     await this.broker.emit('auth.connected', { webId, profileData, authData });
-    //   }
-    //
-    //   return { webId, newUser };
-    // },
-    // async createWebId(profileData, accountData) {
-    //   // Create the webId with the profile information we have
-    //   const webId = await this.broker.call('webid.create', { nick: username, email, ...profileData });
-    //
-    //   // Link the webId with the account
-    //   await this.broker.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
-    //
-    //   this.broker.emit('auth.registered', { webId, profileData, accountData });
-    //
-    //   return webId;
-    // }
   },
   actions: {
     async signup(ctx) {
@@ -205,6 +169,39 @@ module.exports = {
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
       return({ token, newUser: true });
+    },
+    async ssoLogin(ctx) {
+      let { ssoData } = ctx.params;
+
+      const profileData = this.settings.oidc.selectSsoData ? await this.settings.oidc.selectSsoData(ssoData) : ssoData
+
+      // TODO use UUID to identify unique accounts with SSO
+      const existingAccounts = await ctx.call('auth.account.find', { query: { email: profileData.email } });
+
+      let accountData, webId, newUser;
+      if( existingAccounts.length > 0 ) {
+        accountData = existingAccounts[0];
+        webId = accountData.webId;
+        newUser = false;
+
+        // TODO update account with recent informations
+        // await this.broker.call('webid.edit', profileData, { meta: { webId } });
+
+        await this.broker.emit('auth.connected', { webId, profileData });
+      } else {
+        accountData = await ctx.call('auth.account.create', { uuid: profileData.uuid, email: profileData.email });
+        webId = await ctx.call('webid.create', { nick: accountData.username, ...profileData });
+        newUser = true;
+
+        // Link the webId with the account
+        await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
+
+        ctx.emit('auth.registered', { webId, profileData, accountData });
+      }
+
+      const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
+
+      return({ token, newUser });
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
     async authenticate(ctx) {

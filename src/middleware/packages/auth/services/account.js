@@ -13,30 +13,29 @@ module.exports = {
   dependencies: ['triplestore'],
   actions: {
     async create(ctx) {
-      const { username, password, email, webId } = ctx.params;
-      const hashedPassword = await this.hashPassword(password);
+      let { uuid, username, password, email, webId } = ctx.params;
+      const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
-      // Ensure the username has no space or special characters
-      if( !this.isValidUsername(username) ) {
-        throw new Error('username.invalid');
-      }
-
-      // Ensure we don't use reservedUsernames
-      if( this.settings.reservedUsernames.includes(username) ) {
-        throw new Error('username.already.exists');
-      }
-
-      // Ensure email or username doesn't already exist
-      const usernameExists = await ctx.call('auth.account.usernameExists', { username });
-      if( usernameExists ) {
-        throw new Error('username.already.exists');
-      }
       const emailExists = await ctx.call('auth.account.emailExists', { email });
       if( emailExists ) {
         throw new Error('email.already.exists');
       }
 
+      if( username ) {
+        await this.isValidUsername(ctx, username);
+      } else {
+        // If username is not provided, find an username based on the email
+        let usernameValid = false, i = 1;
+        do {
+          i++;
+          username = email.split('@')[0].toLowerCase();
+          if( i>2 ) username += i;
+          usernameValid = await this.isValidUsername(ctx, username);
+        } while(usernameValid);
+      }
+
       return await this._create(ctx, {
+        uuid,
         username,
         email,
         hashedPassword,
@@ -87,9 +86,22 @@ module.exports = {
     }
   },
   methods: {
-    isValidUsername(username) {
-      const res = /^[a-zA-Z0-9\-_]+$/.exec(username);
-      return !!res;
+    async isValidUsername(ctx, username) {
+      // Ensure the username has no space or special characters
+      if( !/^[a-zA-Z0-9\-_]+$/.exec(username) ) {
+        throw new Error('username.invalid');
+      }
+
+      // Ensure we don't use reservedUsernames
+      if( this.settings.reservedUsernames.includes(username) ) {
+        throw new Error('username.already.exists');
+      }
+
+      // Ensure email or username doesn't already exist
+      const usernameExists = await ctx.call('auth.account.usernameExists', { username });
+      if( usernameExists ) {
+        throw new Error('username.already.exists');
+      }
     },
     async hashPassword(password) {
       return new Promise((resolve, reject) => {
