@@ -5,10 +5,10 @@ const AuthJWTService = require('./jwt');
 // const OidcConnector = require('../OidcConnector');
 // const CasConnector = require('../CasConnector');
 // const LocalConnector = require('../LocalConnector');
-const {Errors: E} = require("moleculer-web");
-const session = require("express-session");
-const {Strategy} = require("passport-local");
-const passport = require("passport");
+const { Errors: E } = require('moleculer-web');
+const session = require('express-session');
+const { Strategy } = require('passport-local');
+const passport = require('passport');
 
 module.exports = {
   name: 'auth',
@@ -20,11 +20,11 @@ module.exports = {
       issuer: null,
       clientId: null,
       clientSecret: null,
-      selectSsoData: null,
+      selectSsoData: null
     },
     cas: {
       url: null,
-      selectSsoData: null,
+      selectSsoData: null
     },
     registrationAllowed: true,
     reservedUsernames: ['sparql', 'auth', 'common', 'data']
@@ -70,21 +70,26 @@ module.exports = {
     this.passport = passport;
     this.passportId = 'local';
 
-    this.passport.use(new Strategy(
-      {
-        usernameField: 'username',
-        passwordField: 'password',
-        passReqToCallback: true // We want to have access to req below
-      },
-      (req, username, password, done) => {
-        req.$ctx.call('auth.login', { username, password }).then(returnedData => {
-          done(null, returnedData);
-        }).catch(e => {
-          console.error(e);
-          done(null, false);
-        });
-      }
-    ));
+    this.passport.use(
+      new Strategy(
+        {
+          usernameField: 'username',
+          passwordField: 'password',
+          passReqToCallback: true // We want to have access to req below
+        },
+        (req, username, password, done) => {
+          req.$ctx
+            .call('auth.login', { username, password })
+            .then(returnedData => {
+              done(null, returnedData);
+            })
+            .catch(e => {
+              console.error(e);
+              done(null, false);
+            });
+        }
+      )
+    );
 
     const saveRedirectUrlMiddleware = (req, res, next) => {
       // Persist referer on the session to get it back after redirection
@@ -102,19 +107,14 @@ module.exports = {
     await this.broker.call('api.addRoute', {
       route: {
         path: '/auth/login',
-        use: [
-          sessionMiddleware,
-          this.passport.initialize(),
-          this.passport.session(),
-          saveRedirectUrlMiddleware,
-        ],
+        use: [sessionMiddleware, this.passport.initialize(), this.passport.session(), saveRedirectUrlMiddleware],
         aliases: {
           'GET /': [this.passport.authenticate(this.passportId, { session: false }), 'auth.login'],
-          'POST /': [this.passport.authenticate(this.passportId, { session: false }), 'auth.login'],
+          'POST /': [this.passport.authenticate(this.passportId, { session: false }), 'auth.login']
           // 'GET /login': 'auth.login',
           // 'POST /login': 'auth.login'
         }
-      },
+      }
     });
     //
     // await this.broker.call('api.addRoute', {
@@ -193,7 +193,7 @@ module.exports = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
-      return({ token, newUser: true });
+      return { token, newUser: true };
     },
     async login(ctx) {
       const { username, password } = ctx.params;
@@ -204,7 +204,7 @@ module.exports = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
-      return({ token, newUser: true });
+      return { token, newUser: true };
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
     async authenticate(ctx) {

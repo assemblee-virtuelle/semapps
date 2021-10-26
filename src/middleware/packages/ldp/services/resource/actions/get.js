@@ -4,7 +4,6 @@ const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery } = require('../../../utils');
 
-
 module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;

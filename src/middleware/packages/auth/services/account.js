@@ -17,22 +17,22 @@ module.exports = {
       const hashedPassword = await this.hashPassword(password);
 
       // Ensure the username has no space or special characters
-      if( !this.isValidUsername(username) ) {
+      if (!this.isValidUsername(username)) {
         throw new Error('username.invalid');
       }
 
       // Ensure we don't use reservedUsernames
-      if( this.settings.reservedUsernames.includes(username) ) {
+      if (this.settings.reservedUsernames.includes(username)) {
         throw new Error('username.already.exists');
       }
 
       // Ensure email or username doesn't already exist
       const usernameExists = await ctx.call('auth.account.usernameExists', { username });
-      if( usernameExists ) {
+      if (usernameExists) {
         throw new Error('username.already.exists');
       }
       const emailExists = await ctx.call('auth.account.emailExists', { email });
-      if( emailExists ) {
+      if (emailExists) {
         throw new Error('email.already.exists');
       }
 
@@ -56,8 +56,8 @@ module.exports = {
 
       const accounts = await this._find(ctx, {
         query: {
-          username,
-        },
+          username
+        }
       });
 
       if (accounts.length > 0) {

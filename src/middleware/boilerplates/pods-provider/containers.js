@@ -19,5 +19,5 @@ module.exports = [
   // This must be the last route, otherwise it will override the routes above
   {
     path: '/'
-  },
+  }
 ];

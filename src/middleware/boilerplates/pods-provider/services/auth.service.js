@@ -13,6 +13,6 @@ module.exports = {
       await this.broker.call('pod.create', {
         username: accountData.username
       });
-    },
+    }
   }
 };

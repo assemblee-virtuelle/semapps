@@ -26,7 +26,8 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${middlewareUri}auth/login?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href =
+        `${middlewareUri}auth/login?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
@@ -35,7 +36,12 @@ const authProvider = ({
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ username: username.trim(), email: email.trim(), password: password.trim(), ...profileData }),
+          body: JSON.stringify({
+            username: username.trim(),
+            email: email.trim(),
+            password: password.trim(),
+            ...profileData
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;

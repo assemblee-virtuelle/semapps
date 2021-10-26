@@ -4,6 +4,6 @@ module.exports = {
   mixins: [SparqlEndpointService],
   settings: {
     defaultAccept: 'application/ld+json',
-    podProvider: true,
+    podProvider: true
   }
 };

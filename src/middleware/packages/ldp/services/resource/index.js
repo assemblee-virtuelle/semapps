@@ -34,14 +34,17 @@ module.exports = {
   },
   hooks: {
     before: {
-      "*"(ctx) {
+      '*'(ctx) {
         // If we have a pod provider, guess the dataset from the URI
-        if( this.settings.podProvider && !ctx.meta.dataset ) {
-          const uri = ctx.params.resourceUri || ctx.params.containerUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
-          if( uri ) {
+        if (this.settings.podProvider && !ctx.meta.dataset) {
+          const uri =
+            ctx.params.resourceUri ||
+            ctx.params.containerUri ||
+            (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          if (uri) {
             const containerPath = new URL(uri).pathname;
             const parts = containerPath.split('/');
-            if( parts.length > 1 ) {
+            if (parts.length > 1) {
               ctx.meta.dataset = parts[1];
             }
           }

@@ -1,4 +1,4 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 

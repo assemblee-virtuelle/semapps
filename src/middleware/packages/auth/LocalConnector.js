@@ -79,7 +79,7 @@ class LocalConnector extends Connector {
       })
       .catch(e => {
         console.error(e);
-        this.sendError(res, e.message)
+        this.sendError(res, e.message);
       });
   }
   sendToken(req, res, next) {
