@@ -1,14 +1,14 @@
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const { Errors: E } = require("moleculer-web");
-const passport = require("passport");
+const { Errors: E } = require('moleculer-web');
+const passport = require('passport');
 
 const AuthMixin = {
   settings: {
     baseUrl: null,
     jwtPath: null,
     registrationAllowed: true,
-    reservedUsernames: [],
+    reservedUsernames: []
   },
   dependencies: ['api', 'webid'],
   async created() {
@@ -82,7 +82,7 @@ const AuthMixin = {
       // });
       return await ctx.call('auth.jwt.generateToken', {
         payload: {
-          webId,
+          webId
           // email: userData['foaf:email'],
           // name: userData['foaf:name'],
           // familyName: userData['foaf:familyName']
