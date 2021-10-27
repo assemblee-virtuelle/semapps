@@ -47,9 +47,8 @@ const AuthOIDCService = {
         },
         (req, tokenset, userinfo, done) => {
           req.$ctx.call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(returnedData => {
-              req.$params.tokenPayload = returnedData;
-              done(null, returnedData);
+            .then(loginData => {
+              done(null, loginData);
             })
             .catch(e => {
               console.error(e);

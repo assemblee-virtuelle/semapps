@@ -23,8 +23,15 @@ const AuthMixin = {
     });
   },
   async started() {
+    if( !this.passportId ) throw new Error('this.passportId must be set in the service creation.')
+
     this.passport = passport;
-    this.passport.use(this.passportId, this.getStrategy());
+    this.passport.serializeUser((user, done) => { done(null, user); });
+    this.passport.deserializeUser((user, done) => { done(null, user); });
+
+    this.strategy = this.getStrategy();
+
+    this.passport.use(this.passportId, this.strategy);
 
     for (let route of this.getApiRoutes()) {
       await this.broker.call('api.addRoute', { route });
@@ -75,27 +82,19 @@ const AuthMixin = {
     },
     async impersonate(ctx) {
       const { webId } = ctx.params;
-      // const userData = await ctx.call('ldp.resource.get', {
-      //   resourceUri: webId,
-      //   accept: MIME_TYPES.JSON,
-      //   webId: 'system'
-      // });
       return await ctx.call('auth.jwt.generateToken', {
         payload: {
-          webId,
-          // email: userData['foaf:email'],
-          // name: userData['foaf:name'],
-          // familyName: userData['foaf:familyName']
+          webId
         }
       });
     }
   },
   methods: {
     getStrategy() {
-      throw new Error('getStrategy must be implemented');
+      throw new Error('getStrategy must be implemented by the service');
     },
     getApiRoutes() {
-      throw new Error('getApiRoutes must be implemented');
+      throw new Error('getApiRoutes must be implemented by the service');
     }
   }
 };

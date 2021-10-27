@@ -16,7 +16,6 @@ const AuthSSOMixin = {
     sessionSecret: 's€m@pps',
     selectSsoData: null
   },
-  dependencies: ['api', 'webid'],
   actions: {
     async loginOrSignup(ctx) {
       let { ssoData } = ctx.params;
@@ -79,9 +78,8 @@ const AuthSSOMixin = {
         },
         (req, tokenset, userinfo, done) => {
           req.$ctx.call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(returnedData => {
-              req.$params.tokenPayload = returnedData;
-              done(null, returnedData);
+            .then(loginData => {
+              done(null, loginData);
             })
             .catch(e => {
               console.error(e);
@@ -110,6 +108,14 @@ const AuthSSOMixin = {
           aliases: {
             // TODO handle global logout
             'GET /': [saveRedirectUrl, localLogout, redirectToFront],
+          }
+        },
+        {
+          path: '/auth/logout/global',
+          use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
+          aliases: {
+            // TODO handle global logout
+            'GET /': [saveRedirectUrl, localLogout, globalLogout],
           }
         }
       ]);

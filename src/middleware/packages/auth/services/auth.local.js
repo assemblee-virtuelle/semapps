@@ -1,6 +1,7 @@
 const { Strategy } = require('passport-local');
 const AuthMixin = require("../mixins/auth");
 const sendToken = require("../middlewares/sendToken");
+const { MoleculerError } = require("moleculer").Errors;
 
 const AuthLocalService = {
   name: 'auth',
@@ -11,7 +12,6 @@ const AuthLocalService = {
     registrationAllowed: true,
     reservedUsernames: []
   },
-  dependencies: ['api', 'webid'],
   created() {
     this.passportId = 'local';
   },
@@ -65,7 +65,7 @@ const AuthLocalService = {
             })
             .catch(e => {
               console.error(e);
-              done(null, false);
+              done(new MoleculerError(e.message, 401), false);
             });
         }
       )
