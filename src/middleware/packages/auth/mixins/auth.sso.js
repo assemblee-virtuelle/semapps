@@ -12,6 +12,7 @@ const AuthSSOMixin = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
+    webIdSelection: [],
     // SSO-specific settings
     sessionSecret: 's€m@pps',
     selectSsoData: null
@@ -34,7 +35,7 @@ const AuthSSOMixin = {
         // TODO update account with recent information
         // await this.broker.call('webid.edit', profileData, { meta: { webId } });
 
-        await this.broker.emit('auth.connected', { webId, profileData });
+        await this.broker.emit('auth.connected', { webId, accountData });
       } else {
         accountData = await ctx.call('auth.account.create', { uuid: profileData.uuid, email: profileData.email });
         webId = await ctx.call('webid.create', { nick: accountData.username, ...profileData });

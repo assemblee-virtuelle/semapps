@@ -10,29 +10,25 @@ const AuthLocalService = {
     baseUrl: null,
     jwtPath: null,
     registrationAllowed: true,
-    reservedUsernames: []
+    reservedUsernames: [],
+    webIdSelection: []
   },
   created() {
     this.passportId = 'local';
   },
   actions: {
     async signup(ctx) {
-      const { username, email, password, ...profileData } = ctx.params;
+      const { username, email, password, ...otherData } = ctx.params;
 
       const accountData = await ctx.call('auth.account.create', { username, email, password });
 
-      const webId = await ctx.call('webid.create', { nick: username, email, ...profileData });
+      const profileData = { nick: username, email, ...otherData };
+      const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
 
       // Link the webId with the account
       await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
       ctx.emit('auth.registered', { webId, profileData, accountData });
-
-      // await ctx.call('ldp.resource.get', {
-      //   resourceUri: webId,
-      //   accept: MIME_TYPES.JSON,
-      //   webId: 'system'
-      // });
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
@@ -43,7 +39,7 @@ const AuthLocalService = {
 
       const accountData = await ctx.call('auth.account.verify', { username, password });
 
-      ctx.emit('auth.connected', { webId: accountData.webId });
+      ctx.emit('auth.connected', { webId: accountData.webId, accountData });
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 

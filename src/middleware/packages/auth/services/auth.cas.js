@@ -1,9 +1,8 @@
-const urlJoin = require("url-join");
 const { Strategy } = require('passport-cas2');
 const AuthSSOMixin = require("../mixins/auth.sso");
 const { Errors: E } = require("moleculer-web");
 
-const AuthCasService = {
+const AuthCASService = {
   name: 'auth',
   mixins: [AuthSSOMixin],
   settings: {
@@ -11,6 +10,7 @@ const AuthCasService = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
+    webIdSelection: [],
     // SSO-specific settings
     sessionSecret: 's€m@pps',
     selectSsoData: null,
@@ -41,4 +41,4 @@ const AuthCasService = {
   }
 };
 
-module.exports = AuthCasService;
+module.exports = AuthCASService;

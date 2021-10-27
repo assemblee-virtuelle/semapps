@@ -9,6 +9,7 @@ const AuthMixin = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
+    webIdSelection: []
   },
   dependencies: ['api', 'webid'],
   async created() {
@@ -63,6 +64,7 @@ const AuthMixin = {
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
+      const { route, req, res } = ctx.params;
       // Extract token from authorization header (do not take the Bearer part)
       const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
       if (token) {
@@ -95,6 +97,13 @@ const AuthMixin = {
     },
     getApiRoutes() {
       throw new Error('getApiRoutes must be implemented by the service');
+    },
+    pickWebIdData(data) {
+      if( this.settings.webIdSelection.length > 0 ) {
+        return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
+      } else {
+        return data;
+      }
     }
   }
 };
