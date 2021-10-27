@@ -1,7 +1,7 @@
 const { Strategy } = require('passport-local');
-const AuthMixin = require("../mixins/auth");
-const sendToken = require("../middlewares/sendToken");
-const { MoleculerError } = require("moleculer").Errors;
+const AuthMixin = require('../mixins/auth');
+const sendToken = require('../middlewares/sendToken');
+const { MoleculerError } = require('moleculer').Errors;
 
 const AuthLocalService = {
   name: 'auth',
@@ -32,7 +32,7 @@ const AuthLocalService = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
-      return({ token, newUser: true });
+      return { token, newUser: true };
     },
     async login(ctx) {
       const { username, password } = ctx.params;
@@ -43,7 +43,7 @@ const AuthLocalService = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
-      return({ token, newUser: true });
+      return { token, newUser: true };
     }
   },
   methods: {
@@ -55,7 +55,8 @@ const AuthLocalService = {
           passReqToCallback: true // We want to have access to req below
         },
         (req, username, password, done) => {
-          req.$ctx.call('auth.login', {username, password})
+          req.$ctx
+            .call('auth.login', { username, password })
             .then(returnedData => {
               done(null, returnedData);
             })
@@ -64,17 +65,15 @@ const AuthLocalService = {
               done(new MoleculerError(e.message, 401), false);
             });
         }
-      )
+      );
     },
     getApiRoutes() {
-      return([
+      return [
         {
           path: '/auth/login',
-          use: [
-            this.passport.initialize(),
-          ],
+          use: [this.passport.initialize()],
           aliases: {
-            'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken],
+            'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
           }
         },
         {
@@ -83,7 +82,7 @@ const AuthLocalService = {
             'POST /': 'auth.signup'
           }
         }
-      ])
+      ];
     }
   }
 };

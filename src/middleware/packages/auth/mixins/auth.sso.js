@@ -1,9 +1,9 @@
-const session = require("express-session");
-const {Issuer, Strategy} = require("openid-client");
+const session = require('express-session');
+const { Issuer, Strategy } = require('openid-client');
 const AuthMixin = require('./auth');
-const saveRedirectUrl = require("../middlewares/saveRedirectUrl");
-const redirectToFront = require("../middlewares/redirectToFront");
-const localLogout = require("../middlewares/localLogout");
+const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
+const redirectToFront = require('../middlewares/redirectToFront');
+const localLogout = require('../middlewares/localLogout');
 
 const AuthSSOMixin = {
   mixins: [AuthMixin],
@@ -21,13 +21,13 @@ const AuthSSOMixin = {
     async loginOrSignup(ctx) {
       let { ssoData } = ctx.params;
 
-      const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData
+      const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
 
       // TODO use UUID to identify unique accounts with SSO
       const existingAccounts = await ctx.call('auth.account.find', { query: { email: profileData.email } });
 
       let accountData, webId, newUser;
-      if( existingAccounts.length > 0 ) {
+      if (existingAccounts.length > 0) {
         accountData = existingAccounts[0];
         webId = accountData.webId;
         newUser = false;
@@ -49,7 +49,7 @@ const AuthSSOMixin = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
-      return({ token, newUser });
+      return { token, newUser };
     }
   },
   methods: {
@@ -78,7 +78,8 @@ const AuthSSOMixin = {
           passReqToCallback: true
         },
         (req, tokenset, userinfo, done) => {
-          req.$ctx.call('auth.loginOrSignup', { ssoData: userinfo })
+          req.$ctx
+            .call('auth.loginOrSignup', { ssoData: userinfo })
             .then(loginData => {
               done(null, loginData);
             })
@@ -91,14 +92,10 @@ const AuthSSOMixin = {
     },
     getApiRoutes() {
       const sessionMiddleware = session({ secret: this.settings.sessionSecret, maxAge: null });
-      return([
+      return [
         {
           path: '/auth/login', // Force to use this path ?
-          use: [
-            sessionMiddleware,
-            this.passport.initialize(),
-            this.passport.session(),
-          ],
+          use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             'GET /': [saveRedirectUrl, this.passport.authenticate(this.passportId, { session: false }), redirectToFront]
           }
@@ -108,7 +105,7 @@ const AuthSSOMixin = {
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             // TODO handle global logout
-            'GET /': [saveRedirectUrl, localLogout, redirectToFront],
+            'GET /': [saveRedirectUrl, localLogout, redirectToFront]
           }
         },
         {
@@ -116,10 +113,10 @@ const AuthSSOMixin = {
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             // TODO handle global logout
-            'GET /': [saveRedirectUrl, localLogout, globalLogout],
+            'GET /': [saveRedirectUrl, localLogout, globalLogout]
           }
         }
-      ]);
+      ];
     }
   }
 };
