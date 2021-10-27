@@ -1,6 +1,6 @@
 const { Strategy } = require('passport-cas2');
-const AuthSSOMixin = require("../mixins/auth.sso");
-const { Errors: E } = require("moleculer-web");
+const AuthSSOMixin = require('../mixins/auth.sso');
+const { Errors: E } = require('moleculer-web');
 
 const AuthCASService = {
   name: 'auth',
@@ -15,7 +15,7 @@ const AuthCASService = {
     sessionSecret: 's€m@pps',
     selectSsoData: null,
     // Cas-specific settings
-    casUrl: null,
+    casUrl: null
   },
   async created() {
     this.passportId = 'cas';
@@ -28,7 +28,8 @@ const AuthCASService = {
           passReqToCallback: true
         },
         (req, username, profile, done) => {
-          req.$ctx.call('auth.loginOrSignup', { ssoData: { username, ...profile } })
+          req.$ctx
+            .call('auth.loginOrSignup', { ssoData: { username, ...profile } })
             .then(loginData => {
               done(null, loginData);
             })
