@@ -1,4 +1,4 @@
-const getRoutes = require('./getRoutes');
+const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
@@ -6,23 +6,12 @@ const SparqlEndpointService = {
     podProvider: false,
     defaultAccept: 'text/turtle'
   },
-  dependencies: ['triplestore', 'api', 'auth.account'],
+  dependencies: ['triplestore', 'api'],
   async started() {
-    let datasetsMapping;
-
     if (this.settings.podProvider) {
-      // TODO use /:username instead of adding one SPARQL route per user
-      const accounts = await this.broker.call('auth.account.find');
-      datasetsMapping = Object.fromEntries(
-        accounts.map(account => ['/' + account.username + '/sparql', account.username])
-      );
+      await this.broker.call('api.addRoute', { route: getRoute('/:username/sparql') });
     } else {
-      // null = use default dataset
-      datasetsMapping['/sparql'] = null;
-    }
-
-    for (let route of getRoutes(datasetsMapping)) {
-      await this.broker.call('api.addRoute', { route });
+      await this.broker.call('api.addRoute', { route: getRoute('/sparql') });
     }
   },
   actions: {
@@ -31,7 +20,8 @@ const SparqlEndpointService = {
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
       const response = await ctx.call('triplestore.query', {
         query,
-        accept
+        accept,
+        dataset: ctx.params.username
       });
       if (ctx.meta.$responseType === undefined) {
         ctx.meta.$responseType = ctx.meta.responseType || accept;
