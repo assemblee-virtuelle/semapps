@@ -68,21 +68,26 @@ const AuthLocalService = {
       );
     },
     getApiRoutes() {
-      return [
-        {
-          path: '/auth/login',
-          use: [this.passport.initialize()],
-          aliases: {
-            'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
-          }
-        },
-        {
-          path: '/auth/signup',
-          aliases: {
-            'POST /': 'auth.signup'
-          }
+      const loginRoute = {
+        path: '/auth/login',
+        use: [this.passport.initialize()],
+        aliases: {
+          'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
         }
-      ];
+      };
+
+      const signupRoute = {
+        path: '/auth/signup',
+        aliases: {
+          'POST /': 'auth.signup'
+        }
+      };
+
+      if( this.settings.registrationAllowed ) {
+        return [ loginRoute, signupRoute ];
+      } else {
+        return [ loginRoute ]
+      }
     }
   }
 };

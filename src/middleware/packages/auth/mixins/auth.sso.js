@@ -1,5 +1,4 @@
 const session = require('express-session');
-const { Issuer, Strategy } = require('openid-client');
 const AuthMixin = require('./auth');
 const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
 const redirectToFront = require('../middlewares/redirectToFront');
@@ -37,6 +36,10 @@ const AuthSSOMixin = {
 
         await this.broker.emit('auth.connected', { webId, accountData });
       } else {
+        if (!this.settings.registrationAllowed) {
+          throw new Error('registration.not-allowed');
+        }
+
         accountData = await ctx.call('auth.account.create', { uuid: profileData.uuid, email: profileData.email });
         webId = await ctx.call('webid.create', { nick: accountData.username, ...profileData });
         newUser = true;
@@ -53,43 +56,6 @@ const AuthSSOMixin = {
     }
   },
   methods: {
-    async getStrategy() {
-      this.issuer = await Issuer.discover(this.settings.issuer);
-
-      const client = new this.issuer.Client({
-        client_id: this.settings.clientId,
-        client_secret: this.settings.clientSecret,
-        redirect_uri: this.settings.redirectUri,
-        token_endpoint_auth_method: this.settings.clientSecret ? undefined : 'none'
-      });
-
-      const params = {
-        // ... any authorization params override client properties
-        // client_id defaults to client.client_id
-        // redirect_uri defaults to client.redirect_uris[0]
-        // response type defaults to client.response_types[0], then 'code'
-        // scope defaults to 'openid'
-      };
-
-      return new Strategy(
-        {
-          client,
-          params,
-          passReqToCallback: true
-        },
-        (req, tokenset, userinfo, done) => {
-          req.$ctx
-            .call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(loginData => {
-              done(null, loginData);
-            })
-            .catch(e => {
-              console.error(e);
-              done(null, false);
-            });
-        }
-      );
-    },
     getApiRoutes() {
       const sessionMiddleware = session({ secret: this.settings.sessionSecret, maxAge: null });
       return [
@@ -104,16 +70,7 @@ const AuthSSOMixin = {
           path: '/auth/logout',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
-            // TODO handle global logout
             'GET /': [saveRedirectUrl, localLogout, redirectToFront]
-          }
-        },
-        {
-          path: '/auth/logout/global',
-          use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
-          aliases: {
-            // TODO handle global logout
-            'GET /': [saveRedirectUrl, localLogout, globalLogout]
           }
         }
       ];
