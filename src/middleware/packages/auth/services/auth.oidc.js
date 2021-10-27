@@ -1,6 +1,6 @@
-const urlJoin = require("url-join");
-const { Issuer, Strategy } = require("openid-client");
-const AuthSSOMixin = require("../mixins/auth.sso");
+const urlJoin = require('url-join');
+const { Issuer, Strategy } = require('openid-client');
+const AuthSSOMixin = require('../mixins/auth.sso');
 
 const AuthOIDCService = {
   name: 'auth',
@@ -16,7 +16,7 @@ const AuthOIDCService = {
     // OIDC-specific settings
     issuer: null,
     clientId: null,
-    clientSecret: null,
+    clientSecret: null
   },
   async created() {
     this.passportId = 'oidc';
@@ -46,7 +46,8 @@ const AuthOIDCService = {
           passReqToCallback: true
         },
         (req, tokenset, userinfo, done) => {
-          req.$ctx.call('auth.loginOrSignup', { ssoData: userinfo })
+          req.$ctx
+            .call('auth.loginOrSignup', { ssoData: userinfo })
             .then(loginData => {
               done(null, loginData);
             })

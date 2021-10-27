@@ -1,14 +1,14 @@
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const { Errors: E } = require("moleculer-web");
-const passport = require("passport");
+const { Errors: E } = require('moleculer-web');
+const passport = require('passport');
 
 const AuthMixin = {
   settings: {
     baseUrl: null,
     jwtPath: null,
     registrationAllowed: true,
-    reservedUsernames: [],
+    reservedUsernames: []
   },
   dependencies: ['api', 'webid'],
   async created() {
@@ -23,11 +23,15 @@ const AuthMixin = {
     });
   },
   async started() {
-    if( !this.passportId ) throw new Error('this.passportId must be set in the service creation.')
+    if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
 
     this.passport = passport;
-    this.passport.serializeUser((user, done) => { done(null, user); });
-    this.passport.deserializeUser((user, done) => { done(null, user); });
+    this.passport.serializeUser((user, done) => {
+      done(null, user);
+    });
+    this.passport.deserializeUser((user, done) => {
+      done(null, user);
+    });
 
     this.strategy = this.getStrategy();
 
