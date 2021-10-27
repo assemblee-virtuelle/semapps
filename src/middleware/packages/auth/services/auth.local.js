@@ -83,10 +83,10 @@ const AuthLocalService = {
         }
       };
 
-      if( this.settings.registrationAllowed ) {
-        return [ loginRoute, signupRoute ];
+      if (this.settings.registrationAllowed) {
+        return [loginRoute, signupRoute];
       } else {
-        return [ loginRoute ]
+        return [loginRoute];
       }
     }
   }
