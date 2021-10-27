@@ -17,21 +17,22 @@ module.exports = {
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
       const emailExists = await ctx.call('auth.account.emailExists', { email });
-      if( emailExists ) {
+      if (emailExists) {
         throw new Error('email.already.exists');
       }
 
-      if( username ) {
+      if (username) {
         await this.isValidUsername(ctx, username);
       } else {
         // If username is not provided, find an username based on the email
-        let usernameValid = false, i = 1;
+        let usernameValid = false,
+          i = 1;
         do {
           i++;
           username = email.split('@')[0].toLowerCase();
-          if( i>2 ) username += i;
+          if (i > 2) username += i;
           usernameValid = await this.isValidUsername(ctx, username);
-        } while(usernameValid);
+        } while (usernameValid);
       }
 
       return await this._create(ctx, {
@@ -55,8 +56,8 @@ module.exports = {
 
       const accounts = await this._find(ctx, {
         query: {
-          username,
-        },
+          username
+        }
       });
 
       if (accounts.length > 0) {
@@ -88,18 +89,18 @@ module.exports = {
   methods: {
     async isValidUsername(ctx, username) {
       // Ensure the username has no space or special characters
-      if( !/^[a-zA-Z0-9\-_]+$/.exec(username) ) {
+      if (!/^[a-zA-Z0-9\-_]+$/.exec(username)) {
         throw new Error('username.invalid');
       }
 
       // Ensure we don't use reservedUsernames
-      if( this.settings.reservedUsernames.includes(username) ) {
+      if (this.settings.reservedUsernames.includes(username)) {
         throw new Error('username.already.exists');
       }
 
       // Ensure email or username doesn't already exist
       const usernameExists = await ctx.call('auth.account.usernameExists', { username });
-      if( usernameExists ) {
+      if (usernameExists) {
         throw new Error('username.already.exists');
       }
     },

@@ -9,6 +9,6 @@ const redirectToFront = (req, res) => {
   // Redirect using NodeJS HTTP
   res.writeHead(302, { Location: redirectUrl.toString() });
   res.end();
-}
+};
 
 module.exports = redirectToFront;
