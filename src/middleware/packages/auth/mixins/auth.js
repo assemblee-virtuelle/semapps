@@ -1,7 +1,7 @@
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const { Errors: E } = require("moleculer-web");
-const passport = require("passport");
+const { Errors: E } = require('moleculer-web');
+const passport = require('passport');
 
 const AuthMixin = {
   settings: {
@@ -24,11 +24,15 @@ const AuthMixin = {
     });
   },
   async started() {
-    if( !this.passportId ) throw new Error('this.passportId must be set in the service creation.')
+    if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
 
     this.passport = passport;
-    this.passport.serializeUser((user, done) => { done(null, user); });
-    this.passport.deserializeUser((user, done) => { done(null, user); });
+    this.passport.serializeUser((user, done) => {
+      done(null, user);
+    });
+    this.passport.deserializeUser((user, done) => {
+      done(null, user);
+    });
 
     this.strategy = this.getStrategy();
 
@@ -99,7 +103,7 @@ const AuthMixin = {
       throw new Error('getApiRoutes must be implemented by the service');
     },
     pickWebIdData(data) {
-      if( this.settings.webIdSelection.length > 0 ) {
+      if (this.settings.webIdSelection.length > 0) {
         return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
       } else {
         return data;
