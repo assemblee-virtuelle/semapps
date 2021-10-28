@@ -241,6 +241,23 @@ const CollectionService = {
           }
         `
       });
+    },
+    async getOwner(ctx) {
+      const { collectionUri, collectionKey } = ctx.params;
+
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          SELECT ?actorUri
+          WHERE { 
+            ?actorUri as:${collectionKey} <${collectionUri}>
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      return results.length > 0 ? results[0].actorUri.value : null;
     }
   },
   hooks: {

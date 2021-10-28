@@ -10,19 +10,11 @@ const InboxService = {
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
+      let { collectionUri, ...activity } = ctx.params;
 
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('A username/containerUri or collectionUri must be specified');
-      }
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'inbox');
-      const actorUri = collectionUri.replace('/inbox', '');
-
-      const collectionExists = await ctx.call('activitypub.collection.exist', {
-        collectionUri: collectionUri
-      });
-
+      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;

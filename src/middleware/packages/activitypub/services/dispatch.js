@@ -16,22 +16,21 @@ const DispatchService = {
       if (activity.to) {
         const recipients = await this.getAllRecipients(activity);
         for (const recipientUri of recipients) {
-          // TODO find inbox URI from the actor's profile
-          const inboxUri = urlJoin(recipientUri, 'inbox');
+          const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
           if (this.isLocalActor(recipientUri)) {
             // Attach activity to the inbox of the local actor
             await this.broker.call('activitypub.collection.attach', {
-              collectionUri: inboxUri,
+              collectionUri: recipient.inbox,
               item: activity
             });
             localRecipients.push(recipientUri);
           } else {
             // If the QueueService mixin is available, use it
             if (this.createJob) {
-              this.createJob('remotePost', { inboxUri, activity });
+              this.createJob('remotePost', { inboxUri: recipient.inbox, activity });
             } else {
               // Send directly
-              await this.remotePost(inboxUri, activity);
+              await this.remotePost(recipient.inbox, activity);
             }
           }
         }

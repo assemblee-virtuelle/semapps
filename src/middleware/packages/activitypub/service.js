@@ -28,7 +28,7 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   async created() {
-    const { podProvider } = this.settings;
+    const { baseUri, podProvider } = this.settings;
 
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
@@ -50,6 +50,7 @@ const ActivityPubService = {
 
     this.broker.createService(ActorService, {
       settings: {
+        baseUri,
         actorsContainers,
         context: Array.isArray(context)
           ? [...context, 'https://w3id.org/security/v1']
@@ -60,21 +61,22 @@ const ActivityPubService = {
 
     this.broker.createService(ObjectService, {
       settings: {
-        baseUri: this.settings.baseUri,
+        baseUri,
         containers: this.settings.containers
       }
     });
 
-    // this.broker.createService(ActivityService, {
-    //   settings: {
-    //     containerUri: urlJoin(this.settings.baseUri, 'activities'),
-    //     context
-    //   }
-    // });
+    // TODO give more choices ? with a pathPattern ?
+    this.broker.createService(ActivityService, {
+      settings: {
+        containerUri: podProvider ? urlJoin(baseUri, ':username', 'activities') : urlJoin(baseUri, 'activities'),
+        context
+      }
+    });
 
     this.broker.createService(FollowService, {
       settings: {
-        baseUri: this.settings.baseUri
+        baseUri
       }
     });
 
@@ -84,7 +86,7 @@ const ActivityPubService = {
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
-        baseUri: this.settings.baseUri
+        baseUri
       }
     });
   },

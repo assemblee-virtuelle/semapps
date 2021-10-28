@@ -36,7 +36,7 @@ module.exports = {
     before: {
       '*'(ctx) {
         // If we have a pod provider, guess the dataset from the URI
-        if (this.settings.podProvider && !ctx.meta.dataset) {
+        if (this.settings.podProvider) {
           const uri =
             ctx.params.resourceUri ||
             ctx.params.containerUri ||

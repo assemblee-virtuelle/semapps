@@ -135,6 +135,7 @@ const SignatureService = {
     },
     // TODO use cache mechanisms
     async getRemoteActorPublicKey(actorUri) {
+      // TODO use activitypub.actor.get
       const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
       if (!response) return false;
 
