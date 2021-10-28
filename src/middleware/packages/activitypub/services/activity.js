@@ -1,4 +1,4 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
 const ActivityService = {
@@ -28,7 +28,7 @@ const ActivityService = {
         contentType: MIME_TYPES.JSON
       });
     }
-  },
+  }
   // hooks: {
   //   before: {
   //     create: [
