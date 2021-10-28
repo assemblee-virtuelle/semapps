@@ -26,8 +26,7 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href =
-        `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
