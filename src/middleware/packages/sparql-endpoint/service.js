@@ -1,10 +1,11 @@
 const getRoute = require('./getRoute');
+const { Errors: E } = require('moleculer-web');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
-    podProvider: false,
-    defaultAccept: 'text/turtle'
+    defaultAccept: 'text/turtle',
+    podProvider: false
   },
   dependencies: ['triplestore', 'api'],
   async started() {
@@ -16,8 +17,15 @@ const SparqlEndpointService = {
   },
   actions: {
     async query(ctx) {
-      let query = ctx.params.query || ctx.params.body;
+      const query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+
+      // Only user can query his own pod
+      if( this.settings.podProvider ) {
+        const account = await ctx.call('auth.account.findByWebId', { webId: ctx.meta.webId });
+        if( account.username !== ctx.params.username ) throw new E.ForbiddenError();
+      }
+
       const response = await ctx.call('triplestore.query', {
         query,
         accept,
