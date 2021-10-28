@@ -11,7 +11,7 @@ const WebfingerService = {
     if (!this.settings.domainName) {
       if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
       this.settings.domainName = new URL(this.settings.baseUrl).host;
-      console.log('this.settings.domainName', this.settings.domainName)
+      console.log('this.settings.domainName', this.settings.domainName);
     }
 
     await this.broker.call('api.addRoute', {
@@ -35,7 +35,7 @@ const WebfingerService = {
         const username = matches[1];
         const accounts = await ctx.call('auth.account.find', { query: { username } });
 
-        if( accounts.length > 0 ) {
+        if (accounts.length > 0) {
           return {
             subject: resource,
             aliases: [accounts[0].webId],

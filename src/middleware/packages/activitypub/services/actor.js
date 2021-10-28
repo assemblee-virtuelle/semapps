@@ -19,11 +19,12 @@ const ActorService = {
   actions: {
     async appendActorData(ctx) {
       const { actorUri, userData } = ctx.params;
-      const userTypes = userData.type || userData['@type']
-        ?  Array.isArray(userData.type || userData['@type'])
-          ? userData.type || userData['@type']
-          : [userData.type || userData['@type']]
-        : [];
+      const userTypes =
+        userData.type || userData['@type']
+          ? Array.isArray(userData.type || userData['@type'])
+            ? userData.type || userData['@type']
+            : [userData.type || userData['@type']]
+          : [];
 
       // Skip if ActivityPub information are already provided
       if (

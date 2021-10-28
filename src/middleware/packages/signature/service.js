@@ -4,7 +4,7 @@ const path = require('path');
 const { generateKeyPair, createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const SignatureService = {
   name: 'signature',
@@ -150,12 +150,12 @@ const SignatureService = {
         webId: 'system'
       });
 
-      if( actorData && actorData.preferredUsername ) {
+      if (actorData && actorData.preferredUsername) {
         const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key');
         const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key.pub');
-        return({ privateKeyPath, publicKeyPath });
+        return { privateKeyPath, publicKeyPath };
       } else {
-        throw new Error('No valid actor found with URI ' + actorUri)
+        throw new Error('No valid actor found with URI ' + actorUri);
       }
     }
   }
