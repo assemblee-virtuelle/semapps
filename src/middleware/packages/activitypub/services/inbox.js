@@ -16,7 +16,7 @@ const InboxService = {
         throw new Error('A username/containerUri or collectionUri must be specified');
       }
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'inbox');
+      collectionUri = collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'inbox');
       const actorUri = collectionUri.replace('/inbox', '');
 
       const collectionExists = await ctx.call('activitypub.collection.exist', {
@@ -34,7 +34,7 @@ const InboxService = {
           headers: ctx.meta.headers
         });
 
-        const validSignature = await ctx.call('signature.verifyHttpSignature', {
+        const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
           headers: ctx.meta.headers
         });
@@ -77,7 +77,7 @@ const InboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'inbox'),
+        collectionUri: collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'inbox'),
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,

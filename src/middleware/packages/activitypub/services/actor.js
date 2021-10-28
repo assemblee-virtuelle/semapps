@@ -19,9 +19,11 @@ const ActorService = {
   actions: {
     async appendActorData(ctx) {
       const { actorUri, userData } = ctx.params;
-      const userTypes = Array.isArray(userData.type || userData['@type'])
-        ? userData.type || userData['@type']
-        : [userData.type || userData['@type']];
+      const userTypes = userData.type || userData['@type']
+        ?  Array.isArray(userData.type || userData['@type'])
+          ? userData.type || userData['@type']
+          : [userData.type || userData['@type']]
+        : [];
 
       // Skip if ActivityPub information are already provided
       if (
@@ -38,7 +40,7 @@ const ActorService = {
       await ctx.call('ldp.resource.patch', {
         resource: {
           '@id': actorUri,
-          '@type': [...userTypes, type],
+          '@type': type,
           name,
           preferredUsername
         },
@@ -47,36 +49,39 @@ const ActorService = {
     },
     async attachCollections(ctx) {
       const { actorUri } = ctx.params;
+      const baseUri = ctx.params.baseUri || actorUri;
 
       // Create the collections associated with the user
       await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(actorUri, 'following'),
+        collectionUri: urlJoin(baseUri, 'following'),
         ordered: false
       });
       await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(actorUri, 'followers'),
+        collectionUri: urlJoin(baseUri, 'followers'),
         ordered: false
       });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'inbox'), ordered: true });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'outbox'), ordered: true });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(baseUri, 'inbox'), ordered: true });
+      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(baseUri, 'outbox'), ordered: true });
 
       return await ctx.call('ldp.resource.patch', {
         resource: {
           '@id': actorUri,
-          following: urlJoin(actorUri, 'following'),
-          followers: urlJoin(actorUri, 'followers'),
-          inbox: urlJoin(actorUri, 'inbox'),
-          outbox: urlJoin(actorUri, 'outbox')
+          following: urlJoin(baseUri, 'following'),
+          followers: urlJoin(baseUri, 'followers'),
+          inbox: urlJoin(baseUri, 'inbox'),
+          outbox: urlJoin(baseUri, 'outbox')
         },
         contentType: MIME_TYPES.JSON
       });
     },
     async detachCollections(ctx) {
       const { actorUri } = ctx.params;
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/following' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/followers' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/inbox' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/outbox' });
+      const baseUri = ctx.params.baseUri || actorUri;
+
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'followers') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'following') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'inbox') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'outbox') });
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;

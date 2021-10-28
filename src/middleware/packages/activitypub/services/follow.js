@@ -18,7 +18,7 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'followers'),
+        collectionUri: collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'followers'),
         dereferenceItems: false
       });
 
@@ -38,7 +38,7 @@ const FollowService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'following'),
+        collectionUri: collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'followers'),
         dereferenceItems: false
       });
 

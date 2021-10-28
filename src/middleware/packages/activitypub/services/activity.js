@@ -1,11 +1,11 @@
 const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/ldp');
+const { LdpAdapter } = require('@semapps/ldp');
 const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
 const ActivityService = {
   name: 'activitypub.activity',
   mixins: [DbService],
-  adapter: new TripleStoreAdapter(),
+  adapter: new LdpAdapter(),
   settings: {
     containerUri: null, // To be set by the user
     queryDepth: 3,

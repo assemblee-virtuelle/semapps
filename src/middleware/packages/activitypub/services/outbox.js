@@ -7,7 +7,7 @@ const OutboxService = {
   settings: {
     itemsPerPage: 10
   },
-  dependencies: ['activitypub.activity', 'activitypub.object', 'activitypub.collection'],
+  dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
     async post(ctx) {
       let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
@@ -16,7 +16,7 @@ const OutboxService = {
         throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
       }
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'outbox');
+      collectionUri = collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'outbox');
       const actorUri = collectionUri.replace('/outbox', '');
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
@@ -59,7 +59,7 @@ const OutboxService = {
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'outbox'),
+        collectionUri: collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'outbox'),
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
