@@ -53,11 +53,11 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
       .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
-            history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+            history.push(redirectTo || '/');
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
-          history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+          history.push(redirectTo || '/');
           setLoading(false);
         }
         notify('auth.message.new_user_created', 'info');

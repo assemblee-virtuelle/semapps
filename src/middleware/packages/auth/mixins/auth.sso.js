@@ -60,7 +60,7 @@ const AuthSSOMixin = {
       const sessionMiddleware = session({ secret: this.settings.sessionSecret, maxAge: null });
       return [
         {
-          path: '/auth/login', // Force to use this path ?
+          path: '/auth',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             'GET /': [saveRedirectUrl, this.passport.authenticate(this.passportId, { session: false }), redirectToFront]

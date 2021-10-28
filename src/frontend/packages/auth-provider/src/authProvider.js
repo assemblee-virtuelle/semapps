@@ -27,7 +27,7 @@ const authProvider = ({
       }
     } else {
       window.location.href =
-        `${middlewareUri}auth/login?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+        `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
@@ -96,7 +96,7 @@ const authProvider = ({
 
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
-    let { json } = await httpClient(aclUri);
+    const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
@@ -149,11 +149,15 @@ const authProvider = ({
       })
     });
   },
-  getIdentity: () => {
+  getIdentity: async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const payload = jwtDecode(token);
-      return { id: payload.webId, fullName: payload.name || payload['foaf:name'] };
+      const { webId } = jwtDecode(token);
+
+      const { json: webIdData } = await httpClient(webId);
+      const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
+
+      return { id: webId, fullName: profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
     }
   }
 });

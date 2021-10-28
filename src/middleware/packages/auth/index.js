@@ -3,5 +3,6 @@ module.exports = {
   AuthLocalService: require('./services/auth.local'),
   AuthOIDCService: require('./services/auth.oidc'),
   AuthAccountService: require('./services/account'),
-  AuthJWTService: require('./services/jwt')
+  AuthJWTService: require('./services/jwt'),
+  AuthMigrationService: require('./services/migration'),
 };
