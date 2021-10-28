@@ -37,9 +37,9 @@ module.exports = {
       aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      enabled: function(ctx){
+      enabled: function(ctx) {
         //On regarde si le containerURI est celui d'un fichier, pas de cache si c'est le cas
-        return (/[^/]*$/.exec(ctx.options.parentCtx.params.containerUri)[0] == 'files' ? false : true );
+        return /[^/]*$/.exec(ctx.options.parentCtx.params.containerUri)[0] == 'files' ? false : true;
       },
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },
@@ -94,7 +94,7 @@ module.exports = {
             ctx.meta.$responseType = result['semapps:mimeType'];
             //Les fichiers sont immutables, on défini le cache à la valeur maximum
             ctx.meta.$responseHeaders = {
-              "Cache-Control": "public, max-age=31536000",
+              'Cache-Control': 'public, max-age=31536000'
             };
             return fs.readFileSync(result['semapps:localPath']);
           } catch (e) {
