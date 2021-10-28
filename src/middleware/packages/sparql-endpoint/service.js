@@ -1,35 +1,35 @@
-const getRoutes = require('./getRoutes');
+const getRoute = require('./getRoute');
+const { Errors: E } = require('moleculer-web');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
-    podProvider: false,
     defaultAccept: 'text/turtle',
+    podProvider: false
   },
-  dependencies: ['triplestore', 'api', 'auth.account'],
+  dependencies: ['triplestore', 'api'],
   async started() {
-    let datasetsMapping;
-
-    if( this.settings.podProvider ) {
-      // TODO use /:username instead of adding one SPARQL route per user
-      const accounts = await this.broker.call('auth.account.find');
-      datasetsMapping = Object.fromEntries(accounts.map(account => ['/' + account.username + '/sparql', account.username]));
+    if (this.settings.podProvider) {
+      await this.broker.call('api.addRoute', { route: getRoute('/:username/sparql') });
     } else {
-      // null = use default dataset
-      datasetsMapping['/sparql'] = null;
-    }
-
-    for (let route of getRoutes(datasetsMapping)) {
-      await this.broker.call('api.addRoute', { route });
+      await this.broker.call('api.addRoute', { route: getRoute('/sparql') });
     }
   },
   actions: {
     async query(ctx) {
-      let query = ctx.params.query || ctx.params.body;
+      const query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
+
+      // Only user can query his own pod
+      if( this.settings.podProvider ) {
+        const account = await ctx.call('auth.account.findByWebId', { webId: ctx.meta.webId });
+        if( account.username !== ctx.params.username ) throw new E.ForbiddenError();
+      }
+
       const response = await ctx.call('triplestore.query', {
         query,
-        accept
+        accept,
+        dataset: ctx.params.username
       });
       if (ctx.meta.$responseType === undefined) {
         ctx.meta.$responseType = ctx.meta.responseType || accept;
