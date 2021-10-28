@@ -1,6 +1,6 @@
-const { addContainerUriMiddleware, parseHeader, parseJson } = require("@semapps/middlewares");
+const { addContainerUriMiddleware, parseHeader, parseJson } = require('@semapps/middlewares');
 
-const getCollectionsRoutes = (containerUri) => {
+const getCollectionsRoutes = containerUri => {
   const containerPath = new URL(containerUri).pathname;
 
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
@@ -28,7 +28,7 @@ const getCollectionsRoutes = (containerUri) => {
       authentication: false,
       bodyParsers: false,
       aliases: {
-        'POST /outbox': [...middlewares, 'activitypub.outbox.post'],
+        'POST /outbox': [...middlewares, 'activitypub.outbox.post']
       }
     }
   ];
