@@ -39,7 +39,7 @@ module.exports = {
     cache: {
       enabled: function(ctx) {
         //On regarde si le containerURI est celui d'un fichier, pas de cache si c'est le cas
-        return /[^/]*$/.exec(ctx.options.parentCtx.params.containerUri)[0] == 'files' ? false : true;
+        return /[^/]*$/.exec(ctx.options.parentCtx.params.containerUri)[0] !== 'files';
       },
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },
