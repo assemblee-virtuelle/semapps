@@ -1,4 +1,4 @@
-const { PUBLIC_URI } = require("./constants");
+const { PUBLIC_URI } = require('./constants');
 
 const objectCurrentToId = activityJson => {
   if (activityJson.object && typeof activityJson.object === 'object') {
@@ -45,7 +45,7 @@ const isPublicActivity = activity => {
   // We accept all three representations https://www.w3.org/TR/activitypub/#public-addressing
   const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
   return defaultToArray(activity.to).some(r => publicRepresentations.includes(r));
-}
+};
 
 module.exports = {
   objectCurrentToId,

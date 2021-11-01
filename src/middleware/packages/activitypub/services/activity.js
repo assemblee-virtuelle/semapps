@@ -1,6 +1,6 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent, defaultToArray, isPublicActivity } = require('../utils');
-const { PUBLIC_URI } = require("../constants");
+const { PUBLIC_URI } = require('../constants');
 
 const ActivityService = {
   name: 'activitypub.activity',
@@ -29,7 +29,7 @@ const ActivityService = {
 
       // Give read rights to activity recipients
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
-      for( let recipient of recipients ) {
+      for (let recipient of recipients) {
         await this.broker.call('webacl.resource.addRights', {
           resourceUri: activityUri,
           additionalRights: {
@@ -37,19 +37,19 @@ const ActivityService = {
               uri: recipient,
               read: true
             }
-          },
+          }
         });
       }
 
       // If activity is public, give anonymous read right
-      if( isPublicActivity(activity) ) {
+      if (isPublicActivity(activity)) {
         await this.broker.call('webacl.resource.addRights', {
           resourceUri: activityUri,
           additionalRights: {
             anon: {
               read: true
             }
-          },
+          }
         });
       }
 
@@ -82,7 +82,7 @@ const ActivityService = {
 
             // Sender's followers list
             case actor.followers:
-              const collection = await ctx.call('activitypub.collection.get', {collectionUri: recipient});
+              const collection = await ctx.call('activitypub.collection.get', { collectionUri: recipient });
               if (collection && collection.items) output.push(...defaultToArray(collection.items));
               break;
 
@@ -95,7 +95,7 @@ const ActivityService = {
       }
 
       return output;
-    },
+    }
   }
   // hooks: {
   //   before: {

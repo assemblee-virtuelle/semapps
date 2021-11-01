@@ -43,7 +43,7 @@ module.exports = {
   },
   async started() {
     if (this.settings.containers.length > 0) {
-      if( this.settings.podProvider ) {
+      if (this.settings.podProvider) {
         // TODO go through each users and ensure all the containers are created
       } else {
         await this.broker.call('ldp.container.createMany', {

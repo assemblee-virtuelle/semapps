@@ -50,7 +50,7 @@ let containersWithDefaultAnonRead = [];
 const WebAclMiddleware = config => ({
   name: 'WebAclMiddleware',
   async started(broker) {
-    if( !config.podProvider ) {
+    if (!config.podProvider) {
       const containers = await broker.call('ldp.container.getAll');
       for (let containerUri of containers) {
         const authorizations = await broker.call('triplestore.query', {
@@ -78,7 +78,7 @@ const WebAclMiddleware = config => ({
     }
   },
   localAction: (wrapWebAclMiddleware = (next, action) => {
-    if( action.name === 'ldp.resource.get') {
+    if (action.name === 'ldp.resource.get') {
       /*
        * VERIFY AUTHORIZATIONS
        * This allows us to quickly check the permissions for GET operations using the Redis cache
@@ -86,7 +86,10 @@ const WebAclMiddleware = config => ({
        */
       return async ctx => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-        const bypass = () => { ctx.params.aclVerified = true; return next(ctx) };
+        const bypass = () => {
+          ctx.params.aclVerified = true;
+          return next(ctx);
+        };
 
         if (webId === 'system') {
           return bypass();
@@ -95,12 +98,12 @@ const WebAclMiddleware = config => ({
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
         const containerUri = getContainerFromUri(resourceUri);
 
-        if( config.podProvider ) {
+        if (config.podProvider) {
           // TODO register the POD URI in the meta ?
           const podUri = webId.replace('/actor', '');
           // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
           // TODO make sure it still works well.
-          if( resourceUri.startsWith(podUri + '/') ) {
+          if (resourceUri.startsWith(podUri + '/')) {
             return bypass();
           }
         }
@@ -147,7 +150,7 @@ const WebAclMiddleware = config => ({
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.collectionUri,
               newRights: ctx.params.rights || defaultCollectionRights(webId),
-              webId: 'system',
+              webId: 'system'
             });
             break;
         }
@@ -191,7 +194,9 @@ const WebAclMiddleware = config => ({
             break;
 
           case 'ldp.container.create':
-            const { permissions } = await ctx.call('ldp.container.getOptions', { containerUri: ctx.params.containerUri });
+            const { permissions } = await ctx.call('ldp.container.getOptions', {
+              containerUri: ctx.params.containerUri
+            });
             const containerRights = typeof permissions === 'function' ? permissions(webId) : permissions;
 
             await ctx.call('webacl.resource.addRights', {

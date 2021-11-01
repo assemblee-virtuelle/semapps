@@ -1,15 +1,15 @@
 const defaultContainerRights = webId => {
   switch (webId) {
     case 'anon':
-      return({
+      return {
         anon: {
           read: true,
           append: true
         }
-      });
+      };
 
     case 'system':
-      return({
+      return {
         anon: {
           read: true
         },
@@ -17,17 +17,17 @@ const defaultContainerRights = webId => {
           read: true,
           write: true
         }
-      });
+      };
 
     default:
-      return({
+      return {
         user: {
           uri: webId,
           read: true,
           write: true,
           control: true
         }
-      });
+      };
   }
 };
 

@@ -87,7 +87,7 @@ const ActorService = {
       });
 
       // If the collections are created inside a container, attach them to the container
-      if( containerUri ) {
+      if (containerUri) {
         await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following') });
         await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers') });
         await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox') });
