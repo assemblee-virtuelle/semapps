@@ -29,11 +29,15 @@ const SparqlEndpointService = {
       const response = await ctx.call('triplestore.query', {
         query,
         accept,
-        dataset: ctx.params.username
+        dataset: ctx.params.username,
+        // In POD provider config, query as system as we are searching our own data
+        webId: this.settings.podProvider ? 'system' : ctx.meta.webId
       });
+
       if (ctx.meta.$responseType === undefined) {
         ctx.meta.$responseType = ctx.meta.responseType || accept;
       }
+
       return response;
     }
   }

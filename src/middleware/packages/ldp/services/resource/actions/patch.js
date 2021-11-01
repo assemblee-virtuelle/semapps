@@ -55,7 +55,7 @@ module.exports = {
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
         ...ctx.params
       };
 

@@ -151,8 +151,9 @@ const parseFile = (req, res, next) => {
 };
 
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
-  if (containerUri.includes('/:username/')) {
+  if (containerUri.includes('/:username')) {
     req.$params.containerUri = containerUri.replace(':username', req.$params.username);
+    delete req.$params.username;
   } else {
     req.$params.containerUri = containerUri;
   }

@@ -86,7 +86,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...(await ctx.call('ldp.container.getOptions', { containerUri })),
         ...ctx.params
       };
 

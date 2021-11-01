@@ -61,20 +61,38 @@ const ActorService = {
       });
     },
     async attachCollections(ctx) {
-      const { actorUri } = ctx.params;
-      const baseUri = ctx.params.baseUri || actorUri;
+      const { actorUri, containerUri, rights } = ctx.params;
+      const baseUri = containerUri || actorUri;
 
       // Create the collections associated with the user
       await ctx.call('activitypub.collection.create', {
         collectionUri: urlJoin(baseUri, 'following'),
-        ordered: false
+        ordered: false,
+        rights
       });
       await ctx.call('activitypub.collection.create', {
         collectionUri: urlJoin(baseUri, 'followers'),
-        ordered: false
+        ordered: false,
+        rights
       });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(baseUri, 'inbox'), ordered: true });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(baseUri, 'outbox'), ordered: true });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(baseUri, 'inbox'),
+        ordered: true,
+        rights
+      });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(baseUri, 'outbox'),
+        ordered: true,
+        rights
+      });
+
+      // If the collections are created inside a container, attach them to the container
+      if( containerUri ) {
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox') });
+      }
 
       return await ctx.call('ldp.resource.patch', {
         resource: {
@@ -88,8 +106,8 @@ const ActorService = {
       });
     },
     async detachCollections(ctx) {
-      const { actorUri } = ctx.params;
-      const baseUri = ctx.params.baseUri || actorUri;
+      const { actorUri, containerUri } = ctx.params;
+      const baseUri = containerUri || actorUri;
 
       await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'followers') });
       await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'following') });

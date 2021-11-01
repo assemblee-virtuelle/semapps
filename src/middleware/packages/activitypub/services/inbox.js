@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
@@ -60,16 +59,12 @@ const InboxService = {
       ctx.meta.$statusCode = 202;
     },
     async list(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, page } = ctx.params;
-
-      if (!username && !collectionUri) {
-        throw new Error('A username or collectionUri must be specified');
-      }
+      let { collectionUri, page } = ctx.params;
 
       ctx.meta.$responseType = 'application/ld+json';
 
       const collection = await ctx.call('activitypub.collection.get', {
-        collectionUri: collectionUri || urlJoin(actorContainerUri.replace(':username', username), 'inbox'),
+        collectionUri,
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,

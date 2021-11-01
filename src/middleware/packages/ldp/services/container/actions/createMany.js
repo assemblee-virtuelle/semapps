@@ -11,10 +11,10 @@ module.exports = {
     // 1st loop: Create all containers defined in configurations
     for (let container of containers) {
       const containerUri = this.getContainerUri(container);
-      const exists = await this.actions.exist({ containerUri }, { meta: { webId: 'system' } });
+      const exists = await ctx.call('ldp.container.exist', { containerUri });
       if (!exists) {
         console.log(`Container ${containerUri} doesn't exist, creating it...`);
-        await this.actions.create({ containerUri }, { meta: { webId: 'system' } });
+        await ctx.call('ldp.container.create', { containerUri, webId: 'system' });
       }
     }
 
@@ -33,7 +33,8 @@ module.exports = {
         );
 
       for (let childContainerUri of childContainersUris) {
-        await this.actions.attach({ containerUri, resourceUri: childContainerUri, webId: 'system' });
+        console.log('ldp.container.attach', containerUri, childContainerUri);
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: childContainerUri, webId: 'system' });
       }
     }
   }

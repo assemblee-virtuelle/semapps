@@ -1,23 +1,25 @@
+const { pathToRegexp } = require('path-to-regexp');
 const { getContainerFromUri } = require('../../../utils');
 
-// TODO refactor as this won't work anymore with pods
 module.exports = {
   visibility: 'public',
   params: {
-    uri: { type: 'string' }
+    containerUri: { type: 'string', optional: true },
+    resourceUri: { type: 'string', optional: true },
   },
   async handler(ctx) {
-    const { uri } = ctx.params;
+    const { containerUri, resourceUri } = ctx.params;
 
-    return this.settings.defaultOptions;
+    if( !containerUri && !resourceUri ) {
+      throw new Error('The param containerUri or resourceUri must be provided to ldp.container.getOptions');
+    }
 
-    // const containerOptions =
-    //   // Try to find a matching container
-    //   this.settings.containers.find(container => this.getContainerUri(container) === uri) ||
-    //   // If no container was found, assume the URI passed is a resource
-    //   this.settings.containers.find(container => this.getContainerUri(container) === getContainerFromUri(uri)) ||
-    //   {};
-    //
-    // return { ...this.settings.defaultOptions, ...containerOptions };
+    const path = (new URL(containerUri || getContainerFromUri(resourceUri))).pathname;
+
+    const containerOptions = this.settings.containers.find(container =>
+      pathToRegexp(typeof container === 'string' ? container : container.path).test(path)
+    ) || {};
+
+    return { ...this.settings.defaultOptions, ...containerOptions };
   }
 };
