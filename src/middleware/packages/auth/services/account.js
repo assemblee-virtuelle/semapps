@@ -46,7 +46,7 @@ module.exports = {
     async attachWebId(ctx) {
       const { accountUri, webId } = ctx.params;
 
-      await this._update(ctx, {
+      return await this._update(ctx, {
         '@id': accountUri,
         webId
       });

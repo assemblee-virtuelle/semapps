@@ -3,16 +3,13 @@ const { getSlugFromUri, getContainerFromUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
-  'ldp.resource.patch', // DO WE NEED THIS ?
-  'ldp.resource.put', // DO WE NEED THIS ?
-  'ldp.resource.delete',
   'ldp.resource.post',
   'ldp.container.create',
   'activitypub.collection.create',
-  'webid.create'
+  'webid.create',
+  'ldp.resource.delete'
 ];
 
-// TODO avoid using ldp.container.getOptions as this doesn't work in POD provider config
 const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => {
   const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { containerUri });
   const newRights =
@@ -25,7 +22,6 @@ const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => 
   });
 };
 
-// TODO avoid using ldp.container.getOptions as this doesn't work in POD provider config
 const addRightsToNewUser = async (ctx, userUri) => {
   // Manually add the permissions for the user resource now that we have its webId
   // First delete the default permissions added by the middleware when we called ldp.resource.post
@@ -102,7 +98,6 @@ const WebAclMiddleware = config => ({
           // TODO register the POD URI in the meta ?
           const podUri = webId.replace('/actor', '');
           // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-          // TODO make sure it still works well.
           if (resourceUri.startsWith(podUri + '/')) {
             return bypass();
           }

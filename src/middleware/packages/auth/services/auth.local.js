@@ -20,13 +20,13 @@ const AuthLocalService = {
     async signup(ctx) {
       const { username, email, password, ...otherData } = ctx.params;
 
-      const accountData = await ctx.call('auth.account.create', { username, email, password });
+      let accountData = await ctx.call('auth.account.create', { username, email, password });
 
       const profileData = { nick: username, email, ...otherData };
       const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
 
       // Link the webId with the account
-      await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
+      accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
       ctx.emit('auth.registered', { webId, profileData, accountData });
 
