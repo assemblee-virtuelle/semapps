@@ -26,7 +26,7 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${middlewareUri}auth/login?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
@@ -35,7 +35,12 @@ const authProvider = ({
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ username: username.trim(), email: email.trim(), password: password.trim(), ...profileData }),
+          body: JSON.stringify({
+            username: username.trim(),
+            email: email.trim(),
+            password: password.trim(),
+            ...profileData
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -90,7 +95,7 @@ const authProvider = ({
 
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
-    let { json } = await httpClient(aclUri);
+    const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
@@ -143,11 +148,15 @@ const authProvider = ({
       })
     });
   },
-  getIdentity: () => {
+  getIdentity: async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const payload = jwtDecode(token);
-      return { id: payload.webId, fullName: payload.name || payload['foaf:name'] };
+      const { webId } = jwtDecode(token);
+
+      const { json: webIdData } = await httpClient(webId);
+      const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
+
+      return { id: webId, fullName: profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
     }
   }
 });

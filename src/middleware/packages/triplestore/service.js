@@ -1,5 +1,5 @@
 const { SparqlJsonParser } = require('sparqljson-parse');
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
 const dropAll = require('./actions/dropAll');
@@ -27,17 +27,18 @@ const TripleStoreService = {
     dropAll
   },
   methods: {
-    async fetch(url, { method = "POST", body, headers }) {
+    async fetch(url, { method = 'POST', body, headers }) {
       const response = await fetch(url, {
         method,
         body,
         headers: {
           ...headers,
-          Authorization: 'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64'),
+          Authorization:
+            'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64')
         }
       });
 
-      if( !response.ok ) {
+      if (!response.ok) {
         const text = await response.text();
         if (response.status === 403) {
           throw403(text);
