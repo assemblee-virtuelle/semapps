@@ -33,7 +33,6 @@ module.exports = {
         );
 
       for (let childContainerUri of childContainersUris) {
-        console.log('ldp.container.attach', containerUri, childContainerUri);
         await ctx.call('ldp.container.attach', { containerUri, resourceUri: childContainerUri, webId: 'system' });
       }
     }

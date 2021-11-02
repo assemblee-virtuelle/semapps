@@ -14,10 +14,10 @@ const DispatchService = {
         const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
         if (this.isLocalActor(recipientUri)) {
           // Attach activity to the inbox of the local actor
-          await this.broker.call('activitypub.collection.attach', {
+          await ctx.call('activitypub.collection.attach', {
             collectionUri: recipient.inbox,
             item: activity
-          });
+          }, { meta: 'system' });
           localRecipients.push(recipientUri);
         } else {
           // If the QueueService mixin is available, use it

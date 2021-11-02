@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { parseHeader, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseJson, addContainerUriMiddleware} = require('@semapps/middlewares');
 
 const addCollectionUri = (baseUri, collectionKey) => (req, res, next) => {
   if (baseUri.includes('/:username')) {
@@ -11,7 +11,7 @@ const addCollectionUri = (baseUri, collectionKey) => (req, res, next) => {
   next();
 };
 
-const getCollectionsRoutes = baseUri => {
+const getRoutes = baseUri => {
   const basePath = new URL(baseUri).pathname;
 
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
@@ -39,10 +39,11 @@ const getCollectionsRoutes = baseUri => {
       authentication: false,
       bodyParsers: false,
       aliases: {
-        'POST /outbox': [...middlewares, addCollectionUri(baseUri, 'outbox'), 'activitypub.outbox.post']
+        'POST /outbox': [...middlewares, addCollectionUri(baseUri, 'outbox'), 'activitypub.outbox.post'],
+        'GET /activities/:id': [...middlewares, addContainerUriMiddleware(urlJoin(baseUri, 'activities')), 'activitypub.activity.get']
       }
     }
   ];
 };
 
-module.exports = getCollectionsRoutes;
+module.exports = getRoutes;

@@ -31,8 +31,8 @@ const OutboxService = {
       // TODO use it to order the ordered collections
       activity.published = new Date().toISOString();
 
-      const activityUri = await ctx.call('activitypub.activity.create', activity);
-      activity = await ctx.call('ldp.resource.get', { resourceUri: activityUri, accept: MIME_TYPES.JSON });
+      const activityUri = await ctx.call('activitypub.activity.create', { activity });
+      activity = await ctx.call('activitypub.activity.get', { activityUri });
 
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
@@ -47,20 +47,17 @@ const OutboxService = {
     async list(ctx) {
       let { collectionUri, page } = ctx.params;
 
-      ctx.meta.$responseType = 'application/ld+json';
-
       const collection = await ctx.call('activitypub.collection.get', {
         collectionUri,
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        queryDepth: 3,
+        isActivity: true,
         sort: { predicate: 'as:published', order: 'DESC' }
       });
 
       if (collection) {
-        collection.orderedItems =
-          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
+        ctx.meta.$responseType = 'application/ld+json';
         return collection;
       } else {
         throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');

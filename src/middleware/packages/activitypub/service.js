@@ -10,7 +10,7 @@ const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const { ACTOR_TYPES } = require('./constants');
-const getCollectionsRoutes = require('./routes/getCollectionsRoutes');
+const getRoutes = require('./routes/getRoutes');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -91,15 +91,19 @@ const ActivityPubService = {
     });
   },
   async started() {
-    const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
-    for (let containerUri of containers) {
-      await this.broker.call('activitypub.addApiRoute', { containerUri });
+    if( this.settings.podProvider ) {
+      await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
+    } else {
+      const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
+      for (let containerUri of containers) {
+        await this.actions.addApiRoute( { containerUri });
+      }
     }
   },
   actions: {
     async addApiRoute(ctx) {
       const { containerUri } = ctx.params;
-      const routes = getCollectionsRoutes(containerUri);
+      const routes = getRoutes(containerUri);
       for (let route of routes) {
         await this.broker.call('api.addRoute', { route, toBottom: false });
       }

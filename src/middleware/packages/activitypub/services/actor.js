@@ -21,8 +21,7 @@ const ActorService = {
     async get(ctx) {
       const { actorUri } = ctx.params;
       if (this.isLocal(actorUri)) {
-        // TODO give public read access to actor so we don't need to use webId system
-        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId: 'system' });
+        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON });
       } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
         if (!response) return false;

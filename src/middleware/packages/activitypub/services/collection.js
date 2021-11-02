@@ -86,13 +86,13 @@ const CollectionService = {
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param collectionUri The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param queryDepth Number of blank nodes we want to dereference
+     * @param isActivity True if the items in the container are activities (default false)
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, dereferenceItems = false, queryDepth, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, dereferenceItems = false, isActivity = false, page, itemsPerPage, sort } = ctx.params;
 
       let collection = await ctx.call('triplestore.query', {
         query: `
@@ -163,13 +163,20 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('ldp.resource.get', {
-                resourceUri: itemUri,
-                accept: MIME_TYPES.JSON,
-                queryDepth
-              })
-            );
+            if( isActivity ) {
+              selectedItems.push(
+                await ctx.call('activitypub.activity.get', {
+                  activityUri: itemUri
+                })
+              );
+            } else {
+              selectedItems.push(
+                await ctx.call('ldp.resource.get', {
+                  resourceUri: itemUri,
+                  accept: MIME_TYPES.JSON
+                })
+              );
+            }
           }
 
           // Remove the @context from all items

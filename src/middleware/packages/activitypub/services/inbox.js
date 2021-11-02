@@ -61,20 +61,17 @@ const InboxService = {
     async list(ctx) {
       let { collectionUri, page } = ctx.params;
 
-      ctx.meta.$responseType = 'application/ld+json';
-
       const collection = await ctx.call('activitypub.collection.get', {
         collectionUri,
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        queryDepth: 3,
+        isActivity: true,
         sort: { predicate: 'as:published', order: 'DESC' }
       });
 
       if (collection) {
-        collection.orderedItems =
-          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
+        ctx.meta.$responseType = 'application/ld+json';
         return collection;
       } else {
         ctx.meta.$statusCode = 404;
