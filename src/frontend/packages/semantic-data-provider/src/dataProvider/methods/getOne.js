@@ -1,15 +1,17 @@
 import jsonld from 'jsonld';
+import getServerKeyFromUri from "../utils/getServerKeyFromUri";
 
 const getOneMethod = config => async (resourceId, params) => {
-  const { resources, httpClient, jsonContext } = config;
+  const { dataServers, resources, httpClient, jsonContext } = config;
+  const dataModel = resources[resourceId];
 
-  if (!resources[resourceId]) {
-    Error(`Resource ${resourceId} is not mapped in resources file`);
-  }
+  if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
 
-  const { forceArray } = resources[resourceId];
+  const serverKey = getServerKeyFromUri(params.id, dataServers);
 
-  let { json: data } = await httpClient(params.id);
+  let { json: data } = await httpClient(params.id, {
+    noToken: !serverKey || dataServers[serverKey].authServer !== true
+  });
   data.id = data.id || data['@id'];
 
   // We compact only if the context is different between the frontend and the middleware
@@ -18,9 +20,9 @@ const getOneMethod = config => async (resourceId, params) => {
     data = await jsonld.compact(data, jsonContext);
   }
 
-  // transform single value into array if forceArray is set
-  if (forceArray) {
-    for (const forceArrayItem of forceArray) {
+  // Transform single value into array if forceArray is set
+  if (dataModel.list?.forceArray) {
+    for (const forceArrayItem of dataModel.list?.forceArray) {
       if (data[forceArrayItem] && !Array.isArray(data[forceArrayItem])) {
         data[forceArrayItem] = [data[forceArrayItem]];
       }

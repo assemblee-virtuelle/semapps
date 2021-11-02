@@ -20,8 +20,10 @@ const httpClient = (url, options = {}) => {
       break;
   }
 
-  const token = localStorage.getItem('token');
-  if (token) options.headers.set('Authorization', `Bearer ${token}`);
+  if( !options.noToken ) {
+    const token = localStorage.getItem('token');
+    if (token) options.headers.set('Authorization', `Bearer ${token}`);
+  }
 
   return fetchUtils.fetchJson(url, options);
 };

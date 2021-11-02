@@ -1,4 +1,5 @@
 import buildSparqlQuery from '../utils/buildSparqlQuery';
+import findContainersWithTypes from "../utils/findContainersWithTypes";
 import getEmbedFrame from '../utils/getEmbedFrame';
 import jsonld from 'jsonld';
 
@@ -8,139 +9,223 @@ export const isType = (type, resource) => {
 };
 
 const getListMethod = config => async (resourceId, params) => {
-  let { sparqlEndpoint, httpClient, resources, ontologies, jsonContext } = config;
+  let { dataServers, httpClient, resources, ontologies, jsonContext } = config;
+  const dataModel = resources[resourceId];
 
-  if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
+  if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
 
-  if (params.id || params['@id'] || resources[resourceId].fetchContainer) {
-    const url = params.id || params['@id'] || resources[resourceId].containerUri;
-    let { json } = await httpClient(url);
-
-    if (isType('ldp:Container', json)) {
-      /*
-       * LDP Container
-       */
-      let returnData = json['ldp:contains'].map(item => {
-        item.id = item.id || item['@id'];
-        return item;
-      });
-
-      // Apply filter to results
-      if (params.filter) {
-        // Remove search params from filter
-        if (params.filter.q) {
-          delete params.filter.q;
-        }
-        if (Object.keys(params.filter).length > 0) {
-          returnData = returnData.filter(resource =>
-            Object.entries(params.filter).some(([k, v]) =>
-              Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-            )
-          );
-        }
-      }
-
-      if (params.sort) {
-        returnData = returnData.sort((a, b) => {
-          if (a[params.sort.field] && b[params.sort.field]) {
-            if (params.sort.order === 'ASC') {
-              return a[params.sort.field].localeCompare(b[params.sort.field]);
-            } else {
-              return b[params.sort.field].localeCompare(a[params.sort.field]);
-            }
-          } else {
-            return true;
-          }
-        });
-      }
-      if (params.pagination) {
-        returnData = returnData.slice(
-          (params.pagination.page - 1) * params.pagination.perPage,
-          params.pagination.page * params.pagination.perPage
-        );
-      }
-
-      return { data: returnData, total: json['ldp:contains'].length };
-    } else {
-      /*
-       * ActivityPub collection
-       */
-
-      // If the collection is split amongst several pages, get the first page
-      if (json.first) {
-        const result = await httpClient(json.first);
-        json = result.json;
-      }
-
-      const listProperty = ['as:orderedItems', 'orderedItems', 'as:items', 'items'].find(p => json[p]);
-      if (!listProperty) return { data: [], total: 0 };
-
-      // TODO fetch several pages depending on params.pagination
-
-      let returnData = json[listProperty].map(item => {
-        item.id = item.id || item['@id'];
-        return item;
-      });
-
-      return { data: returnData, total: json.totalItems };
-    }
+  let containers;
+  if( dataModel.list?.containers && dataModel.list?.containers.length > 0 ) {
+    // If containers are set explicitly, use them
+    containers = dataModel.list?.containers;
   } else {
-    const sparqlQuery = buildSparqlQuery({
-      types: resources[resourceId].types,
-      params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
-      dereference: resources[resourceId].dereference,
-      ontologies
-    });
+    containers = findContainersWithTypes(dataModel.types, dataModel.list?.servers, dataServers);
+  }
 
-    const { json } = await httpClient(sparqlEndpoint, {
-      method: 'POST',
-      body: sparqlQuery
-    });
+  const frame = {
+    '@context': jsonContext,
+    '@type': dataModel.types,
+    // Embed only what we explicitly asked to dereference
+    // Otherwise we may have same-type resources embedded in other resources
+    '@embed': '@never',
+    ...getEmbedFrame(dataModel.list?.dereference)
+  };
 
-    const frame = {
-      '@context': jsonContext,
-      '@type': resources[resourceId].types,
-      // Embed only what we explicitly asked to dereference
-      // Otherwise we may have same-type resources embedded in other resources
-      '@embed': '@never',
-      ...getEmbedFrame(resources[resourceId].dereference)
-    };
-
-    // omitGraph option force results to be in a @graph, even if we have a single result
-    const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
-
-    if (Object.keys(compactJson).length === 1) {
-      // If we have only the context, it means there is no match
-      return { data: [], total: 0 };
-    } else {
-      // Add id in addition to @id, as this is what React-Admin expects
-      let returnData = compactJson['@graph'].map(item => {
-        item.id = item.id || item['@id'];
-        return item;
+  const sparqlQueryPromises = Object.keys(containers).map(serverKey =>
+    new Promise((resolve, reject) => {
+      const sparqlQuery = buildSparqlQuery({
+        containers: containers[serverKey],
+        params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+        dereference: dataModel.dereference,
+        ontologies
       });
 
-      if (params.sort) {
-        returnData = returnData.sort((a, b) => {
-          if (a[params.sort.field] && b[params.sort.field]) {
-            if (params.sort.order === 'ASC') {
-              return a[params.sort.field].localeCompare(b[params.sort.field]);
-            } else {
-              return b[params.sort.field].localeCompare(a[params.sort.field]);
-            }
-          } else {
-            return true;
-          }
-        });
-      }
-      if (params.pagination) {
-        returnData = returnData.slice(
-          (params.pagination.page - 1) * params.pagination.perPage,
-          params.pagination.page * params.pagination.perPage
-        );
-      }
+      httpClient(dataServers[serverKey].sparqlEndpoint, {
+          method: 'POST',
+          body: sparqlQuery,
+          noToken: dataServers[serverKey].authServer !== true
+        })
+        .then(({ json }) => {
+          // omitGraph option force results to be in a @graph, even if we have a single result
+          return jsonld.frame(json, frame, { omitGraph: false });
+        })
+        .then(compactJson => {
+          resolve(compactJson['@graph'] || []);
+        })
+        .catch(e => reject(e));
+    })
+  );
 
-      return { data: returnData, total: compactJson['@graph'].length };
+  // Run simultaneous SPARQL queries
+  let results = await Promise.all(sparqlQueryPromises);
+
+  // Merge all results in one array
+  results = [].concat.apply(...results);
+
+  if (results.length === 0) {
+    return { data: [], total: 0 };
+  } else {
+    // Add id in addition to @id, as this is what React-Admin expects
+    let returnData = results.map(item => {
+      item.id = item.id || item['@id'];
+      return item;
+    });
+
+    if (params.sort) {
+      returnData = returnData.sort((a, b) => {
+        if (a[params.sort.field] && b[params.sort.field]) {
+          if (params.sort.order === 'ASC') {
+            return a[params.sort.field].localeCompare(b[params.sort.field]);
+          } else {
+            return b[params.sort.field].localeCompare(a[params.sort.field]);
+          }
+        } else {
+          return true;
+        }
+      });
     }
+    if (params.pagination) {
+      returnData = returnData.slice(
+        (params.pagination.page - 1) * params.pagination.perPage,
+        params.pagination.page * params.pagination.perPage
+      );
+    }
+
+    return {data: returnData, total: results.length};
+  }
+
+
+  // if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
+  //
+  // if (params.id || params['@id'] || resources[resourceId].fetchContainer) {
+  //   const url = params.id || params['@id'] || resources[resourceId].containerUri;
+  //   let { json } = await httpClient(url);
+  //
+  //   if (isType('ldp:Container', json)) {
+  //     /*
+  //      * LDP Container
+  //      */
+  //     let returnData = json['ldp:contains'].map(item => {
+  //       item.id = item.id || item['@id'];
+  //       return item;
+  //     });
+  //
+  //     // Apply filter to results
+  //     if (params.filter) {
+  //       // Remove search params from filter
+  //       if (params.filter.q) {
+  //         delete params.filter.q;
+  //       }
+  //       if (Object.keys(params.filter).length > 0) {
+  //         returnData = returnData.filter(resource =>
+  //           Object.entries(params.filter).some(([k, v]) =>
+  //             Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
+  //           )
+  //         );
+  //       }
+  //     }
+  //
+  //     if (params.sort) {
+  //       returnData = returnData.sort((a, b) => {
+  //         if (a[params.sort.field] && b[params.sort.field]) {
+  //           if (params.sort.order === 'ASC') {
+  //             return a[params.sort.field].localeCompare(b[params.sort.field]);
+  //           } else {
+  //             return b[params.sort.field].localeCompare(a[params.sort.field]);
+  //           }
+  //         } else {
+  //           return true;
+  //         }
+  //       });
+  //     }
+  //     if (params.pagination) {
+  //       returnData = returnData.slice(
+  //         (params.pagination.page - 1) * params.pagination.perPage,
+  //         params.pagination.page * params.pagination.perPage
+  //       );
+  //     }
+  //
+  //     return { data: returnData, total: json['ldp:contains'].length };
+  //   } else {
+  //     /*
+  //      * ActivityPub collection
+  //      */
+  //
+  //     // If the collection is split amongst several pages, get the first page
+  //     if (json.first) {
+  //       const result = await httpClient(json.first);
+  //       json = result.json;
+  //     }
+  //
+  //     const listProperty = ['as:orderedItems', 'orderedItems', 'as:items', 'items'].find(p => json[p]);
+  //     if (!listProperty) return { data: [], total: 0 };
+  //
+  //     // TODO fetch several pages depending on params.pagination
+  //
+  //     let returnData = json[listProperty].map(item => {
+  //       item.id = item.id || item['@id'];
+  //       return item;
+  //     });
+  //
+  //     return { data: returnData, total: json.totalItems };
+  //   }
+  // } else {
+  //   const sparqlQuery = buildSparqlQuery({
+  //     types: resources[resourceId].types,
+  //     params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+  //     dereference: resources[resourceId].dereference,
+  //     ontologies
+  //   });
+  //
+  //   const { json } = await httpClient(sparqlEndpoint, {
+  //     method: 'POST',
+  //     body: sparqlQuery
+  //   });
+  //
+  //   const frame = {
+  //     '@context': jsonContext,
+  //     '@type': resources[resourceId].types,
+  //     // Embed only what we explicitly asked to dereference
+  //     // Otherwise we may have same-type resources embedded in other resources
+  //     '@embed': '@never',
+  //     ...getEmbedFrame(resources[resourceId].dereference)
+  //   };
+  //
+  //   // omitGraph option force results to be in a @graph, even if we have a single result
+  //   const compactJson = await jsonld.frame(json, frame, { omitGraph: false });
+  //
+  //   if (Object.keys(compactJson).length === 1) {
+  //     // If we have only the context, it means there is no match
+  //     return { data: [], total: 0 };
+  //   } else {
+  //     // Add id in addition to @id, as this is what React-Admin expects
+  //     let returnData = compactJson['@graph'].map(item => {
+  //       item.id = item.id || item['@id'];
+  //       return item;
+  //     });
+  //
+  //     if (params.sort) {
+  //       returnData = returnData.sort((a, b) => {
+  //         if (a[params.sort.field] && b[params.sort.field]) {
+  //           if (params.sort.order === 'ASC') {
+  //             return a[params.sort.field].localeCompare(b[params.sort.field]);
+  //           } else {
+  //             return b[params.sort.field].localeCompare(a[params.sort.field]);
+  //           }
+  //         } else {
+  //           return true;
+  //         }
+  //       });
+  //     }
+  //     if (params.pagination) {
+  //       returnData = returnData.slice(
+  //         (params.pagination.page - 1) * params.pagination.perPage,
+  //         params.pagination.page * params.pagination.perPage
+  //       );
+  //     }
+  //
+  //     return { data: returnData, total: compactJson['@graph'].length };
+  //   }
 
     // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
     // TODO compare the performance of the two methods, and eventually allow both of them
@@ -173,7 +258,7 @@ const getListMethod = config => async (resourceId, params) => {
     // data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
     //
     // return { data, total };
-  }
+  // }
 };
 
 export default getListMethod;
