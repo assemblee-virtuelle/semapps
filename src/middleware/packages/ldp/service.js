@@ -16,12 +16,13 @@ module.exports = {
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, ontologies, podProvider, defaultContainerOptions } = this.schema.settings;
+    const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions } = this.schema.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
         ontologies,
+        containers,
         podProvider,
         defaultOptions: defaultContainerOptions
       }
@@ -42,11 +43,15 @@ module.exports = {
   },
   async started() {
     if (this.settings.containers.length > 0) {
-      await this.broker.call('ldp.container.createMany', {
-        containers: this.settings.containers
-      });
+      if (this.settings.podProvider) {
+        // TODO go through each users and ensure all the containers are created
+      } else {
+        await this.broker.call('ldp.container.createMany', {
+          containers: this.settings.containers
+        });
+      }
 
-      await this.broker.call('ldp.addApiRoutes', { containers: this.settings.containers });
+      await this.actions.addApiRoutes({ containers: this.settings.containers });
     }
   },
   actions: {

@@ -41,7 +41,7 @@ const FusekiAdminService = {
     },
     async createDataset(ctx) {
       const { dataset, secure } = ctx.params;
-      const exist = await this.actions.datasetExist({ dataset });
+      const exist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
       if (!exist) {
         console.warn(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
@@ -63,6 +63,7 @@ const FusekiAdminService = {
         }
 
         if (response.status === 200) {
+          await this.actions.waitForDatasetCreation({ dataset }, { parentCtx: ctx });
           console.log(`Created ${secure ? 'secure ' : ''}dataset ${dataset}`);
         } else {
           console.log(await response.text());
@@ -82,6 +83,14 @@ const FusekiAdminService = {
       // Wait for backup to complete
       const { taskId } = await response.json();
       await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
+    },
+    async waitForDatasetCreation(ctx) {
+      const { dataset } = ctx.params;
+      let datasetExist;
+      do {
+        await delay(1000);
+        datasetExist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
+      } while (!datasetExist);
     },
     async waitForTaskCompletion(ctx) {
       const { taskId } = ctx.params;

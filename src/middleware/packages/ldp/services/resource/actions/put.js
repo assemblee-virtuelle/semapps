@@ -47,7 +47,7 @@ module.exports = {
       const resourceUri = resource.id || resource['@id'];
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
         ...ctx.params
       };
 

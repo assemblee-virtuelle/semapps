@@ -37,7 +37,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       const { disassembly } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
         ...ctx.params
       };
 

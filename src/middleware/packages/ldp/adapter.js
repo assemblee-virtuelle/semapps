@@ -109,7 +109,7 @@ class LdpAdapter {
 
     return this.broker
       .call(this.resourceService + '.post', {
-        containerUri: this.service.schema.settings.containerUri,
+        containerUri: containerUri || this.service.schema.settings.containerUri,
         resource: {
           '@context': this.service.schema.settings.context,
           ...resource

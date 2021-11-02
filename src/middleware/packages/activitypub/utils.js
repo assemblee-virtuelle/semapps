@@ -1,3 +1,5 @@
+const { PUBLIC_URI } = require('./constants');
+
 const objectCurrentToId = activityJson => {
   if (activityJson.object && typeof activityJson.object === 'object') {
     const { current, ...object } = activityJson.object;
@@ -39,11 +41,18 @@ const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
+const isPublicActivity = activity => {
+  // We accept all three representations https://www.w3.org/TR/activitypub/#public-addressing
+  const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
+  return defaultToArray(activity.to).some(r => publicRepresentations.includes(r));
+};
+
 module.exports = {
   objectCurrentToId,
   objectIdToCurrent,
   defaultToArray,
   getSlugFromUri,
   getContainerFromUri,
-  delay
+  delay,
+  isPublicActivity
 };

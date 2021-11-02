@@ -3,7 +3,8 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams'
+    context: 'https://www.w3.org/ns/activitystreams',
+    podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
@@ -83,26 +84,26 @@ const CollectionService = {
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
-     * @param id The full URI of the collection
+     * @param collectionUri The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param queryDepth Number of blank nodes we want to dereference
+     * @param isActivity True if the items in the container are activities (default false)
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, dereferenceItems = false, isActivity = false, page, itemsPerPage, sort } = ctx.params;
 
       let collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a as:Collection, ?collectionType .
-            <${id}> as:summary ?summary .
+            <${collectionUri}> a as:Collection, ?collectionType .
+            <${collectionUri}> as:summary ?summary .
           }
           WHERE {
-            <${id}> a as:Collection, ?collectionType .
-            OPTIONAL { <${id}> as:summary ?summary . }
+            <${collectionUri}> a as:Collection, ?collectionType .
+            OPTIONAL { <${collectionUri}> as:summary ?summary . }
           }
         `,
         accept: MIME_TYPES.JSON
@@ -121,9 +122,9 @@ const CollectionService = {
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           SELECT DISTINCT ?itemUri 
           WHERE {
-            <${id}> a as:Collection .
+            <${collectionUri}> a as:Collection .
             OPTIONAL { 
-              <${id}> as:items ?itemUri . 
+              <${collectionUri}> as:items ?itemUri . 
               ${sort ? `OPTIONAL { ?itemUri ${sort.predicate} ?order . }` : ''}
             }
           }
@@ -142,11 +143,11 @@ const CollectionService = {
         // Pagination is enabled but no page is selected, return the collection
         return {
           '@context': this.settings.context,
-          id,
+          id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
-          first: numPages > 0 ? id + '?page=1' : undefined,
-          last: numPages > 0 ? id + '?page=' + numPages : undefined,
+          first: numPages > 0 ? collectionUri + '?page=1' : undefined,
+          last: numPages > 0 ? collectionUri + '?page=' + numPages : undefined,
           totalItems: allItems ? allItems.length : 0
         };
       } else {
@@ -162,13 +163,20 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('ldp.resource.get', {
-                resourceUri: itemUri,
-                accept: MIME_TYPES.JSON,
-                queryDepth
-              })
-            );
+            if (isActivity) {
+              selectedItems.push(
+                await ctx.call('activitypub.activity.get', {
+                  activityUri: itemUri
+                })
+              );
+            } else {
+              selectedItems.push(
+                await ctx.call('ldp.resource.get', {
+                  resourceUri: itemUri,
+                  accept: MIME_TYPES.JSON
+                })
+              );
+            }
           }
 
           // Remove the @context from all items
@@ -180,11 +188,11 @@ const CollectionService = {
         if (itemsPerPage) {
           return {
             '@context': this.settings.context,
-            id: id + '?page=' + page,
+            id: collectionUri + '?page=' + page,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
-            partOf: id,
-            prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
-            next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            partOf: collectionUri,
+            prev: page > 1 ? collectionUri + '?page=' + (parseInt(page) - 1) : undefined,
+            next: page < numPages ? collectionUri + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems,
             totalItems: allItems ? allItems.length : 0
           };
@@ -192,7 +200,7 @@ const CollectionService = {
           // No pagination, return the collection
           return {
             '@context': this.settings.context,
-            id: id,
+            id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
             [itemsProp]: selectedItems,
@@ -240,6 +248,37 @@ const CollectionService = {
           }
         `
       });
+    },
+    async getOwner(ctx) {
+      const { collectionUri, collectionKey } = ctx.params;
+
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          SELECT ?actorUri
+          WHERE { 
+            ?actorUri as:${collectionKey} <${collectionUri}>
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      return results.length > 0 ? results[0].actorUri.value : null;
+    }
+  },
+  hooks: {
+    before: {
+      '*'(ctx) {
+        // If we have a pod provider, guess the dataset from the container URI
+        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.collectionUri) {
+          const collectionPath = new URL(ctx.params.collectionUri).pathname;
+          const parts = collectionPath.split('/');
+          if (parts.length > 1) {
+            ctx.meta.dataset = parts[1];
+          }
+        }
+      }
     }
   },
   methods: {

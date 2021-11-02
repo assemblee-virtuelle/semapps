@@ -8,7 +8,6 @@ const {
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-// TODO check if removing serviceName is OK
 function getContainerRoute(containerUri) {
   const containerPath = new URL(containerUri).pathname;
 
