@@ -38,6 +38,10 @@ module.exports = {
       aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
+      enabled: function(ctx) {
+        //On regarde si le containerURI est celui d'un fichier, pas de cache si c'est le cas
+        return /[^/]*$/.exec(ctx.options.parentCtx.params.containerUri)[0] !== 'files';
+      },
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },
     async handler(ctx) {
@@ -88,8 +92,11 @@ module.exports = {
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
           try {
             // Overwrite response type set by the api action
-            // TODO put this in the API action
             ctx.meta.$responseType = result['semapps:mimeType'];
+            //Les fichiers sont immutables, on défini le cache à la valeur maximum
+            ctx.meta.$responseHeaders = {
+              'Cache-Control': 'public, max-age=31536000'
+            };
             return fs.readFileSync(result['semapps:localPath']);
           } catch (e) {
             throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
