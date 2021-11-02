@@ -61,6 +61,13 @@ const theme = createMuiTheme({
       //   alignItems: null,
       //   flexDirection: null
       // }
+    },
+    MuiCard: {
+      root: {
+        '@media print': {
+          boxShadow: 'none !important'
+        }
+      }
     }
   }
 });

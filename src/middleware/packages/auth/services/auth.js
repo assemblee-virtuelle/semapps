@@ -1,6 +1,7 @@
-const path = require('path');
 const urlJoin = require('url-join');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const AuthAccountService = require('./account');
+const AuthJWTService = require('./jwt');
 const OidcConnector = require('../OidcConnector');
 const CasConnector = require('../CasConnector');
 const LocalConnector = require('../LocalConnector');
@@ -24,10 +25,22 @@ module.exports = {
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { baseUrl, accountsContainer, jwtPath, selectProfileData, oidc, cas } = this.settings;
+    const { baseUrl, accountsContainer, jwtPath, oidc, cas } = this.settings;
 
-    const privateKeyPath = path.resolve(jwtPath, 'jwtRS256.key');
-    const publicKeyPath = path.resolve(jwtPath, 'jwtRS256.key.pub');
+    await this.broker.createService(AuthJWTService, {
+      settings: { jwtPath }
+    });
+
+    if (!oidc.issuer && !cas.url) {
+      await this.broker.createService(AuthAccountService, {
+        settings: {
+          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
+        }
+      });
+    }
+  },
+  async started() {
+    const { baseUrl, selectProfileData, oidc, cas } = this.settings;
 
     if (oidc.issuer) {
       this.connector = new OidcConnector({
@@ -35,33 +48,19 @@ module.exports = {
         clientId: oidc.clientId,
         clientSecret: oidc.clientSecret,
         redirectUri: urlJoin(baseUrl, 'auth'),
-        privateKeyPath,
-        publicKeyPath,
         selectProfileData,
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else if (cas.url) {
       this.connector = new CasConnector({
         casUrl: cas.url,
-        privateKeyPath,
-        publicKeyPath,
         selectProfileData,
         findOrCreateProfile: this.findOrCreateProfile
       });
     } else {
-      await this.broker.createService(AuthAccountService, {
-        settings: {
-          containerUri: accountsContainer || urlJoin(baseUrl, 'accounts')
-        }
-      });
-
-      this.connector = new LocalConnector({
-        privateKeyPath,
-        publicKeyPath
-      });
+      this.connector = new LocalConnector();
     }
-  },
-  async started() {
+
     await this.connector.initialize();
 
     await this.broker.call('api.addRoute', {
@@ -124,6 +123,22 @@ module.exports = {
     async authorize(ctx) {
       const { route, req, res } = ctx.params;
       return await this.connector.authorize(ctx, route, req, res);
+    },
+    async impersonate(ctx) {
+      const { webId } = ctx.params;
+      const userData = await ctx.call('ldp.resource.get', {
+        resourceUri: webId,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+      return await ctx.call('auth.jwt.generateToken', {
+        payload: {
+          webId,
+          email: userData['foaf:email'],
+          name: userData['foaf:name'],
+          familyName: userData['foaf:familyName']
+        }
+      });
     }
   }
 };

@@ -1,35 +1,18 @@
-const jwt = require('jsonwebtoken');
-const { MoleculerError } = require('moleculer').Errors;
 const passport = require('passport');
 const session = require('express-session');
 const E = require('moleculer-web').Errors;
-const fs = require('fs');
 
 class Connector {
   constructor(passportId, settings) {
     this.passport = passport;
     this.passportId = passportId;
-
-    if (!fs.existsSync(settings.privateKeyPath) || !fs.existsSync(settings.publicKeyPath)) {
-      throw new Error('Public or private JWT key not found. Did you generate them ?');
-    }
-
     this.settings = {
-      privateKey: fs.readFileSync(settings.privateKeyPath),
-      publicKey: fs.readFileSync(settings.publicKeyPath),
       sessionSecret: settings.sessionSecret || 's€m@pps',
       selectProfileData: settings.selectProfileData,
       findOrCreateProfile: settings.findOrCreateProfile,
       redirectUri: settings.redirectUri,
       ...settings
     };
-  }
-  async verifyToken(token) {
-    try {
-      return jwt.verify(token, this.settings.publicKey, { algorithms: ['RS256'] });
-    } catch (err) {
-      return false;
-    }
   }
   saveRedirectUrl(req, res, next) {
     // Persist referer on the session to get it back after redirection
@@ -55,7 +38,7 @@ class Connector {
     if (!req.user.token) {
       const profileData = this.settings.selectProfileData ? await this.settings.selectProfileData(req.user) : req.user;
       const payload = { webId: req.user.webId, ...profileData };
-      req.user.token = jwt.sign(payload, this.settings.privateKey, { algorithm: 'RS256' });
+      req.user.token = await req.$ctx.call('auth.jwt.generateToken', { payload });
     }
     next();
   }
@@ -133,9 +116,6 @@ class Connector {
       await asyncRes;
     }
   }
-  async getWebId(ctx) {
-    return ctx.meta.tokenPayload.webId;
-  }
   getRouteMiddlewares(passport) {
     const sessionMiddleware = session({
       secret: this.settings.sessionSecret,
@@ -150,37 +130,43 @@ class Connector {
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
   async authenticate(ctx, route, req, res) {
-    try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-      if (token) {
-        const payload = await this.verifyToken(token);
+    // Extract token from authorization header (do not take the Bearer part)
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    if (token) {
+      const payload = await ctx.call('auth.jwt.verifyToken', { token });
+      if (payload) {
         ctx.meta.tokenPayload = payload;
-        ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
+        ctx.meta.webId = payload.webId;
         return Promise.resolve(payload);
       } else {
+        // Invalid token
+        // TODO make sure token is deleted client-side
         ctx.meta.webId = 'anon';
-        return Promise.resolve(null);
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
-    } catch (err) {
+    } else {
+      // No token, anonymous error
       ctx.meta.webId = 'anon';
-      return Promise.reject(err);
+      return Promise.resolve(null);
     }
   }
   // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
   async authorize(ctx, route, req, res) {
-    try {
-      const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-      if (token) {
-        ctx.meta.tokenPayload = await this.verifyToken(token);
-        ctx.meta.webId = (await this.getWebId(ctx)) || 'anon';
-        return Promise.resolve(ctx);
+    // Extract token from authorization header (do not take the Bearer part)
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    if (token) {
+      const payload = await ctx.call('auth.jwt.verifyToken', { token });
+      if (payload) {
+        ctx.meta.tokenPayload = payload;
+        ctx.meta.webId = payload.webId;
+        return Promise.resolve(payload);
       } else {
         ctx.meta.webId = 'anon';
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
-    } catch (err) {
+    } else {
       ctx.meta.webId = 'anon';
-      return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+      return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
     }
   }
 }

@@ -2,7 +2,7 @@
 title: Auth
 ---
 
-This service allows you to authentify users with an OIDC or CAS server.
+This service allows you to authenticate users with an OIDC or CAS server.
 
 ## Features
 
@@ -19,15 +19,6 @@ This service allows you to authentify users with an OIDC or CAS server.
 
 ```bash
 $ npm install @semapps/auth --save
-```
-
-## Generating JWT token
-
-First generate a public and private keys for the JWT token that will be automatically generated.
-
-```bash
-ssh-keygen -t rsa -b 4096 -m PEM -f jwtRS256.key -P ""
-openssl rsa -in jwtRS256.key -pubout -outform PEM -out jwtRS256.key.pub
 ```
 
 ## Usage
@@ -50,7 +41,7 @@ module.exports = {
     // To set if you want to use a CAS server
     cas: {
       url: "https://my-cas-server.com/cas",
-    }
+    },
     // Return data for the creation of the webId profile (FOAF Person).
     // Available fields: email (required), name, familyName, nick, homepage
     selectProfileData: authData => ({
@@ -113,6 +104,21 @@ If you wish to logout the user remotely (on the SSO), you can do:
 
 http://localhost:3000/auth/logout?global=true&redirectUrl...
 
+## Actions 
+
+The following service actions are available:
+
+### `impersonate`
+
+Generate a JWT token for a given user.
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `webId` | `String`| **required** | URI of the user to impersonate |
+
+##### Return
+A JWT token you can use in your app.
 
 ## Events
 
