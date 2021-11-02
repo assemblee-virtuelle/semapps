@@ -91,12 +91,12 @@ const ActivityPubService = {
     });
   },
   async started() {
-    if( this.settings.podProvider ) {
+    if (this.settings.podProvider) {
       await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
     } else {
       const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
       for (let containerUri of containers) {
-        await this.actions.addApiRoute( { containerUri });
+        await this.actions.addApiRoute({ containerUri });
       }
     }
   },

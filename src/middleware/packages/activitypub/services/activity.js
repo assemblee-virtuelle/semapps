@@ -75,7 +75,7 @@ const ActivityService = {
       const actor = activity.actor ? await ctx.call('activitypub.actor.get', { actorUri: activity.actor }) : {};
 
       for (let predicates of ['to', 'bto', 'cc', 'bcc']) {
-        if( activity[predicates] ) {
+        if (activity[predicates]) {
           for (const recipient of defaultToArray(activity[predicates])) {
             switch (recipient) {
               // Skip public URI

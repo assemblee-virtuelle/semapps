@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { parseHeader, parseJson, addContainerUriMiddleware} = require('@semapps/middlewares');
+const { parseHeader, parseJson, addContainerUriMiddleware } = require('@semapps/middlewares');
 
 const addCollectionUri = (baseUri, collectionKey) => (req, res, next) => {
   if (baseUri.includes('/:username')) {
@@ -40,7 +40,11 @@ const getRoutes = baseUri => {
       bodyParsers: false,
       aliases: {
         'POST /outbox': [...middlewares, addCollectionUri(baseUri, 'outbox'), 'activitypub.outbox.post'],
-        'GET /activities/:id': [...middlewares, addContainerUriMiddleware(urlJoin(baseUri, 'activities')), 'activitypub.activity.get']
+        'GET /activities/:id': [
+          ...middlewares,
+          addContainerUriMiddleware(urlJoin(baseUri, 'activities')),
+          'activitypub.activity.get'
+        ]
       }
     }
   ];
