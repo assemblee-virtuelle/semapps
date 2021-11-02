@@ -90,7 +90,7 @@ const FusekiAdminService = {
       do {
         await delay(1000);
         datasetExist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
-      } while( !datasetExist );
+      } while (!datasetExist);
     },
     async waitForTaskCompletion(ctx) {
       const { taskId } = ctx.params;
