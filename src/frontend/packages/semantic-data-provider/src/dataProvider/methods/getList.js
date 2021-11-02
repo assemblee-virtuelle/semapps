@@ -35,7 +35,7 @@ const getListMethod = config => async (resourceId, params) => {
     new Promise((resolve, reject) => {
       const sparqlQuery = buildSparqlQuery({
         containers: containers[serverKey],
-        params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+        params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
         dereference: dataModel.dereference,
         ontologies
       });
