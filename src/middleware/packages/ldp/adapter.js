@@ -22,17 +22,18 @@ class LdpAdapter {
 
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
 
-    const containerUri = this.service.schema.settings.containerUri;
-    const exists = await this.broker.call(
-      this.containerService + '.exist',
-      { containerUri },
-      { meta: { webId: 'system' } }
-    );
-
-    if (!exists) {
-      console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call(this.containerService + '.create', { containerUri }, { meta: { webId: 'system' } });
-    }
+    // TODO make this optional
+    // const containerUri = this.service.schema.settings.containerUri;
+    // const exists = await this.broker.call(
+    //   this.containerService + '.exist',
+    //   { containerUri },
+    //   { meta: { webId: 'system' } }
+    // );
+    //
+    // if (!exists) {
+    //   console.log(`Container ${containerUri} doesn't exist, creating it...`);
+    //   await this.broker.call(this.containerService + '.create', { containerUri }, { meta: { webId: 'system' } });
+    // }
   }
 
   disconnect() {
@@ -71,9 +72,6 @@ class LdpAdapter {
    * Find an entity by ID.
    */
   findById(_id) {
-    if (!_id.startsWith('http')) {
-      _id = urlJoin(this.service.schema.settings.containerUri, _id);
-    }
     return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
       queryDepth: this.service.schema.settings.queryDepth,
@@ -105,11 +103,21 @@ class LdpAdapter {
    * Insert an entity
    */
   insert(entity) {
-    const { slug, ...resource } = entity;
+    const { slug, containerUri, ...resource } = entity;
+
+    console.log('insert', {
+      containerUri: containerUri || this.service.schema.settings.containerUri,
+      resource: {
+        '@context': this.service.schema.settings.context,
+        ...resource
+      },
+      slug,
+      contentType: MIME_TYPES.JSON
+    });
 
     return this.broker
       .call(this.resourceService + '.post', {
-        containerUri: this.service.schema.settings.containerUri,
+        containerUri: containerUri || this.service.schema.settings.containerUri,
         resource: {
           '@context': this.service.schema.settings.context,
           ...resource
@@ -118,10 +126,10 @@ class LdpAdapter {
         contentType: MIME_TYPES.JSON
       })
       .then(resourceUri => {
-        this.broker.call(this.containerService + '.attach', {
-          containerUri: this.service.schema.settings.containerUri,
-          resourceUri
-        });
+        // this.broker.call(this.containerService + '.attach', {
+        //   containerUri: this.service.schema.settings.containerUri,
+        //   resourceUri
+        // });
 
         return this.findById(resourceUri);
       });

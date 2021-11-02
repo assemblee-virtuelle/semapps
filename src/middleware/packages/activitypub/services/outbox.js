@@ -31,7 +31,7 @@ const OutboxService = {
       // TODO use it to order the ordered collections
       activity.published = new Date().toISOString();
 
-      const activityUri = await ctx.call('activitypub.activity.create', { activity });
+      const activityUri = await ctx.call('activitypub.activity.create', activity);
       activity = await ctx.call('ldp.resource.get', { resourceUri: activityUri, accept: MIME_TYPES.JSON });
 
       // Attach the newly-created activity to the outbox
