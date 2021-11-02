@@ -163,7 +163,7 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            if( isActivity ) {
+            if (isActivity) {
               selectedItems.push(
                 await ctx.call('activitypub.activity.get', {
                   activityUri: itemUri
