@@ -6,7 +6,7 @@ const fetchPodConfig = async config => {
   const podKey = Object.keys(config.dataServers).find(key => config.dataServers[key].pod === true);
 
   // If we have a POD in our server
-  if( podKey ) {
+  if (podKey) {
     const token = localStorage.getItem('token');
 
     // If the user is logged in
@@ -22,6 +22,6 @@ const fetchPodConfig = async config => {
       config.dataServers[podKey].sparqlEndpoint = podUri + '/sparql';
     }
   }
-}
+};
 
 export default fetchPodConfig;

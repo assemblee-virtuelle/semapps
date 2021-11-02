@@ -1,5 +1,5 @@
 import jsonld from 'jsonld';
-import getServerKeyFromUri from "../utils/getServerKeyFromUri";
+import getServerKeyFromUri from '../utils/getServerKeyFromUri';
 
 const getOneMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;

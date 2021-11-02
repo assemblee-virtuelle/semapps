@@ -1,5 +1,5 @@
 import buildSparqlQuery from '../utils/buildSparqlQuery';
-import findContainersWithTypes from "../utils/findContainersWithTypes";
+import findContainersWithTypes from '../utils/findContainersWithTypes';
 import getEmbedFrame from '../utils/getEmbedFrame';
 import jsonld from 'jsonld';
 
@@ -15,7 +15,7 @@ const getListMethod = config => async (resourceId, params) => {
   if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
 
   let containers;
-  if( dataModel.list?.containers && dataModel.list?.containers.length > 0 ) {
+  if (dataModel.list?.containers && dataModel.list?.containers.length > 0) {
     // If containers are set explicitly, use them
     containers = dataModel.list?.containers;
   } else {
@@ -31,29 +31,30 @@ const getListMethod = config => async (resourceId, params) => {
     ...getEmbedFrame(dataModel.list?.dereference)
   };
 
-  const sparqlQueryPromises = Object.keys(containers).map(serverKey =>
-    new Promise((resolve, reject) => {
-      const sparqlQuery = buildSparqlQuery({
-        containers: containers[serverKey],
-        params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
-        dereference: dataModel.dereference,
-        ontologies
-      });
+  const sparqlQueryPromises = Object.keys(containers).map(
+    serverKey =>
+      new Promise((resolve, reject) => {
+        const sparqlQuery = buildSparqlQuery({
+          containers: containers[serverKey],
+          params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+          dereference: dataModel.dereference,
+          ontologies
+        });
 
-      httpClient(dataServers[serverKey].sparqlEndpoint, {
+        httpClient(dataServers[serverKey].sparqlEndpoint, {
           method: 'POST',
           body: sparqlQuery,
           noToken: dataServers[serverKey].authServer !== true
         })
-        .then(({ json }) => {
-          // omitGraph option force results to be in a @graph, even if we have a single result
-          return jsonld.frame(json, frame, { omitGraph: false });
-        })
-        .then(compactJson => {
-          resolve(compactJson['@graph'] || []);
-        })
-        .catch(e => reject(e));
-    })
+          .then(({ json }) => {
+            // omitGraph option force results to be in a @graph, even if we have a single result
+            return jsonld.frame(json, frame, { omitGraph: false });
+          })
+          .then(compactJson => {
+            resolve(compactJson['@graph'] || []);
+          })
+          .catch(e => reject(e));
+      })
   );
 
   // Run simultaneous SPARQL queries
@@ -91,9 +92,8 @@ const getListMethod = config => async (resourceId, params) => {
       );
     }
 
-    return {data: returnData, total: results.length};
+    return { data: returnData, total: results.length };
   }
-
 
   // if (!resources[resourceId]) Error(`Resource ${resourceId} is not mapped in resources file`);
   //
@@ -227,37 +227,37 @@ const getListMethod = config => async (resourceId, params) => {
   //     return { data: returnData, total: compactJson['@graph'].length };
   //   }
 
-    // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
-    // TODO compare the performance of the two methods, and eventually allow both of them
-    //
-    // const sparqlQuery = buildSparqlUriQuery({
-    //   types: resources[resourceId].types,
-    //   params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
-    //   ontologies
-    // });
-    //
-    // let { json } = await httpClient(sparqlEndpoint, {
-    //   method: 'POST',
-    //   body: sparqlQuery
-    // });
-    //
-    // const total = json.length;
-    //
-    // if (params.pagination) {
-    //   json = json.slice(
-    //     (params.pagination.page - 1) * params.pagination.perPage,
-    //     params.pagination.page * params.pagination.perPage
-    //   );
-    // }
-    //
-    // let data = await Promise.allSettled(
-    //   json.map(result => httpClient(result.resource.value).then(result => result.json))
-    // );
-    //
-    // // Ignore resources we were not able to fetch
-    // data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
-    //
-    // return { data, total };
+  // OTHER METHOD: FETCH ONLY RESOURCES URIs AND FETCH THEM INDEPENDENTLY
+  // TODO compare the performance of the two methods, and eventually allow both of them
+  //
+  // const sparqlQuery = buildSparqlUriQuery({
+  //   types: resources[resourceId].types,
+  //   params: { ...params, filter: { ...resources[resourceId].filter, ...params.filter } },
+  //   ontologies
+  // });
+  //
+  // let { json } = await httpClient(sparqlEndpoint, {
+  //   method: 'POST',
+  //   body: sparqlQuery
+  // });
+  //
+  // const total = json.length;
+  //
+  // if (params.pagination) {
+  //   json = json.slice(
+  //     (params.pagination.page - 1) * params.pagination.perPage,
+  //     params.pagination.page * params.pagination.perPage
+  //   );
+  // }
+  //
+  // let data = await Promise.allSettled(
+  //   json.map(result => httpClient(result.resource.value).then(result => result.json))
+  // );
+  //
+  // // Ignore resources we were not able to fetch
+  // data = data.filter(r => r.status === 'fulfilled').map(r => r.value);
+  //
+  // return { data, total };
   // }
 };
 
