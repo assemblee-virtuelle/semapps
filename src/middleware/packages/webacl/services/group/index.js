@@ -12,6 +12,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     graphName: null,
+    podProvider: false,
     superAdmins: []
   },
   dependencies: ['triplestore', 'webacl.resource'],

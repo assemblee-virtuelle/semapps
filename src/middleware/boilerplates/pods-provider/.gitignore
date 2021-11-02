@@ -1,0 +1,6 @@
+.env.local
+.env.*.local
+/jwt/*.key
+/jwt/*.key.pub
+/uploads
+node_modules

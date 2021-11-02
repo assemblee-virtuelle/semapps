@@ -8,6 +8,7 @@ const ActorService = {
   name: 'activitypub.actor',
   dependencies: ['activitypub.collection', 'ldp.resource', 'ldp.container', 'signature'],
   settings: {
+    baseUri: null,
     actorsContainers: [],
     context: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
@@ -17,11 +18,24 @@ const ActorService = {
     })
   },
   actions: {
+    async get(ctx) {
+      const { actorUri } = ctx.params;
+      if (this.isLocal(actorUri)) {
+        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON });
+      } else {
+        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+        if (!response) return false;
+        return await response.json();
+      }
+    },
     async appendActorData(ctx) {
       const { actorUri, userData } = ctx.params;
-      const userTypes = Array.isArray(userData.type || userData['@type'])
-        ? userData.type || userData['@type']
-        : [userData.type || userData['@type']];
+      const userTypes =
+        userData.type || userData['@type']
+          ? Array.isArray(userData.type || userData['@type'])
+            ? userData.type || userData['@type']
+            : [userData.type || userData['@type']]
+          : [];
 
       // Skip if ActivityPub information are already provided
       if (
@@ -38,7 +52,7 @@ const ActorService = {
       await ctx.call('ldp.resource.patch', {
         resource: {
           '@id': actorUri,
-          '@type': [...userTypes, type],
+          '@type': type,
           name,
           preferredUsername
         },
@@ -46,37 +60,58 @@ const ActorService = {
       });
     },
     async attachCollections(ctx) {
-      const { actorUri } = ctx.params;
+      const { actorUri, containerUri, rights } = ctx.params;
+      const baseUri = containerUri || actorUri;
 
       // Create the collections associated with the user
       await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(actorUri, 'following'),
-        ordered: false
+        collectionUri: urlJoin(baseUri, 'following'),
+        ordered: false,
+        rights
       });
       await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(actorUri, 'followers'),
-        ordered: false
+        collectionUri: urlJoin(baseUri, 'followers'),
+        ordered: false,
+        rights
       });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'inbox'), ordered: true });
-      await ctx.call('activitypub.collection.create', { collectionUri: urlJoin(actorUri, 'outbox'), ordered: true });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(baseUri, 'inbox'),
+        ordered: true,
+        rights
+      });
+      await ctx.call('activitypub.collection.create', {
+        collectionUri: urlJoin(baseUri, 'outbox'),
+        ordered: true,
+        rights
+      });
+
+      // If the collections are created inside a container, attach them to the container
+      if (containerUri) {
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox') });
+      }
 
       return await ctx.call('ldp.resource.patch', {
         resource: {
           '@id': actorUri,
-          following: urlJoin(actorUri, 'following'),
-          followers: urlJoin(actorUri, 'followers'),
-          inbox: urlJoin(actorUri, 'inbox'),
-          outbox: urlJoin(actorUri, 'outbox')
+          following: urlJoin(baseUri, 'following'),
+          followers: urlJoin(baseUri, 'followers'),
+          inbox: urlJoin(baseUri, 'inbox'),
+          outbox: urlJoin(baseUri, 'outbox')
         },
         contentType: MIME_TYPES.JSON
       });
     },
     async detachCollections(ctx) {
-      const { actorUri } = ctx.params;
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/following' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/followers' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/inbox' });
-      await ctx.call('activitypub.collection.remove', { collectionUri: actorUri + '/outbox' });
+      const { actorUri, containerUri } = ctx.params;
+      const baseUri = containerUri || actorUri;
+
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'followers') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'following') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'inbox') });
+      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'outbox') });
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;
@@ -128,6 +163,11 @@ const ActorService = {
           console.log('Generated missing data for actor ' + actorUri);
         }
       }
+    }
+  },
+  methods: {
+    isLocal(uri) {
+      return uri.startsWith(this.settings.baseUri);
     }
   },
   events: {

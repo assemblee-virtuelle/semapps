@@ -53,11 +53,11 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
       .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
-            history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+            history.push(redirectTo || '/');
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
-          history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+          history.push(redirectTo || '/');
           setLoading(false);
         }
         notify('auth.message.new_user_created', 'info');
@@ -96,6 +96,15 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
                 name="name"
                 component={Input}
                 label={translate('auth.input.name')}
+                disabled={loading}
+              />
+            </div>
+            <div className={classes.input}>
+              <Field
+                id="username"
+                name="username"
+                component={Input}
+                label={translate('auth.input.username')}
                 disabled={loading}
               />
             </div>

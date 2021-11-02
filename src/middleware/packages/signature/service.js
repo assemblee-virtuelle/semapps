@@ -4,8 +4,7 @@ const path = require('path');
 const { generateKeyPair, createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
-
-const getSlugFromUri = str => str.replace(/\/$/, '').replace(/.*\//, '');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const SignatureService = {
   name: 'signature',
@@ -15,8 +14,7 @@ const SignatureService = {
   actions: {
     async getActorPublicKey(ctx) {
       const { actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
-      const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
+      const { publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
       try {
         return await fs.promises.readFile(publicKeyPath, { encoding: 'utf8' });
@@ -33,11 +31,9 @@ const SignatureService = {
         return publicKey;
       }
 
-      return new Promise((resolve, reject) => {
-        const actorId = getSlugFromUri(actorUri);
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
+      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
+      return new Promise((resolve, reject) => {
         generateKeyPair(
           'rsa',
           {
@@ -65,18 +61,19 @@ const SignatureService = {
     },
     async deleteActorKeyPair(ctx) {
       const { actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
+      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
       try {
-        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
-        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
+        await fs.promises.unlink(privateKeyPath);
+        await fs.promises.unlink(publicKeyPath);
       } catch (e) {
-        console.log(`Could not delete key pair for actor ${actorId}`);
+        console.log(`Could not delete key pair for actor ${actorUri}`);
       }
     },
     async generateSignatureHeaders(ctx) {
       const { url, body, actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
+      const { privateKeyPath } = await this.getKeyPaths(ctx, actorUri);
+      const privateKey = await fsPromises.readFile(privateKeyPath);
 
       const headers = {
         Date: new Date().toUTCString(),
@@ -91,7 +88,6 @@ const SignatureService = {
       // Hash signature string
       const signer = createSign('sha256');
       signer.update(signatureString);
-      const privateKey = await fsPromises.readFile(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
       const signatureHash = signer.sign(privateKey).toString('base64');
 
       headers.Signature = createAuthzHeader({
@@ -118,12 +114,14 @@ const SignatureService = {
 
       const keyId = parsedSignature.params.keyId;
       if (!keyId) return false;
-      const [actorUrl] = keyId.split('#');
+      const [actorUri] = keyId.split('#');
 
-      const publicKey = await this.getRemoteActorPublicKey(actorUrl);
+      const publicKey = await this.getRemoteActorPublicKey(actorUri);
       if (!publicKey) return false;
 
-      return verifySignature(parsedSignature, publicKey);
+      const isValid = verifySignature(parsedSignature, publicKey);
+
+      return { isValid, actorUri };
     }
   },
   methods: {
@@ -136,14 +134,30 @@ const SignatureService = {
       );
     },
     // TODO use cache mechanisms
-    async getRemoteActorPublicKey(actorUrl) {
-      const response = await fetch(actorUrl, { headers: { Accept: 'application/json' } });
+    async getRemoteActorPublicKey(actorUri) {
+      // TODO use activitypub.actor.get
+      const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
       if (!response) return false;
 
       const actor = await response.json();
       if (!actor || !actor.publicKey) return false;
 
       return actor.publicKey.publicKeyPem;
+    },
+    async getKeyPaths(ctx, actorUri) {
+      const actorData = await ctx.call('ldp.resource.get', {
+        resourceUri: actorUri,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      if (actorData && actorData.preferredUsername) {
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key');
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key.pub');
+        return { privateKeyPath, publicKeyPath };
+      } else {
+        throw new Error('No valid actor found with URI ' + actorUri);
+      }
     }
   }
 };

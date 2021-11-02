@@ -1,8 +1,16 @@
-const { parseHeader, negotiateContentType, negotiateAccept, parseSparql } = require('@semapps/middlewares');
+const { negotiateAccept, parseSparql } = require('@semapps/middlewares');
 
-function getRoute() {
-  const commonRouteConfig = {
-    path: '/sparql',
+function getRoute(path) {
+  const middlewares = [parseSparql, negotiateAccept];
+  return {
+    path,
+    authorization: false,
+    authentication: true,
+    mergeParams: true,
+    aliases: {
+      'GET /': [...middlewares, 'sparqlEndpoint.query'],
+      'POST /': [...middlewares, 'sparqlEndpoint.query']
+    },
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: {
@@ -16,19 +24,6 @@ function getRoute() {
       });
       res.end(JSON.stringify({ type, code, message, data, name }));
     }
-  };
-
-  const middlewares = [parseSparql, negotiateAccept];
-
-  return {
-    authorization: false,
-    authentication: true,
-    mergeParams: true,
-    aliases: {
-      'GET /': [...middlewares, 'sparqlEndpoint.query'],
-      'POST /': [...middlewares, 'sparqlEndpoint.query']
-    },
-    ...commonRouteConfig
   };
 }
 

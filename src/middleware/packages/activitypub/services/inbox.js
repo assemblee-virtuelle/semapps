@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent } = require('../utils');
 
@@ -10,19 +9,11 @@ const InboxService = {
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
+      let { collectionUri, ...activity } = ctx.params;
 
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('A username/containerUri or collectionUri must be specified');
-      }
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'inbox');
-      const actorUri = collectionUri.replace('/inbox', '');
-
-      const collectionExists = await ctx.call('activitypub.collection.exist', {
-        collectionUri: collectionUri
-      });
-
+      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;
@@ -34,7 +25,7 @@ const InboxService = {
           headers: ctx.meta.headers
         });
 
-        const validSignature = await ctx.call('signature.verifyHttpSignature', {
+        const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
           headers: ctx.meta.headers
         });
@@ -68,26 +59,19 @@ const InboxService = {
       ctx.meta.$statusCode = 202;
     },
     async list(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, page } = ctx.params;
-
-      if (!username && !collectionUri) {
-        throw new Error('A username or collectionUri must be specified');
-      }
-
-      ctx.meta.$responseType = 'application/ld+json';
+      let { collectionUri, page } = ctx.params;
 
       const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'inbox'),
+        collectionUri,
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        queryDepth: 3,
+        isActivity: true,
         sort: { predicate: 'as:published', order: 'DESC' }
       });
 
       if (collection) {
-        collection.orderedItems =
-          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
+        ctx.meta.$responseType = 'application/ld+json';
         return collection;
       } else {
         ctx.meta.$statusCode = 404;

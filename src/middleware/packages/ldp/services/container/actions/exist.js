@@ -17,7 +17,8 @@ module.exports = {
           FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
         }
       `,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
+      webId: 'system'
     });
   }
 };

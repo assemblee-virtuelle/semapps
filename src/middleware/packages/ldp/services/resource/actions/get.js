@@ -1,13 +1,14 @@
+const fs = require('fs');
+const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery } = require('../../../utils');
-const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
-    const resourceUri = `${containerUri}/${id}`;
-    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })), ...ctx.meta.headers };
+    const resourceUri = urlJoin(containerUri, id);
+    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { resourceUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call('ldp.resource.get', {
@@ -47,7 +48,7 @@ module.exports = {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
         ...ctx.params
       };
 

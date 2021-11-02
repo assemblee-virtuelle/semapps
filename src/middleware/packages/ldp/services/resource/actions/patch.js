@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -10,7 +11,7 @@ module.exports = {
 
     // PATCH have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
-    resource['@id'] = `${containerUri}/${id}`;
+    resource['@id'] = urlJoin(containerUri, id);
 
     try {
       await ctx.call('ldp.resource.patch', {
@@ -54,7 +55,7 @@ module.exports = {
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
         ...ctx.params
       };
 

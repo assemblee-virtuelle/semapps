@@ -6,7 +6,7 @@ module.exports = {
   LdpResourceService: require('./services/resource'),
   ResourcesWatcherBot: require('./bots/resources-watcher'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
-  TripleStoreAdapter: require('./adapter'),
-  getContainerRoutes: require('./routes/getContainerRoutes'),
+  LdpAdapter: require('./adapter'),
+  getContainerRoute: require('./routes/getContainerRoute'),
   ...utils
 };

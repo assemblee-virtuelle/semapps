@@ -3,6 +3,9 @@ const { getPrefixRdf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
+  params: {
+    dataset: { type: 'string', optional: true }
+  },
   async handler(ctx) {
     const result = await ctx.call('triplestore.query', {
       query: `
@@ -13,6 +16,7 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
+      dataset: ctx.params.dataset,
       webId: 'system'
     });
 

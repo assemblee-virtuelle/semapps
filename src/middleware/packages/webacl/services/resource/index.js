@@ -24,7 +24,8 @@ module.exports = {
   name: 'webacl.resource',
   settings: {
     baseUrl: null,
-    graphName: null
+    graphName: null,
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -39,6 +40,20 @@ module.exports = {
     setRights: setRightsAction.action,
     api_addRights: addRightsAction.api,
     addRights: addRightsAction.action
+  },
+  hooks: {
+    before: {
+      '*'(ctx) {
+        // If we have a pod provider, guess the dataset from the container URI
+        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
+          const containerPath = new URL(ctx.params.resourceUri).pathname;
+          const parts = containerPath.split('/');
+          if (parts.length > 1) {
+            ctx.meta.dataset = parts[1];
+          }
+        }
+      }
+    }
   },
   methods: {
     // will return true if it is a container, false otherwise

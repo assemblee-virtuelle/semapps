@@ -6,11 +6,13 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/mime-types": "0.3.17",
+    "@semapps/triplestore": "0.3.17",
     "bcrypt": "^5.0.1",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",
     "moleculer": "^0.14.17",
     "moleculer-web": "^0.10.0-beta1",
+    "moleculer-db": "^0.8.16",
     "openid-client": "^4.7.4",
     "passport": "^0.4.1",
     "passport-cas2": "0.0.11",

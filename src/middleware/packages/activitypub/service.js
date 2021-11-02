@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const QueueService = require('moleculer-bull');
-const { getContainerRoutes, getSlugFromUri } = require('@semapps/ldp');
+const { getSlugFromUri } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');
@@ -9,15 +9,15 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
-const { parseHeader, parseJson, addContainerUriMiddleware } = require('@semapps/middlewares');
 const { ACTOR_TYPES } = require('./constants');
-const defaultContainers = require('./containers');
+const getRoutes = require('./routes/getRoutes');
 
 const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
     additionalContext: {},
+    podProvider: false,
     containers: [],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
@@ -28,15 +28,11 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   async created() {
+    const { baseUri, podProvider } = this.settings;
+
     const context = this.settings.additionalContext
       ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
       : 'https://www.w3.org/ns/activitystreams';
-
-    // Load default containers if none are defined
-    // We can't set the defaults in the parameter directly, as Moleculer merge objects
-    if (this.settings.containers.length === 0) {
-      this.settings.containers = defaultContainers;
-    }
 
     const actorsContainers = this.getContainersByType(Object.values(ACTOR_TYPES)).map(path =>
       urlJoin(this.settings.baseUri, path)
@@ -47,12 +43,14 @@ const ActivityPubService = {
 
     this.broker.createService(CollectionService, {
       settings: {
-        context
+        context,
+        podProvider
       }
     });
 
     this.broker.createService(ActorService, {
       settings: {
+        baseUri,
         actorsContainers,
         context: Array.isArray(context)
           ? [...context, 'https://w3id.org/security/v1']
@@ -63,21 +61,22 @@ const ActivityPubService = {
 
     this.broker.createService(ObjectService, {
       settings: {
-        baseUri: this.settings.baseUri,
+        baseUri,
         containers: this.settings.containers
       }
     });
 
+    // TODO give more choices ? with a pathPattern ?
     this.broker.createService(ActivityService, {
       settings: {
-        containerUri: urlJoin(this.settings.baseUri, 'activities'),
+        containerUri: podProvider ? urlJoin(baseUri, ':username', 'activities') : urlJoin(baseUri, 'activities'),
         context
       }
     });
 
     this.broker.createService(FollowService, {
       settings: {
-        baseUri: this.settings.baseUri
+        baseUri
       }
     });
 
@@ -87,75 +86,27 @@ const ActivityPubService = {
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
-        baseUri: this.settings.baseUri
+        baseUri
       }
     });
   },
   async started() {
-    const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
-      await this.broker.call('api.addRoute', { route });
+    if (this.settings.podProvider) {
+      await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
+    } else {
+      const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
+      for (let containerUri of containers) {
+        await this.actions.addApiRoute({ containerUri });
+      }
     }
   },
   actions: {
-    getApiRoutes() {
-      // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
-      const middlewares = [parseHeader, parseJson];
-
-      const securedAliases = {},
-        unsecuredAliases = {};
-      const actorsContainersPath = this.getContainersByType(Object.values(ACTOR_TYPES));
-
-      actorsContainersPath.map(actorContainer => {
-        securedAliases[`POST ${actorContainer}/:username/outbox`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.outbox.post'
-        ];
-        unsecuredAliases[`GET ${actorContainer}/:username/outbox`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.outbox.list'
-        ];
-        unsecuredAliases[`GET ${actorContainer}/:username/inbox`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.inbox.list'
-        ];
-        unsecuredAliases[`POST ${actorContainer}/:username/inbox`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.inbox.post'
-        ];
-        unsecuredAliases[`GET ${actorContainer}/:username/followers`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.follow.listFollowers'
-        ];
-        unsecuredAliases[`GET ${actorContainer}/:username/following`] = [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(this.settings.baseUri, actorContainer)),
-          'activitypub.follow.listFollowing'
-        ];
-      });
-
-      return [
-        ...getContainerRoutes(urlJoin(this.settings.baseUri, 'activities'), 'activitypub.activity'),
-        // Unsecured routes
-        {
-          authorization: false,
-          authentication: true,
-          bodyParsers: false,
-          aliases: unsecuredAliases
-        },
-        // Secured routes
-        {
-          authorization: true,
-          authentication: false,
-          bodyParsers: false,
-          aliases: securedAliases
-        }
-      ];
+    async addApiRoute(ctx) {
+      const { containerUri } = ctx.params;
+      const routes = getRoutes(containerUri);
+      for (let route of routes) {
+        await this.broker.call('api.addRoute', { route, toBottom: false });
+      }
     }
   },
   methods: {
@@ -168,7 +119,7 @@ const ActivityPubService = {
               : container.acceptedTypes === type
           )
         )
-        .map(container => container.path);
+        .map(container => urlJoin(this.settings.baseUri, container.path, ':username'));
     }
   }
 };

@@ -15,9 +15,9 @@ const authProvider = ({
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth`, {
+        const { json } = await httpClient(`${middlewareUri}auth/login`, {
           method: 'POST',
-          body: JSON.stringify({ email: username.trim(), password: password.trim() }),
+          body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -31,11 +31,16 @@ const authProvider = ({
   },
   signup: async params => {
     if (localAccounts) {
-      const { email, password, ...profileData } = params;
+      const { username, email, password, ...profileData } = params;
       try {
         const { json } = await httpClient(`${middlewareUri}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ email: email.trim(), password: password.trim(), ...profileData }),
+          body: JSON.stringify({
+            username: username.trim(),
+            email: email.trim(),
+            password: password.trim(),
+            ...profileData
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -90,7 +95,7 @@ const authProvider = ({
 
     const aclUri = getAclUri(middlewareUri, resourceUri);
 
-    let { json } = await httpClient(aclUri);
+    const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
@@ -143,11 +148,15 @@ const authProvider = ({
       })
     });
   },
-  getIdentity: () => {
+  getIdentity: async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const payload = jwtDecode(token);
-      return { id: payload.webId, fullName: payload.name || payload['foaf:name'] };
+      const { webId } = jwtDecode(token);
+
+      const { json: webIdData } = await httpClient(webId);
+      const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
+
+      return { id: webId, fullName: profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
     }
   }
 });
