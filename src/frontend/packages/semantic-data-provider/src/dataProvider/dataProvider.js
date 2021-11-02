@@ -6,8 +6,8 @@ import createMethod from './methods/create';
 import updateMethod from './methods/update';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
-import fetchPodConfig from "./utils/fetchPodConfig";
-import fetchVoidEndpoints from "./utils/fetchVoidEndpoints";
+import fetchPodConfig from './utils/fetchPodConfig';
+import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 
 const dataProvider = config => {
   // TODO verify all data provider config + data models

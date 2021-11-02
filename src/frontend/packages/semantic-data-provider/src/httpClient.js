@@ -20,7 +20,7 @@ const httpClient = (url, options = {}) => {
       break;
   }
 
-  if( !options.noToken ) {
+  if (!options.noToken) {
     const token = localStorage.getItem('token');
     if (token) options.headers.set('Authorization', `Bearer ${token}`);
   }

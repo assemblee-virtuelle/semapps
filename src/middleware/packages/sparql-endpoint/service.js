@@ -20,7 +20,7 @@ const SparqlEndpointService = {
       const query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
 
-      console.log('query', query, ctx.meta.webId)
+      console.log('query', query, ctx.meta.webId);
 
       // Only user can query his own pod
       if (this.settings.podProvider) {
