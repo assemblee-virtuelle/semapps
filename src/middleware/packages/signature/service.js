@@ -78,7 +78,7 @@ const SignatureService = {
 
       const headers = { Date: new Date().toUTCString() };
       const includeHeaders = ['(request-target)', 'host', 'date'];
-      if( body ) {
+      if (body) {
         headers.Digest = this.buildDigest(body);
         includeHeaders.push('digest');
       }
@@ -127,9 +127,12 @@ const SignatureService = {
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
     async authenticate(ctx) {
       const { route, req, res } = ctx.params;
-      if( req.headers.signature ) {
-        const { isValid, actorUri } = await this.actions.verifyHttpSignature({ path: req.originalUrl, method: req.method, headers: req.headers }, { parentCtx: ctx });
-        if( isValid ) {
+      if (req.headers.signature) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+          { path: req.originalUrl, method: req.method, headers: req.headers },
+          { parentCtx: ctx }
+        );
+        if (isValid) {
           ctx.meta.webId = actorUri;
           return Promise.resolve();
         } else {
@@ -144,9 +147,12 @@ const SignatureService = {
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
       const { route, req, res } = ctx.params;
-      if( req.headers.signature ) {
-        const { isValid, actorUri } = await this.actions.verifyHttpSignature({ path: req.originalUrl, method: req.method, headers: req.headers }, { parentCtx: ctx });
-        if( isValid ) {
+      if (req.headers.signature) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+          { path: req.originalUrl, method: req.method, headers: req.headers },
+          { parentCtx: ctx }
+        );
+        if (isValid) {
           ctx.meta.webId = actorUri;
           return Promise.resolve(payload);
         } else {
@@ -157,7 +163,7 @@ const SignatureService = {
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
       }
-    },
+    }
   },
   methods: {
     buildDigest(body) {
