@@ -95,7 +95,7 @@ const ObjectService = {
         }
       });
 
-      if( response.ok ) {
+      if (response.ok) {
         const resource = await response.json();
 
         await ctx.call('triplestore.insert', {
