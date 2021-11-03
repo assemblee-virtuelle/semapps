@@ -4,6 +4,7 @@ const path = require('path');
 const { generateKeyPair, createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
+const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const SignatureService = {
@@ -71,18 +72,19 @@ const SignatureService = {
       }
     },
     async generateSignatureHeaders(ctx) {
-      const { url, body, actorUri } = ctx.params;
+      const { url, method, body, actorUri } = ctx.params;
       const { privateKeyPath } = await this.getKeyPaths(ctx, actorUri);
       const privateKey = await fsPromises.readFile(privateKeyPath);
 
-      const headers = {
-        Date: new Date().toUTCString(),
-        Digest: this.buildDigest(body)
-      };
+      const headers = { Date: new Date().toUTCString() };
+      const includeHeaders = ['(request-target)', 'host', 'date'];
+      if( body ) {
+        headers.Digest = this.buildDigest(body);
+        includeHeaders.push('digest');
+      }
 
       // Generate signature string
-      const requestOptions = { url, method: 'POST', headers };
-      const includeHeaders = ['(request-target)', 'host', 'date', 'digest'];
+      const requestOptions = { url, method, headers };
       const signatureString = createSignatureString({ includeHeaders, requestOptions });
 
       // Hash signature string
@@ -104,11 +106,11 @@ const SignatureService = {
       return headers.digest ? this.buildDigest(body) === headers.digest : true;
     },
     async verifyHttpSignature(ctx) {
-      const { url, headers } = ctx.params;
+      const { url, path, method, headers } = ctx.params;
 
       const parsedSignature = parseRequest({
-        url: url.replace(new URL(url).origin, ''), // URL without domain name
-        method: 'POST',
+        url: path || url.replace(new URL(url).origin, ''), // URL without domain name
+        method,
         headers
       });
 
@@ -120,9 +122,42 @@ const SignatureService = {
       if (!publicKey) return false;
 
       const isValid = verifySignature(parsedSignature, publicKey);
-
       return { isValid, actorUri };
-    }
+    },
+    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+    async authenticate(ctx) {
+      const { route, req, res } = ctx.params;
+      if( req.headers.signature ) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature({ path: req.originalUrl, method: req.method, headers: req.headers }, { parentCtx: ctx });
+        if( isValid ) {
+          ctx.meta.webId = actorUri;
+          return Promise.resolve();
+        } else {
+          ctx.meta.webId = 'anon';
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+      } else {
+        ctx.meta.webId = 'anon';
+        return Promise.resolve(null);
+      }
+    },
+    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+    async authorize(ctx) {
+      const { route, req, res } = ctx.params;
+      if( req.headers.signature ) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature({ path: req.originalUrl, method: req.method, headers: req.headers }, { parentCtx: ctx });
+        if( isValid ) {
+          ctx.meta.webId = actorUri;
+          return Promise.resolve(payload);
+        } else {
+          ctx.meta.webId = 'anon';
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+      } else {
+        ctx.meta.webId = 'anon';
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+      }
+    },
   },
   methods: {
     buildDigest(body) {

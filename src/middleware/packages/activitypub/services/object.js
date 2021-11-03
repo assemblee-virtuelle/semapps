@@ -78,6 +78,31 @@ const ObjectService = {
       }
 
       return activity;
+    },
+    async cacheRemote(ctx) {
+      const { resourceUri, actorUri } = ctx.params;
+
+      const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
+        url: resourceUri,
+        method: 'GET',
+        actorUri: actorUri
+      });
+
+      const response = await fetch(resourceUri, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...signatureHeaders
+        }
+      });
+
+      if( response.ok ) {
+        const resource = await response.json();
+
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType: MIME_TYPES.JSON
+        });
+      }
     }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
     // async create(ctx) {

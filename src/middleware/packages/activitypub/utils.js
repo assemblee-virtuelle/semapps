@@ -44,7 +44,7 @@ const delay = t => new Promise(resolve => setTimeout(resolve, t));
 const isPublicActivity = activity => {
   // We accept all three representations https://www.w3.org/TR/activitypub/#public-addressing
   const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
-  return defaultToArray(activity.to).some(r => publicRepresentations.includes(r));
+  return defaultToArray(activity.to) ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r)) : false;
 };
 
 module.exports = {
