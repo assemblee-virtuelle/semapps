@@ -1,5 +1,5 @@
-import uploadAllFiles from '../utils/uploadAllFiles';
 import getOne from './getOne';
+import uploadAllFiles from '../utils/uploadAllFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
 import getServerKeyFromUri from '../utils/getServerKeyFromUri';
 
@@ -38,7 +38,7 @@ const createMethod = config => async (resourceId, params) => {
   }
 
   // Upload files, if there are any
-  // params.data = await uploadAllFiles(params.data, config);
+  params.data = await uploadAllFiles(params.data, config);
 
   const { headers: responseHeaders } = await httpClient(containerUri, {
     method: 'POST',

@@ -1,4 +1,5 @@
 import createSlug from 'speakingurl';
+import urlJoin from "url-join";
 
 export const getSlugWithExtension = fileName => {
   let fileExtension = '';
@@ -12,8 +13,18 @@ export const getSlugWithExtension = fileName => {
 
 export const isFile = o => o && o.rawFile && o.rawFile instanceof File;
 
+const getUploadsContainerUri = (config) => {
+  const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
+  if( serverKey ) {
+    return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer)
+  }
+};
+
 const uploadFile = async (rawFile, config) => {
-  const response = await config.httpClient(config.uploadsContainerUri, {
+  const uploadsContainerUri = getUploadsContainerUri(config);
+  if( !uploadsContainerUri ) throw new Error("You must define an uploadsContainer in one of the server's configuration");
+
+  const response = await config.httpClient(uploadsContainerUri, {
     method: 'POST',
     body: rawFile,
     headers: new Headers({
@@ -35,8 +46,6 @@ const uploadFile = async (rawFile, config) => {
  * If there are any, upload them and replace the file by its URL.
  */
 const uploadAllFiles = async (record, config) => {
-  if (!config.uploadsContainerUri) throw new Error('No uploadsContainerUri defined for the data provider');
-
   for (let property in record) {
     if (record.hasOwnProperty(property)) {
       if (Array.isArray(record[property])) {
