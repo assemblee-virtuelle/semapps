@@ -10,8 +10,8 @@ module.exports = {
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
-    let { webId } = ctx.params;
-    webId = webId || ctx.meta.webId || 'anon';
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
     if (!resourceExists) {
@@ -29,7 +29,8 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId
+      webId,
+      dataset
     });
 
     ctx.emit('ldp.container.attached', {
