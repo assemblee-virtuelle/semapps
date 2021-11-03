@@ -1,4 +1,4 @@
-import fetchResource from "../utils/fetchResource";
+import fetchResource from '../utils/fetchResource';
 
 const getOneMethod = config => async (resourceId, params) => {
   const { resources } = config;
@@ -19,12 +19,16 @@ const getOneMethod = config => async (resourceId, params) => {
 
   if (dataModel.list?.dereference) {
     for (const dereferenceItem of dataModel.list?.dereference) {
-      if (data[dereferenceItem] && typeof data[dereferenceItem] === 'string' && data[dereferenceItem].startsWith('http')) {
+      if (
+        data[dereferenceItem] &&
+        typeof data[dereferenceItem] === 'string' &&
+        data[dereferenceItem].startsWith('http')
+      ) {
         try {
           const dataToEmbed = await fetchResource(data[dereferenceItem], config);
           delete dataToEmbed['@context'];
           data[dereferenceItem] = dataToEmbed;
-        } catch(e) {
+        } catch (e) {
           // Ignore errors (this may happen if user does not have rights to see the resource)
         }
       }

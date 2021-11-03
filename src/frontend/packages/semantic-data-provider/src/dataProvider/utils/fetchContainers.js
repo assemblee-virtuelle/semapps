@@ -56,7 +56,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
     // Apply filter to results
     if (params.filter) {
       // For SPARQL queries, we use "a" to filter types, but in containers it must be "type"
-      if( params.filter.a ) {
+      if (params.filter.a) {
         params.filter.type = params.filter.a;
         delete params.filter.a;
       }

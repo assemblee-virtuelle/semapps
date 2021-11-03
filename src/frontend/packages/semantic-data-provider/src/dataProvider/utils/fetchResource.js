@@ -1,5 +1,5 @@
-import getServerKeyFromUri from "./getServerKeyFromUri";
-import jsonld from "jsonld";
+import getServerKeyFromUri from './getServerKeyFromUri';
+import jsonld from 'jsonld';
 
 const fetchResource = async (resourceUri, config) => {
   const { dataServers, httpClient, jsonContext } = config;
