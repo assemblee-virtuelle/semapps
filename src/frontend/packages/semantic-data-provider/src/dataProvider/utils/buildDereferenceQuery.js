@@ -17,7 +17,7 @@ const generateSparqlVarName = predicate =>
     .map(s => s[0].toUpperCase() + s.slice(1))
     .join('');
 
-export const buildDereferenceQuery = predicates => {
+const buildDereferenceQuery = predicates => {
   let queries = [];
 
   if (predicates) {
@@ -47,3 +47,5 @@ export const buildDereferenceQuery = predicates => {
       .join('\n')
   };
 };
+
+export default buildDereferenceQuery;
