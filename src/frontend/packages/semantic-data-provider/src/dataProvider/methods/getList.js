@@ -2,7 +2,7 @@ import findContainersWithTypes from "../utils/findContainersWithTypes";
 import fetchContainers from '../utils/fetchContainers';
 import fetchSparqlEndpoints from "../utils/fetchSparqlEndpoints";
 
-const getListMethod = config => async (resourceId, params) => {
+const getListMethod = config => async (resourceId, params = {}) => {
   let { dataServers, resources } = config;
   const dataModel = resources[resourceId];
 

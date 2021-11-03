@@ -36,12 +36,12 @@ const fetchContainers = async (containers, resourceId, params, config) => {
   // Fetch simultaneously all containers
   let results = await Promise.all(fetchPromises);
 
-  // Merge all results in one array
-  results = [].concat.apply(...results);
-
   if (results.length === 0) {
     return { data: [], total: 0 };
   } else {
+    // Merge all results in one array
+    results = [].concat.apply(...results);
+
     let returnData = results.map(item => {
       item.id = item.id || item['@id'];
       return item;
@@ -49,6 +49,12 @@ const fetchContainers = async (containers, resourceId, params, config) => {
 
     // Apply filter to results
     if (params.filter) {
+      // For SPARQL queries, we use "a" to filter types, but in containers it must be "type"
+      if( params.filter.a ) {
+        params.filter.type = params.filter.a;
+        delete params.filter.a;
+      }
+
       // Remove search params from filter
       if (params.filter.q) {
         delete params.filter.q;

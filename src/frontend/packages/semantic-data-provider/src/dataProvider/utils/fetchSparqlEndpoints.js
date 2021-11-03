@@ -43,12 +43,12 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   // Run simultaneous SPARQL queries
   let results = await Promise.all(sparqlQueryPromises);
 
-  // Merge all results in one array
-  results = [].concat.apply(...results);
-
   if (results.length === 0) {
     return { data: [], total: 0 };
   } else {
+    // Merge all results in one array
+    results = [].concat.apply(...results);
+
     // Add id in addition to @id, as this is what React-Admin expects
     let returnData = results.map(item => {
       item.id = item.id || item['@id'];
