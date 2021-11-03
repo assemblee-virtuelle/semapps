@@ -1,4 +1,4 @@
-import getServerKeyFromUri from "../utils/getServerKeyFromUri";
+import getServerKeyFromUri from '../utils/getServerKeyFromUri';
 
 const deleteMethod = config => async (resourceId, params) => {
   const { dataServers, httpClient } = config;

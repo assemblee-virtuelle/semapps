@@ -1,6 +1,6 @@
-import getEmbedFrame from "./getEmbedFrame";
-import buildSparqlQuery from "./buildSparqlQuery";
-import jsonld from "jsonld";
+import getEmbedFrame from './getEmbedFrame';
+import buildSparqlQuery from './buildSparqlQuery';
+import jsonld from 'jsonld';
 
 const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
@@ -15,29 +15,30 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
     ...getEmbedFrame(dataModel.list?.dereference)
   };
 
-  const sparqlQueryPromises = Object.keys(containers).map(serverKey =>
-    new Promise((resolve, reject) => {
-      const sparqlQuery = buildSparqlQuery({
-        containers: containers[serverKey],
-        params: {...params, filter: {...dataModel.list?.filter, ...params.filter}},
-        dereference: dataModel.list?.dereference,
-        ontologies
-      });
+  const sparqlQueryPromises = Object.keys(containers).map(
+    serverKey =>
+      new Promise((resolve, reject) => {
+        const sparqlQuery = buildSparqlQuery({
+          containers: containers[serverKey],
+          params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
+          dereference: dataModel.list?.dereference,
+          ontologies
+        });
 
-      httpClient(dataServers[serverKey].sparqlEndpoint, {
-        method: 'POST',
-        body: sparqlQuery,
-        noToken: dataServers[serverKey].authServer !== true
+        httpClient(dataServers[serverKey].sparqlEndpoint, {
+          method: 'POST',
+          body: sparqlQuery,
+          noToken: dataServers[serverKey].authServer !== true
+        })
+          .then(({ json }) => {
+            // omitGraph option force results to be in a @graph, even if we have a single result
+            return jsonld.frame(json, frame, { omitGraph: false });
+          })
+          .then(compactJson => {
+            resolve(compactJson['@graph'] || []);
+          })
+          .catch(e => reject(e));
       })
-        .then(({json}) => {
-          // omitGraph option force results to be in a @graph, even if we have a single result
-          return jsonld.frame(json, frame, {omitGraph: false});
-        })
-        .then(compactJson => {
-          resolve(compactJson['@graph'] || []);
-        })
-        .catch(e => reject(e));
-    })
   );
 
   // Run simultaneous SPARQL queries
