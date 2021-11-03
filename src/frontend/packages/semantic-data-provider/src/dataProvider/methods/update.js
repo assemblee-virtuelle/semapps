@@ -1,5 +1,5 @@
 import uploadAllFiles from '../utils/uploadAllFiles';
-import getServerKeyFromUri from "../utils/getServerKeyFromUri";
+import getServerKeyFromUri from '../utils/getServerKeyFromUri';
 
 const updateMethod = config => async (resourceId, params) => {
   const { dataServers, httpClient, jsonContext } = config;

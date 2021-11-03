@@ -1,4 +1,4 @@
-import jsonld from "jsonld";
+import jsonld from 'jsonld';
 
 export const isType = (type, resource) => {
   const resourceType = resource.type || resource['@type'];
@@ -9,7 +9,13 @@ const fetchContainers = async (containers, resourceId, params, config) => {
   const { dataServers, httpClient, jsonContext } = config;
 
   // Transform in an containerUri:serverKey object
-  const containersServers = Object.keys(containers).reduce((acc, serverKey) => ({ ...acc, ...Object.fromEntries(containers[serverKey].map(containerUri => [containerUri, serverKey]))}), {});
+  const containersServers = Object.keys(containers).reduce(
+    (acc, serverKey) => ({
+      ...acc,
+      ...Object.fromEntries(containers[serverKey].map(containerUri => [containerUri, serverKey]))
+    }),
+    {}
+  );
 
   const fetchPromises = Object.keys(containersServers).map(containerUri =>
     httpClient(containerUri, {
@@ -23,7 +29,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         } else {
           return json;
         }
-      } )
+      })
       .then(json => {
         if (isType('ldp:Container', json)) {
           return json['ldp:contains'];

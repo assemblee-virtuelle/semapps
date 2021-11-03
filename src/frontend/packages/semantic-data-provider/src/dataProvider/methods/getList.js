@@ -1,6 +1,6 @@
-import findContainersWithTypes from "../utils/findContainersWithTypes";
+import findContainersWithTypes from '../utils/findContainersWithTypes';
 import fetchContainers from '../utils/fetchContainers';
-import fetchSparqlEndpoints from "../utils/fetchSparqlEndpoints";
+import fetchSparqlEndpoints from '../utils/fetchSparqlEndpoints';
 
 const getListMethod = config => async (resourceId, params = {}) => {
   let { dataServers, resources } = config;
@@ -9,7 +9,7 @@ const getListMethod = config => async (resourceId, params = {}) => {
   if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
 
   let containers;
-  if( dataModel.list?.containers && dataModel.list?.containers.length > 0 ) {
+  if (dataModel.list?.containers && dataModel.list?.containers.length > 0) {
     // If containers are set explicitly, use them
     containers = dataModel.list?.containers;
   } else {
