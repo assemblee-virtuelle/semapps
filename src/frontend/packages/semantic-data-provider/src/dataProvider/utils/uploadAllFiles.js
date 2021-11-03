@@ -1,5 +1,5 @@
 import createSlug from 'speakingurl';
-import urlJoin from "url-join";
+import urlJoin from 'url-join';
 
 export const getSlugWithExtension = fileName => {
   let fileExtension = '';
@@ -13,16 +13,16 @@ export const getSlugWithExtension = fileName => {
 
 export const isFile = o => o && o.rawFile && o.rawFile instanceof File;
 
-const getUploadsContainerUri = (config) => {
+const getUploadsContainerUri = config => {
   const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
-  if( serverKey ) {
-    return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer)
+  if (serverKey) {
+    return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
   }
 };
 
 const uploadFile = async (rawFile, config) => {
   const uploadsContainerUri = getUploadsContainerUri(config);
-  if( !uploadsContainerUri ) throw new Error("You must define an uploadsContainer in one of the server's configuration");
+  if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
 
   const response = await config.httpClient(uploadsContainerUri, {
     method: 'POST',
