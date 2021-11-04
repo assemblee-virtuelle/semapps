@@ -1,5 +1,5 @@
 import jwtDecode from 'jwt-decode';
-import getServerKeyFromType from "./getServerKeyFromType";
+import getServerKeyFromType from './getServerKeyFromType';
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
@@ -26,13 +26,13 @@ const fetchUserConfig = async config => {
       config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.['void:sparqlEndpoint'] || podUri + '/sparql';
     }
 
-    if( authServerKey ) {
+    if (authServerKey) {
       // Fill the config provided to the data provider
       // We must modify the config object directly
       config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl || podUri + '/proxy';
     }
   } else {
-    if( podKey ) {
+    if (podKey) {
       // If the user is not logged in, ignore the POD server
       delete config.dataServers[podKey];
     }

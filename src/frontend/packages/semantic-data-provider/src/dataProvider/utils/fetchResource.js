@@ -9,13 +9,14 @@ const fetchResource = async (resourceUri, config) => {
   const serverKey = getServerKeyFromUri(resourceUri, dataServers);
 
   // Fetch through proxy server if it is available
-  let { json: data } = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl
-    ? await httpClient(dataServers[authServerKey].proxyUrl, {
-        method: 'POST',
-        headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }),
-        body: new URLSearchParams({ 'id': resourceUri })
-      })
-    : await httpClient(resourceUri);
+  let { json: data } =
+    serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl
+      ? await httpClient(dataServers[authServerKey].proxyUrl, {
+          method: 'POST',
+          headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }),
+          body: new URLSearchParams({ id: resourceUri })
+        })
+      : await httpClient(resourceUri);
 
   data.id = data.id || data['@id'];
 

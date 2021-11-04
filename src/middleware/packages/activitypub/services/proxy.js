@@ -10,7 +10,7 @@ const ProxyService = {
       authentication: false,
       mergeParams: true,
       aliases: {
-        'POST /': 'activitypub.proxy.query',
+        'POST /': 'activitypub.proxy.query'
       },
       bodyParsers: {
         json: true,
