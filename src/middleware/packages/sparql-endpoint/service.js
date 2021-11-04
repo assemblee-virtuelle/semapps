@@ -23,7 +23,7 @@ const SparqlEndpointService = {
       // Only user can query his own pod
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: ctx.meta.webId });
-        if (account[0].username !== ctx.params.username) throw new E.ForbiddenError();
+        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
       }
 
       const response = await ctx.call('triplestore.query', {

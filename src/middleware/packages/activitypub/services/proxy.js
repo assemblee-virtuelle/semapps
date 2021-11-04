@@ -1,3 +1,5 @@
+const { MoleculerError } = require('moleculer').Errors;
+
 const ProxyService = {
   name: 'activitypub.proxy',
   settings: {
@@ -10,7 +12,7 @@ const ProxyService = {
       authentication: false,
       mergeParams: true,
       aliases: {
-        'POST /': 'activitypub.proxy.query',
+        'POST /': 'activitypub.proxy.api_query',
       },
       bodyParsers: {
         json: true,
@@ -25,15 +27,29 @@ const ProxyService = {
     }
   },
   actions: {
-    async query(ctx) {
+    async api_query(ctx) {
       const resourceUri = ctx.params.id;
       const actorUri = ctx.meta.webId;
 
       // Only user can query his own proxy URL
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        if (account[0].username !== ctx.params.username) throw new E.ForbiddenError();
+        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
       }
+
+      try {
+        return await ctx.call('activitypub.proxy.query', {
+          resourceUri,
+          actorUri
+        })
+      } catch(e) {
+        console.error(e);
+        ctx.meta.$statusCode = e.code || 500;
+        ctx.meta.$statusMessage = e.message;
+      }
+    },
+    async query(ctx) {
+      const { resourceUri, actorUri } = ctx.params;
 
       const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
         url: resourceUri,
@@ -51,8 +67,7 @@ const ProxyService = {
       if (response.ok) {
         return await response.json();
       } else {
-        ctx.meta.$statusCode = response.status;
-        ctx.meta.$statusMessage = response.statusText;
+        throw new MoleculerError(response.statusText, response.status);
       }
     }
   }
