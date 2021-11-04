@@ -24,8 +24,6 @@ const getManyMethod = config => async (resourceId, params) => {
     }
   }
 
-  console.log('getMany', returnData);
-
   return { data: returnData };
 };
 

@@ -11,6 +11,10 @@ const ObjectService = {
   },
   dependencies: ['ldp.resource'],
   actions: {
+    async get(ctx) {
+      const { objectUri } = ctx.params;
+      return await ctx.call('ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON });
+    },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
       let activityType = activity.type || activity['@type'],

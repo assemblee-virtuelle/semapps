@@ -1,6 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
   name: 'activitypub.outbox',

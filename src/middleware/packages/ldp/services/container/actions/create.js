@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -20,15 +19,5 @@ module.exports = {
       contentType: MIME_TYPES.JSON,
       webId
     });
-
-    // Attach to parent container, if it exists
-    const parentContainerUri = getContainerFromUri(containerUri);
-    const parentContainerExist = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri });
-    if (parentContainerExist) {
-      await ctx.call('ldp.container.attach', {
-        containerUri: parentContainerUri,
-        resourceUri: containerUri
-      });
-    }
   }
 };
