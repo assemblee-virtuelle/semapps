@@ -15,7 +15,7 @@ const CacherMiddleware = opts => ({
   },
   localAction(next, action) {
     if (cacher) {
-      return cacher(next, action);
+      return cacher.localAction(next, action);
     } else {
       return next;
     }

@@ -7,7 +7,7 @@
   "dependencies": {
     "@semapps/ldp": "0.3.17",
     "expo-server-sdk": "^3.4.0",
-    "moleculer": "^0.14.17",
+    "moleculer": "^0.14.18",
     "moleculer-db": "^0.8.15"
   },
   "publishConfig": {

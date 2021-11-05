@@ -8,7 +8,7 @@
     "@semapps/middlewares": "0.3.17",
     "@semapps/mime-types": "0.3.17",
     "@semapps/triplestore": "0.3.17",
-    "moleculer": "^0.14.17"
+    "moleculer": "^0.14.18"
   },
   "publishConfig": {
     "access": "public"

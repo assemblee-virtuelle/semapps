@@ -20,7 +20,7 @@
     "@semapps/webacl": "0.3.17",
     "@semapps/webid": "0.3.17",
     "dotenv-flow": "^3.1.0",
-    "moleculer": "^0.14.17",
+    "moleculer": "^0.14.18",
     "moleculer-repl": "^0.6.3",
     "moleculer-web": "^0.10.0-beta1"
   },

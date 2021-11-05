@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "moleculer": "^0.14.17"
+    "moleculer": "^0.14.18"
   },
   "publishConfig": {
     "access": "public"

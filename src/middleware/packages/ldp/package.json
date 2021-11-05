@@ -9,7 +9,7 @@
     "@semapps/mime-types": "0.3.17",
     "@semapps/triplestore": "0.3.17",
     "bson": "^4.0.4",
-    "moleculer": "^0.14.17",
+    "moleculer": "^0.14.18",
     "rdf-data-model": "^1.0.0",
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
