@@ -11,7 +11,6 @@ const WebfingerService = {
     if (!this.settings.domainName) {
       if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
       this.settings.domainName = new URL(this.settings.baseUrl).host;
-      console.log('this.settings.domainName', this.settings.domainName);
     }
 
     await this.broker.call('api.addRoute', {
