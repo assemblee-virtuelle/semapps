@@ -41,7 +41,7 @@ const ObjectService = {
             throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
           }
 
-          if( containerUri.includes('/:username') ) {
+          if (containerUri.includes('/:username')) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
             containerUri = containerUri.replace(':username', account.username);
           }
@@ -102,7 +102,7 @@ const ObjectService = {
         throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
       }
 
-      if( containerUri.includes('/:username') ) {
+      if (containerUri.includes('/:username')) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
         containerUri = containerUri.replace(':username', account.username);
         ctx.meta.dataset = account.username;

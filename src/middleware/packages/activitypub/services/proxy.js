@@ -12,7 +12,7 @@ const ProxyService = {
       authentication: false,
       mergeParams: true,
       aliases: {
-        'POST /': 'activitypub.proxy.api_query',
+        'POST /': 'activitypub.proxy.api_query'
       },
       bodyParsers: {
         json: true,
@@ -41,8 +41,8 @@ const ProxyService = {
         return await ctx.call('activitypub.proxy.query', {
           resourceUri,
           actorUri
-        })
-      } catch(e) {
+        });
+      } catch (e) {
         console.error(e);
         ctx.meta.$statusCode = e.code || 500;
         ctx.meta.$statusMessage = e.message;
