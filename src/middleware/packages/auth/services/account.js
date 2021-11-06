@@ -85,6 +85,16 @@ module.exports = {
       const { webId } = ctx.params;
       const accounts = await this._find(ctx, { query: { webId } });
       return accounts.length > 0 ? accounts[0] : null;
+    },
+    async setPassword(ctx) {
+      const { webId, password } = ctx.params;
+      const hashedPassword = await this.hashPassword(password);
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      return await this._update(ctx, {
+        '@id': account.id,
+        hashedPassword
+      });
     }
   },
   methods: {
