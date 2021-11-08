@@ -166,7 +166,7 @@ const CollectionService = {
             if (isActivity) {
               selectedItems.push(
                 await ctx.call('activitypub.activity.get', {
-                  activityUri: itemUri
+                  resourceUri: itemUri
                 })
               );
             } else {

@@ -1,13 +1,26 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent, defaultToArray, isPublicActivity } = require('../utils');
-const { PUBLIC_URI } = require('../constants');
+const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
 
 const ActivityService = {
   name: 'activitypub.activity',
   settings: {
-    containerUri: null, // To be set by the user
     context: 'https://www.w3.org/ns/activitystreams'
+  },
+  dependencies: ['ldp.container'],
+  async started() {
+    await this.broker.call('ldp.container.register', {
+      path: '/activities',
+      acceptedTypes: ACTIVITY_TYPES,
+      accept: MIME_TYPES.JSON,
+      jsonContext: this.settings.context,
+      dereference: ['as:object'],
+      permissions: {},
+      newResourcesPermissions: {},
+      controlledActions: {
+        get: 'activitypub.get'
+      }
+    });
   },
   actions: {
     async create(ctx) {
@@ -57,15 +70,7 @@ const ActivityService = {
       return activityUri;
     },
     async get(ctx) {
-      let { activityUri, id, containerUri } = ctx.params;
-      activityUri = activityUri || urlJoin(containerUri, id);
-
-      const activity = await ctx.call('ldp.resource.get', {
-        resourceUri: activityUri,
-        accept: MIME_TYPES.JSON,
-        dereference: ['as:object']
-      });
-
+      const activity = await ctx.call('ldp.resource.get', ctx.params);
       return objectCurrentToId(activity);
     },
     async getRecipients(ctx) {

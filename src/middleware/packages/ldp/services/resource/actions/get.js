@@ -8,10 +8,10 @@ module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
     const resourceUri = urlJoin(containerUri, id);
-    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { resourceUri })), ...ctx.meta.headers };
+    const { accept, controlledActions } = { ...(await ctx.call('ldp.container.getOptions', { resourceUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return await ctx.call('ldp.resource.get', {
+      return await ctx.call(controlledActions ? controlledActions.get : 'ldp.resource.get', {
         resourceUri,
         accept
       });
@@ -75,6 +75,8 @@ module.exports = {
           `,
           accept,
           // Increase performance by using the 'system' bypass if ACL have already been verified
+          // TODO simply set meta.webId to "system", it will be taken into account in the triplestore.query action
+          // The problem is we need to know the real webid for the permissions, but we can remember it in the WebACL middleware
           webId: aclVerified ? 'system' : webId
         });
 
@@ -93,7 +95,7 @@ module.exports = {
           try {
             // Overwrite response type set by the api action
             ctx.meta.$responseType = result['semapps:mimeType'];
-            //Les fichiers sont immutables, on défini le cache à la valeur maximum
+            // Since files are currently immutable, we set a maximum browser cache age
             ctx.meta.$responseHeaders = {
               'Cache-Control': 'public, max-age=31536000'
             };

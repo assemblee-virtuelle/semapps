@@ -17,7 +17,7 @@ module.exports = {
     const path = new URL(containerUri || getContainerFromUri(resourceUri)).pathname;
 
     const containerOptions =
-      this.settings.containers.find(container =>
+      Object.values(this.registeredContainers).find(container =>
         pathToRegexp(typeof container === 'string' ? container : container.path).test(path)
       ) || {};
 

@@ -30,7 +30,7 @@ const OutboxService = {
       activity.published = new Date().toISOString();
 
       const activityUri = await ctx.call('activitypub.activity.create', { activity });
-      activity = await ctx.call('activitypub.activity.get', { activityUri });
+      activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri });
 
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
