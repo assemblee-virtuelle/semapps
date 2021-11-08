@@ -10,7 +10,7 @@ const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
 const getOptionsAction = require('./actions/getOptions');
 const registerAction = require('./actions/register');
-const { getContainerFromUri } = require("../../utils");
+const { getContainerFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.container',
@@ -39,7 +39,7 @@ module.exports = {
   async started() {
     this.registeredContainers = [];
     if (this.settings.containers.length > 0) {
-      for( let container of this.settings.containers ) {
+      for (let container of this.settings.containers) {
         this.actions.register(container);
       }
     }
@@ -48,9 +48,9 @@ module.exports = {
     async 'auth.registered'(ctx) {
       const { accountData } = ctx.params;
       // We want to add user's containers only in POD provider config
-      if( this.settings.podProvider ) {
+      if (this.settings.podProvider) {
         // Go through each registered containers
-        for( let container of Object.values(this.registeredContainers) ) {
+        for (let container of Object.values(this.registeredContainers)) {
           const containerUri = urlJoin(accountData.podUri, container.path);
 
           const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
@@ -60,7 +60,11 @@ module.exports = {
 
             // Attach the container to its parent container
             const parentContainerUri = getContainerFromUri(containerUri);
-            ctx.call('ldp.container.attach', { containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' });
+            ctx.call('ldp.container.attach', {
+              containerUri: parentContainerUri,
+              resourceUri: containerUri,
+              webId: 'system'
+            });
           }
         }
       }

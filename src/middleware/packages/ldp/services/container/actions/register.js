@@ -1,6 +1,6 @@
-const urlJoin = require("url-join");
-const getContainerRoute = require("../../../routes/getContainerRoute");
-const { getContainerFromUri } = require("../../../utils");
+const urlJoin = require('url-join');
+const getContainerRoute = require('../../../routes/getContainerRoute');
+const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -8,7 +8,7 @@ module.exports = {
     path: { type: 'string' },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    jsonContext: { type: "multi", rules: [ { type: "string" }, { type: "object"}, { type: "array" } ], optional: true },
+    jsonContext: { type: 'multi', rules: [{ type: 'string' }, { type: 'object' }, { type: 'array' }], optional: true },
     dereference: { type: 'array', optional: true },
     permissions: { type: 'object', optional: true },
     newResourcesPermissions: { type: 'object', optional: true },
@@ -16,24 +16,30 @@ module.exports = {
   },
   async handler(ctx) {
     let { path, name, ...options } = ctx.params;
-    if( !name ) name = path;
+    if (!name) name = path;
 
-    if( this.settings.podProvider ) {
+    if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
 
-      for( let account of accounts ) {
+      for (let account of accounts) {
         const containerUri = urlJoin(account.podUri, path);
         const exists = await this.actions.exist({ containerUri, webId: 'system' }, { parentCtx: ctx });
         if (!exists) {
           await this.actions.create({ containerUri, webId: 'system' }, { parentCtx: ctx });
 
           // 2. Attach the container to its parent container
-          if( path !== '/' ) {
+          if (path !== '/') {
             const parentContainerUri = getContainerFromUri(containerUri);
-            const exists = await this.actions.exist({ containerUri: parentContainerUri, webId: 'system' }, { parentCtx: ctx });
-            if( exists ) {
-              await this.actions.attach({ containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' }, { parentCtx: ctx });
+            const exists = await this.actions.exist(
+              { containerUri: parentContainerUri, webId: 'system' },
+              { parentCtx: ctx }
+            );
+            if (exists) {
+              await this.actions.attach(
+                { containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' },
+                { parentCtx: ctx }
+              );
             }
           }
         }
@@ -50,11 +56,17 @@ module.exports = {
         await this.actions.create({ containerUri, webId: 'system' }, { parentCtx: ctx });
 
         // 2. Attach the container to its parent container (if it exists)
-        if( path !== '/' ) {
+        if (path !== '/') {
           const parentContainerUri = getContainerFromUri(containerUri);
-          const exists = await this.actions.exist({ containerUri: parentContainerUri, webId: 'system' }, { parentCtx: ctx });
+          const exists = await this.actions.exist(
+            { containerUri: parentContainerUri, webId: 'system' },
+            { parentCtx: ctx }
+          );
           if (exists) {
-            await this.actions.attach({ containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' }, { parentCtx: ctx });
+            await this.actions.attach(
+              { containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' },
+              { parentCtx: ctx }
+            );
           }
         }
       }
