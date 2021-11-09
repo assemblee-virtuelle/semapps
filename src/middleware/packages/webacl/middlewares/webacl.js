@@ -11,7 +11,7 @@ const modifyActions = [
 ];
 
 const addRightsToNewResource = async (ctx, containerUri, resourceUri, webId) => {
-  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { containerUri });
+  const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { containerUri });
   const newRights =
     typeof newResourcesPermissions === 'function' ? newResourcesPermissions(webId) : newResourcesPermissions;
 
@@ -28,7 +28,7 @@ const addRightsToNewUser = async (ctx, userUri) => {
   await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
 
   // Find the permissions to set from the users container
-  const { newResourcesPermissions } = await ctx.call('ldp.container.getOptions', { resourceUri: userUri });
+  const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri: userUri });
   const newRights =
     typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
 
@@ -189,7 +189,7 @@ const WebAclMiddleware = config => ({
             break;
 
           case 'ldp.container.create':
-            const { permissions } = await ctx.call('ldp.container.getOptions', {
+            const { permissions } = await ctx.call('ldp.registry.getByUri', {
               containerUri: ctx.params.containerUri
             });
             const containerRights = typeof permissions === 'function' ? permissions(webId) : permissions;

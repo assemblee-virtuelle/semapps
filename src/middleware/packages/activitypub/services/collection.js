@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams',
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
@@ -142,7 +142,7 @@ const CollectionService = {
       } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
         return {
-          '@context': this.settings.context,
+          '@context': this.settings.jsonContext,
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
@@ -187,7 +187,7 @@ const CollectionService = {
 
         if (itemsPerPage) {
           return {
-            '@context': this.settings.context,
+            '@context': this.settings.jsonContext,
             id: collectionUri + '?page=' + page,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
@@ -199,7 +199,7 @@ const CollectionService = {
         } else {
           // No pagination, return the collection
           return {
-            '@context': this.settings.context,
+            '@context': this.settings.jsonContext,
             id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,

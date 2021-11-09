@@ -8,7 +8,7 @@ module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
     const resourceUri = urlJoin(containerUri, id);
-    const { accept, controlledActions } = { ...(await ctx.call('ldp.container.getOptions', { resourceUri })), ...ctx.meta.headers };
+    const { accept, controlledActions } = { ...(await ctx.call('ldp.registry.getByUri', { resourceUri })), ...ctx.meta.headers };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call(controlledActions ? controlledActions.get : 'ldp.resource.get', {
@@ -48,7 +48,7 @@ module.exports = {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
 

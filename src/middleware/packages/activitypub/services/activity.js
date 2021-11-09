@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent, defaultToArray, isPublicActivity } = require('../utils');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
@@ -5,15 +6,17 @@ const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
 const ActivityService = {
   name: 'activitypub.activity',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams'
+    baseUri: null,
+    podProvider: false,
+    jsonContext: null
   },
   dependencies: ['ldp.container'],
   async started() {
-    await this.broker.call('ldp.container.register', {
+    await this.broker.call('ldp.registry.register', {
       path: '/activities',
       acceptedTypes: ACTIVITY_TYPES,
       accept: MIME_TYPES.JSON,
-      jsonContext: this.settings.context,
+      jsonContext: this.settings.jsonContext,
       dereference: ['as:object'],
       permissions: {},
       newResourcesPermissions: {},
@@ -28,9 +31,10 @@ const ActivityService = {
 
       const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
 
-      const containerUri = this.settings.containerUri.includes('/:username')
-        ? this.settings.containerUri.replace(':username', actor.preferredUsername)
-        : this.settings.containerUri;
+      // TODO use ldp.registry service to find container URI
+      const containerUri = this.settings.podProvider
+        ? urlJoin(this.settings.baseUri, actor.preferredUsername, 'activities')
+        : urlJoin(this.settings.baseUri, 'activities');
 
       const activityUri = await ctx.call('ldp.resource.post', {
         containerUri,

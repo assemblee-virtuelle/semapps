@@ -1,9 +1,7 @@
-const urlJoin = require('url-join');
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
-const getContainerRoute = require('./routes/getContainerRoute');
-const defaultContainerOptions = require('./services/container/defaultOptions');
+const LdpRegistryService = require('./services/registry');
 
 module.exports = {
   name: 'ldp',
@@ -12,9 +10,9 @@ module.exports = {
     ontologies: [],
     containers: [],
     podProvider: false,
-    defaultContainerOptions
+    defaultContainerOptions: {}
   },
-  dependencies: ['api', 'ldp.container', 'ldp.resource'],
+  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
     const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions } = this.schema.settings;
 
@@ -22,9 +20,7 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        containers,
-        podProvider,
-        defaultOptions: defaultContainerOptions
+        podProvider
       }
     });
 
@@ -32,6 +28,15 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
+        podProvider
+      }
+    });
+
+    await this.broker.createService(LdpRegistryService, {
+      settings: {
+        baseUrl,
+        containers,
+        defaultOptions: defaultContainerOptions,
         podProvider
       }
     });
