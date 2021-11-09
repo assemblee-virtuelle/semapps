@@ -36,7 +36,9 @@ const ObjectService = {
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
           let containerUri;
-          const container = ctx.call('ldp.registry.getByType', { types: activity.object.type || activity.object['@type'] });
+          const container = ctx.call('ldp.registry.getByType', {
+            types: activity.object.type || activity.object['@type']
+          });
 
           if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
@@ -115,7 +117,7 @@ const ObjectService = {
       await ctx.call('triplestore.insert', {
         resource: object,
         contentType: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
     }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?

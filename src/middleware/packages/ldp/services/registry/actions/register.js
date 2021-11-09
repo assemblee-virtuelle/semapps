@@ -1,5 +1,5 @@
-const urlJoin = require("url-join");
-const getContainerRoute = require("../../../routes/getContainerRoute");
+const urlJoin = require('url-join');
+const getContainerRoute = require('../../../routes/getContainerRoute');
 
 module.exports = {
   visibility: 'public',
@@ -7,7 +7,7 @@ module.exports = {
     path: { type: 'string' },
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    jsonContext: { type: "multi", rules: [ { type: "string" }, { type: "object"}, { type: "array" } ], optional: true },
+    jsonContext: { type: 'multi', rules: [{ type: 'string' }, { type: 'object' }, { type: 'array' }], optional: true },
     dereference: { type: 'array', optional: true },
     permissions: { type: 'object', optional: true },
     newResourcesPermissions: { type: 'object', optional: true },
@@ -15,12 +15,12 @@ module.exports = {
   },
   async handler(ctx) {
     let { path, name, ...options } = ctx.params;
-    if( !name ) name = path;
+    if (!name) name = path;
 
-    if( this.settings.podProvider ) {
+    if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
-      for( let account of accounts ) {
+      for (let account of accounts) {
         const containerUri = urlJoin(account.podUri, path);
         await this.createAndAttachContainer(ctx, containerUri, path);
       }
