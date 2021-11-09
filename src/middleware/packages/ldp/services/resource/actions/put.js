@@ -5,6 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
@@ -14,7 +15,7 @@ module.exports = {
     }
 
     try {
-      await ctx.call('ldp.resource.put', {
+      await ctx.call(controlledActions.put || 'ldp.resource.put', {
         resource,
         contentType: ctx.meta.headers['content-type'],
         containerUri,

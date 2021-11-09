@@ -4,10 +4,12 @@ const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
+    const { typeURL, id, containerUri } = ctx.params;
+    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
     try {
-      const { typeURL, id, containerUri } = ctx.params;
-      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-      await ctx.call('ldp.resource.delete', {
+      await ctx.call(controlledActions.delete || 'ldp.resource.delete', {
         resourceUri
       });
       ctx.meta.$statusCode = 204;

@@ -96,9 +96,8 @@ const ObjectService = {
       });
 
       let containerUri, dataset;
-      console.log('container', object)
+      console.log('container type', object.type || object['@type']);
       const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
-
 
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });

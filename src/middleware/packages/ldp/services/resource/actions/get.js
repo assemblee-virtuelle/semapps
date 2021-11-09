@@ -14,7 +14,7 @@ module.exports = {
     };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return await ctx.call(controlledActions ? controlledActions.get : 'ldp.resource.get', {
+      return await ctx.call(controlledActions.get || 'ldp.resource.get', {
         resourceUri,
         accept
       });

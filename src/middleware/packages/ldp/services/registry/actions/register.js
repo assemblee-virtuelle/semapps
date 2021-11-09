@@ -17,6 +17,9 @@ module.exports = {
     let { path, name, ...options } = ctx.params;
     if (!name) name = path;
 
+    // Ignore undefined options
+    Object.keys(options).forEach(key => options[key] === undefined && delete options[key])
+
     if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');

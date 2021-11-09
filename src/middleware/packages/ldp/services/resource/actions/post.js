@@ -8,8 +8,9 @@ module.exports = {
     let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
       if (ctx.meta.parser !== 'file') {
-        resourceUri = await ctx.call('ldp.resource.post', {
+        resourceUri = await ctx.call(controlledActions.create || 'ldp.resource.post', {
           containerUri: containerUri,
           slug: ctx.meta.headers.slug,
           resource,
@@ -24,7 +25,7 @@ module.exports = {
           } else {
             file = ctx.params.files[0];
           }
-          resourceUri = await ctx.call('ldp.resource.post', {
+          resourceUri = await ctx.call(controlledActions.create || 'ldp.resource.post', {
             containerUri: containerUri,
             slug: file.filename || ctx.meta.headers.slug,
             resource: {
