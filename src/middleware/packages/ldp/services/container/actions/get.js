@@ -12,7 +12,10 @@ const {
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const { accept, controlledActions } = { ...(await ctx.call('ldp.registry.getByUri', { containerUri })), ...ctx.meta.headers };
+    const { accept, controlledActions } = {
+      ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
+      ...ctx.meta.headers
+    };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return await ctx.call(controlledActions.list || 'ldp.container.get', {

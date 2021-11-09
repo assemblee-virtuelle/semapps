@@ -1,4 +1,4 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   settings: {
@@ -9,7 +9,7 @@ module.exports = {
     dereference: undefined,
     permissions: undefined,
     newResourcesPermissions: undefined,
-    controlledActions: {},
+    controlledActions: {}
   },
   dependencies: ['ldp'],
   async started() {
