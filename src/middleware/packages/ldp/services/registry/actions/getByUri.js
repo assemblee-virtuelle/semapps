@@ -16,8 +16,13 @@ module.exports = {
     let path = new URL(containerUri || getContainerFromUri(resourceUri)).pathname;
 
     // If we are in a POD provider config, remove the first part with the username
-    if( this.settings.podProvider ) {
-      path = '/' + path.split('/').slice(2).join('/');
+    if (this.settings.podProvider) {
+      path =
+        '/' +
+        path
+          .split('/')
+          .slice(2)
+          .join('/');
     }
 
     const containerOptions =
