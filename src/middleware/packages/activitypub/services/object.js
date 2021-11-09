@@ -36,7 +36,7 @@ const ObjectService = {
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
           let containerUri;
-          const container = ctx.call('ldp.registry.getByType', { types: activity.object.type || activity.object['@type'] });
+          const container = ctx.call('ldp.registry.getByType', { type: activity.object.type || activity.object['@type'] });
 
           if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
@@ -96,7 +96,9 @@ const ObjectService = {
       });
 
       let containerUri, dataset;
-      const container = await ctx.call('ldp.registry.getByType', { types: object.type || object['@type'] });
+      console.log('container', object)
+      const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
+
 
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
