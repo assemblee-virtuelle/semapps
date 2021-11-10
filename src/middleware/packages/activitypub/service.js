@@ -62,8 +62,6 @@ const ActivityPubService = {
 
     this.broker.createService(ActivityService, {
       settings: {
-        baseUri,
-        podProvider,
         jsonContext
       }
     });

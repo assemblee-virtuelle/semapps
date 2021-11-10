@@ -1,40 +1,36 @@
-const urlJoin = require('url-join');
+const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { Errors: E } = require('moleculer-web');
 const { objectCurrentToId, objectIdToCurrent, defaultToArray, isPublicActivity } = require('../utils');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
 
 const ActivityService = {
   name: 'activitypub.activity',
+  mixins: [ControlledContainerMixin],
   settings: {
-    baseUri: null,
-    podProvider: false,
-    jsonContext: null
+    path: '/activities',
+    acceptedTypes: ACTIVITY_TYPES,
+    accept: MIME_TYPES.JSON,
+    jsonContext: null,
+    dereference: ['as:object'],
+    permissions: {},
+    newResourcesPermissions: {},
+    controlledActions: {
+      // Activities shouldn't be handled manually
+      create: 'activitypub.activity.forbidden',
+      patch: 'activitypub.activity.forbidden',
+      put: 'activitypub.activity.forbidden',
+      delete: 'activitypub.activity.forbidden'
+    }
   },
   dependencies: ['ldp.container'],
-  async started() {
-    await this.broker.call('ldp.registry.register', {
-      path: '/activities',
-      acceptedTypes: ACTIVITY_TYPES,
-      accept: MIME_TYPES.JSON,
-      jsonContext: this.settings.jsonContext,
-      dereference: ['as:object'],
-      permissions: {},
-      newResourcesPermissions: {},
-      controlledActions: {
-        get: 'activitypub.get'
-      }
-    });
-  },
   actions: {
+    forbidden() {
+      throw new E.ForbiddenError();
+    },
     async create(ctx) {
       let { activity } = ctx.params;
-
-      const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
-
-      // TODO use ldp.registry service to find container URI
-      const containerUri = this.settings.podProvider
-        ? urlJoin(this.settings.baseUri, actor.preferredUsername, 'activities')
-        : urlJoin(this.settings.baseUri, 'activities');
+      const containerUri = await this.getContainerUri(activity.actor);
 
       const activityUri = await ctx.call('ldp.resource.post', {
         containerUri,
@@ -73,10 +69,6 @@ const ActivityService = {
 
       return activityUri;
     },
-    async get(ctx) {
-      const activity = await ctx.call('ldp.resource.get', ctx.params);
-      return objectCurrentToId(activity);
-    },
     async getRecipients(ctx) {
       const { activity } = ctx.params;
       let output = [];
@@ -109,6 +101,13 @@ const ActivityService = {
       }
 
       return output;
+    }
+  },
+  hooks: {
+    after: {
+      get(ctx, res) {
+        return objectCurrentToId(res);
+      }
     }
   }
 };

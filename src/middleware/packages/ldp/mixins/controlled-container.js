@@ -4,11 +4,11 @@ module.exports = {
   settings: {
     path: null,
     acceptedTypes: null,
-    accept: undefined,
-    jsonContext: undefined,
-    dereference: undefined,
-    permissions: undefined,
-    newResourcesPermissions: undefined,
+    accept: null,
+    jsonContext: null,
+    dereference: null,
+    permissions: null,
+    newResourcesPermissions: null,
     controlledActions: {},
   },
   dependencies: ['ldp'],
@@ -28,7 +28,8 @@ module.exports = {
         create: this.name + '.create',
         patch: this.name + '.patch',
         put: this.name + '.put',
-        delete: this.name + '.delete'
+        delete: this.name + '.delete',
+        ...this.settings.controlledActions
       }
     });
   },
@@ -50,6 +51,11 @@ module.exports = {
     },
     delete(ctx) {
       return ctx.call('ldp.resource.delete', ctx.params);
+    }
+  },
+  methods: {
+    async getContainerUri(webId) {
+      return this.broker.call('ldp.registry.getUri', { path: this.settings.path, webId });
     }
   }
 };

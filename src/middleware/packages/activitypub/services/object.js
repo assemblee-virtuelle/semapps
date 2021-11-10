@@ -13,6 +13,7 @@ const ObjectService = {
   actions: {
     async get(ctx) {
       const { objectUri } = ctx.params;
+      // TODO call ldp.registry to find if a controlled action should be used instead of ldp.resource.get
       return await ctx.call('ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON });
     },
     async process(ctx) {
