@@ -88,10 +88,26 @@ const ActorService = {
 
       // If the collections are created inside a container, attach them to the container
       if (containerUri) {
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following'), webId: 'system' });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers'), webId: 'system' });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox'), webId: 'system' });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox'), webId: 'system' });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'following'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'followers'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'inbox'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'outbox'),
+          webId: 'system'
+        });
       }
 
       return await ctx.call('ldp.resource.patch', {
