@@ -93,7 +93,7 @@ module.exports = {
 
       resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId } });
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,
@@ -172,12 +172,12 @@ module.exports = {
         resourceUri: resource['@id'],
         newData,
         webId
-      });
+      }, { meta: { webId: null, dataset: null }});
 
       ctx.emit('ldp.container.attached', {
         containerUri,
         resourceUri: resource['@id']
-      });
+      }, { meta: { webId: null, dataset: null }});
 
       return resource['@id'];
     }

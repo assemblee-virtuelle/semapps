@@ -13,18 +13,18 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
-    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist(
         { containerUri: resourceUri },
-        { parentCtx: ctx, meta: { webId } }
+        { parentCtx: ctx }
       );
       if (!childContainerExists) {
         throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
       }
     }
 
-    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx, meta: { webId } });
+    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.insert', {
@@ -36,6 +36,6 @@ module.exports = {
     ctx.emit('ldp.container.attached', {
       containerUri,
       resourceUri
-    });
+    }, { meta: { webId: null, dataset: null }});
   }
 };

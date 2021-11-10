@@ -26,7 +26,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.updated', { uri: resourceUri });
+      ctx.emit('webacl.resource.updated', { uri: resourceUri }, { meta: { webId: null, dataset: null }});
     }
   }
 };

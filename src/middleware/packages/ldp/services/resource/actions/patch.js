@@ -138,7 +138,7 @@ module.exports = {
         oldData,
         newData,
         webId
-      });
+      }, { meta: { webId: null, dataset: null }});
 
       return resourceUri;
     }

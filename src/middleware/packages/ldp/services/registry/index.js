@@ -40,10 +40,7 @@ module.exports = {
         // 2. Attach the container to its parent container
         if (containerPath !== '/') {
           const parentContainerUri = getContainerFromUri(containerUri);
-          const parentExists = await ctx.call('ldp.container.exist', {
-            containerUri: parentContainerUri,
-            webId: 'system'
-          });
+          const parentExists = await ctx.call('ldp.container.exist', { containerUri: parentContainerUri, webId: 'system' });
           if (parentExists) {
             await ctx.call('ldp.container.attach', {
               containerUri: parentContainerUri,

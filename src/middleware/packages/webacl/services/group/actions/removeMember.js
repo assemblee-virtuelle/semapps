@@ -57,7 +57,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.group.member-removed', { groupUri, memberUri });
+      ctx.emit('webacl.group.member-removed', { groupUri, memberUri }, { meta: { webId: null, dataset: null }});
     }
   }
 };

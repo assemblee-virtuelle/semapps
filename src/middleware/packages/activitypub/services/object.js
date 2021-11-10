@@ -1,6 +1,5 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 
 const ObjectService = {
@@ -12,9 +11,19 @@ const ObjectService = {
   dependencies: ['ldp.resource'],
   actions: {
     async get(ctx) {
-      const { objectUri } = ctx.params;
-      // TODO call ldp.registry to find if a controlled action should be used instead of ldp.resource.get
-      return await ctx.call('ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON });
+      const { objectUri, ...rest } = ctx.params;
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
+      try {
+        return await ctx.call(controlledActions.get || 'ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON, ...rest });
+      } catch(e) {
+        // If the object was not found in cache, try to query it distantly
+        // TODO only do this for distant objects
+        return await ctx.call('activitypub.proxy.query', {
+          resourceUri: objectUri,
+          actorUri: ctx.meta.webId
+        });
+        // TODO put in cache results ??
+      }
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
@@ -99,7 +108,6 @@ const ObjectService = {
       });
 
       let containerUri, dataset;
-      console.log('container type', object.type || object['@type']);
       const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
 
       if (this.settings.podProvider) {

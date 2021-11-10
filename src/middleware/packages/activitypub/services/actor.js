@@ -15,7 +15,8 @@ const ActorService = {
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
       preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    })
+    }),
+    podProvider: false
   },
   actions: {
     async get(ctx) {
@@ -167,7 +168,7 @@ const ActorService = {
   },
   methods: {
     isLocal(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
     }
   },
   events: {
@@ -181,7 +182,7 @@ const ActorService = {
         }
         await this.actions.attachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
-        ctx.emit('activitypub.actor.created', newData);
+        ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null }});
       }
     },
     async 'ldp.resource.deleted'(ctx) {

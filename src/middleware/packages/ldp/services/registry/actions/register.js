@@ -18,7 +18,7 @@ module.exports = {
     if (!name) name = path;
 
     // Ignore undefined options
-    Object.keys(options).forEach(key => options[key] === undefined && delete options[key]);
+    Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
 
     if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user

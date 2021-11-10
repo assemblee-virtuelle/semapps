@@ -38,7 +38,7 @@ module.exports = {
     async invalidateResourceOrContainer(ctx) {
       if (this.broker.cacher) {
         const { uri } = ctx.params;
-        const isContainer = await ctx.call('ldp.container.exist', { containerUri: uri }, { meta: { webId: 'system' } });
+        const isContainer = await ctx.call('ldp.container.exist', { containerUri: uri, webId: 'system' });
 
         if (isContainer) {
           await this.actions.invalidateContainer({ containerUri: uri }, { parentCtx: ctx });

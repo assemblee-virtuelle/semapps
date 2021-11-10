@@ -38,7 +38,7 @@ const OutboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.outbox.posted', { activity });
+      ctx.emit('activitypub.outbox.posted', { activity }, { meta: { webId: null, dataset: null }});
 
       ctx.meta.$responseHeaders = {
         Location: activityUri,
@@ -58,7 +58,6 @@ const OutboxService = {
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        isActivity: true,
         sort: { predicate: 'as:published', order: 'DESC' }
       });
 

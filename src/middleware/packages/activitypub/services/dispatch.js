@@ -1,7 +1,8 @@
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
-    baseUri: null
+    baseUri: null,
+    podProvider: false
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -19,8 +20,7 @@ const DispatchService = {
             {
               collectionUri: recipient.inbox,
               item: activity
-            },
-            { meta: 'system' }
+            }
           );
           localRecipients.push(recipientUri);
         } else {
@@ -35,6 +35,7 @@ const DispatchService = {
       }
 
       if (localRecipients.length > 0) {
+        this.logger.info('emited from dispatch');
         this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
       }
     },
@@ -44,7 +45,7 @@ const DispatchService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
     },
     async remotePost(inboxUri, activity) {
       const body = JSON.stringify(activity);

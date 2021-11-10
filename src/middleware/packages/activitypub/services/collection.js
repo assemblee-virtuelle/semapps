@@ -86,13 +86,12 @@ const CollectionService = {
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param collectionUri The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param isActivity True if the items in the container are activities (default false)
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, dereferenceItems = false, isActivity = false, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, dereferenceItems = false, page, itemsPerPage, sort } = ctx.params;
 
       let collection = await ctx.call('triplestore.query', {
         query: `
@@ -163,20 +162,9 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            if (isActivity) {
-              selectedItems.push(
-                await ctx.call('activitypub.activity.get', {
-                  resourceUri: itemUri
-                })
-              );
-            } else {
-              selectedItems.push(
-                await ctx.call('ldp.resource.get', {
-                  resourceUri: itemUri,
-                  accept: MIME_TYPES.JSON
-                })
-              );
-            }
+            selectedItems.push(
+              await ctx.call('activitypub.object.get', { objectUri: itemUri })
+            );
           }
 
           // Remove the @context from all items
@@ -252,12 +240,16 @@ const CollectionService = {
     async getOwner(ctx) {
       const { collectionUri, collectionKey } = ctx.params;
 
+      // Inboxes use the LDP ontology (LDN)
+      const prefix = collectionKey === 'inbox' ? 'ldp' : 'as';
+
       const results = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
           SELECT ?actorUri
           WHERE { 
-            ?actorUri as:${collectionKey} <${collectionUri}>
+            ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -271,7 +263,7 @@ const CollectionService = {
     before: {
       '*'(ctx) {
         // If we have a pod provider, guess the dataset from the container URI
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.collectionUri) {
+        if (this.settings.podProvider && ctx.params.collectionUri) {
           const collectionPath = new URL(ctx.params.collectionUri).pathname;
           const parts = collectionPath.split('/');
           if (parts.length > 1) {

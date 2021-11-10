@@ -93,9 +93,9 @@ module.exports = {
         'ldp.container.detach',
         {
           containerUri: getContainerFromUri(resourceUri),
-          resourceUri
-        },
-        { meta: { webId } }
+          resourceUri,
+          webId
+        }
       );
 
       if (oldData['@type'] === 'semapps:File') {
@@ -106,7 +106,7 @@ module.exports = {
         resourceUri,
         oldData,
         webId
-      });
+      }, { meta: { webId: null, dataset: null }});
     }
   }
 };

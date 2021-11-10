@@ -49,7 +49,8 @@ const ActivityPubService = {
         baseUri,
         actorsContainers,
         jsonContext,
-        selectActorData: this.settings.selectActorData
+        selectActorData: this.settings.selectActorData,
+        podProvider
       }
     });
 
@@ -78,7 +79,8 @@ const ActivityPubService = {
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
-        baseUri
+        baseUri,
+        podProvider
       }
     });
   },

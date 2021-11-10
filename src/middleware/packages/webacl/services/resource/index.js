@@ -69,14 +69,10 @@ module.exports = {
         return false; // it is never a container
       }
       // it can be a container or a resource
-      const containerExist = await ctx.call(
-        'ldp.container.exist',
-        { containerUri: resourceUri },
-        { meta: { webId: 'system' } }
-      );
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri: resourceUri, webId: 'system' });
       if (!containerExist) {
         // it must be a resource then!
-        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId: 'system' } });
+        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
         if (!resourceExist) {
           throw new MoleculerError(
             `Cannot get permissions of non-existing container or resource ${resourceUri}`,
