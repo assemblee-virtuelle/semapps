@@ -1,7 +1,7 @@
 module.exports = {
   visibility: 'public',
   params: {
-    type: { type: "multi", rules: [ { type: "string" }, { type: "array" } ] },
+    type: { type: 'multi', rules: [{ type: 'string' }, { type: 'array' }] }
   },
   async handler(ctx) {
     const types = Array.isArray(ctx.params.type) ? ctx.params.type : [ctx.params.type];
