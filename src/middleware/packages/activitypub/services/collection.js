@@ -162,9 +162,7 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('activitypub.object.get', { objectUri: itemUri })
-            );
+            selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri }));
           }
 
           // Remove the @context from all items

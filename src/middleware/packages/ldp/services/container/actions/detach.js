@@ -26,9 +26,13 @@ module.exports = {
       dataset
     });
 
-    ctx.emit('ldp.container.detached', {
-      containerUri,
-      resourceUri
-    }, { meta: { webId: null, dataset: null }});
+    ctx.emit(
+      'ldp.container.detached',
+      {
+        containerUri,
+        resourceUri
+      },
+      { meta: { webId: null, dataset: null } }
+    );
   }
 };

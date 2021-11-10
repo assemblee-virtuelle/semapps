@@ -38,7 +38,7 @@ const OutboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.outbox.posted', { activity }, { meta: { webId: null, dataset: null }});
+      ctx.emit('activitypub.outbox.posted', { activity }, { meta: { webId: null, dataset: null } });
 
       ctx.meta.$responseHeaders = {
         Location: activityUri,

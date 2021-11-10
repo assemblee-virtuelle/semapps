@@ -13,8 +13,8 @@ const InboxService = {
 
       // Ensure the actor in the activity is the same as the posting actor
       // (When posting, the webId is the one of the poster)
-      if( activity.actor !== ctx.meta.webId ) {
-        ctx.meta.$statusMessage = "Activity actor is not the same as the posting actor";
+      if (activity.actor !== ctx.meta.webId) {
+        ctx.meta.$statusMessage = 'Activity actor is not the same as the posting actor';
         ctx.meta.$statusCode = 401;
       }
 
@@ -62,10 +62,14 @@ const InboxService = {
       });
 
       this.logger.info('emited from inbox');
-      ctx.emit('activitypub.inbox.received', {
-        activity,
-        recipients: [actorUri]
-      }, { meta: { webId: null, dataset: null }});
+      ctx.emit(
+        'activitypub.inbox.received',
+        {
+          activity,
+          recipients: [actorUri]
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       ctx.meta.$statusCode = 202;
     },

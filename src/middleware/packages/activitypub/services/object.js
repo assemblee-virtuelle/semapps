@@ -14,8 +14,12 @@ const ObjectService = {
       const { objectUri, ...rest } = ctx.params;
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
-        return await ctx.call(controlledActions.get || 'ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON, ...rest });
-      } catch(e) {
+        return await ctx.call(controlledActions.get || 'ldp.resource.get', {
+          resourceUri: objectUri,
+          accept: MIME_TYPES.JSON,
+          ...rest
+        });
+      } catch (e) {
         // If the object was not found in cache, try to query it distantly
         // TODO only do this for distant objects
         return await ctx.call('activitypub.proxy.query', {
