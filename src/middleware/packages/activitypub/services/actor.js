@@ -88,10 +88,10 @@ const ActorService = {
 
       // If the collections are created inside a container, attach them to the container
       if (containerUri) {
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox') });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following'), webId: 'system' });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers'), webId: 'system' });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox'), webId: 'system' });
+        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox'), webId: 'system' });
       }
 
       return await ctx.call('ldp.resource.patch', {
@@ -102,7 +102,8 @@ const ActorService = {
           inbox: urlJoin(baseUri, 'inbox'),
           outbox: urlJoin(baseUri, 'outbox')
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     async detachCollections(ctx) {
@@ -126,7 +127,8 @@ const ActorService = {
             publicKeyPem: publicKey
           }
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     async deleteKeyPair(ctx) {

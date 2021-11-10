@@ -13,7 +13,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
-    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx });
+    const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.update', {

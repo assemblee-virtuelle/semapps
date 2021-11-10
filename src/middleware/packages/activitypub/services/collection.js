@@ -22,7 +22,8 @@ const CollectionService = {
           summary: ctx.params.summary
         },
         accept: MIME_TYPES.JSON,
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -39,7 +40,8 @@ const CollectionService = {
             <${ctx.params.collectionUri}> a as:Collection .
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -60,7 +62,8 @@ const CollectionService = {
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
 
       return await ctx.call('triplestore.insert', {
-        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
+        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        webId: 'system'
       });
     },
     /*
@@ -79,7 +82,8 @@ const CollectionService = {
           DELETE
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
-        `
+        `,
+        webId: 'system'
       });
     },
     /*
@@ -163,7 +167,7 @@ const CollectionService = {
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
             selectedItems.push(
-              await ctx.call('activitypub.object.get', { objectUri: itemUri })
+              await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: ctx.meta.webId })
             );
           }
 
@@ -214,7 +218,8 @@ const CollectionService = {
             ?container as:items ?s1 .
             ?s1 ?p1 ?o1 .
           } 
-        `
+        `,
+        webId: 'system'
       });
     },
     /*
@@ -234,7 +239,8 @@ const CollectionService = {
             FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
             ?s1 ?p1 ?o1 .
           }
-        `
+        `,
+        webId: 'system'
       });
     },
     async getOwner(ctx) {

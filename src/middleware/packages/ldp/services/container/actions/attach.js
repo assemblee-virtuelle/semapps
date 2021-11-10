@@ -11,12 +11,12 @@ module.exports = {
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
+    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
-    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri });
+    const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist(
-        { containerUri: resourceUri },
+        { containerUri: resourceUri, webId },
         { parentCtx: ctx }
       );
       if (!childContainerExists) {
@@ -24,7 +24,7 @@ module.exports = {
       }
     }
 
-    const containerExists = await this.actions.exist({ containerUri }, { parentCtx: ctx });
+    const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.insert', {

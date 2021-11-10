@@ -11,7 +11,7 @@ const ObjectService = {
   dependencies: ['ldp.resource'],
   actions: {
     async get(ctx) {
-      const { objectUri, ...rest } = ctx.params;
+      const { objectUri, actorUri, ...rest } = ctx.params;
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
         return await ctx.call(controlledActions.get || 'ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON, ...rest });
@@ -20,7 +20,7 @@ const ObjectService = {
         // TODO only do this for distant objects
         return await ctx.call('activitypub.proxy.query', {
           resourceUri: objectUri,
-          actorUri: ctx.meta.webId
+          actorUri
         });
         // TODO put in cache results ??
       }

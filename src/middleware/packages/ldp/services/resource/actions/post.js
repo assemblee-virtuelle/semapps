@@ -83,8 +83,7 @@ module.exports = {
     },
     async handler(ctx) {
       let { resource, containerUri, slug, contentType, fileStream } = ctx.params;
-      let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
@@ -93,7 +92,7 @@ module.exports = {
 
       resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri });
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,

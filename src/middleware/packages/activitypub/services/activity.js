@@ -38,7 +38,8 @@ const ActivityService = {
           '@context': this.settings.context,
           ...objectIdToCurrent(activity)
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
       // Give read rights to activity recipients
@@ -51,7 +52,8 @@ const ActivityService = {
               uri: recipient,
               read: true
             }
-          }
+          },
+          webId: 'system'
         });
       }
 
@@ -63,7 +65,8 @@ const ActivityService = {
             anon: {
               read: true
             }
-          }
+          },
+          webId: 'system'
         });
       }
 
