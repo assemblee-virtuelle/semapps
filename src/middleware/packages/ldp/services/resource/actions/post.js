@@ -167,16 +167,24 @@ module.exports = {
         { meta: { $cache: false } }
       );
 
-      ctx.emit('ldp.resource.created', {
-        resourceUri: resource['@id'],
-        newData,
-        webId
-      }, { meta: { webId: null, dataset: null }});
+      ctx.emit(
+        'ldp.resource.created',
+        {
+          resourceUri: resource['@id'],
+          newData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
-      ctx.emit('ldp.container.attached', {
-        containerUri,
-        resourceUri: resource['@id']
-      }, { meta: { webId: null, dataset: null }});
+      ctx.emit(
+        'ldp.container.attached',
+        {
+          containerUri,
+          resourceUri: resource['@id']
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       return resource['@id'];
     }

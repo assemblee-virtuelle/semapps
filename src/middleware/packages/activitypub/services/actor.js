@@ -184,7 +184,7 @@ const ActorService = {
         }
         await this.actions.attachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
-        ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null }});
+        ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null } });
       }
     },
     async 'ldp.resource.deleted'(ctx) {

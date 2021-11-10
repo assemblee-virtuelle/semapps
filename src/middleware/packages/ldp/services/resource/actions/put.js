@@ -127,12 +127,16 @@ module.exports = {
         { meta: { $cache: false } }
       );
 
-      ctx.emit('ldp.resource.updated', {
-        resourceUri,
-        oldData,
-        newData,
-        webId
-      }, { meta: { webId: null, dataset: null }});
+      ctx.emit(
+        'ldp.resource.updated',
+        {
+          resourceUri,
+          oldData,
+          newData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       return resourceUri;
     }

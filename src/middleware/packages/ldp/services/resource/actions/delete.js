@@ -89,24 +89,25 @@ module.exports = {
       });
 
       // We must detach the resource from the container after deletion, otherwise the permissions will fail
-      await ctx.call(
-        'ldp.container.detach',
-        {
-          containerUri: getContainerFromUri(resourceUri),
-          resourceUri,
-          webId
-        }
-      );
+      await ctx.call('ldp.container.detach', {
+        containerUri: getContainerFromUri(resourceUri),
+        resourceUri,
+        webId
+      });
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);
       }
 
-      ctx.emit('ldp.resource.deleted', {
-        resourceUri,
-        oldData,
-        webId
-      }, { meta: { webId: null, dataset: null }});
+      ctx.emit(
+        'ldp.resource.deleted',
+        {
+          resourceUri,
+          oldData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
     }
   }
 };

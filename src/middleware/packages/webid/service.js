@@ -52,7 +52,7 @@ const WebIdService = {
         webId: 'system'
       });
 
-      ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null }});
+      ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null } });
 
       return webId;
     },
