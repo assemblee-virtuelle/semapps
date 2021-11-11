@@ -12,11 +12,16 @@ const ObjectService = {
   actions: {
     async get(ctx) {
       const { objectUri, actorUri, ...rest } = ctx.params;
+
+      // If the object is already dereferenced, return it
+      if( typeof objectUri !== 'string' ) return objectUri;
+
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
         return await ctx.call(controlledActions.get || 'ldp.resource.get', {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON,
+          webId: actorUri,
           ...rest
         });
       } catch (e) {
