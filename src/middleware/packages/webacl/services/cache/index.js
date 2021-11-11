@@ -17,7 +17,30 @@ module.exports = {
         await this.broker.cacher.clean(`webacl.resource.getRights:**${uri}**`);
         await this.broker.cacher.clean(`webacl.resource.hasRights:**${uri}**`);
       }
-    }
+    },
+    async generateForUser(ctx) {
+      const { webId } = ctx.params;
+      this.logger.info('Generating cache for user ' + webId);
+      const containers = await ctx.call('ldp.container.getAll');
+      for( let containerUri of containers ) {
+        this.logger.info('Generating cache for container ' + containerUri);
+        const resources = await ctx.call('ldp.container.getUris', { containerUri });
+        for( let resourceUri of resources ) {
+          await ctx.call('webacl.resource.hasRights', {
+            resourceUri,
+            rights: { read: true },
+            webId
+          })
+        }
+      }
+    },
+    async generateForAll(ctx) {
+      const { usersContainer } = ctx.params;
+      const users = await ctx.call('ldp.getAllResourcesUris', { containerUri: usersContainer });
+      for( let webId of users ) {
+        await this.actions.generateForUser({ webId }, { parentCtx: ctx });
+      }
+    },
   },
   events: {
     async 'webacl.resource.updated'(ctx) {
