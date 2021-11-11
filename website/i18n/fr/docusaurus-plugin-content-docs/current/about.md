@@ -2,9 +2,9 @@
 title: A propos de SemApps
 ---
 
-SemApps est un logiciel open-source développé par l'[Assemblée-virtuelle](http://virtual-assembly.org) (AV), une organisation française réunissant une cinquantaine de développeurs et militants.
+SemApps est un logiciel open-source développé par l'[Assemblée-virtuelle](http://virtual-assembly.org) (AV), une organisation française réunissant une cinquantaine de développeurs.
 
-Dans un contexte de forte fragmentation des dynamiques dans le domaine de la transition, l'AV vise à développer des communs (outils numériques, méthodologies et projets) pour favoriser l'interconnexion des mouvements de transition.
+Dans un contexte de forte fragmentation des dynamiques dans le domaine de la transition, l'AV développe des communs (outils numériques, méthodologies et projets) pour favoriser l'interconnexion des mouvements de transition.
 
 SemApps est l'un des projets phares de l'AV. Sa mission est de favoriser les interconnexions entre les collectivités en créant des synergies entre leurs systèmes d'information.
 
