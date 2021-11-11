@@ -14,7 +14,7 @@ const ObjectService = {
       const { objectUri, actorUri, ...rest } = ctx.params;
 
       // If the object is already dereferenced, return it
-      if( typeof objectUri !== 'string' ) return objectUri;
+      if (typeof objectUri !== 'string') return objectUri;
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
