@@ -36,7 +36,7 @@ module.exports = {
     },
     async generateForAll(ctx) {
       const { usersContainer } = ctx.params;
-      const users = await ctx.call('ldp.getAllResourcesUris', { containerUri: usersContainer });
+      const users = await ctx.call('ldp.container.getUris', { containerUri: usersContainer });
       for (let webId of users) {
         await this.actions.generateForUser({ webId }, { parentCtx: ctx });
       }
