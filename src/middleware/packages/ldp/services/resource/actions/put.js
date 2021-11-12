@@ -9,7 +9,7 @@ module.exports = {
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
-    
+
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
 
     if (ctx.meta.parser === 'file') {
