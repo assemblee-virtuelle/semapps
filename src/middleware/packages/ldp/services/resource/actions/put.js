@@ -5,11 +5,13 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 module.exports = {
   api: async function api(ctx) {
     const { containerUri, id, ...resource } = ctx.params;
-    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
+    
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
+
     if (ctx.meta.parser === 'file') {
       throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
     }
