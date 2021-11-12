@@ -2,7 +2,7 @@
 title: Contribute to the SemApps core
 ---
 
-As a developer, you can choose to use SemApps as a library for your own project, in which case the [guides](../guides/ldp-server.md) will be your best friend.
+As a developer, you can choose to use SemApps as a library for your own project, in which case the [guides](guides/ldp-server.md) will be your best friend.
 
 On the other hand, if you want to contribute to the core of SemApps, this page is for you.
 
@@ -11,7 +11,7 @@ On the other hand, if you want to contribute to the core of SemApps, this page i
 In a few commands, you can launch the full SemApps stack with:
 
 - Middleware
-- Frontend ([DMS](../guides/dms.md))
+- Frontend ([DMS](guides/dms.md))
 - A Jena Fuseki instance
 
 ### First time
