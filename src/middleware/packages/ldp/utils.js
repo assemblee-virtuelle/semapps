@@ -114,7 +114,7 @@ const hasType = (resource, type) => {
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const isContainer = resource => hasType(resource, 'ldp:Container')
+const isContainer = resource => hasType(resource, 'ldp:Container');
 
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
