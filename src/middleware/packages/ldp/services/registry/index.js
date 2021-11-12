@@ -32,7 +32,7 @@ module.exports = {
     }
   },
   methods: {
-    async createAndAttachContainer(ctx, containerUri, containerPath) {
+    async createAndAttachContainer(ctx, containerUri, containerPath, controlledActions) {
       const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       if (!exists) {
         await ctx.call('ldp.container.create', { containerUri, webId: 'system' });
@@ -51,6 +51,26 @@ module.exports = {
               webId: 'system'
             });
           }
+        }
+      }
+    },
+    async createAndAttachResource(ctx, resourceUri, resourcePath, controlledActions) {
+      const exists = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
+      if (!exists) {
+        await ctx.call(controlledActions.create, { resourceUri, webId: 'system' });
+
+        // 2. Attach the resource to its parent container
+        const containerUri = getContainerFromUri(resourceUri);
+        const containerExist = await ctx.call('ldp.container.exist', {
+          containerUri,
+          webId: 'system'
+        });
+        if (containerExist) {
+          await ctx.call('ldp.container.attach', {
+            containerUri,
+            resourceUri,
+            webId: 'system'
+          });
         }
       }
     }

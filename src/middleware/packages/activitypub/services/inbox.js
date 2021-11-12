@@ -72,24 +72,6 @@ const InboxService = {
       );
 
       ctx.meta.$statusCode = 202;
-    },
-    async list(ctx) {
-      let { collectionUri, page } = ctx.params;
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        collectionUri,
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        sort: { predicate: 'as:published', order: 'DESC' }
-      });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
     }
   }
 };

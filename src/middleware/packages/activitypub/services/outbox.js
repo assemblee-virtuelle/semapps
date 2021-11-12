@@ -49,24 +49,6 @@ const OutboxService = {
 
       // TODO do not return activity when calling through the HTTP
       return activity;
-    },
-    async list(ctx) {
-      let { collectionUri, page } = ctx.params;
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        collectionUri,
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        sort: { predicate: 'as:published', order: 'DESC' }
-      });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
-      }
     }
   }
 };

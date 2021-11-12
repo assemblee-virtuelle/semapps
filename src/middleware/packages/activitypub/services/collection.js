@@ -8,6 +8,34 @@ const CollectionService = {
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
+    async register(ctx) {
+      const { path, options, permissions } = ctx.params;
+      await ctx.call('ldp.registry.register', {
+        type: 'resource',
+        path,
+        acceptedTypes: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+        options: {
+          // Collection-specific options
+          ordered: options.ordered,
+          summary: options.summary,
+          dereferenceItems: options.dereferenceItems,
+          sort: options.sort,
+          // Generic resource options
+          accept: MIME_TYPES.JSON,
+          jsonContext: this.settings.jsonContext
+        },
+        permissions: {
+          resource: permissions,
+        },
+        controlledActions: {
+          get: 'activitypub.collection.get',
+          create: 'activitypub.collection.create',
+          patch: null,
+          put: null,
+          delete: null
+        }
+      });
+    },
     /*
      * Create a persisted collection
      * @param collectionUri The full URI of the collection

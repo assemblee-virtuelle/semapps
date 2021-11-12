@@ -7,6 +7,7 @@ module.exports = {
     accept: null,
     jsonContext: null,
     dereference: null,
+    disassembly: null,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {}
@@ -14,14 +15,21 @@ module.exports = {
   dependencies: ['ldp'],
   async started() {
     await this.broker.call('ldp.registry.register', {
+      type: 'container',
       path: this.settings.path,
       name: this.name,
       acceptedTypes: this.settings.acceptedTypes,
-      accept: MIME_TYPES.JSON || this.settings.accept,
-      jsonContext: this.settings.jsonContext,
-      dereference: this.settings.dereference,
-      permissions: this.settings.permissions,
-      newResourcesPermissions: this.settings.newResourcesPermissions,
+      options: {
+        accept: this.settings.accept || MIME_TYPES.JSON,
+        jsonContext: this.settings.jsonContext,
+        dereference: this.settings.dereference,
+        disassembly: this.settings.disassembly,
+      },
+      permissions: {
+        container: this.settings.permissions.container,
+        default: this.settings.permissions.default,
+        newResources: this.settings.permissions.newResources,
+      },
       controlledActions: {
         get: this.name + '.get',
         list: this.name + '.list',

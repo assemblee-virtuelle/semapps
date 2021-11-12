@@ -8,28 +8,6 @@ const FollowService = {
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   actions: {
-    async listFollowers(ctx) {
-      let { collectionUri } = ctx.params;
-      const collection = await ctx.call('activitypub.collection.get', { collectionUri, dereferenceItems: false });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async listFollowing(ctx) {
-      let { collectionUri } = ctx.params;
-      const collection = await ctx.call('activitypub.collection.get', { collectionUri, dereferenceItems: false });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
     async addFollower(ctx) {
       const { follower, following } = ctx.params;
 
