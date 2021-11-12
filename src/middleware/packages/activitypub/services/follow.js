@@ -1,5 +1,4 @@
-const urlJoin = require('url-join');
-const { ACTIVITY_TYPES } = require('../constants');
+const { ACTIVITY_TYPES, ACTOR_TYPES} = require('../constants');
 
 const FollowService = {
   name: 'activitypub.follow',
@@ -7,29 +6,26 @@ const FollowService = {
     baseUri: null
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
+  async started() {
+    await this.broker.call('activitypub.registry.register', {
+      path: '/followers',
+      attachToTypes: ACTOR_TYPES,
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
+      ordered: false,
+      dereferenceItems: false,
+      permissions: {}
+    });
+
+    await this.broker.call('activitypub.registry.register', {
+      path: '/following',
+      attachToTypes: ACTOR_TYPES,
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
+      ordered: false,
+      dereferenceItems: false,
+      permissions: {}
+    });
+  },
   actions: {
-    async listFollowers(ctx) {
-      let { collectionUri } = ctx.params;
-      const collection = await ctx.call('activitypub.collection.get', { collectionUri, dereferenceItems: false });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async listFollowing(ctx) {
-      let { collectionUri } = ctx.params;
-      const collection = await ctx.call('activitypub.collection.get', { collectionUri, dereferenceItems: false });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
     async addFollower(ctx) {
       const { follower, following } = ctx.params;
 

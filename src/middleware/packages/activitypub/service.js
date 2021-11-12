@@ -9,8 +9,9 @@ const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
+const RegistryService = require('./services/registry');
 const { ACTOR_TYPES } = require('./constants');
-const getRoutes = require('./routes/getRoutes');
+const getRoutes = require('./routes/getCollectionRoute');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -39,6 +40,14 @@ const ActivityPubService = {
 
     this.broker.createService(CollectionService, {
       settings: {
+        jsonContext,
+        podProvider
+      }
+    });
+
+    this.broker.createService(RegistryService, {
+      settings: {
+        baseUri,
         jsonContext,
         podProvider
       }
@@ -84,38 +93,38 @@ const ActivityPubService = {
       }
     });
   },
-  async started() {
-    if (this.settings.podProvider) {
-      await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
-    } else {
-      const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
-      for (let containerUri of containers) {
-        await this.actions.addApiRoute({ containerUri });
-      }
-    }
-  },
-  actions: {
-    async addApiRoute(ctx) {
-      const { containerUri } = ctx.params;
-      const routes = getRoutes(containerUri);
-      for (let route of routes) {
-        await this.broker.call('api.addRoute', { route, toBottom: false });
-      }
-    }
-  },
-  methods: {
-    getContainersByType(types) {
-      return this.settings.containers
-        .filter(container =>
-          types.some(type =>
-            Array.isArray(container.acceptedTypes)
-              ? container.acceptedTypes.includes(type)
-              : container.acceptedTypes === type
-          )
-        )
-        .map(container => urlJoin(this.settings.baseUri, container.path, ':username'));
-    }
-  }
+  // async started() {
+  //   if (this.settings.podProvider) {
+  //     await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
+  //   } else {
+  //     const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
+  //     for (let containerUri of containers) {
+  //       await this.actions.addApiRoute({ containerUri });
+  //     }
+  //   }
+  // },
+  // actions: {
+  //   async addApiRoute(ctx) {
+  //     const { containerUri } = ctx.params;
+  //     const routes = getRoutes(containerUri);
+  //     for (let route of routes) {
+  //       await this.broker.call('api.addRoute', { route, toBottom: false });
+  //     }
+  //   }
+  // },
+  // methods: {
+  //   getContainersByType(types) {
+  //     return this.settings.containers
+  //       .filter(container =>
+  //         types.some(type =>
+  //           Array.isArray(container.acceptedTypes)
+  //             ? container.acceptedTypes.includes(type)
+  //             : container.acceptedTypes === type
+  //         )
+  //       )
+  //       .map(container => urlJoin(this.settings.baseUri, container.path, ':username'));
+  //   }
+  // }
 };
 
 module.exports = ActivityPubService;
