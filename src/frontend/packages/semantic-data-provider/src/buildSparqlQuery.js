@@ -5,11 +5,11 @@ const getPrefixRdf = ontologies => {
 };
 
 const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }) => {
-  let whereQuery = '';
+  let searchWhereQuery = '', filterWhereQuery = '';
 
   if (filter) {
     if (filter.q && filter.q.length > 0) {
-      whereQuery += `
+      searchWhereQuery += `
       {
         SELECT ?s1
         WHERE {
@@ -24,7 +24,7 @@ const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }
     Object.keys(filter).forEach(predicate => {
       if (filter[predicate]) {
         const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
-        whereQuery += `?s1 ${predicate} ${object} .`;
+        filterWhereQuery += `?s1 ${predicate} ${object} .`;
       }
     });
   }
@@ -38,10 +38,11 @@ const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }
       ${dereferenceQuery.construct}
     }
     WHERE {
+      ${filterWhereQuery}
       ?s1 a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
       FILTER( (isIRI(?s1)) ) .
-      ${whereQuery}
+      ${searchWhereQuery}
       ${dereferenceQuery.where}
       ?s1 ?p2 ?o2 .
     }
