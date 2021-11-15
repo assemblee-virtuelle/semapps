@@ -24,7 +24,7 @@ function getContainerRoute(containerUri) {
   // Container aliases
   let aliases = {
     'GET /': [...middlewares, 'ldp.container.api_get'],
-    'POST /': [...middlewares, 'ldp.resource.api_post'],
+    'POST /': [...middlewares, 'ldp.container.api_post'],
     'HEAD /': [addContainerUriMiddleware(containerUri), 'ldp.container.api_head']
   };
 

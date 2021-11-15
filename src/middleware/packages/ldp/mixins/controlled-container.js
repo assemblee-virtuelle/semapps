@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { delay } = require('../utils');
 
 module.exports = {
   settings: {
@@ -60,6 +61,13 @@ module.exports = {
   methods: {
     async getContainerUri(webId) {
       return this.broker.call('ldp.registry.getUri', { path: this.settings.path, webId });
+    },
+    async waitForContainerCreation(containerUri) {
+      let containerExist;
+      do {
+        await delay(1000);
+        containerExist = await this.broker.call('ldp.container.exist', { containerUri, webId: 'system' });
+      } while (!containerExist);
     }
   }
 };

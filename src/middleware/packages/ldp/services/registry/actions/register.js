@@ -43,7 +43,7 @@ module.exports = {
     }
 
     // 3. Save the options
-    this.registeredContainers[name] = { path, ...options };
+    this.registeredContainers[name] = { path, name, ...options };
 
     ctx.emit(
       'ldp.registry.registered',

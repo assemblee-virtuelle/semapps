@@ -11,7 +11,6 @@ const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
 const { ACTOR_TYPES } = require('./constants');
-const getRoutes = require('./routes/getCollectionRoute');
 
 const ActivityPubService = {
   name: 'activitypub',

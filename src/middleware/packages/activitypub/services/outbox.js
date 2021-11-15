@@ -7,7 +7,7 @@ const OutboxService = {
   mixins: [ControlledCollectionMixin],
   settings: {
     path: '/outbox',
-    attachToTypes: ACTOR_TYPES,
+    attachToTypes: Object.values(ACTOR_TYPES),
     attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
     ordered: true,
     itemsPerPage: 10,

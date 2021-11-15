@@ -1,8 +1,7 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getCollectionRoute } = require('../routes/getCollectionRoute');
-const { defaultToArray } = require('../utils');
-const { getContainerFromUri } = require('@semapps/ldp');
+const { defaultToArray, getSlugFromUri} = require('../utils');
 
 const CollectionRegistryService = {
   name: 'activitypub.registry',
@@ -11,10 +10,10 @@ const CollectionRegistryService = {
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
-  dependencies: ['triplestore', 'ldp.resource'],
+  dependencies: ['triplestore', 'ldp'],
   async started() {
-    this.registeredContainers = {};
     this.registeredCollections = [];
+    this.registeredContainers = await this.broker.call('ldp.registry.list');
   },
   actions: {
     async register(ctx) {
@@ -51,6 +50,21 @@ const CollectionRegistryService = {
     },
     list() {
       return this.registeredCollections;
+    },
+    listLocalContainers() {
+      return this.registeredContainers;
+    },
+    async getByUri(ctx) {
+      const { collectionUri } = ctx.params;
+
+      if (!collectionUri) {
+        throw new Error('The param collectionUri must be provided to activitypub.registry.getByUri');
+      }
+
+      // Get last part of the URI (eg. /followers)
+      let path = '/' + getSlugFromUri(collectionUri);
+
+      return this.registeredCollections.find(collection => collection.path === path);
     }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
@@ -75,7 +89,7 @@ const CollectionRegistryService = {
         await ctx.call('ldp.resource.patch', {
           resource: {
             id: objectUri,
-            [collection.attachPredicate]: containerUri
+            [collection.attachPredicate]: { '@id': collectionUri }
           },
           contentType: MIME_TYPES.JSON,
           webId: 'system'
@@ -94,13 +108,12 @@ const CollectionRegistryService = {
     getCollectionsByType(types) {
       types = defaultToArray(types);
       return types
-        ? this.registeredCollections.filter(collection => {
-          defaultToArray(types).some(type =>
-            Array.isArray(collection.attachToTypes)
-              ? collection.attachToTypes.includes(type)
-              : collection.attachToTypes === type
-          );
-        })
+        ? this.registeredCollections.filter(collection =>
+          types.some(type => Array.isArray(collection.attachToTypes)
+            ? collection.attachToTypes.includes(type)
+            : collection.attachToTypes === type
+          )
+        )
         : [];
     },
     // Get the containers with resources of the given type
@@ -118,14 +131,21 @@ const CollectionRegistryService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { newData } = ctx.params;
-      const collections = this.getCollectionsByType(newData.type || newData['@types']);
+      const collections = this.getCollectionsByType(newData.type || newData['@type']);
+      for (let collection of collections) {
+        await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
+      }
+    },
+    async 'ldp.resource.updated'(ctx) {
+      const { newData } = ctx.params;
+      const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
         await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
-      const collections = this.getCollectionsByType(oldData.type || oldData['@types']);
+      const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
         await this.deleteCollection(ctx, newData.id || newData['@id'], collection);
       }

@@ -118,6 +118,8 @@ const isContainer = resource => hasType(resource, 'ldp:Container');
 
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 module.exports = {
   buildBlankNodesQuery,
   buildDereferenceQuery,
@@ -129,5 +131,6 @@ module.exports = {
   hasType,
   isContainer,
   defaultToArray,
+  delay,
   getAclUriFromResourceUri
 };

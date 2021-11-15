@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getSlugFromUri, getContainerFromUri } = require('../utils');
+const { getContainerFromUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
@@ -27,15 +27,25 @@ const addRightsToNewUser = async (ctx, userUri) => {
   // First delete the default permissions added by the middleware when we called ldp.resource.create
   await ctx.call('webacl.resource.deleteAllRights', { resourceUri: userUri }, { meta: { webId: 'system' } });
 
-  // Find the permissions to set from the users container
-  const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri: userUri });
-  const newRights =
-    typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
+  // TODO find the permissions to set from the users container
+  // const { newResourcesPermissions } = await ctx.call('ldp.registry.getByUri', { resourceUri: userUri });
+  // const newRights =
+  //   typeof newResourcesPermissions === 'function' ? newResourcesPermissions(userUri) : newResourcesPermissions;
 
   await ctx.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: userUri,
-    newRights
+    newRights: {
+      anon: {
+        read: true,
+      },
+      user: {
+        uri: userUri,
+        read: true,
+        write: true,
+        control: true
+      }
+    }
   });
 };
 

@@ -1,5 +1,3 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   settings: {
     path: null,
@@ -12,7 +10,7 @@ module.exports = {
     permissions: {},
     controlledActions: {}
   },
-  dependencies: ['activitypub'],
+  dependencies: ['activitypub.registry'],
   async started() {
     await this.broker.call('activitypub.registry.register', {
       path: this.settings.path,
