@@ -92,7 +92,7 @@ const ActivityPubService = {
         podProvider
       }
     });
-  },
+  }
   // async started() {
   //   if (this.settings.podProvider) {
   //     await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });

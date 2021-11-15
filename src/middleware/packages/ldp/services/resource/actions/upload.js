@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { getSlugFromUri, getContainerFromUri} = require("../../../utils");
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {

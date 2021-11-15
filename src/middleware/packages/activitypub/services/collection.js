@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const getContainerRoute = require("../../../routes/getContainerRoute");
+const getContainerRoute = require('../../../routes/getContainerRoute');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -100,7 +100,9 @@ const CollectionService = {
      */
     async get(ctx) {
       const { collectionUri, page } = ctx.params;
-      const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', { collectionUri });
+      const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', {
+        collectionUri
+      });
 
       let collection = await ctx.call('triplestore.query', {
         query: `

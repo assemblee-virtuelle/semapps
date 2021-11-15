@@ -1,5 +1,5 @@
-const ControlledCollectionMixin = require("../mixins/controlled-collection");
-const { ACTOR_TYPES } = require("../constants");
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { ACTOR_TYPES } = require('../constants');
 const { MoleculerError } = require('moleculer').Errors;
 
 const OutboxService = {

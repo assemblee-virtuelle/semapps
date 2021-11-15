@@ -28,7 +28,7 @@ module.exports = {
     // Actions accessible through the API
     api_get: getAction.api,
     api_post: postAction.api,
-    api_head: headAction.api,
+    api_head: headAction.api
   },
   hooks: {
     before: {
