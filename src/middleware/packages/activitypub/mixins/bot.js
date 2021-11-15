@@ -28,7 +28,7 @@ const BotService = {
     if (!actorExist) {
       console.log(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
 
-      await this.broker.call('ldp.resource.post', {
+      await this.broker.call('ldp.container.post', {
         containerUri: getContainerFromUri(actorSettings.uri),
         slug: getSlugFromUri(actorSettings.uri),
         resource: {

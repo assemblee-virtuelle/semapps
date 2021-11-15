@@ -24,7 +24,7 @@ You can also pass parameters defined in the [container options](index#container-
 Triples, Turtle or JSON-LD depending on `accept` type.
 
 
-### `ldp.resource.post`
+### `ldp.container.post`
 * Create a resource
 * Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 

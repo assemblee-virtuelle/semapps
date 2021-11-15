@@ -16,7 +16,7 @@ describe('Resource CRUD operations', () => {
   let project1;
 
   test('Post resource in container', async () => {
-    const resourceUri = await broker.call('ldp.resource.post', {
+    const resourceUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -150,7 +150,7 @@ describe('Resource CRUD operations', () => {
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
   test('PUT resource with ID', async () => {
-    const themeUri = await broker.call('ldp.resource.post', {
+    const themeUri = await broker.call('ldp.container.post', {
       containerUri: 'http://localhost:3000/themes',
       resource: {
         '@context': {

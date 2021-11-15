@@ -4,6 +4,7 @@ const createAction = require('./actions/create');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
+const postAction = require('./actions/post');
 const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
 
@@ -21,11 +22,13 @@ module.exports = {
     create: createAction,
     detach: detachAction,
     exist: existAction,
+    get: getAction.action,
     getAll: getAllAction,
+    post: postAction.action,
     // Actions accessible through the API
     api_get: getAction.api,
+    api_post: postAction.api,
     api_head: headAction.api,
-    get: getAction.action
   },
   hooks: {
     before: {

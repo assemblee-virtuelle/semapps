@@ -32,7 +32,7 @@ const ActivityService = {
       let { activity } = ctx.params;
       const containerUri = await this.getContainerUri(activity.actor);
 
-      const activityUri = await ctx.call('ldp.resource.post', {
+      const activityUri = await ctx.call('ldp.container.post', {
         containerUri,
         resource: {
           '@context': this.settings.context,
