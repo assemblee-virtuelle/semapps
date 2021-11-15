@@ -1,8 +1,8 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getCollectionRoute } = require("../routes/getCollectionRoute");
-const { defaultToArray } = require("../utils");
-const {getContainerFromUri} = require("@semapps/ldp");
+const { getCollectionRoute } = require('../routes/getCollectionRoute');
+const { defaultToArray } = require('../utils');
+const { getContainerFromUri } = require('@semapps/ldp');
 
 const CollectionRegistryService = {
   name: 'activitypub.registry',
@@ -31,7 +31,7 @@ const CollectionRegistryService = {
       const containers = this.getContainersByType(attachToTypes);
 
       // Go through each container and add a corresponding API route
-      for( let container of containers ) {
+      for (let container of containers) {
         await this.actions.addApiRoute({ collection: ctx.params, container });
       }
     },
@@ -43,7 +43,9 @@ const CollectionRegistryService = {
         : urlJoin(this.settings.baseUrl, container.path, ':objectId', collection.path);
 
       // TODO ensure it's not a problem if the same route is added twice
-      await this.broker.call('api.addRoute', { route: getCollectionRoute(collectionUri, collection.controlledActions) });
+      await this.broker.call('api.addRoute', {
+        route: getCollectionRoute(collectionUri, collection.controlledActions)
+      });
     }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
@@ -90,8 +92,8 @@ const CollectionRegistryService = {
           Array.isArray(collection.attachToTypes)
             ? collection.attachToTypes.includes(type)
             : collection.attachToTypes === type
-        )
-      })
+        );
+      });
     },
     // Get the containers with resources of the given type
     // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions
@@ -109,14 +111,14 @@ const CollectionRegistryService = {
     async 'ldp.resource.created'(ctx) {
       const { newData } = ctx.params;
       const collections = this.getCollectionsByType(newData.type || newData['@types']);
-      for( let collection of collections ) {
+      for (let collection of collections) {
         await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
       const collections = this.getCollectionsByType(oldData.type || oldData['@types']);
-      for( let collection of collections ) {
+      for (let collection of collections) {
         await this.deleteCollection(ctx, newData.id || newData['@id'], collection);
       }
     },
@@ -131,7 +133,7 @@ const CollectionRegistryService = {
       const collections = this.getCollectionsByType(container.acceptedTypes);
 
       // Go through each collection and add a corresponding API route
-      for( let collection of collections ) {
+      for (let collection of collections) {
         await this.actions.addApiRoute({ collection, container });
       }
     }

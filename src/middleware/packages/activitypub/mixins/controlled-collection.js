@@ -33,7 +33,7 @@ module.exports = {
     },
     post() {
       throw new E.ForbiddenError();
-    },
+    }
   },
   methods: {
     async getCollectionUri(webId) {

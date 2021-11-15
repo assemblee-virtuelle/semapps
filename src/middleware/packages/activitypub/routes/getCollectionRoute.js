@@ -1,6 +1,6 @@
 const { parseHeader, parseJson } = require('@semapps/middlewares');
 
-const addCollectionUriMiddleware = (collectionUri) => (req, res, next) => {
+const addCollectionUriMiddleware = collectionUri => (req, res, next) => {
   // TODO find a tool to parse this automatically
   if (collectionUri.includes('/:username')) {
     collectionUri = collectionUri.replace(':username', req.$params.username);
@@ -19,8 +19,14 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
   const middlewares = [parseHeader, parseJson];
 
-  let aliases = { 'GET /': [...middlewares, addCollectionUriMiddleware(collectionUri), controlledActions.get || 'activitypub.collection.get'] };
-  if( collection.controlledActions.post ) {
+  let aliases = {
+    'GET /': [
+      ...middlewares,
+      addCollectionUriMiddleware(collectionUri),
+      controlledActions.get || 'activitypub.collection.get'
+    ]
+  };
+  if (collection.controlledActions.post) {
     aliases['POST /'] = [...middlewares, addCollectionUriMiddleware(collectionUri), controlledActions.post];
   }
 

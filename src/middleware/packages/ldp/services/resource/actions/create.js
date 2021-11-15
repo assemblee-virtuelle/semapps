@@ -30,11 +30,7 @@ module.exports = {
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (resourceExist) {
-      throw new MoleculerError(
-        `A resource already exist with URI ${resourceUri}`,
-        400,
-        'BAD_REQUEST'
-      );
+      throw new MoleculerError(`A resource already exist with URI ${resourceUri}`, 400, 'BAD_REQUEST');
     }
 
     // Adds the default context, if it is missing

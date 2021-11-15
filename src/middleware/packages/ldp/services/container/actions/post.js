@@ -5,8 +5,8 @@ module.exports = {
   api: async function api(ctx) {
     let { containerUri, ...resource } = ctx.params;
     try {
-      let resourceUri
-      if( ctx.meta.parser !== 'file' ) {
+      let resourceUri;
+      if (ctx.meta.parser !== 'file') {
         resourceUri = await ctx.call('ldp.container.post', {
           containerUri,
           slug: ctx.meta.headers.slug,
@@ -21,7 +21,7 @@ module.exports = {
           containerUri,
           slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
           file: ctx.params.files[0],
-          contentType: MIME_TYPES.JSON,
+          contentType: MIME_TYPES.JSON
         });
       }
       ctx.meta.$responseHeaders = {
