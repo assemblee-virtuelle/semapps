@@ -1,4 +1,4 @@
-const { ACTIVITY_TYPES, ACTOR_TYPES} = require('../constants');
+const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
 
 const FollowService = {
   name: 'activitypub.follow',
