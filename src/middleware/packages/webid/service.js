@@ -1,16 +1,16 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
 
 const WebIdService = {
   name: 'webid',
   settings: {
     baseUrl: null,
-    pathPattern: '/users/:nick', // or /:nick/actor for POD provider config
+    usersContainer: null,
     context: {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
-    defaultAccept: 'text/turtle'
+    defaultAccept: 'text/turtle',
+    podProvider: false,
   },
   dependencies: ['ldp.resource'],
   actions: {
@@ -24,26 +24,42 @@ const WebIdService = {
         nick = email.split('@')[0].toLowerCase();
       }
 
-      const uri = urlJoin(this.settings.baseUrl, this.settings.pathPattern.replace(':nick', nick));
+      let webId;
+
+      const resource = {
+        '@context': {
+          '@vocab': 'http://xmlns.com/foaf/0.1/'
+        },
+        '@type': 'Person',
+        nick,
+        email,
+        name,
+        familyName,
+        homepage
+      };
 
       // Create profile with system webId
-      const webId = await ctx.call('ldp.container.post', {
-        resource: {
-          '@context': {
-            '@vocab': 'http://xmlns.com/foaf/0.1/'
+      if( this.settings.podProvider ) {
+        if( !this.settings.baseUrl ) throw new Error('The baseUrl setting is required in POD provider config');
+        webId = urlJoin(this.settings.baseUrl, nick);
+        await ctx.call('ldp.resource.create', {
+          resource: {
+            '@id': webId,
+            ...resource
           },
-          '@type': 'Person',
-          nick,
-          email,
-          name,
-          familyName,
-          homepage
-        },
-        slug: getSlugFromUri(uri),
-        containerUri: getContainerFromUri(uri),
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      } else {
+        if( !this.settings.usersContainer ) throw new Error('The usersContainer setting is required');
+        webId = await ctx.call('ldp.container.post', {
+          resource,
+          slug: nick,
+          containerUri: this.settings.usersContainer,
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      }
 
       let newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,

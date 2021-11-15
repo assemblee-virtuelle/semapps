@@ -23,8 +23,9 @@ module.exports = {
       permissions: this.settings.permissions,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
-        get: this.name + '.get',
+        post: this.name + '.post',
         list: this.name + '.list',
+        get: this.name + '.get',
         create: this.name + '.create',
         patch: this.name + '.patch',
         put: this.name + '.put',
@@ -34,11 +35,14 @@ module.exports = {
     });
   },
   actions: {
-    get(ctx) {
-      return ctx.call('ldp.resource.get', ctx.params);
+    post(ctx) {
+      return ctx.call('ldp.container.post', ctx.params);
     },
     list(ctx) {
       return ctx.call('ldp.container.get', ctx.params);
+    },
+    get(ctx) {
+      return ctx.call('ldp.resource.get', ctx.params);
     },
     create(ctx) {
       return ctx.call('ldp.resource.create', ctx.params);

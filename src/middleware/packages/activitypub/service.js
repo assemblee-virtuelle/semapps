@@ -19,7 +19,6 @@ const ActivityPubService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
-    containers: [],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
@@ -30,13 +29,6 @@ const ActivityPubService = {
   dependencies: ['api'],
   async created() {
     const { baseUri, jsonContext, podProvider } = this.settings;
-
-    const actorsContainers = this.getContainersByType(Object.values(ACTOR_TYPES)).map(path =>
-      urlJoin(this.settings.baseUri, path)
-    );
-    if (actorsContainers.length === 0) {
-      console.log('No container found with an ActivityPub actor type (' + Object.values(ACTOR_TYPES).join(', ') + ')');
-    }
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -56,7 +48,6 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         baseUri,
-        actorsContainers,
         jsonContext,
         selectActorData: this.settings.selectActorData,
         podProvider

@@ -31,8 +31,10 @@ const CollectionRegistryService = {
       const containers = this.getContainersByType(attachToTypes);
 
       // Go through each container and add a corresponding API route
-      for (let container of containers) {
-        await this.actions.addApiRoute({ collection: ctx.params, container });
+      if( containers ) {
+        for (let container of Object.values(containers)) {
+          await this.actions.addApiRoute({ collection: ctx.params, container });
+        }
       }
     },
     async addApiRoute(ctx) {
@@ -46,6 +48,9 @@ const CollectionRegistryService = {
       await this.broker.call('api.addRoute', {
         route: getCollectionRoute(collectionUri, collection.controlledActions)
       });
+    },
+    list() {
+      return this.registeredCollections;
     }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
@@ -87,13 +92,16 @@ const CollectionRegistryService = {
     },
     // Get the collections attached to the given type
     getCollectionsByType(types) {
-      return this.registeredCollections.filter(collection => {
-        defaultToArray(types).some(type =>
-          Array.isArray(collection.attachToTypes)
-            ? collection.attachToTypes.includes(type)
-            : collection.attachToTypes === type
-        );
-      });
+      types = defaultToArray(types);
+      return types
+        ? this.registeredCollections.filter(collection => {
+          defaultToArray(types).some(type =>
+            Array.isArray(collection.attachToTypes)
+              ? collection.attachToTypes.includes(type)
+              : collection.attachToTypes === type
+          );
+        })
+        : [];
     },
     // Get the containers with resources of the given type
     // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions

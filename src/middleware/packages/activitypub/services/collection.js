@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const getContainerRoute = require('../../../routes/getContainerRoute');
 
 const CollectionService = {
   name: 'activitypub.collection',

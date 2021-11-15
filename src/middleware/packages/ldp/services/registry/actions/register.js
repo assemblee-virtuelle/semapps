@@ -30,7 +30,8 @@ module.exports = {
       }
 
       // 2. Create the API route
-      const containerUriWithParams = urlJoin(this.settings.baseUrl, ':username', path);
+      // TODO see if we can base ourselves on a general config for the POD data path
+      const containerUriWithParams = urlJoin(this.settings.baseUrl, ':username', 'data', path);
       await this.broker.call('api.addRoute', { route: getContainerRoute(containerUriWithParams) });
     } else {
       // 1. Ensure the container has been created

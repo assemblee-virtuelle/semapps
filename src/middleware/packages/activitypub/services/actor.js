@@ -1,14 +1,13 @@
 const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { delay } = require('../utils');
+const { delay, defaultToArray} = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
-  dependencies: ['activitypub.collection', 'ldp.resource', 'ldp.container', 'signature'],
+  dependencies: ['activitypub.collection', 'ldp', 'signature'],
   settings: {
     baseUri: null,
-    actorsContainers: [],
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
@@ -115,14 +114,16 @@ const ActorService = {
   methods: {
     isLocal(uri) {
       return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
-    }
+    },
+    isActor(resource) {
+      return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
-
-      if (this.settings.actorsContainers.includes(containerUri)) {
+      console.log('actor created ?', newData);
+      if( this.isActor(newData )) {
         if (!newData.preferredUsername || !newData.name) {
           await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
         }
@@ -131,10 +132,8 @@ const ActorService = {
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
-
-      if (this.settings.actorsContainers.includes(containerUri)) {
+      const { resourceUri, oldData } = ctx.params;
+      if( this.isActor(oldData) ) {
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },
