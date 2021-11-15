@@ -27,7 +27,7 @@ module.exports = {
       throw new MoleculerError(e, 500, 'Server Error');
     }
 
-    const resource = {
+    return {
       '@context': { '@vocab': 'http://semapps.org/ns/core#' },
       '@id': resourceUri,
       '@type': 'semapps:File',
@@ -36,7 +36,5 @@ module.exports = {
       localPath,
       fileName
     };
-
-    return resource;
   }
 };

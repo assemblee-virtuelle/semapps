@@ -40,7 +40,6 @@ module.exports = {
           // If we have a pod provider, guess the dataset from the URI
           const uri =
             ctx.params.resourceUri ||
-            ctx.params.containerUri ||
             (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
           if (uri) {
             const containerPath = new URL(uri).pathname;
