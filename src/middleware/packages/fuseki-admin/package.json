@@ -1,6 +1,6 @@
 {
   "name": "@semapps/fuseki-admin",
-  "version": "0.3.20",
+  "version": "0.3.21",
   "description": "Fuseki administration module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
