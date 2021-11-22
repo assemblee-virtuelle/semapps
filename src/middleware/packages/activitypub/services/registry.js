@@ -1,9 +1,10 @@
 const urlJoin = require('url-join');
+const pathJoin = require('path').join;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getCollectionRoute } = require('../routes/getCollectionRoute');
+const getCollectionRoute = require('../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri} = require('../utils');
 
-const CollectionRegistryService = {
+const RegistryService = {
   name: 'activitypub.registry',
   settings: {
     baseUri: null,
@@ -39,9 +40,8 @@ const CollectionRegistryService = {
     async addApiRoute(ctx) {
       const { container, collection } = ctx.params;
 
-      const collectionUri = this.settings.podProvider
-        ? urlJoin(this.settings.baseUrl, ':username', container.path, ':objectId', collection.path)
-        : urlJoin(this.settings.baseUrl, container.path, ':objectId', collection.path);
+      const collectionPath = pathJoin(container.path, ':objectId', collection.path);
+      const collectionUri = urlJoin(this.settings.baseUri, collectionPath);
 
       // TODO ensure it's not a problem if the same route is added twice
       await this.broker.call('api.addRoute', {
@@ -119,7 +119,7 @@ const CollectionRegistryService = {
     // Get the containers with resources of the given type
     // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions
     getContainersByType(types) {
-      return Object.values(this.registeredContainers).find(container =>
+      return Object.values(this.registeredContainers).filter(container =>
         defaultToArray(types).some(type =>
           Array.isArray(container.acceptedTypes)
             ? container.acceptedTypes.includes(type)
@@ -168,4 +168,4 @@ const CollectionRegistryService = {
   }
 };
 
-module.exports = CollectionRegistryService;
+module.exports = RegistryService;

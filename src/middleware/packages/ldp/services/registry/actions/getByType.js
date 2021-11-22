@@ -6,7 +6,7 @@ module.exports = {
   async handler(ctx) {
     const types = Array.isArray(ctx.params.type) ? ctx.params.type : [ctx.params.type];
 
-    return Object.values(this.registeredContainers).find(container =>
+    return Object.values(this.registeredContainers).filter(container =>
       types.some(type =>
         Array.isArray(container.acceptedTypes)
           ? container.acceptedTypes.includes(type)
