@@ -33,6 +33,8 @@ ENV ASF_MIRROR_US https://downloads.apache.org/
 ENV ASF_ARCHIVE http://archive.apache.org/dist/
 #
 
+ENV JENA_SHA512 321c763fa3b3532fa06bb146363722e58e10289194f622f2e29117b610521e62e7ea51b9d06cd366570ed143f2ebbeded22e5302d2375b49da253b7ddef86d34
+
 # Config and data
 VOLUME /fuseki
 ENV FUSEKI_BASE /fuseki
@@ -45,9 +47,7 @@ WORKDIR /tmp
 # sha512 checksum
 RUN echo "$FUSEKI_SHA512  fuseki.tar.gz" > fuseki.tar.gz.sha512
 # Download/check/unpack/move in one go (to reduce image size)
-RUN     (curl -sS --fail $ASF_MIRROR_US/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz || \
-         curl -sS --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz \
-        ) > fuseki.tar.gz && \
+RUN     curl -sS --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VERSION.tar.gz > fuseki.tar.gz && \
         sha512sum -c fuseki.tar.gz.sha512 && \
         tar zxf fuseki.tar.gz && \
         mv apache-jena-fuseki* $FUSEKI_HOME && \
@@ -55,6 +55,21 @@ RUN     (curl -sS --fail $ASF_MIRROR_US/jena/binaries/apache-jena-fuseki-$FUSEKI
         cd $FUSEKI_HOME && rm -rf fuseki.war
 
 RUN chmod 755  /jena-fuseki/fuseki-server
+
+RUN sed -i 's|JVM_ARGS=${JVM_ARGS:--Xmx4G}|JVM_ARGS=${JVM_ARGS:--Xmx${JAVA_MX_RAM}}|g' /jena-fuseki/fuseki-server 
+
+RUN echo "$JENA_SHA512  jena.tar.gz" > jena.tar.gz.sha512
+
+RUN     curl -sS --fail $ASF_ARCHIVE/jena/binaries/apache-jena-$FUSEKI_VERSION.tar.gz > jena.tar.gz && \
+        sha512sum -c jena.tar.gz.sha512 && \
+        tar zxf jena.tar.gz && \
+        cp -R apache-jena-$FUSEKI_VERSION/bin/* $FUSEKI_HOME/bin && \
+        cp -R apache-jena-$FUSEKI_VERSION/lib $FUSEKI_HOME/ && \
+        rm jena.tar.gz* && \
+        rm -r  apache-jena-$FUSEKI_VERSION
+
+RUN chmod 755 $FUSEKI_HOME/bin/tdb2.*
+
 # Test the install by testing it's ping resource
 #RUN  /jena-fuseki/fuseki-server & \
 #     sleep 4 && \
@@ -73,8 +88,9 @@ COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-pe
 COPY configuration/localData.ttl /jena-fuseki/configuration/localData.ttl
 COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
 COPY docker-entrypoint.sh /
+COPY docker-compact-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh
-
+RUN chmod 755 /docker-compact-entrypoint.sh
 
 COPY load.sh /jena-fuseki/
 COPY tdbloader /jena-fuseki/
