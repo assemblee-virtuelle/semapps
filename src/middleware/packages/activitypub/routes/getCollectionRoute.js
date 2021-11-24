@@ -1,16 +1,17 @@
 const { parseHeader, parseJson } = require('@semapps/middlewares');
 
 const addCollectionUriMiddleware = collectionUri => (req, res, next) => {
+  let fullCollectionUri = collectionUri;
   // TODO find a tool to parse this automatically
   if (collectionUri.includes('/:username')) {
-    collectionUri = collectionUri.replace(':username', req.$params.username);
+    fullCollectionUri = fullCollectionUri.replace(':username', req.$params.username);
     delete req.$params.username;
   }
   if (collectionUri.includes('/:objectId')) {
-    collectionUri = collectionUri.replace(':objectId', req.$params.objectId);
+    fullCollectionUri = fullCollectionUri.replace(':objectId', req.$params.objectId);
     delete req.$params.objectId;
   }
-  req.$params.collectionUri = collectionUri;
+  req.$params.collectionUri = fullCollectionUri;
   next();
 };
 
