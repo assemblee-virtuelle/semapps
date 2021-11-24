@@ -43,7 +43,7 @@ const RegistryService = {
     async addApiRoute(ctx) {
       const { container, collection } = ctx.params;
 
-      const collectionPath = pathJoin(container.path, ':objectId', collection.path);
+      const collectionPath = pathJoin(container.fullPath, ':objectId', collection.path);
       const collectionUri = urlJoin(this.settings.baseUri, collectionPath);
 
       // TODO ensure it's not a problem if the same route is added twice
