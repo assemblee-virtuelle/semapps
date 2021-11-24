@@ -30,10 +30,13 @@ const RegistryService = {
       // Find all containers where we want to attach this collection
       const containers = this.getContainersByType(attachToTypes);
 
-      // Go through each container and add a corresponding API route
       if( containers ) {
+        // Go through each container
         for (let container of Object.values(containers)) {
+          // Add a corresponding API route
           await this.actions.addApiRoute({ collection: ctx.params, container });
+
+          // TODO go through all objects in the matching containers and ensure the collection is attached
         }
       }
     },
@@ -65,21 +68,11 @@ const RegistryService = {
       let path = '/' + getSlugFromUri(collectionUri);
 
       return this.registeredCollections.find(collection => collection.path === path);
-    }
-    // async getUri(ctx) {
-    //   const { path, webId } = ctx.params;
-    //
-    //   if (this.settings.podProvider) {
-    //     const account = await ctx.call('auth.account.findByWebId', { webId });
-    //     return urlJoin(account.podUri, path);
-    //   } else {
-    //     return urlJoin(this.settings.baseUrl, path);
-    //   }
-    // }
-  },
-  methods: {
-    async createAndAttachCollection(ctx, objectUri, collection) {
+    },
+    async createAndAttachCollection(ctx) {
+      const { objectUri, collection } = ctx.params;
       const collectionUri = urlJoin(objectUri, collection.path);
+
       const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
       if (!exists) {
         // Create the collection
@@ -96,14 +89,28 @@ const RegistryService = {
         });
       }
     },
-    async deleteCollection(ctx, objectUri, collection) {
+    async deleteCollection(ctx) {
+      const { objectUri, collection } = ctx.params;
       const collectionUri = urlJoin(objectUri, collection.path);
+
       const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
       if (exists) {
         // Delete the collection
         await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
       }
     },
+    // async getUri(ctx) {
+    //   const { path, webId } = ctx.params;
+    //
+    //   if (this.settings.podProvider) {
+    //     const account = await ctx.call('auth.account.findByWebId', { webId });
+    //     return urlJoin(account.podUri, path);
+    //   } else {
+    //     return urlJoin(this.settings.baseUrl, path);
+    //   }
+    // }
+  },
+  methods: {
     // Get the collections attached to the given type
     getCollectionsByType(types) {
       types = defaultToArray(types);
@@ -133,21 +140,21 @@ const RegistryService = {
       const { newData } = ctx.params;
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
-        await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
+        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
       }
     },
     async 'ldp.resource.updated'(ctx) {
       const { newData } = ctx.params;
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
-        await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
+        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
       const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
-        await this.deleteCollection(ctx, newData.id || newData['@id'], collection);
+        await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection });
       }
     },
     async 'ldp.registry.registered'(ctx) {

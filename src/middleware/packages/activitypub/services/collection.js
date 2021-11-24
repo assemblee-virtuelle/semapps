@@ -76,6 +76,7 @@ const CollectionService = {
      */
     async detach(ctx) {
       const { collectionUri, item } = ctx.params;
+      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
@@ -84,7 +85,7 @@ const CollectionService = {
         query: `
           DELETE
           WHERE
-          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
+          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
         webId: 'system'
       });

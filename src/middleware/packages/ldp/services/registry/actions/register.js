@@ -17,8 +17,8 @@ module.exports = {
     controlledActions: { type: 'object', optional: true }
   },
   async handler(ctx) {
-    let { path, name, podsContainer, ...options } = ctx.params;
-    let pathWithParams;
+    let { path, fullPath, name, podsContainer, ...options } = ctx.params;
+    if (!fullPath) fullPath = path;
     if (!name) name = path;
 
     // Ignore undefined options
@@ -37,10 +37,10 @@ module.exports = {
       }
 
       // TODO see if we can base ourselves on a general config for the POD data path
-      pathWithParams = pathJoin('/:username', 'data', path);
+      fullPath = pathJoin('/:username', 'data', path);
 
       // 2. Create the API route
-      const containerUriWithParams = urlJoin(this.settings.baseUrl, pathWithParams);
+      const containerUriWithParams = urlJoin(this.settings.baseUrl, fullPath);
       await this.broker.call('api.addRoute', { route: getContainerRoute(containerUriWithParams) });
     } else {
       // 1. Ensure the container has been created
@@ -51,10 +51,10 @@ module.exports = {
       await this.broker.call('api.addRoute', { route: getContainerRoute(containerUri) });
     }
 
-    const pathRegex = pathToRegexp(pathWithParams || path);
+    const pathRegex = pathToRegexp(fullPath);
 
     // 3. Save the options
-    this.registeredContainers[name] = { path: pathWithParams || path, pathRegex, name, ...options };
+    this.registeredContainers[name] = { path, fullPath, pathRegex, name, ...options };
 
     ctx.emit(
       'ldp.registry.registered',

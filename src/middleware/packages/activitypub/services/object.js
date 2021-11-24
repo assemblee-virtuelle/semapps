@@ -109,23 +109,33 @@ const ObjectService = {
       return activity;
     },
     async cacheRemote(ctx) {
-      const { objectUri, actorUri } = ctx.params;
+      let { objectUri, actorUri } = ctx.params;
+
+      if( typeof objectUri === 'object' ) {
+        objectUri = objectUri.id || objectUri['@id'];
+      }
 
       const object = await ctx.call('activitypub.proxy.query', {
         resourceUri: objectUri,
         actorUri
       });
 
+      console.log('cache object', object);
+
       let containerUri, dataset;
       const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
 
+      console.log('container', container);
+
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        containerUri = urlJoin(this.settings.baseUri, account.username, container.path);
+        containerUri = urlJoin(this.settings.baseUri, container.fullPath.replace(':username', account.username));
         dataset = account.username;
       } else {
         containerUri = urlJoin(this.settings.baseUri, container.path);
       }
+
+      console.log('container URI', containerUri);
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,

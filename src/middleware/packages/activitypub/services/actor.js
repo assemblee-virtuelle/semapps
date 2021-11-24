@@ -122,7 +122,6 @@ const ActorService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      console.log('actor created ?', newData);
       if( this.isActor(newData )) {
         if (!newData.preferredUsername || !newData.name) {
           await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });

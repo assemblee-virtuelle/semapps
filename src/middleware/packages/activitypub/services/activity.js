@@ -12,7 +12,7 @@ const ActivityService = {
     acceptedTypes: ACTIVITY_TYPES,
     accept: MIME_TYPES.JSON,
     jsonContext: null,
-    dereference: ['as:object'],
+    dereference: ['as:object/as:object'],
     permissions: {},
     newResourcesPermissions: {},
     controlledActions: {
@@ -107,6 +107,13 @@ const ActivityService = {
     }
   },
   hooks: {
+    before: {
+      get(ctx) {
+        if( typeof ctx.params.resourceUri === 'object' ) {
+          ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
+        }
+      }
+    },
     after: {
       get(ctx, res) {
         return objectCurrentToId(res);
