@@ -73,7 +73,12 @@ const ActivityPubService = {
     });
 
     this.broker.createService(InboxService);
-    this.broker.createService(OutboxService);
+
+    this.broker.createService(OutboxService, {
+      settings: {
+        jsonContext
+      }
+    });
 
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,

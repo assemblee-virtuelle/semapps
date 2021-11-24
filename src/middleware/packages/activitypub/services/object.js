@@ -120,12 +120,8 @@ const ObjectService = {
         actorUri
       });
 
-      console.log('cache object', object);
-
       let containerUri, dataset;
       const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
-
-      console.log('container', container);
 
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
@@ -134,8 +130,6 @@ const ObjectService = {
       } else {
         containerUri = urlJoin(this.settings.baseUri, container.path);
       }
-
-      console.log('container URI', containerUri);
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,

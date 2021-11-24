@@ -52,7 +52,8 @@ const buildOptionalQuery = (queries, parentNode = false) => (
     .filter(q => q.parentNode === parentNode)
     .map(q => `
       OPTIONAL { 
-        ${q.query} 
+        ${q.query}
+        ${q.filter}
         ${buildOptionalQuery(queries, q.node)}
       }
     `)
@@ -69,12 +70,12 @@ const buildDereferenceQuery = predicates => {
       const predicate = getPredicate(node);
       const varName = generateSparqlVarName(node);
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
-      const query = `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`;
 
       queries.push({
         node,
         parentNode,
-        query
+        query: `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`,
+        filter: `FILTER(isBLANK(?s${varName})) .`
       });
     }
 

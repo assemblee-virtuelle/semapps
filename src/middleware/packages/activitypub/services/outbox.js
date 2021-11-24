@@ -13,7 +13,8 @@ const OutboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: {}
+    permissions: {},
+    jsonContext: null
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -29,6 +30,10 @@ const OutboxService = {
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+      }
+
+      if( !activity['@context'] ) {
+        activity['@context'] = this.settings.jsonContext;
       }
 
       // Process object create, update or delete
