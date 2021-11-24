@@ -75,7 +75,7 @@ do
     curl -s 'http://localhost:3030/$/datasets'\
          -H "Authorization: Basic $(echo -n admin:${ADMIN_PASSWORD} | base64)" \
          -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8'\
-         --data "dbName=${dataset}&dbType=tdb"
+         --data "dbName=${dataset}&dbType=tdb2"
 done
 
 wait
