@@ -175,9 +175,14 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: ctx.meta.webId })
-            );
+            try {
+              selectedItems.push(
+                await ctx.call('activitypub.object.get', {objectUri: itemUri, actorUri: ctx.meta.webId})
+              );
+            } catch(e) {
+              // Ignore resource if it is not found
+              console.info('Resource not found with URI: ' + itemUri);
+            }
           }
 
           // Remove the @context from all items
