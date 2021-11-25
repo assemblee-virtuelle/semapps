@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
-const { pathToRegexp } = require("path-to-regexp");
+const { pathToRegexp } = require('path-to-regexp');
 const getContainerRoute = require('../../../routes/getContainerRoute');
 const getResourcesRoute = require('../../../routes/getResourcesRoute');
 
@@ -25,7 +25,7 @@ module.exports = {
     Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
 
     if (this.settings.podProvider && podsContainer === true) {
-      name = "actors";
+      name = 'actors';
       await this.broker.call('api.addRoute', { route: getResourcesRoute(this.settings.baseUrl) });
     } else if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user

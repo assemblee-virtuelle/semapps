@@ -1,7 +1,7 @@
 const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { delay, defaultToArray} = require('../utils');
+const { delay, defaultToArray } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -117,12 +117,12 @@ const ActorService = {
     },
     isActor(resource) {
       return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
-    },
+    }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      if( this.isActor(newData )) {
+      if (this.isActor(newData)) {
         if (!newData.preferredUsername || !newData.name) {
           await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
         }
@@ -132,7 +132,7 @@ const ActorService = {
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
-      if( this.isActor(oldData) ) {
+      if (this.isActor(oldData)) {
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },

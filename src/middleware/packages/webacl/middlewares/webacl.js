@@ -37,7 +37,7 @@ const addRightsToNewUser = async (ctx, userUri) => {
     resourceUri: userUri,
     newRights: {
       anon: {
-        read: true,
+        read: true
       },
       user: {
         uri: userUri,

@@ -10,7 +10,7 @@ const WebIdService = {
       foaf: 'http://xmlns.com/foaf/0.1/'
     },
     defaultAccept: 'text/turtle',
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['ldp.resource'],
   actions: {
@@ -39,8 +39,8 @@ const WebIdService = {
       };
 
       // Create profile with system webId
-      if( this.settings.podProvider ) {
-        if( !this.settings.baseUrl ) throw new Error('The baseUrl setting is required in POD provider config');
+      if (this.settings.podProvider) {
+        if (!this.settings.baseUrl) throw new Error('The baseUrl setting is required in POD provider config');
         webId = urlJoin(this.settings.baseUrl, nick);
         await ctx.call('ldp.resource.create', {
           resource: {
@@ -51,7 +51,7 @@ const WebIdService = {
           webId: 'system'
         });
       } else {
-        if( !this.settings.usersContainer ) throw new Error('The usersContainer setting is required');
+        if (!this.settings.usersContainer) throw new Error('The usersContainer setting is required');
         webId = await ctx.call('ldp.container.post', {
           resource,
           slug: nick,

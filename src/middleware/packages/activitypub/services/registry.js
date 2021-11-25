@@ -2,7 +2,7 @@ const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const getCollectionRoute = require('../routes/getCollectionRoute');
-const { defaultToArray, getSlugFromUri} = require('../utils');
+const { defaultToArray, getSlugFromUri } = require('../utils');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -30,7 +30,7 @@ const RegistryService = {
       // Find all containers where we want to attach this collection
       const containers = this.getContainersByType(attachToTypes);
 
-      if( containers ) {
+      if (containers) {
         // Go through each container
         for (let container of Object.values(containers)) {
           // Add a corresponding API route
@@ -98,7 +98,7 @@ const RegistryService = {
         // Delete the collection
         await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
       }
-    },
+    }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
     //
@@ -116,11 +116,12 @@ const RegistryService = {
       types = defaultToArray(types);
       return types
         ? this.registeredCollections.filter(collection =>
-          types.some(type => Array.isArray(collection.attachToTypes)
-            ? collection.attachToTypes.includes(type)
-            : collection.attachToTypes === type
+            types.some(type =>
+              Array.isArray(collection.attachToTypes)
+                ? collection.attachToTypes.includes(type)
+                : collection.attachToTypes === type
+            )
           )
-        )
         : [];
     },
     // Get the containers with resources of the given type
