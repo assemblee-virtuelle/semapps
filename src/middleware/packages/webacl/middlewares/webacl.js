@@ -207,7 +207,10 @@ const WebAclMiddleware = config => ({
             break;
 
           case 'activitypub.activity.create':
-            const activity = await ctx.call('activitypub.activity.get', { resourceUri: actionReturnValue, webId: 'system' });
+            const activity = await ctx.call('activitypub.activity.get', {
+              resourceUri: actionReturnValue,
+              webId: 'system'
+            });
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // Give read rights to the activity's recipients

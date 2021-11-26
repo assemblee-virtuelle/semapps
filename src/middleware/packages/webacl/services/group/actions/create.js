@@ -24,7 +24,7 @@ module.exports = {
       let { groupUri, groupSlug } = ctx.params;
       let webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-      if( !groupUri ) {
+      if (!groupUri) {
         groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
         groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);
       }
