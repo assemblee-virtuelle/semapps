@@ -79,7 +79,9 @@ const ActivityService = {
       const { activity } = ctx.params;
       // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
       const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
-      return defaultToArray(activity.to) ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r)) : false;
+      return defaultToArray(activity.to)
+        ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r))
+        : false;
     }
   },
   hooks: {
