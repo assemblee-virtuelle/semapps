@@ -6,6 +6,7 @@ const modifyActions = [
   'ldp.resource.create',
   'ldp.container.create',
   'activitypub.collection.create',
+  'activitypub.activity.create',
   'webid.create',
   'ldp.resource.delete'
 ];
@@ -102,17 +103,14 @@ const WebAclMiddleware = config => ({
         }
 
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
-        const containerUri = getContainerFromUri(resourceUri);
 
-        if (config.podProvider) {
-          // TODO register the POD URI in the meta ?
-          const podUri = webId.replace('/actor', '');
-          // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-          if (resourceUri.startsWith(podUri + '/')) {
-            return bypass();
-          }
+        // If the logged user is fetching is own POD, bypass ACL check
+        // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
+        if (config.podProvider && resourceUri.startsWith(webId + '/')) {
+          return bypass();
         }
 
+        const containerUri = getContainerFromUri(resourceUri);
         if (containersWithDefaultAnonRead.includes(containerUri)) {
           return bypass();
         }
@@ -207,6 +205,39 @@ const WebAclMiddleware = config => ({
           case 'webid.create':
             await addRightsToNewUser(ctx, actionReturnValue);
             break;
+
+          case 'activitypub.activity.create':
+            const activity = await ctx.call('activitypub.activity.get', { resourceUri: actionReturnValue, webId: 'system' });
+            const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+
+             console.log('giving rights to recipients', recipients, activity);
+
+            // Give read rights to the activity's recipients
+            for (let recipient of recipients) {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri: actionReturnValue,
+                additionalRights: {
+                  user: {
+                    uri: recipient,
+                    read: true
+                  }
+                },
+                webId: 'system'
+              });
+            }
+
+            // If activity is public, give anonymous read right
+            if (await ctx.call('activitypub.activity.isPublic', { activity })) {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri: actionReturnValue,
+                additionalRights: {
+                  anon: {
+                    read: true
+                  }
+                },
+                webId: 'system'
+              });
+            }
         }
 
         return actionReturnValue;
