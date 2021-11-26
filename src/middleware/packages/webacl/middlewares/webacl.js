@@ -210,8 +210,6 @@ const WebAclMiddleware = config => ({
             const activity = await ctx.call('activitypub.activity.get', { resourceUri: actionReturnValue, webId: 'system' });
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
-             console.log('giving rights to recipients', recipients, activity);
-
             // Give read rights to the activity's recipients
             for (let recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {

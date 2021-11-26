@@ -11,7 +11,7 @@ module.exports = {
     for (let rule of this.settings.rules) {
       if (!(await this.broker.call('webacl.group.exist', { groupSlug: rule.groupSlug, webId: 'system' }))) {
         console.log(`Group ${rule.groupSlug} doesn't exist, creating it...`);
-        await this.broker.call('webacl.group.create', { slug: rule.groupSlug, webId: 'system' });
+        await this.broker.call('webacl.group.create', { groupSlug: rule.groupSlug, webId: 'system' });
       }
     }
   },

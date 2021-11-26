@@ -48,8 +48,8 @@ module.exports = {
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
           const containerPath = new URL(ctx.params.resourceUri).pathname;
           const parts = containerPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
+          if (parts.length > 2) {
+            ctx.meta.dataset = parts[2];
           }
         }
       }

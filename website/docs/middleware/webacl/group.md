@@ -30,7 +30,7 @@ The following service actions are available:
 ##### Parameters
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
-| `slug` | `String`  | **required** | Name of the group |
+| `groupSlug` | `String`  | **required** | Name of the group |
 | `webId` | `String`  | 'anon' | WebID of the logged user |
 
 ##### Return

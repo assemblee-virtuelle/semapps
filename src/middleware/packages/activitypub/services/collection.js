@@ -48,6 +48,27 @@ const CollectionService = {
       });
     },
     /*
+     * Checks if an item is in a collection
+     * @param collectionUri The full URI of the collection
+     * @param itemUri The full URI of the item
+     * @return true if the collection exists
+     */
+    async includes(ctx) {
+      const { collectionUri, itemUri } = ctx.params;
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          ASK
+          WHERE {
+            <${collectionUri}> a as:Collection .
+            <${collectionUri}> as:items <${itemUri}> .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+    },
+    /*
      * Attach an object to a collection
      * @param collectionUri The full URI of the collection
      * @param item The resource to add to the collection

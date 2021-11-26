@@ -35,6 +35,10 @@ module.exports = {
   },
   async started() {
     if (this.settings.superAdmins.length > 0) {
+      if( this.settings.podProvider ) {
+        throw new Error('You cannot create a superadmin group in a POD provider config');
+      }
+
       const groupExists = await this.actions.exist({ groupSlug: 'superadmins', webId: 'system' });
 
       if (!groupExists) {
@@ -77,5 +81,26 @@ module.exports = {
         }
       }
     }
-  }
+  },
+  hooks: {
+    before: {
+      '*'(ctx) {
+        // If we have a pod provider, guess the dataset from the group URI or group slug
+        if (this.settings.podProvider && !ctx.meta.dataset) {
+          if( ctx.params.groupUri ) {
+            const groupPath = new URL(ctx.params.groupUri).pathname;
+            const parts = groupPath.split('/');
+            if (parts.length > 2) {
+              ctx.meta.dataset = parts[2];
+            }
+          } else if ( ctx.params.groupSlug ) {
+            const parts = ctx.params.groupSlug.split('/');
+            if (parts.length > 1) {
+              ctx.meta.dataset = parts[1];
+            }
+          }
+        }
+      }
+    }
+  },
 };

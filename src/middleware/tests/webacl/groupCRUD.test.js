@@ -83,7 +83,7 @@ const console = require('console');
 describe('middleware CRUD group with perms', () => {
   test('Ensure a call as anonymous to webacl.group.create succeeds', async () => {
     try {
-      const res = await broker.call('webacl.group.create', { slug: 'mygroup5' });
+      const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup5' });
 
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup5'));
     } catch (e) {
@@ -94,7 +94,7 @@ describe('middleware CRUD group with perms', () => {
 
   test('Ensure a call as user to webacl.group.create succeeds', async () => {
     try {
-      const res = await broker.call('webacl.group.create', { slug: 'mygroup10', webId: 'http://test/user3' });
+      const res = await broker.call('webacl.group.create', { groupSlug: 'mygroup10', webId: 'http://test/user3' });
 
       expect(res.groupUri).toBe(urlJoin(CONFIG.HOME_URL, '_groups', 'mygroup10'));
     } catch (e) {

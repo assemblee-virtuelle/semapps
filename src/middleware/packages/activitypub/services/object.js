@@ -131,6 +131,18 @@ const ObjectService = {
         containerUri = urlJoin(this.settings.baseUri, container.path);
       }
 
+      // Delete the existing cached resource (if it exists)
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE { 
+            <${objectUri}> ?p1 ?o1 .
+          }
+        `,
+        webId: 'system',
+        dataset
+      });
+
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
         webId: 'system',
