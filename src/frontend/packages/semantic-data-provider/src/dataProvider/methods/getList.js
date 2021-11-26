@@ -6,7 +6,7 @@ const getListMethod = config => async (resourceId, params = {}) => {
   let { dataServers, resources } = config;
   const dataModel = resources[resourceId];
 
-  if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
+  if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
 
   let containers;
   if (dataModel.list?.containers && dataModel.list?.containers.length > 0) {
