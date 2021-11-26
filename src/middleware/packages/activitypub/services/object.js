@@ -111,7 +111,7 @@ const ObjectService = {
     async cacheRemote(ctx) {
       let { objectUri, actorUri } = ctx.params;
 
-      if( typeof objectUri === 'object' ) {
+      if (typeof objectUri === 'object') {
         objectUri = objectUri.id || objectUri['@id'];
       }
 

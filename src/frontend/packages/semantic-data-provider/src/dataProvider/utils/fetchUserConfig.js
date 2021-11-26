@@ -21,7 +21,8 @@ const fetchUserConfig = async config => {
       // We must modify the config object directly
       config.dataServers[podKey].name = 'My Pod';
       config.dataServers[podKey].baseUrl = urlJoin(webId, 'data'); // TODO find POD URI from user profile
-      config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.['void:sparqlEndpoint'] || urlJoin(webId, 'sparql');
+      config.dataServers[podKey].sparqlEndpoint =
+        userData.endpoints?.['void:sparqlEndpoint'] || urlJoin(webId, 'sparql');
     }
 
     if (authServerKey) {

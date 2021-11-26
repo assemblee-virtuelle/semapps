@@ -85,7 +85,7 @@ const ActivityService = {
   hooks: {
     before: {
       get(ctx) {
-        if( typeof ctx.params.resourceUri === 'object' ) {
+        if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
       }

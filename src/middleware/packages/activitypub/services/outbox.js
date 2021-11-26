@@ -32,7 +32,7 @@ const OutboxService = {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
       }
 
-      if( !activity['@context'] ) {
+      if (!activity['@context']) {
         activity['@context'] = this.settings.jsonContext;
       }
 
