@@ -121,6 +121,7 @@ const CollectionService = {
      */
     async get(ctx) {
       const { collectionUri, page } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', {
         collectionUri
       });
@@ -137,7 +138,8 @@ const CollectionService = {
             OPTIONAL { <${collectionUri}> as:summary ?summary . }
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       // No persisted collection found
@@ -198,7 +200,7 @@ const CollectionService = {
           for (let itemUri of selectedItemsUris) {
             try {
               selectedItems.push(
-                await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: ctx.meta.webId })
+                await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId })
               );
             } catch (e) {
               // Ignore resource if it is not found

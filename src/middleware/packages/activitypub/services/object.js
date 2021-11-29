@@ -25,6 +25,9 @@ const ObjectService = {
           ...rest
         });
       } catch (e) {
+        if( !actorUri || actorUri === 'webId' || actorUri === 'anon' ) {
+          throw new Error('No valid actor URI provided to activitypub.object.get (provided: ' + actorUri +'), cannot query proxy')
+        }
         // If the object was not found in cache, try to query it distantly
         // TODO only do this for distant objects
         return await ctx.call('activitypub.proxy.query', {
