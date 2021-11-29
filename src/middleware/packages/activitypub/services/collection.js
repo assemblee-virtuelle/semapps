@@ -199,9 +199,7 @@ const CollectionService = {
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
             try {
-              selectedItems.push(
-                await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId })
-              );
+              selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId }));
             } catch (e) {
               // Ignore resource if it is not found
               console.info('Resource not found with URI: ' + itemUri);
