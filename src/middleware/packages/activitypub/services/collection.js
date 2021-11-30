@@ -23,7 +23,6 @@ const CollectionService = {
           type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
           summary
         },
-        accept: MIME_TYPES.JSON,
         contentType: MIME_TYPES.JSON,
         webId: 'system'
       });

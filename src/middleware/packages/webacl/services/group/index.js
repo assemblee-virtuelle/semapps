@@ -42,7 +42,7 @@ module.exports = {
       const groupExists = await this.actions.exist({ groupSlug: 'superadmins', webId: 'system' });
 
       if (!groupExists) {
-        console.log("Super admin group doesn't exist, creating it...");
+        this.logger.info("Super admin group doesn't exist, creating it...");
         const { groupUri } = await this.actions.create({ slug: 'superadmins', webId: 'system' });
 
         // Give full rights to root container

@@ -28,7 +28,7 @@ const SignatureService = {
 
       const publicKey = await this.actions.getActorPublicKey({ actorUri }, { parentCtx: ctx });
       if (publicKey) {
-        console.log(`Key for ${actorUri} already exists, skipping...`);
+        this.logger.info(`Key for ${actorUri} already exists, skipping...`);
         return publicKey;
       }
 

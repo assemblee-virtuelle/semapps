@@ -47,7 +47,7 @@ const TripleStoreService = {
           if (response.status === 500 && text.includes('permissions violation')) {
             throw403(text);
           } else {
-            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}`);
+            throw500(`Unable to reach SPARQL endpoint ${url}. Error message: ${response.statusText}. Query: ${body}`);
           }
         }
       }

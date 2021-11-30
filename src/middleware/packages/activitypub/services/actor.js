@@ -18,9 +18,9 @@ const ActorService = {
   },
   actions: {
     async get(ctx) {
-      const { actorUri } = ctx.params;
+      const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON });
+        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
       } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
         if (!response) return false;
@@ -79,19 +79,21 @@ const ActorService = {
       await ctx.call('signature.deleteActorKeyPair', { actorUri });
     },
     async awaitCreateComplete(ctx) {
-      const { actorUri } = ctx.params;
+      let { actorUri, additionalKeys = [] } = ctx.params;
+      const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
       let actor;
       do {
-        await delay(2000);
+        await delay(1000);
         actor = await ctx.call(
           'ldp.resource.get',
           {
             resourceUri: actorUri,
-            accept: MIME_TYPES.JSON
+            accept: MIME_TYPES.JSON,
+            webId: 'system'
           },
           { meta: { $cache: false } }
         );
-      } while (!actor.publicKey);
+      } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
       return actor;
     },
     async generateMissingActorsData(ctx) {
@@ -113,7 +115,7 @@ const ActorService = {
   },
   methods: {
     isLocal(uri) {
-      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUri);
     },
     isActor(resource) {
       return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));

@@ -43,7 +43,7 @@ const FusekiAdminService = {
       const { dataset, secure } = ctx.params;
       const exist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
       if (!exist) {
-        console.warn(`Dataset ${dataset} doesn't exist. Creating it...`);
+        this.logger.info(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
 
         if (secure) {

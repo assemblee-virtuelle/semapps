@@ -10,7 +10,8 @@ module.exports = {
   name: 'jsonld',
   settings: {
     baseUri: null,
-    localContextFiles: []
+    localContextFiles: [],
+    remoteContextFiles: []
   },
   dependencies: ['api'],
   async started() {
@@ -45,6 +46,16 @@ module.exports = {
             ]
           }
         }
+      });
+    }
+
+    for (let contextFile of this.settings.remoteContextFiles) {
+      const contextFileContent = await fsPromises.readFile(contextFile.file);
+      const contextJson = JSON.parse(contextFileContent);
+      cache.set(contextFile.uri, {
+        contextUrl: null,
+        documentUrl: contextFile.uri,
+        document: contextJson
       });
     }
   },
