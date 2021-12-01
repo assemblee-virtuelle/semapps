@@ -26,7 +26,7 @@ export default {
       'pair:TaskStatus'
     ],
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {

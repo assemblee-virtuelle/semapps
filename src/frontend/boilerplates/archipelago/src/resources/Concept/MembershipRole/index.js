@@ -17,7 +17,7 @@ export default {
   dataModel: {
     types: ['pair:MembershipRole'],
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {

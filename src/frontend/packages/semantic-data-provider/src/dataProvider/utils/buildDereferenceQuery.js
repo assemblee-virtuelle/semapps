@@ -1,9 +1,9 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
   let nodes = [];
-  if( predicates ) {
+  if (predicates) {
     for (let predicate of predicates) {
       if (predicate.includes('/')) {
         const nodeNames = predicate.split('/');

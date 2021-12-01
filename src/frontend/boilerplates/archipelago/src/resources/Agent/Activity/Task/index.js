@@ -19,7 +19,7 @@ export default {
   dataModel: {
     types: ['pair:Task'],
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {
