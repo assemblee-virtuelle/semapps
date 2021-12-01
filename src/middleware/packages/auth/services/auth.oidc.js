@@ -28,7 +28,7 @@ const AuthOIDCService = {
       const client = new this.issuer.Client({
         client_id: this.settings.clientId,
         client_secret: this.settings.clientSecret,
-        redirect_uri: urlJoin(this.settings.baseUrl, 'auth/login'),
+        redirect_uri: urlJoin(this.settings.baseUrl, 'auth'),
         token_endpoint_auth_method: this.settings.clientSecret ? undefined : 'none'
       });
 

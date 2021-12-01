@@ -28,14 +28,16 @@ const buildBlankNodesQuery = depth => {
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
   let nodes = [];
-  for (let predicate of predicates) {
-    if (predicate.includes('/')) {
-      const nodeNames = predicate.split('/');
-      for (let i = 1; i <= nodeNames.length; i++) {
-        nodes.push(nodeNames.slice(0, i).join('/'));
+  if( predicates ) {
+    for (let predicate of predicates) {
+      if (predicate.includes('/')) {
+        const nodeNames = predicate.split('/');
+        for (let i = 1; i <= nodeNames.length; i++) {
+          nodes.push(nodeNames.slice(0, i).join('/'));
+        }
+      } else {
+        nodes.push(predicate);
       }
-    } else {
-      nodes.push(predicate);
     }
   }
   return nodes;
