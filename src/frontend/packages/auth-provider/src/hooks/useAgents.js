@@ -3,8 +3,8 @@ import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
 import { defaultToArray } from '../utils';
 import { CLASS_AGENT, GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, AUTHENTICATED_AGENT } from '../constants';
 
-const useAgents = resourceId => {
-  const { permissions } = usePermissionsOptimized(resourceId);
+const useAgents = uri => {
+  const { permissions } = usePermissionsOptimized(uri);
   const authProvider = useAuthProvider();
   const [agents, setAgents] = useState({});
 
@@ -62,12 +62,12 @@ const useAgents = resourceId => {
           permissions: agents[agentId] ? [...agents[agentId]?.permissions, mode] : [mode]
         }
       });
-      authProvider.addPermission(resourceId, agentId, predicate, mode).catch(e => {
+      authProvider.addPermission(uri, agentId, predicate, mode).catch(e => {
         // If there was an error, revert the optimistic update
         setAgents(prevAgents);
       });
     },
-    [agents, setAgents, resourceId, authProvider]
+    [agents, setAgents, uri, authProvider]
   );
 
   const removePermission = useCallback(
@@ -86,12 +86,12 @@ const useAgents = resourceId => {
             .filter(([_, agent]) => agent.predicate === CLASS_AGENT || agent.permissions.length > 0)
         )
       );
-      authProvider.removePermission(resourceId, agentId, predicate, mode).catch(e => {
+      authProvider.removePermission(uri, agentId, predicate, mode).catch(e => {
         // If there was an error, revert the optimistic update
         setAgents(prevAgents);
       });
     },
-    [agents, setAgents, resourceId, authProvider]
+    [agents, setAgents, uri, authProvider]
   );
 
   return { agents, addPermission, removePermission };

@@ -8,7 +8,7 @@ export default {
     }
   },
   dataModel: {
-    types: ['pair:Document', 'pair:Folder']
+    types: ['pair:Document']
   },
   translations: {
     fr: {

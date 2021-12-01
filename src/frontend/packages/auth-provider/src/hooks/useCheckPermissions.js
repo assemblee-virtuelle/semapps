@@ -3,9 +3,9 @@ import { usePermissionsOptimized, useRedirect, useNotify, useGetIdentity } from 
 import { rights, forbiddenErrors } from '../constants';
 import useCheckAuthenticated from './useCheckAuthenticated';
 
-const useCheckPermissions = (resourceId, mode, redirectUrl = '/') => {
+const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
   const { identity } = useCheckAuthenticated();
-  const { permissions } = usePermissionsOptimized(resourceId);
+  const { permissions } = usePermissionsOptimized(uri);
   const notify = useNotify();
   const redirect = useRedirect();
 

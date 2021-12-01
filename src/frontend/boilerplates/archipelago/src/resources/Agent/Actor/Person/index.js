@@ -16,9 +16,12 @@ export default {
   },
   dataModel: {
     types: ['pair:Person'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'users',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    slugField: 'pair:label'
+    list: {
+      dereference: ['pair:hasLocation/pair:hasPostalAddress'],
+    },
+    fieldsMapping: {
+      title: 'pair:label',
+    }
   },
   translations: {
     fr: {

@@ -9,6 +9,8 @@ export { default as UriArrayInput, default as ReferenceArrayInput } from './inpu
 export { default as ReferenceInput } from './inputs/ReferenceInput';
 export { default as ReificationArrayInput } from './inputs/ReificationArrayInput';
 
+export { default as useCreateContainer } from './hooks/useCreateContainer';
+
 export { default as dataProvider } from './dataProvider/dataProvider';
 export { default as httpClient } from './httpClient';
 
