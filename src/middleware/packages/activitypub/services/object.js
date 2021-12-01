@@ -120,8 +120,8 @@ const ObjectService = {
         objectUri = objectUri.id || objectUri['@id'];
       }
 
-      const object = await ctx.call('activitypub.proxy.query', {
-        resourceUri: objectUri,
+      const object = await ctx.call('activitypub.object.get', {
+        objectUri,
         actorUri
       });
 
@@ -197,6 +197,11 @@ const ObjectService = {
     //       });
     //     }
     //   }
+  },
+  methods: {
+    isLocal(uri) {
+      return uri.startsWith(this.settings.baseUri);
+    },
   }
 };
 

@@ -1,4 +1,5 @@
-const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
+const fetch = require('node-fetch');
+const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
 const { delay, defaultToArray } = require('../utils');

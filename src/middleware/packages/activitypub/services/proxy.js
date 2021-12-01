@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
 const ProxyService = {

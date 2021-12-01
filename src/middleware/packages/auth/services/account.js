@@ -100,7 +100,7 @@ module.exports = {
   methods: {
     async isValidUsername(ctx, username) {
       // Ensure the username has no space or special characters
-      if (!/^[a-zA-Z0-9\-_]+$/.exec(username)) {
+      if (!/^[a-zA-Z0-9\-_.]+$/.exec(username)) {
         throw new Error('username.invalid');
       }
 

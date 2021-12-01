@@ -9,7 +9,7 @@
     "@semapps/mime-types": "0.3.17",
     "bson": "^4.0.4",
     "negotiator": "^0.6.2",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.6",
     "sparqljson-parse": "^1.5.1",
     "url-join": "^4.0.1"
   },

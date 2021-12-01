@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
