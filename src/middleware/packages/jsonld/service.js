@@ -128,6 +128,9 @@ module.exports = {
         return cache.get(url);
       } else {
         const context = await defaultDocumentLoader(url, options);
+        if( typeof context.document === 'string' ) {
+          context.document = JSON.parse(context.document);
+        }
         cache.set(url, context);
         return context;
       }

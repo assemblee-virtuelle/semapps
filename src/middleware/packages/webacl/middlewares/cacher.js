@@ -13,6 +13,12 @@ const CacherMiddleware = opts => ({
       cacher = broker.cacher.middleware();
     }
   },
+  // TODO see why this is not called by Moleculer
+  // async stopped(broker) {
+  //   if (opts) {
+  //     await broker.cacher.close();
+  //   }
+  // },
   localAction(next, action) {
     if (cacher) {
       return cacher(next, action);

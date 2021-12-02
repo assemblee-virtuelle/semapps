@@ -30,32 +30,14 @@ const ActorService = {
       }
     },
     async appendActorData(ctx) {
-      const { actorUri, userData } = ctx.params;
-      const userTypes =
-        userData.type || userData['@type']
-          ? Array.isArray(userData.type || userData['@type'])
-            ? userData.type || userData['@type']
-            : [userData.type || userData['@type']]
-          : [];
+      const { actorUri } = ctx.params;
 
-      // Skip if ActivityPub information are already provided
-      if (
-        userData.preferredUsername &&
-        userData.name &&
-        userTypes.some(type => Object.values(ACTOR_TYPES).includes(type))
-      ) {
-        console.log(`ActivityPub data have already been provided for ${actorUri}, skipping...`);
-        return;
-      }
-
-      const { '@type': type, name, preferredUsername } = this.settings.selectActorData(userData);
+      const currentData = await this.actions.get({ actorUri: actorUri, webId: 'system' }, { parentCtx: ctx });
 
       await ctx.call('ldp.resource.patch', {
         resource: {
           '@id': actorUri,
-          '@type': type,
-          name,
-          preferredUsername
+          ...this.settings.selectActorData(currentData)
         },
         contentType: MIME_TYPES.JSON,
         webId: 'system'
@@ -129,11 +111,8 @@ const ActorService = {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
       if (this.isActor(newData)) {
-        if (!newData.preferredUsername || !newData.name) {
-          await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
-        }
+        await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
-        ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null } });
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -142,15 +121,10 @@ const ActorService = {
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },
-    async 'webid.created'(ctx) {
-      const userData = ctx.params;
-      const webId = userData.id || userData['@id'];
-
-      await this.actions.appendActorData({ actorUri: webId, userData }, { parentCtx: ctx });
+    async 'auth.registered'(ctx) {
+      const { webId } = ctx.params;
+      await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       await this.actions.generateKeyPair({ actorUri: webId }, { parentCtx: ctx });
-    },
-    'activitypub.actor.created'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     }
   }
 };

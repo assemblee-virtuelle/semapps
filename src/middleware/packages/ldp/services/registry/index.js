@@ -42,9 +42,11 @@ module.exports = {
     async createAndAttachContainer(ctx, containerUri, containerPath) {
       const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       if (!exists) {
+        // Then create the container
         await ctx.call('ldp.container.create', { containerUri, webId: 'system' });
 
-        // 2. Attach the container to its parent container
+        // First attach the container to its parent container
+        // This will avoid WebACL error, in case the container is fetched before
         if (containerPath !== '/') {
           const parentContainerUri = getContainerFromUri(containerUri);
           const parentExists = await ctx.call('ldp.container.exist', {
