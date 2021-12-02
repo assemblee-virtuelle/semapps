@@ -14,12 +14,7 @@ const PermissionsButton = ({ record, resource }) => {
       <Button label="auth.action.permissions" onClick={() => setShowDialog(true)}>
         <ShareIcon />
       </Button>
-      <PermissionsDialog
-        uri={uri}
-        isContainer={!!isContainer}
-        open={showDialog}
-        onClose={() => setShowDialog(false)}
-      />
+      <PermissionsDialog uri={uri} isContainer={!!isContainer} open={showDialog} onClose={() => setShowDialog(false)} />
     </>
   );
 };

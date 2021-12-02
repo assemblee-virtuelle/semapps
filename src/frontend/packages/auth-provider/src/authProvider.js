@@ -95,7 +95,7 @@ const authProvider = ({
   getPermissions: async uri => {
     if (!checkPermissions) return true;
 
-    if( !uri || !uri.startsWith('http') ) throw new Error('The first parameter passed to getPermissions must be an URL');
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
     const aclUri = getAclUri(middlewareUri, uri);
 
@@ -106,7 +106,7 @@ const authProvider = ({
   addPermission: async (uri, agentId, predicate, mode) => {
     const aclUri = getAclUri(middlewareUri, uri);
 
-    if( !uri || !uri.startsWith('http') ) throw new Error('The first parameter passed to addPermission must be an URL');
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
 
     let authorization = {
       '@id': '#' + mode.replace('acl:', ''),
@@ -125,7 +125,8 @@ const authProvider = ({
     });
   },
   removePermission: async (uri, agentId, predicate, mode) => {
-    if( !uri || !uri.startsWith('http') ) throw new Error('The first parameter passed to removePermission must be an URL');
+    if (!uri || !uri.startsWith('http'))
+      throw new Error('The first parameter passed to removePermission must be an URL');
 
     const aclUri = getAclUri(middlewareUri, uri);
 

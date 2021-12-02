@@ -1,4 +1,4 @@
-const { hasType } = require("@semapps/ldp");
+const { hasType } = require('@semapps/ldp');
 const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
 
 const FollowService = {
@@ -102,7 +102,10 @@ const FollowService = {
         }
 
         case ACTIVITY_TYPES.ACCEPT: {
-          const acceptedActivity = await ctx.call('activitypub.activity.get', { resourceUri: activity.object, webId: 'system' });
+          const acceptedActivity = await ctx.call('activitypub.activity.get', {
+            resourceUri: activity.object,
+            webId: 'system'
+          });
           if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
             await this.actions.addFollower(
               {
@@ -116,7 +119,10 @@ const FollowService = {
         }
 
         case ACTIVITY_TYPES.UNDO:
-          const activityToUndo = await ctx.call('activitypub.activity.get', { resourceUri: activity.object, webId: 'system' });
+          const activityToUndo = await ctx.call('activitypub.activity.get', {
+            resourceUri: activity.object,
+            webId: 'system'
+          });
           if (hasType(activityToUndo, ACTIVITY_TYPES.FOLLOW)) {
             await this.actions.removeFollower(
               {
@@ -126,14 +132,17 @@ const FollowService = {
               { parentCtx: ctx }
             );
           } else if (hasType(activityToUndo, ACTIVITY_TYPES.ACCEPT)) {
-            const acceptedActivity = await ctx.call('activitypub.activity.get', { resourceUri: activityToUndo.object, webId: 'system' });
+            const acceptedActivity = await ctx.call('activitypub.activity.get', {
+              resourceUri: activityToUndo.object,
+              webId: 'system'
+            });
             if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
               await this.actions.removeFollower(
                 {
                   follower: acceptedActivity.actor,
                   following: acceptedActivity.object
                 },
-                {parentCtx: ctx}
+                { parentCtx: ctx }
               );
             }
           }

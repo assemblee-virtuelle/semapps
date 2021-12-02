@@ -17,10 +17,10 @@ export default {
   dataModel: {
     types: ['pair:Person'],
     list: {
-      dereference: ['pair:hasLocation/pair:hasPostalAddress'],
+      dereference: ['pair:hasLocation/pair:hasPostalAddress']
     },
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {

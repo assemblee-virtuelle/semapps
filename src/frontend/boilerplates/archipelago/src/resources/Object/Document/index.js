@@ -18,7 +18,7 @@ export default {
   dataModel: {
     types: ['pair:Document'],
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {

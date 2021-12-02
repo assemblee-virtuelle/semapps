@@ -9,11 +9,12 @@ import getOneMethod from './methods/getOne';
 import updateMethod from './methods/update';
 import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
-import getServerKeyFromType from "./utils/getServerKeyFromType";
+import getServerKeyFromType from './utils/getServerKeyFromType';
 
 const dataProvider = config => {
   // TODO verify all data provider config + data models
-  if( !getServerKeyFromType('default', config.dataServers) ) throw new Error('You must define a default server in your dataServers config');
+  if (!getServerKeyFromType('default', config.dataServers))
+    throw new Error('You must define a default server in your dataServers config');
 
   if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map(o => [o.prefix, o.url]));
   if (!config.returnFailedResources) config.returnFailedResources = false;

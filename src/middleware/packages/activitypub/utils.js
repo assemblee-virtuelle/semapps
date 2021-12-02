@@ -17,7 +17,11 @@ const objectCurrentToId = activityJson => {
 
 const objectIdToCurrent = activityJson => {
   // If the activity has an object predicate, and this object is a real object (not an activity)
-  if (activityJson.object && typeof activityJson.object === 'object' && Object.values(OBJECT_TYPES).includes(activityJson.object.type)) {
+  if (
+    activityJson.object &&
+    typeof activityJson.object === 'object' &&
+    Object.values(OBJECT_TYPES).includes(activityJson.object.type)
+  ) {
     const { id, '@id': arobaseId, ...object } = activityJson.object;
     return {
       ...activityJson,

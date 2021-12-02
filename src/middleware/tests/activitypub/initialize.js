@@ -2,7 +2,7 @@ const fse = require('fs-extra');
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const { AuthLocalService } = require("@semapps/auth");
+const { AuthLocalService } = require('@semapps/auth');
 const FusekiAdminService = require('@semapps/fuseki-admin');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
@@ -19,7 +19,7 @@ const initialize = async () => {
   const broker = new ServiceBroker({
     middlewares: [EventsWatcher, WebAclMiddleware],
     logger: {
-      type: "Console",
+      type: 'Console',
       options: {
         level: 'error'
       }
@@ -42,7 +42,7 @@ const initialize = async () => {
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
-      jwtPath: path.resolve(__dirname, './jwt'),
+      jwtPath: path.resolve(__dirname, './jwt')
     }
   });
   await broker.createService(JsonLdService, {
@@ -69,7 +69,11 @@ const initialize = async () => {
       ontologies,
       containers,
       defaultContainerOptions: {
-        jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1', getPrefixJSON(ontologies)]
+        jsonContext: [
+          'https://www.w3.org/ns/activitystreams',
+          'https://w3id.org/security/v1',
+          getPrefixJSON(ontologies)
+        ]
       }
     }
   });

@@ -16,7 +16,7 @@ const CollectionService = {
     async create(ctx) {
       const { collectionUri } = ctx.params;
       const { ordered, summary } = {
-        ...await ctx.call('activitypub.registry.getByUri', { collectionUri }),
+        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
         ...ctx.params
       };
       return await ctx.call('triplestore.insert', {
@@ -125,7 +125,7 @@ const CollectionService = {
       const { collectionUri, page } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = {
-        ...await ctx.call('activitypub.registry.getByUri', { collectionUri }),
+        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
         ...ctx.params
       };
 

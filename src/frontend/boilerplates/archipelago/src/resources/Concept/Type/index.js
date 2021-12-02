@@ -34,7 +34,7 @@ export default {
       'pair:TaskType'
     ],
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {
