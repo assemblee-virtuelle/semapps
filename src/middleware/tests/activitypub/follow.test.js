@@ -19,19 +19,19 @@ describe('Posting to followers', () => {
 
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {
-      username: "srosset81",
-      email: "sebastien@test.com",
-      password: "test",
-      name: "Sébastien"
+      username: 'srosset81',
+      email: 'sebastien@test.com',
+      password: 'test',
+      name: 'Sébastien'
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
     const { webId: simonUri } = await broker.call('auth.signup', {
-      username: "simonlouvet",
-      email: "simon@test.com",
-      password: "test",
-      name: "Simon"
+      username: 'simonlouvet',
+      email: 'simon@test.com',
+      password: 'test',
+      name: 'Simon'
     });
 
     simon = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
@@ -61,7 +61,9 @@ describe('Posting to followers', () => {
     });
 
     await waitForExpect(async () => {
-      await expect(broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })).resolves.toBeTruthy();
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+      ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
@@ -122,7 +124,9 @@ describe('Posting to followers', () => {
     });
 
     await waitForExpect(async () => {
-      await expect(broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })).resolves.toBeFalsy();
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+      ).resolves.toBeFalsy();
     });
   });
 });

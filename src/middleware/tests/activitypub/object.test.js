@@ -2,7 +2,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
-const waitForExpect = require("wait-for-expect");
+const waitForExpect = require('wait-for-expect');
 
 jest.setTimeout(50000);
 
@@ -20,10 +20,10 @@ describe('Create/Update/Delete objects', () => {
 
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {
-      username: "srosset81",
-      email: "sebastien@test.com",
-      password: "test",
-      name: "Sébastien"
+      username: 'srosset81',
+      email: 'sebastien@test.com',
+      password: 'test',
+      name: 'Sébastien'
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -57,7 +57,9 @@ describe('Create/Update/Delete objects', () => {
     expect(createActivity.object).not.toHaveProperty('current');
 
     await waitForExpect(async () => {
-      await expect(broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id })).resolves.toBeTruthy();
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id })
+      ).resolves.toBeTruthy();
     });
 
     objectUri = createActivity.object.id;

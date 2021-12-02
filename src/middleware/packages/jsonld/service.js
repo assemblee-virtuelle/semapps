@@ -2,7 +2,7 @@ const jsonld = require('jsonld');
 const urlJoin = require('url-join');
 const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
-const JsonLdParser = require("jsonld-streaming-parser").JsonLdParser;
+const JsonLdParser = require('jsonld-streaming-parser').JsonLdParser;
 const streamifyString = require('streamify-string');
 
 const defaultDocumentLoader = jsonld.documentLoaders.node();

@@ -23,7 +23,7 @@ export default {
       forceArray: ['pair:organizationOfMembership']
     },
     fieldsMapping: {
-      title: 'pair:label',
+      title: 'pair:label'
     }
   },
   translations: {

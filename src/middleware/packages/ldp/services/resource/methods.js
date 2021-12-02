@@ -18,7 +18,7 @@ module.exports = {
     });
   },
   async bodyToTriples(body, contentType) {
-    if( contentType === MIME_TYPES.JSON ) {
+    if (contentType === MIME_TYPES.JSON) {
       return await this.broker.call('jsonld.toQuads', { input: body });
     } else {
       return new Promise((resolve, reject) => {

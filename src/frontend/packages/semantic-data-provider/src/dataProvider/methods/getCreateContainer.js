@@ -1,5 +1,5 @@
-import urlJoin from "url-join";
-import getServerKeyFromType from "../utils/getServerKeyFromType";
+import urlJoin from 'url-join';
+import getServerKeyFromType from '../utils/getServerKeyFromType';
 
 const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
   let containers = [];
@@ -14,16 +14,24 @@ const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
     }
   });
 
-  if( containers.length === 0 ) {
-    throw new Error(`No container found matching with types ${JSON.stringify(types)}. You can set explicitely the create.container property of the resource.`);
-  } else if( containers.length > 1 ) {
-    throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
+  if (containers.length === 0) {
+    throw new Error(
+      `No container found matching with types ${JSON.stringify(
+        types
+      )}. You can set explicitely the create.container property of the resource.`
+    );
+  } else if (containers.length > 1) {
+    throw new Error(
+      `More than one container found matching with types ${JSON.stringify(
+        types
+      )}. You must set the create.server or create.container property for the resource.`
+    );
   }
-  
+
   return containers[0];
 };
 
-const getCreateContainer = config => (resourceId) => {
+const getCreateContainer = config => resourceId => {
   let { dataServers, resources } = config;
   const dataModel = resources[resourceId];
 

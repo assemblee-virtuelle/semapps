@@ -16,7 +16,7 @@ const RegistryService = {
       ordered: false,
       itemsPerPage: null,
       dereferenceItems: false,
-      sort: { predicate: 'as:published', order: 'DESC' },
+      sort: { predicate: 'as:published', order: 'DESC' }
     }
   },
   dependencies: ['triplestore', 'ldp'],
@@ -75,7 +75,10 @@ const RegistryService = {
       // Get last part of the URI (eg. /followers)
       let path = '/' + getSlugFromUri(collectionUri);
 
-      return { ...this.settings.defaultCollectionOptions, ...this.registeredCollections.find(collection => collection.path === path) };
+      return {
+        ...this.settings.defaultCollectionOptions,
+        ...this.registeredCollections.find(collection => collection.path === path)
+      };
     },
     async createAndAttachCollection(ctx) {
       const { objectUri, collection } = ctx.params;

@@ -18,7 +18,7 @@ export default {
   dataModel: {
     types: ['semapps:Page'],
     fieldsMapping: {
-      title: 'semapps:title',
+      title: 'semapps:title'
     }
   },
   translations: {
