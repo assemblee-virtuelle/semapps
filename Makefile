@@ -54,7 +54,7 @@ init :
 	make bootstrap
 
 install :
-    npm --version
+	npm --version
 	npm install --prefix ./src/frontend
 	npm install --prefix ./src/middleware
 
