@@ -19,7 +19,6 @@ services:
 #    restart: always
 #    volumes:
 #      - rdf_data_no_acl:/fuseki
-#      - staging_no_acl:/staging
 #    ports:
 #      - "3050:3030"
 #    expose:
@@ -29,9 +28,7 @@ services:
 
 volumes:
   rdf_data:
-  staging:
-  rdf_data_no_acl:
-  staging_no_acl:
+#  rdf_data_no_acl:
 networks:
   semapps:
     name: semapps_network
