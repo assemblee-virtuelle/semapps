@@ -2,7 +2,14 @@ const fs = require('fs');
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery, getContainerFromUri, getSlugFromUri } = require('../../../utils');
+const {
+  getPrefixRdf,
+  getPrefixJSON,
+  buildBlankNodesQuery,
+  buildDereferenceQuery,
+  getContainerFromUri,
+  getSlugFromUri
+} = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {

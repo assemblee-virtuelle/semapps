@@ -166,7 +166,10 @@ describe('Container options', () => {
     expect(orga1['pair:description']).toBe('myOrga');
     expect(orga1['pair:hasLocation']['@id']).toBeDefined();
 
-    const place = await broker.call('ldp.resource.get', { resourceUri: orga1['pair:hasLocation']['@id'], accept: MIME_TYPES.JSON });
+    const place = await broker.call('ldp.resource.get', {
+      resourceUri: orga1['pair:hasLocation']['@id'],
+      accept: MIME_TYPES.JSON
+    });
     expect(place['pair:description']).toBe('myPlace');
   });
 
@@ -187,7 +190,10 @@ describe('Container options', () => {
     expect(orga1Updated['pair:description']).toBe('myOrga2');
     expect(orga1Updated['pair:hasLocation']['@id']).toBeDefined();
 
-    const place = await broker.call('ldp.resource.get', { resourceUri: orga1Updated['pair:hasLocation']['@id'], accept: MIME_TYPES.JSON });
+    const place = await broker.call('ldp.resource.get', {
+      resourceUri: orga1Updated['pair:hasLocation']['@id'],
+      accept: MIME_TYPES.JSON
+    });
     expect(place['pair:description']).toBe('myPlace2');
   }, 20000);
 
