@@ -1,5 +1,5 @@
 const { SparqlJsonParser } = require('sparqljson-parse');
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
 const dropAll = require('./actions/dropAll');
