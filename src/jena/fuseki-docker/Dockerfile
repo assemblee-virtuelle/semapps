@@ -21,7 +21,7 @@ RUN apk add --update pwgen bash curl ca-certificates procps && rm -rf /var/cache
 
 MAINTAINER Niko PLP <info@parlepeuple.fr>
 
-
+ENV JAVA_MX_RAM="4G"
 
 # Update below according to https://jena.apache.org/download/ and
 # corresponding *.tar.gz.sha512 from https://www.apache.org/dist/jena/binaries/
