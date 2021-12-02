@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const urlJoin = require('url-join');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
@@ -56,7 +57,8 @@ const ActorService = {
           name,
           preferredUsername
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     async generateKeyPair(ctx) {
@@ -65,6 +67,7 @@ const ActorService = {
 
       await ctx.call('ldp.resource.patch', {
         resource: {
+          '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
           '@id': actorUri,
           publicKey: {
             owner: actorUri,
@@ -138,6 +141,13 @@ const ActorService = {
       if (this.isActor(oldData)) {
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
+    },
+    async 'webid.created'(ctx) {
+      const userData = ctx.params;
+      const webId = userData.id || userData['@id'];
+
+      await this.actions.appendActorData({ actorUri: webId, userData }, { parentCtx: ctx });
+      await this.actions.generateKeyPair({ actorUri: webId }, { parentCtx: ctx });
     },
     'activitypub.actor.created'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.

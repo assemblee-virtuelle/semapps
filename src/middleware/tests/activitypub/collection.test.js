@@ -50,9 +50,7 @@ describe('Handle collections', () => {
 
     expect(collectionExist).toBeTruthy();
 
-    const collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri
-    });
+    const collection = await broker.call('activitypub.collection.get', { collectionUri });
 
     expect(collection).toMatchObject({
       id: collectionUri,
@@ -77,7 +75,7 @@ describe('Handle collections', () => {
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', {
-      id: orderedCollectionUri,
+      collectionUri: orderedCollectionUri,
       sort: { predicate: 'as:published', order: 'DESC' }
     });
 
@@ -97,7 +95,7 @@ describe('Handle collections', () => {
     });
 
     let collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri
+      collectionUri
     });
 
     expect(collection).toMatchObject({
@@ -109,7 +107,7 @@ describe('Handle collections', () => {
     });
 
     collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri,
+      collectionUri,
       dereferenceItems: true
     });
 
@@ -136,7 +134,7 @@ describe('Handle collections', () => {
     });
 
     const collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri
+      collectionUri
     });
 
     expect(collection).toMatchObject({
@@ -170,7 +168,7 @@ describe('Handle collections', () => {
     });
 
     let collection = await broker.call('activitypub.collection.get', {
-      id: orderedCollectionUri,
+      collectionUri: orderedCollectionUri,
       sort: { predicate: 'as:published', order: 'DESC' }
     });
 
@@ -181,7 +179,7 @@ describe('Handle collections', () => {
     });
 
     collection = await broker.call('activitypub.collection.get', {
-      id: orderedCollectionUri,
+      collectionUri: orderedCollectionUri,
       sort: { predicate: 'as:published', order: 'ASC' }
     });
 
@@ -201,7 +199,7 @@ describe('Handle collections', () => {
     }
 
     let collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri,
+      collectionUri,
       itemsPerPage: 4
     });
 
@@ -213,7 +211,7 @@ describe('Handle collections', () => {
     });
 
     collection = await broker.call('activitypub.collection.get', {
-      id: collectionUri,
+      collectionUri,
       itemsPerPage: 4,
       page: 1
     });

@@ -2,6 +2,8 @@ const fse = require('fs-extra');
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
+const { AuthLocalService } = require("@semapps/auth");
+const FusekiAdminService = require('@semapps/fuseki-admin');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { JsonLdService } = require('@semapps/jsonld');
@@ -16,16 +18,43 @@ const ontologies = require('../ontologies');
 const initialize = async () => {
   const broker = new ServiceBroker({
     middlewares: [EventsWatcher, WebAclMiddleware],
-    logger: false
+    logger: {
+      type: "Console",
+      options: {
+        level: 'error'
+      }
+    }
   });
 
   // Remove all actors keys
-  await fse.emptyDir(path.resolve(__dirname, './actors'));
+  // await fse.emptyDir(path.resolve(__dirname, './actors'));
 
   await broker.createService({
     mixins: [ApiGatewayService]
   });
-  await broker.createService(JsonLdService);
+  await broker.createService(FusekiAdminService, {
+    settings: {
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD
+    }
+  });
+  await broker.createService(AuthLocalService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, './jwt'),
+    }
+  });
+  await broker.createService(JsonLdService, {
+    settings: {
+      remoteContextFiles: [
+        {
+          uri: 'https://www.w3.org/ns/activitystreams',
+          file: path.resolve(__dirname, '../context-as.json')
+        }
+      ]
+    }
+  });
   await broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
@@ -40,7 +69,7 @@ const initialize = async () => {
       ontologies,
       containers,
       defaultContainerOptions: {
-        jsonContext: ['https://www.w3.org/ns/activitystreams', getPrefixJSON(ontologies)]
+        jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1', getPrefixJSON(ontologies)]
       }
     }
   });
@@ -69,6 +98,7 @@ const initialize = async () => {
   // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
   await broker.call('triplestore.dropAll', { webId: 'system' });
+  await broker.call('triplestore.dropAll', { dataset: 'settings', webId: 'system' });
   await broker.stop();
   await broker.start();
 

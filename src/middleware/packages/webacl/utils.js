@@ -197,6 +197,7 @@ async function convertBodyToTriples(body, contentType) {
       });
     });
   } else {
+    // TODO use jsonld.toQuads actions ?
     return new Promise((resolve, reject) => {
       const textStream = streamifyString(body);
       let res = [];

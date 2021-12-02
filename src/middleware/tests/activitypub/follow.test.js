@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
-jest.setTimeout(100000);
+jest.setTimeout(50000);
 
 let broker;
 
@@ -18,29 +18,23 @@ describe('Posting to followers', () => {
   let simon, sebastien, followActivity;
 
   test('Create actor', async () => {
-    const sebastienUri = await broker.call('webid.create', {
-      nick: 'srosset81',
-      name: 'Sébastien',
-      familyName: 'Rosset',
-      email: 'seb@test.com'
+    let { webId: sebastienUri } = await broker.call('auth.signup', {
+      username: "srosset81",
+      email: "sebastien@test.com",
+      password: "test",
+      name: "Sébastien"
     });
 
-    await broker.watchForEvent('activitypub.actor.created');
+    sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
-    const simonUri = await broker.call('webid.create', {
-      nick: 'simonlouvet',
-      name: 'Simon',
-      familyName: 'Louvet',
-      email: 'sim@test.com'
+    let { webId: simonUri } = await broker.call('auth.signup', {
+      username: "simonlouvet",
+      email: "simon@test.com",
+      password: "test",
+      name: "Simon"
     });
 
-    await broker.watchForEvent('activitypub.actor.created');
-
-    sebastien = await broker.call('ldp.resource.get', {
-      resourceUri: sebastienUri,
-      accept: MIME_TYPES.JSON,
-      webId: sebastienUri
-    });
+    simon = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
 
     expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
 
@@ -53,12 +47,6 @@ describe('Posting to followers', () => {
       outbox: sebastienUri + '/outbox',
       followers: sebastienUri + '/followers',
       following: sebastienUri + '/following'
-    });
-
-    simon = await broker.call('ldp.resource.get', {
-      resourceUri: simonUri,
-      accept: MIME_TYPES.JSON,
-      webId: simonUri
     });
   });
 

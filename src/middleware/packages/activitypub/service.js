@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const QueueService = require('moleculer-bull');
 const { getSlugFromUri } = require('@semapps/ldp');
 const ActorService = require('./services/actor');

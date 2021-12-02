@@ -15,7 +15,7 @@ module.exports = {
     defaultOptions,
     podProvider: false
   },
-  dependencies: ['ldp.container', 'api', 'auth.account'],
+  dependencies: ['ldp.container', 'api'],
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
@@ -25,8 +25,13 @@ module.exports = {
   },
   async started() {
     this.registeredContainers = [];
+    if( this.settings.podProvider ) {
+      // The auth.account service is a dependency only in POD provider config
+      await this.broker.waitForServices(['auth.account']);
+    }
     if (this.settings.containers.length > 0) {
       for (let container of this.settings.containers) {
+        // Do not await this action, as we need the service to be available for the WebACL middleware
         this.actions.register(container);
       }
     }

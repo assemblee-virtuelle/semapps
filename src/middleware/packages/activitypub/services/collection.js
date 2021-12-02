@@ -15,7 +15,10 @@ const CollectionService = {
      */
     async create(ctx) {
       const { collectionUri } = ctx.params;
-      const { ordered, summary } = await ctx.call('activitypub.registry.getByUri', { collectionUri });
+      const { ordered, summary } = {
+        ...await ctx.call('activitypub.registry.getByUri', { collectionUri }),
+        ...ctx.params
+      };
       return await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
@@ -121,9 +124,10 @@ const CollectionService = {
     async get(ctx) {
       const { collectionUri, page } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-      const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', {
-        collectionUri
-      });
+      const { dereferenceItems, itemsPerPage, sort } = {
+        ...await ctx.call('activitypub.registry.getByUri', { collectionUri }),
+        ...ctx.params
+      };
 
       let collection = await ctx.call('triplestore.query', {
         query: `
