@@ -18,7 +18,7 @@ describe('Posting to followers', () => {
   let simon, sebastien, followActivity;
 
   test('Create actor', async () => {
-    let { webId: sebastienUri } = await broker.call('auth.signup', {
+    const { webId: sebastienUri } = await broker.call('auth.signup', {
       username: "srosset81",
       email: "sebastien@test.com",
       password: "test",
@@ -27,7 +27,7 @@ describe('Posting to followers', () => {
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
-    let { webId: simonUri } = await broker.call('auth.signup', {
+    const { webId: simonUri } = await broker.call('auth.signup', {
       username: "simonlouvet",
       email: "simon@test.com",
       password: "test",
