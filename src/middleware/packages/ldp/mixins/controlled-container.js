@@ -66,19 +66,26 @@ module.exports = {
       let containerExist, containerAttached;
 
       do {
-        if( containerExist === false ) await delay(1000);
+        if (containerExist === false) await delay(1000);
         containerExist = await this.broker.call('ldp.container.exist', { containerUri, webId: 'system' });
       } while (!containerExist);
 
       const parentContainerUri = getContainerFromUri(containerUri);
-      const parentContainerExist = await this.broker.call('ldp.container.exist', { containerUri: parentContainerUri, webId: 'system' });
+      const parentContainerExist = await this.broker.call('ldp.container.exist', {
+        containerUri: parentContainerUri,
+        webId: 'system'
+      });
 
       // If a parent container exist, check that the child container has been attached
       // Otherwise, it may fail
-      if( parentContainerExist ) {
+      if (parentContainerExist) {
         do {
-          if( containerAttached === false ) await delay(1000);
-          containerAttached = await this.broker.call('ldp.container.includes', { containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' })
+          if (containerAttached === false) await delay(1000);
+          containerAttached = await this.broker.call('ldp.container.includes', {
+            containerUri: parentContainerUri,
+            resourceUri: containerUri,
+            webId: 'system'
+          });
         } while (!containerAttached);
       }
     }
