@@ -12,6 +12,7 @@ module.exports = {
     accept: { type: 'string', optional: true },
     jsonContext: { type: 'multi', rules: [{ type: 'string' }, { type: 'object' }, { type: 'array' }], optional: true },
     dereference: { type: 'array', optional: true },
+    disassembly: { type: 'array', optional: true },
     permissions: { type: 'object', optional: true },
     newResourcesPermissions: { type: 'object', optional: true },
     controlledActions: { type: 'object', optional: true }

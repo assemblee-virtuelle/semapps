@@ -54,13 +54,13 @@ beforeAll(async () => {
 
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
-    webId: 'system',
     resourceUri: CONFIG.HOME_URL + 'users',
     additionalRights: {
       anon: {
         write: true
       }
-    }
+    },
+    webId: 'system',
   });
 });
 

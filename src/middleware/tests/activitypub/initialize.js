@@ -27,7 +27,7 @@ const initialize = async () => {
   });
 
   // Remove all actors keys
-  // await fse.emptyDir(path.resolve(__dirname, './actors'));
+  await fse.emptyDir(path.resolve(__dirname, './actors'));
 
   await broker.createService({
     mixins: [ApiGatewayService]
