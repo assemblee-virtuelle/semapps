@@ -60,7 +60,7 @@ beforeAll(async () => {
         write: true
       }
     },
-    webId: 'system',
+    webId: 'system'
   });
 });
 

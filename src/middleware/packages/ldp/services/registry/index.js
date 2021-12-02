@@ -32,7 +32,7 @@ module.exports = {
     if (this.settings.containers.length > 0) {
       for (let container of this.settings.containers) {
         // Ensure backward compatibility
-        if( typeof container === 'string' ) container = { path: container };
+        if (typeof container === 'string') container = { path: container };
         // Do not await this action, as we need the service to be available for the WebACL middleware
         this.actions.register(container);
       }
