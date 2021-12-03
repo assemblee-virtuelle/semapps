@@ -27,6 +27,7 @@ const InboxService = {
 
         const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
+          method: 'POST',
           headers: ctx.meta.headers
         });
 
@@ -39,7 +40,7 @@ const InboxService = {
       // TODO check activity is valid
 
       // Save the remote activity in the local triple store
-      // TODO see if we could cache it elsewhere
+      // TODO do that also in POD configurations
       await ctx.call('triplestore.insert', {
         resource: objectIdToCurrent(activity),
         contentType: MIME_TYPES.JSON

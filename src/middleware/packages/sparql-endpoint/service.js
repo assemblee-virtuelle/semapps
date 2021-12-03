@@ -10,9 +10,9 @@ const SparqlEndpointService = {
   dependencies: ['triplestore', 'api'],
   async started() {
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: getRoute('/:username/sparql') });
+      await this.broker.call('api.addRoute', { route: getRoute('/:username/sparql'), toBottom: false });
     } else {
-      await this.broker.call('api.addRoute', { route: getRoute('/sparql') });
+      await this.broker.call('api.addRoute', { route: getRoute('/sparql'), toBottom: false });
     }
   },
   actions: {
@@ -20,12 +20,10 @@ const SparqlEndpointService = {
       const query = ctx.params.query || ctx.params.body;
       const accept = ctx.meta.headers.accept || this.settings.defaultAccept;
 
-      console.log('query', query, ctx.meta.webId);
-
       // Only user can query his own pod
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: ctx.meta.webId });
-        if (account[0].username !== ctx.params.username) throw new E.ForbiddenError();
+        if (account.username !== ctx.params.username) throw new E.ForbiddenError();
       }
 
       const response = await ctx.call('triplestore.query', {

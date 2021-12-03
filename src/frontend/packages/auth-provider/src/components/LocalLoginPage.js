@@ -46,9 +46,11 @@ const LocalLoginPage = props => {
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
   const redirectTo = searchParams.get('redirect');
-  const { identity } = useGetIdentity();
+  const { identity, loading } = useGetIdentity();
 
-  if (identity?.id) {
+  if (loading) {
+    return null;
+  } else if (identity?.id) {
     // Do not show login page if user is already connected
     return <Redirect to={redirectTo || '/'} />;
   } else {

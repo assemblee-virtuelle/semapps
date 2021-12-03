@@ -6,7 +6,7 @@ import createMethod from './methods/create';
 import updateMethod from './methods/update';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
-import fetchPodConfig from './utils/fetchPodConfig';
+import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 
 const dataProvider = config => {
@@ -15,11 +15,11 @@ const dataProvider = config => {
   if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map(o => [o.prefix, o.url]));
   if (!config.returnFailedResources) config.returnFailedResources = false;
 
-  const fetchPodConfigPromise = fetchPodConfig(config);
+  const fetchUserConfigPromise = fetchUserConfig(config);
   const fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
 
   const waitForVoidEndpoints = method => async (...arg) => {
-    await fetchPodConfigPromise;
+    await fetchUserConfigPromise;
     await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
     return await method(...arg);
   };

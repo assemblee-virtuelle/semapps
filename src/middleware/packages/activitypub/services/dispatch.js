@@ -51,6 +51,7 @@ const DispatchService = {
 
       const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
         url: inboxUri,
+        method: 'POST',
         body,
         actorUri: activity.actor
       });

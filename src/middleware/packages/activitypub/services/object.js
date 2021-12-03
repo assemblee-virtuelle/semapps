@@ -11,6 +11,10 @@ const ObjectService = {
   },
   dependencies: ['ldp.resource'],
   actions: {
+    async get(ctx) {
+      const { objectUri } = ctx.params;
+      return await ctx.call('ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON });
+    },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
       let activityType = activity.type || activity['@type'],
@@ -32,9 +36,14 @@ const ObjectService = {
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
           const objectType = activity.object.type || activity.object['@type'];
-          const containerUri = this.getMatchingContainerUri(objectType);
+          let containerUri = this.getMatchingContainerUri(objectType);
           if (!containerUri) {
             throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
+          }
+
+          if (containerUri.includes('/:username')) {
+            const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+            containerUri = containerUri.replace(':username', account.username);
           }
 
           objectUri = await ctx.call('ldp.resource.post', {
@@ -78,6 +87,36 @@ const ObjectService = {
       }
 
       return activity;
+    },
+    async cacheRemote(ctx) {
+      const { objectUri, actorUri } = ctx.params;
+
+      const object = await ctx.call('activitypub.proxy.query', {
+        resourceUri: objectUri,
+        actorUri
+      });
+
+      const objectType = object.type || object['@type'];
+      let containerUri = this.getMatchingContainerUri(objectType);
+      if (!containerUri) {
+        throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
+      }
+
+      if (containerUri.includes('/:username')) {
+        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+        containerUri = containerUri.replace(':username', account.username);
+        ctx.meta.dataset = account.username;
+      }
+
+      await ctx.call('triplestore.insert', {
+        resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
+        webId
+      });
+
+      await ctx.call('triplestore.insert', {
+        resource,
+        contentType: MIME_TYPES.JSON
+      });
     }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
     // async create(ctx) {

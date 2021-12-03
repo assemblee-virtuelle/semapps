@@ -22,6 +22,8 @@ const authProvider = ({
         });
         const { token } = json;
         localStorage.setItem('token', token);
+        // Reload to ensure the dataServer config is reset
+        window.location.reload();
       } catch (e) {
         throw new Error('ra.auth.sign_in_error');
       }
@@ -60,7 +62,11 @@ const authProvider = ({
   },
   logout: async () => {
     localStorage.removeItem('token');
-    if (!localAccounts) {
+    if (localAccounts) {
+      // Reload to ensure the dataServer config is reset
+      window.location.reload();
+      window.location.href = '/';
+    } else {
       const url = new URL(window.location.href);
       if (!allowAnonymous) {
         window.location.href = `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');

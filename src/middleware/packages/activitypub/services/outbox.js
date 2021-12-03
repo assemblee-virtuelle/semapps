@@ -1,6 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectCurrentToId } = require('../utils');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -42,6 +40,14 @@ const OutboxService = {
 
       ctx.emit('activitypub.outbox.posted', { activity });
 
+      ctx.meta.$responseHeaders = {
+        Location: activityUri,
+        'Content-Length': 0
+      };
+
+      ctx.meta.$statusCode = 201;
+
+      // TODO do not return activity when calling through the HTTP
       return activity;
     },
     async list(ctx) {
