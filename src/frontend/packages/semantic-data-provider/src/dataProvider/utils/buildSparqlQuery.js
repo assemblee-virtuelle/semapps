@@ -1,7 +1,7 @@
-import { buildDereferenceQuery } from './dereference';
+import buildDereferenceQuery from './buildDereferenceQuery';
 import getRdfPrefixes from './getRdfPrefixes';
 
-const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }) => {
+const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
   let whereQuery = '';
 
   if (filter) {
@@ -35,8 +35,8 @@ const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }
       ${dereferenceQuery.construct}
     }
     WHERE {
-      ?s1 a ?type .
-      FILTER( ?type IN (${types.join(', ')}) ) .
+      ?containerUri ldp:contains ?s1 .
+      FILTER( ?containerUri IN (${containers.map(container => `<${container}>`).join(', ')}) ) .
       FILTER( (isIRI(?s1)) ) .
       ${whereQuery}
       ${dereferenceQuery.where}

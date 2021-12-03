@@ -9,7 +9,7 @@ const getManyMethod = config => async (resourceId, params) => {
     id = typeof id === 'object' ? id['@id'] : id;
 
     try {
-      const data = await getOne(config)(resourceId, { id });
+      const { data } = await getOne(config)(resourceId, { id });
       returnData.push(data);
     } catch (e) {
       // Catch if one resource fails to load
@@ -23,6 +23,8 @@ const getManyMethod = config => async (resourceId, params) => {
       }
     }
   }
+
+  console.log('getMany', returnData);
 
   return { data: returnData };
 };

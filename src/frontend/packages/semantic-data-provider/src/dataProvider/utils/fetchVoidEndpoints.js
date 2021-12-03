@@ -1,17 +1,27 @@
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
-
-const fetchVoidEndpoints = config => {
-  return new Promise(resolve => {
-    const fetchArray = Object.values(config.dataServers).map(server =>
-      config.httpClient(new URL('/.well-known/void', 'https://' + server.domain))
+const fetchVoidEndpoints = async config => {
+  const fetchPromises = Object.values(config.dataServers)
+    .filter(server => server.pod !== true)
+    .map(server =>
+      config
+        .httpClient(new URL('/.well-known/void', server.baseUrl))
+        .then(result => ({ data: result.json }))
+        .catch(e => {
+          if (e.status === 404) {
+            return { error: e };
+          } else {
+            throw e;
+          }
+        })
     );
-    Promise.all([delay(5000)]).then(values => {
-      console.log('fetchVoidEndpoints resolved');
-      // Process all data received and put them in the config
-      config.containers = { hello: 'world' };
-      resolve();
-    });
-  });
+
+  const results = await Promise.all(fetchPromises);
+
+  for (let result of results) {
+    // Ignore unfetchable endpoints
+    if (result.data) {
+      // TODO modify config.dataServers based on the VOID configs returned
+    }
+  }
 };
 
 export default fetchVoidEndpoints;
