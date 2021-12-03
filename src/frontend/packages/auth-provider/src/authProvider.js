@@ -7,8 +7,7 @@ const authProvider = ({
   localAccounts = false,
   checkUser,
   httpClient,
-  checkPermissions,
-  resources
+  checkPermissions
 }) => ({
   login: async params => {
     const url = new URL(window.location.href);
@@ -93,23 +92,21 @@ const authProvider = ({
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: async resourceId => {
+  getPermissions: async uri => {
     if (!checkPermissions) return true;
 
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+    const aclUri = getAclUri(middlewareUri, uri);
 
     const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
-  addPermission: async (resourceId, agentId, predicate, mode) => {
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+  addPermission: async (uri, agentId, predicate, mode) => {
+    const aclUri = getAclUri(middlewareUri, uri);
 
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
 
     let authorization = {
       '@id': '#' + mode.replace('acl:', ''),
@@ -127,10 +124,11 @@ const authProvider = ({
       })
     });
   },
-  removePermission: async (resourceId, agentId, predicate, mode) => {
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+  removePermission: async (uri, agentId, predicate, mode) => {
+    if (!uri || !uri.startsWith('http'))
+      throw new Error('The first parameter passed to removePermission must be an URL');
+
+    const aclUri = getAclUri(middlewareUri, uri);
 
     // Fetch current permissions
     let { json } = await httpClient(aclUri);

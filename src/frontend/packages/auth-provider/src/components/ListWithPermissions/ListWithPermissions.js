@@ -1,11 +1,13 @@
 import React from 'react';
 import { usePermissionsOptimized } from 'react-admin';
 import { List, ListActions } from '@semapps/archipelago-layout';
+import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
 
 const ListWithPermissions = ({ actions, resource, hasCreate, ...rest }) => {
-  const { permissions } = usePermissionsOptimized(resource);
+  const createContainerUri = useCreateContainer(resource);
+  const { permissions } = usePermissionsOptimized(createContainerUri);
   return (
     <List
       {...rest}

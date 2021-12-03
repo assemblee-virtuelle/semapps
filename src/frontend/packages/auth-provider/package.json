@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.57",
+    "@semapps/archipelago-layout": "0.3.9",
+    "@semapps/semantic-data-provider": "0.3.9",
     "jwt-decode": "^3.0.0",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "@semapps/archipelago-layout": "0.3.6",
     "react": "^16.13..1 || ^17.0.0",
     "react-admin": "^3.13.1"
   },

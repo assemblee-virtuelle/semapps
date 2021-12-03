@@ -17,8 +17,9 @@ export default {
   },
   dataModel: {
     types: ['pair:Document'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'documents',
-    slugField: 'pair:label'
+    fieldsMapping: {
+      title: 'pair:label'
+    }
   },
   translations: {
     fr: {

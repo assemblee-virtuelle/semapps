@@ -18,8 +18,9 @@ export default {
   },
   dataModel: {
     types: ['pair:Group'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'groups',
-    slugField: 'pair:label'
+    fieldsMapping: {
+      title: 'pair:label'
+    }
   },
   translations: {
     fr: {

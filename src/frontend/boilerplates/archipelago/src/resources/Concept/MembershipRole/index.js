@@ -16,8 +16,9 @@ export default {
   },
   dataModel: {
     types: ['pair:MembershipRole'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'membership-roles',
-    slugField: 'pair:label'
+    fieldsMapping: {
+      title: 'pair:label'
+    }
   },
   translations: {
     fr: {

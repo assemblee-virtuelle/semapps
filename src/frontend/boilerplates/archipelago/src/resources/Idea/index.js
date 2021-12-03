@@ -17,8 +17,9 @@ export default {
   },
   dataModel: {
     types: ['pair:Idea'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'ideas',
-    slugField: 'pair:label'
+    fieldsMapping: {
+      title: 'pair:label'
+    }
   },
   translations: {
     fr: {

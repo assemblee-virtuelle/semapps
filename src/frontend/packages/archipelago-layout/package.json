@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.57",
+    "@semapps/semantic-data-provider": "0.3.9",
     "autosuggest-highlight": "^3.1.1",
     "classnames": "^2.2.6",
     "lodash.throttle": "^4.1.1",

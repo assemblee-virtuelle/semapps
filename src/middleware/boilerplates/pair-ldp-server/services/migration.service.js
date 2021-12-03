@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const containers = require('../containers');
 const CONFIG = require('../config');
+const { getSlugFromUri } = require('@semapps/ldp');
 
 module.exports = {
   name: 'migration',
@@ -74,6 +75,30 @@ module.exports = {
               }
             }
           }
+        }
+      }
+    },
+    async createAccountsForUsers(ctx) {
+      const { usersContainer } = ctx.params;
+
+      const container = await ctx.call('ldp.container.get', {
+        containerUri: usersContainer,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      if (container['ldp:contains'] && container['ldp:contains'].length > 0) {
+        for (let user of container['ldp:contains']) {
+          // try {
+          const result = await ctx.call('auth.account.create', {
+            username: getSlugFromUri(user.id),
+            email: user['pair:e-mail'],
+            webId: user.id
+          });
+          console.log('Account created', result);
+          // } catch(e) {
+          //   console.error(e);
+          // }
         }
       }
     }

@@ -28,7 +28,7 @@ const fetchUserConfig = async config => {
     if (authServerKey) {
       // Fill the config provided to the data provider
       // We must modify the config object directly
-      config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl || urlJoin(webId, 'proxy');
+      config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
     }
   } else {
     if (podKey) {
