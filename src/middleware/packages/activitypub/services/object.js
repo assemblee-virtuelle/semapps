@@ -1,19 +1,38 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { MoleculerError } = require('moleculer').Errors;
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 
 const ObjectService = {
   name: 'activitypub.object',
   settings: {
     baseUri: null,
-    containers: null
+    podProvider: false
   },
   dependencies: ['ldp.resource'],
   actions: {
     async get(ctx) {
-      const { objectUri } = ctx.params;
-      return await ctx.call('ldp.resource.get', { resourceUri: objectUri, accept: MIME_TYPES.JSON });
+      const { objectUri, actorUri, ...rest } = ctx.params;
+
+      // If the object is already dereferenced, return it
+      if (typeof objectUri !== 'string') return objectUri;
+
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
+      try {
+        return await ctx.call(controlledActions.get || 'ldp.resource.get', {
+          resourceUri: objectUri,
+          accept: MIME_TYPES.JSON,
+          webId: actorUri,
+          ...rest
+        });
+      } catch (e) {
+        // If the object was not found in cache, try to query it distantly
+        // TODO only do this for distant objects
+        return await ctx.call('activitypub.proxy.query', {
+          resourceUri: objectUri,
+          actorUri
+        });
+        // TODO put in cache results ??
+      }
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
@@ -35,15 +54,16 @@ const ObjectService = {
 
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
-          const objectType = activity.object.type || activity.object['@type'];
-          let containerUri = this.getMatchingContainerUri(objectType);
-          if (!containerUri) {
-            throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
-          }
+          let containerUri;
+          const container = ctx.call('ldp.registry.getByType', {
+            type: activity.object.type || activity.object['@type']
+          });
 
-          if (containerUri.includes('/:username')) {
+          if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-            containerUri = containerUri.replace(':username', account.username);
+            containerUri = urlJoin(this.settings.baseUri, account.username, container.path);
+          } else {
+            containerUri = urlJoin(this.settings.baseUri, container.path);
           }
 
           objectUri = await ctx.call('ldp.resource.post', {
@@ -96,26 +116,27 @@ const ObjectService = {
         actorUri
       });
 
-      const objectType = object.type || object['@type'];
-      let containerUri = this.getMatchingContainerUri(objectType);
-      if (!containerUri) {
-        throw new MoleculerError('No container support the object type ' + objectType, 400, 'BAD_REQUEST');
-      }
+      let containerUri, dataset;
+      const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
 
-      if (containerUri.includes('/:username')) {
+      if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        containerUri = containerUri.replace(':username', account.username);
-        ctx.meta.dataset = account.username;
+        containerUri = urlJoin(this.settings.baseUri, account.username, container.path);
+        dataset = account.username;
+      } else {
+        containerUri = urlJoin(this.settings.baseUri, container.path);
       }
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
-        webId
+        webId: 'system',
+        dataset
       });
 
       await ctx.call('triplestore.insert', {
-        resource,
-        contentType: MIME_TYPES.JSON
+        resource: object,
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
@@ -155,19 +176,6 @@ const ObjectService = {
     //       });
     //     }
     //   }
-  },
-  methods: {
-    getMatchingContainerUri(types) {
-      types = Array.isArray(types) ? types : [types];
-      const container = this.settings.containers.find(container =>
-        types.some(type =>
-          Array.isArray(container.acceptedTypes)
-            ? container.acceptedTypes.includes(type)
-            : container.acceptedTypes === type
-        )
-      );
-      return container ? urlJoin(this.settings.baseUri, container.path) : null;
-    }
   }
 };
 

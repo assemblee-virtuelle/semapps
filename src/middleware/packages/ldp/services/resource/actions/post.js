@@ -8,8 +8,9 @@ module.exports = {
     let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
       if (ctx.meta.parser !== 'file') {
-        resourceUri = await ctx.call('ldp.resource.post', {
+        resourceUri = await ctx.call(controlledActions.create || 'ldp.resource.post', {
           containerUri: containerUri,
           slug: ctx.meta.headers.slug,
           resource,
@@ -24,7 +25,7 @@ module.exports = {
           } else {
             file = ctx.params.files[0];
           }
-          resourceUri = await ctx.call('ldp.resource.post', {
+          resourceUri = await ctx.call(controlledActions.create || 'ldp.resource.post', {
             containerUri: containerUri,
             slug: file.filename || ctx.meta.headers.slug,
             resource: {
@@ -82,17 +83,16 @@ module.exports = {
     },
     async handler(ctx) {
       let { resource, containerUri, slug, contentType, fileStream } = ctx.params;
-      let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { containerUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
         ...ctx.params
       };
 
       resource['@id'] = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
-      const containerExist = await ctx.call('ldp.container.exist', { containerUri }, { meta: { webId } });
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
       if (!containerExist) {
         throw new MoleculerError(
           `Cannot create resource in non-existing container ${containerUri}`,
@@ -167,16 +167,24 @@ module.exports = {
         { meta: { $cache: false } }
       );
 
-      ctx.emit('ldp.resource.created', {
-        resourceUri: resource['@id'],
-        newData,
-        webId
-      });
+      ctx.emit(
+        'ldp.resource.created',
+        {
+          resourceUri: resource['@id'],
+          newData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
-      ctx.emit('ldp.container.attached', {
-        containerUri,
-        resourceUri: resource['@id']
-      });
+      ctx.emit(
+        'ldp.container.attached',
+        {
+          containerUri,
+          resourceUri: resource['@id']
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       return resource['@id'];
     }

@@ -56,7 +56,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.group.member-added', { groupUri, memberUri });
+      ctx.emit('webacl.group.member-added', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
     }
   }
 };

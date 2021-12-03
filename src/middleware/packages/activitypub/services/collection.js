@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams',
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
@@ -22,7 +22,8 @@ const CollectionService = {
           summary: ctx.params.summary
         },
         accept: MIME_TYPES.JSON,
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -39,7 +40,8 @@ const CollectionService = {
             <${ctx.params.collectionUri}> a as:Collection .
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -60,7 +62,8 @@ const CollectionService = {
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
 
       return await ctx.call('triplestore.insert', {
-        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
+        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        webId: 'system'
       });
     },
     /*
@@ -79,20 +82,20 @@ const CollectionService = {
           DELETE
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
-        `
+        `,
+        webId: 'system'
       });
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
      * @param collectionUri The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param isActivity True if the items in the container are activities (default false)
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, dereferenceItems = false, isActivity = false, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, dereferenceItems = false, page, itemsPerPage, sort } = ctx.params;
 
       let collection = await ctx.call('triplestore.query', {
         query: `
@@ -142,7 +145,7 @@ const CollectionService = {
       } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
         return {
-          '@context': this.settings.context,
+          '@context': this.settings.jsonContext,
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
@@ -163,20 +166,9 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            if (isActivity) {
-              selectedItems.push(
-                await ctx.call('activitypub.activity.get', {
-                  activityUri: itemUri
-                })
-              );
-            } else {
-              selectedItems.push(
-                await ctx.call('ldp.resource.get', {
-                  resourceUri: itemUri,
-                  accept: MIME_TYPES.JSON
-                })
-              );
-            }
+            selectedItems.push(
+              await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: ctx.meta.webId })
+            );
           }
 
           // Remove the @context from all items
@@ -187,7 +179,7 @@ const CollectionService = {
 
         if (itemsPerPage) {
           return {
-            '@context': this.settings.context,
+            '@context': this.settings.jsonContext,
             id: collectionUri + '?page=' + page,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
@@ -199,7 +191,7 @@ const CollectionService = {
         } else {
           // No pagination, return the collection
           return {
-            '@context': this.settings.context,
+            '@context': this.settings.jsonContext,
             id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
@@ -226,7 +218,8 @@ const CollectionService = {
             ?container as:items ?s1 .
             ?s1 ?p1 ?o1 .
           } 
-        `
+        `,
+        webId: 'system'
       });
     },
     /*
@@ -246,18 +239,23 @@ const CollectionService = {
             FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
             ?s1 ?p1 ?o1 .
           }
-        `
+        `,
+        webId: 'system'
       });
     },
     async getOwner(ctx) {
       const { collectionUri, collectionKey } = ctx.params;
 
+      // Inboxes use the LDP ontology (LDN)
+      const prefix = collectionKey === 'inbox' ? 'ldp' : 'as';
+
       const results = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
           SELECT ?actorUri
           WHERE { 
-            ?actorUri as:${collectionKey} <${collectionUri}>
+            ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -271,7 +269,7 @@ const CollectionService = {
     before: {
       '*'(ctx) {
         // If we have a pod provider, guess the dataset from the container URI
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.collectionUri) {
+        if (this.settings.podProvider && ctx.params.collectionUri) {
           const collectionPath = new URL(ctx.params.collectionUri).pathname;
           const parts = collectionPath.split('/');
           if (parts.length > 1) {

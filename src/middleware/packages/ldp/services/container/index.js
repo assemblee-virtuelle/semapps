@@ -1,22 +1,17 @@
-const urlJoin = require('url-join');
-const defaultOptions = require('./defaultOptions');
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
-const createManyAction = require('./actions/createMany');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
 const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
-const getOptionsAction = require('./actions/getOptions');
 
 module.exports = {
   name: 'ldp.container',
   settings: {
     baseUrl: null,
     ontologies: [],
-    defaultOptions,
     podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
@@ -24,10 +19,8 @@ module.exports = {
     attach: attachAction,
     clear: clearAction,
     create: createAction,
-    createMany: createManyAction,
     detach: detachAction,
     exist: existAction,
-    getOptions: getOptionsAction,
     getAll: getAllAction,
     // Actions accessible through the API
     api_get: getAction.api,
@@ -37,8 +30,12 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
+        // if( ctx.params.dataset ) {
+        //   // If the dataset is provided explicitly, put it in the meta
+        //   ctx.meta.dataset = ctx.params.dataset;
+        //   delete ctx.params.dataset;
         if (this.settings.podProvider && ctx.params.containerUri) {
+          // If we have a pod provider, guess the dataset from the container URI
           const containerPath = new URL(ctx.params.containerUri).pathname;
           const parts = containerPath.split('/');
           if (parts.length > 1) {
@@ -46,12 +43,6 @@ module.exports = {
           }
         }
       }
-    }
-  },
-  methods: {
-    getContainerUri(containerConfig) {
-      const containerPath = typeof containerConfig === 'string' ? containerConfig : containerConfig.path;
-      return urlJoin(this.settings.baseUrl, containerPath);
     }
   }
 };

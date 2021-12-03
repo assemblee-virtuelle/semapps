@@ -50,7 +50,7 @@ const FollowService = {
         });
       }
 
-      ctx.emit('activitypub.follow.added', { follower, following });
+      ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
     },
     async removeFollower(ctx) {
       const { follower, following } = ctx.params;
@@ -72,7 +72,7 @@ const FollowService = {
         });
       }
 
-      ctx.emit('activitypub.follow.removed', { follower, following });
+      ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
     }
   },
   events: {

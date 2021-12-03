@@ -87,7 +87,7 @@ module.exports = {
     async filterMissingResources(ctx, triples) {
       let existingTriples = [];
       for (let triple of triples) {
-        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: triple.subject.id });
+        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: triple.subject.id, webId: 'system' });
         if (resourceExist) existingTriples.push(triple);
       }
       return existingTriples;

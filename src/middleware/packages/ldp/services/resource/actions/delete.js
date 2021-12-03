@@ -4,10 +4,12 @@ const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
+    const { typeURL, id, containerUri } = ctx.params;
+    const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
     try {
-      const { typeURL, id, containerUri } = ctx.params;
-      const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-      await ctx.call('ldp.resource.delete', {
+      await ctx.call(controlledActions.delete || 'ldp.resource.delete', {
         resourceUri
       });
       ctx.meta.$statusCode = 204;
@@ -37,7 +39,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       const { disassembly } = {
-        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
 
@@ -87,24 +89,25 @@ module.exports = {
       });
 
       // We must detach the resource from the container after deletion, otherwise the permissions will fail
-      await ctx.call(
-        'ldp.container.detach',
-        {
-          containerUri: getContainerFromUri(resourceUri),
-          resourceUri
-        },
-        { meta: { webId } }
-      );
+      await ctx.call('ldp.container.detach', {
+        containerUri: getContainerFromUri(resourceUri),
+        resourceUri,
+        webId
+      });
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);
       }
 
-      ctx.emit('ldp.resource.deleted', {
-        resourceUri,
-        oldData,
-        webId
-      });
+      ctx.emit(
+        'ldp.resource.deleted',
+        {
+          resourceUri,
+          oldData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
     }
   }
 };

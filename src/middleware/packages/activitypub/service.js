@@ -16,7 +16,7 @@ const ActivityPubService = {
   name: 'activitypub',
   settings: {
     baseUri: null,
-    additionalContext: {},
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
     containers: [],
     selectActorData: resource => ({
@@ -28,11 +28,7 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   async created() {
-    const { baseUri, podProvider } = this.settings;
-
-    const context = this.settings.additionalContext
-      ? ['https://www.w3.org/ns/activitystreams', this.settings.additionalContext]
-      : 'https://www.w3.org/ns/activitystreams';
+    const { baseUri, jsonContext, podProvider } = this.settings;
 
     const actorsContainers = this.getContainersByType(Object.values(ACTOR_TYPES)).map(path =>
       urlJoin(this.settings.baseUri, path)
@@ -43,7 +39,7 @@ const ActivityPubService = {
 
     this.broker.createService(CollectionService, {
       settings: {
-        context,
+        jsonContext,
         podProvider
       }
     });
@@ -52,25 +48,22 @@ const ActivityPubService = {
       settings: {
         baseUri,
         actorsContainers,
-        context: Array.isArray(context)
-          ? [...context, 'https://w3id.org/security/v1']
-          : [context, 'https://w3id.org/security/v1'],
-        selectActorData: this.settings.selectActorData
+        jsonContext,
+        selectActorData: this.settings.selectActorData,
+        podProvider
       }
     });
 
     this.broker.createService(ObjectService, {
       settings: {
         baseUri,
-        containers: this.settings.containers
+        podProvider
       }
     });
 
-    // TODO give more choices ? with a pathPattern ?
     this.broker.createService(ActivityService, {
       settings: {
-        containerUri: podProvider ? urlJoin(baseUri, ':username', 'activities') : urlJoin(baseUri, 'activities'),
-        context
+        jsonContext
       }
     });
 
@@ -86,7 +79,8 @@ const ActivityPubService = {
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
       settings: {
-        baseUri
+        baseUri,
+        podProvider
       }
     });
   },

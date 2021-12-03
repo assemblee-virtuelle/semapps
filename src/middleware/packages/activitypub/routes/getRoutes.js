@@ -39,12 +39,7 @@ const getRoutes = baseUri => {
       authentication: false,
       bodyParsers: false,
       aliases: {
-        'POST /outbox': [...middlewares, addCollectionUri(baseUri, 'outbox'), 'activitypub.outbox.post'],
-        'GET /activities/:id': [
-          ...middlewares,
-          addContainerUriMiddleware(urlJoin(baseUri, 'activities')),
-          'activitypub.activity.get'
-        ]
+        'POST /outbox': [...middlewares, addCollectionUri(baseUri, 'outbox'), 'activitypub.outbox.post']
       }
     }
   ];

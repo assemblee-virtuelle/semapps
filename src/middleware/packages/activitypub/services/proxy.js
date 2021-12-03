@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { Errors: E } = require('moleculer-web');
 
 const ProxyService = {
   name: 'activitypub.proxy',

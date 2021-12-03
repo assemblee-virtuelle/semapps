@@ -23,15 +23,11 @@ class LdpAdapter {
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
 
     const containerUri = this.service.schema.settings.containerUri;
-    const exists = await this.broker.call(
-      this.containerService + '.exist',
-      { containerUri },
-      { meta: { webId: 'system' } }
-    );
+    const exists = await this.broker.call(this.containerService + '.exist', { containerUri, webId: 'system' });
 
     if (!exists) {
       console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call(this.containerService + '.create', { containerUri }, { meta: { webId: 'system' } });
+      await this.broker.call(this.containerService + '.create', { containerUri });
     }
   }
 

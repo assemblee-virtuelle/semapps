@@ -13,8 +13,10 @@ module.exports = {
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
 
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
+
     try {
-      await ctx.call('ldp.resource.patch', {
+      await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
         resource,
         contentType: ctx.meta.headers['content-type']
       });
@@ -55,7 +57,7 @@ module.exports = {
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { resourceUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
 
@@ -132,12 +134,16 @@ module.exports = {
         { meta: { $cache: false } }
       );
 
-      ctx.emit('ldp.resource.updated', {
-        resourceUri,
-        oldData,
-        newData,
-        webId
-      });
+      ctx.emit(
+        'ldp.resource.updated',
+        {
+          resourceUri,
+          oldData,
+          newData,
+          webId
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       return resourceUri;
     }

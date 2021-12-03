@@ -1,7 +1,8 @@
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
-    baseUri: null
+    baseUri: null,
+    podProvider: false
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -14,14 +15,10 @@ const DispatchService = {
         const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
         if (this.isLocalActor(recipientUri)) {
           // Attach activity to the inbox of the local actor
-          await ctx.call(
-            'activitypub.collection.attach',
-            {
-              collectionUri: recipient.inbox,
-              item: activity
-            },
-            { meta: 'system' }
-          );
+          await ctx.call('activitypub.collection.attach', {
+            collectionUri: recipient.inbox,
+            item: activity
+          });
           localRecipients.push(recipientUri);
         } else {
           // If the QueueService mixin is available, use it
@@ -35,6 +32,7 @@ const DispatchService = {
       }
 
       if (localRecipients.length > 0) {
+        this.logger.info('emited from dispatch');
         this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
       }
     },
@@ -44,7 +42,7 @@ const DispatchService = {
   },
   methods: {
     isLocalActor(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
     },
     async remotePost(inboxUri, activity) {
       const body = JSON.stringify(activity);

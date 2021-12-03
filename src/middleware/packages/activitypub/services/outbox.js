@@ -30,7 +30,7 @@ const OutboxService = {
       activity.published = new Date().toISOString();
 
       const activityUri = await ctx.call('activitypub.activity.create', { activity });
-      activity = await ctx.call('activitypub.activity.get', { activityUri });
+      activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
@@ -38,7 +38,7 @@ const OutboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.outbox.posted', { activity });
+      ctx.emit('activitypub.outbox.posted', { activity }, { meta: { webId: null, dataset: null } });
 
       ctx.meta.$responseHeaders = {
         Location: activityUri,
@@ -58,7 +58,6 @@ const OutboxService = {
         page,
         itemsPerPage: this.settings.itemsPerPage,
         dereferenceItems: true,
-        isActivity: true,
         sort: { predicate: 'as:published', order: 'DESC' }
       });
 

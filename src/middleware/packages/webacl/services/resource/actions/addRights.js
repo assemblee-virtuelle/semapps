@@ -140,10 +140,14 @@ module.exports = {
       });
 
       if (newRights) {
-        ctx.emit('webacl.resource.created', { uri: resourceUri });
+        ctx.emit('webacl.resource.created', { uri: resourceUri }, { meta: { webId: null, dataset: null } });
       } else {
         const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
-        ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated });
+        ctx.emit(
+          'webacl.resource.updated',
+          { uri: resourceUri, isContainer, defaultRightsUpdated },
+          { meta: { webId: null, dataset: null } }
+        );
       }
     }
   }

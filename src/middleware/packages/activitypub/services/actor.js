@@ -10,12 +10,13 @@ const ActorService = {
   settings: {
     baseUri: null,
     actorsContainers: [],
-    context: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
       preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    })
+    }),
+    podProvider: false
   },
   actions: {
     async get(ctx) {
@@ -87,10 +88,26 @@ const ActorService = {
 
       // If the collections are created inside a container, attach them to the container
       if (containerUri) {
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'following') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'followers') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'inbox') });
-        await ctx.call('ldp.container.attach', { containerUri, resourceUri: urlJoin(baseUri, 'outbox') });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'following'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'followers'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'inbox'),
+          webId: 'system'
+        });
+        await ctx.call('ldp.container.attach', {
+          containerUri,
+          resourceUri: urlJoin(baseUri, 'outbox'),
+          webId: 'system'
+        });
       }
 
       return await ctx.call('ldp.resource.patch', {
@@ -101,7 +118,8 @@ const ActorService = {
           inbox: urlJoin(baseUri, 'inbox'),
           outbox: urlJoin(baseUri, 'outbox')
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     async detachCollections(ctx) {
@@ -125,7 +143,8 @@ const ActorService = {
             publicKeyPem: publicKey
           }
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     async deleteKeyPair(ctx) {
@@ -167,7 +186,7 @@ const ActorService = {
   },
   methods: {
     isLocal(uri) {
-      return uri.startsWith(this.settings.baseUri);
+      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
     }
   },
   events: {
@@ -181,7 +200,7 @@ const ActorService = {
         }
         await this.actions.attachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
-        ctx.emit('activitypub.actor.created', newData);
+        ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null } });
       }
     },
     async 'ldp.resource.deleted'(ctx) {
