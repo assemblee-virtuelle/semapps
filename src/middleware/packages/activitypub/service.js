@@ -11,7 +11,6 @@ const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
 const { ACTOR_TYPES } = require('./constants');
-const getRoutes = require('./routes/getCollectionRoute');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -19,7 +18,6 @@ const ActivityPubService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
-    containers: [],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
       name: undefined,
@@ -30,13 +28,6 @@ const ActivityPubService = {
   dependencies: ['api'],
   async created() {
     const { baseUri, jsonContext, podProvider } = this.settings;
-
-    const actorsContainers = this.getContainersByType(Object.values(ACTOR_TYPES)).map(path =>
-      urlJoin(this.settings.baseUri, path)
-    );
-    if (actorsContainers.length === 0) {
-      console.log('No container found with an ActivityPub actor type (' + Object.values(ACTOR_TYPES).join(', ') + ')');
-    }
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -56,7 +47,6 @@ const ActivityPubService = {
     this.broker.createService(ActorService, {
       settings: {
         baseUri,
-        actorsContainers,
         jsonContext,
         selectActorData: this.settings.selectActorData,
         podProvider
@@ -83,7 +73,12 @@ const ActivityPubService = {
     });
 
     this.broker.createService(InboxService);
-    this.broker.createService(OutboxService);
+
+    this.broker.createService(OutboxService, {
+      settings: {
+        jsonContext
+      }
+    });
 
     this.broker.createService(DispatchService, {
       mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,

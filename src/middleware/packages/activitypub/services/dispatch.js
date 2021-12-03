@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
@@ -42,7 +44,7 @@ const DispatchService = {
   },
   methods: {
     isLocalActor(uri) {
-      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUri);
     },
     async remotePost(inboxUri, activity) {
       const body = JSON.stringify(activity);

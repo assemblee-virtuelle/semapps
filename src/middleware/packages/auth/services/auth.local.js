@@ -32,7 +32,7 @@ const AuthLocalService = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
-      return { token, newUser: true };
+      return { token, webId, newUser: true };
     },
     async login(ctx) {
       const { username, password } = ctx.params;
@@ -43,7 +43,7 @@ const AuthLocalService = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
-      return { token, newUser: true };
+      return { token, webId: accountData.webId, newUser: true };
     }
   },
   methods: {

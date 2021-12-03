@@ -1,8 +1,8 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-
 module.exports = {
   settings: {
     path: null,
+    attachToTypes: [],
+    attachPredicate: null,
     ordered: false,
     itemsPerPage: null,
     dereferenceItems: false,
@@ -10,15 +10,17 @@ module.exports = {
     permissions: {},
     controlledActions: {}
   },
-  dependencies: ['activitypub'],
+  dependencies: ['activitypub.registry'],
   async started() {
     await this.broker.call('activitypub.registry.register', {
       path: this.settings.path,
       name: this.name,
-      acceptedTypes: this.settings.acceptedTypes,
-      accept: MIME_TYPES.JSON || this.settings.accept,
-      jsonContext: this.settings.jsonContext,
-      dereference: this.settings.dereference,
+      attachToTypes: this.settings.attachToTypes,
+      attachPredicate: this.settings.attachPredicate,
+      ordered: this.settings.ordered,
+      itemsPerPage: this.settings.itemsPerPage,
+      dereferenceItems: this.settings.dereferenceItems,
+      sort: this.settings.sort,
       permissions: this.settings.permissions,
       controlledActions: {
         get: this.name + '.get',

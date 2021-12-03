@@ -7,13 +7,14 @@ const OutboxService = {
   mixins: [ControlledCollectionMixin],
   settings: {
     path: '/outbox',
-    attachToTypes: ACTOR_TYPES,
+    attachToTypes: Object.values(ACTOR_TYPES),
     attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
     ordered: true,
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: {}
+    permissions: {},
+    jsonContext: null
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -29,6 +30,10 @@ const OutboxService = {
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+      }
+
+      if (!activity['@context']) {
+        activity['@context'] = this.settings.jsonContext;
       }
 
       // Process object create, update or delete
@@ -59,24 +64,6 @@ const OutboxService = {
 
       // TODO do not return activity when calling through HTTP
       return activity;
-    },
-    async list(ctx) {
-      let { collectionUri, page } = ctx.params;
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        collectionUri,
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        sort: { predicate: 'as:published', order: 'DESC' }
-      });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
-      }
     }
   }
 };

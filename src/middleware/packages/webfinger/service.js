@@ -1,4 +1,4 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+const fetch = require('node-fetch');
 
 const WebfingerService = {
   name: 'webfinger',

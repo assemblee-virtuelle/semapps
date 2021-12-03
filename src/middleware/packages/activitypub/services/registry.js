@@ -1,20 +1,20 @@
 const urlJoin = require('url-join');
+const pathJoin = require('path').join;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getCollectionRoute } = require('../routes/getCollectionRoute');
-const { defaultToArray } = require('../utils');
-const { getContainerFromUri } = require('@semapps/ldp');
+const getCollectionRoute = require('../routes/getCollectionRoute');
+const { defaultToArray, getSlugFromUri } = require('../utils');
 
-const CollectionRegistryService = {
+const RegistryService = {
   name: 'activitypub.registry',
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false
   },
-  dependencies: ['triplestore', 'ldp.resource'],
+  dependencies: ['triplestore', 'ldp'],
   async started() {
-    this.registeredContainers = {};
     this.registeredCollections = [];
+    this.registeredContainers = await this.broker.call('ldp.registry.list');
   },
   actions: {
     async register(ctx) {
@@ -30,22 +30,74 @@ const CollectionRegistryService = {
       // Find all containers where we want to attach this collection
       const containers = this.getContainersByType(attachToTypes);
 
-      // Go through each container and add a corresponding API route
-      for (let container of containers) {
-        await this.actions.addApiRoute({ collection: ctx.params, container });
+      if (containers) {
+        // Go through each container
+        for (let container of Object.values(containers)) {
+          // Add a corresponding API route
+          await this.actions.addApiRoute({ collection: ctx.params, container });
+
+          // TODO go through all objects in the matching containers and ensure the collection is attached
+        }
       }
     },
     async addApiRoute(ctx) {
       const { container, collection } = ctx.params;
 
-      const collectionUri = this.settings.podProvider
-        ? urlJoin(this.settings.baseUrl, ':username', container.path, ':objectId', collection.path)
-        : urlJoin(this.settings.baseUrl, container.path, ':objectId', collection.path);
+      const collectionPath = pathJoin(container.fullPath, ':objectId', collection.path);
+      const collectionUri = urlJoin(this.settings.baseUri, collectionPath);
 
       // TODO ensure it's not a problem if the same route is added twice
       await this.broker.call('api.addRoute', {
         route: getCollectionRoute(collectionUri, collection.controlledActions)
       });
+    },
+    list() {
+      return this.registeredCollections;
+    },
+    listLocalContainers() {
+      return this.registeredContainers;
+    },
+    async getByUri(ctx) {
+      const { collectionUri } = ctx.params;
+
+      if (!collectionUri) {
+        throw new Error('The param collectionUri must be provided to activitypub.registry.getByUri');
+      }
+
+      // Get last part of the URI (eg. /followers)
+      let path = '/' + getSlugFromUri(collectionUri);
+
+      return this.registeredCollections.find(collection => collection.path === path);
+    },
+    async createAndAttachCollection(ctx) {
+      const { objectUri, collection } = ctx.params;
+      const collectionUri = urlJoin(objectUri, collection.path);
+
+      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
+      if (!exists) {
+        // Create the collection
+        await ctx.call('activitypub.collection.create', { collectionUri, webId: 'system' });
+
+        // Attach it to the object
+        await ctx.call('ldp.resource.patch', {
+          resource: {
+            id: objectUri,
+            [collection.attachPredicate]: { '@id': collectionUri }
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      }
+    },
+    async deleteCollection(ctx) {
+      const { objectUri, collection } = ctx.params;
+      const collectionUri = urlJoin(objectUri, collection.path);
+
+      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
+      if (exists) {
+        // Delete the collection
+        await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
+      }
     }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
@@ -59,46 +111,23 @@ const CollectionRegistryService = {
     // }
   },
   methods: {
-    async createAndAttachCollection(ctx, objectUri, collection) {
-      const collectionUri = urlJoin(objectUri, collection.path);
-      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
-      if (!exists) {
-        // Create the collection
-        await ctx.call('activitypub.collection.create', { collectionUri, webId: 'system' });
-
-        // Attach it to the object
-        await ctx.call('ldp.resource.patch', {
-          resource: {
-            id: objectUri,
-            [collection.attachPredicate]: containerUri
-          },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
-      }
-    },
-    async deleteCollection(ctx, objectUri, collection) {
-      const collectionUri = urlJoin(objectUri, collection.path);
-      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
-      if (exists) {
-        // Delete the collection
-        await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
-      }
-    },
     // Get the collections attached to the given type
     getCollectionsByType(types) {
-      return this.registeredCollections.filter(collection => {
-        defaultToArray(types).some(type =>
-          Array.isArray(collection.attachToTypes)
-            ? collection.attachToTypes.includes(type)
-            : collection.attachToTypes === type
-        );
-      });
+      types = defaultToArray(types);
+      return types
+        ? this.registeredCollections.filter(collection =>
+            types.some(type =>
+              Array.isArray(collection.attachToTypes)
+                ? collection.attachToTypes.includes(type)
+                : collection.attachToTypes === type
+            )
+          )
+        : [];
     },
     // Get the containers with resources of the given type
     // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions
     getContainersByType(types) {
-      return Object.values(this.registeredContainers).find(container =>
+      return Object.values(this.registeredContainers).filter(container =>
         defaultToArray(types).some(type =>
           Array.isArray(container.acceptedTypes)
             ? container.acceptedTypes.includes(type)
@@ -110,16 +139,23 @@ const CollectionRegistryService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { newData } = ctx.params;
-      const collections = this.getCollectionsByType(newData.type || newData['@types']);
+      const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
-        await this.createAndAttachCollection(ctx, newData.id || newData['@id'], collection);
+        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
+      }
+    },
+    async 'ldp.resource.updated'(ctx) {
+      const { newData } = ctx.params;
+      const collections = this.getCollectionsByType(newData.type || newData['@type']);
+      for (let collection of collections) {
+        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
-      const collections = this.getCollectionsByType(oldData.type || oldData['@types']);
+      const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
-        await this.deleteCollection(ctx, newData.id || newData['@id'], collection);
+        await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection });
       }
     },
     async 'ldp.registry.registered'(ctx) {
@@ -140,4 +176,4 @@ const CollectionRegistryService = {
   }
 };
 
-module.exports = CollectionRegistryService;
+module.exports = RegistryService;

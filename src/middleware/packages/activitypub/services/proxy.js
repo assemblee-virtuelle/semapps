@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
 const ProxyService = {
@@ -22,9 +23,9 @@ const ProxyService = {
     };
 
     if (this.settings.podProvider) {
-      await this.broker.call('api.addRoute', { route: { path: '/:username/proxy', ...routeConfig }, toBottom: false });
+      await this.broker.call('api.addRoute', { route: { path: '/:username/proxy', ...routeConfig } });
     } else {
-      await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig }, toBottom: false });
+      await this.broker.call('api.addRoute', { route: { path: '/proxy', ...routeConfig } });
     }
   },
   actions: {

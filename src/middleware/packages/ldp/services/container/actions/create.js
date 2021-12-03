@@ -12,7 +12,7 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource: {
-        '@context': 'http://www.w3.org/ns/ldp',
+        '@context': { '@vocab': 'http://www.w3.org/ns/ldp#' },
         '@id': containerUri,
         '@type': ['Container', 'BasicContainer']
       },

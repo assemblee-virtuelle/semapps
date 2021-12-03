@@ -11,6 +11,12 @@ module.exports = {
         path: '/context.json',
         file: path.resolve(__dirname, '../public/context.json')
       }
+    ],
+    remoteContextFiles: [
+      {
+        uri: 'https://www.w3.org/ns/activitystreams',
+        file: path.resolve(__dirname, '../public/context-as.json')
+      }
     ]
   }
 };

@@ -6,22 +6,25 @@ module.exports = {
     let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
+      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
       if (ctx.meta.parser !== 'file') {
-        resourceUri = await ctx.call('ldp.container.post', {
+        resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
           containerUri,
           slug: ctx.meta.headers.slug,
           resource,
-          contentType: ctx.meta.headers['content-type']
+          contentType: ctx.meta.headers['content-type'],
+          createResourceAction: controlledActions.create
         });
       } else {
         if (ctx.params.files.length > 1) {
           throw new MoleculerError(`Multiple file upload not supported`, 400, 'BAD_REQUEST');
         }
-        resourceUri = await ctx.call('ldp.container.post', {
+        resourceUri = await ctx.call(controlledActions.post || 'ldp.container.post', {
           containerUri,
           slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
           file: ctx.params.files[0],
-          contentType: MIME_TYPES.JSON
+          contentType: MIME_TYPES.JSON,
+          createResourceAction: controlledActions.create
         });
       }
       ctx.meta.$responseHeaders = {
@@ -64,13 +67,15 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
+      },
+      createResourceAction: {
+        type: 'string',
+        default: 'ldp.resource.create'
       }
     },
     async handler(ctx) {
-      let { resource, containerUri, slug, contentType, file } = ctx.params;
+      let { resource, containerUri, slug, contentType, file, createResourceAction } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
       const resourceUri = await ctx.call('ldp.resource.generateId', { containerUri, slug });
 
@@ -92,7 +97,8 @@ module.exports = {
         if (file) {
           resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
         }
-        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+
+        await ctx.call(createResourceAction, {
           resource: {
             '@id': resourceUri,
             ...resource

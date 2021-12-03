@@ -1,7 +1,7 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
-const { objectCurrentToId, objectIdToCurrent, defaultToArray, isPublicActivity } = require('../utils');
+const { objectCurrentToId, objectIdToCurrent, defaultToArray } = require('../utils');
 const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
 
 const ActivityService = {
@@ -12,7 +12,7 @@ const ActivityService = {
     acceptedTypes: ACTIVITY_TYPES,
     accept: MIME_TYPES.JSON,
     jsonContext: null,
-    dereference: ['as:object'],
+    dereference: ['as:object/as:object'],
     permissions: {},
     newResourcesPermissions: {},
     controlledActions: {
@@ -32,7 +32,7 @@ const ActivityService = {
       let { activity } = ctx.params;
       const containerUri = await this.getContainerUri(activity.actor);
 
-      const activityUri = await ctx.call('ldp.container.post', {
+      return await ctx.call('ldp.container.post', {
         containerUri,
         resource: {
           '@context': this.settings.context,
@@ -41,36 +41,6 @@ const ActivityService = {
         contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
-
-      // Give read rights to activity recipients
-      const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
-      for (let recipient of recipients) {
-        await ctx.call('webacl.resource.addRights', {
-          resourceUri: activityUri,
-          additionalRights: {
-            user: {
-              uri: recipient,
-              read: true
-            }
-          },
-          webId: 'system'
-        });
-      }
-
-      // If activity is public, give anonymous read right
-      if (isPublicActivity(activity)) {
-        await ctx.call('webacl.resource.addRights', {
-          resourceUri: activityUri,
-          additionalRights: {
-            anon: {
-              read: true
-            }
-          },
-          webId: 'system'
-        });
-      }
-
-      return activityUri;
     },
     async getRecipients(ctx) {
       const { activity } = ctx.params;
@@ -104,9 +74,24 @@ const ActivityService = {
       }
 
       return output;
+    },
+    isPublic(ctx) {
+      const { activity } = ctx.params;
+      // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
+      const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
+      return defaultToArray(activity.to)
+        ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r))
+        : false;
     }
   },
   hooks: {
+    before: {
+      get(ctx) {
+        if (typeof ctx.params.resourceUri === 'object') {
+          ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
+        }
+      }
+    },
     after: {
       get(ctx, res) {
         return objectCurrentToId(res);

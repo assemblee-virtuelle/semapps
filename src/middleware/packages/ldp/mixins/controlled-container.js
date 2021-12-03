@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { delay } = require('../utils');
 
 module.exports = {
   settings: {
@@ -23,8 +24,9 @@ module.exports = {
       permissions: this.settings.permissions,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
-        get: this.name + '.get',
+        post: this.name + '.post',
         list: this.name + '.list',
+        get: this.name + '.get',
         create: this.name + '.create',
         patch: this.name + '.patch',
         put: this.name + '.put',
@@ -34,11 +36,14 @@ module.exports = {
     });
   },
   actions: {
-    get(ctx) {
-      return ctx.call('ldp.resource.get', ctx.params);
+    post(ctx) {
+      return ctx.call('ldp.container.post', ctx.params);
     },
     list(ctx) {
       return ctx.call('ldp.container.get', ctx.params);
+    },
+    get(ctx) {
+      return ctx.call('ldp.resource.get', ctx.params);
     },
     create(ctx) {
       return ctx.call('ldp.resource.create', ctx.params);
@@ -56,6 +61,13 @@ module.exports = {
   methods: {
     async getContainerUri(webId) {
       return this.broker.call('ldp.registry.getUri', { path: this.settings.path, webId });
+    },
+    async waitForContainerCreation(containerUri) {
+      let containerExist;
+      do {
+        await delay(1000);
+        containerExist = await this.broker.call('ldp.container.exist', { containerUri, webId: 'system' });
+      } while (!containerExist);
     }
   }
 };

@@ -1,14 +1,14 @@
-const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
+const fetch = require('node-fetch');
+const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { delay } = require('../utils');
+const { delay, defaultToArray } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
-  dependencies: ['activitypub.collection', 'ldp.resource', 'ldp.container', 'signature'],
+  dependencies: ['activitypub.collection', 'ldp', 'signature'],
   settings: {
     baseUri: null,
-    actorsContainers: [],
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
       '@type': ACTOR_TYPES.PERSON,
@@ -19,9 +19,9 @@ const ActorService = {
   },
   actions: {
     async get(ctx) {
-      const { actorUri } = ctx.params;
+      const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON });
+        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
       } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
         if (!response) return false;
@@ -80,19 +80,21 @@ const ActorService = {
       await ctx.call('signature.deleteActorKeyPair', { actorUri });
     },
     async awaitCreateComplete(ctx) {
-      const { actorUri } = ctx.params;
+      let { actorUri, additionalKeys = [] } = ctx.params;
+      const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
       let actor;
       do {
-        await delay(2000);
+        await delay(1000);
         actor = await ctx.call(
           'ldp.resource.get',
           {
             resourceUri: actorUri,
-            accept: MIME_TYPES.JSON
+            accept: MIME_TYPES.JSON,
+            webId: 'system'
           },
           { meta: { $cache: false } }
         );
-      } while (!actor.publicKey);
+      } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
       return actor;
     },
     async generateMissingActorsData(ctx) {
@@ -114,15 +116,16 @@ const ActorService = {
   },
   methods: {
     isLocal(uri) {
-      return !this.settings.podProvider && uri.startsWith(this.settings.baseUri);
+      return uri.startsWith(this.settings.baseUri);
+    },
+    isActor(resource) {
+      return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
     }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
-
-      if (this.settings.actorsContainers.includes(containerUri)) {
+      if (this.isActor(newData)) {
         if (!newData.preferredUsername || !newData.name) {
           await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
         }
@@ -131,10 +134,8 @@ const ActorService = {
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
-
-      if (this.settings.actorsContainers.includes(containerUri)) {
+      const { resourceUri, oldData } = ctx.params;
+      if (this.isActor(oldData)) {
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },

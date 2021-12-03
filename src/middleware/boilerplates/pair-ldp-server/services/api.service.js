@@ -4,7 +4,6 @@ const CONFIG = require('../config');
 module.exports = {
   mixins: [ApiGatewayService],
   settings: {
-    server: true,
     port: CONFIG.PORT,
     cors: {
       origin: '*',

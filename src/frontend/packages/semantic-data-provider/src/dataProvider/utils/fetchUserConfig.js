@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import getServerKeyFromType from './getServerKeyFromType';
+import urlJoin from 'url-join';
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
@@ -14,22 +15,20 @@ const fetchUserConfig = async config => {
     const { webId } = jwtDecode(token);
     const { json: userData } = await httpClient(webId);
 
-    // TODO find POD URI from user profile
-    const podUri = getContainerFromUri(webId);
-
     // If we have a POD server
     if (podKey) {
       // Fill the config provided to the data provider
       // We must modify the config object directly
       config.dataServers[podKey].name = 'My Pod';
-      config.dataServers[podKey].baseUrl = podUri;
-      config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.['void:sparqlEndpoint'] || podUri + '/sparql';
+      config.dataServers[podKey].baseUrl = urlJoin(webId, 'data'); // TODO find POD URI from user profile
+      config.dataServers[podKey].sparqlEndpoint =
+        userData.endpoints?.['void:sparqlEndpoint'] || urlJoin(webId, 'sparql');
     }
 
     if (authServerKey) {
       // Fill the config provided to the data provider
       // We must modify the config object directly
-      config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl || podUri + '/proxy';
+      config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl || urlJoin(webId, 'proxy');
     }
   } else {
     if (podKey) {

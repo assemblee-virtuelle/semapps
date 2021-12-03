@@ -9,7 +9,7 @@ const FollowService = {
   async started() {
     await this.broker.call('activitypub.registry.register', {
       path: '/followers',
-      attachToTypes: ACTOR_TYPES,
+      attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
       dereferenceItems: false,
@@ -18,7 +18,7 @@ const FollowService = {
 
     await this.broker.call('activitypub.registry.register', {
       path: '/following',
-      attachToTypes: ACTOR_TYPES,
+      attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
       dereferenceItems: false,

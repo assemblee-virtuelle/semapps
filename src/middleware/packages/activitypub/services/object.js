@@ -25,6 +25,11 @@ const ObjectService = {
           ...rest
         });
       } catch (e) {
+        if (!actorUri || actorUri === 'webId' || actorUri === 'anon') {
+          throw new Error(
+            'No valid actor URI provided to activitypub.object.get (provided: ' + actorUri + '), cannot query proxy'
+          );
+        }
         // If the object was not found in cache, try to query it distantly
         // TODO only do this for distant objects
         return await ctx.call('activitypub.proxy.query', {
@@ -109,10 +114,14 @@ const ObjectService = {
       return activity;
     },
     async cacheRemote(ctx) {
-      const { objectUri, actorUri } = ctx.params;
+      let { objectUri, actorUri } = ctx.params;
 
-      const object = await ctx.call('activitypub.proxy.query', {
-        resourceUri: objectUri,
+      if (typeof objectUri === 'object') {
+        objectUri = objectUri.id || objectUri['@id'];
+      }
+
+      const object = await ctx.call('activitypub.object.get', {
+        objectUri,
         actorUri
       });
 
@@ -121,11 +130,23 @@ const ObjectService = {
 
       if (this.settings.podProvider) {
         const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        containerUri = urlJoin(this.settings.baseUri, account.username, container.path);
+        containerUri = urlJoin(this.settings.baseUri, container.fullPath.replace(':username', account.username));
         dataset = account.username;
       } else {
         containerUri = urlJoin(this.settings.baseUri, container.path);
       }
+
+      // Delete the existing cached resource (if it exists)
+      await ctx.call('triplestore.update', {
+        query: `
+          DELETE
+          WHERE { 
+            <${objectUri}> ?p1 ?o1 .
+          }
+        `,
+        webId: 'system',
+        dataset
+      });
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
@@ -176,6 +197,11 @@ const ObjectService = {
     //       });
     //     }
     //   }
+  },
+  methods: {
+    isLocal(uri) {
+      return uri.startsWith(this.settings.baseUri);
+    }
   }
 };
 

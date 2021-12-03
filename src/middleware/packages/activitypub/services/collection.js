@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const getContainerRoute = require('../../../routes/getContainerRoute');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -24,7 +23,6 @@ const CollectionService = {
           type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
           summary
         },
-        accept: MIME_TYPES.JSON,
         contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
@@ -42,6 +40,27 @@ const CollectionService = {
           ASK
           WHERE {
             <${collectionUri}> a as:Collection .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+    },
+    /*
+     * Checks if an item is in a collection
+     * @param collectionUri The full URI of the collection
+     * @param itemUri The full URI of the item
+     * @return true if the collection exists
+     */
+    async includes(ctx) {
+      const { collectionUri, itemUri } = ctx.params;
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          ASK
+          WHERE {
+            <${collectionUri}> a as:Collection .
+            <${collectionUri}> as:items <${itemUri}> .
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -77,6 +96,7 @@ const CollectionService = {
      */
     async detach(ctx) {
       const { collectionUri, item } = ctx.params;
+      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
@@ -85,7 +105,7 @@ const CollectionService = {
         query: `
           DELETE
           WHERE
-          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
+          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
         webId: 'system'
       });
@@ -100,6 +120,7 @@ const CollectionService = {
      */
     async get(ctx) {
       const { collectionUri, page } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', {
         collectionUri
       });
@@ -116,7 +137,8 @@ const CollectionService = {
             OPTIONAL { <${collectionUri}> as:summary ?summary . }
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       // No persisted collection found
@@ -175,9 +197,12 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: ctx.meta.webId })
-            );
+            try {
+              selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId }));
+            } catch (e) {
+              // Ignore resource if it is not found
+              console.info('Resource not found with URI: ' + itemUri);
+            }
           }
 
           // Remove the @context from all items

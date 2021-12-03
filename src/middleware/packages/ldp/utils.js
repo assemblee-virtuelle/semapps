@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const crypto = require('crypto');
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
@@ -24,55 +25,77 @@ const buildBlankNodesQuery = depth => {
   return { construct, where };
 };
 
-// Return an object in the form of predicate => parentPredicate
-const flattenPredicate = (accumulator, predicate, parent = 'root') => {
-  if (predicate.includes('/')) {
-    const matches = predicate.split(/\/(.+)/);
-    accumulator[matches[0]] = parent;
-    flattenPredicate(accumulator, matches[1], matches[0]);
-  } else {
-    accumulator[predicate] = parent;
+// Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
+const extractNodes = predicates => {
+  let nodes = [];
+  if (predicates) {
+    for (let predicate of predicates) {
+      if (predicate.includes('/')) {
+        const nodeNames = predicate.split('/');
+        for (let i = 1; i <= nodeNames.length; i++) {
+          nodes.push(nodeNames.slice(0, i).join('/'));
+        }
+      } else {
+        nodes.push(predicate);
+      }
+    }
   }
-  return accumulator;
+  return nodes;
 };
 
-// Transform ontology:predicate to OntologyPredicate in order to use it as a variable name
-const generateSparqlVarName = predicate =>
-  predicate
-    .split(':')
-    .map(s => s[0].toUpperCase() + s.slice(1))
-    .join('')
-    .replace(/[^a-z0-9]+/gi, '');
+const generateSparqlVarName = node =>
+  crypto
+    .createHash('md5')
+    .update(node)
+    .digest('hex');
+
+const getParentNode = node => node.includes('/') && node.split('/')[0];
+
+const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
+
+const buildOptionalQuery = (queries, parentNode = false) =>
+  queries
+    .filter(q => q.parentNode === parentNode)
+    .map(
+      q => `
+      OPTIONAL { 
+        ${q.query}
+        ${q.filter}
+        ${buildOptionalQuery(queries, q.node)}
+      }
+    `
+    )
+    .join('\n');
 
 const buildDereferenceQuery = predicates => {
   let queries = [];
+  const nodes = extractNodes(predicates);
 
-  if (predicates) {
-    const flattenedPredicates = predicates.reduce((acc, predicate) => flattenPredicate(acc, predicate), {});
+  if (nodes) {
+    for (let node of nodes) {
+      const parentNode = getParentNode(node);
+      const predicate = getPredicate(node);
+      const varName = generateSparqlVarName(node);
+      const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
-    for (const [predicate, parent] of Object.entries(flattenedPredicates)) {
-      const varName = generateSparqlVarName(predicate);
-      const parentVarName = parent === 'root' ? '1' : generateSparqlVarName(parent);
-
-      // Group queries by parent, so that we can group WHERE triples in the same OPTIONAL tag
-      const groupKey = parent === 'root' ? predicate : parent;
-      if (!queries[groupKey]) queries[groupKey] = [];
-
-      queries[groupKey].push(`
-        ?s${parentVarName} ${predicate} ?s${varName} .
-        ?s${varName} ?p${varName} ?o${varName} .
-      `);
+      queries.push({
+        node,
+        parentNode,
+        query: `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`,
+        filter: `FILTER(isBLANK(?s${varName})) .`
+      });
     }
-  }
 
-  return {
-    construct: Object.values(queries)
-      .map(groupedQueries => Object.values(groupedQueries).join('\n'))
-      .join('\n'),
-    where: Object.values(queries)
-      .map(groupedQueries => `OPTIONAL { ${Object.values(groupedQueries).join('\n')} }`)
-      .join('\n')
-  };
+    return {
+      construct: queries.map(q => q.query).join('\n'),
+      where: buildOptionalQuery(queries)
+    };
+  } else {
+    return {
+      construct: '',
+      where: ''
+    };
+  }
 };
 
 const buildFiltersQuery = filters => {
@@ -118,6 +141,8 @@ const isContainer = resource => hasType(resource, 'ldp:Container');
 
 const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 module.exports = {
   buildBlankNodesQuery,
   buildDereferenceQuery,
@@ -129,5 +154,6 @@ module.exports = {
   hasType,
   isContainer,
   defaultToArray,
+  delay,
   getAclUriFromResourceUri
 };

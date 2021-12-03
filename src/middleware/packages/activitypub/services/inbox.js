@@ -8,7 +8,7 @@ const InboxService = {
   mixins: [ControlledCollectionMixin],
   settings: {
     path: '/inbox',
-    attachToTypes: ACTOR_TYPES,
+    attachToTypes: Object.values(ACTOR_TYPES),
     attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
     ordered: true,
     itemsPerPage: 10,
