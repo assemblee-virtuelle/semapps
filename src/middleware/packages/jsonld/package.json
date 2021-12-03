@@ -1,6 +1,6 @@
 {
   "name": "@semapps/jsonld",
-  "version": "0.3.21",
+  "version": "0.4.0-alpha.0",
   "description": "JsonLD utils for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -8,8 +8,8 @@
     "jsonld": "^3.3.2",
     "jsonld-streaming-parser": "^2.4.2",
     "lru-cache": "^6.0.0",
-    "url-join": "^4.0.1",
-    "streamify-string": "^1.0.1"
+    "streamify-string": "^1.0.1",
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
