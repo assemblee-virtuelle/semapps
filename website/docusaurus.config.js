@@ -23,10 +23,13 @@ module.exports = {
   themeConfig: {
     navbar: {
       title: 'SemApps',
-      // logo: {
-      //   alt: 'My Site Logo',
-      //   src: 'img/logo.svg',
-      // },
+      logo: {
+        alt: 'Logo Semapps',
+        src: 'img/logo.png',
+        srcDark: 'img/logo_dark.png',
+        href: 'https://semapps.org/',
+        target: '_self',
+      },
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/governance/team', label: 'Team', position: 'left'},

@@ -16,6 +16,19 @@ services:
       - semapps
     environment:
       ADMIN_PASSWORD: "admin"
+      JAVA_MX_RAM: "4G"
+
+  fuseki_compact:
+    build:
+      context: ./src/jena/fuseki-docker
+      dockerfile: Dockerfile
+    entrypoint: /docker-compact-entrypoint.sh  
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_compact
+    volumes:
+      - ./data/rdf_data:/fuseki
+    networks:
+      - semapps
 
   middleware:
     build:

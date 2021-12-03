@@ -81,7 +81,8 @@ module.exports = {
 
     return await ctx.call('webacl.resource.hasRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      rights: ctx.params.rights
+      rights: ctx.params.rights,
+      webId: ctx.meta.webId
     });
   },
   action: {
@@ -102,7 +103,7 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     cache: {
-      keys: ['resourceUri', 'rights', 'webId', '#webId']
+      keys: ['resourceUri', 'rights', 'webId']
     },
     async handler(ctx) {
       let { resourceUri, webId, rights } = ctx.params;

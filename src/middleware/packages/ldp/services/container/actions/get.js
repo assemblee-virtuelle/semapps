@@ -85,11 +85,12 @@ module.exports = {
               let resource = await ctx.call('ldp.resource.get', {
                 resourceUri,
                 webId,
-                accept,
-                queryDepth,
-                dereference,
-                jsonContext,
-                forceSemantic: true
+                forceSemantic: true,
+                // We pass the following parameters only if they are explicit
+                accept: ctx.params.accept,
+                queryDepth: ctx.params.queryDepth,
+                dereference: ctx.params.dereference,
+                jsonContext: ctx.params.jsonContext
               });
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
@@ -102,7 +103,7 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
-              console.log('error requesting resource: ', resourceUri, e);
+              console.log('Error requesting resource: ', resourceUri);
               // Ignore a resource if it is not found
               if (e.name !== 'MoleculerError') throw e;
             }

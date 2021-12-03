@@ -1,6 +1,6 @@
 {
   "name": "@semapps/webacl",
-  "version": "0.3.17",
+  "version": "0.3.21",
   "description": "WebACL modification service for SemApps",
   "author": "Virtual Assembly",
   "homepage": "https://github.com/assemblee-virtuelle/semapps#readme",
@@ -16,12 +16,12 @@
     "url": "https://github.com/assemblee-virtuelle/semapps/issues"
   },
   "dependencies": {
-    "@semapps/middlewares": "0.3.17",
-    "@semapps/mime-types": "0.3.17",
-    "@semapps/triplestore": "0.3.17",
+    "@semapps/middlewares": "0.3.21",
+    "@semapps/mime-types": "0.3.21",
+    "@semapps/triplestore": "0.3.21",
     "ioredis": "^4.17.3",
     "jsonld-streaming-serializer": "^1.2.0",
-    "moleculer": "^0.14.17",
+    "moleculer": "^0.14.18",
     "n3": "^1.8.0",
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
