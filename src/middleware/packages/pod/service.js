@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { ACTOR_TYPES } = require("@semapps/activitypub");
+const { ACTOR_TYPES } = require('@semapps/activitypub');
 
 module.exports = {
   name: 'pod',
@@ -13,7 +13,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
-      dereference: ['sec:publicKey', 'as:endpoints'],
+      dereference: ['sec:publicKey', 'as:endpoints']
       // newResourcesPermissions: {}
     });
 
@@ -30,7 +30,7 @@ module.exports = {
   actions: {
     async create(ctx) {
       const { username } = ctx.params;
-      if( !username ) throw new Error('Cannot create pod without a username');
+      if (!username) throw new Error('Cannot create pod without a username');
 
       await ctx.call('fuseki-admin.createDataset', {
         dataset: username,
