@@ -10,11 +10,15 @@ module.exports = {
 
       for (let user of results['ldp:contains']) {
         if (user[emailPredicate]) {
-          await ctx.call('auth.account.create', {
-            email: user[emailPredicate],
-            username: user[usernamePredicate],
-            webId: user.id
-          });
+          try {
+            await ctx.call('auth.account.create', {
+              email: user[emailPredicate],
+              username: user[usernamePredicate],
+              webId: user.id
+            });
+          } catch(e) {
+            console.log(`Unable to create account for user ${user.id}. Error message: ${e.message}`);
+          }
         } else {
           console.log('No email found for user ' + user.id);
         }
