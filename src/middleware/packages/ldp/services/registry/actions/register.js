@@ -43,5 +43,11 @@ module.exports = {
 
     // 3. Save the options
     this.registeredContainers[name] = { path, ...options };
+
+    ctx.emit(
+      'ldp.registry.registered',
+      { container: this.registeredContainers[name] },
+      { meta: { webId: null, dataset: null } }
+    );
   }
 };

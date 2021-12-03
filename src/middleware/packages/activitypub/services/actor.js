@@ -1,4 +1,3 @@
-const urlJoin = require('url-join');
 const { getContainerFromUri, getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
@@ -59,77 +58,6 @@ const ActorService = {
         },
         contentType: MIME_TYPES.JSON
       });
-    },
-    async attachCollections(ctx) {
-      const { actorUri, containerUri, rights } = ctx.params;
-      const baseUri = containerUri || actorUri;
-
-      // Create the collections associated with the user
-      await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(baseUri, 'following'),
-        ordered: false,
-        rights
-      });
-      await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(baseUri, 'followers'),
-        ordered: false,
-        rights
-      });
-      await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(baseUri, 'inbox'),
-        ordered: true,
-        rights
-      });
-      await ctx.call('activitypub.collection.create', {
-        collectionUri: urlJoin(baseUri, 'outbox'),
-        ordered: true,
-        rights
-      });
-
-      // If the collections are created inside a container, attach them to the container
-      if (containerUri) {
-        await ctx.call('ldp.container.attach', {
-          containerUri,
-          resourceUri: urlJoin(baseUri, 'following'),
-          webId: 'system'
-        });
-        await ctx.call('ldp.container.attach', {
-          containerUri,
-          resourceUri: urlJoin(baseUri, 'followers'),
-          webId: 'system'
-        });
-        await ctx.call('ldp.container.attach', {
-          containerUri,
-          resourceUri: urlJoin(baseUri, 'inbox'),
-          webId: 'system'
-        });
-        await ctx.call('ldp.container.attach', {
-          containerUri,
-          resourceUri: urlJoin(baseUri, 'outbox'),
-          webId: 'system'
-        });
-      }
-
-      return await ctx.call('ldp.resource.patch', {
-        resource: {
-          '@id': actorUri,
-          following: urlJoin(baseUri, 'following'),
-          followers: urlJoin(baseUri, 'followers'),
-          inbox: urlJoin(baseUri, 'inbox'),
-          outbox: urlJoin(baseUri, 'outbox')
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
-    },
-    async detachCollections(ctx) {
-      const { actorUri, containerUri } = ctx.params;
-      const baseUri = containerUri || actorUri;
-
-      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'followers') });
-      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'following') });
-      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'inbox') });
-      await ctx.call('activitypub.collection.remove', { collectionUri: urlJoin(baseUri, 'outbox') });
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;
@@ -198,7 +126,6 @@ const ActorService = {
         if (!newData.preferredUsername || !newData.name) {
           await this.actions.appendActorData({ actorUri: resourceUri, userData: newData }, { parentCtx: ctx });
         }
-        await this.actions.attachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
         ctx.emit('activitypub.actor.created', newData, { meta: { webId: null, dataset: null } });
       }
@@ -208,7 +135,6 @@ const ActorService = {
       const containerUri = getContainerFromUri(resourceUri);
 
       if (this.settings.actorsContainers.includes(containerUri)) {
-        await this.actions.detachCollections({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
     },

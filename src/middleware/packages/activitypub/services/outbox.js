@@ -1,9 +1,19 @@
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { ACTOR_TYPES } = require('../constants');
 const { MoleculerError } = require('moleculer').Errors;
 
 const OutboxService = {
   name: 'activitypub.outbox',
+  mixins: [ControlledCollectionMixin],
   settings: {
-    itemsPerPage: 10
+    path: '/outbox',
+    attachToTypes: ACTOR_TYPES,
+    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sort: { predicate: 'as:published', order: 'DESC' },
+    permissions: {}
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -47,7 +57,7 @@ const OutboxService = {
 
       ctx.meta.$statusCode = 201;
 
-      // TODO do not return activity when calling through the HTTP
+      // TODO do not return activity when calling through HTTP
       return activity;
     },
     async list(ctx) {

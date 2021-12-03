@@ -5,6 +5,7 @@ module.exports = {
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
   BotService: require('./mixins/bot'),
+  ControlledCollectionMixin: require('./mixins/controlled-collection'),
   CollectionService: require('./services/collection'),
   DispatchService: require('./services/dispatch'),
   FollowService: require('./services/follow'),
@@ -12,5 +13,6 @@ module.exports = {
   ObjectService: require('./services/object'),
   OutboxService: require('./services/outbox'),
   ProxyService: require('./services/proxy'),
+  RegistryService: require('./services/registry'),
   ...constants
 };

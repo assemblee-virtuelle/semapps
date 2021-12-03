@@ -30,10 +30,6 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        // if( ctx.params.dataset ) {
-        //   // If the dataset is provided explicitly, put it in the meta
-        //   ctx.meta.dataset = ctx.params.dataset;
-        //   delete ctx.params.dataset;
         if (this.settings.podProvider && ctx.params.containerUri) {
           // If we have a pod provider, guess the dataset from the container URI
           const containerPath = new URL(ctx.params.containerUri).pathname;

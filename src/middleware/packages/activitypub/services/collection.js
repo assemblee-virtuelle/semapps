@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const getContainerRoute = require('../../../routes/getContainerRoute');
 
 const CollectionService = {
   name: 'activitypub.collection',
@@ -14,12 +15,14 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
+      const { collectionUri } = ctx.params;
+      const { ordered, summary } = await ctx.call('activitypub.registry.getByUri', { collectionUri });
       return await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: ctx.params.collectionUri,
-          type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary: ctx.params.summary
+          id: collectionUri,
+          type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+          summary
         },
         accept: MIME_TYPES.JSON,
         contentType: MIME_TYPES.JSON,
@@ -32,12 +35,13 @@ const CollectionService = {
      * @return true if the collection exists
      */
     async exist(ctx) {
+      const { collectionUri } = ctx.params;
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           ASK
           WHERE {
-            <${ctx.params.collectionUri}> a as:Collection .
+            <${collectionUri}> a as:Collection .
           }
         `,
         accept: MIME_TYPES.JSON,
@@ -95,7 +99,10 @@ const CollectionService = {
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, dereferenceItems = false, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, page } = ctx.params;
+      const { dereferenceItems, itemsPerPage, sort } = await ctx.call('activitypub.registry.getByUri', {
+        collectionUri
+      });
 
       let collection = await ctx.call('triplestore.query', {
         query: `
@@ -138,13 +145,15 @@ const CollectionService = {
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
       const numPages = !itemsPerPage ? 1 : allItems ? Math.ceil(allItems.length / itemsPerPage) : 0;
+      let returnData = null;
 
       if (page && page > numPages) {
         // The collection page does not exist
-        return null;
+        ctx.meta.$statusCode = 404;
+        return;
       } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
-        return {
+        returnData = {
           '@context': this.settings.jsonContext,
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
@@ -178,7 +187,7 @@ const CollectionService = {
         }
 
         if (itemsPerPage) {
-          return {
+          returnData = {
             '@context': this.settings.jsonContext,
             id: collectionUri + '?page=' + page,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
@@ -190,7 +199,7 @@ const CollectionService = {
           };
         } else {
           // No pagination, return the collection
-          return {
+          returnData = {
             '@context': this.settings.jsonContext,
             id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
@@ -200,6 +209,9 @@ const CollectionService = {
           };
         }
       }
+
+      ctx.meta.$responseType = 'application/ld+json';
+      return returnData;
     },
     /*
      * Empty the collection, deleting all items it contains.

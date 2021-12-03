@@ -1,10 +1,20 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { objectCurrentToId, objectIdToCurrent } = require('../utils');
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { ACTOR_TYPES } = require('../constants');
 
 const InboxService = {
   name: 'activitypub.inbox',
+  mixins: [ControlledCollectionMixin],
   settings: {
-    itemsPerPage: 10
+    path: '/inbox',
+    attachToTypes: ACTOR_TYPES,
+    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sort: { predicate: 'as:published', order: 'DESC' },
+    permissions: {}
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
@@ -61,7 +71,6 @@ const InboxService = {
         item: activity
       });
 
-      this.logger.info('emited from inbox');
       ctx.emit(
         'activitypub.inbox.received',
         {
@@ -72,24 +81,6 @@ const InboxService = {
       );
 
       ctx.meta.$statusCode = 202;
-    },
-    async list(ctx) {
-      let { collectionUri, page } = ctx.params;
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        collectionUri,
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        sort: { predicate: 'as:published', order: 'DESC' }
-      });
-
-      if (collection) {
-        ctx.meta.$responseType = 'application/ld+json';
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
     }
   }
 };
