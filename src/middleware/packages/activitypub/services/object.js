@@ -60,7 +60,7 @@ const ObjectService = {
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
           let containerUri;
-          const container = ctx.call('ldp.registry.getByType', {
+          const container = await ctx.call('ldp.registry.getByType', {
             type: activity.object.type || activity.object['@type']
           });
 

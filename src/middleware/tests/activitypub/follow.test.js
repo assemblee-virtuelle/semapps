@@ -1,9 +1,9 @@
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
-const { MIME_TYPES } = require('@semapps/mime-types');
+const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
 
-jest.setTimeout(100000);
+jest.setTimeout(50000);
 
 let broker;
 
@@ -18,29 +18,23 @@ describe('Posting to followers', () => {
   let simon, sebastien, followActivity;
 
   test('Create actor', async () => {
-    const sebastienUri = await broker.call('webid.create', {
-      nick: 'srosset81',
-      name: 'Sébastien',
-      familyName: 'Rosset',
-      email: 'seb@test.com'
+    const { webId: sebastienUri } = await broker.call('auth.signup', {
+      username: 'srosset81',
+      email: 'sebastien@test.com',
+      password: 'test',
+      name: 'Sébastien'
     });
 
-    await broker.watchForEvent('activitypub.actor.created');
+    sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
-    const simonUri = await broker.call('webid.create', {
-      nick: 'simonlouvet',
-      name: 'Simon',
-      familyName: 'Louvet',
-      email: 'sim@test.com'
+    const { webId: simonUri } = await broker.call('auth.signup', {
+      username: 'simonlouvet',
+      email: 'simon@test.com',
+      password: 'test',
+      name: 'Simon'
     });
 
-    await broker.watchForEvent('activitypub.actor.created');
-
-    sebastien = await broker.call('ldp.resource.get', {
-      resourceUri: sebastienUri,
-      accept: MIME_TYPES.JSON,
-      webId: sebastienUri
-    });
+    simon = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
 
     expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
 
@@ -54,12 +48,6 @@ describe('Posting to followers', () => {
       followers: sebastienUri + '/followers',
       following: sebastienUri + '/following'
     });
-
-    simon = await broker.call('ldp.resource.get', {
-      resourceUri: simonUri,
-      accept: MIME_TYPES.JSON,
-      webId: simonUri
-    });
   });
 
   test('Follow user', async () => {
@@ -72,40 +60,29 @@ describe('Posting to followers', () => {
       to: [simon.id, sebastien.id + '/followers']
     });
 
-    expect(followActivity).toMatchObject({
-      type: ACTIVITY_TYPES.FOLLOW,
-      actor: sebastien.id,
-      object: simon.id
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+      ).resolves.toBeTruthy();
     });
 
-    // Wait for actor to be added to the followers collection
-    await broker.watchForEvent('activitypub.follow.added');
-
-    let result = await broker.call('activitypub.follow.listFollowers', {
-      collectionUri: simon.followers
-    });
-
-    expect(result.items).toContain(sebastien.id);
-
-    result = await broker.call('activitypub.inbox.list', {
-      collectionUri: sebastien.inbox,
-      page: 1
-    });
-
-    expect(result.orderedItems).toHaveLength(1);
-
-    expect(result.orderedItems[0]).toMatchObject({
-      type: ACTIVITY_TYPES.ACCEPT,
-      actor: simon.id,
-      object: {
-        type: ACTIVITY_TYPES.FOLLOW,
-        object: simon.id
-      }
+    await waitForExpect(async () => {
+      const inbox = await broker.call('activitypub.collection.get', {
+        collectionUri: sebastien.inbox,
+        page: 1,
+        webId: sebastien.id
+      });
+      expect(inbox.orderedItems).toHaveLength(1);
+      expect(inbox.orderedItems[0]).toMatchObject({
+        type: ACTIVITY_TYPES.ACCEPT,
+        actor: simon.id,
+        object: followActivity.id
+      });
     });
   });
 
   test('Send message to followers', async () => {
-    let result = await broker.call('activitypub.outbox.post', {
+    const createActivity = await broker.call('activitypub.outbox.post', {
       collectionUri: simon.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
@@ -115,7 +92,7 @@ describe('Posting to followers', () => {
       content: 'Voilà mon premier message, très content de faire partie du fedivers !'
     });
 
-    expect(result).toMatchObject({
+    expect(createActivity).toMatchObject({
       type: ACTIVITY_TYPES.CREATE,
       object: {
         type: OBJECT_TYPES.NOTE,
@@ -123,43 +100,33 @@ describe('Posting to followers', () => {
       }
     });
 
-    // Wait for message to be received by all followers
-    await broker.watchForEvent('activitypub.inbox.received');
-
-    result = await broker.call('activitypub.inbox.list', {
-      collectionUri: sebastien.inbox,
-      page: 1
+    await waitForExpect(async () => {
+      const inbox = await broker.call('activitypub.collection.get', {
+        collectionUri: sebastien.inbox,
+        page: 1,
+        webId: sebastien.id
+      });
+      expect(inbox.orderedItems).toHaveLength(2);
+      expect(inbox.orderedItems[1]).toMatchObject({
+        id: createActivity.id
+      });
     });
-
-    expect(result.orderedItems).toHaveLength(2);
   });
 
   test('Unfollow user', async () => {
-    let result = await broker.call('activitypub.outbox.post', {
+    await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       actor: sebastien.id,
       type: ACTIVITY_TYPES.UNDO,
-      object: followActivity,
+      object: followActivity.id,
       to: [simon.id, sebastien.id + '/followers']
     });
 
-    // Wait for actor to be removed to the followers collection
-    await broker.watchForEvent('activitypub.follow.removed');
-
-    expect(result).toMatchObject({
-      type: ACTIVITY_TYPES.UNDO,
-      actor: sebastien.id,
-      object: {
-        type: ACTIVITY_TYPES.FOLLOW,
-        object: simon.id
-      }
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+      ).resolves.toBeFalsy();
     });
-
-    result = await broker.call('activitypub.follow.listFollowers', {
-      collectionUri: simon.followers
-    });
-
-    expect(result.items).toHaveLength(0);
   });
 });

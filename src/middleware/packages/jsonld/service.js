@@ -2,6 +2,8 @@ const jsonld = require('jsonld');
 const urlJoin = require('url-join');
 const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
+const JsonLdParser = require('jsonld-streaming-parser').JsonLdParser;
+const streamifyString = require('streamify-string');
 
 const defaultDocumentLoader = jsonld.documentLoaders.node();
 const cache = new LRU({ max: 500 });
@@ -17,6 +19,12 @@ module.exports = {
   async started() {
     this.jsonld = jsonld;
     this.jsonld.documentLoader = this.documentLoaderWithCache;
+
+    this.jsonLdParser = new JsonLdParser({
+      documentLoader: {
+        load: url => this.documentLoaderWithCache(url).then(context => context.document)
+      }
+    });
 
     for (let contextFile of this.settings.localContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
@@ -65,6 +73,10 @@ module.exports = {
       const context = cache.get(ctx.params.uri);
       return context.document;
     },
+    async getContextDocument(ctx) {
+      const { document } = await this.documentLoaderWithCache(ctx.params.url);
+      return document;
+    },
     compact(ctx) {
       const { input, context, options } = ctx.params;
       return this.jsonld.compact(input, context, options);
@@ -92,6 +104,22 @@ module.exports = {
     toRDF(ctx) {
       const { input, options } = ctx.params;
       return this.jsonld.toRDF(input, options);
+    },
+    // Return quads in RDF.JS data model
+    // (this.jsonld.toRDF does not use the same model)
+    // https://github.com/rdfjs/data-model-spec
+    toQuads(ctx) {
+      const { input } = ctx.params;
+      return new Promise((resolve, reject) => {
+        const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
+        const textStream = streamifyString(jsonString);
+        let res = [];
+        this.jsonLdParser
+          .import(textStream)
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
+          .on('end', () => resolve(res));
+      });
     }
   },
   methods: {
@@ -100,6 +128,9 @@ module.exports = {
         return cache.get(url);
       } else {
         const context = await defaultDocumentLoader(url, options);
+        if (typeof context.document === 'string') {
+          context.document = JSON.parse(context.document);
+        }
         cache.set(url, context);
         return context;
       }

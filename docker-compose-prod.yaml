@@ -9,7 +9,6 @@ services:
     restart: always
     volumes:
       - rdf_data:/fuseki
-      - staging:/staging
     ports:
       - "3030:3030"
     expose:

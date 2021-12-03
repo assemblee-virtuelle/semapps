@@ -145,7 +145,7 @@ describe('Container options', () => {
   });
 
   test('Create resource with disassembly', async () => {
-    const resourceUri = await broker.call('ldp.container.post', {
+    const organizationUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
           pair: 'http://virtual-assembly.org/ontologies/pair#'
@@ -162,10 +162,15 @@ describe('Container options', () => {
       containerUri: CONFIG.HOME_URL + 'organizations'
     });
 
-    orga1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON });
+    orga1 = await broker.call('ldp.resource.get', { resourceUri: organizationUri, accept: MIME_TYPES.JSON });
     expect(orga1['pair:description']).toBe('myOrga');
     expect(orga1['pair:hasLocation']['@id']).toBeDefined();
-    expect(orga1['pair:hasLocation']['pair:description']).toBe('myPlace');
+
+    const place = await broker.call('ldp.resource.get', {
+      resourceUri: orga1['pair:hasLocation']['@id'],
+      accept: MIME_TYPES.JSON
+    });
+    expect(place['pair:description']).toBe('myPlace');
   });
 
   test('Update (PUT) resource with disassembly', async () => {
@@ -181,14 +186,15 @@ describe('Container options', () => {
       contentType: MIME_TYPES.JSON
     });
 
-    let orga1Updated = await broker.call('ldp.resource.get', {
-      resourceUri: orga1['@id'],
-      accept: MIME_TYPES.JSON
-    });
-
+    const orga1Updated = await broker.call('ldp.resource.get', { resourceUri: orga1['@id'], accept: MIME_TYPES.JSON });
     expect(orga1Updated['pair:description']).toBe('myOrga2');
     expect(orga1Updated['pair:hasLocation']['@id']).toBeDefined();
-    expect(orga1Updated['pair:hasLocation']['pair:description']).toBe('myPlace2');
+
+    const place = await broker.call('ldp.resource.get', {
+      resourceUri: orga1Updated['pair:hasLocation']['@id'],
+      accept: MIME_TYPES.JSON
+    });
+    expect(place['pair:description']).toBe('myPlace2');
   }, 20000);
 
   test('Delete resource with disassembly', async () => {

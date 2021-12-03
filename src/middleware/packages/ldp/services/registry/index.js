@@ -15,7 +15,7 @@ module.exports = {
     defaultOptions,
     podProvider: false
   },
-  dependencies: ['ldp.container', 'api', 'auth.account'],
+  dependencies: ['ldp.container', 'api'],
   actions: {
     getByType: getByTypeAction,
     getByUri: getByUriAction,
@@ -25,8 +25,15 @@ module.exports = {
   },
   async started() {
     this.registeredContainers = [];
+    if (this.settings.podProvider) {
+      // The auth.account service is a dependency only in POD provider config
+      await this.broker.waitForServices(['auth.account']);
+    }
     if (this.settings.containers.length > 0) {
       for (let container of this.settings.containers) {
+        // Ensure backward compatibility
+        if (typeof container === 'string') container = { path: container };
+        // Do not await this action, as we need the service to be available for the WebACL middleware
         this.actions.register(container);
       }
     }
@@ -35,9 +42,11 @@ module.exports = {
     async createAndAttachContainer(ctx, containerUri, containerPath) {
       const exists = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       if (!exists) {
+        // Then create the container
         await ctx.call('ldp.container.create', { containerUri, webId: 'system' });
 
-        // 2. Attach the container to its parent container
+        // First attach the container to its parent container
+        // This will avoid WebACL error, in case the container is fetched before
         if (containerPath !== '/') {
           const parentContainerUri = getContainerFromUri(containerUri);
           const parentExists = await ctx.call('ldp.container.exist', {

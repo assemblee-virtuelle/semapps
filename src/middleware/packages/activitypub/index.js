@@ -14,5 +14,6 @@ module.exports = {
   OutboxService: require('./services/outbox'),
   ProxyService: require('./services/proxy'),
   RegistryService: require('./services/registry'),
+  containers: require('./containers'),
   ...constants
 };

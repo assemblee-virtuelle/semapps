@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { delay } = require('../utils');
+const { delay, getContainerFromUri } = require('../utils');
 
 module.exports = {
   settings: {
@@ -63,11 +63,31 @@ module.exports = {
       return this.broker.call('ldp.registry.getUri', { path: this.settings.path, webId });
     },
     async waitForContainerCreation(containerUri) {
-      let containerExist;
+      let containerExist, containerAttached;
+
       do {
-        await delay(1000);
+        if (containerExist === false) await delay(1000);
         containerExist = await this.broker.call('ldp.container.exist', { containerUri, webId: 'system' });
       } while (!containerExist);
+
+      const parentContainerUri = getContainerFromUri(containerUri);
+      const parentContainerExist = await this.broker.call('ldp.container.exist', {
+        containerUri: parentContainerUri,
+        webId: 'system'
+      });
+
+      // If a parent container exist, check that the child container has been attached
+      // Otherwise, it may fail
+      if (parentContainerExist) {
+        do {
+          if (containerAttached === false) await delay(1000);
+          containerAttached = await this.broker.call('ldp.container.includes', {
+            containerUri: parentContainerUri,
+            resourceUri: containerUri,
+            webId: 'system'
+          });
+        } while (!containerAttached);
+      }
     }
   }
 };

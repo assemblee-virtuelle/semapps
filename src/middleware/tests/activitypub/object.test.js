@@ -2,6 +2,7 @@ const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
+const waitForExpect = require('wait-for-expect');
 
 jest.setTimeout(50000);
 
@@ -18,26 +19,20 @@ describe('Create/Update/Delete objects', () => {
   let sebastien, objectUri;
 
   test('Create actor', async () => {
-    const sebastienUri = await broker.call('webid.create', {
-      nick: 'srosset81',
-      name: 'Sébastien',
-      familyName: 'Rosset',
-      email: 'seb@test.com'
+    const { webId: sebastienUri } = await broker.call('auth.signup', {
+      username: 'srosset81',
+      email: 'sebastien@test.com',
+      password: 'test',
+      name: 'Sébastien'
     });
 
-    await broker.watchForEvent('activitypub.actor.created');
-
-    sebastien = await broker.call('ldp.resource.get', {
-      resourceUri: sebastienUri,
-      accept: MIME_TYPES.JSON,
-      webId: sebastienUri
-    });
+    sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
     expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
   });
 
   test('Create object', async () => {
-    await broker.call('activitypub.outbox.post', {
+    const createActivity = await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.ARTICLE,
@@ -47,12 +42,7 @@ describe('Create/Update/Delete objects', () => {
       content: 'Mon premier article, soyez indulgents'
     });
 
-    // Check the activity is on the user's outbox
-    let result = await broker.call('activitypub.outbox.list', {
-      collectionUri: sebastien.outbox,
-      page: 1
-    });
-    expect(result.orderedItems[0]).toMatchObject({
+    expect(createActivity).toMatchObject({
       type: ACTIVITY_TYPES.CREATE,
       actor: sebastien.id,
       object: {
@@ -62,12 +52,19 @@ describe('Create/Update/Delete objects', () => {
       },
       to: sebastien.followers
     });
-    expect(result.orderedItems[0].object).toHaveProperty('id');
-    expect(result.orderedItems[0].object).not.toHaveProperty('current');
 
-    objectUri = result.orderedItems[0].object.id;
+    expect(createActivity.object).toHaveProperty('id');
+    expect(createActivity.object).not.toHaveProperty('current');
 
-    // Check the object has been created
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id })
+      ).resolves.toBeTruthy();
+    });
+
+    objectUri = createActivity.object.id;
+
+    // Check the object has been created in the container
     const object = await broker.call('ldp.resource.get', {
       resourceUri: objectUri,
       accept: MIME_TYPES.JSON
@@ -77,7 +74,7 @@ describe('Create/Update/Delete objects', () => {
   });
 
   test('Update object', async () => {
-    await broker.call('activitypub.outbox.post', {
+    const updateActivity = await broker.call('activitypub.outbox.post', {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.UPDATE,
@@ -89,12 +86,7 @@ describe('Create/Update/Delete objects', () => {
       to: sebastien.followers
     });
 
-    // Check activity is on the user's outbox
-    let result = await broker.call('activitypub.outbox.list', {
-      collectionUri: sebastien.outbox,
-      page: 1
-    });
-    expect(result.orderedItems[0]).toMatchObject({
+    expect(updateActivity).toMatchObject({
       type: ACTIVITY_TYPES.UPDATE,
       actor: sebastien.id,
       object: {
@@ -105,7 +97,7 @@ describe('Create/Update/Delete objects', () => {
       },
       to: sebastien.followers
     });
-    expect(result.orderedItems[0].object).not.toHaveProperty('current');
+    expect(updateActivity).not.toHaveProperty('current');
 
     // Check the object has been updated
     const object = await broker.call('ldp.resource.get', {
@@ -128,22 +120,13 @@ describe('Create/Update/Delete objects', () => {
       object: objectUri
     });
 
-    // Check activity is on the user's outbox
-    let result = await broker.call('activitypub.outbox.list', {
-      collectionUri: sebastien.outbox,
-      page: 1
+    await waitForExpect(async () => {
+      await expect(
+        broker.call('ldp.resource.get', {
+          resourceUri: objectUri,
+          accept: MIME_TYPES.JSON
+        })
+      ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + objectUri);
     });
-    expect(result.orderedItems[0]).toMatchObject({
-      type: ACTIVITY_TYPES.DELETE,
-      object: objectUri
-    });
-
-    // Check the object has been deleted
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri: objectUri,
-        accept: MIME_TYPES.JSON
-      })
-    ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + objectUri);
   });
 });

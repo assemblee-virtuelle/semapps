@@ -5,8 +5,7 @@ services:
     container_name: fuseki_tests
     restart: always
     volumes:
-      - rdf_data:/fuseki
-      - staging:/staging
+      - ./data/fuseki_tests:/fuseki
     ports:
       - "3040:3030"
     expose:
@@ -20,7 +19,6 @@ services:
 #    restart: always
 #    volumes:
 #      - rdf_data_no_acl:/fuseki
-#      - staging_no_acl:/staging
 #    ports:
 #      - "3050:3030"
 #    expose:
@@ -30,9 +28,7 @@ services:
 
 volumes:
   rdf_data:
-  staging:
-  rdf_data_no_acl:
-  staging_no_acl:
+#  rdf_data_no_acl:
 networks:
   semapps:
     name: semapps_network

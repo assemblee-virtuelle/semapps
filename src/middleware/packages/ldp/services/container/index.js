@@ -4,9 +4,10 @@ const createAction = require('./actions/create');
 const detachAction = require('./actions/detach');
 const existAction = require('./actions/exist');
 const getAction = require('./actions/get');
-const postAction = require('./actions/post');
-const headAction = require('./actions/head');
 const getAllAction = require('./actions/getAll');
+const headAction = require('./actions/head');
+const includesAction = require('./actions/includes');
+const postAction = require('./actions/post');
 
 module.exports = {
   name: 'ldp.container',
@@ -24,6 +25,7 @@ module.exports = {
     exist: existAction,
     get: getAction.action,
     getAll: getAllAction,
+    includes: includesAction,
     post: postAction.action,
     // Actions accessible through the API
     api_get: getAction.api,

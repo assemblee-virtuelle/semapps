@@ -1,3 +1,4 @@
+const { hasType } = require('@semapps/ldp');
 const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
 
 const FollowService = {
@@ -101,13 +102,15 @@ const FollowService = {
         }
 
         case ACTIVITY_TYPES.ACCEPT: {
-          const objectType = activity.object.type || activity.object['@type'];
-          if (objectType === ACTIVITY_TYPES.FOLLOW) {
-            const followActivity = activity.object;
+          const acceptedActivity = await ctx.call('activitypub.activity.get', {
+            resourceUri: activity.object,
+            webId: 'system'
+          });
+          if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
             await this.actions.addFollower(
               {
-                follower: followActivity.actor,
-                following: followActivity.object
+                follower: acceptedActivity.actor,
+                following: acceptedActivity.object
               },
               { parentCtx: ctx }
             );
@@ -116,16 +119,32 @@ const FollowService = {
         }
 
         case ACTIVITY_TYPES.UNDO:
-          const objectType = activity.object.type || activity.object['@type'];
-          if (objectType === ACTIVITY_TYPES.FOLLOW) {
-            const followActivity = activity.object;
+          const activityToUndo = await ctx.call('activitypub.activity.get', {
+            resourceUri: activity.object,
+            webId: 'system'
+          });
+          if (hasType(activityToUndo, ACTIVITY_TYPES.FOLLOW)) {
             await this.actions.removeFollower(
               {
-                follower: followActivity.actor,
-                following: followActivity.object
+                follower: activityToUndo.actor,
+                following: activityToUndo.object
               },
               { parentCtx: ctx }
             );
+          } else if (hasType(activityToUndo, ACTIVITY_TYPES.ACCEPT)) {
+            const acceptedActivity = await ctx.call('activitypub.activity.get', {
+              resourceUri: activityToUndo.object,
+              webId: 'system'
+            });
+            if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
+              await this.actions.removeFollower(
+                {
+                  follower: acceptedActivity.actor,
+                  following: acceptedActivity.object
+                },
+                { parentCtx: ctx }
+              );
+            }
           }
           break;
       }

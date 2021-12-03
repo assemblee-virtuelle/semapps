@@ -1,2 +1,4 @@
 activitypub/actors/*.key
 activitypub/actors/*.key.pub
+activitypub/jwt/*.key
+activitypub/jwt/*.key.pub

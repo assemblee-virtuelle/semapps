@@ -5,9 +5,11 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "jsonld": "^5.2.0",
+    "jsonld": "^3.3.2",
+    "jsonld-streaming-parser": "^2.4.2",
     "lru-cache": "^6.0.0",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "streamify-string": "^1.0.1"
   },
   "publishConfig": {
     "access": "public"

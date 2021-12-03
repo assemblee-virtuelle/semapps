@@ -9,7 +9,15 @@ const RegistryService = {
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    podProvider: false
+    podProvider: false,
+    defaultCollectionOptions: {
+      attachToTypes: [],
+      attachPredicate: null,
+      ordered: false,
+      itemsPerPage: null,
+      dereferenceItems: false,
+      sort: { predicate: 'as:published', order: 'DESC' }
+    }
   },
   dependencies: ['triplestore', 'ldp'],
   async started() {
@@ -67,7 +75,10 @@ const RegistryService = {
       // Get last part of the URI (eg. /followers)
       let path = '/' + getSlugFromUri(collectionUri);
 
-      return this.registeredCollections.find(collection => collection.path === path);
+      return {
+        ...this.settings.defaultCollectionOptions,
+        ...this.registeredCollections.find(collection => collection.path === path)
+      };
     },
     async createAndAttachCollection(ctx) {
       const { objectUri, collection } = ctx.params;
