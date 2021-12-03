@@ -16,7 +16,7 @@ module.exports = {
               username: user[usernamePredicate],
               webId: user.id
             });
-          } catch(e) {
+          } catch (e) {
             console.log(`Unable to create account for user ${user.id}. Error message: ${e.message}`);
           }
         } else {
