@@ -2,11 +2,11 @@ import buildDereferenceQuery from './buildDereferenceQuery';
 import getRdfPrefixes from './getRdfPrefixes';
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
-  let whereQuery = '';
+  let searchWhereQuery = '', filterWhereQuery = '';
 
   if (filter) {
     if (filter.q && filter.q.length > 0) {
-      whereQuery += `
+      searchWhereQuery += `
       {
         SELECT ?s1
         WHERE {
@@ -21,10 +21,11 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     Object.keys(filter).forEach(predicate => {
       if (filter[predicate]) {
         const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
-        whereQuery += `?s1 ${predicate} ${object} .`;
+        filterWhereQuery += `?s1 ${predicate} ${object} .`;
       }
     });
   }
+
 
   const dereferenceQuery = buildDereferenceQuery(dereference);
 
@@ -35,10 +36,11 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       ${dereferenceQuery.construct}
     }
     WHERE {
+      ${filterWhereQuery}
       ?containerUri ldp:contains ?s1 .
       FILTER( ?containerUri IN (${containers.map(container => `<${container}>`).join(', ')}) ) .
       FILTER( (isIRI(?s1)) ) .
-      ${whereQuery}
+      ${searchWhereQuery}
       ${dereferenceQuery.where}
       ?s1 ?p2 ?o2 .
     }
