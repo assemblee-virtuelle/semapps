@@ -21,7 +21,7 @@ describe('Handle collections', () => {
   test('Create ressources', async () => {
     for (let i = 0; i < 10; i++) {
       items.push(
-        await broker.call('ldp.resource.post', {
+        await broker.call('ldp.container.post', {
           containerUri: CONFIG.HOME_URL + 'objects',
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',

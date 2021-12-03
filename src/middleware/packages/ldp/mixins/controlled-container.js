@@ -41,7 +41,7 @@ module.exports = {
       return ctx.call('ldp.container.get', ctx.params);
     },
     create(ctx) {
-      return ctx.call('ldp.resource.post', ctx.params);
+      return ctx.call('ldp.resource.create', ctx.params);
     },
     patch(ctx) {
       return ctx.call('ldp.resource.patch', ctx.params);

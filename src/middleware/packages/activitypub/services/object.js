@@ -66,7 +66,7 @@ const ObjectService = {
             containerUri = urlJoin(this.settings.baseUri, container.path);
           }
 
-          objectUri = await ctx.call('ldp.resource.post', {
+          objectUri = await ctx.call('ldp.container.post', {
             containerUri,
             slug: ctx.meta.headers && ctx.meta.headers.slug,
             resource: activity.object,
@@ -165,7 +165,7 @@ const ObjectService = {
     //     const slug = getSlugFromUri(resourceUri);
     //
     //     if (this.settings.objectsContainers.includes(containerUri)) {
-    //       await ctx.call('ldp.resource.post', {
+    //       await ctx.call('ldp.container.post', {
     //         containerUri,
     //         slug,
     //         resource: {

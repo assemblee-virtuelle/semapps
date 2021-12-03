@@ -101,7 +101,7 @@ module.exports = {
         const uriAdded = [];
         for (let resource of disassemblyValue) {
           let { id, ...resourceWithoutId } = resource;
-          const newResourceUri = await ctx.call('ldp.resource.post', {
+          const newResourceUri = await ctx.call('ldp.container.post', {
             containerUri: disassemblyConfig.container,
             resource: {
               '@context': newData['@context'],
@@ -139,7 +139,7 @@ module.exports = {
         for (let resource of resourcesToAdd) {
           delete resource.id;
 
-          const newResourceUri = await ctx.call('ldp.resource.post', {
+          const newResourceUri = await ctx.call('ldp.container.post', {
             containerUri: disassemblyConfig.container,
             resource: {
               '@context': newData['@context'],

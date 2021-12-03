@@ -86,7 +86,7 @@ These routes are automatically added to the `ApiGateway` service.
 | Route | Action called |
 | -------- | ---- |
 | `GET /<container>` | `ldp.container.get` |
-| `POST /<container>` | `ldp.resource.post` |
+| `POST /<container>` | `ldp.container.post` |
 | `GET /<container>/<resource>` | `ldp.resource.get` |
 | `PATCH /<container>/<resource>` | `ldp.resource.patch` |
 | `PUT /<container>/<resource>` | `ldp.resource.put` |

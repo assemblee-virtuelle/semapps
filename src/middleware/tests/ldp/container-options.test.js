@@ -16,7 +16,7 @@ describe('Container options', () => {
   let orga1;
 
   test('Get resource with queryDepth', async () => {
-    const resourceUri = await broker.call('ldp.resource.post', {
+    const resourceUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': 'https://www.w3.org/ns/activitystreams',
         type: 'Event',
@@ -68,7 +68,7 @@ describe('Container options', () => {
       }
     ];
 
-    const resourceUri = await broker.call('ldp.resource.post', {
+    const resourceUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': jsonContext,
         type: 'Event',
@@ -145,7 +145,7 @@ describe('Container options', () => {
   });
 
   test('Create resource with disassembly', async () => {
-    const resourceUri = await broker.call('ldp.resource.post', {
+    const resourceUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
           pair: 'http://virtual-assembly.org/ontologies/pair#'

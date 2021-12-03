@@ -27,7 +27,7 @@ const WebIdService = {
       const uri = urlJoin(this.settings.baseUrl, this.settings.pathPattern.replace(':nick', nick));
 
       // Create profile with system webId
-      const webId = await ctx.call('ldp.resource.post', {
+      const webId = await ctx.call('ldp.container.post', {
         resource: {
           '@context': {
             '@vocab': 'http://xmlns.com/foaf/0.1/'

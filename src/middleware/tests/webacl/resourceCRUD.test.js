@@ -80,7 +80,7 @@ afterAll(async () => {
 });
 
 describe('middleware CRUD resource with perms', () => {
-  test('Ensure a call to ldp.resource.post fails if anonymous user, because container access denied', async () => {
+  test('Ensure a call to ldp.container.post fails if anonymous user, because container access denied', async () => {
     // this is because containers only get Read perms for anonymous users.
 
     try {
@@ -96,7 +96,7 @@ describe('middleware CRUD resource with perms', () => {
         contentType: MIME_TYPES.JSON,
         containerUri: CONFIG.HOME_URL + 'resources'
       };
-      const resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId: 'anon' } });
+      const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
       expect(e.code).toEqual(403);
     }
@@ -104,7 +104,7 @@ describe('middleware CRUD resource with perms', () => {
 
   let resourceUri;
 
-  test('Ensure a call to ldp.resource.post creates some default permissions', async () => {
+  test('Ensure a call to ldp.container.post creates some default permissions', async () => {
     try {
       const urlParamsPost = {
         resource: {
@@ -119,7 +119,7 @@ describe('middleware CRUD resource with perms', () => {
         containerUri: CONFIG.HOME_URL + 'resources'
       };
       let webId = 'http://a/user';
-      resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId } });
+      resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
       project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 
