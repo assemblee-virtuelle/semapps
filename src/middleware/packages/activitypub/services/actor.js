@@ -115,7 +115,6 @@ const ActorService = {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
       if (this.isActor(newData)) {
-        console.log('is actor', resourceUri);
         await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
@@ -128,7 +127,6 @@ const ActorService = {
     },
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
-      console.log('auth registred', webId);
       await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       await this.actions.generateKeyPair({ actorUri: webId }, { parentCtx: ctx });
     }
