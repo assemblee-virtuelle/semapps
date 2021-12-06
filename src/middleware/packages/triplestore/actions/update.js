@@ -20,6 +20,8 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
+    if( !dataset ) throw new Error('No dataset defined for triplestore update: ' + query);
+
     return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
       body: query,
       headers: {

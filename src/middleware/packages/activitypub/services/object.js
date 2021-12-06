@@ -27,7 +27,7 @@ const ObjectService = {
       } catch (e) {
         if (!actorUri || actorUri === 'webId' || actorUri === 'anon') {
           throw new Error(
-            'No valid actor URI provided to activitypub.object.get (provided: ' + actorUri + '), cannot query proxy'
+            'No valid actor URI provided to activitypub.object.get (provided: ' + actorUri + '), cannot get object ' + objectUri + ' through proxy'
           );
         }
         // If the object was not found in cache, try to query it distantly
@@ -157,7 +157,8 @@ const ObjectService = {
       await ctx.call('triplestore.insert', {
         resource: object,
         contentType: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
+        dataset
       });
     }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?

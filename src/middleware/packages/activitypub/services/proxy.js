@@ -1,6 +1,8 @@
+const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const ProxyService = {
   name: 'activitypub.proxy',
@@ -70,6 +72,24 @@ const ProxyService = {
         return await response.json();
       } else {
         throw new MoleculerError(response.statusText, response.status);
+      }
+    }
+  },
+  events: {
+    async 'auth.registered'(ctx) {
+      const { webId } = ctx.params;
+
+      if( this.settings.podProvider ) {
+        await ctx.call('ldp.resource.patch', {
+          resource: {
+            '@id': webId,
+            endpoints: {
+              proxyUrl: urlJoin(webId, 'proxy')
+            }
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
       }
     }
   }

@@ -42,6 +42,8 @@ module.exports = {
       });
     }
 
+    if( !dataset ) throw new Error('No dataset defined for triplestore insert: ' + rdf);
+
     return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
       body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
       headers: {

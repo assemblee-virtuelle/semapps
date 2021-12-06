@@ -26,7 +26,7 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   async created() {
-    const { baseUri, jsonContext, podProvider } = this.settings;
+    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -47,7 +47,7 @@ const ActivityPubService = {
       settings: {
         baseUri,
         jsonContext,
-        selectActorData: this.settings.selectActorData,
+        selectActorData,
         podProvider
       }
     });
@@ -80,7 +80,7 @@ const ActivityPubService = {
     });
 
     this.broker.createService(DispatchService, {
-      mixins: this.settings.queueServiceUrl ? [QueueService(this.settings.queueServiceUrl)] : undefined,
+      mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
       settings: {
         baseUri,
         podProvider

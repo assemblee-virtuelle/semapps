@@ -9,7 +9,8 @@
     "@semapps/mime-types": "0.4.0-alpha.0",
     "@semapps/triplestore": "0.4.0-alpha.0",
     "moleculer": "^0.14.17",
-    "moleculer-web": "^0.10.0-beta1"
+    "moleculer-web": "^0.10.0-beta1",
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"

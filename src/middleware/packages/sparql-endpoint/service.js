@@ -1,5 +1,7 @@
-const getRoute = require('./getRoute');
+const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
+const { MIME_TYPES } = require("@semapps/mime-types");
+const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
@@ -40,7 +42,26 @@ const SparqlEndpointService = {
 
       return response;
     }
-  }
+  },
+  // TODO restore this when https://github.com/assemblee-virtuelle/semapps/issues/893 will be fixed
+  // events: {
+  //   async 'auth.registered'(ctx) {
+  //     const { webId } = ctx.params;
+  //
+  //     if( this.settings.podProvider ) {
+  //       await ctx.call('ldp.resource.patch', {
+  //         resource: {
+  //           '@id': webId,
+  //           endpoints: {
+  //             'void:sparqlEndpoint': urlJoin(webId, 'sparql'),
+  //           }
+  //         },
+  //         contentType: MIME_TYPES.JSON,
+  //         webId: 'system'
+  //       });
+  //     }
+  //   }
+  // }
 };
 
 module.exports = SparqlEndpointService;

@@ -32,7 +32,7 @@ const ActorService = {
     async appendActorData(ctx) {
       const { actorUri } = ctx.params;
 
-      const currentData = await this.actions.get({ actorUri: actorUri, webId: 'system' }, { parentCtx: ctx });
+      const currentData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
 
       await ctx.call('ldp.resource.patch', {
         resource: {
@@ -45,20 +45,24 @@ const ActorService = {
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;
-      const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
+      const actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
 
-      await ctx.call('ldp.resource.patch', {
-        resource: {
-          '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-          '@id': actorUri,
-          publicKey: {
-            owner: actorUri,
-            publicKeyPem: publicKey
-          }
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      if( !actor.publicKey ) {
+        const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
+
+        await ctx.call('ldp.resource.patch', {
+          resource: {
+            '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+            '@id': actorUri,
+            publicKey: {
+              owner: actorUri,
+              publicKeyPem: publicKey
+            }
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      }
     },
     async deleteKeyPair(ctx) {
       const { actorUri } = ctx.params;
@@ -111,6 +115,7 @@ const ActorService = {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
       if (this.isActor(newData)) {
+        console.log('is actor', resourceUri);
         await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
         await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
       }
@@ -123,6 +128,7 @@ const ActorService = {
     },
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
+      console.log('auth registred', webId);
       await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
       await this.actions.generateKeyPair({ actorUri: webId }, { parentCtx: ctx });
     }

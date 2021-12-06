@@ -14,7 +14,7 @@ module.exports = {
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
-    const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions } = this.schema.settings;
+    const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {

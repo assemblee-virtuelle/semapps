@@ -16,7 +16,9 @@ const fetchResource = async (resourceUri, config) => {
           headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }),
           body: new URLSearchParams({ id: resourceUri })
         })
-      : await httpClient(resourceUri);
+      : await httpClient(resourceUri, {
+          noToken: serverKey !== authServerKey
+        });
 
   data.id = data.id || data['@id'];
 

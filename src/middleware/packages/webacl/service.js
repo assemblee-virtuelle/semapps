@@ -13,7 +13,7 @@ module.exports = {
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, graphName, podProvider, superAdmins } = this.schema.settings;
+    const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
     await this.broker.createService(WebAclResourceService, {
       settings: {
