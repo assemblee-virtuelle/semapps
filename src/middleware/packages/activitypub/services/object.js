@@ -27,7 +27,11 @@ const ObjectService = {
       } catch (e) {
         if (!actorUri || actorUri === 'webId' || actorUri === 'anon') {
           throw new Error(
-            'No valid actor URI provided to activitypub.object.get (provided: ' + actorUri + '), cannot get object ' + objectUri + ' through proxy'
+            'No valid actor URI provided to activitypub.object.get (provided: ' +
+              actorUri +
+              '), cannot get object ' +
+              objectUri +
+              ' through proxy'
           );
         }
         // If the object was not found in cache, try to query it distantly

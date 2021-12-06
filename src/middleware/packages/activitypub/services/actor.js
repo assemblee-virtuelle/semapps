@@ -47,7 +47,7 @@ const ActorService = {
       const { actorUri } = ctx.params;
       const actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
 
-      if( !actor.publicKey ) {
+      if (!actor.publicKey) {
         const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
 
         await ctx.call('ldp.resource.patch', {

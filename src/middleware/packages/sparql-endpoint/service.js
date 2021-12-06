@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
@@ -42,7 +42,7 @@ const SparqlEndpointService = {
 
       return response;
     }
-  },
+  }
   // TODO restore this when https://github.com/assemblee-virtuelle/semapps/issues/893 will be fixed
   // events: {
   //   async 'auth.registered'(ctx) {
