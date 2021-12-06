@@ -2,7 +2,8 @@ import buildDereferenceQuery from './buildDereferenceQuery';
 import getRdfPrefixes from './getRdfPrefixes';
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
-  let searchWhereQuery = '', filterWhereQuery = '';
+  let searchWhereQuery = '',
+    filterWhereQuery = '';
 
   if (filter) {
     if (filter.q && filter.q.length > 0) {
@@ -25,7 +26,6 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       }
     });
   }
-
 
   const dereferenceQuery = buildDereferenceQuery(dereference);
 
