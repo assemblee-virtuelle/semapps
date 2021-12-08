@@ -11,10 +11,12 @@ const authProvider = ({
 }) => ({
   login: async params => {
     const url = new URL(window.location.href);
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if( !serverUrl ) throw new Error('You must specify a middlewareUri in the authProvider config, or specify a domain when calling the login method');
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth/login`, {
+        const { json } = await httpClient(`${serverUrl}auth/login`, {
           method: 'POST',
           body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
@@ -27,14 +29,16 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   signup: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if( !serverUrl ) throw new Error('You must specify a middlewareUri in the authProvider config, or specify a domain when calling the signup method');
     if (localAccounts) {
-      const { username, email, password, ...profileData } = params;
+      const { username, email, password, domain, ...profileData } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth/signup`, {
+        const { json } = await httpClient(`${serverUrl || `https://${domain}`}auth/signup`, {
           method: 'POST',
           body: JSON.stringify({
             username: username.trim(),
@@ -56,24 +60,36 @@ const authProvider = ({
         }
       }
     } else {
-      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   logout: async () => {
+    let serverUrl;
+    if( middlewareUri ) {
+      serverUrl = middlewareUri;
+    } else {
+      // Get the server URL from the connected user's webId
+      const token = localStorage.getItem('token');
+      if( token ) {
+        const { webId } = jwtDecode(token);
+        serverUrl = (new URL(webId)).origin + '/';
+      }
+    }
+
     localStorage.removeItem('token');
     if (localAccounts) {
       // Reload to ensure the dataServer config is reset
       window.location.reload();
       window.location.href = '/';
-    } else {
+    } else if (serverUrl) {
       const url = new URL(window.location.href);
       if (!allowAnonymous) {
-        window.location.href = `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
+        window.location.href = `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
       } else {
         // Redirect to login page after disconnecting from SSO
         // The login page will remove the token, display a notification and redirect to the homepage
         window.location.href =
-          `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
+          `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
       }
     }
 
@@ -97,14 +113,14 @@ const authProvider = ({
 
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
-    const aclUri = getAclUri(middlewareUri, uri);
+    const aclUri = getAclUri(uri);
 
     const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
   addPermission: async (uri, agentId, predicate, mode) => {
-    const aclUri = getAclUri(middlewareUri, uri);
+    const aclUri = getAclUri(uri);
 
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
 
@@ -128,7 +144,7 @@ const authProvider = ({
     if (!uri || !uri.startsWith('http'))
       throw new Error('The first parameter passed to removePermission must be an URL');
 
-    const aclUri = getAclUri(middlewareUri, uri);
+    const aclUri = getAclUri(uri);
 
     // Fetch current permissions
     let { json } = await httpClient(aclUri);
