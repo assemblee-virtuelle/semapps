@@ -12,7 +12,10 @@ const authProvider = ({
   login: async params => {
     const url = new URL(window.location.href);
     const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if( !serverUrl ) throw new Error('You must specify a middlewareUri in the authProvider config, or specify a domain when calling the login method');
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the login method'
+      );
     if (localAccounts) {
       const { username, password } = params;
       try {
@@ -34,7 +37,10 @@ const authProvider = ({
   },
   signup: async params => {
     const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if( !serverUrl ) throw new Error('You must specify a middlewareUri in the authProvider config, or specify a domain when calling the signup method');
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the signup method'
+      );
     if (localAccounts) {
       const { username, email, password, domain, ...profileData } = params;
       try {
@@ -65,14 +71,14 @@ const authProvider = ({
   },
   logout: async () => {
     let serverUrl;
-    if( middlewareUri ) {
+    if (middlewareUri) {
       serverUrl = middlewareUri;
     } else {
       // Get the server URL from the connected user's webId
       const token = localStorage.getItem('token');
-      if( token ) {
+      if (token) {
         const { webId } = jwtDecode(token);
-        serverUrl = (new URL(webId)).origin + '/';
+        serverUrl = new URL(webId).origin + '/';
       }
     }
 
