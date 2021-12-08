@@ -79,7 +79,7 @@ const ProxyService = {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
 
-      if( this.settings.podProvider ) {
+      if (this.settings.podProvider) {
         await ctx.call('ldp.resource.patch', {
           resource: {
             '@id': webId,
