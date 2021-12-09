@@ -1,4 +1,4 @@
-const { parseHeader, negotiateContentType, negotiateAccept, parseJson} = require("@semapps/middlewares");
+const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 const onError = (req, res, err) => {
   let { type, code, message, data, name } = err;
@@ -29,7 +29,7 @@ const getRoutes = () => {
       aliases: {
         'PATCH /:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
         'PUT /:slugParts*': [parseHeader, 'webacl.resource.api_setRights'],
-        'GET /:slugParts*': [...middlewares, 'webacl.resource.api_getRights'],
+        'GET /:slugParts*': [...middlewares, 'webacl.resource.api_getRights']
       },
       onError
     },
@@ -39,7 +39,7 @@ const getRoutes = () => {
       authentication: true,
       aliases: {
         'GET /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
-        'POST /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
+        'POST /:slugParts*': [...middlewares, 'webacl.resource.api_hasRights']
       },
       bodyParsers: {
         json: false
