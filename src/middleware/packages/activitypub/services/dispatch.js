@@ -34,7 +34,6 @@ const DispatchService = {
       }
 
       if (localRecipients.length > 0) {
-        this.logger.info('emited from dispatch');
         this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
       }
     },
