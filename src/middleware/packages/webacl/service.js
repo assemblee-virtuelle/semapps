@@ -47,7 +47,6 @@ module.exports = {
         webId: 'anon'
       });
     } catch (e) {
-      console.log(e);
       if (e.code == 403) hasWebAcl = true;
     }
     if (!hasWebAcl)
