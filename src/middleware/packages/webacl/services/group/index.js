@@ -43,7 +43,7 @@ module.exports = {
 
       if (!groupExists) {
         this.logger.info("Super admin group doesn't exist, creating it...");
-        const { groupUri } = await this.actions.create({ slug: 'superadmins', webId: 'system' });
+        const { groupUri } = await this.actions.create({ groupSlug: 'superadmins', webId: 'system' });
 
         // Give full rights to root container
         await this.broker.call('webacl.resource.addRights', {
