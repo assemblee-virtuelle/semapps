@@ -17,7 +17,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
   if (!position[0] || !position[1]) return null;
 
   return (
-    <Box addLabel={addLabel}>
+    <Box>
       {address && (
         <Box mt={1} mb={1}>
           <Typography {...typographyProps}>{address(record)}</Typography>

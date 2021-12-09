@@ -10,12 +10,12 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const GridList = ({ children, linkType, spacing, ...otherProps }) => {
+const GridList = ({ children, linkType, spacing, xs, sm, md, lg, xl }) => {
   const { ids, data, basePath } = useListContext();
   return (
     <Grid container spacing={spacing}>
       {ids.map(id => (
-        <Grid item key={id} {...otherProps}>
+        <Grid item key={id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
           {linkType ? (
             <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {

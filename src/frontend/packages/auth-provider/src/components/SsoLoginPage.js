@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
-import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
+import { createTheme, makeStyles } from '@material-ui/core/styles';
 import { Avatar, Button, Card, CardActions, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 
@@ -82,7 +82,7 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
   }, [location.search]);
 
   return (
-    <ThemeProvider theme={createMuiTheme(theme)}>
+    <ThemeProvider theme={createTheme(theme)}>
       <div className={classes.main}>
         <Card className={classes.card}>
           <div className={classes.lockIconAvatar}>

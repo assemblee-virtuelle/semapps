@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { LoginForm, Notification, useGetIdentity } from 'react-admin';
-import { Card, Avatar, makeStyles, createMuiTheme, ThemeProvider, Typography } from '@material-ui/core';
+import { Card, Avatar, makeStyles, createTheme, ThemeProvider, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
@@ -42,7 +42,7 @@ const LocalLoginPage = props => {
   const { theme, title, classes: classesOverride, className, ...rest } = props;
   const classes = useStyles(props);
   const location = useLocation();
-  const muiTheme = useMemo(() => createMuiTheme(theme), [theme]);
+  const muiTheme = useMemo(() => createTheme(theme), [theme]);
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
   const redirectTo = searchParams.get('redirect');

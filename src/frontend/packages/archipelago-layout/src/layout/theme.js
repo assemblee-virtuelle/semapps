@@ -1,9 +1,9 @@
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme } from '@material-ui/core';
 
 // Allow to use breakpoints
-const defaultTheme = createMuiTheme();
+const defaultTheme = createTheme();
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: { main: '#28ccfb', contrastText: '#fff' },
     secondary: { main: '#bcef5b' },
