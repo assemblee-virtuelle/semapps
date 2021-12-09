@@ -45,7 +45,7 @@ const ActivitiesHandlerMixin = {
       const { activity } = ctx.params;
       const emitter = activity.actor;
       for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
-        if( activityHandler.onEmit ) {
+        if (activityHandler.onEmit) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
               ? await this.matchPattern(activityHandler.match, activity)
@@ -61,7 +61,7 @@ const ActivitiesHandlerMixin = {
     async 'activitypub.inbox.received'(ctx) {
       const { activity, recipients } = ctx.params;
       for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
-        if( activityHandler.onReceive ) {
+        if (activityHandler.onReceive) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
               ? await this.matchPattern(activityHandler.match, activity)
