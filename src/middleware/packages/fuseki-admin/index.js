@@ -64,10 +64,10 @@ const FusekiAdminService = {
 
         if (response.status === 200) {
           await this.actions.waitForDatasetCreation({ dataset }, { parentCtx: ctx });
-          console.log(`Created ${secure ? 'secure ' : ''}dataset ${dataset}`);
+          this.logger.info(`Created ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
         } else {
           console.log(await response.text());
-          throw new Error(`Error when creating ${secure ? 'secure ' : ''}dataset ${dataset}`);
+          throw new Error(`Error when creating ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
         }
       }
     },

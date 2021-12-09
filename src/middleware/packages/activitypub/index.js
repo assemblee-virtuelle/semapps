@@ -6,6 +6,7 @@ module.exports = {
   ActivityService: require('./services/activity'),
   BotService: require('./mixins/bot'),
   ControlledCollectionMixin: require('./mixins/controlled-collection'),
+  ActivitiesHandlerMixin: require('./mixins/activities-handler'),
   CollectionService: require('./services/collection'),
   DispatchService: require('./services/dispatch'),
   FollowService: require('./services/follow'),
