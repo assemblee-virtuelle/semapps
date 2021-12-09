@@ -67,11 +67,10 @@ The WebAclMiddleware:
 It is important to know if your Fuseki dataset is secured with WebACL or not. 
 
 - If you use a secured dataset without the WebACL service and middleware, you will get permission errors every time you try to access a container or resource, because Fuseki will not find the appropriate WebACL triples and will thus assume you do not have the permission to do the action.
-- If you use a unsecured data with the WebACL service and middleware, everything will seem to work, but in reality the WebACL permissions will not be checked by Fuseki, which can lead to major security issues.
+- If you use a unsecured data with the WebACL service and middleware, you will get the error `Error when starting the webAcl service: the main dataset is not secure. see fuseki-admin.createDataset`.
 
 Here are some important notes:
 
-- When you use the `semapps/jena-fuseki-webacl` Docker image, it will automatically create two **secured** datasets: localData and testData.
 - To create a new secured dataset, you should use the [FusekiAdmin](../fuseki-admin.md) service, and more specifically the `fuseki-admin.createDataset` action with the param `secure: true`. It will load the appropriate config.
 - If you create a new dataset through the Fuseki frontend, it will **not** be secured.
 - You should never use the `DROP+ALL` command on a secured dataset, as it will break all the internal config. Use `CLEAR+ALL` instead.
