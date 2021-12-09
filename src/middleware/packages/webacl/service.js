@@ -11,7 +11,7 @@ module.exports = {
     podProvider: false,
     superAdmins: []
   },
-  dependencies: ['api'],
+  dependencies: ['api','triplestore','fuseki-admin'],
   async created() {
     const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
@@ -38,6 +38,22 @@ module.exports = {
     }
   },
   async started() {
+
+    // testing if there is a secure graph. you should not start the webAcl service if you created an unsecure main dataset.
+    await this.broker.waitForServices(["triplestore"]);
+    let hasWebAcl = false;
+    try {
+      await this.broker.call('triplestore.query', {
+        query: `ASK WHERE { GRAPH ${this.settings.graphName} { ?s ?p ?o } }`,
+        webId: 'anon'
+      })
+    } catch (e) {
+      console.log(e)
+      if (e.code == 403) hasWebAcl = true;
+    }
+    if (!hasWebAcl) throw new Error('Error when starting the webAcl service: the main dataset is not secure. see fuseki-admin.createDataset');
+  
+
     for (let route of getRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
