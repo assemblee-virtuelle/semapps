@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "dev": "moleculer-runner --repl --hot services",
-    "start": "moleculer-runner --instances=max services"
+    "start": "moleculer-runner services"
   },
   "dependencies": {
     "@semapps/activitypub": "0.4.0-alpha.2",
