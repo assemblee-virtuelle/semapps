@@ -20,3 +20,7 @@ cd /fuseki
 
 /jena-fuseki/bin/tdb2.tdbcompact --loc=/fuseki/databases/localData
 
+cd databases/localData
+
+find . -iname 'Data*' ! -wholename $(find . -iname 'Data*' -type d | sort -n | tail -n 1)  -type d -exec rm -rf {} +
+
