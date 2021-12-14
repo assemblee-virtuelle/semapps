@@ -182,7 +182,7 @@ const authProvider = ({
       const { json: webIdData } = await httpClient(webId);
       const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
 
-      return { id: webId, fullName: profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
+      return { id: webId, fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
     }
   }
 });
