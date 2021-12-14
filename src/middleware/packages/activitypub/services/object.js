@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
+const { delay } = require("../utils");
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -42,6 +43,23 @@ const ObjectService = {
         });
         // TODO put in cache results ??
       }
+    },
+    async awaitCreateComplete(ctx) {
+      let { objectUri, predicates } = ctx.params;
+      let object;
+      do {
+        await delay(1000);
+        object = await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri: objectUri,
+            accept: MIME_TYPES.JSON,
+            webId: 'system'
+          },
+          { meta: { $cache: false } }
+        );
+      } while (!predicates.every(p => Object.keys(object).includes(p)));
+      return object;
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
