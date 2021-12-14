@@ -79,6 +79,8 @@ const CollectionService = {
       const { collectionUri, item } = ctx.params;
       const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
 
+      if( !itemUri ) throw new Error('No valid item provided for activitypub.collection.attach');
+
       // TODO also check external resources
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
       // if (!resourceExist) throw new Error('Cannot attach a non-existing resource !')
@@ -100,6 +102,8 @@ const CollectionService = {
     async detach(ctx) {
       const { collectionUri, item } = ctx.params;
       const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+
+      if( !itemUri ) throw new Error('No valid item provided for activitypub.collection.detach');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
