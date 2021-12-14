@@ -64,7 +64,7 @@ module.exports = {
             }
             WHERE {
               <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL { 
+              OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ${filtersQuery.where}
               }
@@ -142,7 +142,7 @@ module.exports = {
             }
             WHERE {
               <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL { 
+              OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ?s1 ?p1 ?o1 .
                 ${blandNodeQuery.where}
