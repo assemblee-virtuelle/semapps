@@ -1,6 +1,13 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery, getContainerFromUri, getSlugFromUri} = require('../../../utils');
+const {
+  getPrefixRdf,
+  getPrefixJSON,
+  buildBlankNodesQuery,
+  buildDereferenceQuery,
+  getContainerFromUri,
+  getSlugFromUri
+} = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
