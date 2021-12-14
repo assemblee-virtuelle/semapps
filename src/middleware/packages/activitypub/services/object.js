@@ -88,7 +88,7 @@ const ObjectService = {
 
           if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-            containerUri = urlJoin(this.settings.baseUri, account.username, container.path);
+            containerUri = urlJoin(account.podUri, container.path);
           } else {
             containerUri = urlJoin(this.settings.baseUri, container.path);
           }

@@ -36,13 +36,13 @@ const OutboxService = {
         activity['@context'] = this.settings.jsonContext;
       }
 
-      if (!activity.actor) {
-        activity.actor = actorUri;
-      }
-
       // Process object create, update or delete
       // and return an activity with the object ID
       activity = await ctx.call('activitypub.object.process', { activity, actorUri });
+
+      if (!activity.actor) {
+        activity.actor = actorUri;
+      }
 
       // Use the current time for the activity's publish date
       // TODO use it to order the ordered collections
