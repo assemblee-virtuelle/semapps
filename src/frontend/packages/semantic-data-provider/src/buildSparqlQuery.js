@@ -5,7 +5,8 @@ const getPrefixRdf = ontologies => {
 };
 
 const buildSparqlQuery = ({ types, params: { filter }, dereference, ontologies }) => {
-  let searchWhereQuery = '', filterWhereQuery = '';
+  let searchWhereQuery = '',
+    filterWhereQuery = '';
 
   if (filter) {
     if (filter.q && filter.q.length > 0) {
