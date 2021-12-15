@@ -1,6 +1,13 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery, buildDereferenceQuery, getContainerFromUri, getSlugFromUri} = require('../../../utils');
+const {
+  getPrefixRdf,
+  getPrefixJSON,
+  buildBlankNodesQuery,
+  buildDereferenceQuery,
+  getContainerFromUri,
+  getSlugFromUri
+} = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -41,7 +48,7 @@ module.exports = {
         // Check if container URI is a file, disable cache in this case
         const containerUri = getContainerFromUri(ctx.params.resourceUri);
         const containerSlug = getSlugFromUri(containerUri);
-        return containerSlug === 'files';
+        return containerSlug !== 'files';
       },
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },
