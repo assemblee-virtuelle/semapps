@@ -55,9 +55,7 @@ module.exports = {
       const { username, password } = ctx.params;
 
       // If the username includes a @, assume it is an email
-      const query = username.includes('@')
-        ? { email: username }
-        : { username };
+      const query = username.includes('@') ? { email: username } : { username };
 
       const accounts = await this._find(ctx, { query });
 
