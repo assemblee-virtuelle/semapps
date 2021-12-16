@@ -62,6 +62,20 @@ The WebAclMiddleware:
 - Protects the actions of the LDP service
 - Automatically updates ACL when LDP resources, LDP containers or ActivityPub collections are added or removed.
 
+## Secured and unsecured dataset
+
+It is important to know if your Fuseki dataset is secured with WebACL or not. 
+
+- If you use a secured dataset without the WebACL service and middleware, you will get permission errors every time you try to access a container or resource, because Fuseki will not find the appropriate WebACL triples and will thus assume you do not have the permission to do the action.
+- If you use a unsecured data with the WebACL service and middleware, you will get the error `Error when starting the webAcl service: the main dataset is not secure. see fuseki-admin.createDataset`.
+
+Here are some important notes:
+
+- To create a new secured dataset, you should use the [FusekiAdmin](../fuseki-admin.md) service, and more specifically the `fuseki-admin.createDataset` action with the param `secure: true`. It will load the appropriate config.
+- If you create a new dataset through the Fuseki frontend, it will **not** be secured.
+- You should never use the `DROP+ALL` command on a secured dataset, as it will break all the internal config. Use `CLEAR+ALL` instead.
+- Removing a dataset through the Fuseki frontend will not remove the data and will create problems if you create a new dataset with the same name. So to correctly remove a dataset, you should do a `rm -Rf` on the two folders in the `databases` folders: datasetName and datasetNameAcl.
+
 ## Caching
 
 If you wish to properly cache the WebAcl and improve performances, we recommend that you add a Cacher middleware before the WebACL middleware.

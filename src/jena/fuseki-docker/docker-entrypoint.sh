@@ -27,14 +27,14 @@ if [ ! -d "$FUSEKI_BASE/extra" ] ; then
   rm -rf "$FUSEKI_BASE/system_files"
   cp -r "$FUSEKI_HOME/extra" "$FUSEKI_BASE/"
   mkdir -p "$FUSEKI_BASE/configuration"
-  cp "$FUSEKI_HOME/configuration/localData.ttl" "$FUSEKI_BASE/configuration/localData.ttl"
+#  cp "$FUSEKI_HOME/configuration/localData.ttl" "$FUSEKI_BASE/configuration/localData.ttl"
   echo ""
   echo "###################################"
 fi
 
 cp "$FUSEKI_HOME/extra/semapps-jena-permissions-1.0.0.jar" "$FUSEKI_BASE/extra/semapps-jena-permissions-1.0.0.jar"
 
-cp "$FUSEKI_HOME/configuration/testData.ttl" "$FUSEKI_BASE/configuration/testData.ttl"
+#cp "$FUSEKI_HOME/configuration/testData.ttl" "$FUSEKI_BASE/configuration/testData.ttl"
 
 # always copying semapps-jena-permissions-1.0.0.jar
 cp "$FUSEKI_HOME/extra/semapps-jena-permissions-1.0.0.jar" "$FUSEKI_BASE/extra/semapps-jena-permissions-1.0.0.jar"
