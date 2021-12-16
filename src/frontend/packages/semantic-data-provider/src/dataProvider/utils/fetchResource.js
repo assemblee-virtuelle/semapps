@@ -10,7 +10,7 @@ const fetchResource = async (resourceUri, config) => {
 
   // Fetch through proxy server if it is available
   let { json: data } =
-    serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl
+    serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true
       ? await httpClient(dataServers[authServerKey].proxyUrl, {
           method: 'POST',
           headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' }),
