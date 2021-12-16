@@ -29,8 +29,9 @@ const frenchMessages = {
     input: {
       agent_select: 'Ajouter un utilisateur...',
       name: 'Prénom',
-      username: 'Nom utilisateur',
-      email: 'Adresse e-mail'
+      username: 'Identifiant unique',
+      email: 'Adresse e-mail',
+      username_or_email: 'Identifiant ou adresse e-mail',
     },
     message: {
       resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
@@ -42,6 +43,8 @@ const frenchMessages = {
       user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
       user_email_not_found: 'Aucun compte trouvé avec cette adresse mail',
       user_email_exist: 'Un compte existe déjà avec cette adresse mail',
+      username_exist: 'Un compte existe déjà avec cet identifiant',
+      username_invalid: "Cet identifiant n'est pas valide. Seuls les lettres minuscules, les chiffres, les points et les tirets sont autorisés",
       new_user_created: 'Votre compte a été créé avec succès',
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',

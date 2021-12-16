@@ -61,6 +61,10 @@ const authProvider = ({
       } catch (e) {
         if (e.message === 'email.already.exists') {
           throw new Error('auth.message.user_email_exist');
+        } else if (e.message === 'username.already.exists') {
+          throw new Error('auth.message.username_exist');
+        } else if (e.message === 'username.invalid') {
+          throw new Error('auth.message.username_invalid');
         } else {
           throw new Error(e.message || 'ra.auth.sign_in_error');
         }
