@@ -14,7 +14,11 @@ const DispatchService = {
 
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
       for (const recipientUri of recipients) {
-        const recipientInbox = await ctx.call('activitypub.actor.getCollectionUri', { actorUri: recipientUri, predicate: 'inbox', webId: 'system' });
+        const recipientInbox = await ctx.call('activitypub.actor.getCollectionUri', {
+          actorUri: recipientUri,
+          predicate: 'inbox',
+          webId: 'system'
+        });
         if (this.isLocalActor(recipientUri)) {
           // Attach activity to the inbox of the local actor
           await ctx.call('activitypub.collection.attach', {

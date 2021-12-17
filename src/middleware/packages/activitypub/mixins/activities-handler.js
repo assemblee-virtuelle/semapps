@@ -31,7 +31,8 @@ const ActivitiesHandlerMixin = {
           dereferencedActivityOrObject[key] = await this.matchPattern(pattern[key], dereferencedActivityOrObject[key]);
           if (!dereferencedActivityOrObject[key]) return false;
         } else {
-          if (!defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v))) return false;
+          if (!defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v)))
+            return false;
         }
       }
 
