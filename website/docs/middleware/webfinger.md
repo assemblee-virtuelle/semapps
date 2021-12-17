@@ -12,7 +12,7 @@ This service implements the [WebFinger](https://en.wikipedia.org/wiki/WebFinger)
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- ActivityPub [ActorService](activitypub.md)
+- ActivityPub [ActorService](activitypub/index.md)
 
 ## Install
 

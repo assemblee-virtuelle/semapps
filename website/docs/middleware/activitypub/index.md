@@ -8,7 +8,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 - Store activities, actors and objects in the triple store
 - Handle all kind of ontologies (see `additionalContext` setting)
-- Allow to create actors when new [WebIDs](./webid.md) are created
+- Allow to create actors when new [WebIDs](../webid.md) are created
 - Currently supported activities:
   - `Create`
   - `Update`
@@ -18,9 +18,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](ldp/index.md)
-- [WebfingerService](webfinger.md)
-- [SignatureService](signature.md)
+- [LdpService](../ldp/index.md)
+- [WebfingerService](../webfinger.md)
+- [SignatureService](../signature.md)
 
 ## Sub-services
 
@@ -31,6 +31,13 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - InboxService
 - ObjectService
 - OutboxService
+- ProxyService
+- RegistryService
+
+## Mixins
+- [ActivitiesHandlerMixin](activities-handler.md)
+- ControlledCollectionMixin
+- BotMixin
 
 ## Install
 
@@ -89,5 +96,5 @@ This is done automatically when a `webid.created` event is detected.
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `baseUri` | `String` | **required** | Base URI of your web server |
-| `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.
-| `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.
+| `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish. |
+| `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs. |
