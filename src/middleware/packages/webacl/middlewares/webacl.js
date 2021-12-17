@@ -214,6 +214,8 @@ const WebAclMiddleware = config => ({
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // Give read rights to the activity's recipients
+            // TODO improve performances by passing all users at once
+            // https://github.com/assemblee-virtuelle/semapps/issues/908
             for (let recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
                 resourceUri: actionReturnValue,

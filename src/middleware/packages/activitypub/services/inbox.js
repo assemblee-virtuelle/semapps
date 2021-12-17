@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectCurrentToId, objectIdToCurrent } = require('../utils');
+const { objectIdToCurrent } = require('../utils');
 const ControlledCollectionMixin = require('../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../constants');
 

@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const urlJoin = require('url-join');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
@@ -100,6 +99,14 @@ const ActorService = {
           }
           console.log('Generated missing data for actor ' + actorUri);
         }
+      }
+    },
+    getCollectionUri: {
+      cache: true,
+      async handler(ctx) {
+        const { actorUri, predicate, webId } = ctx.params;
+        const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
+        return actor && actor[predicate];
       }
     }
   },
