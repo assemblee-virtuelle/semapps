@@ -2,7 +2,7 @@
 
 SemApps means Semantic Apps. 
 
-It is a collaborative, interoperable, generic and modular knowledge management system and web semantic application framework, compliant with several specifications: LDP, Solid, SPARQL, ActivityPub, WAC, OIDC. 
+It is a collaborative, interoperable, generic and modular knowledge management system and semantic web application framework, compliant with several specifications: LDP, Solid, SPARQL, ActivityPub, WAC, OIDC. 
 
 Based on linked data & semantic web technologies, it allows the co-production of knowledge graphs.
 Built on open standards, it enables the development of interoperable information systems.
