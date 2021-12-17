@@ -1,3 +1,4 @@
+const { defaultToArray } = require('@semapps/ldp');
 const { ACTIVITY_TYPES } = require('../constants');
 
 const ActivitiesHandlerMixin = {
@@ -26,13 +27,11 @@ const ActivitiesHandlerMixin = {
       }
 
       for (let key of Object.keys(pattern)) {
-        if (typeof pattern[key] === 'object') {
+        if (typeof pattern[key] === 'object' && !Array.isArray(pattern[key])) {
           dereferencedActivityOrObject[key] = await this.matchPattern(pattern[key], dereferencedActivityOrObject[key]);
           if (!dereferencedActivityOrObject[key]) return false;
-        } else if (Array.isArray(dereferencedActivityOrObject[key])) {
-          if (!dereferencedActivityOrObject[key].includes(pattern[key])) return false;
         } else {
-          if (pattern[key] !== dereferencedActivityOrObject[key]) return false;
+          if (!defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v))) return false;
         }
       }
 
