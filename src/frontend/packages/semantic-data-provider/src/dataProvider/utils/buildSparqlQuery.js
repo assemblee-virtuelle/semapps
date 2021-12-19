@@ -176,7 +176,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       console.log('** FILTER-<>Q');
     
       Object.keys(filter).forEach(predicate => {
-        if (filter[predicate]) {
+        if (filter[predicate] && predicate !== 'sparqlWhere') {
           
           /*
           const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
