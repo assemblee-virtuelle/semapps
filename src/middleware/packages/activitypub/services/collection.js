@@ -57,6 +57,7 @@ const CollectionService = {
      */
     async includes(ctx) {
       const { collectionUri, itemUri } = ctx.params;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.includes');
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -76,10 +77,9 @@ const CollectionService = {
      * @param item The resource to add to the collection
      */
     async attach(ctx) {
-      const { collectionUri, item } = ctx.params;
-      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
-
-      if (!itemUri) throw new Error('No valid item provided for activitypub.collection.attach');
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.attach');
 
       // TODO also check external resources
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
@@ -100,10 +100,9 @@ const CollectionService = {
      * @param item The resource to remove from the collection
      */
     async detach(ctx) {
-      const { collectionUri, item } = ctx.params;
-      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
-
-      if (!itemUri) throw new Error('No valid item provided for activitypub.collection.detach');
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.detach');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
