@@ -16,6 +16,8 @@ var generator = new SparqlGenerator({ /* prefixes, baseIRI, factory, sparqlStar 
 
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
+  
+  console.log('******************* buildSparqlQuery', containers, filter, dereference, ontologies);
 
   // sparqljs init :
   let sparqljsParams = {
@@ -50,11 +52,20 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
             [DataFactory.namedNode(containers[0])]
           ]
         }
+      },{
+        "type": "bgp",
+        "triples": [{
+          "subject": DataFactory.variable('containerUri'),
+          "predicate": DataFactory.namedNode('http://www.w3.org/ns/ldp#contains'),
+          "object": DataFactory.variable('s1'),
+        }]
       }
     ],
     "type": "query",
     "prefixes": {}
   }
+
+  console.log('***** sparqljsParams-init', {...sparqljsParams});
   
   // sparqljs prefixes :
   ontologies.map( ontologie => {
@@ -63,29 +74,30 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       [ontologie.prefix]: ontologie.url
     }
   });
+  
+  console.log('***** sparqljsParams-1', {...sparqljsParams});
+    
+  // sparqljs dereference :
+  const dereferenceQuery = buildDereferenceQuery(dereference, ontologies);
+  if (dereferenceQuery && dereferenceQuery.constructForSparqljs) {
+    sparqljsParams.where = sparqljsParams.where.concat(dereferenceQuery.whereForSparqljs);
+    sparqljsParams.template = sparqljsParams.template.concat(dereferenceQuery.constructForSparqljs);
+  }
+  
+  console.log('***** sparqljsParams-2', {...sparqljsParams});
     
   // sparqljs filters :
-  if ( filter ) {   
+  if ( filter && Object.keys(filter).length > 0 ) {   
     
-    console.log('** FILTER-0', filter);
+    console.log('** FILTER-0', {...filter},  Object.keys(filter).join());
     
-    const isAFilter = filter.a && filter.a.length > 0;
-    const isQFilter = filter.q && filter.q.length > 0 && ! isAFilter;
     const isSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
-    
-    sparqljsParams.where.push({
-      "type": "bgp",
-      "triples": [{
-        "subject": DataFactory.variable('containerUri'),
-        "predicate": DataFactory.namedNode('http://www.w3.org/ns/ldp#contains'),
-        "object": DataFactory.variable('s1'),
-      }]
-    });
-    
+    const isQFilter = filter.q && filter.q.length > 0;
+
     // sparqljs filter sparql :
     if ( isSPARQLFilter ) {
       
-      console.log('** FILTER-SPARQL', filter.sparqlWhere);
+      console.log('** FILTER-SPARQL');
       /* 
       Exemple : 
       http://localhost:5000/Organization?filter=%7B%22q%22%3A%20%22orga%22%2C%22sparqlWhere%22%3A%20%7B%0A%22type%22%3A%20%22bgp%22%2C%0A%22triples%22%3A%20%5B%7B%0A%22subject%22%3A%20%7B%0A%22termType%22%3A%20%22Variable%22%2C%0A%22value%22%3A%20%22s1%22%0A%7D%2C%0A%22predicate%22%3A%20%7B%0A%22termType%22%3A%20%22NameNode%22%2C%0A%22value%22%3A%20%22http%3A%2F%2Fvirtual-assembly.org%2Fontologies%2Fpair%23label%22%0A%7D%2C%0A%22object%22%3A%20%7B%0A%22termType%22%3A%20%22Literal%22%2C%0A%22value%22%3A%20%22orga2%22%0A%7D%0A%7D%5D%0A%7D%7D
@@ -173,21 +185,17 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     // sparqljs filter <> Q :
     } else {
       
-      console.log('** FILTER-<>Q');
+      console.log('** FILTER<>Q');
     
       Object.keys(filter).forEach(predicate => {
         if (filter[predicate] && predicate !== 'sparqlWhere') {
-          
-          /*
-          const object = filter[predicate].startsWith('http') ? `<${filter[predicate]}>` : filter[predicate];
-          */
-        
           let filterPrefix = null;
           let filterValue =null;
           let filterOntologie = null;
           let filterObjectValue = null;
           let filterPredicateValue = null;
-          if ( isAFilter ) {
+          if ( predicate = 'a' ) {
+            console.log('** FILTER<>Q-a');
             filterPrefix = filter[predicate].split(':')[0];
             filterValue = filter[predicate].split(':')[1];
             filterOntologie = ontologies.find( ontologie => ontologie.prefix === filterPrefix );
@@ -215,27 +223,17 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       });
     }
     
-  } else {
-    
-    console.log('** FILTER-NO');
-    return null;
   }
   
-  // sparqljs dereference :
-  const dereferenceQuery = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQuery && dereferenceQuery.constructForSparqljs) {
-    sparqljsParams.where = sparqljsParams.where.concat(dereferenceQuery.whereForSparqljs);
-    sparqljsParams.template = sparqljsParams.template.concat(dereferenceQuery.constructForSparqljs);
-  }
+  console.log('***** sparqljsParams-final', {...sparqljsParams});
   
-  console.log('*** SEMAPPS -> SPARQL.JS - params ***', dereferenceQuery, sparqljsParams);
   const sparqljsQuery = generator.stringify(sparqljsParams);
 
 
   
   // OLD STUFF :
   
-  console.log('*** SEMAPPS buildSparqlQuery ***', containers, filter, dereference, ontologies);
+  console.log('******************* SEMAPPS buildSparqlQuery ***', containers, filter, dereference, ontologies);
   
   let searchWhereQuery = '',
     filterWhereQuery = '';
@@ -290,8 +288,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   }
   `;
   
-  console.log('!!!!!! SEMAPPS -> SPARQL.JS - return :', sparqljsQuery);
-  console.log('!!!!!! SEMAPPS buildSparqlQuery - return :', semappsQuery);
+  console.log('******************* SEMAPPS -> SPARQL.JS - return :', sparqljsQuery);
+  console.log('******************* SEMAPPS buildSparqlQuery - return :', semappsQuery);
   
   return sparqljsQuery;
 };
