@@ -1,6 +1,7 @@
-const ControlledCollectionMixin = require('../mixins/controlled-collection');
-const { ACTOR_TYPES } = require('../constants');
 const { MoleculerError } = require('moleculer').Errors;
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { collectionPermissionsWithAnonRead } = require('../utils');
+const { ACTOR_TYPES } = require('../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -13,8 +14,7 @@ const OutboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: {},
-    jsonContext: null
+    permissions: collectionPermissionsWithAnonRead
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
