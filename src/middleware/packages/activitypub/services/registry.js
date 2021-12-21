@@ -3,7 +3,7 @@ const pathJoin = require('path').join;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const getCollectionRoute = require('../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri } = require('../utils');
-const { ACTOR_TYPES } = require("../constants");
+const { ACTOR_TYPES } = require('../constants');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -95,7 +95,7 @@ const RegistryService = {
         await ctx.call('activitypub.collection.create', { collectionUri, webId });
 
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
-        this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri)
+        this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
 
         // Attach it to the object
         await ctx.call('ldp.resource.patch', {
@@ -167,7 +167,7 @@ const RegistryService = {
 
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
-        if( this.isActor(newData.type || newData['@type'])) {
+        if (this.isActor(newData.type || newData['@type'])) {
           // If the resource is an actor, use the resource URI as the webId
           await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
         } else {
@@ -179,10 +179,10 @@ const RegistryService = {
       const { resourceUri, newData, oldData, webId } = ctx.params;
 
       // Check if we need to create collection only if the type has changed
-      if( this.hasTypeChanged(oldData, newData) ) {
+      if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
         for (let collection of collections) {
-          if( this.isActor(newData.type || newData['@type'])) {
+          if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
             await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
           } else {
