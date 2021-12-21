@@ -14,13 +14,17 @@ const fetchVoidEndpoints = async config => {
         })
     );
 
-  const results = await Promise.all(fetchPromises);
+  try {
+    const results = await Promise.all(fetchPromises);
 
-  for (let result of results) {
-    // Ignore unfetchable endpoints
-    if (result.data) {
-      // TODO modify config.dataServers based on the VOID configs returned
+    for (let result of results) {
+      // Ignore unfetchable endpoints
+      if (result.data) {
+        // TODO modify config.dataServers based on the VOID configs returned
+      }
     }
+  } catch (e) {
+    // no block methods if no VOID
   }
 };
 
