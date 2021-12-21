@@ -42,13 +42,13 @@ const collectionPermissionsWithAnonRead = webId => {
     }
   };
 
-  if( webId !== 'anon' && webId !== 'system' ) {
+  if (webId !== 'anon' && webId !== 'system') {
     permissions.user = {
       uri: webId,
       read: true,
       write: true,
       control: true
-    }
+    };
   }
 
   return permissions;
