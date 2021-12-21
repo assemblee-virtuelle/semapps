@@ -28,6 +28,13 @@ const ActorService = {
         return await response.json();
       }
     },
+    async getProfile(ctx) {
+      const { actorUri, webId } = ctx.params;
+      const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
+      if( actor.url ) {
+        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
+      }
+    },
     async appendActorData(ctx) {
       const { actorUri } = ctx.params;
 

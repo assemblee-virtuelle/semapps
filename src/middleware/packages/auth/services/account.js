@@ -16,6 +16,8 @@ module.exports = {
       let { uuid, username, password, email, webId } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
+      email = email.toLowerCase();
+
       const emailExists = await ctx.call('auth.account.emailExists', { email });
       if (emailExists) {
         throw new Error('email.already.exists');
