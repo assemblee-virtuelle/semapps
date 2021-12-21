@@ -142,10 +142,15 @@ const WebAclMiddleware = config => ({
             break;
 
           case 'activitypub.collection.create':
+            const { permissions } = await ctx.call('activitypub.registry.getByUri', {
+              collectionUri: ctx.params.collectionUri
+            });
+            const collectionRights = typeof permissions === 'function' ? permissions(webId) : permissions;
+
             // We must add the permissions before inserting the collection
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.collectionUri,
-              newRights: ctx.params.rights || defaultCollectionRights(webId),
+              newRights: ctx.params.rights || collectionRights || defaultCollectionRights(webId),
               webId: 'system'
             });
             break;

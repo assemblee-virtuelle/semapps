@@ -104,7 +104,7 @@ const ActorService = {
           if (!actor.publicKey) {
             await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
           }
-          console.log('Generated missing data for actor ' + actorUri);
+          this.broker.info('Generated missing data for actor ' + actorUri);
         }
       }
     },

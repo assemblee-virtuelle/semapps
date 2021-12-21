@@ -13,8 +13,7 @@ const FollowService = {
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
-      dereferenceItems: false,
-      permissions: {}
+      dereferenceItems: false
     });
 
     await this.broker.call('activitypub.registry.register', {
@@ -22,8 +21,7 @@ const FollowService = {
       attachToTypes: Object.values(ACTOR_TYPES),
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
-      dereferenceItems: false,
-      permissions: {}
+      dereferenceItems: false
     });
   },
   actions: {

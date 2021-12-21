@@ -169,7 +169,8 @@ const CollectionService = {
           }
           ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
