@@ -2,8 +2,6 @@ import jwtDecode from 'jwt-decode';
 import getServerKeyFromType from './getServerKeyFromType';
 import urlJoin from 'url-join';
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
-
 const fetchUserConfig = async config => {
   const { dataServers, httpClient } = config;
   const token = localStorage.getItem('token');
@@ -13,7 +11,18 @@ const fetchUserConfig = async config => {
   // If the user is logged in
   if (token) {
     const { webId } = jwtDecode(token);
-    const { json: userData } = await httpClient(webId);
+    let userData;
+
+    try {
+      const { json } = await httpClient(webId);
+      userData = json;
+    } catch(e) {
+      console.error(e);
+      // If the webId cannot be fetched, assume an invalid token and disconnect the user
+      localStorage.removeItem('token');
+      window.location.reload();
+      return;
+    }
 
     // If we have a POD server
     if (podKey) {

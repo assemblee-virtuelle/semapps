@@ -16,7 +16,6 @@ const fetchVoidEndpoints = async config => {
 
   try {
     const results = await Promise.all(fetchPromises);
-
     for (let result of results) {
       // Ignore unfetchable endpoints
       if (result.data) {
@@ -24,7 +23,7 @@ const fetchVoidEndpoints = async config => {
       }
     }
   } catch (e) {
-    // no block methods if no VOID
+    // Do not throw error if no endpoint found
   }
 };
 
