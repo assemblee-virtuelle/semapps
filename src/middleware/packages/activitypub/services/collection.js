@@ -149,7 +149,10 @@ const CollectionService = {
       });
 
       // No persisted collection found
-      if (!collection['@id']) return null;
+      if (!collection['@id']) {
+        ctx.meta.$statusCode = 404;
+        return null;
+      }
 
       if (this.isOrderedCollection(collection) && !sort) {
         throw new Error('A sort parameter must be provided for ordered collections');
