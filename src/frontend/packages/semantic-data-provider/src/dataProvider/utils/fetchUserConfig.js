@@ -16,7 +16,7 @@ const fetchUserConfig = async config => {
     try {
       const { json } = await httpClient(webId);
       userData = json;
-    } catch(e) {
+    } catch (e) {
       console.error(e);
       // If the webId cannot be fetched, assume an invalid token and disconnect the user
       localStorage.removeItem('token');
