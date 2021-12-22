@@ -93,7 +93,7 @@ module.exports = {
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return await this._update(ctx, {
-        '@id': account.id,
+        '@id': account['@id'],
         hashedPassword
       });
     }
