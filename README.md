@@ -6,15 +6,22 @@ SemApps (from *Sem*antic *App*lications) is a semantic web toolbox, allowing to 
 
 We provide tools on several layers:
 
-- Middleware
-- Triple store
-- Frontend
+- [Middleware](#middleware)
+- [Triple store](#triple-store)
+- [Frontend](#frontend)
 
 ### Middleware
 
 This is where all the semantic web standards are implemented.
 
-We use the [Moleculer](https://moleculer.services/) micro-service framework to create a modular middleware.
+- [LDP](https://semapps.org/docs/middleware/ldp/index)
+- [ActivityPub](https://semapps.org/docs/middleware/activitypub/index)
+- [WAC / WebACL](https://semapps.org/docs/middleware/webacl)
+- [Webfinger](https://semapps.org/docs/middleware/webfinger)
+- [WebId](https://semapps.org/docs/middleware/webid)
+- [HTTP Signature](https://semapps.org/docs/middleware/signature)
+
+We use the [Moleculer](https://moleculer.services/) micro-service framework to help create modular backends.
 
 ### Triple store
 
@@ -24,7 +31,7 @@ It is available as a Docker image on [Docker Hub](https://hub.docker.com/orgs/se
 
 ### Frontend
 
-We are providing many components to ease the development of web applications based on the React-Admin framework.
+We are providing many components to ease the development of web applications based on the [React-Admin](https://marmelab.com/react-admin/) framework.
 
 Our [Semantic Data Provider](src/frontend/packages/semantic-data-provider), which eases the communication with a semantic web server (through SPARQL and LDP), can be used with other view engines and frameworks.
 
