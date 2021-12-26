@@ -1,7 +1,0 @@
-.env.local
-.env.*.local
-/jwt/*.key
-/jwt/*.key.pub
-/actors/*.key
-/actors/*.key.pub
-/uploads
