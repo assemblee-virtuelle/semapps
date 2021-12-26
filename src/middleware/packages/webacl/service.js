@@ -53,7 +53,7 @@ module.exports = {
       }
       if (!hasWebAcl) {
         throw new Error(
-          'Error when starting the webAcl service: the main dataset is not secure. You muse use the fuseki-admin.createDataset action with the secure param'
+          'Error when starting the webAcl service: the main dataset is not secure. You must use the fuseki-admin.createDataset action with the secure param'
         );
       }
     }
