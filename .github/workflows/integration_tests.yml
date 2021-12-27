@@ -28,7 +28,9 @@ jobs:
           node-version: '12.19.1'
 
       - name: Install NPM packages
-        run: make init
+        run: |
+          ( cd ./src/middleware && yarn install )
+          ( cd ./src/middleware && yarn run bootstrap )
 
       - name: Run integration tests
-        run: make test
+        run: ( cd ./src/middleware/tests && yarn run test )
