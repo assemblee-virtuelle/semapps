@@ -14,11 +14,20 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Install NPM packages
-        run: make install
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12.19.1'
 
-      - name: Run prettier
-        run: make prettier
+      - name: Install prettier |
+        run: |
+          yarn install --prefix ./src/frontend
+          yarn install --prefix ./src/middleware
+
+      - name: Run prettier on frontend
+        run: yarn run prettier --prefix ./src/frontend
+
+      - name: Run prettier on middleware
+        run: yarn run prettier --prefix ./src/middleware
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
