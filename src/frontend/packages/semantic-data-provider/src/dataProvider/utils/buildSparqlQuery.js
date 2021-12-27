@@ -8,6 +8,22 @@ import sparqljs from 'sparqljs';
 // Parse a SPARQL query to a JSON object
 var SparqlParser = require('sparqljs').Parser;
 var parser = new SparqlParser();
+/*
+const sparql = '' +
+'PREFIX ldp: <http://www.w3.org/ns/ldp#> ' +
+'PREFIX petr: <https://data.petr-msb.data-players.com/ontology#> ' +
+'PREFIX pair: <http://virtual-assembly.org/ontologies/pair#> ' +
+'CONSTRUCT { ?s1 ?p1 ?o1. } ' +
+'WHERE { ' +
+'  ?s1 ?p1 ?o1. ' +
+'  FILTER(ISIRI(?s1)) ' +
+'  FILTER(?containerUri IN(<http://localhost:3000/spaces>)) ' +
+'  ?containerUri ldp:contains ?s1. ' +
+'  ?s1 ^pair:hasLocation [petr:hasEquipmentType <http://localhost:3000/equipment-types/mobile>] ' +
+'} ';
+
+console.log('parser.parse:', parser.parse(sparql));
+*/
 
 // Regenerate a SPARQL query from a JSON object
 var SparqlGenerator = require('sparqljs').Generator;
@@ -194,7 +210,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           let filterOntologie = null;
           let filterObjectValue = null;
           let filterPredicateValue = null;
-          if ( predicate = 'a' ) {
+          if ( predicate === 'a' ) {
             console.log('** FILTER<>Q-a');
             filterPrefix = filter[predicate].split(':')[0];
             filterValue = filter[predicate].split(':')[1];
