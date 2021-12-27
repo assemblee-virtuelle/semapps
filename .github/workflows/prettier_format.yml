@@ -20,14 +20,14 @@ jobs:
 
       - name: Install prettier |
         run: |
-          yarn install --prefix ./src/frontend
-          yarn install --prefix ./src/middleware
+          ( cd ./src/frontend && yarn install )
+          ( cd ./src/middleware && yarn install )
 
       - name: Run prettier on frontend
-        run: yarn run prettier --prefix ./src/frontend
+        run: ( cd ./src/frontend && yarn run prettier )
 
       - name: Run prettier on middleware
-        run: yarn run prettier --prefix ./src/middleware
+        run: ( cd ./src/middleware && yarn run prettier )
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
