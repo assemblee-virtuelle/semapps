@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectCurrentToId, objectIdToCurrent } = require('../utils');
+const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../utils');
 const ControlledCollectionMixin = require('../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../constants');
 
@@ -14,7 +14,7 @@ const InboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: {}
+    permissions: collectionPermissionsWithAnonRead
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {

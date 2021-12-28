@@ -1,6 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
+const FusekiAdminService = require('@semapps/fuseki-admin');
 const { LdpService } = require('@semapps/ldp');
 const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -16,13 +17,19 @@ jest.setTimeout(20000);
 
 const broker = new ServiceBroker({
   middlewares: [WebAclMiddleware],
-  logger: false
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
 });
 
 let expressMocked = undefined;
 
 beforeAll(async () => {
   broker.createService(JsonLdService);
+  broker.createService(FusekiAdminService);
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,

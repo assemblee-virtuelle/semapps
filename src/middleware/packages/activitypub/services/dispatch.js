@@ -14,21 +14,25 @@ const DispatchService = {
 
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
       for (const recipientUri of recipients) {
-        const recipient = await ctx.call('activitypub.actor.get', { actorUri: recipientUri });
+        const recipientInbox = await ctx.call('activitypub.actor.getCollectionUri', {
+          actorUri: recipientUri,
+          predicate: 'inbox',
+          webId: 'system'
+        });
         if (this.isLocalActor(recipientUri)) {
           // Attach activity to the inbox of the local actor
           await ctx.call('activitypub.collection.attach', {
-            collectionUri: recipient.inbox,
+            collectionUri: recipientInbox,
             item: activity
           });
           localRecipients.push(recipientUri);
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
-            this.createJob('remotePost', { inboxUri: recipient.inbox, activity });
+            this.createJob('remotePost', { inboxUri: recipientInbox, activity });
           } else {
             // Send directly
-            await this.remotePost(recipient.inbox, activity);
+            await this.remotePost(recipientUri + '/inbox', activity);
           }
         }
       }

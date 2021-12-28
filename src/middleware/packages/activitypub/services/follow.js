@@ -1,5 +1,6 @@
 const { hasType } = require('@semapps/ldp');
 const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
+const { collectionPermissionsWithAnonRead } = require('../utils');
 
 const FollowService = {
   name: 'activitypub.follow',
@@ -14,7 +15,7 @@ const FollowService = {
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
       dereferenceItems: false,
-      permissions: {}
+      permissions: collectionPermissionsWithAnonRead
     });
 
     await this.broker.call('activitypub.registry.register', {
@@ -23,7 +24,7 @@ const FollowService = {
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
       dereferenceItems: false,
-      permissions: {}
+      permissions: collectionPermissionsWithAnonRead
     });
   },
   actions: {

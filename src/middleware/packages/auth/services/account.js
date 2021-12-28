@@ -16,6 +16,8 @@ module.exports = {
       let { uuid, username, password, email, webId } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
+      email = email.toLowerCase();
+
       const emailExists = await ctx.call('auth.account.emailExists', { email });
       if (emailExists) {
         throw new Error('email.already.exists');
@@ -54,11 +56,10 @@ module.exports = {
     async verify(ctx) {
       const { username, password } = ctx.params;
 
-      const accounts = await this._find(ctx, {
-        query: {
-          username
-        }
-      });
+      // If the username includes a @, assume it is an email
+      const query = username.includes('@') ? { email: username } : { username };
+
+      const accounts = await this._find(ctx, { query });
 
       if (accounts.length > 0) {
         const passwordMatch = await this.comparePassword(password, accounts[0].hashedPassword);
@@ -92,7 +93,7 @@ module.exports = {
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return await this._update(ctx, {
-        '@id': account.id,
+        '@id': account['@id'],
         hashedPassword
       });
     }
@@ -100,7 +101,7 @@ module.exports = {
   methods: {
     async isValidUsername(ctx, username) {
       // Ensure the username has no space or special characters
-      if (!/^[a-zA-Z0-9\-_.]+$/.exec(username)) {
+      if (!/^[a-z0-9\-_.]+$/.exec(username)) {
         throw new Error('username.invalid');
       }
 

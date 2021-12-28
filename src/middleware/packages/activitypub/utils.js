@@ -35,6 +35,25 @@ const objectIdToCurrent = activityJson => {
   }
 };
 
+const collectionPermissionsWithAnonRead = webId => {
+  let permissions = {
+    anon: {
+      read: true
+    }
+  };
+
+  if (webId !== 'anon' && webId !== 'system') {
+    permissions.user = {
+      uri: webId,
+      read: true,
+      write: true,
+      control: true
+    };
+  }
+
+  return permissions;
+};
+
 // Items or recipients may be string or array, so default to array for easier handling
 const defaultToArray = value => {
   return !value ? undefined : Array.isArray(value) ? value : [value];
@@ -49,6 +68,7 @@ const delay = t => new Promise(resolve => setTimeout(resolve, t));
 module.exports = {
   objectCurrentToId,
   objectIdToCurrent,
+  collectionPermissionsWithAnonRead,
   defaultToArray,
   getSlugFromUri,
   getContainerFromUri,

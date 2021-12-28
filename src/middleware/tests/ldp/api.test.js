@@ -2,6 +2,7 @@ const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
+const FusekiAdminService = require('@semapps/fuseki-admin');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
 const express = require('express');
@@ -18,7 +19,8 @@ const broker = new ServiceBroker({
 let expressMocked = undefined;
 
 beforeAll(async () => {
-  await broker.createService(JsonLdService);
+  broker.createService(JsonLdService);
+  broker.createService(FusekiAdminService);
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,

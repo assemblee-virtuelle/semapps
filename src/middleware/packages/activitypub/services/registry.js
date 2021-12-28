@@ -3,6 +3,7 @@ const pathJoin = require('path').join;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const getCollectionRoute = require('../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri } = require('../utils');
+const { ACTOR_TYPES } = require('../constants');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -23,6 +24,7 @@ const RegistryService = {
   async started() {
     this.registeredCollections = [];
     this.registeredContainers = await this.broker.call('ldp.registry.list');
+    this.collectionsInCreation = [];
   },
   actions: {
     async register(ctx) {
@@ -81,13 +83,19 @@ const RegistryService = {
       };
     },
     async createAndAttachCollection(ctx) {
-      const { objectUri, collection } = ctx.params;
+      const { objectUri, collection, webId } = ctx.params;
       const collectionUri = urlJoin(objectUri, collection.path);
 
-      const exists = await ctx.call('activitypub.collection.exist', { collectionUri, webId: 'system' });
-      if (!exists) {
+      const exists = await ctx.call('activitypub.collection.exist', { collectionUri });
+      if (!exists && !this.collectionsInCreation.includes(collectionUri)) {
+        // Prevent race conditions by keeping the collections being created in memory
+        this.collectionsInCreation.push(collectionUri);
+
         // Create the collection
-        await ctx.call('activitypub.collection.create', { collectionUri, webId: 'system' });
+        await ctx.call('activitypub.collection.create', { collectionUri, webId });
+
+        // Now the collection has been created, we can remove it (this way we don't use too much memory)
+        this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
 
         // Attach it to the object
         await ctx.call('ldp.resource.patch', {
@@ -96,7 +104,7 @@ const RegistryService = {
             [collection.attachPredicate]: { '@id': collectionUri }
           },
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId
         });
       }
     },
@@ -145,21 +153,42 @@ const RegistryService = {
             : container.acceptedTypes === type
         )
       );
+    },
+    isActor(types) {
+      return defaultToArray(types).some(type => Object.values(ACTOR_TYPES).includes(type));
+    },
+    hasTypeChanged(oldData, newData) {
+      return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
     }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
-      const { newData } = ctx.params;
+      const { resourceUri, newData, webId } = ctx.params;
+
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
-        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
+        if (this.isActor(newData.type || newData['@type'])) {
+          // If the resource is an actor, use the resource URI as the webId
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+        } else {
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+        }
       }
     },
     async 'ldp.resource.updated'(ctx) {
-      const { newData } = ctx.params;
-      const collections = this.getCollectionsByType(newData.type || newData['@type']);
-      for (let collection of collections) {
-        await this.actions.createAndAttachCollection({ objectUri: newData.id || newData['@id'], collection });
+      const { resourceUri, newData, oldData, webId } = ctx.params;
+
+      // Check if we need to create collection only if the type has changed
+      if (this.hasTypeChanged(oldData, newData)) {
+        const collections = this.getCollectionsByType(newData.type || newData['@type']);
+        for (let collection of collections) {
+          if (this.isActor(newData.type || newData['@type'])) {
+            // If the resource is an actor, use the resource URI as the webId
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+          } else {
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+          }
+        }
       }
     },
     async 'ldp.resource.deleted'(ctx) {

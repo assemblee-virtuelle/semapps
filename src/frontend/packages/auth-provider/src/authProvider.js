@@ -61,6 +61,10 @@ const authProvider = ({
       } catch (e) {
         if (e.message === 'email.already.exists') {
           throw new Error('auth.message.user_email_exist');
+        } else if (e.message === 'username.already.exists') {
+          throw new Error('auth.message.username_exist');
+        } else if (e.message === 'username.invalid') {
+          throw new Error('auth.message.username_invalid');
         } else {
           throw new Error(e.message || 'ra.auth.sign_in_error');
         }
@@ -182,7 +186,12 @@ const authProvider = ({
       const { json: webIdData } = await httpClient(webId);
       const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
 
-      return { id: webId, fullName: profileData?.['pair:label'] || webIdData['foaf:name'], profileData, webIdData };
+      return {
+        id: webId,
+        fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'],
+        profileData,
+        webIdData
+      };
     }
   }
 });

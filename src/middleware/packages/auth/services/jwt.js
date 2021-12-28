@@ -14,6 +14,9 @@ module.exports = {
 
     if (!fs.existsSync(privateKeyPath) && !fs.existsSync(publicKeyPath)) {
       console.log('JWT keypair not found, generating...');
+      if (!fs.existsSync(this.settings.jwtPath)) {
+        fs.mkdirSync(this.settings.jwtPath);
+      }
       await this.actions.generateKeyPair({ privateKeyPath, publicKeyPath });
     }
 

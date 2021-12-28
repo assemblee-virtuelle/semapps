@@ -7,7 +7,7 @@ module.exports = {
     itemsPerPage: null,
     dereferenceItems: false,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: {},
+    permissions: null,
     controlledActions: {}
   },
   dependencies: ['activitypub.registry'],

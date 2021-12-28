@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const urlJoin = require('url-join');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
@@ -27,6 +26,13 @@ const ActorService = {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
         if (!response) return false;
         return await response.json();
+      }
+    },
+    async getProfile(ctx) {
+      const { actorUri, webId } = ctx.params;
+      const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
+      if (actor.url) {
+        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
       }
     },
     async appendActorData(ctx) {
@@ -98,8 +104,16 @@ const ActorService = {
           if (!actor.publicKey) {
             await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
           }
-          console.log('Generated missing data for actor ' + actorUri);
+          this.broker.info('Generated missing data for actor ' + actorUri);
         }
+      }
+    },
+    getCollectionUri: {
+      cache: true,
+      async handler(ctx) {
+        const { actorUri, predicate, webId } = ctx.params;
+        const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
+        return actor && actor[predicate];
       }
     }
   },

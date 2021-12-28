@@ -9,7 +9,14 @@ module.exports = {
   docs: {
     Guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
     'Middleware packages': [
-      'middleware/activitypub',
+      {
+        type: 'category',
+        label: 'ActivityPub',
+        items: [
+          'middleware/activitypub/index',
+          'middleware/activitypub/activities-handler',
+        ],
+      },
       'middleware/auth',
       'middleware/backup',
       'middleware/fuseki-admin',

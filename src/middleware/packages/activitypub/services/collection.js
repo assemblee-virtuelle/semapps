@@ -57,6 +57,7 @@ const CollectionService = {
      */
     async includes(ctx) {
       const { collectionUri, itemUri } = ctx.params;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.includes');
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
@@ -76,8 +77,9 @@ const CollectionService = {
      * @param item The resource to add to the collection
      */
     async attach(ctx) {
-      const { collectionUri, item } = ctx.params;
-      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.attach');
 
       // TODO also check external resources
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
@@ -98,8 +100,9 @@ const CollectionService = {
      * @param item The resource to remove from the collection
      */
     async detach(ctx) {
-      const { collectionUri, item } = ctx.params;
-      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.detach');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
@@ -146,7 +149,10 @@ const CollectionService = {
       });
 
       // No persisted collection found
-      if (!collection['@id']) return null;
+      if (!collection['@id']) {
+        ctx.meta.$statusCode = 404;
+        return null;
+      }
 
       if (this.isOrderedCollection(collection) && !sort) {
         throw new Error('A sort parameter must be provided for ordered collections');
@@ -166,7 +172,8 @@ const CollectionService = {
           }
           ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);

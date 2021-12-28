@@ -60,7 +60,10 @@ const ActivityService = {
 
               // Sender's followers list
               case actor.followers:
-                const collection = await ctx.call('activitypub.collection.get', { collectionUri: recipient });
+                const collection = await ctx.call('activitypub.collection.get', {
+                  collectionUri: recipient,
+                  webId: activity.actor
+                });
                 if (collection && collection.items) output.push(...defaultToArray(collection.items));
                 break;
 

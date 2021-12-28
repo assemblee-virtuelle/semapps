@@ -142,10 +142,15 @@ const WebAclMiddleware = config => ({
             break;
 
           case 'activitypub.collection.create':
+            const { permissions } = await ctx.call('activitypub.registry.getByUri', {
+              collectionUri: ctx.params.collectionUri
+            });
+            const collectionRights = typeof permissions === 'function' ? permissions(webId) : permissions;
+
             // We must add the permissions before inserting the collection
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.collectionUri,
-              newRights: ctx.params.rights || defaultCollectionRights(webId),
+              newRights: ctx.params.rights || collectionRights || defaultCollectionRights(webId),
               webId: 'system'
             });
             break;
@@ -214,6 +219,8 @@ const WebAclMiddleware = config => ({
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // Give read rights to the activity's recipients
+            // TODO improve performances by passing all users at once
+            // https://github.com/assemblee-virtuelle/semapps/issues/908
             for (let recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
                 resourceUri: actionReturnValue,

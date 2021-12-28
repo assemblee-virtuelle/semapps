@@ -52,7 +52,7 @@ module.exports = {
         // Check if container URI is a file, disable cache in this case
         const containerUri = getContainerFromUri(ctx.params.resourceUri);
         const containerSlug = getSlugFromUri(containerUri);
-        return containerSlug === 'files';
+        return containerSlug !== 'files';
       },
       keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
     },

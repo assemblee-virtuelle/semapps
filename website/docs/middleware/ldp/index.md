@@ -19,7 +19,7 @@ This package allows you to setup LDP direct containers in which LDP resources ca
 - LdpCacheCleanerService
 
 ## Mixins
-- [DocumentTaggerMixin]
+- [DocumentTaggerMixin](document-tagger.md)
 
 ## Install
 

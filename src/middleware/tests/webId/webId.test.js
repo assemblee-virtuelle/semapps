@@ -1,6 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { WebIdService } = require('@semapps/webid');
+const FusekiAdminService = require('@semapps/fuseki-admin');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -12,14 +13,18 @@ const ontologies = require('../ontologies');
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
   middlewares: [EventsWatcher, WebAclMiddleware],
-  logger: false
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
 });
 
 beforeAll(async () => {
-  await broker.createService({
-    mixins: [ApiGatewayService]
-  });
+  broker.createService(ApiGatewayService);
   broker.createService(JsonLdService);
+  broker.createService(FusekiAdminService);
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
