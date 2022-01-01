@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const { delay } = require('../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
@@ -11,6 +12,9 @@ const DispatchService = {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
       let localRecipients = [];
+
+      // Wait 30 seconds before dispatching the activity, so that onEmit side effects have time to run
+      await delay(30000);
 
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
       for (const recipientUri of recipients) {
