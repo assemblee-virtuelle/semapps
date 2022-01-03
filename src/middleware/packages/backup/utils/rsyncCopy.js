@@ -1,9 +1,9 @@
-const RsyncCopy = require("src/middleware/packages/backup/utils/rsyncCopy");
+const Rsync = require('rsync');
 const { join: pathJoin } = require("path");
 
 const rsyncCopy = (path, subDir, remoteServer) => {
   // Setup rsync to remote server
-  const rsync = new RsyncCopy()
+  const rsync = new Rsync()
     .flags('arv')
     .set('e', `sshpass -p "${remoteServer.password}" ssh -o StrictHostKeyChecking=no`)
     .source(path)

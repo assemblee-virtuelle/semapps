@@ -41,13 +41,14 @@ const BackupService = {
       const { fusekiBackupsPath } = this.settings.localServer;
 
       if (!fusekiBackupsPath) {
-        console.log('No fusekiBackupsPath defined, skipping backup...');
+        this.logger.info('No fusekiBackupsPath defined, skipping backup...');
         return;
       }
 
       // Generate new backup of all datasets
       const datasets = await ctx.call('fuseki-admin.listAllDatasets');
       for (const dataset of datasets) {
+        this.logger.info('Backing up dataset: ' + dataset);
         await ctx.call('fuseki-admin.backupDataset', { dataset });
       }
 
@@ -57,11 +58,12 @@ const BackupService = {
       const { otherDirsPaths } = this.settings.localServer;
 
       if (!otherDirsPaths) {
-        console.log('No otherDirPaths defined, skipping backup...');
+        this.logger.info('No otherDirPaths defined, skipping backup...');
         return;
       }
 
       for (const [key, path] of Object.entries(otherDirsPaths)) {
+        this.logger.info('Backing up directory: ' + path);
         await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
       }
     },
@@ -71,12 +73,12 @@ const BackupService = {
 
       // Path is mandatory for all copy methods
       if (!remoteServer.path) {
-        console.log('No remove server config defined, skipping remote backup...');
+        this.logger.info('No remote server config defined, skipping remote backup...');
         return;
       }
 
       switch(copyMethod) {
-        case 'rsynch':
+        case 'rsync':
           await rsyncCopy(path, subDir, remoteServer);
           break;
 
