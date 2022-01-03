@@ -75,7 +75,7 @@ const BackupService = {
         return;
       }
 
-      switch(copyMethod) {
+      switch (copyMethod) {
         case 'rsynch':
           await rsyncCopy(path, subDir, remoteServer);
           break;

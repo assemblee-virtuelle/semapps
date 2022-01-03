@@ -1,5 +1,5 @@
-const RsyncCopy = require("src/middleware/packages/backup/utils/rsyncCopy");
-const { join: pathJoin } = require("path");
+const RsyncCopy = require('src/middleware/packages/backup/utils/rsyncCopy');
+const { join: pathJoin } = require('path');
 
 const rsyncCopy = (path, subDir, remoteServer) => {
   // Setup rsync to remote server
