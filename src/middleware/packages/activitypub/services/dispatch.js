@@ -5,7 +5,10 @@ const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
     baseUri: null,
-    podProvider: false
+    podProvider: false,
+    // Delay before dispatching (0 for immediate dispatch)
+    // This is useful if we want onEmit side effects to run first
+    delay: 0,
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -13,8 +16,9 @@ const DispatchService = {
       const { activity } = ctx.params;
       let localRecipients = [];
 
-      // Wait 30 seconds before dispatching the activity, so that onEmit side effects have time to run
-      await delay(30000);
+      if( this.settings.delay ) {
+        await delay(this.settings.delay);
+      }
 
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
       for (const recipientUri of recipients) {
@@ -33,7 +37,7 @@ const DispatchService = {
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
-            this.createJob('remotePost', { inboxUri: recipientInbox, activity });
+            this.createJob('remotePost', activity.id || activity['@id'],{ inboxUri: recipientInbox, activity });
           } else {
             // Send directly
             await this.remotePost(recipientUri + '/inbox', activity);
@@ -42,7 +46,12 @@ const DispatchService = {
       }
 
       if (localRecipients.length > 0) {
-        this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
+        // If the QueueService mixin is available, use it
+        if (this.createJob) {
+          this.createJob('localPost', activity.id || activity['@id'], { activity, recipients: localRecipients });
+        } else {
+          this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
+        }
       }
     },
     'activitypub.inbox.received'() {
@@ -76,21 +85,21 @@ const DispatchService = {
   },
   queues: {
     async remotePost(job) {
-      const response = await this.remotePost(job.data.inboxUri, job.data.activity);
+      const { activity, inboxUri } = job.data;
+      const response = await this.remotePost(inboxUri, activity);
 
       if (!response.ok) {
-        job.moveToFailed({ message: 'Unable to send to remote host ' + job.data.inboxUri }, true);
+        job.moveToFailed({ message: 'Unable to send to remote host ' + inboxUri }, true);
       } else {
         job.progress(100);
       }
 
-      return {
-        response: {
-          ok: response.ok,
-          status: response.status,
-          statusText: response.statusText
-        }
-      };
+      return { response };
+    },
+    async localPost(job) {
+      const { activity, recipients } = job.data;
+      await this.broker.emit('activitypub.inbox.received', { activity, recipients });
+      job.progress(100);
     }
   }
 };

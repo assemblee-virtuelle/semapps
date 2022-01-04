@@ -22,11 +22,14 @@ const ActivityPubService = {
       name: undefined,
       preferredUsername: getSlugFromUri(resource.id || resource['@id'])
     }),
-    queueServiceUrl: null
+    dispatch: {
+      queueServiceUrl: null,
+      delay: 0,
+    }
   },
   dependencies: ['api'],
   async created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl } = this.settings;
+    const { baseUri, jsonContext, podProvider, selectActorData, dispatch } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -80,45 +83,14 @@ const ActivityPubService = {
     });
 
     this.broker.createService(DispatchService, {
-      mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
+      mixins: dispatch.queueServiceUrl ? [QueueService(dispatch.queueServiceUrl)] : undefined,
       settings: {
         baseUri,
-        podProvider
+        podProvider,
+        delay: dispatch.delay
       }
     });
   }
-  // async started() {
-  //   if (this.settings.podProvider) {
-  //     await this.actions.addApiRoute({ containerUri: urlJoin(this.settings.baseUri, ':username') });
-  //   } else {
-  //     const containers = this.getContainersByType(Object.values(ACTOR_TYPES));
-  //     for (let containerUri of containers) {
-  //       await this.actions.addApiRoute({ containerUri });
-  //     }
-  //   }
-  // },
-  // actions: {
-  //   async addApiRoute(ctx) {
-  //     const { containerUri } = ctx.params;
-  //     const routes = getRoutes(containerUri);
-  //     for (let route of routes) {
-  //       await this.broker.call('api.addRoute', { route, toBottom: false });
-  //     }
-  //   }
-  // },
-  // methods: {
-  //   getContainersByType(types) {
-  //     return this.settings.containers
-  //       .filter(container =>
-  //         types.some(type =>
-  //           Array.isArray(container.acceptedTypes)
-  //             ? container.acceptedTypes.includes(type)
-  //             : container.acceptedTypes === type
-  //         )
-  //       )
-  //       .map(container => urlJoin(this.settings.baseUri, container.path, ':username'));
-  //   }
-  // }
 };
 
 module.exports = ActivityPubService;
