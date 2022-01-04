@@ -37,7 +37,7 @@ const DispatchService = {
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
-            this.createJob('remotePost', activity.id || activity['@id'],{ inboxUri: recipientInbox, activity });
+            this.createJob('remotePost', activity.actor, { inboxUri: recipientInbox, activity });
           } else {
             // Send directly
             await this.remotePost(recipientUri + '/inbox', activity);
@@ -48,7 +48,7 @@ const DispatchService = {
       if (localRecipients.length > 0) {
         // If the QueueService mixin is available, use it
         if (this.createJob) {
-          this.createJob('localPost', activity.id || activity['@id'], { activity, recipients: localRecipients });
+          this.createJob('localPost', activity.actor, { activity, recipients: localRecipients });
         } else {
           this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
         }
@@ -84,22 +84,28 @@ const DispatchService = {
     }
   },
   queues: {
-    async remotePost(job) {
-      const { activity, inboxUri } = job.data;
-      const response = await this.remotePost(inboxUri, activity);
+    remotePost: {
+      name: '*',
+      async process(job) {
+        const { activity, inboxUri } = job.data;
+        const response = await this.remotePost(inboxUri, activity);
 
-      if (!response.ok) {
-        job.moveToFailed({ message: 'Unable to send to remote host ' + inboxUri }, true);
-      } else {
+        if (!response.ok) {
+          job.moveToFailed({ message: 'Unable to send to remote host ' + inboxUri }, true);
+        } else {
+          job.progress(100);
+        }
+
+        return {response};
+      },
+    },
+    localPost: {
+      name: '*',
+      async process(job) {
+        const { activity, recipients } = job.data;
+        await this.broker.emit('activitypub.inbox.received', { activity, recipients });
         job.progress(100);
       }
-
-      return { response };
-    },
-    async localPost(job) {
-      const { activity, recipients } = job.data;
-      await this.broker.emit('activitypub.inbox.received', { activity, recipients });
-      job.progress(100);
     }
   }
 };
