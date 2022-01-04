@@ -8,18 +8,18 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "0.4.0-alpha.7",
-    "@semapps/auth": "0.4.0-alpha.7",
-    "@semapps/fuseki-admin": "0.4.0-alpha.7",
-    "@semapps/jsonld": "0.4.0-alpha.7",
-    "@semapps/ldp": "0.4.0-alpha.7",
-    "@semapps/middlewares": "0.4.0-alpha.7",
-    "@semapps/mime-types": "0.4.0-alpha.7",
-    "@semapps/signature": "0.4.0-alpha.7",
-    "@semapps/sparql-endpoint": "0.4.0-alpha.7",
-    "@semapps/triplestore": "0.4.0-alpha.7",
-    "@semapps/webacl": "0.4.0-alpha.7",
-    "@semapps/webid": "0.4.0-alpha.7",
+    "@semapps/activitypub": "0.4.0-alpha.8",
+    "@semapps/auth": "0.4.0-alpha.8",
+    "@semapps/fuseki-admin": "0.4.0-alpha.8",
+    "@semapps/jsonld": "0.4.0-alpha.8",
+    "@semapps/ldp": "0.4.0-alpha.8",
+    "@semapps/middlewares": "0.4.0-alpha.8",
+    "@semapps/mime-types": "0.4.0-alpha.8",
+    "@semapps/signature": "0.4.0-alpha.8",
+    "@semapps/sparql-endpoint": "0.4.0-alpha.8",
+    "@semapps/triplestore": "0.4.0-alpha.8",
+    "@semapps/webacl": "0.4.0-alpha.8",
+    "@semapps/webid": "0.4.0-alpha.8",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
@@ -33,5 +33,5 @@
     "jest": "^24.9.0",
     "supertest": "^4.0.2"
   },
-  "version": "0.4.0-alpha.7"
+  "version": "0.4.0-alpha.8"
 }
