@@ -1,3 +1,4 @@
+/data
 activitypub/actors/*.key
 activitypub/actors/*.key.pub
 activitypub/jwt/*.key
