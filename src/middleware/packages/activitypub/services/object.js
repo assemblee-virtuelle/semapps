@@ -159,6 +159,7 @@ const ObjectService = {
       }
 
       // Delete the existing cached resource (if it exists)
+      // TODO also delete the associated blank nodes
       await ctx.call('triplestore.update', {
         query: `
           DELETE
