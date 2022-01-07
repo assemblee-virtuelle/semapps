@@ -94,10 +94,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   console.log('***** sparqljsParams-1', {...sparqljsParams});
     
   // sparqljs dereference :
-  const dereferenceQuery = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQuery && dereferenceQuery.constructForSparqljs) {
-    sparqljsParams.where = sparqljsParams.where.concat(dereferenceQuery.whereForSparqljs);
-    sparqljsParams.template = sparqljsParams.template.concat(dereferenceQuery.constructForSparqljs);
+  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, true, ontologies);
+  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
+    sparqljsParams.where = sparqljsParams.where.concat(dereferenceQueryForSparqlJs.where);
+    sparqljsParams.template = sparqljsParams.template.concat(dereferenceQueryForSparqlJs.construct);
   }
   
   console.log('***** sparqljsParams-2', {...sparqljsParams});
@@ -115,7 +115,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       
       console.log('** FILTER-SPARQL');
       /* 
-      Exemple : 
+      Example : 
       http://localhost:5000/Organization?filter=%7B%22q%22%3A%20%22orga%22%2C%22sparqlWhere%22%3A%20%7B%0A%22type%22%3A%20%22bgp%22%2C%0A%22triples%22%3A%20%5B%7B%0A%22subject%22%3A%20%7B%0A%22termType%22%3A%20%22Variable%22%2C%0A%22value%22%3A%20%22s1%22%0A%7D%2C%0A%22predicate%22%3A%20%7B%0A%22termType%22%3A%20%22NameNode%22%2C%0A%22value%22%3A%20%22http%3A%2F%2Fvirtual-assembly.org%2Fontologies%2Fpair%23label%22%0A%7D%2C%0A%22object%22%3A%20%7B%0A%22termType%22%3A%20%22Literal%22%2C%0A%22value%22%3A%20%22orga2%22%0A%7D%0A%7D%5D%0A%7D%7D
       {
         "q": "orga",
@@ -196,8 +196,6 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         ]
       });
       
-      delete filter.q;
-      
     // sparqljs filter <> Q :
     } else {
       
@@ -226,7 +224,6 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           }
 
           console.log('** FILTER-<>Q--->', predicate, filter[predicate], filterPrefix, filterValue, filterOntologie, filterObjectValue);
-          
           sparqljsParams.where.push({
             "type": "bgp",
             "triples": [{
@@ -276,15 +273,13 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     });
   }
 
-//  const dereferenceQuery = buildDereferenceQuery(dereference);
+  const dereferenceQuery = buildDereferenceQuery(dereference);
   
   console.log('*** SEMAPPS buildSparqlQuery-params ***',
-    '1:', dereferenceQuery.construct,
+    '1:', dereferenceQuery,
     '2:', filterWhereQuery,
     '3:', containers,
-    '4:', searchWhereQuery,
-    '5:', dereferenceQuery.where,
-    '6:', dereferenceQuery.whereForSparqljs
+    '4:', searchWhereQuery
   );
   
   const semappsQuery = `
@@ -306,6 +301,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   
   console.log('******************* SEMAPPS -> SPARQL.JS - return :', sparqljsQuery);
   console.log('******************* SEMAPPS buildSparqlQuery - return :', semappsQuery);
+  
+  if (filter.q) { delete filter.q };
   
   return sparqljsQuery;
 };
