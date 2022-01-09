@@ -46,21 +46,17 @@ const FusekiAdminService = {
         this.logger.info(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
 
-        if (secure) {
-          const templateFilePath = path.join(__dirname, 'templates', 'secure-dataset.ttl');
-          const template = await fsPromises.readFile(templateFilePath, 'utf8');
-          const assembler = format(template, { dataset: dataset });
-          response = await fetch(this.settings.url + '$/datasets', {
-            method: 'POST',
-            headers: { ...this.headers, 'Content-Type': 'text/turtle' },
-            body: assembler
-          });
-        } else {
-          response = await fetch(this.settings.url + '$/datasets' + '?state=active&dbType=tdb2&dbName=' + dataset, {
-            method: 'POST',
-            headers: this.headers
-          });
-        }
+        if (dataset.endsWith('Acl') || dataset.endsWith('Mirror')) 
+          throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
+
+        const templateFilePath = path.join(__dirname, 'templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
+        const template = await fsPromises.readFile(templateFilePath, 'utf8');
+        const assembler = format(template, { dataset: dataset });
+        response = await fetch(this.settings.url + '$/datasets', {
+          method: 'POST',
+          headers: { ...this.headers, 'Content-Type': 'text/turtle' },
+          body: assembler
+        });
 
         if (response.status === 200) {
           await this.actions.waitForDatasetCreation({ dataset }, { parentCtx: ctx });

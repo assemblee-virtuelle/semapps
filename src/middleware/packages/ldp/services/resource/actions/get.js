@@ -8,7 +8,8 @@ const {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   getContainerFromUri,
-  getSlugFromUri
+  getSlugFromUri,
+  isMirror
 } = require('../../../utils');
 
 module.exports = {
@@ -70,6 +71,8 @@ module.exports = {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
 
+        const mirror = isMirror(resourceUri,this.settings.baseUrl);
+
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
@@ -79,10 +82,12 @@ module.exports = {
               ${dereferenceQuery.construct}
             }
             WHERE {
+              ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${blandNodeQuery.where}
               ${dereferenceQuery.where}
+              ${ mirror? '} .' : ''}
             }
           `,
           accept,
