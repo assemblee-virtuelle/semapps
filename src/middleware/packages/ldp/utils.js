@@ -5,6 +5,10 @@ function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
 }
 
+const isMirror = (resourceUri, baseUrl) => {
+  return !resourceUri.startsWith(baseUrl)
+}
+
 const buildBlankNodesQuery = depth => {
   let construct = '',
     where = '';
@@ -71,7 +75,7 @@ const buildDereferenceQuery = predicates => {
   let queries = [];
   const nodes = extractNodes(predicates);
 
-  if (nodes) {
+  if (nodes && nodes.length) {
     for (let node of nodes) {
       const parentNode = getParentNode(node);
       const predicate = getPredicate(node);
@@ -155,5 +159,6 @@ module.exports = {
   isContainer,
   defaultToArray,
   delay,
-  getAclUriFromResourceUri
+  getAclUriFromResourceUri,
+  isMirror
 };
