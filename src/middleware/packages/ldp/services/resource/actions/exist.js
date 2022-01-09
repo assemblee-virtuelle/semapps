@@ -1,3 +1,5 @@
+const { isMirror } = require('../../../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -8,10 +10,20 @@ module.exports = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    const triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-      uri: resourceUri,
-      webId
-    });
+    let triplesNb;
+    if (!isMirror(resourceUri, this.settings.baseUrl)) {
+      triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
+        uri: resourceUri,
+        webId
+      });
+    }
+    else {
+      triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
+        uri: resourceUri,
+        webId,
+        graphName: this.settings.mirrorGraphName
+      });
+    }
 
     return triplesNb > 0;
   }

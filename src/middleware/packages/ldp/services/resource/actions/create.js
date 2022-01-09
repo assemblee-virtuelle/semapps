@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -22,6 +23,9 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const resourceUri = resource.id || resource['@id'];
+
+    if (isMirror(resourceUri,this.settings.baseUrl))
+      throw new MoleculerError('Mirrored resources cannot be created with LDP', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
