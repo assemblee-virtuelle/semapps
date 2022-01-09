@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri } = require('../../../utils');
+const { getContainerFromUri, isMirror } = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -37,6 +37,9 @@ module.exports = {
       const { resourceUri } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+
+      if (isMirror(resourceUri,this.settings.baseUrl))
+        throw new MoleculerError('Mirrored resources cannot be deleted with LDP', 403, 'FORBIDDEN');
 
       const { disassembly } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),

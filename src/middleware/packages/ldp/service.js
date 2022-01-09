@@ -8,6 +8,7 @@ module.exports = {
   name: 'ldp',
   settings: {
     baseUrl: null,
+    mirrorGraphName: 'http://semapps.org/mirror',
     ontologies: [],
     containers: [],
     podProvider: false,

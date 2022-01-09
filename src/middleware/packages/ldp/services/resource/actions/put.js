@@ -1,6 +1,9 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const {
+  isMirror
+} = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -48,6 +51,9 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       const resourceUri = resource.id || resource['@id'];
+
+      if (isMirror(resourceUri,this.settings.baseUrl))
+        throw new MoleculerError('Mirrored resources cannot be modified with LDP PUT', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
