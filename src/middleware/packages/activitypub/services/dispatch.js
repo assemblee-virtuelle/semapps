@@ -8,7 +8,7 @@ const DispatchService = {
     podProvider: false,
     // Delay before dispatching (0 for immediate dispatch)
     // This is useful if we want onEmit side effects to run first
-    delay: 0,
+    delay: 0
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -16,7 +16,7 @@ const DispatchService = {
       const { activity } = ctx.params;
       let localRecipients = [];
 
-      if( this.settings.delay ) {
+      if (this.settings.delay) {
         await delay(this.settings.delay);
       }
 
@@ -96,8 +96,8 @@ const DispatchService = {
           job.progress(100);
         }
 
-        return {response};
-      },
+        return { response };
+      }
     },
     localPost: {
       name: '*',

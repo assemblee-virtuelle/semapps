@@ -22,14 +22,17 @@ module.exports = {
     }
 
     let preferredUri = urlJoin(containerUri, slug);
-    let resourceAlreadyExists = await ctx.call('ldp.resource.exist', { resourceUri: preferredUri, webId:'system' });
+    let resourceAlreadyExists = await ctx.call('ldp.resource.exist', { resourceUri: preferredUri, webId: 'system' });
 
     let counter = 0;
     if (resourceAlreadyExists) {
       // If preferredUri is already used, find another available URI
       do {
         counter++;
-        resourceAlreadyExists = await ctx.call('ldp.resource.exist', { resourceUri:preferredUri + counter, webId:'system' });
+        resourceAlreadyExists = await ctx.call('ldp.resource.exist', {
+          resourceUri: preferredUri + counter,
+          webId: 'system'
+        });
       } while (resourceAlreadyExists);
       preferredUri = preferredUri + counter;
     }
