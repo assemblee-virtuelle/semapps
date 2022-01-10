@@ -102,7 +102,6 @@ npm run dev
 If you have selected the `webAcl` option above, then you will need to configure the OIDC provider by entering these variables in the file `.env.local` at the root folder of your project.
 
 ```
-SEMAPPS_CONNECT_TYPE=OIDC
 SEMAPPS_OIDC_ISSUER=
 SEMAPPS_OIDC_CLIENT_ID=
 SEMAPPS_OIDC_CLIENT_SECRET=
