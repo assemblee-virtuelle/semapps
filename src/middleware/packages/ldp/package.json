@@ -15,7 +15,9 @@
     "rdf-parse": "^1.7.0",
     "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "jsonld-streaming-serializer": "^1.2.0",
+    "n3": "^1.8.0"
   },
   "publishConfig": {
     "access": "public"
