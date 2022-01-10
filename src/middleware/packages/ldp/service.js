@@ -2,6 +2,7 @@ const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
 const LdpRegistryService = require('./services/registry');
+const LdpVoidService = require('./services/void');
 
 module.exports = {
   name: 'ldp',
@@ -12,7 +13,7 @@ module.exports = {
     podProvider: false,
     defaultContainerOptions: {}
   },
-  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
+  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry','ldp.void'],
   async created() {
     const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions } = this.settings;
 
@@ -38,6 +39,13 @@ module.exports = {
         containers,
         defaultOptions: defaultContainerOptions,
         podProvider
+      }
+    });
+
+    await this.broker.createService(LdpVoidService, {
+      settings: {
+        baseUrl,
+        ontologies,
       }
     });
 

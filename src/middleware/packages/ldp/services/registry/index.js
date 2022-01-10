@@ -24,7 +24,7 @@ module.exports = {
     register: registerAction
   },
   async started() {
-    this.registeredContainers = [];
+    this.registeredContainers = {};
     if (this.settings.podProvider) {
       // The auth.account service is a dependency only in POD provider config
       await this.broker.waitForServices(['auth.account']);
