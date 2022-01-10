@@ -125,7 +125,7 @@ const buildDereferenceQueryForSparqlJs = ( predicates, ontologies ) => {
       });
     }
     return {
-      construct: (queries.length > 0) ? queries.reduce((pre, cur) => pre.concat(cur) ) : null,
+      construct: (queries.length > 0) ? queries.map(q => q.query).reduce((pre, cur) => (pre.concat(cur))) : null,
       where: buildOptionalqueryForSparqljs(queries),
     };
   } else {
