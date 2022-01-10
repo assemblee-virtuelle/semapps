@@ -192,7 +192,7 @@ INSERT DATA {
 
 You will then be allowed to run the `POST /users` query stated above.
 
-Please not that you just opened a security hole in your instance by allowing any anonymous user with write access to the `users` container. After you performed your first test, you should remove the triple you just created in the webacl graph (use the snippet below), and configure properly your OIDC provider and superAdmins list.
+Please note that you just opened a security hole in your instance by allowing any anonymous user with write access to the `users` container. After you performed your first test, you should remove the triple you just created in the webacl graph (use the snippet below), and configure properly your OIDC provider and superAdmins list.
 
 ```
 DELETE DATA {
