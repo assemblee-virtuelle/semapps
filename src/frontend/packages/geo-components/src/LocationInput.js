@@ -36,10 +36,13 @@ const LocationInput = ({
   helperText,
   ...rest
 }) => {
-  
-  if (!mapboxConfig) { throw new Error('@semapps/geo-components : No mapbox configuration') }
-  if (!mapboxConfig.access_token) { throw new Error('@semapps/geo-components : No access token in mapbox configuration') }
-  
+  if (!mapboxConfig) {
+    throw new Error('@semapps/geo-components : No mapbox configuration');
+  }
+  if (!mapboxConfig.access_token) {
+    throw new Error('@semapps/geo-components : No access token in mapbox configuration');
+  }
+
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
