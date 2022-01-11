@@ -6,6 +6,8 @@ const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
 const {
     getPrefixJSON,
+    createFragmentURL,
+    regexProtocolAndHostAndPort
   } = require('../../utils');
 const {
     parseHeader,
@@ -26,17 +28,7 @@ function streamToString(stream) {
     });
 }
 
-const regex = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
-
-function createFragmentURL(baseUrl, serverUrl){
-    let fragment = 'me'
-    const res = serverUrl.match(regex)
-    if (res) fragment = res[2].replace('-','_').replace('.','_').replace(':','_')
-
-    return urlJoin(baseUrl,'#'+fragment)
-}
-
-const regexServer = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)\\/');
+//const regexServer = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)\\/');
 
 const jsonContext = {
     ...prefixes,
@@ -76,7 +68,7 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
 
 }
 
-const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers) => {
+const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers, mirrorGraph, ctx, nextScalar) => {
 
     let thisServer = createFragmentURL(baseUrl, serverUrl)
 
@@ -90,19 +82,24 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers)
 
     for (const [i, p] of containers.entries()) {
 
+        const type = await ctx.call('triplestore.query', {
+            query: `SELECT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t } LIMIT 1`
+        })
+
         let partition = {
             'http://rdfs.org/ns/void#uriSpace': p,
-            'http://rdfs.org/ns/void#class': undefined,
+            'http://rdfs.org/ns/void#class': type[0].t.value,
         }
 
         //if (dereference) partition['http://semapps.org/ns/core#blankNodes'] = dereference
         
         const count = await ctx.call('triplestore.query', {
-            query: `SELECT (COUNT (?o) as ?count) FROM <http://semapps.org/mirror> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
+            query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
         })
+
         partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
 
-        addClassPartition(thisServer, partition, graph, i)
+        addClassPartition(thisServer, partition, graph, nextScalar+i)
     }
 
 }
@@ -111,8 +108,8 @@ module.exports = {
   name: 'ldp.void',
   settings: {
     baseUrl: null,
+    mirrorGraphName: null,
     ontologies: [],
-    servers: [],
   },
   dependencies: ['ldp.registry', 'api'],
   actions: {
@@ -157,16 +154,17 @@ module.exports = {
         for (const [i, p] of partitions.entries()) {
             addClassPartition(thisServer, p, graph, i)
         }
+        let scalar = partitions.length
 
         const serversContainers = await ctx.call('triplestore.query', {
-            query: `SELECT DISTINCT ?s FROM <http://semapps.org/mirror> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
+            query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
         })
 
         let serversMap = {}
         for (const s of serversContainers.map(sc => sc.s.value)) {
-            const res = s.match(regex)
+            const res = s.match(regexProtocolAndHostAndPort)
             if (res){
-               let name = res[0].slice(0, -1)
+               let name = res[0]; //.slice(0, -1)
                let serverName = serversMap[name]
                if (!serverName) {
                 serversMap[name] = []
@@ -175,9 +173,10 @@ module.exports = {
                serverName.push(s)
             }
         }
-
+        
         for (const server of Object.keys(serversMap)) {
-            await addMirrorServer( url, server, graph, hasSparql, serversMap[server] )
+            await addMirrorServer( url, server, graph, hasSparql, serversMap[server], this.settings.mirrorGraphName, ctx, scalar )
+            scalar += serversMap[server].length
         }
 
         ctx.meta.$responseType = accept;
@@ -215,12 +214,6 @@ module.exports = {
         }
     });
 
-    // this.mirroredServers = [];
-    // if (this.settings.servers.length > 0) {
-    //   for (let server of this.settings.servers) {
-    //     await this.actions.mirror(server);
-    //   }
-    // }
   },
   methods: {
     async getContainers(ctx) {

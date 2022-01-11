@@ -14,7 +14,8 @@ module.exports = {
   settings: {
     baseUrl: null,
     ontologies: [],
-    podProvider: false
+    podProvider: false,
+    mirrorGraphName: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
