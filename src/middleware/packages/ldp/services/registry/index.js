@@ -34,7 +34,7 @@ module.exports = {
         // Ensure backward compatibility
         if (typeof container === 'string') container = { path: container };
         // Do not await this action, as we need the service to be available for the WebACL middleware
-        this.actions.register(container);
+        await this.actions.register(container);
       }
     }
   },
@@ -48,13 +48,17 @@ module.exports = {
         // First attach the container to its parent container
         // This will avoid WebACL error, in case the container is fetched before
         if (containerPath !== '/') {
-          const parentContainerUri = getContainerFromUri(containerUri);
-          if (parentContainerUri === this.settings.baseUrl) parentContainerUri += '/';
+          let parentContainerUri = getContainerFromUri(containerUri);
+          // if it is the root container, add a trailing slash
+          if (urlJoin(parentContainerUri,'/') === urlJoin(this.settings.baseUrl,'/')) 
+            parentContainerUri = urlJoin(parentContainerUri,'/');
+          
           const parentExists = await ctx.call('ldp.container.exist', {
             containerUri: parentContainerUri,
             webId: 'system'
           });
           if (parentExists) {
+            
             await ctx.call('ldp.container.attach', {
               containerUri: parentContainerUri,
               resourceUri: containerUri,
