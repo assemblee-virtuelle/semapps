@@ -5,6 +5,16 @@ function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
 }
 
+const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
+
+function createFragmentURL(baseUrl, serverUrl){
+  let fragment = 'me'
+  const res = serverUrl.match(regexProtocolAndHostAndPort)
+  if (res) fragment = res[2].replace('-','_').replace('.','_').replace(':','_')
+
+  return urlJoin(baseUrl,'#'+fragment)
+}
+
 const isMirror = (resourceUri, baseUrl) => {
   return !resourceUri.startsWith(baseUrl)
 }
@@ -160,5 +170,7 @@ module.exports = {
   defaultToArray,
   delay,
   getAclUriFromResourceUri,
-  isMirror
+  isMirror,
+  createFragmentURL,
+  regexProtocolAndHostAndPort
 };

@@ -6,6 +6,7 @@ module.exports = {
   LdpRegistryService: require('./services/registry'),
   LdpResourceService: require('./services/resource'),
   LdpVoidService: require('./services/void'),
+  LdpMirrorService: require('./services/mirror'),
   ResourcesWatcherBot: require('./bots/resources-watcher'),
   ControlledContainerMixin: require('./mixins/controlled-container'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
