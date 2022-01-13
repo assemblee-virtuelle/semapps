@@ -1,5 +1,5 @@
 const Rsync = require('rsync');
-const { join: pathJoin } = require("path");
+const { join: pathJoin } = require('path');
 
 const rsyncCopy = (path, subDir, remoteServer) => {
   // Setup rsync to remote server

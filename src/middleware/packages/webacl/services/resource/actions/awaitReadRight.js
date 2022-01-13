@@ -9,22 +9,25 @@ module.exports = {
     handler(ctx) {
       const { resourceUri, webId, timeout } = ctx.params;
       return new Promise(resolve => {
-        let i = 0, interval;
+        let i = 0,
+          interval;
         const checkRights = () => {
-          ctx.call('webacl.resource.hasRights', {
-            resourceUri,
-            rights: { read: true },
-            webId,
-          }).then(rights => {
-            if (rights.read === true) {
-              if (interval) clearInterval(interval);
-              resolve(true);
-            } else if ((i * 1000) >= timeout) {
-              if (interval) clearInterval(interval);
-              resolve(false);
-            }
-            i++;
-          });
+          ctx
+            .call('webacl.resource.hasRights', {
+              resourceUri,
+              rights: { read: true },
+              webId
+            })
+            .then(rights => {
+              if (rights.read === true) {
+                if (interval) clearInterval(interval);
+                resolve(true);
+              } else if (i * 1000 >= timeout) {
+                if (interval) clearInterval(interval);
+                resolve(false);
+              }
+              i++;
+            });
         };
         checkRights(); // Try immediately, then launch interval
         interval = setInterval(checkRights, 1000);

@@ -24,7 +24,7 @@ const ActivityPubService = {
     }),
     dispatch: {
       queueServiceUrl: null,
-      delay: 0,
+      delay: 0
     }
   },
   dependencies: ['api'],
