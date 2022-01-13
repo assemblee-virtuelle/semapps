@@ -45,7 +45,7 @@ const ActorService = {
         await ctx.call('ldp.resource.patch', {
           resource: {
             '@id': actorUri,
-            ...this.settings.selectActorData(currentData)
+            ...actorData
           },
           contentType: MIME_TYPES.JSON,
           webId: 'system'
