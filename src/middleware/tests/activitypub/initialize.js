@@ -37,6 +37,12 @@ const initialize = async () => {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
       password: CONFIG.JENA_PASSWORD
+    },
+    async started() {
+      await this.actions.createDataset({
+        dataset: CONFIG.MAIN_DATASET,
+        secure: true
+      });
     }
   });
   await broker.createService(AuthLocalService, {

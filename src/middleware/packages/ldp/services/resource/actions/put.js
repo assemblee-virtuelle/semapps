@@ -46,6 +46,7 @@ module.exports = {
       let { resource, contentType } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+      let newData;
 
       const resourceUri = resource.id || resource['@id'];
 
@@ -93,54 +94,59 @@ module.exports = {
       const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
-      // The exact same data have been posted, skip
+      // If the exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
-        return resourceUri;
+        newData = oldData;
+      } else {
+        // Keep track of blank nodes to use in WHERE clause
+        const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
+          triple => triple.object.termType === 'Variable'
+        );
+        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
+
+        // Generate the query
+        let query = '';
+        if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+        if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+        query += `WHERE { `;
+        if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+        if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+        query += ` }`;
+
+        console.log('query', query);
+
+        await ctx.call('triplestore.update', { query, webId });
+
+        // Get the new data, with the same formatting as the old data
+        // We skip the cache because it has not been invalidated yet
+        newData = await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri,
+            accept: MIME_TYPES.JSON,
+            webId
+          },
+          { meta: { $cache: false } }
+        );
+
+        ctx.emit(
+          'ldp.resource.updated',
+          {
+            resourceUri,
+            oldData,
+            newData,
+            webId
+          },
+          { meta: { webId: null, dataset: null } }
+        );
       }
 
-      // Keep track of blank nodes to use in WHERE clause
-      const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-        triple => triple.object.termType === 'Variable'
-      );
-      const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
-
-      // Generate the query
-      let query = '';
-      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
-      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-      query += `WHERE { `;
-      if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
-      if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-      query += ` }`;
-
-      console.log('query', query);
-
-      await ctx.call('triplestore.update', { query, webId });
-
-      // Get the new data, with the same formatting as the old data
-      // We skip the cache because it has not been invalidated yet
-      const newData = await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri,
-          accept: MIME_TYPES.JSON,
-          webId
-        },
-        { meta: { $cache: false } }
-      );
-
-      ctx.emit(
-        'ldp.resource.updated',
-        {
-          resourceUri,
-          oldData,
-          newData,
-          webId
-        },
-        { meta: { webId: null, dataset: null } }
-      );
-
-      return resourceUri;
+      return {
+        resourceUri,
+        oldData,
+        newData,
+        webId
+      };
     }
   }
 };

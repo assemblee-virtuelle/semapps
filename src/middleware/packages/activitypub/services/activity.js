@@ -17,7 +17,6 @@ const ActivityService = {
     newResourcesPermissions: {},
     controlledActions: {
       // Activities shouldn't be handled manually
-      create: 'activitypub.activity.forbidden',
       patch: 'activitypub.activity.forbidden',
       put: 'activitypub.activity.forbidden',
       delete: 'activitypub.activity.forbidden'
@@ -27,20 +26,6 @@ const ActivityService = {
   actions: {
     forbidden() {
       throw new E.ForbiddenError();
-    },
-    async create(ctx) {
-      let { activity } = ctx.params;
-      const containerUri = await this.getContainerUri(activity.actor);
-
-      return await ctx.call('ldp.container.post', {
-        containerUri,
-        resource: {
-          '@context': this.settings.context,
-          ...objectIdToCurrent(activity)
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
     },
     async getRecipients(ctx) {
       const { activity } = ctx.params;
@@ -93,6 +78,9 @@ const ActivityService = {
         if (typeof ctx.params.resourceUri === 'object') {
           ctx.params.resourceUri = ctx.params.resourceUri.id || ctx.params.resourceUri['@id'];
         }
+      },
+      create(ctx) {
+        ctx.params.resource = objectIdToCurrent(ctx.params.resource);
       }
     },
     after: {

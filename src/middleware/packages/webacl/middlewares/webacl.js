@@ -213,7 +213,7 @@ const WebAclMiddleware = config => ({
 
           case 'activitypub.activity.create':
             const activity = await ctx.call('activitypub.activity.get', {
-              resourceUri: actionReturnValue,
+              resourceUri: actionReturnValue.resourceUri,
               webId: 'system'
             });
             const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
@@ -223,7 +223,7 @@ const WebAclMiddleware = config => ({
             // https://github.com/assemblee-virtuelle/semapps/issues/908
             for (let recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
-                resourceUri: actionReturnValue,
+                resourceUri: actionReturnValue.resourceUri,
                 additionalRights: {
                   user: {
                     uri: recipient,
@@ -237,7 +237,7 @@ const WebAclMiddleware = config => ({
             // If activity is public, give anonymous read right
             if (await ctx.call('activitypub.activity.isPublic', { activity })) {
               await ctx.call('webacl.resource.addRights', {
-                resourceUri: actionReturnValue,
+                resourceUri: actionReturnValue.resourceUri,
                 additionalRights: {
                   anon: {
                     read: true

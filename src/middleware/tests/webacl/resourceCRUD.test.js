@@ -29,7 +29,19 @@ let expressMocked = undefined;
 
 beforeAll(async () => {
   broker.createService(JsonLdService);
-  broker.createService(FusekiAdminService);
+  broker.createService(FusekiAdminService, {
+    settings: {
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD
+    },
+    async started() {
+      await this.actions.createDataset({
+        dataset: CONFIG.MAIN_DATASET,
+        secure: true
+      });
+    }
+  });
   broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,

@@ -104,11 +104,12 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.UPDATE: {
-          objectUri = await ctx.call('ldp.resource.patch', {
+          await ctx.call('ldp.resource.patch', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
             webId: actorUri
           });
+          objectUri = activity.object['@id'] || activity.object.id;
           break;
         }
 
