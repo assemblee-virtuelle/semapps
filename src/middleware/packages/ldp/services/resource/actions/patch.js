@@ -52,6 +52,7 @@ module.exports = {
     async handler(ctx) {
       let { resource, contentType, webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+      let newData;
 
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
@@ -103,49 +104,54 @@ module.exports = {
 
       // The exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
-        return resourceUri;
+        newData = oldData;
+      } else {
+        // Keep track of blank nodes to use in WHERE clause
+        const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
+          triple => triple.object.termType === 'Variable'
+        );
+        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
+
+        // Generate the query
+        let query = '';
+        if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+        if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+        query += `WHERE { `;
+        if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+        if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+        query += ` }`;
+
+        await ctx.call('triplestore.update', { query, webId });
+
+        // Get the new data, with the same formatting as the old data
+        newData = await ctx.call(
+          'ldp.resource.get',
+          {
+            resourceUri,
+            accept: MIME_TYPES.JSON,
+            webId
+          },
+          { meta: { $cache: false } }
+        );
+
+        ctx.emit(
+          'ldp.resource.updated',
+          {
+            resourceUri,
+            oldData,
+            newData,
+            webId
+          },
+          { meta: { webId: null, dataset: null } }
+        );
       }
 
-      // Keep track of blank nodes to use in WHERE clause
-      const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-        triple => triple.object.termType === 'Variable'
-      );
-      const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
-
-      // Generate the query
-      let query = '';
-      if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
-      if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-      query += `WHERE { `;
-      if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
-      if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-      query += ` }`;
-
-      await ctx.call('triplestore.update', { query, webId });
-
-      // Get the new data, with the same formatting as the old data
-      const newData = await ctx.call(
-        'ldp.resource.get',
-        {
-          resourceUri,
-          accept: MIME_TYPES.JSON,
-          webId
-        },
-        { meta: { $cache: false } }
-      );
-
-      ctx.emit(
-        'ldp.resource.updated',
-        {
-          resourceUri,
-          oldData,
-          newData,
-          webId
-        },
-        { meta: { webId: null, dataset: null } }
-      );
-
-      return resourceUri;
+      return {
+        resourceUri,
+        oldData,
+        newData,
+        webId
+      };
     }
   }
 };

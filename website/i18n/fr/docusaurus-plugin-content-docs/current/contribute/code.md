@@ -1,5 +1,5 @@
 ---
-title: Contributer au coeur de SemApps
+title: Contribuer au coeur de SemApps
 ---
 
 Si vous êtes développeur, vous pouvez choisir d'utiliser SemApps comme librairie pour votre propre projet. Dans ce cas, ce [guide](guides/ldp-server.md) sera pour vous d'une grande utilité.

@@ -41,7 +41,7 @@ const ActorService = {
       const currentData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
       const actorData = this.settings.selectActorData(currentData);
 
-      if( actorData ) {
+      if (actorData) {
         await ctx.call('ldp.resource.patch', {
           resource: {
             '@id': actorUri,

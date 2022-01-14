@@ -99,15 +99,15 @@ module.exports = {
         fs.unlinkSync(oldData['semapps:localPath']);
       }
 
-      ctx.emit(
-        'ldp.resource.deleted',
-        {
-          resourceUri,
-          oldData,
-          webId
-        },
-        { meta: { webId: null, dataset: null } }
-      );
+      const returnValues = {
+        resourceUri,
+        oldData,
+        webId
+      };
+
+      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+
+      return returnValues;
     }
   }
 };

@@ -74,3 +74,19 @@ You can also pass parameters defined in the [container options](index#container-
 ##### Return
 Triples, Turtle or JSON-LD depending on `accept` type.
 
+
+### `ldp.container.post`
+* Generate an URI, create the resource (calling `ldp.resource.create`), and attach it to a container
+* Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `resource` | `Object`  | **required** | Resource to create |
+| `containerUri` | `string` | **required** | Container where the resource will be created |
+| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `string` | Logged user's webId  | User doing the action |
+| `slug` | `String` |  | Specific ID tu use for URI instead generated UUID |
+
+##### Return
+`String` : URI of the created resource

@@ -12,8 +12,7 @@ module.exports = {
           containerUri,
           slug: ctx.meta.headers.slug,
           resource,
-          contentType: ctx.meta.headers['content-type'],
-          createResourceAction: controlledActions.create
+          contentType: ctx.meta.headers['content-type']
         });
       } else {
         if (ctx.params.files.length > 1) {
@@ -23,8 +22,7 @@ module.exports = {
           containerUri,
           slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
           file: ctx.params.files[0],
-          contentType: MIME_TYPES.JSON,
-          createResourceAction: controlledActions.create
+          contentType: MIME_TYPES.JSON
         });
       }
       ctx.meta.$responseHeaders = {
@@ -67,14 +65,10 @@ module.exports = {
       disassembly: {
         type: 'array',
         optional: true
-      },
-      createResourceAction: {
-        type: 'string',
-        default: 'ldp.resource.create'
       }
     },
     async handler(ctx) {
-      let { resource, containerUri, slug, contentType, file, createResourceAction } = ctx.params;
+      let { resource, containerUri, slug, contentType, file } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       const resourceUri = await ctx.call('ldp.resource.generateId', { containerUri, slug });
@@ -98,7 +92,9 @@ module.exports = {
           resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
         }
 
-        await ctx.call(createResourceAction, {
+        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
+        await ctx.call(controlledActions.create || 'ldp.resource.create', {
           resource: {
             '@id': resourceUri,
             ...resource
