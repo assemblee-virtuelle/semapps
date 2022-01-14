@@ -37,7 +37,7 @@ module.exports = {
   },
   actions: {
     async post(ctx) {
-      if(!ctx.params.containerUri) {
+      if (!ctx.params.containerUri) {
         ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
       }
       return await ctx.call('ldp.container.post', ctx.params);
@@ -62,7 +62,7 @@ module.exports = {
     },
     getContainerUri(ctx) {
       return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params.webId || ctx.meta.webId });
-    },
+    }
   },
   methods: {
     async waitForContainerCreation(containerUri) {

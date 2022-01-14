@@ -68,11 +68,7 @@ module.exports = {
       webId
     };
 
-    ctx.emit(
-      'ldp.resource.created',
-      returnValues,
-      { meta: { webId: null, dataset: null } }
-    );
+    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
 
     return returnValues;
   }

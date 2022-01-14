@@ -1,8 +1,8 @@
 const { MoleculerError } = require('moleculer').Errors;
 const ControlledCollectionMixin = require('../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, objectIdToCurrent} = require('../utils');
+const { collectionPermissionsWithAnonRead, objectIdToCurrent } = require('../utils');
 const { ACTOR_TYPES } = require('../constants');
-const {MIME_TYPES} = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -49,7 +49,9 @@ const OutboxService = {
       // TODO use it to order the ordered collections
       activity.published = new Date().toISOString();
 
-      const activitiesContainerUri = await this.broker.call('activitypub.activity.getContainerUri', { webId: actorUri });
+      const activitiesContainerUri = await this.broker.call('activitypub.activity.getContainerUri', {
+        webId: actorUri
+      });
 
       const activityUri = await ctx.call('activitypub.activity.post', {
         containerUri: activitiesContainerUri,
