@@ -64,7 +64,7 @@ module.exports = {
             }
             WHERE {
               <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL { 
+              OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ${filtersQuery.where}
               }
@@ -79,15 +79,22 @@ module.exports = {
         if (result && result.contains) {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
+              // We pass the following parameters only if they are explicit
+              let explicitProperties = ['queryDepth', 'dereference', 'jsonContext','accept'];
+              let explicitParams= explicitProperties.reduce((accumulator, currentProperty)=>{
+                if(ctx.params[currentProperty]){
+                  accumulator[currentProperty]=ctx.params[currentProperty]
+                }
+                return accumulator;
+              }
+              ,{})
+
               let resource = await ctx.call('ldp.resource.get', {
                 resourceUri,
                 webId,
                 forceSemantic: true,
                 // We pass the following parameters only if they are explicit
-                accept: ctx.params.accept,
-                queryDepth: ctx.params.queryDepth,
-                dereference: ctx.params.dereference,
-                jsonContext: ctx.params.jsonContext
+                ...explicitParams
               });
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
@@ -100,7 +107,7 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
-              console.log('Error requesting resource: ', resourceUri);
+              console.error('Error requesting resource: ', resourceUri);
               // Ignore a resource if it is not found
               if (e.name !== 'MoleculerError') throw e;
             }
@@ -142,7 +149,7 @@ module.exports = {
             }
             WHERE {
               <${containerUri}> a ldp:Container, ?containerType .
-              OPTIONAL { 
+              OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ?s1 ?p1 ?o1 .
                 ${blandNodeQuery.where}
