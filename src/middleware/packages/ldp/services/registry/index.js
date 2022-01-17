@@ -30,12 +30,19 @@ module.exports = {
       await this.broker.waitForServices(['auth.account']);
     }
     if (this.settings.containers.length > 0) {
-      for (let container of this.settings.containers) {
-        // Ensure backward compatibility
-        if (typeof container === 'string') container = { path: container };
-        // Do not await this action, as we need the service to be available for the WebACL middleware
-        await this.actions.register(container);
-      }
+      // Do not await the Promise.all, to avoid deadlock, as we need the service to finishe its initialization in order to be available for the WebACL middleware (which is called by the register action)
+      Promise.all( this.settings.containers.map(
+        async c => {
+          if (typeof c === 'string') c = { path: c };
+          await this.actions.register(c);
+        }
+      ) )
+      // for (let container of this.settings.containers) {
+      //   // Ensure backward compatibility
+      //   if (typeof container === 'string') container = { path: container };
+      //   // Do not await this action, as we need the service to be available for the WebACL middleware
+      //   await this.actions.register(container);
+      // }
     }
   },
   methods: {
