@@ -80,14 +80,13 @@ module.exports = {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
               // We pass the following parameters only if they are explicit
-              let explicitProperties = ['queryDepth', 'dereference', 'jsonContext','accept'];
-              let explicitParams= explicitProperties.reduce((accumulator, currentProperty)=>{
-                if(ctx.params[currentProperty]){
-                  accumulator[currentProperty]=ctx.params[currentProperty]
+              let explicitProperties = ['queryDepth', 'dereference', 'jsonContext', 'accept'];
+              let explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
+                if (ctx.params[currentProperty]) {
+                  accumulator[currentProperty] = ctx.params[currentProperty];
                 }
                 return accumulator;
-              }
-              ,{})
+              }, {});
 
               let resource = await ctx.call('ldp.resource.get', {
                 resourceUri,
