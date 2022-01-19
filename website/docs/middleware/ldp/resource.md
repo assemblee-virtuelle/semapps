@@ -24,21 +24,23 @@ You can also pass parameters defined in the [container options](index#container-
 Triples, Turtle or JSON-LD depending on `accept` type.
 
 
-### `ldp.container.post`
-* Create a resource
-* Content-type can be triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+### `ldp.resource.create`
+* This action is called internally by `ldp.container.post`
+* If called directly, the full URI must be provided in the `resource` object
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `resource` | `String` or `Object`  | **required** | Resource to create |
-| `containerUri` | `string` | **required** | Container where the resource will be created |
-| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId` | `string` | Logged user's webId  | User doing the action |
-| `slug` | `String` |  | Specific ID tu use for URI instead generated UUID |
+| Property | Type | Default | Description                                                                                 |
+| -------- | ---- | ------- |---------------------------------------------------------------------------------------------|
+| `resource` | `Object`  | **required** | Resource to create (with an ID)                                                             |
+| `contentType` | `String` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `String` | Logged user's webId | User doing the action                                                                       |
 
-##### Return
-`String` : URI of the created resource
+##### Return values
+| Property      | Type     | Description                 |
+|---------------|----------|-----------------------------|
+| `resourceUri` | `String` | URI of the created resource |
+| `newData`     | `Object` | New value of the resource   |
+| `webId`       | `String` | User who did the action     |
 
 
 ### `ldp.resource.patch`
@@ -49,11 +51,16 @@ Triples, Turtle or JSON-LD depending on `accept` type.
 | Property | Type | Default | Description |
 | -------- | ---- | ------- | ----------- |
 | `resource` | `String` or `Object`  | **required** | Resource to update |
-| `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId` | `string` | Logged user's webId | User doing the action |
+| `contentType` | `String` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId` | `String` | Logged user's webId | User doing the action |
 
-##### Return
-`String` : URI of the updated resource
+##### Return values
+| Property      | Type     | Description                 |
+|---------------|----------|-----------------------------|
+| `resourceUri` | `String` | URI of the updated resource |
+| `newData`     | `Object` | New value of the resource   |
+| `oldData`     | `Object` | Old value of the resource   |
+| `webId`       | `String` | User who did the action     |
 
 
 ### `ldp.resource.put`
@@ -68,8 +75,13 @@ Triples, Turtle or JSON-LD depending on `accept` type.
 | `contentType` | `string` | **required** | Type of provided resource (`application/ld+json`, `text/turtle` or `application/n-triples`) |
 | `webId` | `string` | Logged user's webId | User doing the action |
 
-##### Return
-`String` : URI of the updated resource
+##### Return values
+| Property      | Type     | Description                 |
+|---------------|----------|-----------------------------|
+| `resourceUri` | `String` | URI of the updated resource |
+| `newData`     | `Object` | New value of the resource   |
+| `oldData`     | `Object` | Old value of the resource   |
+| `webId`       | `String` | User who did the action     |
 
 
 ### `ldp.resource.delete`
@@ -80,3 +92,10 @@ Triples, Turtle or JSON-LD depending on `accept` type.
 | -------- | ---- | ------- | ----------- |
 | `resourceUri` | `String`| **required** | URI of resource to delete |
 | `webId` | `string` | Logged user's webId | User doing the action |
+
+##### Return values
+| Property      | Type     | Description                 |
+|---------------|----------|-----------------------------|
+| `resourceUri` | `String` | URI of the deleted resource |
+| `oldData`     | `Object` | Old value of the resource   |
+| `webId`       | `String` | User who did the action     |

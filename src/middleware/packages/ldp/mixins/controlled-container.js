@@ -36,8 +36,11 @@ module.exports = {
     });
   },
   actions: {
-    post(ctx) {
-      return ctx.call('ldp.container.post', ctx.params);
+    async post(ctx) {
+      if (!ctx.params.containerUri) {
+        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      }
+      return await ctx.call('ldp.container.post', ctx.params);
     },
     list(ctx) {
       return ctx.call('ldp.container.get', ctx.params);
@@ -56,12 +59,12 @@ module.exports = {
     },
     delete(ctx) {
       return ctx.call('ldp.resource.delete', ctx.params);
+    },
+    getContainerUri(ctx) {
+      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params.webId || ctx.meta.webId });
     }
   },
   methods: {
-    async getContainerUri(webId) {
-      return this.broker.call('ldp.registry.getUri', { path: this.settings.path, webId });
-    },
     async waitForContainerCreation(containerUri) {
       let containerExist, containerAttached;
 

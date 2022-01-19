@@ -22,7 +22,19 @@ const initialize = async () => {
 
   await broker.createService(ApiGatewayService);
   await broker.createService(JsonLdService);
-  await broker.createService(FusekiAdminService);
+  await broker.createService(FusekiAdminService, {
+    settings: {
+      url: CONFIG.SPARQL_ENDPOINT,
+      user: CONFIG.JENA_USER,
+      password: CONFIG.JENA_PASSWORD
+    },
+    async started() {
+      await this.actions.createDataset({
+        dataset: CONFIG.MAIN_DATASET,
+        secure: true
+      });
+    }
+  });
   await broker.createService(TripleStoreService, {
     settings: {
       sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,

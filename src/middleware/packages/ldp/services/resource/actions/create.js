@@ -23,7 +23,7 @@ module.exports = {
 
     const resourceUri = resource.id || resource['@id'];
 
-    const { disassembly, jsonContext } = {
+    const { disassembly, jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -52,27 +52,24 @@ module.exports = {
     });
 
     const newData = await ctx.call(
-      'ldp.resource.get',
+      controlledActions.get || 'ldp.resource.get',
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1,
         forceSemantic: true,
         webId
       },
       { meta: { $cache: false } }
     );
 
-    ctx.emit(
-      'ldp.resource.created',
-      {
-        resourceUri: resource['@id'],
-        newData,
-        webId
-      },
-      { meta: { webId: null, dataset: null } }
-    );
+    const returnValues = {
+      resourceUri: resource['@id'],
+      newData,
+      webId
+    };
 
-    return newData;
+    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+
+    return returnValues;
   }
 };

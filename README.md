@@ -56,7 +56,7 @@ Here are some examples of websites made with SemApps:
 
 > Feel free to open a PR to add your own website here.
 
-## SemApps website
+## See the SemApps' website for more information :
 
 - [Homepage](https://semapps.org)
 - [About](https://semapps.org/docs/about)

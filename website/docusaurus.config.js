@@ -1,6 +1,6 @@
 module.exports = {
   title: 'SemApps',
-  tagline: 'A toolbox for web semantic applications',
+  tagline: 'A toolbox for semantic web applications',
   url: 'https://semapps.org',
   baseUrl: '/',
   favicon: 'img/favicon.ico',

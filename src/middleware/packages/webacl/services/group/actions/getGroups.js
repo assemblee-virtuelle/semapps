@@ -1,6 +1,3 @@
-const { MoleculerError } = require('moleculer').Errors;
-const urlJoin = require('url-join');
-
 module.exports = {
   api: async function api(ctx) {
     return await ctx.call('webacl.group.getGroups', {});

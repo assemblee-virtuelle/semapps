@@ -1,7 +1,8 @@
 const urlJoin = require('url-join');
+const addRightsAction = require('./actions/addRights');
+const awaitReadRightAction = require('./actions/awaitReadRight');
 const getRightsAction = require('./actions/getRights');
 const setRightsAction = require('./actions/setRights');
-const addRightsAction = require('./actions/addRights');
 const hasRightsAction = require('./actions/hasRights');
 const deleteAllRightsAction = require('./actions/deleteAllRights');
 const removeRightsAction = require('./actions/removeRights');
@@ -31,6 +32,7 @@ module.exports = {
   actions: {
     deleteAllRights: deleteAllRightsAction.action,
     removeRights: removeRightsAction.action,
+    awaitReadRight: awaitReadRightAction.action,
     // Actions accessible through the API
     api_hasRights: hasRightsAction.api,
     hasRights: hasRightsAction.action,

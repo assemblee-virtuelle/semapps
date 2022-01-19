@@ -39,15 +39,18 @@ const ActorService = {
       const { actorUri } = ctx.params;
 
       const currentData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
+      const actorData = this.settings.selectActorData(currentData);
 
-      await ctx.call('ldp.resource.patch', {
-        resource: {
-          '@id': actorUri,
-          ...this.settings.selectActorData(currentData)
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      if (actorData) {
+        await ctx.call('ldp.resource.patch', {
+          resource: {
+            '@id': actorUri,
+            ...actorData
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      }
     },
     async generateKeyPair(ctx) {
       const { actorUri } = ctx.params;
