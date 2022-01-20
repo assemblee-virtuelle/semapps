@@ -16,7 +16,7 @@ module.exports = {
   dependencies: ['api'],
   async created() {
     const { baseUrl, ontologies, containers, defaultContainerOptions } = this.schema.settings;
-    
+
     await this.broker.createService(LdpContainerService, {
       settings: {
         baseUrl,
@@ -24,7 +24,7 @@ module.exports = {
         containers,
         defaultOptions: defaultContainerOptions
       },
-      hooks:this.schema.hooksContainer||{}
+      hooks: this.schema.hooksContainer || {}
     });
 
     await this.broker.createService(LdpResourceService, {
@@ -33,7 +33,7 @@ module.exports = {
         ontologies,
         containers
       },
-      hooks:this.schema.hooksResource||{}
+      hooks: this.schema.hooksResource || {}
     });
 
     // Only create this service if a cacher is defined
