@@ -16,7 +16,7 @@ const ReferenceCollectionField = ({ source, record, reference, children, ...rest
 };
 
 ReferenceCollectionField.defaultProps = {
-  addLabel: true,
+  addLabel: true
 };
 
 export default ReferenceCollectionField;

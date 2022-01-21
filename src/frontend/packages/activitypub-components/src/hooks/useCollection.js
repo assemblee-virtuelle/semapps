@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
 
-const useCollection = (predicateOrUri) => {
+const useCollection = predicateOrUri => {
   const { identity } = useGetIdentity();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const useCollection = (predicateOrUri) => {
     setLoading(true);
     const headers = new Headers({
       Accept: 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token'),
+      Authorization: 'Bearer ' + localStorage.getItem('token')
     });
 
     fetchUtils
