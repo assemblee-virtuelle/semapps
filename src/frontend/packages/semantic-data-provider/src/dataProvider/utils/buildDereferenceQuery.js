@@ -42,7 +42,7 @@ const buildOptionalQuery = (queries, parentNode = false) =>
     `
     )
     .join('\n');
-    
+
 const buildDereferenceQueryStandard = predicates => {
   let queries = [];
   const nodes = extractNodes(predicates);
@@ -73,25 +73,22 @@ const buildDereferenceQueryStandard = predicates => {
     };
   }
 };
-    
+
 const buildOptionalqueryForSparqljs = (queries, parentNode = false) =>
   queries
     .filter(q => q.parentNode === parentNode)
-    .map(
-      q => ({
-        "type": "optional",
-        "patterns": [
-          {
-            "type": "bgp",
-            "triples": q.query
-          },
-          buildOptionalqueryForSparqljs(queries, q.node)
-        ]
-      })
-    );
+    .map(q => ({
+      type: 'optional',
+      patterns: [
+        {
+          type: 'bgp',
+          triples: q.query
+        },
+        buildOptionalqueryForSparqljs(queries, q.node)
+      ]
+    }));
 
-    
-const buildDereferenceQueryForSparqlJs = ( predicates, ontologies ) => {
+const buildDereferenceQueryForSparqlJs = (predicates, ontologies) => {
   let queries = [];
   const nodes = extractNodes(predicates);
 
@@ -103,20 +100,20 @@ const buildDereferenceQueryForSparqlJs = ( predicates, ontologies ) => {
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
       const filterPrefix = predicate.split(':')[0];
       const filterValue = predicate.split(':')[1];
-      const filterOntologie = ontologies.find( ontologie => ontologie.prefix === filterPrefix );
+      const filterOntologie = ontologies.find(ontologie => ontologie.prefix === filterPrefix);
       const queryForSparqljs = [
         {
-          "subject": DataFactory.variable("s" + parentVarName),
-          "predicate": DataFactory.namedNode(filterOntologie.url + filterValue),
-          "object": DataFactory.variable("s" + varName)
+          subject: DataFactory.variable('s' + parentVarName),
+          predicate: DataFactory.namedNode(filterOntologie.url + filterValue),
+          object: DataFactory.variable('s' + varName)
         },
         {
-          "subject": DataFactory.variable("s" + varName),
-          "predicate": DataFactory.variable("p" + varName),
-          "object": DataFactory.variable("o" + varName),
-        },
+          subject: DataFactory.variable('s' + varName),
+          predicate: DataFactory.variable('p' + varName),
+          object: DataFactory.variable('o' + varName)
+        }
       ];
-      
+
       queries.push({
         node,
         parentNode,
@@ -125,8 +122,8 @@ const buildDereferenceQueryForSparqlJs = ( predicates, ontologies ) => {
       });
     }
     return {
-      construct: (queries.length > 0) ? queries.map(q => q.query).reduce((pre, cur) => (pre.concat(cur))) : null,
-      where: buildOptionalqueryForSparqljs(queries),
+      construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
+      where: buildOptionalqueryForSparqljs(queries)
     };
   } else {
     return {
@@ -135,8 +132,8 @@ const buildDereferenceQueryForSparqlJs = ( predicates, ontologies ) => {
     };
   }
 };
-  
-const buildDereferenceQuery = (predicates, sparqlJs=false, ontologies=null) => {
+
+const buildDereferenceQuery = (predicates, sparqlJs = false, ontologies = null) => {
   if (sparqlJs) {
     return buildDereferenceQueryForSparqlJs(predicates, ontologies);
   } else {
