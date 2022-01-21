@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import md5 from 'crypto-js/md5';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
@@ -18,11 +18,7 @@ const extractNodes = predicates => {
   return nodes;
 };
 
-const generateSparqlVarName = node =>
-  crypto
-    .createHash('md5')
-    .update(node)
-    .digest('hex');
+const generateSparqlVarName = node => md5(node);
 
 const getParentNode = node => node.includes('/') && node.split('/')[0];
 
