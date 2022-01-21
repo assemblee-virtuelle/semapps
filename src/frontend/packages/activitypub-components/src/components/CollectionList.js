@@ -11,7 +11,11 @@ const CollectionList = ({ collectionUri, resource, children, ...rest }) => {
   const { data: collection, loading } = useGetOne(resource, collectionUri, { enabled: !!collectionUri });
 
   if (loading) {
-    return ( <div style={{ marginTop: 8 }}><LinearProgress /></div> );
+    return (
+      <div style={{ marginTop: 8 }}>
+        <LinearProgress />
+      </div>
+    );
   } else if (!collection) {
     return null;
   }

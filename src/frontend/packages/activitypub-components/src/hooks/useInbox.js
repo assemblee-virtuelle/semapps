@@ -26,7 +26,7 @@ const useInbox = () => {
 
       let filtersWhereQuery = '';
       if (filters) {
-        Object.keys(filters).forEach((predicate) => {
+        Object.keys(filters).forEach(predicate => {
           if (filters[predicate]) {
             const object = filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : filters[predicate];
             filtersWhereQuery += `?s1 ${predicate} ${object} .`;
@@ -54,8 +54,8 @@ const useInbox = () => {
         body: query,
         headers: new Headers({
           Accept: 'application/ld+json',
-          Authorization: 'Bearer ' + token,
-        }),
+          Authorization: 'Bearer ' + token
+        })
       });
 
       if (json['@graph']) {

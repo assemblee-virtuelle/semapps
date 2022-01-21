@@ -19,19 +19,19 @@ const useOutbox = () => {
 
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
-    async (activity) => {
+    async activity => {
       const token = localStorage.getItem('token');
       try {
         const { headers } = await fetchUtils.fetchJson(outboxUrl, {
           method: 'POST',
           body: JSON.stringify({
             '@context': 'https://www.w3.org/ns/activitystreams',
-            ...activity,
+            ...activity
           }),
           headers: new Headers({
             'Content-Type': 'application/ld+json',
-            Authorization: `Bearer ${token}`,
-          }),
+            Authorization: `Bearer ${token}`
+          })
         });
         return headers.get('Location');
       } catch (e) {
@@ -65,8 +65,8 @@ const useOutbox = () => {
       body: query,
       headers: new Headers({
         Accept: 'application/ld+json',
-        Authorization: 'Bearer ' + token,
-      }),
+        Authorization: 'Bearer ' + token
+      })
     });
 
     if (json['@graph']) {
