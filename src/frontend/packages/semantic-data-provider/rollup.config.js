@@ -3,10 +3,22 @@ import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import replace from 'rollup-plugin-replace';
 import { terser } from 'rollup-plugin-terser';
-import {createFilter} from "rollup-pluginutils";
+import { createFilter } from 'rollup-pluginutils';
 
 const external = createFilter(
-  ['react', 'react-admin', 'react-router-dom', 'react-final-form', 'react-router', 'react-redux', 'speakingurl', 'jsonld', '@material-ui/**', 'crypto-js', 'crypto'],
+  [
+    'react',
+    'react-admin',
+    'react-router-dom',
+    'react-final-form',
+    'react-router',
+    'react-redux',
+    'speakingurl',
+    'jsonld',
+    '@material-ui/**',
+    'crypto-js',
+    'crypto'
+  ],
   null,
   { resolve: false }
 );
