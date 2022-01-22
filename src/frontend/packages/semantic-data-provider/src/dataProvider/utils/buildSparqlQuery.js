@@ -12,11 +12,11 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   // sparqljs init :
   let sparqljsParams = {
     queryType: 'CONSTRUCT',
-    template: [quad(variable('s1'),variable('p1'),variable('o1'))],
+    template: [quad(variable('s1'), variable('p1'), variable('o1'))],
     where: [
       {
         type: 'bgp',
-        triples: [quad(variable('s1'),variable('p1'),variable('o1'))]
+        triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
       },
       {
         type: 'filter',
@@ -36,7 +36,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       },
       {
         type: 'bgp',
-        triples: [quad(variable('containerUri'),namedNode('http://www.w3.org/ns/ldp#contains'),variable('s1'))]
+        triples: [quad(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
       }
     ],
     type: 'query',
@@ -79,7 +79,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
             where: [
               {
                 type: 'bgp',
-                triples: [quad(variable('s1'),variable('p1'),variable('o1'))]
+                triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
               },
               {
                 type: 'filter',
@@ -98,11 +98,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                         }
                       ]
                     },
-                    literal(
-                      filter.q.toLowerCase(),
-                      '',
-                      namedNode('http://www.w3.org/2001/XMLSchema#string')
-                    )
+                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
                   ]
                 }
               },
@@ -114,7 +110,13 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                   args: [
                     {
                       type: 'bgp',
-                      triples: [quad(variable('s1'),namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),variable('o1'))]
+                      triples: [
+                        quad(
+                          variable('s1'),
+                          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+                          variable('o1')
+                        )
+                      ]
                     }
                   ]
                 }
@@ -149,7 +151,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           }
           sparqljsParams.where.push({
             type: 'bgp',
-            triples: [quad(variable('s1'),namedNode(filterPredicateValue),namedNode(filterObjectValue))]
+            triples: [quad(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
           });
         }
       });

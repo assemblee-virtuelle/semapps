@@ -103,8 +103,8 @@ const buildDereferenceQueryForSparqlJs = (predicates, ontologies) => {
       const filterValue = predicate.split(':')[1];
       const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
       const queryForSparqljs = [
-        quad(variable('s' + parentVarName),namedNode(filterOntology.url + filterValue),variable('s' + varName)),
-        quad(variable('s' + varName),variable('p' + varName),variable('o' + varName))
+        quad(variable('s' + parentVarName), namedNode(filterOntology.url + filterValue), variable('s' + varName)),
+        quad(variable('s' + varName), variable('p' + varName), variable('o' + varName))
       ];
 
       queries.push({
