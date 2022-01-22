@@ -1,11 +1,10 @@
 import buildDereferenceQuery from './buildDereferenceQuery';
-import getRdfPrefixes from './getRdfPrefixes';
 import DataFactory from '@rdfjs/data-model';
-import sparqljs from 'sparqljs';
+const { literal, namedNode, quad, variable } = DataFactory;
 
 // Regenerate a SPARQL query from a JSON object
-var SparqlGenerator = require('sparqljs').Generator;
-var generator = new SparqlGenerator({
+let SparqlGenerator = require('sparqljs').Generator;
+let generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
@@ -13,30 +12,18 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   // sparqljs init :
   let sparqljsParams = {
     queryType: 'CONSTRUCT',
-    template: [
-      {
-        subject: DataFactory.variable('s1'),
-        predicate: DataFactory.variable('p1'),
-        object: DataFactory.variable('o1')
-      }
-    ],
+    template: [quad(variable('s1'),variable('p1'),variable('o1'))],
     where: [
       {
         type: 'bgp',
-        triples: [
-          {
-            subject: DataFactory.variable('s1'),
-            predicate: DataFactory.variable('p1'),
-            object: DataFactory.variable('o1')
-          }
-        ]
+        triples: [quad(variable('s1'),variable('p1'),variable('o1'))]
       },
       {
         type: 'filter',
         expression: {
           type: 'operation',
           operator: 'isiri',
-          args: [DataFactory.variable('s1')]
+          args: [variable('s1')]
         }
       },
       {
@@ -44,18 +31,12 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         expression: {
           type: 'operation',
           operator: 'in',
-          args: [DataFactory.variable('containerUri'), [DataFactory.namedNode(containers[0])]]
+          args: [variable('containerUri'), [namedNode(containers[0])]]
         }
       },
       {
         type: 'bgp',
-        triples: [
-          {
-            subject: DataFactory.variable('containerUri'),
-            predicate: DataFactory.namedNode('http://www.w3.org/ns/ldp#contains'),
-            object: DataFactory.variable('s1')
-          }
-        ]
+        triples: [quad(variable('containerUri'),namedNode('http://www.w3.org/ns/ldp#contains'),variable('s1'))]
       }
     ],
     type: 'query',
@@ -63,10 +44,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   };
 
   // sparqljs prefixes :
-  ontologies.map(ontologie => {
+  ontologies.map(ontology => {
     sparqljsParams.prefixes = {
       ...sparqljsParams.prefixes,
-      [ontologie.prefix]: ontologie.url
+      [ontology.prefix]: ontology.url
     };
   });
 
@@ -94,17 +75,11 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         patterns: [
           {
             queryType: 'SELECT',
-            variables: [DataFactory.variable('s1')],
+            variables: [variable('s1')],
             where: [
               {
                 type: 'bgp',
-                triples: [
-                  {
-                    subject: DataFactory.variable('s1'),
-                    predicate: DataFactory.variable('p1'),
-                    object: DataFactory.variable('o1')
-                  }
-                ]
+                triples: [quad(variable('s1'),variable('p1'),variable('o1'))]
               },
               {
                 type: 'filter',
@@ -119,14 +94,14 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                         {
                           type: 'operation',
                           operator: 'str',
-                          args: [DataFactory.variable('o1')]
+                          args: [variable('o1')]
                         }
                       ]
                     },
-                    DataFactory.literal(
+                    literal(
                       filter.q.toLowerCase(),
                       '',
-                      DataFactory.namedNode('http://www.w3.org/2001/XMLSchema#string')
+                      namedNode('http://www.w3.org/2001/XMLSchema#string')
                     )
                   ]
                 }
@@ -139,13 +114,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                   args: [
                     {
                       type: 'bgp',
-                      triples: [
-                        {
-                          subject: DataFactory.variable('s1'),
-                          predicate: DataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-                          object: DataFactory.variable('o1')
-                        }
-                      ]
+                      triples: [quad(variable('s1'),namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),variable('o1'))]
                     }
                   ]
                 }
@@ -162,31 +131,25 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         if (filter[predicate] && predicate !== 'sparqlWhere') {
           let filterPrefix = null;
           let filterValue = null;
-          let filterOntologie = null;
+          let filterOntology = null;
           let filterObjectValue = null;
           let filterPredicateValue = null;
           if (predicate === 'a') {
             filterPrefix = filter[predicate].split(':')[0];
             filterValue = filter[predicate].split(':')[1];
-            filterOntologie = ontologies.find(ontologie => ontologie.prefix === filterPrefix);
+            filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
             filterPredicateValue = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
-            filterObjectValue = filterOntologie.url + filterValue;
+            filterObjectValue = filterOntology.url + filterValue;
           } else {
             filterPrefix = predicate.split(':')[0];
             filterValue = predicate.split(':')[1];
-            filterOntologie = ontologies.find(ontologie => ontologie.prefix === filterPrefix);
-            filterPredicateValue = filterOntologie.url + filterValue;
+            filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
+            filterPredicateValue = filterOntology.url + filterValue;
             filterObjectValue = filter[predicate];
           }
           sparqljsParams.where.push({
             type: 'bgp',
-            triples: [
-              {
-                subject: DataFactory.variable('s1'),
-                predicate: DataFactory.namedNode(filterPredicateValue),
-                object: DataFactory.namedNode(filterObjectValue)
-              }
-            ]
+            triples: [quad(variable('s1'),namedNode(filterPredicateValue),namedNode(filterObjectValue))]
           });
         }
       });

@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import DataFactory from '@rdfjs/data-model';
+const { namedNode, quad, variable } = DataFactory;
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
@@ -74,7 +75,7 @@ const buildDereferenceQueryStandard = predicates => {
   }
 };
 
-const buildOptionalqueryForSparqljs = (queries, parentNode = false) =>
+const buildOptionalQueryForSparqljs = (queries, parentNode = false) =>
   queries
     .filter(q => q.parentNode === parentNode)
     .map(q => ({
@@ -84,7 +85,7 @@ const buildOptionalqueryForSparqljs = (queries, parentNode = false) =>
           type: 'bgp',
           triples: q.query
         },
-        buildOptionalqueryForSparqljs(queries, q.node)
+        buildOptionalQueryForSparqljs(queries, q.node)
       ]
     }));
 
@@ -100,18 +101,10 @@ const buildDereferenceQueryForSparqlJs = (predicates, ontologies) => {
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
       const filterPrefix = predicate.split(':')[0];
       const filterValue = predicate.split(':')[1];
-      const filterOntologie = ontologies.find(ontologie => ontologie.prefix === filterPrefix);
+      const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
       const queryForSparqljs = [
-        {
-          subject: DataFactory.variable('s' + parentVarName),
-          predicate: DataFactory.namedNode(filterOntologie.url + filterValue),
-          object: DataFactory.variable('s' + varName)
-        },
-        {
-          subject: DataFactory.variable('s' + varName),
-          predicate: DataFactory.variable('p' + varName),
-          object: DataFactory.variable('o' + varName)
-        }
+        quad(variable('s' + parentVarName),namedNode(filterOntology.url + filterValue),variable('s' + varName)),
+        quad(variable('s' + varName),variable('p' + varName),variable('o' + varName))
       ];
 
       queries.push({
@@ -123,7 +116,7 @@ const buildDereferenceQueryForSparqlJs = (predicates, ontologies) => {
     }
     return {
       construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
-      where: buildOptionalqueryForSparqljs(queries)
+      where: buildOptionalQueryForSparqljs(queries)
     };
   } else {
     return {
