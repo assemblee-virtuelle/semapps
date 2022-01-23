@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import md5 from 'crypto-js/md5';
 import DataFactory from '@rdfjs/data-model';
 const { namedNode, quad, variable } = DataFactory;
 
@@ -20,11 +20,7 @@ const extractNodes = predicates => {
   return nodes;
 };
 
-const generateSparqlVarName = node =>
-  crypto
-    .createHash('md5')
-    .update(node)
-    .digest('hex');
+const generateSparqlVarName = node => md5(node);
 
 const getParentNode = node => node.includes('/') && node.split('/')[0];
 
