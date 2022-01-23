@@ -144,25 +144,19 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         ]
       });
     }
-    
-    // sparqljs "a" and other filters :
-    Object.keys(filter).forEach((filterKey) => {
-      if (filterKey !== 'sparqlWhere' && filterKey !== 'q') {
 
+    // sparqljs "a" and other filters :
+    Object.keys(filter).forEach(filterKey => {
+      if (filterKey !== 'sparqlWhere' && filterKey !== 'q') {
         // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
         // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
-        const filterItem = (filterKey === 'a')
-          ? filter[filterKey]
-          : filterKey
+        const filterItem = filterKey === 'a' ? filter[filterKey] : filterKey;
         const filterPrefix = filterItem.split(':')[0];
         const filterValue = filterItem.split(':')[1];
         const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
-        const filterPredicateValue = (filterKey === 'a')
-          ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
-          : filterOntology.url + filterValue;
-        const filterObjectValue = (filterKey === 'a')
-          ? filterOntology.url + filterValue
-          : filter[filterKey];
+        const filterPredicateValue =
+          filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
+        const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
 
         sparqljsParams.where.push({
           type: 'bgp',
