@@ -9,7 +9,7 @@ let generator = new SparqlGenerator({
 });
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
-  // sparqljs init :
+  // sparqljsParams : init CONSTRUCT clause
   let sparqljsParams = {
     queryType: 'CONSTRUCT',
     template: [quad(variable('s1'), variable('p1'), variable('o1'))],
@@ -43,7 +43,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     prefixes: {}
   };
 
-  // sparqljs prefixes :
+  // sparqljsParams : prefixes property fill from ontologies
   ontologies.map(ontology => {
     sparqljsParams.prefixes = {
       ...sparqljsParams.prefixes,
@@ -51,14 +51,14 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     };
   });
 
-  // sparqljs dereference :
+  // sparqljsParams : build dereference
   const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, true, ontologies);
   if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
     sparqljsParams.where = sparqljsParams.where.concat(dereferenceQueryForSparqlJs.where);
     sparqljsParams.template = sparqljsParams.template.concat(dereferenceQueryForSparqlJs.construct);
   }
 
-  // sparqljs filters :
+  // sparqljsParams : check for filters
   if (filter && Object.keys(filter).length > 0) {
     const isSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
     const isQFilter = filter.q && filter.q.length > 0;
@@ -85,7 +85,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       sparqljsParams.where.push(filter.sparqlWhere);
     }
 
-    // sparqljs filter "q" :
+    // sparqljs filter "q" (full-text search) :
     if (isQFilter) {
       sparqljsParams.where.push({
         type: 'group',
@@ -146,10 +146,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     }
 
     // sparqljs "a" and other filters :
+    // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
+    // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
     Object.keys(filter).forEach(filterKey => {
       if (filterKey !== 'sparqlWhere' && filterKey !== 'q') {
-        // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
-        // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
         const filterItem = filterKey === 'a' ? filter[filterKey] : filterKey;
         const filterPrefix = filterItem.split(':')[0];
         const filterValue = filterItem.split(':')[1];
