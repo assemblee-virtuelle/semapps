@@ -63,12 +63,29 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     const isSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
     const isQFilter = filter.q && filter.q.length > 0;
 
-    // sparqljs filter sparql :
+    // sparqljs filter "sparqlWhere" :
     if (isSPARQLFilter) {
+      /* 
+      Example of sparqlWhere usage : 
+      - url :
+      http://localhost:5000/Organization?filter=%7B%22q%22%3A%20%22orga%22%2C%22sparqlWhere%22%3A%20%7B%0A%22type%22%3A%20%22bgp%22%2C%0A%22triples%22%3A%20%5B%7B%0A%22subject%22%3A%20%7B%0A%22termType%22%3A%20%22Variable%22%2C%0A%22value%22%3A%20%22s1%22%0A%7D%2C%0A%22predicate%22%3A%20%7B%0A%22termType%22%3A%20%22NameNode%22%2C%0A%22value%22%3A%20%22http%3A%2F%2Fvirtual-assembly.org%2Fontologies%2Fpair%23label%22%0A%7D%2C%0A%22object%22%3A%20%7B%0A%22termType%22%3A%20%22Literal%22%2C%0A%22value%22%3A%20%22orga2%22%0A%7D%0A%7D%5D%0A%7D%7D
+      - json :
+      {
+        "q": "orga",
+        "sparqlWhere": {
+          "type": "bgp",
+          "triples": [{
+              "subject": {"termType": "Variable","value": "s1"},
+              "predicate": {"termType": "NameNode","value": "http://virtual-assembly.org/ontologies/pair#label"},
+              "object": {"termType": "Literal","value": "orga2"}
+          }]
+        }
+      }
+      */
       sparqljsParams.where.push(filter.sparqlWhere);
     }
 
-    // sparqljs filter Q :
+    // sparqljs filter "q" :
     if (isQFilter) {
       sparqljsParams.where.push({
         type: 'group',
@@ -126,36 +143,33 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           }
         ]
       });
-
-      // sparqljs filter <> Q :
-    } else {
-      Object.keys(filter).forEach(predicate => {
-        if (filter[predicate] && predicate !== 'sparqlWhere') {
-          let filterPrefix = null;
-          let filterValue = null;
-          let filterOntology = null;
-          let filterObjectValue = null;
-          let filterPredicateValue = null;
-          if (predicate === 'a') {
-            filterPrefix = filter[predicate].split(':')[0];
-            filterValue = filter[predicate].split(':')[1];
-            filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
-            filterPredicateValue = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
-            filterObjectValue = filterOntology.url + filterValue;
-          } else {
-            filterPrefix = predicate.split(':')[0];
-            filterValue = predicate.split(':')[1];
-            filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
-            filterPredicateValue = filterOntology.url + filterValue;
-            filterObjectValue = filter[predicate];
-          }
-          sparqljsParams.where.push({
-            type: 'bgp',
-            triples: [quad(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
-          });
-        }
-      });
     }
+    
+    // sparqljs "a" and other filters :
+    Object.keys(filter).forEach((filterKey) => {
+      if (filterKey !== 'sparqlWhere' && filterKey !== 'q') {
+
+        // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
+        // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
+        const filterItem = (filterKey === 'a')
+          ? filter[filterKey]
+          : filterKey
+        const filterPrefix = filterItem.split(':')[0];
+        const filterValue = filterItem.split(':')[1];
+        const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
+        const filterPredicateValue = (filterKey === 'a')
+          ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type'
+          : filterOntology.url + filterValue;
+        const filterObjectValue = (filterKey === 'a')
+          ? filterOntology.url + filterValue
+          : filter[filterKey];
+
+        sparqljsParams.where.push({
+          type: 'bgp',
+          triples: [quad(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
+        });
+      }
+    });
   }
 
   const sparqljsQuery = generator.stringify(sparqljsParams);
