@@ -52,7 +52,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   });
 
   // sparqljsParams : build dereference
-  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, true, ontologies);
+  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
   if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
     sparqljsParams.where = sparqljsParams.where.concat(dereferenceQueryForSparqlJs.where);
     sparqljsParams.template = sparqljsParams.template.concat(dereferenceQueryForSparqlJs.construct);
