@@ -7,7 +7,7 @@ import { terser } from 'rollup-plugin-terser';
 import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
-const external = createFilter(['react', 'react-dom', 'react-admin', 'react-router-dom', '@material-ui/**'], null, {
+const external = createFilter(['react', 'react-dom', 'react-admin', 'react-router-dom', '@material-ui/**', '@fullcalendar/**', '@date-io/**', 'date-fns'], null, {
   resolve: false
 });
 
