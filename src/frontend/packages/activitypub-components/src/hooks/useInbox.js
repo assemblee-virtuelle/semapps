@@ -35,19 +35,19 @@ const useInbox = () => {
       }
 
       const query = `
-      PREFIX as: <https://www.w3.org/ns/activitystreams#>
-      CONSTRUCT {
-        ?s1 ?p1 ?o1 .
-        ${dereferenceQuery.construct}
-      }
-      WHERE {
-        <${inboxUrl}> as:items ?s1 .
-        ?s1 ?p1 ?o1 .
-        FILTER( (isIRI(?s1)) ) .
-        ${filtersWhereQuery}
-        ${dereferenceQuery.where}
-      }
-    `;
+        PREFIX as: <https://www.w3.org/ns/activitystreams#>
+        CONSTRUCT {
+          ?s1 ?p1 ?o1 .
+          ${dereferenceQuery.construct}
+        }
+        WHERE {
+          <${inboxUrl}> as:items ?s1 .
+          ?s1 ?p1 ?o1 .
+          FILTER( (isIRI(?s1)) ) .
+          ${filtersWhereQuery}
+          ${dereferenceQuery.where}
+        }
+      `;
 
       const { json } = await fetchUtils.fetchJson(sparqlEndpoint, {
         method: 'POST',

@@ -1,25 +1,25 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
 
-const useCollection = predicateOrUri => {
+const useCollection = predicateOrUrl => {
   const { identity } = useGetIdentity();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
-  const collectionUri = useMemo(() => {
-    if (predicateOrUri) {
-      if (predicateOrUri.startsWith('http')) {
-        return predicateOrUri;
+  const collectionUrl = useMemo(() => {
+    if (predicateOrUrl) {
+      if (predicateOrUrl.startsWith('http')) {
+        return predicateOrUrl;
       } else if (identity?.webIdData) {
-        return identity?.webIdData?.[predicateOrUri];
+        return identity?.webIdData?.[predicateOrUrl];
       }
     }
-  }, [identity, predicateOrUri]);
+  }, [identity, predicateOrUrl]);
 
   const fetch = useCallback(async () => {
-    if (!collectionUri) return;
+    if (!collectionUrl) return;
 
     setLoading(true);
     const headers = new Headers({
@@ -28,7 +28,7 @@ const useCollection = predicateOrUri => {
     });
 
     fetchUtils
-      .fetchJson(collectionUri, { headers })
+      .fetchJson(collectionUrl, { headers })
       .then(({ json }) => {
         if (json && json.items) {
           setItems(json.items);
@@ -44,7 +44,7 @@ const useCollection = predicateOrUri => {
         setLoaded(true);
         setLoading(false);
       });
-  }, [setItems, setLoaded, setLoading, setError, collectionUri]);
+  }, [setItems, setLoaded, setLoading, setError, collectionUrl]);
 
   useEffect(() => {
     if (!loading && !loaded && !error) {
@@ -52,7 +52,7 @@ const useCollection = predicateOrUri => {
     }
   }, [fetch, loading, loaded, error]);
 
-  return { items, loading, loaded, error, refetch: fetch, url: collectionUri, owner: identity?.id };
+  return { items, loading, loaded, error, refetch: fetch, url: collectionUrl };
 };
 
 export default useCollection;

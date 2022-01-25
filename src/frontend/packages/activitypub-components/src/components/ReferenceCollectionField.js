@@ -9,7 +9,7 @@ const ReferenceCollectionField = ({ source, record, reference, children, ...rest
   if (!record || !record[source]) return null;
 
   return (
-    <CollectionList resource={reference} collectionUri={record[source]} {...rest}>
+    <CollectionList resource={reference} collectionUrl={record[source]} {...rest}>
       {children}
     </CollectionList>
   );
