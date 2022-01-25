@@ -18,7 +18,7 @@ The following service actions are available:
 | `accept` | `string` | **required** | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
 | `webId` | `string` | Logged user's webId | User doing the action |
 
-You can also pass parameters defined in the [container options](index#container-options).
+You can also pass parameters defined in the [container options](./index.md#container-options).
 
 ##### Return
 Triples, Turtle or JSON-LD depending on `accept` type.
