@@ -16,6 +16,7 @@ const external = createFilter(
     'speakingurl',
     'jsonld',
     '@material-ui/**',
+    '@rdfjs/**',
     'crypto-js',
     'crypto'
   ],
