@@ -17,7 +17,10 @@ const external = createFilter(
     'react-final-form',
     'react-router',
     'react-redux',
-    '@material-ui/**'
+    '@material-ui/**',
+    '@react-leaflet/**',
+    'react-leaflet',
+    'react-leaflet-markercluster'
   ],
   null,
   { resolve: false }
