@@ -51,6 +51,7 @@ module.exports = {
     ],
     'Frontend packages': [
       'frontend/auth-provider',
+      'frontend/activitypub-components',
       'frontend/date-components',
       'frontend/geo-components',
       'frontend/markdown-components'

@@ -69,7 +69,7 @@ The following service actions are available:
 | `filters` | `Object` | null | Return only triples matching all key-value of the provided object |
 | `webId` | `string` | Logged user's webId  | webId used to identify user doing action on tripleStore|
 
-You can also pass parameters defined in the [container options](index#container-options).
+You can also pass parameters defined in the [container options](./index.md#container-options).
 
 ##### Return
 Triples, Turtle or JSON-LD depending on `accept` type.

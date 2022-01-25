@@ -1,0 +1,27 @@
+import { useCallback } from 'react';
+import { fetchUtils } from 'react-admin';
+
+const useWebfinger = () => {
+  // Post an activity to the logged user's outbox and return its URI
+  const fetch = useCallback(async id => {
+    // eslint-disable-next-line
+    const [_, username, host] = id.split('@');
+    const protocol = host.includes(':') ? 'http' : 'https';
+
+    const webfingerUrl = `${protocol}://${host}/.well-known/webfinger?resource=acct:${username}@${host}`;
+
+    try {
+      const { json } = await fetchUtils.fetchJson(webfingerUrl);
+
+      const link = json.links.find(l => l.type === 'application/activity+json');
+
+      return link ? link.href : null;
+    } catch (e) {
+      return null;
+    }
+  }, []);
+
+  return { fetch };
+};
+
+export default useWebfinger;
