@@ -52,7 +52,15 @@ const useCollection = predicateOrUrl => {
     }
   }, [fetch, loading, loaded, error]);
 
-  return { items, loading, loaded, error, refetch: fetch, url: collectionUrl };
+  const addItem = useCallback(item => {
+    setItems(oldItems => [ ...oldItems, item ]);
+  }, [setItems]);
+
+  const removeItem = useCallback(itemId => {
+    setItems(oldItems => oldItems.filter(item => item.id !== itemId));
+  }, [setItems]);
+
+  return { items, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
 };
 
 export default useCollection;
