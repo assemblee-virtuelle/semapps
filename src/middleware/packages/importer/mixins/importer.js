@@ -93,7 +93,7 @@ module.exports = {
         const compactResults = await this.list(this.settings.source.getAllCompact);
 
         if (compactResults) {
-          this.logger.info(`Importing ${compactResults.length} items from ${this.settings.source.getAllCompact}...`);
+          this.logger.info(`Importing ${compactResults.length} items from ${typeof this.settings.source.getAllCompact === 'string' ? this.settings.source.getAllCompact : this.settings.source.getAllCompact.url}...`);
 
           for (let data of compactResults) {
             const sourceUri = this.settings.source.getOneFull(data);
@@ -101,13 +101,13 @@ module.exports = {
             if (destUri) this.imported[sourceUri] = destUri;
           }
         } else {
-          throw new Error(`Error fetching the endpoint ${this.settings.source.getAllCompact}...`);
+          throw new Error(`Error fetching the endpoint ${typeof this.settings.source.getAllCompact === 'string' ? this.settings.source.getAllCompact : this.settings.source.getAllCompact.url}...`);
         }
       } else if (this.settings.source.getAllFull) {
         const fullResults = await this.list(this.settings.source.getAllFull);
 
         if (fullResults) {
-          this.logger.info(`Importing ${fullResults.length} items from ${this.settings.source.getAllFull}...`);
+          this.logger.info(`Importing ${fullResults.length} items from ${typeof this.settings.source.getAllFull === 'string' ? this.settings.source.getAllFull : this.settings.source.getAllFull.url}...`);
 
           for (let data of fullResults) {
             const sourceUri = this.settings.source.getOneFull && this.settings.source.getOneFull(data);
@@ -115,7 +115,7 @@ module.exports = {
             if (destUri) this.imported[sourceUri] = destUri;
           }
         } else {
-          throw new Error(`Error fetching the endpoint ${this.settings.source.getAllFull}...`);
+          throw new Error(`Error fetching the endpoint ${typeof this.settings.source.getAllFull === 'string' ? this.settings.source.getAllFull : this.settings.source.getAllFull.url}...`);
         }
       } else {
         throw new Error('You must define the setting source.getAllCompact or source.getAllFull');
