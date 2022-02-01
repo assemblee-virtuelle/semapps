@@ -55,7 +55,7 @@ module.exports = {
       apiUrl: 'https://mydomain.com/api/articles',
       getAllCompact: 'https://mydomain.com/api/articles_compact',
       getOneFull: data => 'https://mydomain.com/api/articles/' + data.uuid,
-      // ... see ImporterService settings for other source config available
+      // ... see ImporterMixin settings for other source config available
     },
     dest: {
       containerUri: null, // Container where the data will be posted (must be created already)
@@ -82,7 +82,7 @@ module.exports = {
 
 ### Bypassing Drupal cache
 
-Drupal 7 use an internal cache which ignores headers traditionally used to bypass cache (such as `Cache:Control: no-cache`). 
+Drupal 7 use an internal cache which ignores headers traditionally used to bypass cache (such as `Cache-Control: no-cache`). 
 
 To make sure you get always a fresh version of your data, we recommend you to install the [User-Agent Cache Bypass](https://www.drupal.org/project/ua_cache_bypass) module.
 

@@ -19,7 +19,7 @@ module.exports = {
         baseUrl: null, // Base URL of the GoGoCarto instance
         type: 'elements' // Currently, only elements can be imported
       },
-      // ... see ImporterService settings for other source config available
+      // ... see ImporterMixin settings for other source config available
     },
     dest: {
       containerUri: null, // Container where the data will be posted (must be created already)

@@ -20,7 +20,7 @@ module.exports = {
         type: null, // Tested only with "products"
         wsKey: null, // A WebService key you need to generate from PrestaShop admin interface
       },
-      // ... see ImporterService settings for other source config available
+      // ... see ImporterMixin settings for other source config available
     },
     dest: {
       containerUri: null, // Container where the data will be posted (must be created already)
