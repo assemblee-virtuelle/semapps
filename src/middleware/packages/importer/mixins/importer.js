@@ -19,6 +19,7 @@ module.exports = {
         user: '',
         password: ''
       },
+      fetchOptions: {},
       fieldsMapping: {
         slug: null,
         created: null,
