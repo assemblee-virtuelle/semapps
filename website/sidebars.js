@@ -21,7 +21,7 @@ module.exports = {
       'middleware/backup',
       'middleware/fuseki-admin',
       {
-        type: 'importer',
+        type: 'category',
         label: 'Importer',
         items: [
           'middleware/importer/index',
