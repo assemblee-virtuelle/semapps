@@ -20,12 +20,12 @@ module.exports = {
       fieldsMapping: {
         slug: 'uuid',
         created: 'published',
-        updated: 'updated',
-      },
+        updated: 'updated'
+      }
     }
   },
   created() {
-    if( this.settings.source.mobilizon.type === 'events' ) {
+    if (this.settings.source.mobilizon.type === 'events') {
       this.settings.source.getAllCompact = {
         url: urlJoin(this.settings.source.mobilizon.baseUrl, 'api'),
         method: 'POST',
