@@ -20,7 +20,18 @@ module.exports = {
       'middleware/auth',
       'middleware/backup',
       'middleware/fuseki-admin',
-      'middleware/importer',
+      {
+        type: 'importer',
+        label: 'Importer',
+        items: [
+          'middleware/importer/index',
+          'middleware/importer/drupal',
+          'middleware/importer/gogocarto',
+          'middleware/importer/mobilizon',
+          'middleware/importer/prestashop',
+          'middleware/importer/yeswiki',
+        ],
+      },
       'middleware/inference',
       {
         type: 'category',
