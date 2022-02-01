@@ -38,7 +38,7 @@ We provide a number of pre-configured importers, some of which work "out of the 
 
 ### Queue service
 
-If you wish to keep an eye on the `synchronize` action, you should add [moleculer-bull](https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-bull) QueueMixin.
+If you wish the `synchronize` action to be run through cron jobs, and keep an eye on its results, you should add [moleculer-bull](https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-bull) QueueMixin.
 
 ```js
 const QueueMixin = require('moleculer-bull');

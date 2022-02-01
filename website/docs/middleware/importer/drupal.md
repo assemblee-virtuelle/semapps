@@ -79,3 +79,11 @@ module.exports = {
   }
 };
 ```
+
+### Bypassing Drupal cache
+
+Drupal 7 use an internal cache which ignores headers traditionally used to bypass cache (such as `Cache:Control: no-cache`). 
+
+To make sure you get always a fresh version of your data, we recommend you to install the [User-Agent Cache Bypass](https://www.drupal.org/project/ua_cache_bypass) module.
+
+Once the module is activated, go to its configuration and set `SemAppsImporter` in the User Agents fields.
