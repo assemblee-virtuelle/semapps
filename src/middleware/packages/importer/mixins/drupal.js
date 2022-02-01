@@ -18,14 +18,14 @@ module.exports = {
       fieldsMapping: {
         slug: 'uuid',
         created: data => convertToIsoString(data.published),
-        updated: data => convertToIsoString(data.updated),
-      },
+        updated: data => convertToIsoString(data.updated)
+      }
     }
   },
   methods: {
     async list(url) {
       const data = await this.fetch(url);
-      if( data && data.nodes ) {
+      if (data && data.nodes) {
         return data.nodes.map(n => n.node);
       } else {
         return false;
@@ -33,7 +33,7 @@ module.exports = {
     },
     async getOne(url) {
       const data = await this.fetch(url);
-      if( data && data.nodes && data.nodes.length > 0 ) {
+      if (data && data.nodes && data.nodes.length > 0) {
         return data.nodes[0].node;
       } else {
         return false;

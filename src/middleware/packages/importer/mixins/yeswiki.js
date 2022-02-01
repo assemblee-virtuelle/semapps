@@ -12,8 +12,8 @@ module.exports = {
       fieldsMapping: {
         slug: 'id_fiche',
         created: data => convertToIsoString(data.date_creation_fiche),
-        updated: data => convertToIsoString(data.date_maj_fiche),
-      },
+        updated: data => convertToIsoString(data.date_maj_fiche)
+      }
     }
   },
   created() {
@@ -30,7 +30,7 @@ module.exports = {
     },
     async getOne(url) {
       const data = await this.fetch(url);
-      if( data ) {
+      if (data) {
         return Object.values(data)[0];
       } else {
         return false;
