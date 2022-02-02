@@ -2,6 +2,7 @@ const { SparqlJsonParser } = require('sparqljson-parse');
 const fetch = require('node-fetch');
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
+const deleteOrphanBlankNodes = require('./actions/deleteOrphanBlankNodes');
 const dropAll = require('./actions/dropAll');
 const insert = require('./actions/insert');
 const query = require('./actions/query');
@@ -21,10 +22,11 @@ const TripleStoreService = {
   },
   actions: {
     insert,
-    countTriplesOfSubject,
     update,
     query,
-    dropAll
+    dropAll,
+    countTriplesOfSubject,
+    deleteOrphanBlankNodes
   },
   methods: {
     async fetch(url, { method = 'POST', body, headers }) {

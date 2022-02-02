@@ -58,6 +58,7 @@ module.exports = {
       }
 
       // TODO see why blank node deletion does not work (permission error)
+      // TODO when fixed, remove the call to triplestore.deleteOrphanBlankNodes below
       // const blandNodeQuery = buildBlankNodesQuery(3);
       //
       // // The resource must be deleted after the blank node, otherwise the permissions will fail
@@ -104,6 +105,8 @@ module.exports = {
         oldData,
         webId
       };
+
+      ctx.call('triplestore.deleteOrphanBlankNodes');
 
       ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
 

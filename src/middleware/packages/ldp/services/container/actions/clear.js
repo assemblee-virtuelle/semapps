@@ -8,7 +8,8 @@ module.exports = {
     let { containerUri, webId } = ctx.params;
     // Matches container with or without trailing slash
     containerUri = containerUri.replace(/\/+$/, '');
-    return await ctx.call('triplestore.update', {
+
+    await ctx.call('triplestore.update', {
       query: `
         PREFIX as: <https://www.w3.org/ns/activitystreams#> 
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
@@ -24,5 +25,7 @@ module.exports = {
       `,
       webId
     });
+
+    ctx.call('triplestore.deleteOrphanBlankNodes');
   }
 };
