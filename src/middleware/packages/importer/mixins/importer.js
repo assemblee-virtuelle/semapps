@@ -257,7 +257,7 @@ module.exports = {
   },
   methods: {
     async transform(data) {
-      throw new Error('The transform method must be implemented by the service');
+      return data;
     },
     async list(url) {
       return await this.fetch(url);
