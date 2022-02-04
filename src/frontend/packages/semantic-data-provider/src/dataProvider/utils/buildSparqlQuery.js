@@ -31,7 +31,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         expression: {
           type: 'operation',
           operator: 'in',
-          args: [variable('containerUri'), [namedNode(containers[0])]]
+          args: [variable('containerUri'), containers.map(containerUri => namedNode(containerUri))]
         }
       },
       {

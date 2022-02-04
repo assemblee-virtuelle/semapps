@@ -66,6 +66,11 @@ const ObjectService = {
       let activityType = activity.type || activity['@type'],
         objectUri;
 
+      if (typeof activity.object === 'string') {
+        // If the object passed is an URI, there is nothing to process
+        return activity;
+      }
+
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
         let { to, '@id': id, ...object } = activity;

@@ -1,5 +1,5 @@
 # @semapps/importer
 
-Mass importer for SemApps
+JSON importer and synchronizer for SemApps
 
-[Documentation](https://semapps.org/docs/middleware/importer)
+[Documentation](https://semapps.org/docs/middleware/importer/index)

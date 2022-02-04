@@ -52,13 +52,19 @@ const useCollection = predicateOrUrl => {
     }
   }, [fetch, loading, loaded, error]);
 
-  const addItem = useCallback(item => {
-    setItems(oldItems => [ ...oldItems, item ]);
-  }, [setItems]);
+  const addItem = useCallback(
+    item => {
+      setItems(oldItems => [...oldItems, item]);
+    },
+    [setItems]
+  );
 
-  const removeItem = useCallback(itemId => {
-    setItems(oldItems => oldItems.filter(item => item.id !== itemId));
-  }, [setItems]);
+  const removeItem = useCallback(
+    itemId => {
+      setItems(oldItems => oldItems.filter(item => item.id !== itemId));
+    },
+    [setItems]
+  );
 
   return { items, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };
 };
