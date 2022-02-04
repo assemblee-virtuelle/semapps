@@ -1,7 +1,7 @@
 import findContainersWithTypes from '../utils/findContainersWithTypes';
 import fetchContainers from '../utils/fetchContainers';
 import fetchSparqlEndpoints from '../utils/fetchSparqlEndpoints';
-import findContainersWithPaths from "../utils/findContainersWithPath";
+import findContainersWithPaths from '../utils/findContainersWithPath';
 
 const getListMethod = config => async (resourceId, params = {}) => {
   let { dataServers, resources } = config;
