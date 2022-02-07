@@ -157,10 +157,14 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
         const filterPredicateValue =
           filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
         const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
-
+        
         sparqljsParams.where.push({
           type: 'bgp',
-          triples: [quad(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
+          triples: [quad(
+            variable('s1'),
+            namedNode(filterPredicateValue),
+            filterObjectValue.startsWith('http') ? namedNode(filterObjectValue) : literal(filterObjectValue)
+          )]
         });
       }
     });
@@ -172,6 +176,9 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     delete filter.q;
   }
 
+  console.log('SPARQLJS------------------sparqljsParams:', sparqljsParams);
+  console.log('SPARQLJS------------------ sparqljsQuery:', sparqljsQuery);
+  
   return sparqljsQuery;
 };
 
