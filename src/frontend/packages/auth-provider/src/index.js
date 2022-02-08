@@ -21,4 +21,5 @@ export { default as useCheckPermissions } from './hooks/useCheckPermissions';
 export { default as usePermissionsWithRefetch } from './hooks/usePermissionsWithRefetch';
 export { default as useSignup } from './hooks/useSignup';
 
+export { default as englishMessages } from './messages/english';
 export { default as frenchMessages } from './messages/french';

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { LoginForm, Notification, useGetIdentity } from 'react-admin';
+import { LoginForm, Notification, useGetIdentity, useTranslate } from 'react-admin';
 import { Card, Avatar, makeStyles, createTheme, ThemeProvider, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import { Link, useLocation, Redirect } from 'react-router-dom';
@@ -42,6 +42,7 @@ const LocalLoginPage = props => {
   const { theme, title, classes: classesOverride, className, ...rest } = props;
   const classes = useStyles(props);
   const location = useLocation();
+  const translate = useTranslate();
   const muiTheme = useMemo(() => createTheme(theme), [theme]);
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
@@ -71,11 +72,11 @@ const LocalLoginPage = props => {
             <div className={classes.switch}>
               {isSignup ? (
                 <Link to="/login">
-                  <Typography variant="body2">Se connecter avec un compte</Typography>
+                  <Typography variant="body2">{translate('auth.action.login')}</Typography>
                 </Link>
               ) : (
                 <Link to="/login?signup=true">
-                  <Typography variant="body2">Créer un nouveau compte</Typography>
+                  <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                 </Link>
               )}
             </div>
