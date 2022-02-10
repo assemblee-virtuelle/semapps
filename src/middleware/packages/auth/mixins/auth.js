@@ -1,7 +1,8 @@
+const passport = require('passport');
+const { Errors: E } = require('moleculer-web');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
-const { Errors: E } = require('moleculer-web');
-const passport = require('passport');
 
 const AuthMixin = {
   settings: {
@@ -9,18 +10,20 @@ const AuthMixin = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
-    webIdSelection: []
+    webIdSelection: [],
+    accountsDataset: 'settings'
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { jwtPath, reservedUsernames } = this.settings;
+    const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
     });
 
     await this.broker.createService(AuthAccountService, {
-      settings: { reservedUsernames }
+      settings: { reservedUsernames },
+      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset }),
     });
   },
   async started() {
