@@ -11,6 +11,7 @@ const AuthMixin = {
     registrationAllowed: true,
     reservedUsernames: [],
     webIdSelection: [],
+    accountSelection: [],
     accountsDataset: 'settings'
   },
   dependencies: ['api', 'webid'],
@@ -110,6 +111,13 @@ const AuthMixin = {
         return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
       } else {
         return data;
+      }
+    },
+    pickAccountData(data) {
+      if (this.settings.accountSelection.length > 0) {
+        return Object.fromEntries(this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]]));
+      } else {
+        return data || {};
       }
     }
   }

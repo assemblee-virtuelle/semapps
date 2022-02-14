@@ -11,18 +11,19 @@ const AuthLocalService = {
     jwtPath: null,
     registrationAllowed: true,
     reservedUsernames: [],
-    webIdSelection: []
+    webIdSelection: [],
+    accountSelection: [],
   },
   created() {
     this.passportId = 'local';
   },
   actions: {
     async signup(ctx) {
-      const { username, email, password, ...otherData } = ctx.params;
+      const { username, email, password, ...rest } = ctx.params;
 
-      let accountData = await ctx.call('auth.account.create', { username, email, password });
+      let accountData = await ctx.call('auth.account.create', { username, email, password, ...this.pickAccountData(rest) });
 
-      const profileData = { nick: username, email, ...otherData };
+      const profileData = { nick: username, email, ...rest };
       const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
 
       // Link the webId with the account

@@ -13,7 +13,7 @@ module.exports = {
   dependencies: ['triplestore'],
   actions: {
     async create(ctx) {
-      let { uuid, username, password, email, webId } = ctx.params;
+      let { uuid, username, password, email, webId, ...rest } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
       email = email.toLowerCase();
@@ -38,6 +38,7 @@ module.exports = {
       }
 
       return await this._create(ctx, {
+        ...rest,
         uuid,
         username,
         email,
