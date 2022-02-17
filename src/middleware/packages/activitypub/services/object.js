@@ -48,7 +48,7 @@ const ObjectService = {
       let { objectUri, predicates } = ctx.params;
       let object;
       do {
-        await delay(1000);
+        if (object) await delay(1000); // Delay only on second loop
         object = await ctx.call(
           'ldp.resource.get',
           {
