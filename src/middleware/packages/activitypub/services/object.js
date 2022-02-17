@@ -26,7 +26,7 @@ const ObjectService = {
           ...rest
         });
       } catch (e) {
-        if (!actorUri || actorUri === 'webId' || actorUri === 'anon') {
+        if (!actorUri || actorUri === 'system' || actorUri === 'anon') {
           throw new Error(
             'No valid actor URI provided to activitypub.object.get (provided: ' +
               actorUri +
