@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
-import { useInput } from 'react-admin';
-import { FormControl } from '@material-ui/core';
+import { useInput, InputHelperText } from 'react-admin';
+import { FormControl, FormHelperText } from '@material-ui/core';
 
 const MarkdownInput = props => {
   const [tab, setTab] = useState('write');
   const {
-    input: { value, onChange }
+    input: { value, onChange },
+    meta: { error, touched }
   } = useInput(props);
 
   return (
@@ -20,6 +21,13 @@ const MarkdownInput = props => {
         selectedTab={tab}
         {...props}
       />
+      <FormHelperText error={!!error} margin="dense" variant="outlined">
+        <InputHelperText
+          error={error}
+          helperText={props.helperText}
+          touched={touched}
+        />
+      </FormHelperText>
     </FormControl>
   );
 };
