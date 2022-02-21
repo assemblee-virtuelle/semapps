@@ -17,8 +17,6 @@ const getListMethod = config => async (resourceId, params = {}) => {
     containers = findContainersWithTypes(dataModel.types, dataModel.list?.servers, dataServers);
   }
 
-  console.log('containers', containers);
-
   if (dataModel.list?.fetchContainer) {
     return fetchContainers(containers, resourceId, params, config);
   } else {
