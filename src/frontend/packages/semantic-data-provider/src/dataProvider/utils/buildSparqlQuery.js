@@ -1,31 +1,17 @@
 import buildDereferenceQuery from './buildDereferenceQuery';
 import DataFactory from '@rdfjs/data-model';
-const { literal, namedNode, quad, variable } = DataFactory;
+const { literal, namedNode, triple, variable } = DataFactory;
 
-// Regenerate a SPARQL query from a JSON object
-let SparqlGenerator = require('sparqljs').Generator;
-let generator = new SparqlGenerator({
+const SparqlGenerator = require('sparqljs').Generator;
+const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
-  // sparqljsParams : init CONSTRUCT clause
-  let sparqljsParams = {
+  let sparqlJsParams = {
     queryType: 'CONSTRUCT',
-    template: [quad(variable('s1'), variable('p1'), variable('o1'))],
+    template: [triple(variable('s1'), variable('p1'), variable('o1'))],
     where: [
-      {
-        type: 'bgp',
-        triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
-      },
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'isiri',
-          args: [variable('s1')]
-        }
-      },
       {
         type: 'filter',
         expression: {
@@ -36,58 +22,44 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       },
       {
         type: 'bgp',
-        triples: [quad(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
-      }
+        triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
+      },
+      {
+        type: 'filter',
+        expression: {
+          type: 'operation',
+          operator: 'isiri',
+          args: [variable('s1')]
+        }
+      },
     ],
     type: 'query',
-    prefixes: {}
+    prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
 
-  // sparqljsParams : prefixes property fill from ontologies
-  ontologies.map(ontology => {
-    sparqljsParams.prefixes = {
-      ...sparqljsParams.prefixes,
-      [ontology.prefix]: ontology.url
-    };
-  });
-
-  // sparqljsParams : build dereference
-  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
-    sparqljsParams.where = sparqljsParams.where.concat(dereferenceQueryForSparqlJs.where);
-    sparqljsParams.template = sparqljsParams.template.concat(dereferenceQueryForSparqlJs.construct);
-  }
-
-  // sparqljsParams : check for filters
   if (filter && Object.keys(filter).length > 0) {
-    const isSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
-    const isQFilter = filter.q && filter.q.length > 0;
+    const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
+    const hasFullTextSearch = filter.q && filter.q.length > 0;
 
-    // sparqljs filter "sparqlWhere" :
-    if (isSPARQLFilter) {
+    if (hasSPARQLFilter) {
       /* 
-      Example of sparqlWhere usage : 
-      - url :
-      http://localhost:5000/Organization?filter=%7B%22q%22%3A%20%22orga%22%2C%22sparqlWhere%22%3A%20%7B%0A%22type%22%3A%20%22bgp%22%2C%0A%22triples%22%3A%20%5B%7B%0A%22subject%22%3A%20%7B%0A%22termType%22%3A%20%22Variable%22%2C%0A%22value%22%3A%20%22s1%22%0A%7D%2C%0A%22predicate%22%3A%20%7B%0A%22termType%22%3A%20%22NameNode%22%2C%0A%22value%22%3A%20%22http%3A%2F%2Fvirtual-assembly.org%2Fontologies%2Fpair%23label%22%0A%7D%2C%0A%22object%22%3A%20%7B%0A%22termType%22%3A%20%22Literal%22%2C%0A%22value%22%3A%20%22orga2%22%0A%7D%0A%7D%5D%0A%7D%7D
-      - json :
-      {
-        "q": "orga",
-        "sparqlWhere": {
-          "type": "bgp",
-          "triples": [{
-              "subject": {"termType": "Variable","value": "s1"},
-              "predicate": {"termType": "NameNode","value": "http://virtual-assembly.org/ontologies/pair#label"},
-              "object": {"termType": "Literal","value": "orga2"}
-          }]
+        Example of usage :
+        {
+          "sparqlWhere": {
+            "type": "bgp",
+            "triples": [{
+              "subject": {"termType": "Variable", "value": "s1"},
+              "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
+              "object": {"termType": "Literal", "value": "My Organization"}
+            }]
+          }
         }
-      }
       */
-      sparqljsParams.where.push(filter.sparqlWhere);
+      sparqlJsParams.where.push(filter.sparqlWhere);
     }
 
-    // sparqljs filter "q" (full-text search) :
-    if (isQFilter) {
-      sparqljsParams.where.push({
+    if (hasFullTextSearch) {
+      sparqlJsParams.where.push({
         type: 'group',
         patterns: [
           {
@@ -96,7 +68,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
             where: [
               {
                 type: 'bgp',
-                triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
+                triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
               },
               {
                 type: 'filter',
@@ -128,7 +100,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                     {
                       type: 'bgp',
                       triples: [
-                        quad(
+                        triple(
                           variable('s1'),
                           namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
                           variable('o1')
@@ -145,7 +117,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       });
     }
 
-    // sparqljs "a" and other filters :
+    // Other filters
     // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
     // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
     Object.keys(filter).forEach(filterKey => {
@@ -158,21 +130,28 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
         const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
 
-        sparqljsParams.where.push({
+        sparqlJsParams.where.push({
           type: 'bgp',
-          triples: [quad(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
+          triples: [triple(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
         });
       }
     });
   }
 
-  const sparqljsQuery = generator.stringify(sparqljsParams);
-
-  if (filter.q) {
-    delete filter.q;
+  // Dereference
+  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
+  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
+    sparqlJsParams.where = sparqlJsParams.where.concat(dereferenceQueryForSparqlJs.where);
+    sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
   }
 
-  return sparqljsQuery;
+  // End with this to improve performances
+  sparqlJsParams.where.push({
+    type: 'bgp',
+    triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
+  });
+
+  return generator.stringify(sparqlJsParams);
 };
 
 export default buildSparqlQuery;
