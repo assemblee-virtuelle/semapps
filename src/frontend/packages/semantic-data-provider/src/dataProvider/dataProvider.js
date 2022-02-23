@@ -2,6 +2,8 @@ import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
 import getCreateContainerMethod from './methods/getCreateContainer';
+import getDataServersMethod from './methods/getDataServers';
+import getDataModelMethod from './methods/getDataModel';
 import getListMethod from './methods/getList';
 import getManyMethod from './methods/getMany';
 import getManyReferenceMethod from './methods/getManyReference';
@@ -30,9 +32,9 @@ const dataProvider = config => {
 
   return {
     getList: waitForVoidEndpoints(getListMethod(config)),
-    getOne: waitForVoidEndpoints(getOneMethod(config)),
     getMany: waitForVoidEndpoints(getManyMethod(config)),
     getManyReference: waitForVoidEndpoints(getManyReferenceMethod(config)),
+    getOne: waitForVoidEndpoints(getOneMethod(config)),
     create: waitForVoidEndpoints(createMethod(config)),
     update: waitForVoidEndpoints(updateMethod(config)),
     updateMany: () => {
@@ -40,7 +42,10 @@ const dataProvider = config => {
     },
     delete: waitForVoidEndpoints(deleteMethod(config)),
     deleteMany: waitForVoidEndpoints(deleteManyMethod(config)),
-    getCreateContainer: waitForVoidEndpoints(getCreateContainerMethod(config))
+    // Custom methods
+    getCreateContainer: waitForVoidEndpoints(getCreateContainerMethod(config)),
+    getDataModel: waitForVoidEndpoints(getDataModelMethod(config)),
+    getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
   };
 };
 
