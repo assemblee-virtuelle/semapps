@@ -74,6 +74,14 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                 type: 'filter',
                 expression: {
                   type: 'operation',
+                  operator: 'isliteral',
+                  args: [variable('o1')]
+                }
+              },
+              {
+                type: 'filter',
+                expression: {
+                  type: 'operation',
                   operator: 'regex',
                   args: [
                     {
@@ -88,25 +96,6 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
                       ]
                     },
                     literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
-                  ]
-                }
-              },
-              {
-                type: 'filter',
-                expression: {
-                  type: 'operation',
-                  operator: 'notexists',
-                  args: [
-                    {
-                      type: 'bgp',
-                      triples: [
-                        triple(
-                          variable('s1'),
-                          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-                          variable('o1')
-                        )
-                      ]
-                    }
                   ]
                 }
               }
