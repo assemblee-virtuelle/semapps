@@ -45,7 +45,7 @@ const dataProvider = config => {
     // Custom methods
     getCreateContainer: waitForVoidEndpoints(getCreateContainerMethod(config)),
     getDataModel: waitForVoidEndpoints(getDataModelMethod(config)),
-    getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
+    getDataServers: waitForVoidEndpoints(getDataServersMethod(config))
   };
 };
 

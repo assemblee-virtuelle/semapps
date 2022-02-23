@@ -31,7 +31,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           operator: 'isiri',
           args: [variable('s1')]
         }
-      },
+      }
     ],
     type: 'query',
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))

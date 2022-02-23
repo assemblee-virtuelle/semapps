@@ -7,7 +7,7 @@ const useDataServers = () => {
   const [dataServers, setDataServers] = useState({});
 
   useEffect(() => {
-    dataProvider.getDataServers().then(results => setDataServers(results))
+    dataProvider.getDataServers().then(results => setDataServers(results));
   }, [dataProvider, setDataServers]);
 
   return dataServers;

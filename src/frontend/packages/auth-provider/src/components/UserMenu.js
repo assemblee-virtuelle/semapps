@@ -23,11 +23,11 @@ const EditProfileMenu = forwardRef(({ onClick, label, webId }, ref) => (
   />
 ));
 
-const LoginMenu = forwardRef(({ onClick, label, }, ref) => (
+const LoginMenu = forwardRef(({ onClick, label }, ref) => (
   <MenuItemLink ref={ref} to="/login" primaryText={label} onClick={onClick} />
 ));
 
-const SignupMenu = forwardRef(({ onClick, label, }, ref) => (
+const SignupMenu = forwardRef(({ onClick, label }, ref) => (
   <MenuItemLink ref={ref} to="/login?signup=true" primaryText={label} onClick={onClick} />
 ));
 
@@ -43,9 +43,9 @@ const UserMenu = ({ logout, ...otherProps }) => {
             React.cloneElement(logout, { key: 'logout' })
           ]
         : [
-          <SignupMenu label={translate('auth.action.signup')} key="signup" />,
-          <LoginMenu label={translate('auth.action.login')} key="login" />
-        ]}
+            <SignupMenu label={translate('auth.action.signup')} key="signup" />,
+            <LoginMenu label={translate('auth.action.login')} key="login" />
+          ]}
     </RaUserMenu>
   );
 };

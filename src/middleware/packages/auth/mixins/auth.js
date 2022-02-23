@@ -24,7 +24,7 @@ const AuthMixin = {
 
     await this.broker.createService(AuthAccountService, {
       settings: { reservedUsernames },
-      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset }),
+      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
   },
   async started() {
@@ -115,7 +115,9 @@ const AuthMixin = {
     },
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
-        return Object.fromEntries(this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]]));
+        return Object.fromEntries(
+          this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
+        );
       } else {
         return data || {};
       }

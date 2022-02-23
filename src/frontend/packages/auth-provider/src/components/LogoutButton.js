@@ -5,12 +5,12 @@ import ExitIcon from '@material-ui/icons/PowerSettingsNew';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary
   },
   active: {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.primary
   },
-  icon: { minWidth: theme.spacing(5) },
+  icon: { minWidth: theme.spacing(5) }
 }));
 
 const LogoutButton = forwardRef((props, ref) => {
