@@ -6,9 +6,9 @@ SemApps est une solution fullstack et modulaire destinée aux développeurs souh
 
 Son code est publié sous la licence libre Apache 2.0.
 
-# Team
+# Equipe
 
-- **Core team**
+- **Equipe coeur**
     - [Sébastien Rosset](https://www.linkedin.com/in/sebastien-rosset-reconnexion/)
         - **Skills :** Développeur, Web Semantique, ActivityPub, ReactJS, Moleculer.
         - **Roles :** DevX, infoculture, facilitation, communication externe, qualité du code, coordination AV
