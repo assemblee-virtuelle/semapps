@@ -10,26 +10,26 @@ Its code is released under the Apache 2.0 free license.
 
 - **Core team**
     - [Sébastien Rosset](https://www.linkedin.com/in/sebastien-rosset-reconnexion/)
-        - **Skills :** Software developer, Semantic web, ActivityPub, ReactJS, Moleculer.
-        - **Roles :** DevX, Information gardening, Facilitation, Extern communication, Code quality, AV coordination
+        - **Skills :** Software developer, semantic web, ActivityPub, ReactJS, Moleculer.
+        - **Roles :** Facilitation, Communication, DevX, Code quality, Virtual Assembly coordination
     - [Simon Louvet](https://www.linkedin.com/in/simon-louvet-a9842018/)
-        - **Skills :** Software developer, Semantic web, Moleculer.
-        - **Roles :** Comptability,Development
+        - **Skills :** Software developer, semantic web, Moleculer.
+        - **Roles :** Development, Economic sustainability
     - [Niko Bonnieure](https://github.com/nikoPLP)
-        - **Skills :** Software developer, Semantic web, SOLID, Java/J2EE, WebACL, Moleculer
+        - **Skills :** Software developer, semantic web, SOLID, Java/J2EE, WebACL, Moleculer
     - [Pierre Bouvier-Muller](https://www.linkedin.com/in/bouviermullerp/)
         - **Skills :** UX design, Ontology Design, Agile roadmap
+        - **Roles :** Mediation
     - [Guillaume Rouyer](https://www.linkedin.com/in/guillaume-rouyer-paris/)
-        - **Skills :** Project designer, Prospective, political philosophy, ecology & econnomics, complex systems, community management
-        - **Roles :** Comptability, Technical Parnership
+        - **Skills :** Project designer, prospective, political philosophy, ecology & econnomics, complex systems, community management
     - [Yannick Duthé](https://www.linkedin.com/in/yannick-duthe-569a741b)
-        - **Skills :** Software developer, Semantic web, D3JS, ReactJS
+        - **Skills :** Software developer, semantic web, D3JS, ReactJS
         - **Roles :** Onboarding, Information gardening
     - [Bastien Siguier](https://www.linkedin.com/in/bastien-siguier/)
-        - **Skills :** Software developer, Javascript, ReactJS
-        - **Roles :** Instance Hosting
+        - **Skills :** Software developer, ReactJS
+        - **Roles :** Instances hosting
     - [Vincent Farcy](https://www.linkedin.com/in/vincentfarcy/)
-        - **Skills :** Software developer, Javascript, ReactJS, Symfony
+        - **Skills :** Software developer, ReactJS, Symfony
 
 - **Technical advisors**
     - [Thomas Francart](http://www.sparna.fr/qui-suis-je/) : Knowledge Graph and Semantic Web senior consultant
@@ -41,5 +41,5 @@ Its code is released under the Apache 2.0 free license.
     - [Henry Story](https://medium.com/@bblfish) : Software architect & semantic web researcher
         - **Skills :** SOLID, RDF, OWL, linked data, Web-ID (co-author), web-acl, philosophy of the web.
 
-> To visualise interactive Semapps Team organisation, please follow [this link](https://cercles.assemblee-virtuelle.org/Circle/https%3A%2F%2Fdata.virtual-assembly.org%2Fprojects%2Fsemapps/show).
+> For an interactive visualization of the SemApps team organization, please see [this link](https://cercles.assemblee-virtuelle.org/Circle/https%3A%2F%2Fdata.virtual-assembly.org%2Fprojects%2Fsemapps/show) (in French)
 ![](https://hot-objects.liiib.re/pad-lescommuns-org/uploads/upload_fc9cb5c4b4cb0b1b79aa100f7a48e616.png)
