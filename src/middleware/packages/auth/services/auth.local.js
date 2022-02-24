@@ -12,7 +12,7 @@ const AuthLocalService = {
     registrationAllowed: true,
     reservedUsernames: [],
     webIdSelection: [],
-    accountSelection: [],
+    accountSelection: []
   },
   created() {
     this.passportId = 'local';
@@ -21,7 +21,12 @@ const AuthLocalService = {
     async signup(ctx) {
       const { username, email, password, ...rest } = ctx.params;
 
-      let accountData = await ctx.call('auth.account.create', { username, email, password, ...this.pickAccountData(rest) });
+      let accountData = await ctx.call('auth.account.create', {
+        username,
+        email,
+        password,
+        ...this.pickAccountData(rest)
+      });
 
       const profileData = { nick: username, email, ...rest };
       const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));

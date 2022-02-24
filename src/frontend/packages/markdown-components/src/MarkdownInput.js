@@ -22,11 +22,7 @@ const MarkdownInput = props => {
         {...props}
       />
       <FormHelperText error={!!error} margin="dense" variant="outlined">
-        <InputHelperText
-          error={error}
-          helperText={props.helperText}
-          touched={touched}
-        />
+        <InputHelperText error={error} helperText={props.helperText} touched={touched} />
       </FormHelperText>
     </FormControl>
   );

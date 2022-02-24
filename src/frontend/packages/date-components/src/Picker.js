@@ -92,13 +92,7 @@ const Picker = ({
         inputVariant={variant}
         margin={margin}
         error={!!(touched && error)}
-        helperText={
-          <InputHelperText
-            touched={touched}
-            error={error}
-            helperText={helperText}
-          />
-        }
+        helperText={<InputHelperText touched={touched} error={error} helperText={helperText} />}
         clearLabel={translate('ra.action.clear_input_value')}
         cancelLabel={translate('ra.action.cancel')}
         {...options}
