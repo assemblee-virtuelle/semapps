@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ReferenceArrayField as RaReferenceArrayField, usePermissionsOptimized } from 'react-admin';
-import QuickAppendDialog from "./QuickAppendDialog";
+import QuickAppendDialog from './QuickAppendDialog';
 
 const QuickAppendReferenceArrayField = ({ record, reference, source, resource, ...otherProps }) => {
   const [showDialog, setShowDialog] = useState(false);

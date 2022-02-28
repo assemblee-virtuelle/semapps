@@ -1,24 +1,30 @@
-import React  from "react";
-import { ChipField, useResourceContext, useListContext, sanitizeListRestProps, linkToRecord, RecordContextProvider, Link } from 'react-admin';
-import { makeStyles, LinearProgress } from "@material-ui/core";
+import React from 'react';
+import {
+  ChipField,
+  useResourceContext,
+  useListContext,
+  sanitizeListRestProps,
+  linkToRecord,
+  RecordContextProvider,
+  Link
+} from 'react-admin';
+import { makeStyles, LinearProgress } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
-const useStyles = makeStyles(
-  theme => ({
-    root: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    link: {},
-    addIcon: {
-      cursor: 'pointer',
-      fontSize: 35,
-      position: 'relative',
-      top: -2,
-      left: -2
-    }
-  })
-);
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap'
+  },
+  link: {},
+  addIcon: {
+    cursor: 'pointer',
+    fontSize: 35,
+    position: 'relative',
+    top: -2,
+    left: -2
+  }
+}));
 
 const stopPropagation = e => e.stopPropagation();
 
@@ -27,7 +33,7 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const ChipList = (props) => {
+const ChipList = props => {
   const {
     classes: classesOverride,
     className,
@@ -49,24 +55,14 @@ const ChipList = (props) => {
   }
 
   return (
-    <Component
-      className={classes.root}
-      {...sanitizeListRestProps(rest)}
-    >
+    <Component className={classes.root} {...sanitizeListRestProps(rest)}>
       {ids.map(id => {
-        const resourceLinkPath = !linkType
-          ? false
-          : linkToRecord(basePath, id, linkType);
+        const resourceLinkPath = !linkType ? false : linkToRecord(basePath, id, linkType);
 
         if (resourceLinkPath) {
           return (
             <RecordContextProvider value={data[id]} key={id}>
-              <Link
-                className={classes.link}
-                key={id}
-                to={resourceLinkPath}
-                onClick={stopPropagation}
-              >
+              <Link className={classes.link} key={id} to={resourceLinkPath} onClick={stopPropagation}>
                 <ChipField
                   record={data[id]}
                   resource={resource}
@@ -95,13 +91,7 @@ const ChipList = (props) => {
           </RecordContextProvider>
         );
       })}
-      {appendLink &&
-        <AddCircleIcon
-          color="primary"
-          className={classes.addIcon}
-          onClick={appendLink}
-        />
-      }
+      {appendLink && <AddCircleIcon color="primary" className={classes.addIcon} onClick={appendLink} />}
     </Component>
   );
 };

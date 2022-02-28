@@ -40,47 +40,55 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
   const getResourceLabel = useGetResourceLabel();
   const dataModel = useDataModel(reference);
 
-  const appendLink = useCallback(async objectUri => {
-    // Get the freshest data so that the put operation doesn't overwrite anything
-    const { data } = await dataProvider.getOne(resource, { id: subjectUri });
+  const appendLink = useCallback(
+    async objectUri => {
+      // Get the freshest data so that the put operation doesn't overwrite anything
+      const { data } = await dataProvider.getOne(resource, { id: subjectUri });
 
-    await dataProvider.update(resource, {
-      id: subjectUri,
-      data: {
-        ...data,
-        [source]: data[source] ? Array.isArray(data[source]) ? [...data[source], objectUri] : [data[source], objectUri] : objectUri
-      },
-      previousData: data
-    });
+      await dataProvider.update(resource, {
+        id: subjectUri,
+        data: {
+          ...data,
+          [source]: data[source]
+            ? Array.isArray(data[source])
+              ? [...data[source], objectUri]
+              : [data[source], objectUri]
+            : objectUri
+        },
+        previousData: data
+      });
 
-    refresh();
+      refresh();
 
-    onClose();
-  }, [dataProvider, subjectUri, resource, source, refresh, onClose]);
+      onClose();
+    },
+    [dataProvider, subjectUri, resource, source, refresh, onClose]
+  );
 
-  const create = useCallback(async values => {
-    const { data } = await dataProvider.create(reference, {
-      data: {
-        [dataModel.fieldsMapping.title]: values.title
-      }
-    });
+  const create = useCallback(
+    async values => {
+      const { data } = await dataProvider.create(reference, {
+        data: {
+          [dataModel.fieldsMapping.title]: values.title
+        }
+      });
 
-    await appendLink(data.id);
+      await appendLink(data.id);
 
-    notify(`La resource "${values.title}" a été créée`, 'success');
-  }, [dataProvider, dataModel, appendLink, reference, notify]);
+      notify(`La resource "${values.title}" a été créée`, 'success');
+    },
+    [dataProvider, dataModel, appendLink, reference, notify]
+  );
 
   return (
     <Dialog fullWidth open={open} onClose={onClose}>
-      {panel === 'find' ?
+      {panel === 'find' ? (
         <>
-          <DialogTitle className={classes.title}>
-            Ajouter une relation
-          </DialogTitle>
+          <DialogTitle className={classes.title}>Ajouter une relation</DialogTitle>
           <DialogContent className={classes.addForm}>
             <TextField
               autoFocus
-              label={"Rechercher ou créer des " + getResourceLabel(reference, 2).toLowerCase()}
+              label={'Rechercher ou créer des ' + getResourceLabel(reference, 2).toLowerCase()}
               variant="filled"
               margin="dense"
               value={keyword}
@@ -89,17 +97,23 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
             />
           </DialogContent>
           <DialogContent className={classes.listForm}>
-            <ResultsList keyword={keyword} source={source} reference={reference} appendLink={appendLink} switchToCreate={() => setPanel('create')} />
+            <ResultsList
+              keyword={keyword}
+              source={source}
+              reference={reference}
+              appendLink={appendLink}
+              switchToCreate={() => setPanel('create')}
+            />
           </DialogContent>
           <DialogActions className={classes.actions}>
             <Button label="ra.action.close" variant="text" onClick={onClose} />
           </DialogActions>
         </>
-        :
+      ) : (
         <Form
           onSubmit={create}
           initialValues={{
-            title: keyword,
+            title: keyword
           }}
           render={({ handleSubmit, submitting }) => (
             <form onSubmit={handleSubmit}>
@@ -119,13 +133,19 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
                 />
               </DialogContent>
               <DialogActions className={classes.actions}>
-                <Button label="ra.action.create" variant="contained" startIcon={<AddIcon />} type="submit" disabled={submitting} />
+                <Button
+                  label="ra.action.create"
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  type="submit"
+                  disabled={submitting}
+                />
                 <Button label="ra.action.close" variant="text" onClick={onClose} />
               </DialogActions>
             </form>
           )}
         />
-      }
+      )}
     </Dialog>
   );
 };
