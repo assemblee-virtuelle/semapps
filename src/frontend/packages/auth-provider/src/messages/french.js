@@ -7,10 +7,10 @@ const frenchMessages = {
     action: {
       permissions: 'Permissions',
       signup: "S'inscrire",
-      logout: "Se déconnecter",
-      login: "Se connecter",
-      view_my_profile: "Voir mon profil",
-      edit_my_profile: "Éditer mon profil"
+      logout: 'Se déconnecter',
+      login: 'Se connecter',
+      view_my_profile: 'Voir mon profil',
+      edit_my_profile: 'Éditer mon profil'
     },
     right: {
       resource: {
