@@ -26,3 +26,17 @@ export const TopicsInput = props => (
   </ReferenceArrayInput>
 );
 ```
+
+To prevent the name of the server to be displayed inside the chip, you can add this to your Material-UI theme:
+
+```
+overrides: {
+  RaAutocompleteArrayInput: {
+    chipContainerFilled: {
+      '& .serverName': {
+        display: 'none'
+      }
+    }
+  }
+}
+```
