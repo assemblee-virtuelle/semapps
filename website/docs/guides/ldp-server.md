@@ -40,10 +40,11 @@ Then, initialize a new project based on a semapps template with this command:
 moleculer init assemblee-virtuelle/semapps-template-ldp my-project
 ```
 
-Choose `yes` to all questions
+Choose `yes` to all questions (except maybe for webACL)
 ```
 ? Do you need a local instance of Jena Fuseki (with Docker)? Yes
 ? Do you need a read-only SPARQL endpoint? Yes
+? Do you need webACL (WAC) service and Fuseki support? No
 Create 'my-project' folder...
 ? Would you like to run 'npm install'? Yes
 
@@ -98,26 +99,39 @@ To do so, open an other terminal and run the following command in your my-projec
 npm run dev
 ```
 
+If you have selected the `webAcl` option above, then you will need to configure the OIDC provider by entering these variables in the file `.env.local` at the root folder of your project.
+
+```
+SEMAPPS_OIDC_ISSUER=
+SEMAPPS_OIDC_CLIENT_ID=
+SEMAPPS_OIDC_CLIENT_SECRET=
+SEMAPPS_OIDC_PUBLIC_KEY=
+```
+
 Your instance of SemApps is available at http://localhost:3000.
 
 You should get something like this:
 
-![](ldp_resources/npm_run_dev.jpg)
+```
+{"@context":"http://localhost:3000/context.json","id":"http://localhost:3000/","type":["ldp:Container","ldp:BasicContainer"],"ldp:contains":[]}
+```
 
 ## Testing your LDP server
 
 Now, it is time to test your LDP server, which means that you will try to update your data base by using this LDP server and not by using Jena Fuseki.
 
-By default, the LDP service will create a LDP container in the `/persons` path. Indeed, if you go to http://localhost:3000/persons, you should see this LDP container:
+By default, the LDP service will create a LDP container in the `/users` path. Indeed, if you go to http://localhost:3000/users, you should see this LDP container:
 
-![](ldp_resources/ldp_container_persons_empty.jpg)
+```
+{"@context":"http://localhost:3000/context.json","id":"http://localhost:3000/users","type":["ldp:Container","ldp:BasicContainer"],"ldp:contains":[]}
+```
 
 ### Add data with the LDP server
 
 Now, let's try to add a person to our database. Post an ActivityStreams Note to this LDP container with a tool like [Insomnia](https://insomnia.rest/), [Postman](https://www.postman.com/downloads/) or the [RESTClient add-on for Firefox](https://addons.mozilla.org/fr/firefox/addon/restclient/).
 
 ```
-POST /persons HTTP/1.1
+POST /users HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
 Accept: */*
@@ -130,10 +144,10 @@ Content-Length: 97
 }
 ```
 
-Retrieve the `/persons` LDP container:
+Retrieve the `/users` LDP container:
 
 ```
-GET /persons HTTP/1.1
+GET /users HTTP/1.1
 Host: localhost:3000
 Accept: application/ld+json
 ```
@@ -143,23 +157,50 @@ You should get this result:
 ```json
 {
   "@context": "http://localhost:3000/context.json",
-  "@id": "http://localhost:3000/persons",
+  "@id": "http://localhost:3000/users",
   "@type": [
     "ldp:Container",
     "ldp:BasicContainer"
   ],
   "ldp:contains": [
     {
-      "@id": "http://localhost:3000/persons/603288b18391d7738ebba0fe",
+      "@id": "http://localhost:3000/users/603288b18391d7738ebba0fe",
       "@type": "Person",
       "name": "Guillaume Cousin"
     }
   ]
 }
 ```
-You should also see the result on http://localhost:3000/persons:
 
-![](ldp_resources/ldp_container_persons_not_empty.jpg)
+If you had selected the `webAcl` option earlier when creating your project, then you will get instead `403 Forbidden` error.
+
+This is normal because your dataset is protected and you must log-in before your can edit or add any data.
+
+For that, you will have to configure an OIDC provider, add your user webId to the list of superAdmins (in `services/webacl.service.js`), and modify the ACLs of the users container. But this is out of scope of this tutorial.
+
+For a shortcut, you can manually add a permission to the `users` container, so that `anonymous` users can add new users to it.
+
+In order to achieve that, you have to connect to the web interface of fuseki a [http://localhost:3030](http://localhost:3030) and run this query on the `/localData/update` endpoint :
+
+```
+INSERT DATA {
+  GRAPH <http://semapps.org/webacl> {
+    <http://localhost:3000/_acl/users#Write> <http://www.w3.org/ns/auth/acl#agentClass> <http://xmlns.com/foaf/0.1/Agent> .
+  }
+}
+```
+
+You will then be allowed to run the `POST /users` query stated above.
+
+Please note that you just opened a security hole in your instance by allowing any anonymous user with write access to the `users` container. After you performed your first test, you should remove the triple you just created in the webacl graph (use the snippet below), and configure properly your OIDC provider and superAdmins list.
+
+```
+DELETE DATA {
+  GRAPH <http://semapps.org/webacl> {
+    <http://localhost:3000/_acl/users#Write> <http://www.w3.org/ns/auth/acl#agentClass> <http://xmlns.com/foaf/0.1/Agent> .
+  }
+}
+```
 
 ### Changes on Jena Fuseki
 
