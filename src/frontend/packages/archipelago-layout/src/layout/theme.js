@@ -52,6 +52,13 @@ const theme = createTheme({
         marginBottom: 0
       }
     },
+    RaAutocompleteArrayInput: {
+      chipContainerFilled: {
+        '& .serverName': {
+          display: 'none'
+        }
+      }
+    },
     MuiTab: {
       labelIcon: {
         paddingTop: 0
