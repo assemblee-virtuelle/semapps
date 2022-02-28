@@ -21,7 +21,8 @@ module.exports = {
         baseUrl,
         ontologies,
         podProvider
-      }
+      },
+      hooks: this.schema.hooksContainer || {}
     });
 
     await this.broker.createService(LdpResourceService, {
@@ -29,7 +30,8 @@ module.exports = {
         baseUrl,
         ontologies,
         podProvider
-      }
+      },
+      hooks: this.schema.hooksResource || {}
     });
 
     await this.broker.createService(LdpRegistryService, {

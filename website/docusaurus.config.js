@@ -32,9 +32,9 @@ module.exports = {
       },
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
-        {to: 'docs/governance/team', label: 'Team', position: 'left'},
-        {to: 'docs/governance/organisation-and-roles', label: 'Governance', position: 'left'},
-        {to: 'docs/guides/ldp-server', label: 'Documentation', position: 'left'},
+        {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
+        {to: 'docs/middleware/auth', label: 'Middleware', position: 'left'},
+        {to: 'docs/frontend/auth-provider', label: 'Frontend', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {to: 'blog', label: 'Blog', position: 'left'},
         {
