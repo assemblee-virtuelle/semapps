@@ -45,11 +45,11 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-const TopToolbar = ({ children, currentView, ...otherProps }) => {
+const TopToolbar = ({ children, currentView }) => {
   const sidebarOpen = useSelector(state => state.admin.ui.sidebarOpen);
   const classes = useStyles({ currentView, sidebarOpen });
   return (
-    <RaTopToolbar classes={{ root: classes.topToolBar }}>
+    <RaTopToolbar className={classes.topToolBar}>
       <div className={classes.titleContainer}>
         <Typography className={classes.title} variant="h4" color="primary" id="react-admin-title" component="h1" />
       </div>
