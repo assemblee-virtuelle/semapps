@@ -9,6 +9,6 @@ const CreateActions = ({ basePath, className, data, title, ...rest }) => {
       {hasList && <ListButton basePath={basePath} record={data} />}
     </TopToolbar>
   );
-}
+};
 
 export default CreateActions;
