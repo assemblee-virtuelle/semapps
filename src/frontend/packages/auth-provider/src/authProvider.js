@@ -138,7 +138,7 @@ const authProvider = ({
       '@id': '#' + mode.replace('acl:', ''),
       '@type': 'acl:Authorization',
       [predicate]: agentId,
-      'acl:accessTo': resourceUri,
+      'acl:accessTo': uri,
       'acl:mode': mode
     };
 
