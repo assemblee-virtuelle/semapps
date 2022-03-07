@@ -7,6 +7,8 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
+const reservedFilterKeys = ['q', 'sparqlWhere', '_servers'];
+
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
   let sparqlJsParams = {
     queryType: 'CONSTRUCT',
@@ -110,7 +112,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
     // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
     Object.keys(filter).forEach(filterKey => {
-      if (filterKey !== 'sparqlWhere' && filterKey !== 'q') {
+      if (!reservedFilterKeys.includes(filterKey)) {
         const filterItem = filterKey === 'a' ? filter[filterKey] : filterKey;
         const filterPrefix = filterItem.split(':')[0];
         const filterValue = filterItem.split(':')[1];

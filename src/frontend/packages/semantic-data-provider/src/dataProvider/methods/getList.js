@@ -10,11 +10,12 @@ const getListMethod = config => async (resourceId, params = {}) => {
   if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
 
   let containers;
-  if (dataModel.list?.containers && Object.keys(dataModel.list.containers).length > 0) {
+  if (!params.filter?._servers && dataModel.list?.containers && Object.keys(dataModel.list.containers).length > 0) {
     // If containers are set explicitly, use them
     containers = findContainersWithPaths(dataModel.list.containers, dataServers);
   } else {
-    containers = findContainersWithTypes(dataModel.types, dataModel.list?.servers, dataServers);
+    // Otherwise find the container URIs on the given servers (either in the filter or the data model)
+    containers = findContainersWithTypes(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
   }
 
   if (dataModel.list?.fetchContainer) {
