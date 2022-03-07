@@ -1,32 +1,21 @@
 import React, { useCallback } from 'react';
 import { AutocompleteArrayInput } from 'react-admin';
 import { useDataServers } from '@semapps/semantic-data-provider';
+import OptionRenderer from "./OptionRenderer";
 
 const MultiServerAutocompleteArrayInput = ({ optionText, ...rest }) => {
   const dataServers = useDataServers();
-  const optionTextWithServerName = useCallback(
-    record => {
-      if (record) {
-        const server = Object.values(dataServers).find(server => record.id.startsWith(server.baseUrl));
-        return (
-          <span>
-            {record[optionText]}
-            {server && (
-              <em className="serverName" style={{ color: 'grey' }}>
-                &nbsp;({server.name})
-              </em>
-            )}
-          </span>
-        );
-      }
-    },
-    [optionText, dataServers]
-  );
   const matchSuggestion = useCallback(
-    (filterValue, choice) => choice[optionText].toLowerCase().match(filterValue.toLocaleString()),
+    (filterValue, choice) => choice[optionText].toLowerCase().match(filterValue.toLowerCase()),
     [optionText]
   );
-  return <AutocompleteArrayInput matchSuggestion={matchSuggestion} optionText={optionTextWithServerName} {...rest} />;
+  return (
+    <AutocompleteArrayInput
+      matchSuggestion={matchSuggestion}
+      optionText={<OptionRenderer optionText={optionText} dataServers={dataServers} />}
+      {...rest}
+    />
+  );
 };
 
 export default MultiServerAutocompleteArrayInput;
