@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
-const { delay } = require('../utils');
+const { delay, getSlugFromUri, getContainerFromUri } = require('../utils');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -165,17 +165,7 @@ const ObjectService = {
       }
 
       // Delete the existing cached resource (if it exists)
-      // TODO also delete the associated blank nodes
-      await ctx.call('triplestore.update', {
-        query: `
-          DELETE
-          WHERE { 
-            <${objectUri}> ?p1 ?o1 .
-          }
-        `,
-        webId: 'system',
-        dataset
-      });
+      await this.actions.deleteFromCache({objectUri, actorUri}, {parentCtx: ctx});
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
@@ -186,6 +176,29 @@ const ObjectService = {
       await ctx.call('triplestore.insert', {
         resource: object,
         contentType: MIME_TYPES.JSON,
+        webId: 'system',
+        dataset
+      });
+    },
+    async deleteFromCache(ctx) {
+      const { objectUri, actorUri } = ctx.params;
+
+      let dataset;
+      if (this.settings.podProvider) {
+        const account = await ctx.call('auth.account.findByWebId', {webId: actorUri});
+        dataset = account.username;
+      }
+
+      // TODO also delete the associated blank nodes
+      await ctx.call('triplestore.update', {
+        query: `
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          DELETE
+          WHERE { 
+            ?container ldp:contains <${objectUri}> .
+            <${objectUri}> ?p1 ?o1 .
+          }
+        `,
         webId: 'system',
         dataset
       });
