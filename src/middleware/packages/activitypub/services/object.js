@@ -165,7 +165,7 @@ const ObjectService = {
       }
 
       // Delete the existing cached resource (if it exists)
-      await this.actions.deleteFromCache({objectUri, actorUri}, {parentCtx: ctx});
+      await this.actions.deleteFromCache({ objectUri, actorUri }, { parentCtx: ctx });
 
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
@@ -185,7 +185,7 @@ const ObjectService = {
 
       let dataset;
       if (this.settings.podProvider) {
-        const account = await ctx.call('auth.account.findByWebId', {webId: actorUri});
+        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
         dataset = account.username;
       }
 
