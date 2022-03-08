@@ -19,7 +19,7 @@ const CollectionService = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
         ...ctx.params
       };
-      return await ctx.call('triplestore.insert', {
+      await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
@@ -89,7 +89,7 @@ const CollectionService = {
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
 
-      return await ctx.call('triplestore.insert', {
+      await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
         webId: 'system'
       });
@@ -255,7 +255,7 @@ const CollectionService = {
      */
     async clear(ctx) {
       const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
-      return await ctx.call('triplestore.update', {
+      await ctx.call('triplestore.update', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
           DELETE {
@@ -277,7 +277,7 @@ const CollectionService = {
      */
     async remove(ctx) {
       const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
-      return await ctx.call('triplestore.update', {
+      await ctx.call('triplestore.update', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
           DELETE {

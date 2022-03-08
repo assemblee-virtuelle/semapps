@@ -44,13 +44,19 @@ module.exports = {
 
     if (!dataset) throw new Error('No dataset defined for triplestore insert: ' + rdf);
 
-    return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
-      body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-      headers: {
-        'Content-Type': 'application/sparql-update',
-        'X-SemappsUser': webId,
-        Authorization: this.Authorization
-      }
-    });
+    // Handle wildcard
+    const datasets = dataset === '*' ? await ctx.call('fuseki-admin.listAllDatasets') : [dataset];
+
+    for( let dataset of datasets ) {
+      if( datasets.length > 1 ) this.logger.info(`Inserting into dataset ${dataset}...`);
+      await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
+        body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': webId,
+          Authorization: this.Authorization
+        }
+      });
+    }
   }
 };

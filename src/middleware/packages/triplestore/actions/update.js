@@ -22,12 +22,18 @@ module.exports = {
 
     if (!dataset) throw new Error('No dataset defined for triplestore update: ' + query);
 
-    return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
-      body: query,
-      headers: {
-        'Content-Type': 'application/sparql-update',
-        'X-SemappsUser': webId
-      }
-    });
+    // Handle wildcard
+    const datasets = dataset === '*' ? await ctx.call('fuseki-admin.listAllDatasets') : [dataset];
+
+    for( let dataset of datasets ) {
+      if( datasets.length > 1 ) this.logger.info(`Updating dataset ${dataset}...`);
+      await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
+        body: query,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': webId
+        }
+      });
+    }
   }
 };
