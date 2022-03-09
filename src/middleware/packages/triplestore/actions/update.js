@@ -25,8 +25,8 @@ module.exports = {
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('fuseki-admin.listAllDatasets') : [dataset];
 
-    for( let dataset of datasets ) {
-      if( datasets.length > 1 ) this.logger.info(`Updating dataset ${dataset}...`);
+    for (let dataset of datasets) {
+      if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
       await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
         body: query,
         headers: {
