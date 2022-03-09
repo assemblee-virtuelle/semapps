@@ -56,7 +56,7 @@ RUN     curl -sS --fail $ASF_ARCHIVE/jena/binaries/apache-jena-fuseki-$FUSEKI_VE
 
 RUN chmod 755  /jena-fuseki/fuseki-server
 
-RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:--Xmx'"${JAVA_MX_RAM}"'}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server
+RUN sed -i 's/JVM_ARGS=${JVM_ARGS:--Xmx4G}/JVM_ARGS=${JVM_ARGS:--Xmx${JAVA_MX_RAM}}\nexport LOG4J_FORMAT_MSG_NO_LOOKUPS=true/g' /jena-fuseki/fuseki-server 
 
 RUN echo "$JENA_SHA512  jena.tar.gz" > jena.tar.gz.sha512
 
