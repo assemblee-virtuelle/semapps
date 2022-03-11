@@ -1,4 +1,4 @@
-import urlJoin from "url-join";
+import urlJoin from 'url-join';
 
 const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
   let containers = [];

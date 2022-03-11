@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import useDataModel from "./useDataModel";
-import useDataServers from "./useDataServers";
-import findContainersWithTypes from "../dataProvider/utils/findContainersWithTypes";
+import useDataModel from './useDataModel';
+import useDataServers from './useDataServers';
+import findContainersWithTypes from '../dataProvider/utils/findContainersWithTypes';
 
 const useContainers = (resourceId, serverKeys = '@all') => {
   const dataModel = useDataModel(resourceId);
