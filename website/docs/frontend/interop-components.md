@@ -32,4 +32,7 @@ export const PostCreate = (props) => (
 ```
 
 > Note: if you want to allow users to search for remote data, you should have configured (in the `dataServer` config of the semantic data provider) other servers which have the same class of resources.
-> 
+
+| Property          | Type    | Default | Description                                           |
+|-------------------|---------| ------- |-------------------------------------------------------|
+| `stripProperties` | `Array` |  | Properties you don't want to copy locally (fork mode) |
