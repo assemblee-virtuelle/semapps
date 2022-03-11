@@ -1,16 +1,26 @@
-import { useContext, useState, useEffect } from 'react';
-import { DataProviderContext } from 'react-admin';
+import { useState, useEffect } from 'react';
+import useDataModel from './useDataModel';
+import useDataServers from './useDataServers';
+import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
+import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';
 
 const useCreateContainer = resourceId => {
-  // Get the raw data provider, since useDataProvider returns a wrapper
-  const dataProvider = useContext(DataProviderContext);
+  const dataModel = useDataModel(resourceId);
+  const dataServers = useDataServers();
   const [createContainer, setCreateContainer] = useState();
 
   useEffect(() => {
-    if (resourceId) {
-      dataProvider.getCreateContainer(resourceId).then(containerUri => setCreateContainer(containerUri));
+    if (dataModel && dataServers) {
+      if (dataModel.create?.container) {
+        setCreateContainer(dataModel.create?.container);
+      } else if (dataModel.create?.server) {
+        setCreateContainer(findCreateContainerWithTypes(dataModel.types, dataModel.create?.server, dataServers));
+      } else {
+        const defaultServerKey = getServerKeyFromType('default', dataServers);
+        setCreateContainer(findCreateContainerWithTypes(dataModel.types, defaultServerKey, dataServers));
+      }
     }
-  }, [resourceId]);
+  }, [dataModel, dataServers, setCreateContainer]);
 
   return createContainer;
 };

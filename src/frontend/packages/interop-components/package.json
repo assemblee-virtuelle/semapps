@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/list-components",
-  "version": "0.4.0-alpha.12",
-  "description": "React-Admin list components for SemApps",
+  "name": "@semapps/interop-components",
+  "version": "0.4.0-alpha.11",
+  "description": "React-Admin components to handle interoperability between SemApps instances",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "main": "dist/index.cjs.js",
@@ -12,6 +12,11 @@
   "scripts": {
     "pre-publish": "rollup --sourcemap --config",
     "dev": "rollup --watch --sourcemap --config"
+  },
+  "dependencies": {
+    "final-form-calculate": "^1.3.2",
+    "@semapps/semantic-data-provider": "0.4.0-alpha.11",
+    "@semapps/input-components": "0.4.0-alpha.11"
   },
   "peerDependencies": {
     "react": "^16.13.1 || ^17.0.0",

@@ -1,11 +1,15 @@
 import urlJoin from 'url-join';
+import parseServerKeys from './parseServerKeys';
 
-const findContainersWithTypes = (types, servers, dataServers) => {
+const findContainersWithTypes = (types, serverKeys, dataServers) => {
   let containers = {};
   let existingContainers = [];
+
+  serverKeys = parseServerKeys(serverKeys, dataServers);
+
   Object.keys(dataServers).forEach(key1 => {
     Object.keys(dataServers[key1].containers).forEach(key2 => {
-      if (!servers || (Array.isArray(servers) ? servers.includes(key2) : servers === key2)) {
+      if (!serverKeys || serverKeys.includes(key2)) {
         Object.keys(dataServers[key1].containers[key2]).forEach(type => {
           if (types.includes(type)) {
             dataServers[key1].containers[key2][type].map(path => {

@@ -4,7 +4,7 @@ import { DataProviderContext } from 'react-admin';
 const useDataModel = resourceId => {
   // Get the raw data provider, since useDataProvider returns a wrapper
   const dataProvider = useContext(DataProviderContext);
-  const [dataModel, setDataModel] = useState({});
+  const [dataModel, setDataModel] = useState();
 
   useEffect(() => {
     dataProvider.getDataModel(resourceId).then(results => setDataModel(results));

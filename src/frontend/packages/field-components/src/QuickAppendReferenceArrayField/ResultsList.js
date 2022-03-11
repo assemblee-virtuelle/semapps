@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const getServerName = (resourceUri, dataServers) => {
-  const server = Object.values(dataServers).find(server => resourceUri.startsWith(server.baseUrl));
+  const server = dataServers && Object.values(dataServers).find(server => resourceUri.startsWith(server.baseUrl));
   return server ? server.name : 'Inconnu';
 };
 
@@ -75,7 +75,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
         dataProvider
           .getList(reference, {
             pagination: { page: 1, perPage: 100 },
-            sort: { field: dataModel.fieldsMapping.title, order: 'ASC' },
+            sort: { field: dataModel?.fieldsMapping?.title, order: 'ASC' },
             filter: { q: keyword }
           })
           .then(({ data }) => {
