@@ -1,7 +1,7 @@
 import React from 'react';
 
 const OptionRenderer = ({ record, optionText, dataServers }) => {
-  const server = Object.values(dataServers).find(server => record.id.startsWith(server.baseUrl));
+  const server = dataServers && Object.values(dataServers).find(server => record.id.startsWith(server.baseUrl));
   return (
     <span>
       {record[optionText]}

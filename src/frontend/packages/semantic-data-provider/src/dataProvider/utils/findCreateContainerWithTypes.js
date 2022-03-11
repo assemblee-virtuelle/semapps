@@ -1,5 +1,4 @@
-import urlJoin from 'url-join';
-import getServerKeyFromType from '../utils/getServerKeyFromType';
+import urlJoin from "url-join";
 
 const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
   let containers = [];
@@ -31,20 +30,4 @@ const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
   return containers[0];
 };
 
-const getCreateContainer = config => resourceId => {
-  let { dataServers, resources } = config;
-  const dataModel = resources[resourceId];
-
-  if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
-
-  if (dataModel.create?.container) {
-    return dataModel.create?.container;
-  } else if (dataModel.create?.server) {
-    return findCreateContainerWithTypes(dataModel.types, dataModel.create?.server, dataServers);
-  } else {
-    const defaultServerKey = getServerKeyFromType('default', dataServers);
-    return findCreateContainerWithTypes(dataModel.types, defaultServerKey, dataServers);
-  }
-};
-
-export default getCreateContainer;
+export default findCreateContainerWithTypes;

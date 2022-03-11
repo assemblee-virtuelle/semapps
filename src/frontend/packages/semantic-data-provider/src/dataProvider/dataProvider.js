@@ -1,7 +1,6 @@
 import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
-import getCreateContainerMethod from './methods/getCreateContainer';
 import getDataServersMethod from './methods/getDataServers';
 import getDataModelMethod from './methods/getDataModel';
 import getListMethod from './methods/getList';
@@ -43,7 +42,6 @@ const dataProvider = config => {
     delete: waitForVoidEndpoints(deleteMethod(config)),
     deleteMany: waitForVoidEndpoints(deleteManyMethod(config)),
     // Custom methods
-    getCreateContainer: waitForVoidEndpoints(getCreateContainerMethod(config)),
     getDataModel: waitForVoidEndpoints(getDataModelMethod(config)),
     getDataServers: waitForVoidEndpoints(getDataServersMethod(config))
   };

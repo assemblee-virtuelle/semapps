@@ -66,6 +66,7 @@ module.exports = {
     'frontend/field-components',
     'frontend/geo-components',
     'frontend/input-components',
+    'frontend/interop-components',
     'frontend/list-components',
     'frontend/markdown-components'
   ],
