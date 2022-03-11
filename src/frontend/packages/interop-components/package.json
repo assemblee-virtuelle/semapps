@@ -14,8 +14,8 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@semapps/input-components": "0.4.0-alpha.11",
-    "@semapps/semantic-data-provider": "0.4.0-alpha.11",
+    "@semapps/input-components": "0.4.0-alpha.13",
+    "@semapps/semantic-data-provider": "0.4.0-alpha.13",
     "final-form-calculate": "^1.3.2"
   },
   "peerDependencies": {
