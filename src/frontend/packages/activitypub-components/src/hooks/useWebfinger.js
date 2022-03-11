@@ -6,12 +6,12 @@ const useWebfinger = () => {
   const fetch = useCallback(async id => {
     // eslint-disable-next-line
     const [_, username, host] = id.split('@');
-    if( host ) {
+    if (host) {
       const protocol = host.includes(':') ? 'http' : 'https'; // If the host has a port, we are most likely on localhost
       const webfingerUrl = `${protocol}://${host}/.well-known/webfinger?resource=acct:${username}@${host}`;
 
       try {
-        const {json} = await fetchUtils.fetchJson(webfingerUrl);
+        const { json } = await fetchUtils.fetchJson(webfingerUrl);
 
         const link = json.links.find(l => l.type === 'application/activity+json');
 

@@ -1,22 +1,22 @@
 import React, { useCallback } from 'react';
-import { FormInput, TextInput, RadioButtonGroupInput } from "react-admin";
+import { FormInput, TextInput, RadioButtonGroupInput } from 'react-admin';
 import { Form } from 'react-final-form';
-import createDecorator from 'final-form-calculate'
+import createDecorator from 'final-form-calculate';
 import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { ReferenceInput, useCreateContainer } from '@semapps/semantic-data-provider';
 import { MultiServerAutocompleteInput } from '@semapps/input-components';
-import useFork from "../hooks/useFork";
-import useSync from "../hooks/useSync";
+import useFork from '../hooks/useFork';
+import useSync from '../hooks/useSync';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
     backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(2)
   },
   field: {
     marginBottom: 23,
-    minWidth: theme.spacing(20),
+    minWidth: theme.spacing(20)
   }
 }));
 
@@ -24,7 +24,7 @@ const decorator = createDecorator(
   {
     field: 'remoteUri',
     updates: value => {
-      if( value ) {
+      if (value) {
         return { plainUri: value };
       }
       return {};
@@ -33,11 +33,11 @@ const decorator = createDecorator(
   {
     field: 'plainUri',
     updates: (value, name, allValues) => {
-        if( value !== allValues.remoteUri ) {
-          return { remoteUri: null };
-        }
-        return {};
+      if (value !== allValues.remoteUri) {
+        return { remoteUri: null };
       }
+      return {};
+    }
   }
 );
 
@@ -47,13 +47,16 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
   const fork = useFork();
   const sync = useSync();
 
-  const onSubmit = useCallback(async ({ plainUri, method }) => {
-    if( method === 'fork' ) {
-      await fork(resource, plainUri, stripProperties);
-    } else {
-      await sync(resource, plainUri, localContainerUri);
-    }
-  }, [fork, sync, resource, stripProperties, localContainerUri]);
+  const onSubmit = useCallback(
+    async ({ plainUri, method }) => {
+      if (method === 'fork') {
+        await fork(resource, plainUri, stripProperties);
+      } else {
+        await sync(resource, plainUri, localContainerUri);
+      }
+    },
+    [fork, sync, resource, stripProperties, localContainerUri]
+  );
 
   return (
     <Form
@@ -65,8 +68,18 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
           <Box m="1em">
             <FormInput
               input={
-                <ReferenceInput source="remoteUri" label="Rechercher..." reference={resource} filter={{ _servers: '@remote' }} fullWidth>
-                  <MultiServerAutocompleteInput optionText="pair:label" shouldRenderSuggestions={value => value.length > 1} resettable />
+                <ReferenceInput
+                  source="remoteUri"
+                  label="Rechercher..."
+                  reference={resource}
+                  filter={{ _servers: '@remote' }}
+                  fullWidth
+                >
+                  <MultiServerAutocompleteInput
+                    optionText="pair:label"
+                    shouldRenderSuggestions={value => value.length > 1}
+                    resettable
+                  />
                 </ReferenceInput>
               }
               basePath={basePath}
@@ -76,9 +89,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
               margin="dense"
             />
             <FormInput
-              input={
-                <TextInput source="plainUri" label="URL de la ressource distante" fullWidth />
-              }
+              input={<TextInput source="plainUri" label="URL de la ressource distante" fullWidth />}
               basePath={basePath}
               record={record}
               resource={resource}
@@ -87,10 +98,14 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
             />
             <FormInput
               input={
-                <RadioButtonGroupInput source="method" label="Méthode d'importation" choices={[
-                  { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
-                  { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
-                ]} />
+                <RadioButtonGroupInput
+                  source="method"
+                  label="Méthode d'importation"
+                  choices={[
+                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
+                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' }
+                  ]}
+                />
               }
               basePath={basePath}
               record={record}
@@ -100,7 +115,15 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
             />
           </Box>
           <Toolbar className={classes.toolbar}>
-            <Button type="submit" startIcon={<SaveAltIcon />} variant="contained" color="primary" disabled={!dirtyFields.remoteUri}>Importer</Button>
+            <Button
+              type="submit"
+              startIcon={<SaveAltIcon />}
+              variant="contained"
+              color="primary"
+              disabled={!dirtyFields.remoteUri}
+            >
+              Importer
+            </Button>
           </Toolbar>
         </form>
       )}
