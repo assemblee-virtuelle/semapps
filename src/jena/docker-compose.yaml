@@ -3,7 +3,7 @@ services:
   fuseki:
     build:
       context: fuseki-docker
-      dockerfile: fuseki-docker/Dockerfile
+      dockerfile: Dockerfile
     image: semapps/jena-fuseki-webacl
     container_name: fuseki
     volumes:
@@ -19,8 +19,8 @@ services:
   fuseki_compact:
     build:
       context: fuseki-docker
-      dockerfile: fuseki-docker/Dockerfile
-    entrypoint: /docker-compact-entrypoint.sh  
+      dockerfile: Dockerfile
+    entrypoint: /docker-compact-entrypoint.sh
     image: semapps/jena-fuseki-webacl
     container_name: fuseki_compact
     volumes:
