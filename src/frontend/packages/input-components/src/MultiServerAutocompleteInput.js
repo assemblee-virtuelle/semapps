@@ -7,7 +7,7 @@ const MultiServerAutocompleteInput = ({ optionText, ...rest }) => {
   // We cannot use OptionRenderer like MultiServerAutocompleteArrayInput because there is a bug with AutocompleteInput
   const optionTextWithServerName = useCallback(
     record => {
-      if( record ) {
+      if (record) {
         const server = Object.values(dataServers).find(server => record.id.startsWith(server.baseUrl));
         return record[optionText] + (server ? ` (${server.name})` : '');
       }

@@ -15,7 +15,11 @@ const getListMethod = config => async (resourceId, params = {}) => {
     containers = findContainersWithPaths(dataModel.list.containers, dataServers);
   } else {
     // Otherwise find the container URIs on the given servers (either in the filter or the data model)
-    containers = findContainersWithTypes(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
+    containers = findContainersWithTypes(
+      dataModel.types,
+      params.filter?._servers || dataModel.list?.servers,
+      dataServers
+    );
   }
 
   if (dataModel.list?.fetchContainer) {

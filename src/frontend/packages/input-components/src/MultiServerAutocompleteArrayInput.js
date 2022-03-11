@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { AutocompleteArrayInput } from 'react-admin';
 import { useDataServers } from '@semapps/semantic-data-provider';
-import OptionRenderer from "./OptionRenderer";
+import OptionRenderer from './OptionRenderer';
 
 const MultiServerAutocompleteArrayInput = ({ optionText, ...rest }) => {
   const dataServers = useDataServers();
