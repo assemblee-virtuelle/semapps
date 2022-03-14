@@ -35,7 +35,7 @@ const getOneMethod = config => async (resourceId, params) => {
     }
   }
 
-  return { data: data };
+  return { data };
 };
 
 export default getOneMethod;

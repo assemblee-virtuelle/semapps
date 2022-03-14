@@ -1,3 +1,4 @@
+import { HttpError } from 'react-admin';
 import getServerKeyFromType from './getServerKeyFromType';
 import getServerKeyFromUri from './getServerKeyFromUri';
 import jsonld from 'jsonld';
@@ -19,6 +20,14 @@ const fetchResource = async (resourceUri, config) => {
       : await httpClient(resourceUri, {
           noToken: serverKey !== authServerKey
         });
+
+  if (data.type === 'Tombstone' || data['@type'] === 'Tombstone') {
+    throw new HttpError(
+      'Not found',
+      404,
+      data
+    );
+  }
 
   data.id = data.id || data['@id'];
 
