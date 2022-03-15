@@ -96,17 +96,17 @@ const RegistryService = {
 
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
         this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
-
-        // Attach it to the object
-        await ctx.call('ldp.resource.patch', {
-          resource: {
-            id: objectUri,
-            [collection.attachPredicate]: { '@id': collectionUri }
-          },
-          contentType: MIME_TYPES.JSON,
-          webId
-        });
       }
+
+      // Attach it to the object (do that even if collection exist, in case it's not correctly attached)
+      await ctx.call('ldp.resource.patch', {
+        resource: {
+          id: objectUri,
+          [collection.attachPredicate]: { '@id': collectionUri }
+        },
+        contentType: MIME_TYPES.JSON,
+        webId
+      });
     },
     async deleteCollection(ctx) {
       const { objectUri, collection } = ctx.params;
