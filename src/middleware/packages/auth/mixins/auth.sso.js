@@ -32,9 +32,9 @@ const AuthSSOMixin = {
         newUser = false;
 
         // TODO update account with recent information
-        // await this.broker.call('webid.edit', profileData, { meta: { webId } });
+        // await ctx.call('webid.edit', profileData, { meta: { webId } });
 
-        await this.broker.emit('auth.connected', { webId, accountData });
+        ctx.emit('auth.connected', { webId, accountData, ssoData }, { meta: { webId: null, dataset: null } });
       } else {
         if (!this.settings.registrationAllowed) {
           throw new Error('registration.not-allowed');
@@ -47,10 +47,10 @@ const AuthSSOMixin = {
         // Link the webId with the account
         await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
-        ctx.emit('auth.registered', { webId, profileData, accountData }, { meta: { webId: null, dataset: null } });
+        ctx.emit('auth.registered', { webId, profileData, accountData, ssoData }, { meta: { webId: null, dataset: null } });
       }
 
-      const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
+      const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
       return { token, newUser };
     }
