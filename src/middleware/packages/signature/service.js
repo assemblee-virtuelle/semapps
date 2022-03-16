@@ -6,6 +6,7 @@ const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
 
 const SignatureService = {
   name: 'signature',
@@ -192,9 +193,10 @@ const SignatureService = {
         webId: 'system'
       });
 
-      if (actorData && actorData.preferredUsername) {
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorData.preferredUsername + '.key.pub');
+      if (actorData) {
+        const username = actorData.preferredUsername || getSlugFromUri(actorUri);
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key');
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key.pub');
         return { privateKeyPath, publicKeyPath };
       } else {
         throw new Error('No valid actor found with URI ' + actorUri);
