@@ -1,13 +1,13 @@
 {
   "name": "@semapps/sparql-endpoint",
-  "version": "0.4.0-alpha.13",
+  "version": "0.4.0-alpha.14",
   "description": "SPARQL endpoint for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/middlewares": "0.4.0-alpha.13",
-    "@semapps/mime-types": "0.4.0-alpha.13",
-    "@semapps/triplestore": "0.4.0-alpha.13",
+    "@semapps/middlewares": "0.4.0-alpha.14",
+    "@semapps/mime-types": "0.4.0-alpha.14",
+    "@semapps/triplestore": "0.4.0-alpha.14",
     "moleculer": "^0.14.18",
     "moleculer-web": "^0.10.0-beta1",
     "url-join": "^4.0.1"
