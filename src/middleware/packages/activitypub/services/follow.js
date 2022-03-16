@@ -71,6 +71,18 @@ const FollowService = {
       }
 
       ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
+    },
+    async isFollowing(ctx) {
+      const { follower, following } = ctx.params;
+
+      if (!this.isLocalActor(following))
+        throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
+
+      const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+      return await ctx.call('activitypub.collection.includes', {
+        collectionUri: actor.followers,
+        itemUri: follower
+      });
     }
   },
   events: {
