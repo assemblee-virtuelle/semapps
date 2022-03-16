@@ -2437,9 +2437,9 @@ capture-exit@^2.0.0:
   dependencies:
     rsvp "^4.8.4"
 
-"cas@git://github.com/joshchan/node-cas":
+"cas@git+https://github.com/joshchan/node-cas.git":
   version "0.0.5"
-  resolved "git://github.com/joshchan/node-cas#344a8bfba9d054e2e378adaf95b720c898ae48a2"
+  resolved "git+https://github.com/joshchan/node-cas.git#344a8bfba9d054e2e378adaf95b720c898ae48a2"
   dependencies:
     cheerio "0.19.0"
 
@@ -6961,12 +6961,12 @@ pascalcase@^0.1.1:
   resolved "https://registry.yarnpkg.com/pascalcase/-/pascalcase-0.1.1.tgz#b363e55e8006ca6fe21784d2db22bd15d7917f14"
   integrity sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
 
-passport-cas2@0.0.11:
-  version "0.0.11"
-  resolved "https://registry.yarnpkg.com/passport-cas2/-/passport-cas2-0.0.11.tgz#db14476f77c69112bba298189bc81809c2fd587b"
-  integrity sha512-EIE+HA3s0V5S5XAlXsRhPw8Asnt36/T6jLEg2cTX5xWgzJEoWmWqLcwRgdfrqPuWmogX1HtuWnvwFsk9Y5n6Fg==
+passport-cas2@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/passport-cas2/-/passport-cas2-0.0.12.tgz#aca3364a02d158a01ca7fadd71c6c26fd8ee9370"
+  integrity sha512-ck/6x2lb6eYhlC/9lmw7ZTgqzSiJmYB0px7H2B00kpRZlBQuds9yPzFMi7kBWtgFpTDf0o+rwQMUYga8yO/jIg==
   dependencies:
-    cas "git://github.com/joshchan/node-cas"
+    cas "https://github.com/joshchan/node-cas"
     passport-strategy "^1.0.0"
 
 passport-local@^1.0.0:
