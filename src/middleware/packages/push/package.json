@@ -1,11 +1,11 @@
 {
   "name": "@semapps/push",
-  "version": "0.3.23",
+  "version": "0.3.24",
   "description": "Mobile push notifications handler using Expo",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.3.23",
+    "@semapps/ldp": "0.3.24",
     "expo-server-sdk": "^3.4.0",
     "moleculer": "^0.14.18",
     "moleculer-db": "^0.8.15"
