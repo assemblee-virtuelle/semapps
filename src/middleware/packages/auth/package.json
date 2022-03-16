@@ -15,7 +15,7 @@
     "moleculer-web": "^0.10.0-beta1",
     "openid-client": "^4.7.4",
     "passport": "^0.4.1",
-    "passport-cas2": "0.0.11",
+    "passport-cas2": "0.0.12",
     "passport-local": "^1.0.0",
     "url-join": "^4.0.1"
   },
