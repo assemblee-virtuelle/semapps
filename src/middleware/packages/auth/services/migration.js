@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
 
 module.exports = {
   name: 'auth.migration',
@@ -13,7 +14,7 @@ module.exports = {
           try {
             await ctx.call('auth.account.create', {
               email: user[emailPredicate],
-              username: user[usernamePredicate],
+              username: usernamePredicate ? user[usernamePredicate] : getSlugFromUri(user.id),
               webId: user.id
             });
           } catch (e) {
