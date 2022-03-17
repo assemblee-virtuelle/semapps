@@ -20,7 +20,9 @@ const external = createFilter(
     '@material-ui/**',
     '@react-leaflet/**',
     'react-leaflet',
-    'react-leaflet-markercluster'
+    'react-leaflet-markercluster',
+    'autosuggest-highlight',
+    'lodash.throttle'
   ],
   null,
   { resolve: false }

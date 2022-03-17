@@ -17,7 +17,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "autosuggest-highlight": "^3.1.1",
     "lodash.throttle": "^4.1.1",
-    "react-leaflet": "^3.2.5",
+    "react-leaflet": "3.2.1",
     "react-leaflet-markercluster": "^3.0.0-rc1"
   },
   "peerDependencies": {
