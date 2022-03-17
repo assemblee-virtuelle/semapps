@@ -1,6 +1,6 @@
 {
   "name": "@semapps/activitypub-components",
-  "version": "0.4.0-alpha.14",
+  "version": "0.4.0-alpha.15",
   "description": "React-Admin components for ActivityPub display",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
