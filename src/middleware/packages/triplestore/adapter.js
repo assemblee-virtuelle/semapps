@@ -222,7 +222,7 @@ class TripleStoreAdapter {
   removeById(_id) {
     return this.broker
       .call('triplestore.update', {
-        query: `DELETE WHERE { ${_id} ?p ?o . }`,
+        query: `DELETE WHERE { <${_id}> ?p ?o . }`,
         dataset: this.dataset
       })
       .then(() => {
