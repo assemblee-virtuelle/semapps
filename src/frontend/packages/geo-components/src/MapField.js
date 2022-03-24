@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { Box, Typography } from '@material-ui/core';
 
 const MapField = ({ record, latitude, longitude, address, height, addLabel, typographyProps, ...rest }) => {
@@ -7,6 +7,12 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
   const position = [latitude(record), longitude(record)];
   if (!position[0] || !position[1]) return null;
 
+  function ChangeView({ center, zoom }) {
+    const map = useMap();
+    map.setView(center, zoom);
+    return null;
+  }
+  
   return (
     <Box>
       {address && (
@@ -15,6 +21,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
         </Box>
       )}
       <MapContainer style={{ height }} center={position} {...rest}>
+        <ChangeView center={position} /> 
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
