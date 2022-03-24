@@ -40,6 +40,7 @@ const AccordionList = ({ date, title, content }) => {
   return (
     <div className={classes.root}>
       {ids.map((id, i) => {
+        if (!data[id]) return null;
         const computedDate = date && new Date(date(data[id]));
         const computedTitle = title && title(data[id]);
         return (
