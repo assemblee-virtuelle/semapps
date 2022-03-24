@@ -57,6 +57,7 @@ const MapList = ({
   let previousRecord;
 
   const records = ids
+    .filter(id => data[id])
     .map(id => ({
       ...data[id],
       latitude: latitude && latitude(data[id]),

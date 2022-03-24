@@ -26,7 +26,9 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
 
   const events = useMemo(
     () =>
-      ids.map(id => ({
+      ids
+        .filter(id => data[id])
+        .map(id => ({
         id,
         title: typeof label === 'string' ? data[id][label] : label(data[id]),
         start: typeof startDate === 'string' ? data[id][startDate] : startDate(data[id]),
