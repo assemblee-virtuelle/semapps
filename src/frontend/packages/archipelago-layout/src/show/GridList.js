@@ -15,7 +15,7 @@ const GridList = ({ children, linkType, spacing, ...otherProps }) => {
   return (
     <Grid container spacing={spacing}>
       {ids.map(id => {
-        if( !data[id] ) return null;
+        if (!data[id]) return null;
         return (
           <Grid item key={id} {...otherProps}>
             {linkType ? (
@@ -34,7 +34,7 @@ const GridList = ({ children, linkType, spacing, ...otherProps }) => {
               })
             )}
           </Grid>
-        )
+        );
       })}
     </Grid>
   );

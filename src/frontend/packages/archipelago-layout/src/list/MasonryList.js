@@ -44,7 +44,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
   return (
     <Masonry breakpointCols={breakpointCols} className={classes.grid} columnClassName={classes.column}>
       {ids.map(id => {
-        if( !data[id] ) return null;
+        if (!data[id]) return null;
         const imageUrl = typeof image === 'function' ? image(data[id]) : image;
         return (
           <Card key={id} className={classes.card}>
