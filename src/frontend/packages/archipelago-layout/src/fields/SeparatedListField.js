@@ -27,6 +27,7 @@ const SeparatedListField = props => {
   return (
     <React.Fragment>
       {ids.map((id, i) => {
+        if (!data[id]) return null;
         const resourceLinkPath = typeof link === 'function' ? link(data[id]) : linkToRecord(basePath, id, link);
 
         if (resourceLinkPath) {
