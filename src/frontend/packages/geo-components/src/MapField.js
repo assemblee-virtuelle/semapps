@@ -12,7 +12,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
     map.setView(center, zoom);
     return null;
   }
-  
+
   return (
     <Box>
       {address && (
@@ -21,7 +21,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
         </Box>
       )}
       <MapContainer style={{ height }} center={position} {...rest}>
-        <ChangeView center={position} /> 
+        <ChangeView center={position} />
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
