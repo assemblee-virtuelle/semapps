@@ -57,6 +57,7 @@ const ChipList = props => {
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
       {ids.map(id => {
+        if( !data[id] ) return null;
         const resourceLinkPath = !linkType ? false : linkToRecord(basePath, id, linkType);
 
         if (resourceLinkPath) {
