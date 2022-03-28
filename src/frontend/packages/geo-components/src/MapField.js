@@ -1,18 +1,13 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import { Box, Typography } from '@material-ui/core';
+import ChangeView from './ChangeView';
 
 const MapField = ({ record, latitude, longitude, address, height, addLabel, typographyProps, ...rest }) => {
   // Do not display the component if it has no latitude or longitude
   const position = [latitude(record), longitude(record)];
   if (!position[0] || !position[1]) return null;
 
-  function ChangeView({ center, zoom }) {
-    const map = useMap();
-    map.setView(center, zoom);
-    return null;
-  }
-  
   return (
     <Box>
       {address && (
