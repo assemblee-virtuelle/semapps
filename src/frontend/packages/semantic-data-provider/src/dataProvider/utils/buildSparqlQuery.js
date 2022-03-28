@@ -60,7 +60,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       // initialize array in case of single value :
       [].concat(filter.sparqlWhere).forEach(sw => {
         sparqlJsParams.where.push(sw);
-      })
+      });
     }
 
     if (hasFullTextSearch) {
