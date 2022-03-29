@@ -1,13 +1,12 @@
 const DbService = require('moleculer-db');
-const { TripleStoreAdapter } = require('@semapps/ldp');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
-const DeviceService = {
-  name: 'push.device',
+const ExpoPushDeviceService = {
+  name: 'expo-push.device',
   mixins: [DbService],
-  adapter: new TripleStoreAdapter(),
+  adapter: new TripleStoreAdapter({ type: 'Device', dataset: 'settings' }),
   settings: {
-    containerUri: null,
-    context: null,
+    idField: '@id',
     newDeviceNotification: {
       message: null,
       data: {}
@@ -20,8 +19,8 @@ const DeviceService = {
       let device = await this.actions.find(
         {
           query: {
-            'semapps:ownedBy': userUri,
-            'semapps:pushToken': pushToken
+            ownedBy: userUri,
+            pushToken: pushToken
           }
         },
         { parentCtx: ctx }
@@ -30,12 +29,11 @@ const DeviceService = {
       if (!device['ldp:contains']) {
         device = await this.actions.create(
           {
-            '@type': 'semapps:Device',
-            'semapps:name': name,
-            'semapps:yearClass': yearClass,
-            'semapps:ownedBy': userUri,
-            'semapps:pushToken': pushToken,
-            'semapps:addedAt': new Date().toISOString()
+            name: name,
+            yearClass: yearClass,
+            ownedBy: userUri,
+            pushToken: pushToken,
+            addedAt: new Date().toISOString()
           },
           { parentCtx: ctx }
         );
@@ -51,9 +49,9 @@ const DeviceService = {
         device = await this.actions.update(
           {
             '@id': device['ldp:contains'][0]['@id'],
-            'semapps:name': name,
-            'semapps:yearClass': yearClass,
-            'semapps:errorMessage': null
+            name: name,
+            yearClass: yearClass,
+            errorMessage: null
           },
           { parentCtx: ctx }
         );
@@ -68,8 +66,8 @@ const DeviceService = {
         const container = await this.actions.find(
           {
             query: {
-              'semapps:ownedBy': userUri,
-              'semapps:errorMessage': null
+              ownedBy: userUri,
+              errorMessage: null
             }
           },
           { parentCtx: ctx }
@@ -85,4 +83,4 @@ const DeviceService = {
   }
 };
 
-module.exports = DeviceService;
+module.exports = ExpoPushDeviceService;

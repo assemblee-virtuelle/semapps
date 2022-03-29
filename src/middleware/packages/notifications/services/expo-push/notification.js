@@ -1,14 +1,13 @@
 const DbService = require('moleculer-db');
 const { Expo } = require('expo-server-sdk');
-const { TripleStoreAdapter } = require('@semapps/ldp');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
-const NotificationService = {
-  name: 'push.notification',
+const ExpoPushNotificationService = {
+  name: 'expo-push.notification',
   mixins: [DbService],
-  adapter: new TripleStoreAdapter(),
+  adapter: new TripleStoreAdapter({ type: 'PushNotification', dataset: 'settings' }),
   settings: {
-    containerUri: null,
-    context: null
+    idField: '@id'
   },
   started() {
     this.expo = new Expo();
@@ -32,12 +31,11 @@ const NotificationService = {
       for (let device of devices) {
         await this.actions.create(
           {
-            '@type': 'semapps:PushNotification',
-            'semapps:deviceId': device['@id'],
-            'semapps:addedAt': new Date().toISOString(),
-            'semapps:status': 'queued',
-            'semapps:message': JSON.stringify({
-              to: device['semapps:pushToken'],
+            deviceId: device.id,
+            addedAt: new Date().toISOString(),
+            status: 'queued',
+            message: JSON.stringify({
+              to: device.pushToken,
               body: message,
               data
             })
@@ -63,8 +61,8 @@ const NotificationService = {
             await this.actions.update(
               {
                 '@id': notification['@id'],
-                'semapps:status': 'processed',
-                'semapps:receiptId': receipt[0].id
+                status: 'processed',
+                receiptId: receipt[0].id
               },
               { parentCtx: ctx }
             );
@@ -97,15 +95,15 @@ const NotificationService = {
             for (const receiptId in receipts) {
               let { status, message, details } = receipts[receiptId];
               const notificationId = notifications.find(
-                notification => notification['semapps:receiptId'] === receiptId
+                notification => notification.receiptId === receiptId
               )['@id'];
 
               if (status === 'ok') {
                 await this.actions.update(
                   {
                     '@id': notificationId,
-                    'semapps:status': 'checked',
-                    'semapps:receiptStatus': status
+                    status: 'checked',
+                    receiptStatus: status
                   },
                   { parentCtx: ctx }
                 );
@@ -131,9 +129,7 @@ const NotificationService = {
     async findByStatus(status, ctx) {
       const collection = await this.actions.find(
         {
-          query: {
-            'semapps:status': status
-          }
+          query: { status }
         },
         { parentCtx: ctx }
       );
@@ -143,19 +139,19 @@ const NotificationService = {
       const notification = await this.actions.update(
         {
           '@id': notificationId,
-          'semapps:status': 'error',
-          'semapps:errorMessage': message
+          status: 'error',
+          errorMessage: message
         },
         { parentCtx: ctx }
       );
 
       // Also mark device as error
       await ctx.call('push.device.update', {
-        '@id': notification['semapps:deviceId'],
-        'semapps:errorMessage': message
+        '@id': notification.deviceId,
+        errorMessage: message
       });
     }
   }
 };
 
-module.exports = NotificationService;
+module.exports = ExpoPushNotificationService;
