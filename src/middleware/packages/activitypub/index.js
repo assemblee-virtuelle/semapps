@@ -4,6 +4,7 @@ module.exports = {
   ActivityPubService: require('./service'),
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
+  ActivityMappingService: require('./services/activity-mapping'),
   BotService: require('./mixins/bot'),
   ControlledCollectionMixin: require('./mixins/controlled-collection'),
   ActivitiesHandlerMixin: require('./mixins/activities-handler'),
