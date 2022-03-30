@@ -4,7 +4,7 @@ const matchActivity = require('../utils/matchActivity');
 const ActivityMappingService = {
   name: 'activity-mapping',
   settings: {
-    mappers: []
+    mappers: [],
   },
   async started() {
     this.mappers = [];
@@ -22,15 +22,17 @@ const ActivityMappingService = {
         // If we have a match...
         if( dereferencedActivity ) {
           const emitter = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
+          const emitterProfile = emitter.url ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor, webId: 'system' }) : {};
+          const templateParams = { activity: dereferencedActivity, emitter, emitterProfile, ...rest };
 
           return Object.fromEntries(Object.entries(mapper.mapping).map(([key, value]) => {
             // If the value is a function, it is a Handlebar template
             if( typeof value === 'function' ) {
-              return [key, value({ activity: dereferencedActivity, emitter, ...rest })];
+              return [key, value(templateParams)];
             } else {
               // If we have an object with locales mapping, look for the right locale
               if( value[locale] ) {
-                return [key, value[locale]({ activity: dereferencedActivity, emitter, ...rest })];
+                return [key, value[locale](templateParams)];
               } else {
                 throw new Error(`No ${locale} locale found for key ${key}`);
               }
