@@ -1,12 +1,11 @@
-const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
-const { MIME_TYPES } = require('@semapps/mime-types');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
   name: 'sparqlEndpoint',
   settings: {
     defaultAccept: 'text/turtle',
+    ignoreAcl: false,
     podProvider: false
   },
   dependencies: ['triplestore', 'api'],
@@ -33,7 +32,7 @@ const SparqlEndpointService = {
         accept,
         dataset: ctx.params.username,
         // In POD provider config, query as system as we are searching our own data
-        webId: this.settings.podProvider ? 'system' : ctx.meta.webId
+        webId: (this.settings.ignoreAcl || this.settings.podProvider) ? 'system' : ctx.meta.webId
       });
 
       if (ctx.meta.$responseType === undefined) {
