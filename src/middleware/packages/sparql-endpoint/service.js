@@ -32,7 +32,7 @@ const SparqlEndpointService = {
         accept,
         dataset: ctx.params.username,
         // In POD provider config, query as system as we are searching our own data
-        webId: (this.settings.ignoreAcl || this.settings.podProvider) ? 'system' : ctx.meta.webId
+        webId: this.settings.ignoreAcl || this.settings.podProvider ? 'system' : ctx.meta.webId
       });
 
       if (ctx.meta.$responseType === undefined) {

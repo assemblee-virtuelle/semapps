@@ -12,7 +12,7 @@ const createMethod = config => async (resourceId, params) => {
   const headers = new Headers();
 
   if (dataModel.fieldsMapping?.title) {
-    if( Array.isArray(dataModel.fieldsMapping.title) ) {
+    if (Array.isArray(dataModel.fieldsMapping.title)) {
       headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
     } else {
       headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
