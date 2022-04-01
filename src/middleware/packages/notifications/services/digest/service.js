@@ -1,6 +1,6 @@
 const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
-const DigestSubscriptionService = require("./subscription");
+const DigestSubscriptionService = require('./subscription');
 
 const Service = {
   name: 'digest',
@@ -22,16 +22,12 @@ const Service = {
     this.broker.createService(DigestSubscriptionService);
   },
   async started() {
-    if( !this.createJob ) throw new Error('The QueueMixin of moleculer-bull must be added for the DigestService to work');
+    if (!this.createJob)
+      throw new Error('The QueueMixin of moleculer-bull must be added for the DigestService to work');
 
-    for( const [jobName, cronExp] of Object.entries(this.settings.frequencies) ) {
+    for (const [jobName, cronExp] of Object.entries(this.settings.frequencies)) {
       // See https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd
-      this.createJob(
-        'build',
-        jobName,
-        {},
-        { repeat: { cron: cronExp, tz: this.settings.timeZone } }
-      );
+      this.createJob('build', jobName, {}, { repeat: { cron: cronExp, tz: this.settings.timeZone } });
     }
   },
   actions: {
@@ -49,27 +45,36 @@ const Service = {
 
       const subscriptions = await ctx.call('digest.subscription.find', { query: { frequency } });
 
-      for( let subscription of subscriptions ) {
+      for (let subscription of subscriptions) {
         const subscriber = await ctx.call('activitypub.actor.get', { actorUri: subscription.webId });
-        const newActivities = await ctx.call('activitypub.inbox.getByDates', { collectionUri: subscriber.inbox, fromDate: previousDate, toDate: currentDate });
+        const newActivities = await ctx.call('activitypub.inbox.getByDates', {
+          collectionUri: subscriber.inbox,
+          fromDate: previousDate,
+          toDate: currentDate
+        });
 
-        if( newActivities.length > 0 ) {
-          let notifications = [], notificationsByCategories = {};
+        if (newActivities.length > 0) {
+          let notifications = [],
+            notificationsByCategories = {};
 
           // Map received activities to notifications
-          for( let activity of newActivities ) {
+          for (let activity of newActivities) {
             const notification = await ctx.call('activity-mapping.map', { activity, locale: subscription.locale });
-            if( notification ) {
+            if (notification) {
               notifications.push(notification);
-              if( notification.category ) {
-                if( !notificationsByCategories[notification.category] ) notificationsByCategories[notification.category] = { category: notification.category, notifications: [] };
+              if (notification.category) {
+                if (!notificationsByCategories[notification.category])
+                  notificationsByCategories[notification.category] = {
+                    category: notification.category,
+                    notifications: []
+                  };
                 notificationsByCategories[notification.category].notifications.push(notification);
               }
             }
           }
 
           // If we have at least one notification, send email
-          if(notifications.length > 0) {
+          if (notifications.length > 0) {
             await this.actions.send(
               {
                 to: subscription.email,

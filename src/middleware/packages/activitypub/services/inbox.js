@@ -86,8 +86,8 @@ const InboxService = {
       const { collectionUri, fromDate, toDate } = ctx.params;
 
       const filters = [];
-      if( fromDate ) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
-      if( toDate ) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
+      if (fromDate) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
+      if (toDate) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
 
       const results = await ctx.call('triplestore.query', {
         query: `
@@ -108,7 +108,7 @@ const InboxService = {
 
       let activities = [];
 
-      for( const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value) ) {
+      for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
         const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
         activities.push(activity);
       }
