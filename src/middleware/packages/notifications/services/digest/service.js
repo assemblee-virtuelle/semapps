@@ -59,7 +59,7 @@ const Service = {
           // Map received activities to notifications
           for( let activity of newActivities ) {
             const notification = await ctx.call('activity-mapping.map', { activity, locale: subscription.locale });
-            if( notification ) {
+            if( notification && await this.filterNotification(notification, subscription) ) {
               notifications.push(notification);
               if( notification.category ) {
                 if( !notificationsByCategories[notification.category] ) notificationsByCategories[notification.category] = { category: notification.category, notifications: [] };
@@ -89,6 +89,11 @@ const Service = {
           }
         }
       }
+    }
+  },
+  methods: {
+    async filterNotification(notification, subscription) {
+      return true;
     }
   },
   queues: {
