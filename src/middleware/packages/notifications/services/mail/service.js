@@ -17,21 +17,23 @@ const MailNotificationsService = {
     async 'activitypub.inbox.received'(ctx) {
       const { activity, recipients } = ctx.params;
 
-      for( let recipientUri of recipients ) {
+      for (let recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
         const locale = account.preferredLocale || this.settings.defaultLocale;
         const frontUrl = account.preferredFrontUrl || this.settings.defaultFrontUrl;
 
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-        if( notification.actionLink ) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
+        if (notification.actionLink) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
 
         await this.queueMail(ctx, notification.key, {
           to: account.email,
           data: {
             ...notification,
-            descriptionWithBr: notification.description ? notification.description.replace(/\r\n|\r|\n/g, '<br />') : undefined
-          },
+            descriptionWithBr: notification.description
+              ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
+              : undefined
+          }
         });
       }
     }
@@ -44,7 +46,7 @@ const MailNotificationsService = {
       } else {
         await ctx.call('notification.send', payload);
       }
-    },
+    }
   },
   queues: {
     sendMail: {
@@ -54,9 +56,9 @@ const MailNotificationsService = {
         const result = await this.broker.call('notification.send', job.data);
         job.progress(100);
         return result;
-      },
-    },
-  },
+      }
+    }
+  }
 };
 
 module.exports = MailNotificationsService;

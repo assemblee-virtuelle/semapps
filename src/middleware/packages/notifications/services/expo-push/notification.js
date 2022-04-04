@@ -94,9 +94,7 @@ const ExpoPushNotificationService = {
             // notification and information about an error, if one occurred.
             for (const receiptId in receipts) {
               let { status, message, details } = receipts[receiptId];
-              const notificationId = notifications.find(
-                notification => notification.receiptId === receiptId
-              )['@id'];
+              const notificationId = notifications.find(notification => notification.receiptId === receiptId)['@id'];
 
               if (status === 'ok') {
                 await this.actions.update(

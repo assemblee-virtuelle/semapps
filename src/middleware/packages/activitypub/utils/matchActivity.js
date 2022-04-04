@@ -1,5 +1,5 @@
-const { ACTIVITY_TYPES } = require("../constants");
-const { defaultToArray } = require("@semapps/ldp");
+const { ACTIVITY_TYPES } = require('../constants');
+const { defaultToArray } = require('@semapps/ldp');
 
 /*
  * Match an activity against a pattern

@@ -14,6 +14,6 @@ module.exports = {
       const { webId } = ctx.params;
       const subscriptions = await this._find(ctx, { query: { webId } });
       return subscriptions.length > 0 ? subscriptions[0] : null;
-    },
+    }
   }
 };
