@@ -16,7 +16,7 @@ module.exports = {
       let { uuid, username, password, email, webId, ...rest } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
-      email = email.toLowerCase();
+      email = email && email.toLowerCase();
 
       const emailExists = await ctx.call('auth.account.emailExists', { email });
       if (emailExists) {
@@ -102,7 +102,7 @@ module.exports = {
   methods: {
     async isValidUsername(ctx, username) {
       // Ensure the username has no space or special characters
-      if (!/^[a-z0-9\-_.]+$/.exec(username)) {
+      if (!/^[a-z0-9\-+_.]+$/.exec(username)) {
         throw new Error('username.invalid');
       }
 

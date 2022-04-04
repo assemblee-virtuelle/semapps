@@ -57,7 +57,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           }
         }
       */
-      sparqlJsParams.where.push(filter.sparqlWhere);
+      // initialize array in case of single value :
+      [].concat(filter.sparqlWhere).forEach(sw => {
+        sparqlJsParams.where.push(sw);
+      });
     }
 
     if (hasFullTextSearch) {
@@ -121,7 +124,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
         const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
 
-        sparqlJsParams.where.push({
+        sparqlJsParams.where.unshift({
           type: 'bgp',
           triples: [triple(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
         });
