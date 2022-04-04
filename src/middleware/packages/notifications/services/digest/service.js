@@ -18,6 +18,7 @@ const Service = {
     // Data available in all templates
     data: {}
   },
+  dependencies: ['digest.subscription'],
   created() {
     this.broker.createService(DigestSubscriptionService);
   },
