@@ -52,6 +52,7 @@ const Service = {
 
       for( let subscription of subscriptions ) {
         const subscriber = await ctx.call('activitypub.actor.get', { actorUri: subscription.webId });
+        const account = await ctx.call('auth.account.findByWebId', { webId: subscription.webId });
         const newActivities = await ctx.call('activitypub.inbox.getByDates', { collectionUri: subscriber.inbox, fromDate: previousDate, toDate: currentDate });
 
         if( newActivities.length > 0 ) {
@@ -59,7 +60,7 @@ const Service = {
 
           // Map received activities to notifications
           for( let activity of newActivities ) {
-            const notification = await ctx.call('activity-mapping.map', { activity, locale: subscription.locale });
+            const notification = await ctx.call('activity-mapping.map', { activity, locale: subscription.locale || account.locale });
             if( notification && await this.filterNotification(notification, subscription) ) {
               notifications.push(notification);
               if( notification.category ) {
@@ -73,14 +74,15 @@ const Service = {
           if(notifications.length > 0) {
             await this.actions.send(
               {
-                to: subscription.email,
+                to: subscription.email || account.email,
                 template: 'digest',
-                locale: subscription.locale,
+                locale: subscription.locale || account.locale,
                 data: {
                   notifications,
                   notificationsByCategories,
+                  subscription,
                   subscriber,
-                  subscription
+                  account
                 }
               },
               {
@@ -93,6 +95,8 @@ const Service = {
     }
   },
   methods: {
+    // Optional method called for each notification
+    // Return true if you want the notification to be included in the digest
     async filterNotification(notification, subscription) {
       return true;
     }
