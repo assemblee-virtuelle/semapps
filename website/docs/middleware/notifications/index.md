@@ -13,5 +13,5 @@ This package allows you to send notifications to user, through digest emails, si
 ## Install
 
 ```bash
-$ yarn add @semapps/importer
+$ yarn add @semapps/notifications
 ```
