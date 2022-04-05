@@ -2,11 +2,9 @@ const constants = require('./constants');
 
 module.exports = {
   ActivityPubService: require('./service'),
+  // Sub-services
   ActorService: require('./services/actor'),
   ActivityService: require('./services/activity'),
-  BotService: require('./mixins/bot'),
-  ControlledCollectionMixin: require('./mixins/controlled-collection'),
-  ActivitiesHandlerMixin: require('./mixins/activities-handler'),
   CollectionService: require('./services/collection'),
   DispatchService: require('./services/dispatch'),
   FollowService: require('./services/follow'),
@@ -15,6 +13,13 @@ module.exports = {
   OutboxService: require('./services/outbox'),
   ProxyService: require('./services/proxy'),
   RegistryService: require('./services/registry'),
+  // Other services
+  ActivityMappingService: require('./services/activity-mapping'),
+  // Mixins
+  BotService: require('./mixins/bot'),
+  ControlledCollectionMixin: require('./mixins/controlled-collection'),
+  ActivitiesHandlerMixin: require('./mixins/activities-handler'),
+  // Misc.
   containers: require('./containers'),
   ...constants
 };

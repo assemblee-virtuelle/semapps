@@ -10,6 +10,7 @@
     "@semapps/mime-types": "0.4.0-alpha.16",
     "@semapps/triplestore": "0.4.0-alpha.16",
     "bull-board": "^0.7.0",
+    "handlebars": "^4.7.7",
     "moleculer": "^0.14.18",
     "moleculer-bull": "^0.2.5",
     "moleculer-db": "^0.8.15",

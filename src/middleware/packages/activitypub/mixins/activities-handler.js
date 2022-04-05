@@ -1,46 +1,9 @@
-const { defaultToArray } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('../constants');
+const matchActivity = require('../utils/matchActivity');
 
 const ActivitiesHandlerMixin = {
   started() {
     if (!this.schema.activities || this.schema.activities.length === 0) {
       throw new Error('ActivitiesHandlerMixin: no activities defined in the service ' + this.name);
-    }
-  },
-  methods: {
-    async matchPattern(pattern, activityOrObject) {
-      let dereferencedActivityOrObject = { ...activityOrObject };
-
-      // Check if we need to dereference the activity or object
-      if (typeof activityOrObject === 'string') {
-        if (pattern.type && Object.values(ACTIVITY_TYPES).includes(pattern.type)) {
-          dereferencedActivityOrObject = await this.broker.call('activitypub.activity.get', {
-            resourceUri: activityOrObject,
-            webId: 'system'
-          });
-        } else {
-          dereferencedActivityOrObject = await this.broker.call('activitypub.object.get', {
-            objectUri: activityOrObject,
-            actorUri: 'system'
-          });
-        }
-      }
-
-      for (let key of Object.keys(pattern)) {
-        if (typeof pattern[key] === 'object' && !Array.isArray(pattern[key])) {
-          dereferencedActivityOrObject[key] = await this.matchPattern(pattern[key], dereferencedActivityOrObject[key]);
-          if (!dereferencedActivityOrObject[key]) return false;
-        } else {
-          if (
-            !dereferencedActivityOrObject[key] ||
-            !defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v))
-          )
-            return false;
-        }
-      }
-
-      // We have a match ! Return the dereferenced object
-      return dereferencedActivityOrObject;
     }
   },
   events: {
@@ -51,7 +14,7 @@ const ActivitiesHandlerMixin = {
         if (activityHandler.onEmit) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
-              ? await this.matchPattern(activityHandler.match, activity)
+              ? await matchActivity(ctx, activityHandler.match, activity)
               : await activityHandler.match.bind(this)(activity);
 
           if (dereferencedActivity) {
@@ -67,7 +30,7 @@ const ActivitiesHandlerMixin = {
         if (activityHandler.onReceive) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
-              ? await this.matchPattern(activityHandler.match, activity)
+              ? await matchActivity(ctx, activityHandler.match, activity)
               : await activityHandler.match.bind(this)(activity);
 
           if (dereferencedActivity) {
