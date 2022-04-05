@@ -34,6 +34,7 @@ const Service = {
   actions: {
     async build(ctx) {
       const { frequency, timestamp } = ctx.params;
+      const returnValues = [];
 
       const currentDate = timestamp ? new Date(timestamp) : new Date();
 
@@ -97,9 +98,19 @@ const Service = {
                 parentCtx: ctx
               }
             );
+
+            returnValues.push({
+              email: subscription.email || account.email,
+              locale: subscription.locale || account.locale,
+              numNotifications: notifications.length,
+              categories: Object.keys(notificationsByCategories),
+              subscription
+            })
           }
         }
       }
+
+      return returnValues;
     }
   },
   methods: {
@@ -114,7 +125,7 @@ const Service = {
       {
         name: '*',
         process(job) {
-          this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
+          return this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
         }
       }
     ]
