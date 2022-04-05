@@ -83,7 +83,8 @@ module.exports = {
           // Try again after 3 minutes and until 12 hours later
           attempts: 8,
           backoff: { type: 'exponential', delay: '180000' },
-          repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone } }
+          repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone }
+        }
       );
     }
   },
@@ -333,7 +334,10 @@ module.exports = {
       }
     },
     async processSynchronize(job) {
-      const interval = cronParser.parseExpression(this.settings.cronJob.time, { currentDate: new Date(job.opts.timestamp), tz: this.settings.cronJob.timeZone });
+      const interval = cronParser.parseExpression(this.settings.cronJob.time, {
+        currentDate: new Date(job.opts.timestamp),
+        tz: this.settings.cronJob.timeZone
+      });
       const toDate = new Date(interval.next().toISOString());
       const fromDate = new Date(interval.prev().toISOString());
       job.log('Looking for updates from ' + fromDate.toString() + ' to ' + toDate.toString());
@@ -343,7 +347,7 @@ module.exports = {
         updatedUris = {};
       const compactResults = await this.list(this.settings.source.getAllCompact);
 
-      if( !compactResults ) {
+      if (!compactResults) {
         job.moveToFailed('Unable to fetch ' + this.settings.source.getAllCompact);
         return;
       }
