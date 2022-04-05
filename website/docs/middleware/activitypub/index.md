@@ -34,6 +34,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - ProxyService
 - RegistryService
 
+## Other services
+- [ActivityMappingService](activity-mapping.md)
+
 ## Mixins
 - [ActivitiesHandlerMixin](activities-handler.md)
 - ControlledCollectionMixin
