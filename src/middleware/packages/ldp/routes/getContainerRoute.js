@@ -27,10 +27,10 @@ function getContainerRoute(containerUri, readOnly = false) {
     'HEAD /': [addContainerUriMiddleware(containerUri), 'ldp.container.api_head']
   };
 
-  if( !readOnly ) {
+  if (!readOnly) {
     aliases = {
       ...aliases,
-      'POST /': [...middlewares, 'ldp.container.api_post'],
+      'POST /': [...middlewares, 'ldp.container.api_post']
     };
   }
 
@@ -42,7 +42,7 @@ function getContainerRoute(containerUri, readOnly = false) {
       'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
     };
 
-    if( !readOnly ) {
+    if (!readOnly) {
       aliases = {
         ...aliases,
         'PUT /:id': [...middlewares, 'ldp.resource.api_put'],

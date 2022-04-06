@@ -24,9 +24,9 @@ function getResourcesRoute(containerUri, readOnly = false) {
   let aliases = {
     'GET /:id': [...middlewares, 'ldp.resource.api_get'],
     'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
-  }
+  };
 
-  if( !readOnly ) {
+  if (!readOnly) {
     aliases = {
       ...aliases,
       'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
