@@ -17,8 +17,7 @@ const external = createFilter(
     'jsonld',
     '@material-ui/**',
     '@rdfjs/**',
-    'crypto-js',
-    'crypto'
+    'crypto-js'
   ],
   null,
   { resolve: false }

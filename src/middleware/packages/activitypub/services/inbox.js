@@ -81,6 +81,39 @@ const InboxService = {
       );
 
       ctx.meta.$statusCode = 202;
+    },
+    async getByDates(ctx) {
+      const { collectionUri, fromDate, toDate } = ctx.params;
+
+      const filters = [];
+      if (fromDate) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
+      if (toDate) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
+
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+          SELECT DISTINCT ?activityUri 
+          WHERE {
+            <${collectionUri}> a as:Collection .
+            <${collectionUri}> as:items ?activityUri . 
+            ?activityUri as:published ?published . 
+            ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+          }
+          ORDER BY ?published
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      let activities = [];
+
+      for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
+        const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+        activities.push(activity);
+      }
+
+      return activities;
     }
   }
 };

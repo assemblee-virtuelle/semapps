@@ -48,7 +48,8 @@ module.exports = {
         // First attach the container to its parent container
         // This will avoid WebACL error, in case the container is fetched before
         if (containerPath !== '/') {
-          const parentContainerUri = getContainerFromUri(containerUri);
+          let parentContainerUri = getContainerFromUri(containerUri);
+          if (parentContainerUri + '/' === this.settings.baseUrl) parentContainerUri += '/';
           const parentExists = await ctx.call('ldp.container.exist', {
             containerUri: parentContainerUri,
             webId: 'system'

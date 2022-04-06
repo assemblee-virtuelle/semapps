@@ -49,8 +49,8 @@ module.exports = {
   },
   methods: {
     async list(url) {
-      const data = await this.fetch(url);
-      return data.data.events.elements;
+      const results = await this.fetch(url);
+      return results && results.data && results.data.events && results.data.events.elements;
     }
   }
 };

@@ -19,6 +19,7 @@ module.exports = {
     'middleware/auth',
     'middleware/backup',
     'middleware/fuseki-admin',
+    'middleware/signature',
     {
       type: 'category',
       label: 'Importer',
@@ -42,7 +43,14 @@ module.exports = {
         'middleware/ldp/document-tagger',
       ],
     },
-    'middleware/signature',
+    {
+      type: 'category',
+      label: 'Notifications',
+      items: [
+        'middleware/notifications/index',
+        'middleware/notifications/digest',
+      ],
+    },
     'middleware/triplestore',
     {
       type: 'category',

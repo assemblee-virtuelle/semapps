@@ -79,7 +79,12 @@ module.exports = {
         this.name,
         'synchronize',
         {},
-        { repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone } }
+        {
+          // Try again after 3 minutes and until 12 hours later
+          attempts: 8,
+          backoff: { type: 'exponential', delay: '180000' },
+          repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone }
+        }
       );
     }
   },
@@ -329,10 +334,23 @@ module.exports = {
       }
     },
     async processSynchronize(job) {
+      const interval = cronParser.parseExpression(this.settings.cronJob.time, {
+        currentDate: new Date(job.opts.timestamp),
+        tz: this.settings.cronJob.timeZone
+      });
+      const toDate = new Date(interval.next().toISOString());
+      const fromDate = new Date(interval.prev().toISOString());
+      job.log('Looking for updates from ' + fromDate.toString() + ' to ' + toDate.toString());
+
       let deletedUris = {},
         createdUris = {},
         updatedUris = {};
       const compactResults = await this.list(this.settings.source.getAllCompact);
+
+      if (!compactResults) {
+        job.moveToFailed('Unable to fetch ' + this.settings.source.getAllCompact);
+        return;
+      }
 
       job.progress(5);
 
@@ -390,15 +408,11 @@ module.exports = {
       // UPDATED RESOURCES
       ///////////////////////////////////////////
 
-      const interval = cronParser.parseExpression(this.settings.cronJob.time, { tz: this.settings.cronJob.timeZone });
-      const currentSyncDate = new Date(interval.prev().toISOString());
-      const previousSyncDate = new Date(interval.prev().toISOString());
-      job.log('Previous synchronization date: ' + previousSyncDate.toString());
       const urisToUpdate = compactResults
         .filter(data => {
-          // If an updated field is available in compact results, filter out older items
+          // If an updated field is available in compact results, filter out items outside of the time frame
           const updated = this.getField('updated', data);
-          return updated ? new Date(updated) > previousSyncDate : true;
+          return updated ? fromDate < new Date(updated) && new Date(updated) > toDate : true;
         })
         .map(data => this.settings.source.getOneFull(data))
         .filter(uri => !urisToCreate.includes(uri));
