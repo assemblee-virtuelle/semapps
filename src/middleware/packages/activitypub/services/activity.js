@@ -15,6 +15,7 @@ const ActivityService = {
     dereference: ['as:object/as:object'],
     permissions: {},
     newResourcesPermissions: {},
+    readOnly: true,
     controlledActions: {
       // Activities shouldn't be handled manually
       patch: 'activitypub.activity.forbidden',

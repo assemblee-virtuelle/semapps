@@ -15,7 +15,8 @@ module.exports = {
     disassembly: { type: 'array', optional: true },
     permissions: { type: 'object', optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
-    controlledActions: { type: 'object', optional: true }
+    controlledActions: { type: 'object', optional: true },
+    readOnly: { type: 'boolean', optional: true }
   },
   async handler(ctx) {
     let { path, fullPath, name, podsContainer, ...options } = ctx.params;
@@ -27,7 +28,7 @@ module.exports = {
 
     if (this.settings.podProvider && podsContainer === true) {
       name = 'actors';
-      await this.broker.call('api.addRoute', { route: getResourcesRoute(this.settings.baseUrl) });
+      await this.broker.call('api.addRoute', { route: getResourcesRoute(this.settings.baseUrl, options.readOnly) });
     } else if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
@@ -42,14 +43,14 @@ module.exports = {
 
       // 2. Create the API route
       const containerUriWithParams = urlJoin(this.settings.baseUrl, fullPath);
-      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUriWithParams) });
+      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUriWithParams, options.readOnly) });
     } else {
       // 1. Ensure the container has been created
       const containerUri = urlJoin(this.settings.baseUrl, path);
       await this.createAndAttachContainer(ctx, containerUri, path);
 
       // 2. Create the API route
-      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUri) });
+      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUri, options.readOnly) });
     }
 
     const pathRegex = pathToRegexp(fullPath);

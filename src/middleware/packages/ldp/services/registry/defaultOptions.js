@@ -3,6 +3,7 @@ module.exports = {
   jsonContext: null,
   queryDepth: 0,
   dereference: [],
+  readOnly: false,
   newResourcesPermissions: webId => {
     switch (webId) {
       case 'anon':

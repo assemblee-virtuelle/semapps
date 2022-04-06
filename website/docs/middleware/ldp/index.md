@@ -44,8 +44,7 @@ module.exports = {
       {
         prefix: 'ldp',
         url: 'http://www.w3.org/ns/ldp#',
-      },
-      ...
+      }
     ],
     containers: [
       {
@@ -71,13 +70,15 @@ module.exports = {
 
 ## Container options
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `accept` | `String` | `text/turtle` | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `jsonContext` | `[Any]` |  | JSON context to use to format results |
-| `dereference`| `[Array]` | `[]` | Properties to dereference, prefixed with their ontology. You can define sub-predicates separated by `/` |
-| `queryDepth` | `Integer` | 0 | Depth of blank nodes to dereference (Deprecated. Will be removed in a future minor release.) |
-| `newResourcesPermissions` | `Object` or `Function` |  | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources) |
+| Property                  | Type                   | Default       | Description                                                                                                                                            |
+|---------------------------|------------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `accept`                  | `String`               | `text/turtle` | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                       |
+| `jsonContext`             | `[Any]`                |               | JSON context to use to format results                                                                                                                  |
+| `dereference`             | `[Array]`              | `[]`          | Blank nodes to dereference, prefixed with their ontology. You can define sub-predicates separated by `/`                                               |
+| `queryDepth`              | `Integer`              | 0             | Depth of blank nodes to dereference (Deprecated. Will be removed in a future minor release.)                                                           |
+| `permissions`             | `Object` or `Function` |               | If the WebACL service is activated, permissions of the container itself                                                                                |
+| `newResourcesPermissions` | `Object` or `Function` |               | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources) |
+| `readOnly`                | `Boolean`              | `false`       | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                              |
 
 ## API routes
 
@@ -92,3 +93,4 @@ These routes are automatically added to the `ApiGateway` service.
 | `PUT /<container>/<resource>` | `ldp.resource.put` |
 | `DELETE /<container>/<resource>` | `ldp.resource.delete` |
 
+> Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
