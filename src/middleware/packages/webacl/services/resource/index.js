@@ -43,7 +43,7 @@ module.exports = {
     api_addRights: addRights.api,
     api_hasRights: hasRights.api,
     api_getRights: getRights.api,
-    api_setRights: setRights.api,
+    api_setRights: setRights.api
   },
   hooks: {
     before: {
