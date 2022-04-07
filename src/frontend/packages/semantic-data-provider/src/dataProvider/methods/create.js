@@ -1,7 +1,7 @@
 import getOne from './getOne';
 import uploadAllFiles from '../utils/uploadAllFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
-import urlJoin from "url-join";
+import urlJoin from 'url-join';
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
