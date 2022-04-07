@@ -26,19 +26,18 @@ const getParentNode = node => node.includes('/') && node.split('/')[0];
 
 const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
 
-const buildOptionalQuery = (queries, parentNode = false) =>
-  queries
-    .filter(q => q.parentNode === parentNode)
-    .map(q => ({
-      type: 'optional',
-      patterns: [
-        {
-          type: 'bgp',
-          triples: q.query
-        },
-        buildOptionalQuery(queries, q.node)
-      ]
-    }));
+const buildUnionQuery = queries =>
+  queries.map(q => {
+    let triples = q.query;
+    const firstTriple = queries.find(q2 => q.parentNode === q2.node);
+    if (firstTriple !== undefined) {
+      triples = triples.concat(firstTriple.query[0]);
+    }
+    return {
+      type: 'bgp',
+      triples: triples
+    };
+  });
 
 const buildDereferenceQuery = (predicates, ontologies) => {
   let queries = [];
@@ -65,9 +64,20 @@ const buildDereferenceQuery = (predicates, ontologies) => {
         filter: '' // `FILTER(isBLANK(?s${varName})) .`
       });
     }
+
+    const firstQuery = [
+      {
+        type: 'bgp',
+        triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
+      }
+    ];
+
     return {
       construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
-      where: buildOptionalQuery(queries)
+      where: {
+        type: 'union',
+        patterns: firstQuery.concat(buildUnionQuery(queries))
+      }
     };
   } else {
     return {
