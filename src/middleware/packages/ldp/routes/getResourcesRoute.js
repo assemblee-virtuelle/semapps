@@ -8,7 +8,7 @@ const {
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-function getResourcesRoute(containerUri) {
+function getResourcesRoute(containerUri, readOnly = false) {
   const containerPath = new URL(containerUri).pathname;
 
   const middlewares = [
@@ -21,6 +21,20 @@ function getResourcesRoute(containerUri) {
     addContainerUriMiddleware(containerUri)
   ];
 
+  let aliases = {
+    'GET /:id': [...middlewares, 'ldp.resource.api_get'],
+    'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
+  };
+
+  if (!readOnly) {
+    aliases = {
+      ...aliases,
+      'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
+      'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
+      'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
+    };
+  }
+
   return {
     path: containerPath,
     // Disable the body parsers so that we can parse the body ourselves
@@ -28,13 +42,7 @@ function getResourcesRoute(containerUri) {
     bodyParsers: false,
     authorization: false,
     authentication: true,
-    aliases: {
-      'GET /:id': [...middlewares, 'ldp.resource.api_get'],
-      'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
-      'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
-      'DELETE /:id': [...middlewares, 'ldp.resource.api_delete'],
-      'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
-    }
+    aliases
   };
 }
 

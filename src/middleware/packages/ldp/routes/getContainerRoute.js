@@ -8,7 +8,7 @@ const {
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 
-function getContainerRoute(containerUri) {
+function getContainerRoute(containerUri, readOnly = false) {
   const containerPath = new URL(containerUri).pathname;
 
   const middlewares = [
@@ -24,20 +24,32 @@ function getContainerRoute(containerUri) {
   // Container aliases
   let aliases = {
     'GET /': [...middlewares, 'ldp.container.api_get'],
-    'POST /': [...middlewares, 'ldp.container.api_post'],
     'HEAD /': [addContainerUriMiddleware(containerUri), 'ldp.container.api_head']
   };
+
+  if (!readOnly) {
+    aliases = {
+      ...aliases,
+      'POST /': [...middlewares, 'ldp.container.api_post']
+    };
+  }
 
   // If this is not the root container, add resource aliases
   if (containerPath !== '/') {
     aliases = {
       ...aliases,
       'GET /:id': [...middlewares, 'ldp.resource.api_get'],
-      'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
-      'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
-      'DELETE /:id': [...middlewares, 'ldp.resource.api_delete'],
       'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
     };
+
+    if (!readOnly) {
+      aliases = {
+        ...aliases,
+        'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
+        'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
+        'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
+      };
+    }
   }
 
   return {

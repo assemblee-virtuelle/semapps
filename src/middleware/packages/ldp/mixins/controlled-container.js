@@ -5,12 +5,13 @@ module.exports = {
   settings: {
     path: null,
     acceptedTypes: null,
-    accept: null,
+    accept: MIME_TYPES.JSON,
     jsonContext: null,
     dereference: null,
     permissions: null,
     newResourcesPermissions: null,
-    controlledActions: {}
+    controlledActions: {},
+    readOnly: false,
   },
   dependencies: ['ldp'],
   async started() {
@@ -18,7 +19,7 @@ module.exports = {
       path: this.settings.path,
       name: this.name,
       acceptedTypes: this.settings.acceptedTypes,
-      accept: MIME_TYPES.JSON || this.settings.accept,
+      accept: this.settings.accept,
       jsonContext: this.settings.jsonContext,
       dereference: this.settings.dereference,
       permissions: this.settings.permissions,
@@ -32,7 +33,8 @@ module.exports = {
         put: this.name + '.put',
         delete: this.name + '.delete',
         ...this.settings.controlledActions
-      }
+      },
+      readOnly: this.settings.readOnly
     });
   },
   actions: {
