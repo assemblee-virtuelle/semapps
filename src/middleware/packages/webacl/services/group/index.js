@@ -34,11 +34,11 @@ module.exports = {
     api_removeMember: removeMemberAction.api
   },
   async started() {
-    if (this.settings.superAdmins.length > 0) {
-      if (this.settings.podProvider) {
-        throw new Error('You cannot create a superadmin group in a POD provider config');
-      }
+    if (this.settings.podProvider && this.settings.superAdmins.length > 0) {
+      throw new Error('You cannot create a superadmin group in a POD provider config');
+    }
 
+    if (!this.settings.podProvider) {
       const groupExists = await this.actions.exist({ groupSlug: 'superadmins', webId: 'system' });
 
       if (!groupExists) {
