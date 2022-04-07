@@ -11,7 +11,7 @@ module.exports = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
-    readOnly: false,
+    readOnly: false
   },
   dependencies: ['ldp'],
   async started() {
