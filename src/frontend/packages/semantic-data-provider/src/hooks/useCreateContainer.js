@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import urlJoin from 'url-join';
 import useDataModel from './useDataModel';
 import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
@@ -12,7 +13,8 @@ const useCreateContainer = resourceId => {
   useEffect(() => {
     if (dataModel && dataServers) {
       if (dataModel.create?.container) {
-        setCreateContainer(dataModel.create?.container);
+        const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+        setCreateContainer(urlJoin(dataServers[serverKey].baseUrl, path));
       } else if (dataModel.create?.server) {
         setCreateContainer(findCreateContainerWithTypes(dataModel.types, dataModel.create?.server, dataServers));
       } else {

@@ -1,7 +1,7 @@
 import getOne from './getOne';
 import uploadAllFiles from '../utils/uploadAllFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
-import getServerKeyFromUri from '../utils/getServerKeyFromUri';
+import urlJoin from "url-join";
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
@@ -21,8 +21,8 @@ const createMethod = config => async (resourceId, params) => {
 
   let containerUri, serverKey;
   if (dataModel.create?.container) {
-    containerUri = dataModel.create?.container;
-    serverKey = getServerKeyFromUri(containerUri, dataServers);
+    serverKey = Object.keys(dataModel.create.container)[0];
+    containerUri = urlJoin(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
   } else {
     serverKey =
       dataModel.create?.server || Object.keys(config.dataServers).find(key => config.dataServers[key].default === true);
