@@ -15,8 +15,6 @@ module.exports = {
 
           this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
-          console.log(containerRights);
-
           await ctx.call('webacl.resource.deleteAllRights', {
             resourceUri: containerUri
           });
