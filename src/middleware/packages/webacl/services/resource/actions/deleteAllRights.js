@@ -9,9 +9,6 @@ module.exports = {
     async handler(ctx) {
       let { resourceUri } = ctx.params;
 
-      if (ctx.meta.webId !== 'system')
-        throw new MoleculerError('Access denied ! only system can do that', 403, 'ACCESS_DENIED');
-
       await ctx.call('triplestore.update', {
         query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
         WITH ${this.settings.graphName}

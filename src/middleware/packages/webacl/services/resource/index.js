@@ -1,11 +1,12 @@
 const urlJoin = require('url-join');
-const addRightsAction = require('./actions/addRights');
-const awaitReadRightAction = require('./actions/awaitReadRight');
-const getRightsAction = require('./actions/getRights');
-const setRightsAction = require('./actions/setRights');
-const hasRightsAction = require('./actions/hasRights');
-const deleteAllRightsAction = require('./actions/deleteAllRights');
-const removeRightsAction = require('./actions/removeRights');
+const addRights = require('./actions/addRights');
+const awaitReadRight = require('./actions/awaitReadRight');
+const getRights = require('./actions/getRights');
+const setRights = require('./actions/setRights');
+const hasRights = require('./actions/hasRights');
+const deleteAllRights = require('./actions/deleteAllRights');
+const refreshContainersRights = require('./actions/refreshContainersRights');
+const removeRights = require('./actions/removeRights');
 const { MoleculerError } = require('moleculer').Errors;
 const {
   getAuthorizationNode,
@@ -30,18 +31,19 @@ module.exports = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    deleteAllRights: deleteAllRightsAction.action,
-    removeRights: removeRightsAction.action,
-    awaitReadRight: awaitReadRightAction.action,
+    addRights: addRights.action,
+    awaitReadRight: awaitReadRight.action,
+    deleteAllRights: deleteAllRights.action,
+    getRights: getRights.action,
+    hasRights: hasRights.action,
+    refreshContainersRights: refreshContainersRights.action,
+    removeRights: removeRights.action,
+    setRights: setRights.action,
     // Actions accessible through the API
-    api_hasRights: hasRightsAction.api,
-    hasRights: hasRightsAction.action,
-    api_getRights: getRightsAction.api,
-    getRights: getRightsAction.action,
-    api_setRights: setRightsAction.api,
-    setRights: setRightsAction.action,
-    api_addRights: addRightsAction.api,
-    addRights: addRightsAction.action
+    api_addRights: addRights.api,
+    api_hasRights: hasRights.api,
+    api_getRights: getRights.api,
+    api_setRights: setRights.api,
   },
   hooks: {
     before: {

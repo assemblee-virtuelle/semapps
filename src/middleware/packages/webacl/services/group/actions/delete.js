@@ -49,7 +49,7 @@ module.exports = {
         webId: 'system'
       });
 
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri }, { meta: { webId: 'system' } });
+      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
       await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
     }
