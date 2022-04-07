@@ -105,7 +105,7 @@ const Service = {
               numNotifications: notifications.length,
               categories: Object.keys(notificationsByCategories),
               subscription
-            })
+            });
           }
         }
       }
