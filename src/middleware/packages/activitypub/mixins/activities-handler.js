@@ -7,7 +7,9 @@ const ActivitiesHandlerMixin = {
     }
   },
   methods: {
-    matchActivity
+    matchActivity(pattern, activityOrObject) {
+      return matchActivity(this.broker, pattern, activityOrObject);
+    }
   },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
@@ -17,7 +19,7 @@ const ActivitiesHandlerMixin = {
         if (activityHandler.onEmit) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
-              ? await matchActivity(ctx, activityHandler.match, activity)
+              ? await this.matchActivity(activityHandler.match, activity)
               : await activityHandler.match.bind(this)(activity);
 
           if (dereferencedActivity) {
@@ -33,7 +35,7 @@ const ActivitiesHandlerMixin = {
         if (activityHandler.onReceive) {
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
-              ? await matchActivity(ctx, activityHandler.match, activity)
+              ? await this.matchActivity(activityHandler.match, activity)
               : await activityHandler.match.bind(this)(activity);
 
           if (dereferencedActivity) {
