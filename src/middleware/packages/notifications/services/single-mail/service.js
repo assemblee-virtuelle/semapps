@@ -1,14 +1,15 @@
 const urlJoin = require('url-join');
+const path = require('path');
 const MailService = require('moleculer-mail');
 
-const MailNotificationsService = {
-  name: 'notifications.mail',
+const SingleMailNotificationsService = {
+  name: 'notifications.single-mail',
   mixins: [MailService],
   settings: {
     defaultLocale: 'en',
     defaultFrontUrl: null,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
-    templateFolder: null,
+    templateFolder: path.join(__dirname, '../../templates'),
     from: null,
     transport: null,
     data: {}
@@ -24,27 +25,35 @@ const MailNotificationsService = {
 
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-        if (notification.actionLink) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
+        if( notification && (await this.filterNotification(notification)) ) {
+          if (notification.actionLink) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
 
-        await this.queueMail(ctx, notification.key, {
-          to: account.email,
-          data: {
-            ...notification,
-            descriptionWithBr: notification.description
-              ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
-              : undefined
-          }
-        });
+          await this.queueMail(ctx, notification.key, {
+            to: account.email,
+            locale,
+            data: {
+              ...notification,
+              descriptionWithBr: notification.description
+                ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
+                : undefined
+            }
+          });
+        }
       }
     }
   },
   methods: {
+    // Optional method called for each notification
+    // Return true if you want the notification to be sent by email
+    async filterNotification(notification) {
+      return true;
+    },
     async queueMail(ctx, key, payload) {
-      payload.template = 'simple-email';
+      payload.template = 'single-mail';
       if (this.createJob) {
         return this.createJob('sendMail', key, payload);
       } else {
-        await ctx.call('notification.send', payload);
+        await this.actions.send(payload, { parentCtx: ctx });
       }
     }
   },
@@ -53,7 +62,7 @@ const MailNotificationsService = {
       name: '*',
       async process(job) {
         job.progress(0);
-        const result = await this.broker.call('notification.send', job.data);
+        const result = await this.actions.send(job.data);
         job.progress(100);
         return result;
       }
@@ -61,4 +70,4 @@ const MailNotificationsService = {
   }
 };
 
-module.exports = MailNotificationsService;
+module.exports = SingleMailNotificationsService;
