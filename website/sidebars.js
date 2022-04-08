@@ -49,6 +49,7 @@ module.exports = {
       items: [
         'middleware/notifications/index',
         'middleware/notifications/digest',
+        'middleware/notifications/single-mail',
       ],
     },
     'middleware/triplestore',

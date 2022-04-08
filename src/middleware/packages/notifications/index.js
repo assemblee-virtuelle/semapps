@@ -1,5 +1,5 @@
 module.exports = {
-  DigestService: require('./services/digest/service'),
-  ExpoPushService: require('./services/expo-push/service'),
+  DigestNotificationsService: require('./services/digest/service'),
+  ExpoPushNotificationsService: require('./services/expo-push/service'),
   SingleMailNotificationsService: require('./services/single-mail/service')
 };
