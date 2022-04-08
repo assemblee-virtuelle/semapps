@@ -12,7 +12,7 @@ const ActivityMappingService = {
   async started() {
     this.mappers = [];
 
-    for( const [name, fn] of Object.entries(this.settings.handlebars.helpers) ) {
+    for (const [name, fn] of Object.entries(this.settings.handlebars.helpers)) {
       this.logger.info('Registering handlebars helper ' + name);
       Handlebars.registerHelper(name, fn);
     }
@@ -57,7 +57,7 @@ const ActivityMappingService = {
     async addMapper(ctx) {
       const { match, mapping, priority = 1 } = ctx.params;
 
-      if( !match || !mapping ) throw new Error('No object defined for match or mapping');
+      if (!match || !mapping) throw new Error('No object defined for match or mapping');
 
       this.mappers.push({
         match,

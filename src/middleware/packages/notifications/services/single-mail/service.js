@@ -25,7 +25,7 @@ const SingleMailNotificationsService = {
 
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-        if( notification && (await this.filterNotification(notification)) ) {
+        if (notification && (await this.filterNotification(notification))) {
           if (notification.actionLink) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
 
           await this.queueMail(ctx, notification.key, {
