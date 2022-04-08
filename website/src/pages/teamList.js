@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 export default function TeamList(){
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+
   useEffect( () => {
       (async function () {
         const method = {
@@ -21,7 +22,7 @@ export default function TeamList(){
             let isperson = false
             if (Array.isArray(type))
             {
-              type.forEach((item, i) => {
+              type.forEach(item => {
                 if ( item.includes("Person") ){
                   isperson = true
                   return isperson
@@ -34,10 +35,38 @@ export default function TeamList(){
             }
             return isperson
           }
-          setUsers(responseLdp.filter(onlyPerson));
+
+          const onlySemapps = (user) => {
+            const cercle = user["pair:involvedIn"]
+            let isSemapps = false
+            if (typeof cercle != "undefined")
+            {
+//              console.log(user)
+              if (Array.isArray(cercle))
+              {
+                cercle.forEach(item => {
+                  if ( item.includes("/semapps") ){
+                    isSemapps = true
+                    return isSemapps
+                  }
+                });
+              }
+              else // string
+              {
+                isSemapps = cercle.includes("/semapps")
+              }
+            }
+            return isSemapps
+          }
+
+          setUsers(() => {
+            const filterList = responseLdp.filter(onlyPerson).filter(onlySemapps)
+            console.log(filterList);
+            return filterList
+          });
         }
         else {
-          console.log(JSON.Stringify(response))
+          console.log(JSON.Stringify(responseLdp))
         }
         setLoading(false)
      })()
@@ -45,6 +74,61 @@ export default function TeamList(){
     if (loading)
       return "chargement..."
     return <ul>
-    {users.map(t => <li>{t["pair:label"]}</li>)}
+    {
+      users.map(user => {
+        //Get list of Skills for each users
+        const skills = user["pair:offers"]
+        let skillList = "";
+        if (typeof skills != "undefined")
+        {
+          if (Array.isArray(skills))
+          {
+            let cpt = 1;
+            for (let skill of skills){
+              skillList += skill.split("/").pop();
+              if (cpt < skills.length)
+                skillList += ", "
+              cpt ++
+            }
+          }
+          else {
+            skillList = skills.split("/").pop();
+          }
+        }
+        else{
+          skillList = "No skill"
+        }
+
+        //Get list of roles for each users
+        const roles = user["og:leads"]
+        let roleList = "";
+        if (typeof roles != "undefined")
+        {
+          if (Array.isArray(roles))
+          {
+            let cpt = 1;
+            for (let role of roles){
+              roleList += role.split("/").pop();
+              if (cpt < roles.length)
+                roleList += ", "
+              cpt ++
+            }
+          }
+          else {
+            roleList = roles.split("/").pop();
+          }
+        }
+        else{
+          skillList = "No skill"
+        }
+
+        const li =
+        <li key={user.id}>{user["pair:label"]}
+          <ul><li><b>Skills</b> : {skillList}</li></ul>
+          <ul><li><b>Roles</b> : {roleList}</li></ul>
+        </li>
+        return li
+      })
+    }
     </ul>
   }
