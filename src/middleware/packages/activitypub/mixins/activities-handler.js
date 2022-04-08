@@ -6,6 +6,9 @@ const ActivitiesHandlerMixin = {
       throw new Error('ActivitiesHandlerMixin: no activities defined in the service ' + this.name);
     }
   },
+  methods: {
+    matchActivity
+  },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
