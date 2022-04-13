@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useInput, useTranslate, FieldTitle, InputHelperText } from 'react-admin';
-import { IconButton } from "@material-ui/core";
+import { IconButton } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { dateTimeFormatter, dateTimeParser } from './utils';
-import ClearIcon from "@material-ui/icons/Clear";
+import ClearIcon from '@material-ui/icons/Clear';
 
 const sanitizeRestProps = ({
   allowEmpty,
@@ -100,7 +100,9 @@ const Picker = ({
             <IconButton onClick={handleClear}>
               <ClearIcon />
             </IconButton>
-          ) : undefined
+          ) : (
+            undefined
+          )
         }}
         label={<FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />}
         variant={pickerVariant}
@@ -137,7 +139,7 @@ Picker.defaultProps = {
     locale: undefined
   },
   // Avoid saving an empty string in the dataset
-  parse: value => value === '' ? null : value
+  parse: value => (value === '' ? null : value)
 };
 
 export default Picker;
