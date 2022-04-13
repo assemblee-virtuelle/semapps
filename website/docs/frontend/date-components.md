@@ -35,13 +35,13 @@ const MyList = props => (
 );
 ```
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `label` | `Function` or `String` | **required** | A function which takes a record and returns a label, or the property to use |
+| Property    | Type                   | Default      | Description                                                                      |
+|-------------|------------------------|--------------|----------------------------------------------------------------------------------|
+| `label`     | `Function` or `String` | **required** | A function which takes a record and returns a label, or the property to use      |
 | `startDate` | `Function` or `String` | **required** | A function which takes a record and returns a start date, or the property to use |
-| `endDate` | `Function` or `String` | **required** | A function which takes a record and returns an end date, or the property to use |
-| `locale` | `Object` | (English) | The [locale](https://fullcalendar.io/docs/locale) to be used by FullCalendar |
-| `linkType` | `String` | "edit" | What kind of link to use. Available options: "show" or "edit" |
+| `endDate`   | `Function` or `String` | **required** | A function which takes a record and returns an end date, or the property to use  |
+| `locale`    | `Object`               | (English)    | The [locale](https://fullcalendar.io/docs/locale) to be used by FullCalendar     |
+| `linkType`  | `String`               | "edit"       | What kind of link to use. Available options: "show" or "edit"                    |
 
 ### DaysList
 
@@ -67,6 +67,10 @@ export const MyEdit = (props) => (
 ```
 
 #### Props
+
+| Property     | Type      | Default | Description                                    |
+|--------------|-----------|---------|------------------------------------------------|
+| `allowClear` | `Boolean` | false   | Show a clear button on the right of component  |
 
 ##### `options`
 
