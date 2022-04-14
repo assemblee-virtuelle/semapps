@@ -2,7 +2,7 @@ const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
 const DigestSubscriptionService = require('./subscription');
 
-const Service = {
+const DigestNotificationsService = {
   name: 'digest',
   mixins: [MailService],
   settings: {
@@ -132,4 +132,4 @@ const Service = {
   }
 };
 
-module.exports = Service;
+module.exports = DigestNotificationsService;

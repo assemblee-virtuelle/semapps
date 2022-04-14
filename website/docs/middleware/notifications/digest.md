@@ -1,5 +1,5 @@
 ---
-title: DigestService
+title: Digest
 ---
 
 This service takes the ActivityPub activities in the inbox of subscribers, turns them into notification using the [ActivityMappingService](../activitypub/activity-mapping.md) and send a digest email to the subscribers.
@@ -87,13 +87,14 @@ module.exports = {
 You may map other properties, which will be available in a custom template or passed to the `filterNotification` method (see below).
 
 
-### 3. Setup the `DigestService`
+### 3. Setup the `DigestNotificationsService`
 
 ```js
-const { DigestService } = require('@semapps/notifications');
+const { DigestNotificationsService } = require('@semapps/notifications');
+const QueueMixin = require('moleculer-bull');
 
 module.exports = {
-  mixins: [DigestService],
+  mixins: [DigestService, QueueMixin('redis://localhost:6379/0')],
   settings: {
     frequencies: {
       daily: '0 0 17 * * *', // Everyday at 5pm
@@ -117,3 +118,5 @@ module.exports = {
   }
 };
 ```
+
+> If you want some notifications to be sent immediately in [single mails](./single-mail.md), and others in a digest, you should add a new property to the mappings (for example: `immediate: true/false`) and use the `filterNotification` method in both services to differentiate the notifications.
