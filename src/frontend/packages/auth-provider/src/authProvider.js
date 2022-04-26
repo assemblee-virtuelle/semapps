@@ -208,7 +208,7 @@ const authProvider = ({
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
     } catch (e) {
-      throw new Error('auth.message.reset_password_error');
+      throw new Error('app.notification.reset_password_error');
     }
   },
   setNewPassword: async params => {
@@ -225,7 +225,7 @@ const authProvider = ({
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
     } catch (e) {
-      throw new Error('auth.message.new_password_error');
+      throw new Error('app.notification.new_password_error');
     }
   },
 });
