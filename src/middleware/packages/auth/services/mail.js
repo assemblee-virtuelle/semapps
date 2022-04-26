@@ -1,11 +1,11 @@
 const MailService = require('moleculer-mail');
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   name: 'auth.mail',
   settings: {
     defaultLocale: 'en',
-    templateFolder: path.join(__dirname, "../mail/templates"),
+    templateFolder: path.join(__dirname, '../mail/templates'),
     from: null,
     transport: null
   },
@@ -16,27 +16,30 @@ module.exports = {
   },
   actions: {
     async sendResetPasswordEmail(ctx) {
-      const { account: { email, username, preferredLocale }, token } = ctx.params;
-      ctx.call("mail.send", {
+      const {
+        account: { email, username, preferredLocale },
+        token
+      } = ctx.params;
+      ctx.call('mail.send', {
         to: email,
-        template: "reset-password",
+        template: 'reset-password',
         locale: this.getTemplateLocale(ctx, preferredLocale),
         data: {
           username,
-          token,
+          token
         }
-      })
+      });
     }
   },
   methods: {
     getTemplateLocale(ctx, userLocale) {
       switch (userLocale) {
-        case "fr":
-          return "fr-FR"
-        case "en":
-          return "en-EN"
+        case 'fr':
+          return 'fr-FR';
+        case 'en':
+          return 'en-EN';
         default:
-          return "en-EN"
+          return 'en-EN';
       }
     }
   }

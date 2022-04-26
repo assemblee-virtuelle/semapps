@@ -210,7 +210,7 @@ const authProvider = ({
     } catch (e) {
       throw new Error('auth.message.reset_password_error');
     }
-  },
+  }
 });
 
 export default authProvider;

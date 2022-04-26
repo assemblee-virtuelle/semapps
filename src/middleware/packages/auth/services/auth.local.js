@@ -18,12 +18,14 @@ const AuthLocalService = {
       from: null,
       transport: {
         host: null,
-        port: null,
-      },
+        port: null
+      }
     }
   },
   async created() {
-    const { mail: { from, transport } } = this.settings;
+    const {
+      mail: { from, transport }
+    } = this.settings;
 
     this.passportId = 'local';
 
@@ -80,7 +82,8 @@ const AuthLocalService = {
       const token = await ctx.call('auth.account.generateResetPasswordToken', {});
 
       await ctx.call('auth.mail.sendResetPasswordEmail', {
-        account, token
+        account,
+        token
       });
 
       return true;

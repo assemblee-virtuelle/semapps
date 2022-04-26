@@ -150,7 +150,7 @@ module.exports = {
     },
     async generateResetPasswordToken() {
       return new Promise(resolve => {
-        crypto.randomBytes(32, function (ex, buf) {
+        crypto.randomBytes(32, function(ex, buf) {
           if (ex) {
             reject(ex);
           }
