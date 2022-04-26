@@ -13,10 +13,12 @@
     "moleculer": "^0.14.17",
     "moleculer-db": "^0.8.16",
     "moleculer-web": "^0.10.0-beta1",
+    "node-sass": "^7.0.1",
     "openid-client": "^4.7.4",
     "passport": "^0.4.1",
     "passport-cas2": "0.0.12",
     "passport-local": "^1.0.0",
+    "pug": "^3.0.2",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

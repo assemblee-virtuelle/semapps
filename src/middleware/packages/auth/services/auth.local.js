@@ -2,6 +2,7 @@ const { Strategy } = require('passport-local');
 const AuthMixin = require('../mixins/auth');
 const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
+const AuthMailService = require('../services/mail');
 
 const AuthLocalService = {
   name: 'auth',
@@ -12,10 +13,26 @@ const AuthLocalService = {
     registrationAllowed: true,
     reservedUsernames: [],
     webIdSelection: [],
-    accountSelection: []
+    accountSelection: [],
+    mail: {
+      from: null,
+      transport: {
+        host: null,
+        port: null,
+      },
+    }
   },
-  created() {
+  async created() {
+    const { mail: { from, transport } } = this.settings;
+
     this.passportId = 'local';
+
+    await this.broker.createService(AuthMailService, {
+      settings: {
+        from,
+        transport
+      }
+    });
   },
   actions: {
     async signup(ctx) {
@@ -50,6 +67,23 @@ const AuthLocalService = {
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
       return { token, webId: accountData.webId, newUser: true };
+    },
+    async resetPassword(ctx) {
+      const { email } = ctx.params;
+
+      const account = await ctx.call('auth.account.findByEmail', { email });
+
+      if (!account) {
+        throw new Error('email.not.exists');
+      }
+
+      const token = await ctx.call('auth.account.generateResetPasswordToken', {});
+
+      await ctx.call('auth.mail.sendResetPasswordEmail', {
+        account, token
+      });
+
+      return true;
     }
   },
   methods: {
@@ -89,10 +123,17 @@ const AuthLocalService = {
         }
       };
 
+      const resetPasswordRoute = {
+        path: '/auth/reset_password',
+        aliases: {
+          'POST /': 'auth.resetPassword'
+        }
+      };
+
       if (this.settings.registrationAllowed) {
-        return [loginRoute, signupRoute];
+        return [loginRoute, signupRoute, resetPasswordRoute];
       } else {
-        return [loginRoute];
+        return [loginRoute, resetPasswordRoute];
       }
     }
   }

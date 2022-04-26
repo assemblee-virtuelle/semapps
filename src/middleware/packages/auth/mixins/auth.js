@@ -12,7 +12,11 @@ const AuthMixin = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
-    accountsDataset: 'settings'
+    accountsDataset: 'settings',
+    mail: {
+      from: null,
+      transport: null
+    }
   },
   dependencies: ['api', 'webid'],
   async created() {
