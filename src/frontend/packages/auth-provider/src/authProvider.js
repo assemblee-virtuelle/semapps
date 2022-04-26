@@ -210,7 +210,24 @@ const authProvider = ({
     } catch (e) {
       throw new Error('auth.message.reset_password_error');
     }
-  }
+  },
+  setNewPassword: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the new password method'
+      );
+    const { email, token, password } = params;
+    try {
+      await httpClient(`${serverUrl}auth/new_password`, {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim(), token, password }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      throw new Error('auth.message.new_password_error');
+    }
+  },
 });
 
 export default authProvider;

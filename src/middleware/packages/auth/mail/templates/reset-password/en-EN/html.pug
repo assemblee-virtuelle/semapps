@@ -3,5 +3,5 @@ html(lang="en")
 body
 	h1 Hello, #{username}!
 	h2 In order to reset your password, please follow the link below!
-	a(href="/verify/" + token) Reset password!
+	a(href=frontUrl + "/login?new_password=true&token=" + token) Reset password!
 	

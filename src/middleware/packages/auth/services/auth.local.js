@@ -18,21 +18,22 @@ const AuthLocalService = {
       from: null,
       transport: {
         host: null,
-        port: null
+        port: null,
+      },
+      defaults: {
+        locale: null,
+        frontUrl: null
       }
     }
   },
   async created() {
-    const {
-      mail: { from, transport }
-    } = this.settings;
+    const { mail } = this.settings;
 
     this.passportId = 'local';
 
     await this.broker.createService(AuthMailService, {
       settings: {
-        from,
-        transport
+        ...mail
       }
     });
   },
@@ -79,12 +80,25 @@ const AuthLocalService = {
         throw new Error('email.not.exists');
       }
 
-      const token = await ctx.call('auth.account.generateResetPasswordToken', {});
+      const token = await ctx.call('auth.account.generateResetPasswordToken', { webId: account.webId });
 
       await ctx.call('auth.mail.sendResetPasswordEmail', {
         account,
         token
       });
+
+      return true;
+    },
+    async setNewPassword(ctx) {
+      const { email, token, password } = ctx.params;
+
+      const account = await ctx.call('auth.account.findByEmail', { email });
+
+      if (!account) {
+        throw new Error('email.not.exists');
+      }
+
+      await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
 
       return true;
     }
@@ -132,11 +146,17 @@ const AuthLocalService = {
           'POST /': 'auth.resetPassword'
         }
       };
+      const setNewPasswordRoute = {
+        path: '/auth/new_password',
+        aliases: {
+          'POST /': 'auth.setNewPassword'
+        }
+      };
 
       if (this.settings.registrationAllowed) {
-        return [loginRoute, signupRoute, resetPasswordRoute];
+        return [loginRoute, signupRoute, resetPasswordRoute, setNewPasswordRoute];
       } else {
-        return [loginRoute, resetPasswordRoute];
+        return [loginRoute, resetPasswordRoute, setNewPasswordRoute];
       }
     }
   }

@@ -104,9 +104,33 @@ module.exports = {
         hashedPassword
       });
     },
+    async setNewPassword(ctx) {
+      const { webId, token, password } = ctx.params;
+      const hashedPassword = await this.hashPassword(password);
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      if (account.resetPasswordToken !== token) {
+        throw new Error("auth.password.invalid_reset_token");
+      }
+
+      return await this._update(ctx, {
+        '@id': account['@id'],
+        hashedPassword,
+        resetPasswordToken: undefined
+      });
+    },
     async generateResetPasswordToken(ctx) {
-      return await this.generateResetPasswordToken();
-    }
+      const { webId } = ctx.params;
+      const resetPasswordToken = await this.generateResetPasswordToken();
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      await this._update(ctx, {
+        '@id': account['@id'],
+        resetPasswordToken
+      });
+
+      return resetPasswordToken
+    },
   },
   methods: {
     async isValidUsername(ctx, username) {

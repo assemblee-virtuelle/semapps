@@ -4,8 +4,11 @@ const path = require('path');
 module.exports = {
   name: 'auth.mail',
   settings: {
-    defaultLocale: 'en',
-    templateFolder: path.join(__dirname, '../mail/templates'),
+    defaults: {
+      locale: 'en',
+      frontUrl: null,
+    },
+    templateFolder: path.join(__dirname, "../mail/templates"),
     from: null,
     transport: null
   },
@@ -16,17 +19,20 @@ module.exports = {
   },
   actions: {
     async sendResetPasswordEmail(ctx) {
+      const { frontUrl, locale } = this.settings.defaults;
       const {
         account: { email, username, preferredLocale },
         token
       } = ctx.params;
-      ctx.call('mail.send', {
+
+      ctx.call("mail.send", {
         to: email,
-        template: 'reset-password',
-        locale: this.getTemplateLocale(ctx, preferredLocale),
+        template: "reset-password",
+        locale: this.getTemplateLocale(ctx, preferredLocale ? preferredLocale : locale),
         data: {
           username,
-          token
+          token,
+          frontUrl
         }
       });
     }
