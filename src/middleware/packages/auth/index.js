@@ -4,5 +4,6 @@ module.exports = {
   AuthOIDCService: require('./services/auth.oidc'),
   AuthAccountService: require('./services/account'),
   AuthJWTService: require('./services/jwt'),
-  AuthMigrationService: require('./services/migration')
+  AuthMigrationService: require('./services/migration'),
+  AuthMailService: require('./services/mail')
 };

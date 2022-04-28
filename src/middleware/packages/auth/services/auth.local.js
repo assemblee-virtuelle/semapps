@@ -2,6 +2,7 @@ const { Strategy } = require('passport-local');
 const AuthMixin = require('../mixins/auth');
 const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
+const AuthMailService = require('../services/mail');
 
 const AuthLocalService = {
   name: 'auth',
@@ -12,10 +13,29 @@ const AuthLocalService = {
     registrationAllowed: true,
     reservedUsernames: [],
     webIdSelection: [],
-    accountSelection: []
+    accountSelection: [],
+    mail: {
+      from: null,
+      transport: {
+        host: null,
+        port: null,
+      },
+      defaults: {
+        locale: null,
+        frontUrl: null
+      }
+    }
   },
-  created() {
+  async created() {
+    const { mail } = this.settings;
+
     this.passportId = 'local';
+
+    await this.broker.createService(AuthMailService, {
+      settings: {
+        ...mail
+      }
+    });
   },
   actions: {
     async signup(ctx) {
@@ -50,6 +70,33 @@ const AuthLocalService = {
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
       return { token, webId: accountData.webId, newUser: true };
+    },
+    async resetPassword(ctx) {
+      const { email } = ctx.params;
+
+      const account = await ctx.call('auth.account.findByEmail', { email });
+
+      if (!account) {
+        throw new Error('email.not.exists');
+      }
+
+      const token = await ctx.call('auth.account.generateResetPasswordToken', { webId: account.webId });
+
+      await ctx.call('auth.mail.sendResetPasswordEmail', {
+        account,
+        token
+      });
+    },
+    async setNewPassword(ctx) {
+      const { email, token, password } = ctx.params;
+
+      const account = await ctx.call('auth.account.findByEmail', { email });
+
+      if (!account) {
+        throw new Error('email.not.exists');
+      }
+
+      await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
     }
   },
   methods: {
@@ -89,10 +136,23 @@ const AuthLocalService = {
         }
       };
 
+      const resetPasswordRoute = {
+        path: '/auth/reset_password',
+        aliases: {
+          'POST /': 'auth.resetPassword'
+        }
+      };
+      const setNewPasswordRoute = {
+        path: '/auth/new_password',
+        aliases: {
+          'POST /': 'auth.setNewPassword'
+        }
+      };
+
       if (this.settings.registrationAllowed) {
-        return [loginRoute, signupRoute];
+        return [loginRoute, signupRoute, resetPasswordRoute, setNewPasswordRoute];
       } else {
-        return [loginRoute];
+        return [loginRoute, resetPasswordRoute, setNewPasswordRoute];
       }
     }
   }

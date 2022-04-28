@@ -1,0 +1,12 @@
+$headerColor: red;
+
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,900&subset=latin,latin-ext);
+
+html, body {
+	font-family: "Source Sans Pro";
+	font-size: 16px;
+}
+
+h1 {
+	color: $headerColor;
+}
