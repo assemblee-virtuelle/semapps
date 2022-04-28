@@ -227,7 +227,7 @@ const authProvider = ({
     } catch (e) {
       throw new Error('app.notification.new_password_error');
     }
-  },
+  }
 });
 
 export default authProvider;

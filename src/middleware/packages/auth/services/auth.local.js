@@ -18,7 +18,7 @@ const AuthLocalService = {
       from: null,
       transport: {
         host: null,
-        port: null,
+        port: null
       },
       defaults: {
         locale: null,

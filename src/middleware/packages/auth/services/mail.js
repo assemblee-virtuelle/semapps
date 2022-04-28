@@ -6,9 +6,9 @@ module.exports = {
   settings: {
     defaults: {
       locale: 'en',
-      frontUrl: null,
+      frontUrl: null
     },
-    templateFolder: path.join(__dirname, "../mail/templates"),
+    templateFolder: path.join(__dirname, '../mail/templates'),
     from: null,
     transport: null
   },
@@ -25,9 +25,9 @@ module.exports = {
         token
       } = ctx.params;
 
-      await ctx.call("mail.send", {
+      await ctx.call('mail.send', {
         to: email,
-        template: "reset-password",
+        template: 'reset-password',
         locale: this.getTemplateLocale(ctx, preferredLocale ? preferredLocale : locale),
         data: {
           username,
