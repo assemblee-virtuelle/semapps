@@ -6,8 +6,8 @@ This package allows you to send notifications to user, through digest emails, si
 
 ## Services
 
-- [DigestService](./digest.md)
-- MailNotificationsService *(documentation coming soon)*
+- [DigestNotificationsService](./digest.md)
+- [SingleMailNotificationsService](./single-mail.md)
 - ExpoPushService *(legacy, must be refactored)*
 
 ## Install

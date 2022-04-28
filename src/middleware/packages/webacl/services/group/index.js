@@ -1,3 +1,4 @@
+const urlJoin = require('url-join');
 const createAction = require('./actions/create');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
@@ -43,41 +44,42 @@ module.exports = {
 
       if (!groupExists) {
         this.logger.info("Super admin group doesn't exist, creating it...");
-        const { groupUri } = await this.actions.create({ groupSlug: 'superadmins', webId: 'system' });
+        await this.actions.create({ groupSlug: 'superadmins', webId: 'system' });
+      }
 
-        // Give full rights to root container
-        await this.broker.call('webacl.resource.addRights', {
-          resourceUri: this.settings.baseUrl,
-          additionalRights: {
+      // Give full rights to root container
+      const groupUri = urlJoin(this.settings.baseUrl, '_groups', 'superadmins');
+      await this.broker.call('webacl.resource.addRights', {
+        resourceUri: this.settings.baseUrl,
+        additionalRights: {
+          group: {
+            uri: groupUri,
+            read: true,
+            write: true,
+            control: true
+          },
+          default: {
             group: {
               uri: groupUri,
               read: true,
               write: true,
               control: true
-            },
-            default: {
-              group: {
-                uri: groupUri,
-                read: true,
-                write: true,
-                control: true
-              }
             }
-          },
-          webId: 'system'
-        });
-      }
+          }
+        },
+        webId: 'system'
+      });
 
       for (let memberUri of this.settings.superAdmins) {
         const isMember = await this.actions.isMember({
-          groupSlug: 'superadmins',
+          groupUri,
           memberId: memberUri,
           webId: 'system'
         });
 
         if (!isMember) {
-          console.log(`User ${memberUri} is not member of superadmin group, adding it...`);
-          await this.actions.addMember({ groupSlug: 'superadmins', memberUri, webId: 'system' });
+          console.log(`User ${memberUri} is not member of superadmins group, adding it...`);
+          await this.actions.addMember({ groupUri, memberUri, webId: 'system' });
         }
       }
     }
