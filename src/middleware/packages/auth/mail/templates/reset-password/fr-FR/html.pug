@@ -1,0 +1,7 @@
+doctype html
+html(lang="fr")
+body
+	h1 Bonjour, #{username}!
+	h2 Pour réinitialiser votre mot de passe, veuillez suivre le lien ci-dessous:
+	a(href=frontUrl + "/login?new_password=true&token=" + token) Réinitialiser le mot de passe
+	
