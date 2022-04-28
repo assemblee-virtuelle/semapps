@@ -25,7 +25,7 @@ module.exports = {
         token
       } = ctx.params;
 
-      ctx.call("mail.send", {
+      await ctx.call("mail.send", {
         to: email,
         template: "reset-password",
         locale: this.getTemplateLocale(ctx, preferredLocale ? preferredLocale : locale),

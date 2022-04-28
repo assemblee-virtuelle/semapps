@@ -86,8 +86,6 @@ const AuthLocalService = {
         account,
         token
       });
-
-      return true;
     },
     async setNewPassword(ctx) {
       const { email, token, password } = ctx.params;
@@ -99,8 +97,6 @@ const AuthLocalService = {
       }
 
       await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
-
-      return true;
     }
   },
   methods: {
