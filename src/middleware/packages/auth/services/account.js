@@ -110,7 +110,7 @@ module.exports = {
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       if (account.resetPasswordToken !== token) {
-        throw new Error("auth.password.invalid_reset_token");
+        throw new Error('auth.password.invalid_reset_token');
       }
 
       return await this._update(ctx, {
@@ -129,8 +129,8 @@ module.exports = {
         resetPasswordToken
       });
 
-      return resetPasswordToken
-    },
+      return resetPasswordToken;
+    }
   },
   methods: {
     async isValidUsername(ctx, username) {
