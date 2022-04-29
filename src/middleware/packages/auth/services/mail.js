@@ -3,42 +3,39 @@ const path = require('path');
 
 module.exports = {
   name: 'auth.mail',
+  mixins: [MailService],
   settings: {
     defaults: {
       locale: 'en',
       frontUrl: null
     },
-    templateFolder: path.join(__dirname, '../mail/templates'),
+    templateFolder: path.join(__dirname, '../templates'),
     from: null,
     transport: null
   },
-  async created() {
-    await this.broker.createService(MailService, {
-      settings: this.settings
-    });
-  },
   actions: {
     async sendResetPasswordEmail(ctx) {
-      const { frontUrl, locale } = this.settings.defaults;
-      const {
-        account: { email, username, preferredLocale },
-        token
-      } = ctx.params;
+      const { account, token } = ctx.params;
 
-      await ctx.call('mail.send', {
-        to: email,
-        template: 'reset-password',
-        locale: this.getTemplateLocale(ctx, preferredLocale ? preferredLocale : locale),
-        data: {
-          username,
-          token,
-          frontUrl
+      await this.actions.send(
+        {
+          to: account.email,
+          template: 'reset-password',
+          locale: this.getTemplateLocale( account.preferredLocale || this.settings.defaults.locale),
+          data: {
+            account,
+            token,
+            frontUrl: account.preferredFrontUrl || this.settings.defaults.frontUrl
+          }
+        },
+        {
+          parentCtx: ctx
         }
-      });
+      );
     }
   },
   methods: {
-    getTemplateLocale(ctx, userLocale) {
+    getTemplateLocale(userLocale) {
       switch (userLocale) {
         case 'fr':
           return 'fr-FR';
