@@ -31,7 +31,7 @@ const ActivityMappingService = {
         // If we have a match...
         if (dereferencedActivity) {
           // If mapping is false, we want the activity to be ignored
-          if( mapper.mapping === false ) return;
+          if (mapper.mapping === false) return;
 
           const emitter = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
           const emitterProfile = emitter.url
@@ -83,14 +83,17 @@ const ActivityMappingService = {
       this.mappers.sort((a, b) => b.priority - a.priority);
     },
     compileObject(object) {
-      return object && Object.fromEntries(
-        Object.entries(object).map(([key, value]) => {
-          if (typeof value === 'string') {
-            return [key, Handlebars.compile(value)];
-          } else {
-            return [key, this.compileObject(value)];
-          }
-        })
+      return (
+        object &&
+        Object.fromEntries(
+          Object.entries(object).map(([key, value]) => {
+            if (typeof value === 'string') {
+              return [key, Handlebars.compile(value)];
+            } else {
+              return [key, this.compileObject(value)];
+            }
+          })
+        )
       );
     }
   }
