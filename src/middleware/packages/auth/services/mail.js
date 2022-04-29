@@ -21,7 +21,7 @@ module.exports = {
         {
           to: account.email,
           template: 'reset-password',
-          locale: this.getTemplateLocale( account.preferredLocale || this.settings.defaults.locale),
+          locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
           data: {
             account,
             token,
