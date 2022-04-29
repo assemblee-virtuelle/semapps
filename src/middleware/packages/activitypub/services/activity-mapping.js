@@ -30,6 +30,9 @@ const ActivityMappingService = {
 
         // If we have a match...
         if (dereferencedActivity) {
+          // If mapping is false, we want the activity to be ignored
+          if( mapper.mapping === false ) return;
+
           const emitter = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
           const emitterProfile = emitter.url
             ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor, webId: 'system' })
@@ -57,7 +60,7 @@ const ActivityMappingService = {
     async addMapper(ctx) {
       const { match, mapping, priority = 1 } = ctx.params;
 
-      if (!match || !mapping) throw new Error('No object defined for match or mapping');
+      if (!match || mapping === undefined) throw new Error('No object defined for match or mapping property');
 
       this.mappers.push({
         match,
@@ -80,7 +83,7 @@ const ActivityMappingService = {
       this.mappers.sort((a, b) => b.priority - a.priority);
     },
     compileObject(object) {
-      return Object.fromEntries(
+      return object && Object.fromEntries(
         Object.entries(object).map(([key, value]) => {
           if (typeof value === 'string') {
             return [key, Handlebars.compile(value)];
