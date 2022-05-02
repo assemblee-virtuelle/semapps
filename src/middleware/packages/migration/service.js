@@ -84,12 +84,15 @@ module.exports = {
         webId: 'system'
       });
 
-      await this.actions.moveAclRights({ newResourceUri: newGroupUri, oldResourceUri: oldGroupUri, dataset }, { parentCtx: ctx });
+      await this.actions.moveAclRights(
+        { newResourceUri: newGroupUri, oldResourceUri: oldGroupUri, dataset },
+        { parentCtx: ctx }
+      );
     },
     async moveAclRights(ctx) {
       const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
-      for( let right of ['Read', 'Append', 'Write', 'Control'] ) {
+      for (let right of ['Read', 'Append', 'Write', 'Control']) {
         const oldResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri) + '#' + right;
         const newResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri) + '#' + right;
 
@@ -108,4 +111,4 @@ module.exports = {
       }
     }
   }
-}
+};
