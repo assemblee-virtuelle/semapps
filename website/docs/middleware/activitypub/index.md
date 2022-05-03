@@ -29,6 +29,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - CollectionService
 - FollowService
 - InboxService
+- LikeService
 - ObjectService
 - OutboxService
 - ProxyService
