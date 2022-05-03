@@ -6,6 +6,7 @@ const CollectionService = require('./services/collection');
 const DispatchService = require('./services/dispatch');
 const FollowService = require('./services/follow');
 const InboxService = require('./services/inbox');
+const LikeService = require('./services/like');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
@@ -75,6 +76,12 @@ const ActivityPubService = {
     });
 
     this.broker.createService(InboxService);
+
+    this.broker.createService(LikeService, {
+      settings: {
+        baseUri
+      }
+    });
 
     this.broker.createService(OutboxService, {
       settings: {

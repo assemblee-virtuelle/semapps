@@ -85,6 +85,7 @@ const FollowService = {
       });
     }
   },
+  // TODO use ActivitiesHandlerMixin like LikeService
   events: {
     async 'activitypub.inbox.received'(ctx) {
       const { activity } = ctx.params;
