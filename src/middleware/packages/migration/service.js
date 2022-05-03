@@ -1,5 +1,4 @@
 const { getAclUriFromResourceUri } = require('@semapps/webacl');
-const { formatPredicateForSparqlQuery } = require('./utils');
 
 module.exports = {
   name: 'migration',
@@ -7,13 +6,16 @@ module.exports = {
     async replacePredicate(ctx) {
       const { oldPredicate, newPredicate, dataset } = ctx.params;
 
-      this.logger.info(`Replacing predicate ${oldPredicate} to ${newPredicate}...`);
+      if( !oldPredicate.startsWith('http') ) throw new Error('oldPredicate must be a full URI. Received: ' + oldPredicate);
+      if( !newPredicate.startsWith('http') ) throw new Error('newPredicate must be a full URI. Received: ' + oldPredicate);
+
+      this.logger.info(`Replacing predicate ${oldPredicate} with ${newPredicate}...`);
 
       await ctx.call('triplestore.update', {
         query: `
-          DELETE { ?s ${formatPredicateForSparqlQuery(oldPredicate)}> ?o . }
-          INSERT { ?s ${formatPredicateForSparqlQuery(newPredicate)} ?o . }
-          WHERE { ?s ${formatPredicateForSparqlQuery(oldPredicate)} ?o . }
+          DELETE { ?s <${oldPredicate}> ?o . }
+          INSERT { ?s <${newPredicate}> ?o . }
+          WHERE { ?s <${oldPredicate}> ?o . }
         `,
         dataset,
         webId: 'system'

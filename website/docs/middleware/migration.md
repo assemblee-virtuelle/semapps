@@ -32,11 +32,11 @@ module.exports = {
 Replace an old predicate with a new predicate on the whole dataset.
 
 ##### Parameters
-| Property       | Type     | Default         | Description                                         |
-|----------------|----------|-----------------|-----------------------------------------------------|
-| `oldPredicate` | `String` | **required**    | Predicate to be replaced (with prefix or full URL)  |
-| `newPredicate` | `String` | **required**    | Predicate to replace with (with prefix or full URL) |
-| `dataset`      | `String` | Default dataset | Dataset where migration will be applied             |
+| Property       | Type     | Default         | Description                             |
+|----------------|----------|-----------------|-----------------------------------------|
+| `oldPredicate` | `String` | **required**    | Full URI of predicate to be replaced    |
+| `newPredicate` | `String` | **required**    | Full URI of predicate to replace with   |
+| `dataset`      | `String` | Default dataset | Dataset where migration will be applied |
 
 
 ### `moveResource`
