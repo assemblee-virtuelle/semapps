@@ -36,7 +36,7 @@ const LikeService = {
       const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
 
       // If a liked collection is attached to the actor, attach the object
-      if( actor.liked ) {
+      if (actor.liked) {
         await ctx.call('activitypub.collection.attach', {
           collectionUri: actor.liked,
           item: objectUri
@@ -44,7 +44,7 @@ const LikeService = {
       }
 
       // If a likes collection is attached to the object, attach the actor
-      if( object.likes ) {
+      if (object.likes) {
         await ctx.call('activitypub.collection.attach', {
           collectionUri: object.likes,
           item: actorUri
@@ -60,7 +60,7 @@ const LikeService = {
       const object = await ctx.call('activitypub.object.get', { objectUri, actorUri });
 
       // If a liked collection is attached to the actor, detach the object
-      if( actor.liked ) {
+      if (actor.liked) {
         await ctx.call('activitypub.collection.detach', {
           collectionUri: actor.liked,
           item: objectUri
@@ -68,7 +68,7 @@ const LikeService = {
       }
 
       // If a likes collection is attached to the object, detach the actor
-      if( object.likes ) {
+      if (object.likes) {
         await ctx.call('activitypub.collection.detach', {
           collectionUri: object.likes,
           item: actorUri
@@ -95,7 +95,10 @@ const LikeService = {
         }
       },
       async onEmit(ctx, activity) {
-        await this.actions.removeLike({ actorUri: activity.actor, objectUri: activity.object.object }, { parentCtx: ctx });
+        await this.actions.removeLike(
+          { actorUri: activity.actor, objectUri: activity.object.object },
+          { parentCtx: ctx }
+        );
       }
     }
   }
