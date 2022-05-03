@@ -6,8 +6,10 @@ module.exports = {
     async replacePredicate(ctx) {
       const { oldPredicate, newPredicate, dataset } = ctx.params;
 
-      if( !oldPredicate.startsWith('http') ) throw new Error('oldPredicate must be a full URI. Received: ' + oldPredicate);
-      if( !newPredicate.startsWith('http') ) throw new Error('newPredicate must be a full URI. Received: ' + oldPredicate);
+      if (!oldPredicate.startsWith('http'))
+        throw new Error('oldPredicate must be a full URI. Received: ' + oldPredicate);
+      if (!newPredicate.startsWith('http'))
+        throw new Error('newPredicate must be a full URI. Received: ' + oldPredicate);
 
       this.logger.info(`Replacing predicate ${oldPredicate} with ${newPredicate}...`);
 
