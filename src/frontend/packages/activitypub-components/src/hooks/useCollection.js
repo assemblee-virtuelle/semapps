@@ -61,7 +61,7 @@ const useCollection = predicateOrUrl => {
 
   const removeItem = useCallback(
     itemId => {
-      setItems(oldItems => oldItems.filter(item => typeof item === 'string' ? item !== itemId : item.id !== itemId));
+      setItems(oldItems => oldItems.filter(item => (typeof item === 'string' ? item !== itemId : item.id !== itemId)));
     },
     [setItems]
   );
