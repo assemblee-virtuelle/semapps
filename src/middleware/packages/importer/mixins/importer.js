@@ -58,7 +58,7 @@ module.exports = {
     };
   },
   async started() {
-    if( this.settings.source.apiUrl ) {
+    if (this.settings.source.apiUrl) {
       const result = await this.broker.call('triplestore.query', {
         query: `
           PREFIX dc: <http://purl.org/dc/terms/>
