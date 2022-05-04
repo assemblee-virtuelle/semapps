@@ -58,20 +58,24 @@ module.exports = {
     };
   },
   async started() {
-    const result = await this.broker.call('triplestore.query', {
-      query: `
-        PREFIX dc: <http://purl.org/dc/terms/>
-        SELECT ?id ?sourceUri
-        WHERE {
-          ?id dc:source ?sourceUri.
-          FILTER regex(str(?sourceUri), "^${this.settings.source.apiUrl}")
-        }
-      `,
-      accept: MIME_TYPES.JSON,
-      webId: 'system'
-    });
+    if( this.settings.source.apiUrl ) {
+      const result = await this.broker.call('triplestore.query', {
+        query: `
+          PREFIX dc: <http://purl.org/dc/terms/>
+          SELECT ?id ?sourceUri
+          WHERE {
+            ?id dc:source ?sourceUri.
+            FILTER STRSTARTS(STR(?sourceUri), "${this.settings.source.apiUrl}")
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
 
-    this.imported = Object.fromEntries(result.map(node => [node.sourceUri.value, node.id.value]));
+      this.imported = Object.fromEntries(result.map(node => [node.sourceUri.value, node.id.value]));
+    } else {
+      this.imported = {};
+    }
 
     if (this.settings.cronJob.time && this.createJob) {
       // See https://github.com/OptimalBits/bull/blob/master/REFERENCE.md#queueadd
@@ -356,6 +360,9 @@ module.exports = {
 
       const newSourceUris = compactResults.map(data => this.settings.source.getOneFull(data));
       const oldSourceUris = Object.keys(this.imported);
+
+      console.log('newSourceUris', newSourceUris);
+      console.log('oldSourceUris', oldSourceUris);
 
       job.progress(10);
 

@@ -26,6 +26,7 @@ module.exports = {
   },
   created() {
     if (this.settings.source.mobilizon.type === 'events') {
+      this.settings.source.apiUrl = urlJoin(this.settings.source.mobilizon.baseUrl, 'events');
       this.settings.source.getAllCompact = {
         url: urlJoin(this.settings.source.mobilizon.baseUrl, 'api'),
         method: 'POST',
