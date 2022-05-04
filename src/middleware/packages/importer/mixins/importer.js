@@ -361,9 +361,6 @@ module.exports = {
       const newSourceUris = compactResults.map(data => this.settings.source.getOneFull(data));
       const oldSourceUris = Object.keys(this.imported);
 
-      console.log('newSourceUris', newSourceUris);
-      console.log('oldSourceUris', oldSourceUris);
-
       job.progress(10);
 
       ///////////////////////////////////////////
