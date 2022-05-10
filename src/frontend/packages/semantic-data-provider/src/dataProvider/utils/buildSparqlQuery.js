@@ -7,7 +7,7 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', '_servers'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'dereference', '_servers'];
 
 const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
   let sparqlJsParams = {
