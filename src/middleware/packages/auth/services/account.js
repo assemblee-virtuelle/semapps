@@ -28,14 +28,17 @@ module.exports = {
         await this.isValidUsername(ctx, username);
       } else {
         // If username is not provided, find an username based on the email
-        let usernameValid = false,
-          i = 1;
+        const usernameFromEmail = email.split('@')[0].toLowerCase();
+        let usernameValid = false, i = 0;
         do {
+          username = i === 0 ? usernameFromEmail : usernameFromEmail + i;
+          try {
+            usernameValid = await this.isValidUsername(ctx, username);
+          } catch(e) {
+            // Do nothing, the loop will continue
+          }
           i++;
-          username = email.split('@')[0].toLowerCase();
-          if (i > 2) username += i;
-          usernameValid = await this.isValidUsername(ctx, username);
-        } while (usernameValid);
+        } while (!usernameValid);
       }
 
       return await this._create(ctx, {
@@ -149,6 +152,8 @@ module.exports = {
       if (usernameExists) {
         throw new Error('username.already.exists');
       }
+
+      return true;
     },
     async hashPassword(password) {
       return new Promise((resolve, reject) => {

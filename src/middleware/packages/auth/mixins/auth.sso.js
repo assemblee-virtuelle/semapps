@@ -40,7 +40,7 @@ const AuthSSOMixin = {
           throw new Error('registration.not-allowed');
         }
 
-        accountData = await ctx.call('auth.account.create', { uuid: profileData.uuid, email: profileData.email });
+        accountData = await ctx.call('auth.account.create', { uuid: profileData.uuid, email: profileData.email, username: profileData.username });
         webId = await ctx.call('webid.create', this.pickWebIdData({ nick: accountData.username, ...profileData }));
         newUser = true;
 
