@@ -6,14 +6,21 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
   const dataModel = resources[resourceId];
 
-  const frame = {
-    '@context': jsonContext,
-    '@type': dataModel.types,
-    // Embed only what we explicitly asked to dereference
-    // Otherwise we may have same-type resources embedded in other resources
-    '@embed': '@never',
-    ...getEmbedFrame(dataModel.list?.dereference)
-  };
+  // By default, embed only what we explicitly asked to dereference
+  // Otherwise we may have same-type resources embedded in other resources
+  // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
+  const frame =
+    dataModel.list?.explicitEmbedOnFraming !== false
+      ? {
+          '@context': jsonContext,
+          '@type': dataModel.types,
+          '@embed': '@never',
+          ...getEmbedFrame(params.filter?.dereference || dataModel.list?.dereference)
+        }
+      : {
+          '@context': jsonContext,
+          '@type': dataModel.types
+        };
 
   const sparqlQueryPromises = Object.keys(containers).map(
     serverKey =>
@@ -21,7 +28,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
-          dereference: dataModel.list?.dereference,
+          dereference: params.filter?.dereference || dataModel.list?.dereference,
           ontologies
         });
 
