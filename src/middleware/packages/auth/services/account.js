@@ -29,12 +29,13 @@ module.exports = {
       } else {
         // If username is not provided, find an username based on the email
         const usernameFromEmail = email.split('@')[0].toLowerCase();
-        let usernameValid = false, i = 0;
+        let usernameValid = false,
+          i = 0;
         do {
           username = i === 0 ? usernameFromEmail : usernameFromEmail + i;
           try {
             usernameValid = await this.isValidUsername(ctx, username);
-          } catch(e) {
+          } catch (e) {
             // Do nothing, the loop will continue
           }
           i++;
