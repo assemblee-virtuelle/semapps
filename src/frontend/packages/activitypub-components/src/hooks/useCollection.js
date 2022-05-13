@@ -33,7 +33,7 @@ const useCollection = predicateOrUrl => {
         if (json) {
           if (json.items) {
             setItems(json.items);
-          } else if ( json.orderedItems ) {
+          } else if (json.orderedItems) {
             setItems(json.orderedItems);
           }
         } else {
