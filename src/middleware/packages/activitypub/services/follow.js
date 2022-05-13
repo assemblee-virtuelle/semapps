@@ -1,9 +1,10 @@
-const { hasType } = require('@semapps/ldp');
+const ActivitiesHandlerMixin = require('../mixins/activities-handler');
 const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
 const { collectionPermissionsWithAnonRead } = require('../utils');
 
 const FollowService = {
   name: 'activitypub.follow',
+  mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null
   },
@@ -85,91 +86,171 @@ const FollowService = {
       });
     }
   },
-  // TODO use ActivitiesHandlerMixin like LikeService
-  events: {
-    async 'activitypub.inbox.received'(ctx) {
-      const { activity } = ctx.params;
-      const activityType = activity.type || activity['@type'];
+  activities: {
+    follow: {
+      match: {
+        type: ACTIVITY_TYPES.FOLLOW
+      },
+      async onReceive(ctx, activity) {
+        const { '@context': context, ...activityObject } = activity;
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
+        await ctx.call('activitypub.outbox.post', {
+          collectionUri: actor.outbox,
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          actor: activity.object,
+          type: ACTIVITY_TYPES.ACCEPT,
+          object: activityObject,
+          to: activity.actor
+        });
 
-      switch (activityType) {
-        case ACTIVITY_TYPES.FOLLOW: {
-          if (this.isLocalActor(activity.object)) {
-            const { '@context': context, ...activityObject } = activity;
-            const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
-            await ctx.call('activitypub.outbox.post', {
-              collectionUri: actor.outbox,
-              '@context': 'https://www.w3.org/ns/activitystreams',
-              actor: activity.object,
-              type: ACTIVITY_TYPES.ACCEPT,
-              object: activityObject,
-              to: activity.actor
-            });
-            await this.actions.addFollower(
-              {
-                follower: activity.actor,
-                following: activity.object
-              },
-              { parentCtx: ctx }
-            );
-          }
-          break;
-        }
-
-        case ACTIVITY_TYPES.ACCEPT: {
-          const acceptedActivity = await ctx.call('activitypub.activity.get', {
-            resourceUri: activity.object,
-            webId: 'system'
-          });
-          if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
-            await this.actions.addFollower(
-              {
-                follower: acceptedActivity.actor,
-                following: acceptedActivity.object
-              },
-              { parentCtx: ctx }
-            );
-          }
-          break;
-        }
-
-        case ACTIVITY_TYPES.UNDO:
-          const activityToUndo = await ctx.call('activitypub.activity.get', {
-            resourceUri: activity.object,
-            webId: 'system'
-          });
-          if (hasType(activityToUndo, ACTIVITY_TYPES.FOLLOW)) {
-            await this.actions.removeFollower(
-              {
-                follower: activityToUndo.actor,
-                following: activityToUndo.object
-              },
-              { parentCtx: ctx }
-            );
-          } else if (hasType(activityToUndo, ACTIVITY_TYPES.ACCEPT)) {
-            const acceptedActivity = await ctx.call('activitypub.activity.get', {
-              resourceUri: activityToUndo.object,
-              webId: 'system'
-            });
-            if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
-              await this.actions.removeFollower(
-                {
-                  follower: acceptedActivity.actor,
-                  following: acceptedActivity.object
-                },
-                { parentCtx: ctx }
-              );
-            }
-          }
-          break;
+        await this.actions.addFollower(
+          {
+            follower: activity.actor,
+            following: activity.object
+          },
+          { parentCtx: ctx }
+        );
       }
     },
-    'activitypub.follow.added'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
+    acceptFollow: {
+      match: {
+        type: ACTIVITY_TYPES.ACCEPT,
+        object: {
+          type: ACTIVITY_TYPES.FOLLOW
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.addFollower(
+          {
+            follower: activity.object.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
     },
-    'activitypub.follow.removed'() {
-      // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
-    }
+    undoFollow: {
+      match: {
+        type: ACTIVITY_TYPES.UNDO,
+        object: {
+          type: ACTIVITY_TYPES.FOLLOW
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
+    },
+    undoAcceptFollow: {
+      match: {
+        type: ACTIVITY_TYPES.UNDO,
+        object: {
+          type: ACTIVITY_TYPES.ACCEPT,
+          object: {
+            type: ACTIVITY_TYPES.FOLLOW
+          }
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.object.actor,
+            following: activity.object.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
+    },
   },
+  // events: {
+  //   async 'activitypub.inbox.received'(ctx) {
+  //     const { activity } = ctx.params;
+  //     const activityType = activity.type || activity['@type'];
+  //
+  //     switch (activityType) {
+  //       case ACTIVITY_TYPES.FOLLOW: {
+  //         if (this.isLocalActor(activity.object)) {
+  //           const { '@context': context, ...activityObject } = activity;
+  //           const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
+  //           await ctx.call('activitypub.outbox.post', {
+  //             collectionUri: actor.outbox,
+  //             '@context': 'https://www.w3.org/ns/activitystreams',
+  //             actor: activity.object,
+  //             type: ACTIVITY_TYPES.ACCEPT,
+  //             object: activityObject,
+  //             to: activity.actor
+  //           });
+  //           await this.actions.addFollower(
+  //             {
+  //               follower: activity.actor,
+  //               following: activity.object
+  //             },
+  //             { parentCtx: ctx }
+  //           );
+  //         }
+  //         break;
+  //       }
+  //
+  //       case ACTIVITY_TYPES.ACCEPT: {
+  //         const acceptedActivity = await ctx.call('activitypub.activity.get', {
+  //           resourceUri: activity.object,
+  //           webId: 'system'
+  //         });
+  //         if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
+  //           await this.actions.addFollower(
+  //             {
+  //               follower: acceptedActivity.actor,
+  //               following: acceptedActivity.object
+  //             },
+  //             { parentCtx: ctx }
+  //           );
+  //         }
+  //         break;
+  //       }
+  //
+  //       case ACTIVITY_TYPES.UNDO:
+  //         const activityToUndo = await ctx.call('activitypub.activity.get', {
+  //           resourceUri: activity.object,
+  //           webId: 'system'
+  //         });
+  //         if (hasType(activityToUndo, ACTIVITY_TYPES.FOLLOW)) {
+  //           await this.actions.removeFollower(
+  //             {
+  //               follower: activityToUndo.actor,
+  //               following: activityToUndo.object
+  //             },
+  //             { parentCtx: ctx }
+  //           );
+  //         } else if (hasType(activityToUndo, ACTIVITY_TYPES.ACCEPT)) {
+  //           const acceptedActivity = await ctx.call('activitypub.activity.get', {
+  //             resourceUri: activityToUndo.object,
+  //             webId: 'system'
+  //           });
+  //           if (hasType(acceptedActivity, ACTIVITY_TYPES.FOLLOW)) {
+  //             await this.actions.removeFollower(
+  //               {
+  //                 follower: acceptedActivity.actor,
+  //                 following: acceptedActivity.object
+  //               },
+  //               { parentCtx: ctx }
+  //             );
+  //           }
+  //         }
+  //         break;
+  //     }
+  //   },
+  //   'activitypub.follow.added'() {
+  //     // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
+  //   },
+  //   'activitypub.follow.removed'() {
+  //     // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
+  //   }
+  // },
   methods: {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
