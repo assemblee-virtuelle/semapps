@@ -165,7 +165,7 @@ const FollowService = {
           { parentCtx: ctx }
         );
       }
-    },
+    }
   },
   // events: {
   //   async 'activitypub.inbox.received'(ctx) {
