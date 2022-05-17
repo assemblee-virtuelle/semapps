@@ -112,7 +112,7 @@ module.exports = {
   methods: {
     // Optional method called for each notification
     // Return true if you want the notification to be included in the digest
-    async filterNotification(notification, subscription) {
+    async filterNotification(notification, subscription, notifications) {
       return true;
     }
   }

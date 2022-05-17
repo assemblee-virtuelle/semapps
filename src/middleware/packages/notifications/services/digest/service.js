@@ -66,7 +66,7 @@ const DigestNotificationsService = {
               activity,
               locale: subscription.locale || account.locale
             });
-            if (notification && (await this.filterNotification(notification, subscription))) {
+            if (notification && (await this.filterNotification(notification, subscription, notifications))) {
               notifications.push(notification);
               if (notification.category) {
                 if (!notificationsByCategories[notification.category])
