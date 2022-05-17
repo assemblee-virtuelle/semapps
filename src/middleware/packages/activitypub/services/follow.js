@@ -139,7 +139,7 @@ const FollowService = {
       async onReceive(ctx, activity) {
         await this.actions.removeFollower(
           {
-            follower: activity.object.actor,
+            follower: activity.object.actor || activity.actor,
             following: activity.object.object
           },
           { parentCtx: ctx }
@@ -159,7 +159,7 @@ const FollowService = {
       async onReceive(ctx, activity) {
         await this.actions.removeFollower(
           {
-            follower: activity.object.object.actor,
+            follower: activity.object.object.actor || activity.object.actor || activity.actor,
             following: activity.object.object.object
           },
           { parentCtx: ctx }
