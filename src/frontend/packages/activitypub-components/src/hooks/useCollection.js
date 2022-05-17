@@ -30,12 +30,10 @@ const useCollection = predicateOrUrl => {
     fetchUtils
       .fetchJson(collectionUrl, { headers })
       .then(({ json }) => {
-        if (json) {
-          if (json.items) {
-            setItems(json.items);
-          } else if ( json.orderedItems ) {
-            setItems(json.orderedItems);
-          }
+        if (json && json.items) {
+          setItems(json.items);
+        } else if ( json && json.orderedItems ) {
+          setItems(json.orderedItems);
         } else {
           setItems([]);
         }
