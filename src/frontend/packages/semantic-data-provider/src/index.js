@@ -12,6 +12,7 @@ export { default as ReificationArrayInput } from './inputs/ReificationArrayInput
 export { default as useContainers } from './hooks/useContainers';
 export { default as useCreateContainer } from './hooks/useCreateContainer';
 export { default as useDataModel } from './hooks/useDataModel';
+export { default as useDataModels } from './hooks/useDataModels';
 export { default as useDataServers } from './hooks/useDataServers';
 
 export { default as dataProvider } from './dataProvider/dataProvider';
