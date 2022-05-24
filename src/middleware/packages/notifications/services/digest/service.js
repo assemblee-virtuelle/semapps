@@ -1,7 +1,7 @@
 const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
 const DigestSubscriptionService = require('./subscription');
-const { TripleStoreAdapter } = require("@semapps/triplestore");
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
 const DigestNotificationsService = {
   name: 'digest',
