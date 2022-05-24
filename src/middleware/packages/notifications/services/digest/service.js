@@ -1,6 +1,7 @@
 const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
 const DigestSubscriptionService = require('./subscription');
+const { TripleStoreAdapter } = require("@semapps/triplestore");
 
 const DigestNotificationsService = {
   name: 'digest',
@@ -11,6 +12,7 @@ const DigestNotificationsService = {
       // daily: '0 0 17 * * *',
     },
     timeZone: 'Europe/Paris',
+    subscriptionsDataset: 'settings',
     templateFolder: null,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: null,
@@ -20,7 +22,9 @@ const DigestNotificationsService = {
   },
   dependencies: ['digest.subscription'],
   created() {
-    this.broker.createService(DigestSubscriptionService);
+    this.broker.createService(DigestSubscriptionService, {
+      adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
+    });
   },
   async started() {
     if (!this.createJob)

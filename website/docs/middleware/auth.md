@@ -41,7 +41,9 @@ module.exports = {
     // User data you want to be available in the webId
     webIdSelection: [],
     // If false, user account must be created manually with a foaf:email field. True by default.
-    registrationAllowed: true
+    registrationAllowed: true,
+    // Dataset where the account data will be stored (email, hashed password...)
+    accountsDataset: 'settings',
   }
 };
 ```
@@ -72,6 +74,8 @@ module.exports = {
       name: authData.given_name,
       familyName: authData.family_name
     }),
+    // Dataset where the account data will be stored (email)
+    accountsDataset: 'settings',
   }
 };
 ```
@@ -99,7 +103,9 @@ module.exports = {
       email: authData.email,
       name: authData.given_name,
       familyName: authData.family_name
-    })
+    }),
+    // Dataset where the account data will be stored (email)
+    accountsDataset: 'settings',
   }
 };
 ```

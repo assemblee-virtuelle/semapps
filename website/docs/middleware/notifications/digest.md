@@ -100,6 +100,7 @@ module.exports = {
       daily: '0 0 17 * * *', // Everyday at 5pm
     },
     timeZone: 'Europe/Paris',
+    subscriptionsDataset: 'settings',
     // The following settings are from the moleculer-mail mixin used to send emails
     // See https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: `"My service" <myservice@mydomain.com>`,
