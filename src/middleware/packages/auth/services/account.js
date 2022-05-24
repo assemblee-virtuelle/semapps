@@ -134,6 +134,44 @@ module.exports = {
       });
 
       return resetPasswordToken;
+    },
+    async findSettingsByWebId(ctx) {
+      const { webId } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      return {
+        email: account['email'],
+        preferredLocale: account['preferredLocale']
+      };
+    },
+    async updateAccountSettings(ctx) {
+      const { webId, currentPassword, email, newPassword } = ctx.params;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+      const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);
+      let params = {};
+
+      if (!passwordMatch) {
+        throw new Error('auth.account.invalid_password')
+      }
+
+      if (newPassword) {
+        const hashedPassword = await this.hashPassword(newPassword);
+        params = { ...params, hashedPassword }
+      }
+
+      if (email !== account['email']) {
+        const existing = await ctx.call('auth.account.findByEmail', { email });
+        if (existing) {
+          throw new Error("email.already.exists")
+        }
+
+        params = { ...params, email }
+      }
+
+      return await this._update(ctx, {
+        '@id': account['@id'],
+        ...params
+      });
     }
   },
   methods: {
@@ -180,7 +218,7 @@ module.exports = {
     },
     async generateResetPasswordToken() {
       return new Promise(resolve => {
-        crypto.randomBytes(32, function(ex, buf) {
+        crypto.randomBytes(32, function (ex, buf) {
           if (ex) {
             reject(ex);
           }

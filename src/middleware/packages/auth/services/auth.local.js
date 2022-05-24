@@ -149,11 +149,29 @@ const AuthLocalService = {
         }
       };
 
+      const accountSettingsRoute = {
+        path: '/auth/account',
+        aliases: {
+          'GET /': 'auth.account.findSettingsByWebId',
+          'POST /': 'auth.account.updateAccountSettings'
+        }
+      };
+
+      const routes = [
+        loginRoute,
+        resetPasswordRoute,
+        setNewPasswordRoute,
+        accountSettingsRoute
+      ]
+
       if (this.settings.registrationAllowed) {
-        return [loginRoute, signupRoute, resetPasswordRoute, setNewPasswordRoute];
-      } else {
-        return [loginRoute, resetPasswordRoute, setNewPasswordRoute];
+        return [
+          ...routes,
+          signupRoute
+        ];
       }
+      
+      return routes;
     }
   }
 };
