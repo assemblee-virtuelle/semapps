@@ -3,6 +3,7 @@ import { FieldTitle, useInput, useTranslate, useLocale } from 'react-admin';
 import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import LanguageIcon from '@material-ui/icons/Language';
+import AddIcon from '@material-ui/icons/Add';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
@@ -61,6 +62,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
 
   return (
     <Autocomplete
+      freeSolo
       autoComplete
       value={value || null}
       openOnFocus={!!initialValue}
@@ -70,7 +72,20 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
       // Do not show the current value as an option (this would break renderOptions)
       filterSelectedOptions
       // For some reasons, this prop has to be passed
-      filterOptions={x => x}
+      filterOptions={(options, params) => {
+        // Suggest the creation of a new value
+        if (params.inputValue !== '') {
+          options.push({
+            label: params.inputValue,
+            description: `Ajouter "${params.inputValue}" au dictionnaire`,
+            icon: AddIcon
+          });
+        }
+        return options
+      }}
+      clearOnBlur // Recommended for https://v4.mui.com/components/autocomplete/#creatable
+      selectOnFocus // Recommended for https://v4.mui.com/components/autocomplete/#creatable
+      handleHomeEndKeys // Recommended for https://v4.mui.com/components/autocomplete/#creatable
       getOptionLabel={option => selectOptionText(option, optionText)}
       getOptionSelected={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
@@ -126,7 +141,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
         return (
           <Grid container alignItems="center">
             <Grid item>
-              <LanguageIcon className={classes.icon} />
+              {React.createElement(option.icon || LanguageIcon, { className: classes.icon })}
             </Grid>
             <Grid item xs>
               {typeof parts === 'string'

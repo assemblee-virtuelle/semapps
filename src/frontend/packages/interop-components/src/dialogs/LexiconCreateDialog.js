@@ -11,6 +11,7 @@ const LexiconCreateDialog = ({ fetchLexicon, parse }) => {
 
   const onSubmit = useCallback(
     ({ lexicon }) => {
+      if( !lexicon.uri ) delete lexicon.summary;
       create(
         {
           payload: {
