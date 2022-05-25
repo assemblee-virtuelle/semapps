@@ -15,14 +15,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LexiconImportForm = ({ basePath, record, resource, fetchLexicon }) => {
+const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save, saving, ...rest }) => {
   const classes = useStyles();
 
   const onSubmit = useCallback(
     async ({ lexicon }) => {
-      console.log('lexicon', lexicon);
+      // If we have no URI, it means we are creating a new definition
+      // Delete the summary as it is "Ajouter XXX au dictionaire"
+      if( !lexicon.uri ) delete lexicon.summary;
+      await save(selectData(lexicon), redirect);
     },
-    []
+    [selectData, save, redirect]
   );
 
   return (

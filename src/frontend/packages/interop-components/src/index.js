@@ -11,6 +11,7 @@ export { default as LexiconAutocompleteInput } from './inputs/LexiconAutocomplet
 
 // Fetch
 export { default as fetchWikidata } from './fetch/fetchWikidata';
+export { default as fetchESCO } from './fetch/fetchESCO';
 
 // Hooks
 export { default as useFork } from './hooks/useFork';

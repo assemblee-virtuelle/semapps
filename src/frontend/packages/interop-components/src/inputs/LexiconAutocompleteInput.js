@@ -77,7 +77,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
         if (params.inputValue !== '') {
           options.push({
             label: params.inputValue,
-            description: `Ajouter "${params.inputValue}" au dictionnaire`,
+            summary: `Ajouter "${params.inputValue}" au dictionnaire`,
             icon: AddIcon
           });
         }
@@ -152,7 +152,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
                     </span>
                 ))}
               <Typography variant="body2" color="textSecondary">
-                {option.description}
+                {option.summary}
               </Typography>
             </Grid>
           </Grid>

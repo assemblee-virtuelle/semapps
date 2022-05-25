@@ -1,21 +1,24 @@
-import React, {useCallback, useState} from 'react';
+import React, { useCallback, useState } from 'react';
 import { Form } from 'react-final-form';
-import { useCreate, useCreateSuggestionContext} from 'react-admin';
+import { useCreate, useCreateSuggestionContext, useResourceContext } from 'react-admin';
 import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
 import LexiconAutocompleteInput from "../inputs/LexiconAutocompleteInput";
 
-const LexiconCreateDialog = ({ fetchLexicon, parse }) => {
+const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
   const { filter, onCancel, onCreate } = useCreateSuggestionContext();
+  const resource = useResourceContext();
   const [value, setValue] = useState(filter || '');
-  const [create] = useCreate('Skill');
+  const [create] = useCreate(resource);
 
   const onSubmit = useCallback(
     ({ lexicon }) => {
+      // If we have no URI, it means we are creating a new definition
+      // Delete the summary as it is "Ajouter XXX au dictionaire"
       if( !lexicon.uri ) delete lexicon.summary;
       create(
         {
           payload: {
-            data: parse(lexicon),
+            data: selectData(lexicon),
           },
         },
         {
@@ -26,7 +29,7 @@ const LexiconCreateDialog = ({ fetchLexicon, parse }) => {
         }
       );
     },
-    [create, onCreate, parse]
+    [create, onCreate, selectData]
   );
 
   return (
