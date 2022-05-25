@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Form } from 'react-final-form';
 import { useCreate, useCreateSuggestionContext, useResourceContext } from 'react-admin';
 import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
-import LexiconAutocompleteInput from "../inputs/LexiconAutocompleteInput";
+import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
 const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
   const { filter, onCancel, onCreate } = useCreateSuggestionContext();
@@ -14,18 +14,18 @@ const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
     ({ lexicon }) => {
       // If we have no URI, it means we are creating a new definition
       // Delete the summary as it is "Ajouter XXX au dictionaire"
-      if( !lexicon.uri ) delete lexicon.summary;
+      if (!lexicon.uri) delete lexicon.summary;
       create(
         {
           payload: {
-            data: selectData(lexicon),
-          },
+            data: selectData(lexicon)
+          }
         },
         {
           onSuccess: ({ data }) => {
             setValue('');
             onCreate(data);
-          },
+          }
         }
       );
     },
@@ -48,7 +48,9 @@ const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
             </DialogContent>
             <DialogActions>
               <Button onClick={onCancel}>Annuler</Button>
-              <Button variant="contained" color="primary" type="submit" disabled={!dirtyFields.lexicon}>Ajouter</Button>
+              <Button variant="contained" color="primary" type="submit" disabled={!dirtyFields.lexicon}>
+                Ajouter
+              </Button>
             </DialogActions>
           </form>
         )}

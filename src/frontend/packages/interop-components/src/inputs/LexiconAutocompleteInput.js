@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const selectOptionText = (option, optionText) => {
-  if( typeof option === 'string' ) {
+  if (typeof option === 'string') {
     return option;
   } else if (option.label) {
     return option.label;
@@ -27,7 +27,17 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue, label, parse, optionText, helperText, ...rest }) => {
+const LexiconAutocompleteInput = ({
+  fetchLexicon,
+  resource,
+  source,
+  initialValue,
+  label,
+  parse,
+  optionText,
+  helperText,
+  ...rest
+}) => {
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
@@ -45,8 +55,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
   const throttledFetchLexicon = useMemo(
     () =>
       throttle((keyword, callback) => {
-        fetchLexicon({ keyword, locale })
-          .then(data => callback(data));
+        fetchLexicon({ keyword, locale }).then(data => callback(data));
       }, 200),
     [locale, fetchLexicon]
   );
@@ -81,7 +90,7 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
             icon: AddIcon
           });
         }
-        return options
+        return options;
       }}
       clearOnBlur // Recommended for https://v4.mui.com/components/autocomplete/#creatable
       selectOnFocus // Recommended for https://v4.mui.com/components/autocomplete/#creatable
@@ -140,17 +149,15 @@ const LexiconAutocompleteInput = ({ fetchLexicon, resource, source, initialValue
 
         return (
           <Grid container alignItems="center">
-            <Grid item>
-              {React.createElement(option.icon || LanguageIcon, { className: classes.icon })}
-            </Grid>
+            <Grid item>{React.createElement(option.icon || LanguageIcon, { className: classes.icon })}</Grid>
             <Grid item xs>
               {typeof parts === 'string'
                 ? parts
                 : parts.map((part, index) => (
-                  <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                    <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
                       {part.text}
                     </span>
-                ))}
+                  ))}
               <Typography variant="body2" color="textSecondary">
                 {option.summary}
               </Typography>

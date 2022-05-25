@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Form } from 'react-final-form';
 import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
-import LexiconAutocompleteInput from "../inputs/LexiconAutocompleteInput";
+import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -22,7 +22,7 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
     async ({ lexicon }) => {
       // If we have no URI, it means we are creating a new definition
       // Delete the summary as it is "Ajouter XXX au dictionaire"
-      if( !lexicon.uri ) delete lexicon.summary;
+      if (!lexicon.uri) delete lexicon.summary;
       await save(selectData(lexicon), redirect);
     },
     [selectData, save, redirect]
@@ -34,11 +34,7 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
       render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
-            <LexiconAutocompleteInput
-              label="Titre"
-              source="lexicon"
-              fetchLexicon={fetchLexicon}
-            />
+            <LexiconAutocompleteInput label="Titre" source="lexicon" fetchLexicon={fetchLexicon} />
           </Box>
           <Toolbar className={classes.toolbar}>
             <Button
