@@ -58,7 +58,7 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
     let blank = blankNode('b'+scalar)
     blank.data = [
         { s: blankNode('b'+scalar), p: namedNode('http://rdfs.org/ns/void#uriSpace'), o: literal(partition['http://rdfs.org/ns/void#uriSpace']) },
-        { s: blankNode('b'+scalar), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(partition['http://rdfs.org/ns/void#class'])  },
+        ...partition['http://rdfs.org/ns/void#class'].map(t => {return { s: blankNode('b'+scalar), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(t)  }}),
         { s: blankNode('b'+scalar), p: namedNode('http://rdfs.org/ns/void#entities'), o: literal(partition['http://rdfs.org/ns/void#entities'].toString(),namedNode('http://www.w3.org/2001/XMLSchema#integer') ) },
     ]
     if (partition['http://semapps.org/ns/core#blankNodes'])
@@ -82,13 +82,15 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
 
     for (const [i, p] of containers.entries()) {
 
-        const type = await ctx.call('triplestore.query', {
-            query: `SELECT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t } LIMIT 1`
+        const types = await ctx.call('triplestore.query', {
+            query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
         })
+
+        console.log(types)
 
         let partition = {
             'http://rdfs.org/ns/void#uriSpace': p,
-            'http://rdfs.org/ns/void#class': type[0].t.value,
+            'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
         }
 
         //if (dereference) partition['http://semapps.org/ns/core#blankNodes'] = dereference
@@ -133,6 +135,8 @@ module.exports = {
 
         const url = urlJoin(this.settings.baseUrl, '.well-known/void')
         
+        // first we compile the local data void information (local containers)
+
         let thisServer = createFragmentURL(url,this.settings.baseUrl)
 
         let graph = [];
@@ -156,6 +160,8 @@ module.exports = {
         }
         let scalar = partitions.length
 
+        // then we move on to the mirrored data (containers that have been mirrored from remote servers)
+
         const serversContainers = await ctx.call('triplestore.query', {
             query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
         })
@@ -173,7 +179,9 @@ module.exports = {
                serverName.push(s)
             }
         }
-        
+       
+        // TODO : fetch the void file from remote servers instead ?
+
         for (const server of Object.keys(serversMap)) {
             await addMirrorServer( url, server, graph, hasSparql, serversMap[server], this.settings.mirrorGraphName, ctx, scalar )
             scalar += serversMap[server].length
@@ -224,7 +232,7 @@ module.exports = {
             let partition =
             {
                 'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-                'http://rdfs.org/ns/void#class': c.acceptedTypes[0],
+                'http://rdfs.org/ns/void#class': c.acceptedTypes,
             }
             if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference
             

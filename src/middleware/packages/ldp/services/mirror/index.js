@@ -69,7 +69,7 @@ const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
                 sparqlQuery += container.replace(regexPrefix, '')
                 sparqlQuery += '} }'
 
-                 await ctx.call('triplestore.update', { query:sparqlQuery })
+                await ctx.call('triplestore.update', { query:sparqlQuery })
             }
         }
 
