@@ -24,7 +24,7 @@ const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
       async handler(ctx) {
 
         let { serverUrl } = ctx.params;
-        console.log('MIRRORING ',serverUrl)
+        this.logger.info("Mirroring "+serverUrl)
 
         const voidUrl = urlJoin(serverUrl,'/.well-known/void')
 
@@ -73,6 +73,8 @@ const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
             }
         }
 
+        this.logger.info("Mirroring done.")
+
       }
     }
   },
@@ -81,7 +83,11 @@ const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
       for (let server of this.settings.servers) {
-        await this.actions.mirror( { serverUrl:server } );
+        try {
+          await this.actions.mirror( { serverUrl:server } );
+        } catch(e) {
+          this.logger.error("Mirroring failed: "+e.message)
+        }
       }
     }
 
