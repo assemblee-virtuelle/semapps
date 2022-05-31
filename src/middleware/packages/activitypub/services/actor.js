@@ -11,7 +11,7 @@ const ActorService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
-      '@type': ACTOR_TYPES.PERSON,
+      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
       name: undefined,
       preferredUsername: getSlugFromUri(resource.id || resource['@id'])
     }),

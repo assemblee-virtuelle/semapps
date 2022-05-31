@@ -1,20 +1,79 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
+const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { MIME_TYPES } = require('@semapps/mime-types');
+
 const {
-    createFragmentURL
-  } = require('../../utils');
+    createFragmentURL,
+    getContainerFromUri
+  } = require('@semapps/ldp/utils');
+
 
 const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
 
-  module.exports = {
-  name: 'ldp.mirror',
+module.exports = {
+  name: 'mirror',
   settings: {
     baseUrl: null,
-    mirrorGraphName: null,
+    mirrorGraphName: 'http://semapps.org/mirror',
     servers: [],
+    actor: {
+      username: 'relay',
+      name: 'Relay actor for Mirror service'
+    }
   },
-  dependencies: ['triplestore'],
+  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account'],
+
+  async started() {
+
+    // Ensure LDP sub-services have been started
+    await this.broker.waitForServices(['ldp.container', 'ldp.resource','auth.account']);
+
+    const actorSettings = this.settings.actor;
+
+    const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
+
+    this.logger.info('actorExist '+ actorExist)
+    // const actorExist = await this.broker.call('auth.account', {
+    //   resourceUri: actorSettings.uri
+    // });
+
+    if (!actorExist) {
+      this.logger.info(`MirrorService > Actor ${actorSettings.name} does not exist yet, creating it...`);
+
+      const uri = urlJoin(this.settings.baseUrl,'/users',actorSettings.username)
+
+      await this.broker.call('auth.account.create', { 
+        username: actorSettings.username,
+        webId: uri,
+      },{ meta:{ isSystemCall:true } } );
+
+      await this.broker.call('ldp.container.post', {
+        containerUri: getContainerFromUri(uri),
+        slug: actorSettings.username,
+        resource: {
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          type: ACTOR_TYPES.APPLICATION,
+          preferredUsername: actorSettings.username,
+          name: actorSettings.name
+        },
+        contentType: MIME_TYPES.JSON
+      });
+
+    }
+
+    this.mirroredServers = [];
+    if (this.settings.servers.length > 0) {
+      for (let server of this.settings.servers) {
+        try {
+          await this.actions.mirror( { serverUrl:server } );
+        } catch(e) {
+          this.logger.error("Mirroring failed: "+e.message)
+        }
+      }
+    }
+  },
   actions: {
     mirror: {
       visibility: 'public',
@@ -78,20 +137,7 @@ const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
       }
     }
   },
-  async started() {
 
-    this.mirroredServers = [];
-    if (this.settings.servers.length > 0) {
-      for (let server of this.settings.servers) {
-        try {
-          await this.actions.mirror( { serverUrl:server } );
-        } catch(e) {
-          this.logger.error("Mirroring failed: "+e.message)
-        }
-      }
-    }
-
-  },
   methods: {
   }
 };
