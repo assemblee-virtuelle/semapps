@@ -3,20 +3,17 @@ const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
 const LdpRegistryService = require('./services/registry');
 const LdpVoidService = require('./services/void');
-const LdpMirrorService = require('./services/mirror');
 
 module.exports = {
   name: 'ldp',
   settings: {
     baseUrl: null,
-    mirrorGraphName: 'http://semapps.org/mirror',
-    mirrorServers: [],
     ontologies: [],
     containers: [],
     podProvider: false,
     defaultContainerOptions: {}
   },
-  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry','ldp.void', 'ldp.mirror'],
+  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry','ldp.void'],
   async created() {
     const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions, mirrorGraphName, mirrorServers } = this.settings;
 
@@ -52,14 +49,6 @@ module.exports = {
       settings: {
         baseUrl,
         ontologies,
-        mirrorGraphName
-      }
-    });
-
-    await this.broker.createService(LdpMirrorService, {
-      settings: {
-        baseUrl,
-        servers: mirrorServers,
         mirrorGraphName
       }
     });

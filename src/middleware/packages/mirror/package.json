@@ -1,0 +1,28 @@
+{
+  "name": "@semapps/mirror",
+  "version": "0.4.0-alpha.30",
+  "description": "Mirror module for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "@semapps/middlewares": "0.4.0-alpha.30",
+    "@semapps/mime-types": "0.4.0-alpha.30",
+    "@semapps/triplestore": "0.4.0-alpha.30",
+    "@semapps/activitypub": "0.4.0-alpha.30",
+    "bson": "^4.0.4",
+    "moleculer": "^0.14.17",
+    "path-to-regexp": "^6.2.0",
+    "rdf-data-model": "^1.0.0",
+    "rdf-parse": "^1.7.0",
+    "speakingurl": "^14.0.1",
+    "streamify-string": "^1.0.1",
+    "url-join": "^4.0.1",
+    "jsonld-streaming-serializer": "^1.2.0",
+    "n3": "^1.8.0",
+    "node-fetch": "^2.6.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+}
