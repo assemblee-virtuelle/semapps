@@ -79,7 +79,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE
-          WHERE { 
+          WHERE {
             <${resourceUri}> ?p1 ?o1 .
           }
         `,

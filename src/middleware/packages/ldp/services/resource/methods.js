@@ -6,6 +6,36 @@ const fs = require('fs');
 
 const { defaultToArray } = require('../../utils');
 
+const cleanDisassemblyPerdicate = v => {
+  if (typeof v.origin === 'string' || v.origin instanceof String) {
+    return {
+      origin: v,
+      clean: {
+        '@id': v,
+        '@type': '@id'
+      }
+    };
+  } else {
+    if (v.id != undefined) {
+      const out = {
+        origin: v,
+        clean: {
+          ...v,
+          '@id': v.id
+        }
+      };
+
+      delete out.clean.id;
+      return out;
+    } else {
+      return {
+        origin: v,
+        clean: v
+      };
+    }
+  }
+};
+
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
   async streamToFile(inputStream, filePath) {
@@ -24,7 +54,9 @@ module.exports = {
       const textStream = streamifyString(body);
       let res = [];
       rdfParser
-        .parse(textStream, { contentType })
+        .parse(textStream, {
+          contentType
+        })
         .on('data', quad => res.push(quad))
         .on('error', error => reject(error))
         .on('end', () => resolve(res));
@@ -110,7 +142,10 @@ module.exports = {
             contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
-          uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
+          uriAdded.push({
+            '@id': newResourceUri,
+            '@type': '@id'
+          });
         }
         newData[disassemblyConfig.path] = uriAdded;
       }
@@ -124,50 +159,86 @@ module.exports = {
 
       let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
       let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
+      oldDisassemblyValue = oldDisassemblyValue.map(v => cleanDisassemblyPerdicate(v));
+      newDisassemblyValue = newDisassemblyValue.map(v => cleanDisassemblyPerdicate(v));
 
       let resourcesToAdd = newDisassemblyValue.filter(
-        t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+        t1 => !oldDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
       let resourcesToRemove = oldDisassemblyValue.filter(
-        t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+        t1 => !newDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
-      let resourcesToKeep = oldDisassemblyValue.filter(t1 =>
-        newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+
+      let resourcesToKeep = newDisassemblyValue.filter(t1 =>
+        oldDisassemblyValue.some(t2 => t1.clean['@id'] === t2.clean['@id'])
       );
 
       if (resourcesToAdd) {
         for (let resource of resourcesToAdd) {
-          delete resource.id;
-
-          const newResourceUri = await ctx.call('ldp.resource.post', {
-            containerUri: disassemblyConfig.container,
-            resource: {
-              '@context': newData['@context'],
-              ...resource
-            },
-            contentType: MIME_TYPES.JSON,
-            webId: 'system'
-          });
-          uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
+          if (!(typeof resource.origin === 'string' || resource.origin instanceof String)) {
+            const newResourceUri = await ctx.call('ldp.resource.post', {
+              containerUri: disassemblyConfig.container,
+              resource: {
+                '@context': newData['@context'],
+                ...resource.clean
+              },
+              contentType: MIME_TYPES.JSON,
+              webId: 'system'
+            });
+            uriAdded.push({
+              '@id': newResourceUri,
+              '@type': '@id'
+            });
+          } else {
+            throw new Error('disassembly can not create resource from string');
+          }
         }
       }
 
-      if (method === 'PUT') {
+      if (method === 'PUT' || (method === 'PATCH' && newData[disassemblyConfig.path] != undefined)) {
         if (resourcesToRemove) {
           for (let resource of resourcesToRemove) {
             await ctx.call('ldp.resource.delete', {
-              resourceUri: resource['@id'] || resource['id'] || resource,
+              resourceUri: resource.clean['@id'],
               webId: 'system'
             });
-            uriRemoved.push({ '@id': resource['@id'] || resource['id'] || resource, '@type': '@id' });
+            uriRemoved.push({
+              '@id': resource.clean['@id'],
+              '@type': '@id'
+            });
           }
         }
 
         if (resourcesToKeep) {
-          uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
+          for (let resource of resourcesToKeep) {
+            if (resource.origin['@id'] != undefined || resource.origin.id != undefined) {
+              await ctx.call('ldp.resource.put', {
+                resourceUri: resource.clean['@id'],
+                resource: {
+                  '@context': newData['@context'],
+                  ...resource.clean
+                },
+                contentType: MIME_TYPES.JSON,
+                webId: 'system'
+              });
+              uriRemoved.push({
+                '@id': resource.clean['@id'],
+                '@type': '@id'
+              });
+            } else {
+              //Nothing to do resource because resource is only uri and not antity to update
+            }
+          }
+          uriKept = resourcesToKeep.map(r => ({
+            '@id': r.clean['@id'],
+            '@type': '@id'
+          }));
         }
-      } else if (method === 'PATCH') {
-        uriKept = oldDisassemblyValue.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
+      } else if (method === 'PATCH' && newData[disassemblyConfig.path] == undefined) {
+        uriKept = oldDisassemblyValue.map(r => ({
+          '@id': r.clean['@id'],
+          '@type': '@id'
+        }));
       } else {
         throw new Error('Unknown method ' + method);
       }
