@@ -121,7 +121,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           WITH <http://semapps.org/webacl>
-          DELETE
+          DELETE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
           WHERE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
         `,
         dataset,
@@ -132,7 +132,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           WITH <http://semapps.org/webacl>
-          DELETE
+          DELETE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
           WHERE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
         `,
         dataset,
