@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
-const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { ACTOR_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const {
@@ -23,26 +23,24 @@ module.exports = {
       name: 'Relay actor for Mirror service'
     }
   },
-  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account'],
+  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account','ldp.container'],
 
   async started() {
 
-    // Ensure LDP sub-services have been started
-    await this.broker.waitForServices(['ldp.container', 'ldp.resource','auth.account']);
+    // Ensure services have been started
+    await this.broker.waitForServices(['ldp.container', 'auth.account','activitypub.follow']);
 
     const actorSettings = this.settings.actor;
 
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
     this.logger.info('actorExist '+ actorExist)
-    // const actorExist = await this.broker.call('auth.account', {
-    //   resourceUri: actorSettings.uri
-    // });
+
+    const uri = urlJoin(this.settings.baseUrl,'/users',actorSettings.username)
+    this.relayActorUri = uri;
 
     if (!actorExist) {
-      this.logger.info(`MirrorService > Actor ${actorSettings.name} does not exist yet, creating it...`);
-
-      const uri = urlJoin(this.settings.baseUrl,'/users',actorSettings.username)
+      this.logger.info(`MirrorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
       await this.broker.call('auth.account.create', { 
         username: actorSettings.username,
@@ -63,13 +61,24 @@ module.exports = {
 
     }
 
+    // keep the outbox collection uri
+    this.relayOutboxUri = await this.broker.call('activitypub.actor.getCollectionUri', {
+      actorUri: uri,
+      predicate: 'outbox',
+      webId: 'system'
+    });
+
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
       for (let server of this.settings.servers) {
         try {
-          await this.actions.mirror( { serverUrl:server } );
+
+          // we do not await because we don't want to bloc the startup of the services.
+          const promise = this.actions.mirror( { serverUrl:server } );
+          promise.then( () =>  {this.mirroredServers.push(server);} )
+                 .catch(e => this.logger.error("Mirroring failed for "+server+" : "+e.message));
         } catch(e) {
-          this.logger.error("Mirroring failed: "+e.message)
+          this.logger.error("Mirroring failed for "+server+" : "+e.message)
         }
       }
     }
@@ -83,6 +92,21 @@ module.exports = {
       async handler(ctx) {
 
         let { serverUrl } = ctx.params;
+
+        // check if the server is already followed, in which case, we already did the mirror, we can skip.
+
+        const serverDomainName = new URL(serverUrl).host
+        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@'+serverDomainName });
+
+        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', { follower: this.relayActorUri, following: remoteRelayActorUri});
+
+        if (alreadyFollowing) {
+          this.logger.info("Already mirrored and following: "+serverUrl)
+          return;
+        }
+
+        // if not, we will now mirror and then follow the relay actor
+
         this.logger.info("Mirroring "+serverUrl)
 
         const voidUrl = urlJoin(serverUrl,'/.well-known/void')
@@ -134,10 +158,41 @@ module.exports = {
 
         this.logger.info("Mirroring done.")
 
+        // now subscribing to the relay actor in order to receive updates (updateBot)
+
+        this.logger.info("Following remote relay actor "+remoteRelayActorUri)
+
+        const followActivity = await ctx.call('activitypub.outbox.post', {
+          collectionUri: this.relayOutboxUri,
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          actor: this.relayActorUri,
+          type: ACTIVITY_TYPES.FOLLOW,
+          object: remoteRelayActorUri,
+          to: [remoteRelayActorUri]
+        });
+        
       }
     }
   },
-
+  events: {
+    'activitypub.inbox.received'(ctx) {
+      if (this.inboxReceived) {
+        if (ctx.params.recipients.includes(this.relayActorUri)) {
+          this.inboxReceived(ctx);
+        }
+      }
+    }
+  },
   methods: {
+
+    async getFollowers() {
+      const result = await this.broker.call('activitypub.follow.listFollowers', {
+        collectionUri: urlJoin(this.uri, 'followers')
+      });
+      return result ? defaultToArray(result.items) : [];
+    },
+    inboxReceived(ctx) {
+       //console.log('Received ',ctx.params.activity)
+    }
   }
 };
