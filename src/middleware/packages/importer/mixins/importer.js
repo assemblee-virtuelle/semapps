@@ -340,7 +340,7 @@ module.exports = {
     async processSynchronize(job) {
       let fromDate, toDate;
 
-      if( this.settings.cronJob.time ) {
+      if (this.settings.cronJob.time) {
         const interval = cronParser.parseExpression(this.settings.cronJob.time, {
           currentDate: new Date((job.opts && job.opts.timestamp) || undefined),
           tz: this.settings.cronJob.timeZone

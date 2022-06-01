@@ -17,25 +17,26 @@ module.exports = {
     }
   },
   created() {
-    if( this.settings.source.discourse.type === 'topics' ) {
+    if (this.settings.source.discourse.type === 'topics') {
       this.settings.source.apiUrl = this.settings.source.discourse.baseUrl;
       this.settings.source.getAllCompact = urlJoin(this.settings.source.discourse.baseUrl, 'latest.json');
       this.settings.source.getOneFull = data => urlJoin(this.settings.source.discourse.baseUrl, 't', `${data.id}.json`);
-    }
-    else {
+    } else {
       throw new Error('The DiscourseImporterMixin can only import topics for now');
     }
   },
   methods: {
     async list(url) {
-      if( this.settings.source.discourse.type === 'topics' ) {
-        let topics = [], page = 0, result;
+      if (this.settings.source.discourse.type === 'topics') {
+        let topics = [],
+          page = 0,
+          result;
 
         do {
           result = await this.fetch(url + '?page=' + page);
           topics.push(...result.topic_list.topics);
           page++;
-        } while( result.topic_list.more_topics_url )
+        } while (result.topic_list.more_topics_url);
 
         return topics;
       }
