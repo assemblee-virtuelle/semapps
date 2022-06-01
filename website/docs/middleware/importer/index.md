@@ -27,6 +27,7 @@ $ yarn add @semapps/importer
 
 We provide a number of pre-configured importers, some of which work "out of the box" with very little configurations.
 
+- [Discourse](discourse.md)
 - [Drupal](drupal.md)
 - [GoGoCarto](gogocarto.md)
 - [PrestaShop](prestashop.md)
