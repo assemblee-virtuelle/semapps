@@ -9,6 +9,11 @@ const {
     getContainerFromUri
   } = require('@semapps/ldp/utils');
 
+  
+  const {
+    defaultToArray
+  } = require('@semapps/activitypub/utils');
+
 
 const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
 
@@ -23,12 +28,23 @@ module.exports = {
       name: 'Relay actor for Mirror service'
     }
   },
-  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account','ldp.container'],
+  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account','ldp.container', 'ldp.registry'],
 
   async started() {
 
+    this.excludedContainers = {};
+
     // Ensure services have been started
-    await this.broker.waitForServices(['ldp.container', 'auth.account','activitypub.follow']);
+    await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account','activitypub.follow']);
+
+    const containers = await this.broker.call('ldp.registry.list');
+    Object.values(containers).filter(c => c.excludeFromMirror).map(c => {this.excludedContainers[c.path] = true;});
+
+    const services = await this.broker.call("$node.services");
+    if (services.map(s => s.name).includes('webacl')) {
+      this.hasWebacl = true;
+      await this.broker.waitForServices(['webacl']);
+    }
 
     const actorSettings = this.settings.actor;
 
@@ -61,12 +77,22 @@ module.exports = {
 
     }
 
-    // keep the outbox collection uri
+    // keep the outbox collection uri, for later use
     this.relayOutboxUri = await this.broker.call('activitypub.actor.getCollectionUri', {
       actorUri: uri,
       predicate: 'outbox',
       webId: 'system'
     });
+
+    // keep the followers collection uri, for later use
+    this.relayFollowersUri = await this.broker.call('activitypub.actor.getCollectionUri', {
+      actorUri: uri,
+      predicate: 'followers',
+      webId: 'system'
+    });
+
+    // check if has followers (initialize value)
+    this.hasFollowers = await this.checkHasFollowers();
 
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
@@ -175,24 +201,184 @@ module.exports = {
     }
   },
   events: {
-    'activitypub.inbox.received'(ctx) {
+    async 'activitypub.inbox.received'(ctx) {
       if (this.inboxReceived) {
         if (ctx.params.recipients.includes(this.relayActorUri)) {
-          this.inboxReceived(ctx);
+          await this.inboxReceived(ctx);
         }
       }
+    },
+    'activitypub.follow.added'(ctx) {
+      if (ctx.params.following === this.relayActorUri) {
+        this.hasFollowers = true;
+      }
+    },
+    async 'activitypub.follow.removed'(ctx) {
+      if (ctx.params.following === this.relayActorUri) {
+        this.hasFollowers = await this.checkHasFollowers();
+      }
+    },
+    async 'ldp.resource.created'(ctx) {
+      const { resourceUri, newData } = ctx.params;
+      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && (await this.checkResourcePublic(resourceUri))) {
+        this.create(resourceUri);
+      }
+    },
+    async 'ldp.resource.updated'(ctx) {
+      const { resourceUri, newData, oldData } = ctx.params;
+      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && (await this.checkResourcePublic(resourceUri))) {
+        this.update(resourceUri);
+      }
+    },
+    async 'ldp.resource.deleted'(ctx) {
+      const { resourceUri, oldData } = ctx.params;
+      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri)) {
+        this.delete(resourceUri);
+      }
+    },
+    async 'webacl.resource.created'(ctx) {
+      // We don't need to do anything because the resource is not created yet. 
+    },
+    async 'webacl.resource.updated'(ctx) {
+      const { uri, addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead } = ctx.params;
+      if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
+        
+        if ( addPublicRead ) { 
+          this.create(uri);
+        } else if ( removePublicRead ) { 
+          this.delete(uri);
+        }
+
+        if ( defaultAddPublicRead ) {
+          const resources = await this.listAllResourcesInSubContainer(uri);
+          for (const res of resources) {
+            console.log(res)
+            this.create(res);
+          }
+        } else if (defaultRemovePublicRead) {
+          const resources = await this.listAllResourcesInSubContainer(uri);
+          for (const res of resources) {
+            console.log(res)
+            const isPublic = await this.checkResourcePublic(res)
+            if (!isPublic) this.delete(res);
+          }
+        }
+      }
+    },
+    async 'webacl.resource.deleted'(ctx) {
+        // we don't do nothing because the resource will be deleted very soon afterwards, and ldp.resource.deleted will be emited
+    },
+    'ldp.registry.registered'(ctx) {
+      const {container} = ctx.params
+      if (container.excludeFromMirror) this.excludedContainers[container.path] = true
     }
   },
   methods: {
+    containerExcludedFromMirror(resourceUri) {
+      const path = new URL(resourceUri).pathname
+      for (const c of Object.keys(this.excludedContainers)) {
+        if (path.startsWith(c)) return true;
+      }
+      return false;
+    },
+    async create(resourceUri) {
+      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
+        collectionUri: this.relayOutboxUri,
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        actor: this.relayActorUri,
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.CREATE,
+          object: resourceUri
+        },
+        to: await this.getFollowers()
+      });
+      //console.log(AnnounceActivity)
+    },
+    async update(resourceUri) {
+      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
+        collectionUri: this.relayOutboxUri,
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        actor: this.relayActorUri,
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.UPDATE,
+          object: resourceUri
+        },
+        to: await this.getFollowers()
+      });
+      //console.log(AnnounceActivity)
+    },
+    async delete(resourceUri) {
+      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
+        collectionUri: this.relayOutboxUri,
+        '@context': 'https://www.w3.org/ns/activitystreams',
+        actor: this.relayActorUri,
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.DELETE,
+          object: resourceUri
+        },
+        to: await this.getFollowers()
+      });
+      //console.log(AnnounceActivity)
+    },
+    async checkHasFollowers() {
+      const res = await this.broker.call('activitypub.collection.isEmpty', {
+        collectionUri: this.relayFollowersUri
+      });
+      return ! res
+    },
+    async checkResourcePublic(resourceUri) {
+      
+      if (!this.hasWebacl) return true;
 
+      const perms = await this.broker.call('webacl.resource.hasRights', {resourceUri, rights: {read:true}, webId:'anon'});
+      return perms.read;
+
+    },
+    async listAllResourcesInSubContainer(containerUri) {
+      return await this.broker.call('triplestore.query', {
+        query: `
+          SELECT *
+          WHERE {
+            <${containerUri}> <http://www.w3.org/ns/ldp#contains>+ ?object
+          }
+        `,
+        webId: 'system'
+      });//            filter not exists { ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container> }
+      
+    },
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {
-        collectionUri: urlJoin(this.uri, 'followers')
+        collectionUri: this.relayFollowersUri
       });
       return result ? defaultToArray(result.items) : [];
     },
-    inboxReceived(ctx) {
-       //console.log('Received ',ctx.params.activity)
+    async inboxReceived(ctx) {
+      //console.log('Received ',ctx.params.activity)
+      const {activity} = ctx.params;
+
+      if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
+        switch (activity.object.type) {
+          case ACTIVITY_TYPES.CREATE: {
+            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
+            newResource = await newResource.json()
+            await ctx.call('ldp.resource.create', { resource:newResource, webId: 'system', contentType: MIME_TYPES.JSON},{meta:{ forceMirror: true}})
+            break;
+          }
+          case ACTIVITY_TYPES.UPDATE: {
+            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
+            newResource = await newResource.json()
+            await ctx.call('ldp.resource.put', { resource:newResource, webId: 'system', contentType: MIME_TYPES.JSON},{meta:{ forceMirror: true}})
+            break;
+          }
+          case ACTIVITY_TYPES.DELETE: {
+            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object, webId: 'system'},{meta:{ forceMirror: true}})
+            break;
+          }
+        }
+      }
     }
   }
 };

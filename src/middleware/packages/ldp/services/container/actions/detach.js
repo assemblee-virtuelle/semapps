@@ -1,3 +1,5 @@
+const { isMirror } = require('../../../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -13,6 +15,10 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
+    const mirror = isMirror(containerUri,this.settings.baseUrl)
+    if ( mirror && !ctx.meta.forceMirror)
+      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
 
@@ -20,7 +26,11 @@ module.exports = {
       query: `
         DELETE
         WHERE
-        { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }
+        { 
+          ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
+          <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
+          ${ mirror? '}' : ''}
+        }
       `,
       webId,
       dataset

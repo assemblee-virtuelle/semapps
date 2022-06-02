@@ -57,10 +57,12 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
+      if (ctx.meta.isMirror || !resourceUri) return;
       this.actions.tagCreatedResource({ resourceUri, newData, webId }, { parentCtx: ctx });
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;
+      if (ctx.meta.isMirror || !resourceUri) return;
       this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
     }
   },

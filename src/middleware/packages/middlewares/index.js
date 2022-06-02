@@ -76,6 +76,17 @@ const parseSparql = async (req, res, next) => {
   next();
 };
 
+const parseTurtle = async (req, res, next) => {
+  if (
+    !req.$ctx.meta.parser &&
+      (req.headers['content-type'] && req.headers['content-type'].includes('turtle'))
+  ) {
+    req.$ctx.meta.parser = 'turtle';
+    req.$params.body = await getRawBody(req);
+  }
+  next();
+};
+
 const parseJson = async (req, res, next) => {
   let mimeType = null;
   try {
@@ -166,6 +177,7 @@ module.exports = {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware,
   throw403,

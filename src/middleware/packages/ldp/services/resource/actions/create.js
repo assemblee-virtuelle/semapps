@@ -24,8 +24,9 @@ module.exports = {
 
     const resourceUri = resource.id || resource['@id'];
 
-    if (isMirror(resourceUri,this.settings.baseUrl))
-      throw new MoleculerError('Mirrored resources cannot be created with LDP', 403, 'FORBIDDEN');
+    const mirror = isMirror(resourceUri,this.settings.baseUrl)
+    if ( mirror && !ctx.meta.forceMirror)
+      throw new MoleculerError('Mirrored resources cannot be created with LDP PUT', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -38,7 +39,7 @@ module.exports = {
     }
 
     // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+    if (jsonContext && contentType === MIME_TYPES.JSON && !resource['@context']) {
       resource = {
         '@context': jsonContext,
         ...resource
@@ -52,11 +53,12 @@ module.exports = {
     await ctx.call('triplestore.insert', {
       resource,
       contentType,
-      webId
+      webId,
+      graphName: mirror ? this.settings.mirrorGraphName : undefined
     });
 
     const newData = await ctx.call(
-      controlledActions.get || 'ldp.resource.get',
+      (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
@@ -67,12 +69,12 @@ module.exports = {
     );
 
     const returnValues = {
-      resourceUri: resource['@id'],
+      resourceUri,
       newData,
       webId
     };
 
-    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null, isMirror:mirror } });
 
     return returnValues;
   }

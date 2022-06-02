@@ -65,13 +65,13 @@ module.exports = {
         ...ctx.params
       };
 
+      const mirror = isMirror(resourceUri,this.settings.baseUrl);
+
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
-
-        const mirror = isMirror(resourceUri,this.settings.baseUrl);
 
         let result = await ctx.call('triplestore.query', {
           query: `

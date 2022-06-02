@@ -164,7 +164,7 @@ const RegistryService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
-
+      if (ctx.meta.isMirror || !resourceUri) return;
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
@@ -177,7 +177,7 @@ const RegistryService = {
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData, webId } = ctx.params;
-
+      if (ctx.meta.isMirror || !resourceUri) return;
       // Check if we need to create collection only if the type has changed
       if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
@@ -193,6 +193,7 @@ const RegistryService = {
     },
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
+      if (ctx.meta.isMirror) return;
       const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
         await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection });

@@ -38,7 +38,8 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (isMirror(resourceUri,this.settings.baseUrl))
+      const mirror = isMirror(resourceUri,this.settings.baseUrl)
+      if ( mirror && !ctx.meta.forceMirror)
         throw new MoleculerError('Mirrored resources cannot be deleted with LDP', 403, 'FORBIDDEN');
 
       const { disassembly } = {
@@ -86,7 +87,9 @@ module.exports = {
         query: `
           DELETE
           WHERE { 
+            ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
             <${resourceUri}> ?p1 ?o1 .
+            ${ mirror? '}' : ''}
           }
         `,
         webId
@@ -109,9 +112,9 @@ module.exports = {
         webId
       };
 
-      ctx.call('triplestore.deleteOrphanBlankNodes');
+      ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: mirror? this.settings.mirrorGraphName : undefined});
 
-      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null, isMirror:mirror } });
 
       return returnValues;
     }
