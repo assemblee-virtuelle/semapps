@@ -83,6 +83,13 @@ const FollowService = {
         collectionUri: actor.following,
         itemUri: following
       });
+    },
+    async listFollowers(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
+      });
     }
   },
   // TODO use ActivitiesHandlerMixin like LikeService

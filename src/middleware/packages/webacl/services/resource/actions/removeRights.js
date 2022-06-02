@@ -1,4 +1,9 @@
-const { getAclUriFromResourceUri, processRights } = require('../../../utils');
+const { 
+  getAclUriFromResourceUri, 
+  processRights,
+  FULL_AGENTCLASS_URI,
+  FULL_FOAF_AGENT
+ } = require('../../../utils');
 
 module.exports = {
   action: {
@@ -11,6 +16,8 @@ module.exports = {
       let { resourceUri, rights } = ctx.params;
 
       let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
+
+      const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       const processedRights = processRights(rights, aclUri + '#');
 
@@ -26,7 +33,10 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.updated', { uri: resourceUri }, { meta: { webId: null, dataset: null } });
+      const defaultRightsUpdated = isContainer && processedRights.some(triple => triple.auth.includes('#Default'));
+      const removePublicRead = processedRights.some(triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
+      const defaultRemovePublicRead = isContainer && processedRights.some(triple => triple.auth.includes('#DefautRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
+      ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, defaultRemovePublicRead }, { meta: { webId: null, dataset: null } });
     }
   }
 };

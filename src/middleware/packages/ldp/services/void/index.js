@@ -228,7 +228,7 @@ module.exports = {
         const baseUrl = this.settings.baseUrl;
         const registeredContainers = await ctx.call('ldp.registry.list');
 
-        const res = await Promise.all(Object.values(registeredContainers).filter( c => c.acceptedTypes ).map( async c => { 
+        const res = await Promise.all(Object.values(registeredContainers).filter( c => c.acceptedTypes && !c.excludeFromMirror ).map( async c => { 
             let partition =
             {
                 'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),

@@ -125,7 +125,7 @@ const ActorService = {
       return uri.startsWith(this.settings.baseUri);
     },
     isActor(resource) {
-      return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
+      return defaultToArray(resource['@type'] || resource.type || []).some(type => Object.values(ACTOR_TYPES).includes(type));
     }
   },
   events: {

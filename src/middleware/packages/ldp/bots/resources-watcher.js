@@ -6,13 +6,13 @@ module.exports = {
     containerUri: null
   },
   methods: {
-    created(resourceUri, newData) {
+    create(resourceUri, newData) {
       // This method can be implemented
     },
-    updated(resourceUri, newData, oldData) {
+    update(resourceUri, newData, oldData) {
       // This method can be implemented
     },
-    deleted(resourceUri, oldData) {
+    delete(resourceUri, oldData) {
       // This method can be implemented
     },
     isMatching(resourceUri) {
@@ -22,20 +22,23 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
+      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
-        this.created(resourceUri, newData);
+        this.create(resourceUri, newData);
       }
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
+      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
-        this.updated(resourceUri, newData, oldData);
+        this.update(resourceUri, newData, oldData);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
+      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
-        this.updated(resourceUri, oldData);
+        this.delete(resourceUri, oldData);
       }
     }
   }

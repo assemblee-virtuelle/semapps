@@ -50,6 +50,26 @@ const CollectionService = {
       });
     },
     /*
+     * Checks if the collection is empty
+     * @param collectionUri The full URI of the collection
+     * @return true if the collection is empty
+     */  
+    async isEmpty(ctx) {
+      const { collectionUri } = ctx.params;
+      const res = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          SELECT ( Count(?follower) as ?count )
+          WHERE {
+            <${collectionUri}> as:items ?follower .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+      return Number(res[0].count.value) === 0;
+    },
+    /*
      * Checks if an item is in a collection
      * @param collectionUri The full URI of the collection
      * @param itemUri The full URI of the item
