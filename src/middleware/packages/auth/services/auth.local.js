@@ -154,7 +154,8 @@ const AuthLocalService = {
         aliases: {
           'GET /': 'auth.account.findSettingsByWebId',
           'POST /': 'auth.account.updateAccountSettings'
-        }
+        },
+        authorization: true
       };
 
       const routes = [
