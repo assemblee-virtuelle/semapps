@@ -236,9 +236,7 @@ const authProvider = ({
       );
       
     try {
-      const token = localStorage.getItem('token');
-      const { webId } = jwtDecode(token);
-      const { json } = await httpClient(`${serverUrl}auth/account?webId=${webId}`, {
+      const { json } = await httpClient(`${serverUrl}auth/account`, {
         method: 'GET',
       });
       return json;
@@ -255,12 +253,10 @@ const authProvider = ({
 
     try {
       const { email, currentPassword, newPassword } = params;
-      const token = localStorage.getItem('token');
-      const { webId } = jwtDecode(token);
 
       await httpClient(`${serverUrl}auth/account`, {
         method: 'POST',
-        body: JSON.stringify({ webId, currentPassword, email: email.trim(), newPassword }),
+        body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
 

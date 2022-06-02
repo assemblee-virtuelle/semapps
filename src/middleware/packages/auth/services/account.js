@@ -136,7 +136,7 @@ module.exports = {
       return resetPasswordToken;
     },
     async findSettingsByWebId(ctx) {
-      const { webId } = ctx.params;
+      const { webId } = ctx.meta;
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return {
@@ -145,7 +145,8 @@ module.exports = {
       };
     },
     async updateAccountSettings(ctx) {
-      const { webId, currentPassword, email, newPassword } = ctx.params;
+      const { currentPassword, email, newPassword } = ctx.params;
+      const { webId } = ctx.meta;
       const account = await ctx.call('auth.account.findByWebId', { webId });
       const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);
       let params = {};
