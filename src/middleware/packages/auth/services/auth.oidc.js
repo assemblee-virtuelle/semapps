@@ -1,5 +1,8 @@
 const urlJoin = require('url-join');
-const { Issuer, Strategy } = require('openid-client');
+const { Issuer, Strategy, custom } = require('openid-client');
+custom.setHttpOptionsDefaults({
+  timeout: 10000,
+});
 const AuthSSOMixin = require('../mixins/auth.sso');
 
 const AuthOIDCService = {
@@ -21,11 +24,14 @@ const AuthOIDCService = {
   },
   async created() {
     this.passportId = 'oidc';
-    this.issuer = await Issuer.discover(this.settings.issuer);
+
   },
   methods: {
-    getStrategy() {
-      const client = new this.issuer.Client({
+    async getStrategy() {
+
+      const issuer = await Issuer.discover(this.settings.issuer);
+
+      const client = new issuer.Client({
         client_id: this.settings.clientId,
         client_secret: this.settings.clientSecret,
         redirect_uri: urlJoin(this.settings.baseUrl, 'auth'),
