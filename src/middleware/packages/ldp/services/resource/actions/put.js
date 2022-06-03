@@ -85,20 +85,17 @@ module.exports = {
       oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
       newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
 
-
       // blank nodes are convert to variable for sparql query (?variable)
       oldTriples = this.convertBlankNodesToVars(oldTriples);
       newTriples = this.convertBlankNodesToVars(newTriples);
-
 
       // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
       // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
       // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
       let triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
-      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd)
+      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd);
 
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
-
 
       // If the exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {

@@ -7,17 +7,17 @@ const initialize = require('./initialize');
 jest.setTimeout(20000);
 let broker;
 
-
-
 beforeAll(() => {
-  return new Promise((resolve, reject)=>{
-    initialize().then(brokerProvided=>{
-      broker= brokerProvided;
-      resolve();
-    }).catch(e=>{
-      reject(e);
-    })
-  })
+  return new Promise((resolve, reject) => {
+    initialize()
+      .then(brokerProvided => {
+        broker = brokerProvided;
+        resolve();
+      })
+      .catch(e => {
+        reject(e);
+      });
+  });
 });
 
 afterAll(async () => {

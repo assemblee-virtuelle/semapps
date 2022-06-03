@@ -93,15 +93,20 @@ module.exports = {
       // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
       // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
       let triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
-      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd)
+      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd);
 
-      // We want to remove in old triples only the triples for which we have provided a new literal value
+      // We want to remove in old triples only the triples for which we have provided a new literal value or new blank node value
       const literalTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Literal');
+      const variableTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Variable');
 
-      const triplesToRemove = oldTriples.filter(ot =>
-        literalTriplesToAdd.some(
-          nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
-        )
+      const triplesToRemove = oldTriples.filter(
+        ot =>
+          literalTriplesToAdd.some(
+            nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
+          ) ||
+          variableTriplesToAdd.some(
+            nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
+          )
       );
 
       // The exact same data have been posted, skip

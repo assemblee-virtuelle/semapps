@@ -18,7 +18,7 @@ let expressMocked = undefined;
 
 beforeAll(async () => {
   broker = await initialize();
-  apiGateway = await broker.getLocalService("api");
+  apiGateway = await broker.getLocalService('api');
   const app = express();
   app.use(apiGateway.express());
   expressMocked = supertest(app);

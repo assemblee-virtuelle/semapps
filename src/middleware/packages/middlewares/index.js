@@ -30,11 +30,17 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError(JSON.stringify(msg), 403, 'ACCESS_DENIED', { status: 'Forbidden', text: JSON.stringify(msg)});
+  throw new MoleculerError(JSON.stringify(msg), 403, 'ACCESS_DENIED', {
+    status: 'Forbidden',
+    text: JSON.stringify(msg)
+  });
 };
 
 const throw500 = msg => {
-  throw new MoleculerError(JSON.stringify(msg), 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: JSON.stringify(msg) });
+  throw new MoleculerError(JSON.stringify(msg), 500, 'INTERNAL_SERVER_ERROR', {
+    status: 'Server Error',
+    text: JSON.stringify(msg)
+  });
 };
 
 const negotiateAccept = (req, res, next) => {
@@ -86,7 +92,7 @@ const parseJson = async (req, res, next) => {
     // Do nothing if mime type is not found
   }
 
-  try{
+  try {
     if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
       const body = await getRawBody(req);
       if (body) {
@@ -94,7 +100,6 @@ const parseJson = async (req, res, next) => {
         req.$params = { ...json, ...req.$params };
       }
       req.$ctx.meta.parser = 'json';
-
     }
     next();
   } catch (e) {

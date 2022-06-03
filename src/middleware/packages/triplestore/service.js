@@ -40,7 +40,6 @@ const TripleStoreService = {
         }
       });
 
-
       if (!response.ok) {
         const text = await response.text();
         if (response.status === 403) {
