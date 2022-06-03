@@ -45,11 +45,28 @@ module.exports = {
       await this.createDisassembly(ctx, disassembly, resource);
     }
 
-    await ctx.call('triplestore.insert', {
-      resource,
-      contentType,
-      webId
-    });
+    let newTriples = await this.bodyToTriples(resource, contentType);
+    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+    newTriples.sort((a,b)=>{
+      if(b.subject.termType==='BlankNode'){
+        return -1
+      }else{
+        return 1
+      }
+    })
+    newTriples = this.convertBlankNodesToVars(newTriples);
+    const newBlankNodes = newTriples.filter(
+      triple => triple.object.termType === 'Variable'
+    );
+    newTriples = this.addDiscriminentToBlankNodes(newTriples)
+
+
+    // Generate the query
+    let query = '';
+    query += `INSERT { ${this.triplesToString(newTriples)} } `;
+    if (newBlankNodes.length > 0) query += `WHERE { ${this.bindNewBlankNodes(newBlankNodes)} }`;
+
+    await ctx.call('triplestore.update', { query, webId });
 
     const newData = await ctx.call(
       controlledActions.get || 'ldp.resource.get',

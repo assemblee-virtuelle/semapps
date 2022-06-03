@@ -85,17 +85,19 @@ module.exports = {
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       let newTriples = await this.bodyToTriples(resource, contentType);
 
-      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
+      // const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
-      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
-      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+      oldTriples = this.convertBlankNodesToVars(oldTriples);
+      newTriples = this.convertBlankNodesToVars(newTriples);
 
       // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
       // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+      let triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd)
 
       // We want to remove in old triples only the triples for which we have provided a new literal value
       const literalTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Literal');
+
       const triplesToRemove = oldTriples.filter(ot =>
         literalTriplesToAdd.some(
           nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
@@ -110,8 +112,9 @@ module.exports = {
         const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
           triple => triple.object.termType === 'Variable'
         );
-        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
-
+        const existingBlankNodes = oldTriples.filter(
+          triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+        );
         // Generate the query
         let query = '';
         if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;

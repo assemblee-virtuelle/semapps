@@ -78,21 +78,27 @@ module.exports = {
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       let newTriples = await this.bodyToTriples(resource, contentType);
 
-      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
+      // const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
       // Filter out triples whose subject is not the resource itself
       // We don't want to update or delete resources with IDs
       oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
       newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
 
-      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
-      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+
+      // blank nodes are convert to variable for sparql query (?variable)
+      oldTriples = this.convertBlankNodesToVars(oldTriples);
+      newTriples = this.convertBlankNodesToVars(newTriples);
+
 
       // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
       // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
       // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+      let triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+      triplesToAdd = this.addDiscriminentToBlankNodes(triplesToAdd)
+
       const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
+
 
       // If the exact same data have been posted, skip
       if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
@@ -102,7 +108,10 @@ module.exports = {
         const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
           triple => triple.object.termType === 'Variable'
         );
-        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
+
+        const existingBlankNodes = oldTriples.filter(
+          triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+        );
 
         // Generate the query
         let query = '';
@@ -112,8 +121,6 @@ module.exports = {
         if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
         if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
         query += ` }`;
-
-        console.log('query', query);
 
         await ctx.call('triplestore.update', { query, webId });
 

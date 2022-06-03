@@ -1,8 +1,9 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const { variable } = require('rdf-data-model');
+const { variable, literal,namedNode, quad } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const fs = require('fs');
+const ObjectID = require('bson').ObjectID;
 
 const { defaultToArray } = require('../../utils');
 
@@ -40,13 +41,42 @@ module.exports = {
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
-        triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
+        // triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
+        triple.subject = variable(triple.subject.value);
       }
       if (triple.object.termType === 'BlankNode') {
-        triple.object = variable(blankNodesVarsMap[triple.object.value]);
+        // triple.object = variable(blankNodesVarsMap[triple.object.value]);
+        triple.object = variable(triple.object.value);
       }
       return triple;
     });
+  },
+  addDiscriminentToBlankNodes(triples){
+    console.log('triples',triples);
+    const subjects = triples
+      .map(t=>t.subject)
+      .filter(s=>{
+          return (s.termType==='Variable')
+      })
+      .reduce((previousValue, currentValue)=>{
+        if(!previousValue.map(s=>s.value).includes(currentValue.value)){
+          return [...previousValue,currentValue];
+        }else{
+          return previousValue;
+        }
+      },[]);
+    const disriminents= subjects.map(s=>{
+      return quad(
+          s,
+          namedNode('http://semapps.org/ns/core#discriminent'),
+          literal(new ObjectID().toString())
+        )
+    });
+    // discriminents = triples.pap(triple=>{
+    //   return literal(new ObjectID().toString())
+    // });
+    console.log('disriminents',disriminents);
+    return [...triples,...disriminents];
   },
   // Exclude from triples1 the triples which also exist in triples2
   getTriplesDifference(triples1, triples2) {
@@ -77,6 +107,7 @@ module.exports = {
    */
   mapBlankNodesOnVars(triples) {
     let blankNodesVars = {};
+    console.log('triples',triples);
     triples
       .filter(triple => triple.object.termType === 'BlankNode')
       .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));

@@ -20,7 +20,32 @@ const initialize = async () => {
     }
   });
 
-  await broker.createService(ApiGatewayService);
+  await broker.createService(
+    {
+      mixins: [ApiGatewayService],
+      settings: {
+        port: CONFIG.PORT,
+        cors: {
+          origin: '*',
+          methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'HEAD', 'OPTIONS'],
+          exposedHeaders: '*'
+        }
+      },
+      methods: {
+        authenticate(ctx, route, req, res) {
+          // return ctx.call('auth.authenticate', { route, req, res });
+          return Promise.resolve(null);
+        },
+        authorize(ctx, route, req, res) {
+          // return ctx.call('auth.authorize', { route, req, res });
+          // authorize(ctx, route, req, res) {
+          return Promise.resolve(ctx);
+
+        }
+      }
+    }
+  );
+  // await broker.createService(ApiGatewayService);
   await broker.createService(JsonLdService);
   await broker.createService(FusekiAdminService, {
     settings: {
@@ -48,6 +73,9 @@ const initialize = async () => {
       baseUrl: CONFIG.HOME_URL,
       ontologies,
       containers: [
+        {
+          path: '/'
+        },
         {
           path: '/resources',
           dereference: ['pair:hasLocation', 'pair:hasTopic']

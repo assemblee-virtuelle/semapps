@@ -3,7 +3,7 @@
   "private": true,
   "description": "SemApps integration tests",
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose"
+    "test": "jest --detectOpenHandles --verbose ldp"
   },
   "author": "SemApps Team",
   "license": "Apache-2.0",
@@ -30,7 +30,7 @@
     "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^28.1.0",
     "supertest": "^4.0.2"
   },
   "version": "0.4.0-alpha.30"
