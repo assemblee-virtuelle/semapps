@@ -1,12 +1,12 @@
 {
   "name": "@semapps/auth",
-  "version": "0.4.0-alpha.30",
+  "version": "0.4.0-alpha.32",
   "description": "Authentification module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "0.4.0-alpha.30",
-    "@semapps/triplestore": "0.4.0-alpha.30",
+    "@semapps/mime-types": "0.4.0-alpha.32",
+    "@semapps/triplestore": "0.4.0-alpha.32",
     "bcrypt": "^5.0.1",
     "express-session": "^1.17.0",
     "jsonwebtoken": "^8.5.1",

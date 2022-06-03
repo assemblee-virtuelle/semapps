@@ -8,27 +8,36 @@ module.exports = {
   },
   actions: {
     async tagCreatedResource(ctx) {
-      const { resourceUri, webId } = ctx.params;
+      const { resourceUri, newData, webId } = ctx.params;
       const now = new Date();
-
       let triples = [];
-      triples.push(
-        `<${resourceUri}> <${
-          this.settings.documentPredicates.created
-        }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
-      );
-      triples.push(
-        `<${resourceUri}> <${
-          this.settings.documentPredicates.updated
-        }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
-      );
-      if (webId && webId.startsWith('http'))
-        triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
 
-      await ctx.call('triplestore.insert', {
-        resource: triples.join('\n'),
-        webId: 'system'
-      });
+      if (!newData['dc:created']) {
+        triples.push(
+          `<${resourceUri}> <${
+            this.settings.documentPredicates.created
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+        );
+      }
+
+      if (!newData['dc:modified']) {
+        triples.push(
+          `<${resourceUri}> <${
+            this.settings.documentPredicates.updated
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+        );
+      }
+
+      if (!newData['dc:creator'] && webId && webId.startsWith('http')) {
+        triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
+      }
+
+      if (triples.length > 0) {
+        await ctx.call('triplestore.insert', {
+          resource: triples.join('\n'),
+          webId: 'system'
+        });
+      }
     },
     async tagUpdatedResource(ctx) {
       const { resourceUri } = ctx.params;
@@ -47,8 +56,8 @@ module.exports = {
   },
   events: {
     async 'ldp.resource.created'(ctx) {
-      const { resourceUri, webId } = ctx.params;
-      this.actions.tagCreatedResource({ resourceUri, webId }, { parentCtx: ctx });
+      const { resourceUri, newData, webId } = ctx.params;
+      this.actions.tagCreatedResource({ resourceUri, newData, webId }, { parentCtx: ctx });
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;

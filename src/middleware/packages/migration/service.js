@@ -113,6 +113,31 @@ module.exports = {
           webId: 'system'
         });
       }
+    },
+    async clearUserRights(ctx) {
+      const { userUri, dataset } = ctx.params;
+
+      // Remove user from all WebACL groups he may be member of
+      await ctx.call('triplestore.update', {
+        query: `
+          WITH <http://semapps.org/webacl>
+          DELETE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
+          WHERE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
+        `,
+        dataset,
+        webId: 'system'
+      });
+
+      // Remove all authorization given specifically to this user
+      await ctx.call('triplestore.update', {
+        query: `
+          WITH <http://semapps.org/webacl>
+          DELETE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
+          WHERE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
+        `,
+        dataset,
+        webId: 'system'
+      });
     }
   }
 };

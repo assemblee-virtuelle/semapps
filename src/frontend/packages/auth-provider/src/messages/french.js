@@ -53,7 +53,8 @@ const frenchMessages = {
       new_user_created: 'Votre compte a été créé avec succès',
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',
-      bad_request: "Requête erronée (Message d'erreur renvoyé par le serveur: %{error})"
+      bad_request: "Requête erronée (Message d'erreur renvoyé par le serveur: %{error})",
+      account_settings_updated: 'Les paramètres de votre compte ont été mis à jour avec succès'
     }
   }
 };
