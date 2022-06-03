@@ -100,6 +100,7 @@ module.exports = {
       daily: '0 0 17 * * *', // Everyday at 5pm
     },
     timeZone: 'Europe/Paris',
+    subscriptionsDataset: 'settings',
     // The following settings are from the moleculer-mail mixin used to send emails
     // See https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: `"My service" <myservice@mydomain.com>`,
@@ -112,7 +113,7 @@ module.exports = {
   methods: {
     // Optional method called for each notification
     // Return true if you want the notification to be included in the digest
-    async filterNotification(notification, subscription) {
+    async filterNotification(notification, subscription, notifications) {
       return true;
     }
   }

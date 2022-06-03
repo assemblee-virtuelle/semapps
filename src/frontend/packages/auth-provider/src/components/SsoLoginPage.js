@@ -55,7 +55,7 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
         } else if (searchParams.has('token')) {
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
-          const { data } = await dataProvider.getOne('Person', { id: webId });
+          const { data } = await dataProvider.getOne(userResource, { id: webId });
 
           if (!authProvider.checkUser(data)) {
             notify('auth.message.user_not_allowed_to_login', 'error');

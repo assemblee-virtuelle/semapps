@@ -18,6 +18,7 @@ module.exports = {
       label: 'Importer',
       items: [
         'middleware/importer/index',
+        'middleware/importer/discourse',
         'middleware/importer/drupal',
         'middleware/importer/gogocarto',
         'middleware/importer/mobilizon',
