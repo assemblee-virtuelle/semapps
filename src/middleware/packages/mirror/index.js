@@ -4,6 +4,8 @@ const fetch = require('node-fetch');
 const { ACTOR_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 const {
     createFragmentURL,
     getContainerFromUri
@@ -28,7 +30,7 @@ module.exports = {
       name: 'Relay actor for Mirror service'
     }
   },
-  dependencies: ['triplestore','webfinger','activitypub','ldp.void','auth.account','ldp.container', 'ldp.registry'],
+  dependencies: ['triplestore','webfinger','activitypub','activitypub.follow','ldp.void','auth.account','ldp.container', 'ldp.registry'],
 
   async started() {
 
@@ -39,9 +41,10 @@ module.exports = {
 
     const containers = await this.broker.call('ldp.registry.list');
     Object.values(containers).filter(c => c.excludeFromMirror).map(c => {this.excludedContainers[c.path] = true;});
-
+    console.log(this.excludedContainers)
     const services = await this.broker.call("$node.services");
-    if (services.map(s => s.name).includes('webacl')) {
+
+    if (services.map(s => s.name).filter(s => s.startsWith('webacl')).length) {
       this.hasWebacl = true;
       await this.broker.waitForServices(['webacl']);
     }
@@ -72,24 +75,31 @@ module.exports = {
           preferredUsername: actorSettings.username,
           name: actorSettings.name
         },
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
     }
 
-    // keep the outbox collection uri, for later use
-    this.relayOutboxUri = await this.broker.call('activitypub.actor.getCollectionUri', {
-      actorUri: uri,
-      predicate: 'outbox',
-      webId: 'system'
-    });
+    // wait until the outbox collection is created, and keep its uri, for later use
+    do {
+      this.relayOutboxUri = await this.broker.call('activitypub.actor.getCollectionUri', {
+        actorUri: uri,
+        predicate: 'outbox',
+        webId: 'system'
+      });
+      if (this.relayOutboxUri === undefined) await delay(1000);    
+    } while (!this.relayOutboxUri);
 
-    // keep the followers collection uri, for later use
-    this.relayFollowersUri = await this.broker.call('activitypub.actor.getCollectionUri', {
-      actorUri: uri,
-      predicate: 'followers',
-      webId: 'system'
-    });
+    // wait until the followers collection is created, and keep its uri, for later use
+    do {
+      this.relayFollowersUri = await this.broker.call('activitypub.actor.getCollectionUri', {
+        actorUri: uri,
+        predicate: 'followers',
+        webId: 'system'
+      });
+      if (this.relayFollowersUri === undefined) await delay(1000);    
+    } while (!this.relayFollowersUri);
 
     // check if has followers (initialize value)
     this.hasFollowers = await this.checkHasFollowers();
@@ -154,7 +164,8 @@ module.exports = {
         
         const partitions = firstServer['void:classPartition']
 
-        for (const p of partitions) {
+        if (partitions) {
+          for (const p of defaultToArray(partitions)) {
             //console.log(p['void:class'], p['void:entities'], p['void:uriSpace'])
 
             const rep = await fetch(p['void:uriSpace'], {
@@ -180,6 +191,7 @@ module.exports = {
 
                 await ctx.call('triplestore.update', { query:sparqlQuery })
             }
+          }
         }
 
         this.logger.info("Mirroring done.")
@@ -240,10 +252,14 @@ module.exports = {
       // We don't need to do anything because the resource is not created yet. 
     },
     async 'webacl.resource.updated'(ctx) {
-      const { uri, addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead } = ctx.params;
+
+      const { uri, isContainer, addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead } = ctx.params;
+      //console.log(this.hasWebacl,this.hasFollowers,!this.containerExcludedFromMirror(uri), uri)
       if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
+        //console.log(addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead, uri )
         
         if ( addPublicRead ) { 
+          if (isContainer && await ctx.call('ldp.container.isEmpty',{containerUri:uri}) ) return;
           this.create(uri);
         } else if ( removePublicRead ) { 
           this.delete(uri);
@@ -251,16 +267,26 @@ module.exports = {
 
         if ( defaultAddPublicRead ) {
           const resources = await this.listAllResourcesInSubContainer(uri);
+          let containers = []
           for (const res of resources) {
-            console.log(res)
-            this.create(res);
+            if (!this.containerExcludedFromMirror(res)) {
+              const isContainer = await ctx.call('ldp.container.exist',{containerUri:res});
+              if (isContainer) {
+                const empty = await ctx.call('ldp.container.isEmpty',{containerUri:res});
+                if ( empty ) continue;
+                containers.push(res)
+              }
+              else if (containers.some(c => res.startsWith(c))) continue;
+              this.create(res);
+            }
           }
         } else if (defaultRemovePublicRead) {
           const resources = await this.listAllResourcesInSubContainer(uri);
           for (const res of resources) {
-            console.log(res)
-            const isPublic = await this.checkResourcePublic(res)
-            if (!isPublic) this.delete(res);
+            if (!this.containerExcludedFromMirror(res)) {
+              const isPublic = await this.checkResourcePublic(res)
+              if (!isPublic) this.delete(res);
+            }
           }
         }
       }
@@ -271,11 +297,12 @@ module.exports = {
     'ldp.registry.registered'(ctx) {
       const {container} = ctx.params
       if (container.excludeFromMirror) this.excludedContainers[container.path] = true
+      console.log('++++++++++',container.path,this.excludedContainers)
     }
   },
   methods: {
     containerExcludedFromMirror(resourceUri) {
-      const path = new URL(resourceUri).pathname
+      const path = (new URL(resourceUri)).pathname
       for (const c of Object.keys(this.excludedContainers)) {
         if (path.startsWith(c)) return true;
       }
@@ -338,16 +365,16 @@ module.exports = {
 
     },
     async listAllResourcesInSubContainer(containerUri) {
-      return await this.broker.call('triplestore.query', {
+      const res = await this.broker.call('triplestore.query', {
         query: `
-          SELECT *
+          SELECT ?object
           WHERE {
             <${containerUri}> <http://www.w3.org/ns/ldp#contains>+ ?object
           }
         `,
         webId: 'system'
       });//            filter not exists { ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container> }
-      
+      return res.map(o => o.object.value)
     },
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {

@@ -18,13 +18,14 @@ module.exports = {
       await this.actions.update(
         {
           query: `
-          DELETE 
+          ${ graphName? 'WITH <'+graphName+'>' : ''}
+          DELETE {
+            ?s ?p ?o .
+          }
           WHERE {
-            ${ graphName? 'GRAPH <'+graphName+'> {' : ''}
             ?s ?p ?o .
             FILTER(isBLANK(?s))
             FILTER(NOT EXISTS {?parentS ?parentP ?s})
-            ${ mirror? '}' : ''}
           }
         `,
           webId: 'system',

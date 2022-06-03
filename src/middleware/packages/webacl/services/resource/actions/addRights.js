@@ -147,7 +147,7 @@ module.exports = {
       } else {
         const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
         const addPublicRead = difference.some(triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-        const defaultAddPublicRead = isContainer && difference.some(triple => triple.auth.includes('#DefautRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
+        const defaultAddPublicRead = isContainer && difference.some(triple => triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
         ctx.emit(
           'webacl.resource.updated',
           { uri: resourceUri, isContainer, defaultRightsUpdated, addPublicRead, defaultAddPublicRead },

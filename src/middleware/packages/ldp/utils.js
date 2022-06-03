@@ -16,7 +16,7 @@ function createFragmentURL(baseUrl, serverUrl){
 }
 
 const isMirror = (resourceUri, baseUrl) => {
-  return !resourceUri.startsWith(baseUrl)
+  return !urlJoin(resourceUri,'/').startsWith(baseUrl)
 }
 
 const buildBlankNodesQuery = depth => {

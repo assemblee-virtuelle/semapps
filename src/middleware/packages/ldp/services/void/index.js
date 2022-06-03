@@ -198,9 +198,9 @@ module.exports = {
       }
     },
     api_get: async function api(ctx) {
-        const accept = ctx.meta.headers.accept;
-        
-        if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
+        let accept = ctx.meta.headers.accept;
+        if (accept == '*/*') accept = MIME_TYPES.JSON;
+        else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
             throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
         return await ctx.call('ldp.void.get',{
