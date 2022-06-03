@@ -1,4 +1,5 @@
 const { isMirror } = require('../../../utils');
+const urlJoin = require('url-join');
 
 module.exports = {
   visibility: 'public',
@@ -11,7 +12,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { containerUri, resourceUri } = ctx.params;
+    let { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
@@ -19,7 +20,12 @@ module.exports = {
     if ( mirror && !ctx.meta.forceMirror)
       throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
 
+    if (new URL(containerUri).pathname == '/') {
+      containerUri = urlJoin(containerUri,'/')
+      if (mirror) return; // indeed, we never have the root container on a mirror.
+    }
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
+    if (!containerExists && mirror) return;
     if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.update', {

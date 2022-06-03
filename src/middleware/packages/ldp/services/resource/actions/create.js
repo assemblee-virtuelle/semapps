@@ -54,7 +54,7 @@ module.exports = {
       resource,
       contentType,
       webId,
-      graphName: mirror ? this.settings.mirrorGraphName : undefined
+      graphName: mirror ? '<'+this.settings.mirrorGraphName+'>' : undefined
     });
 
     const newData = await ctx.call(
