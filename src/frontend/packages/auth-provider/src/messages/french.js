@@ -54,7 +54,7 @@ const frenchMessages = {
       user_connected: 'Vous êtes maintenant connecté',
       user_disconnected: 'Vous êtes maintenant déconnecté',
       bad_request: "Requête erronée (Message d'erreur renvoyé par le serveur: %{error})",
-      account_settings_updated: 'Les paramètres de votre compte ont été mis à jour avec succès',
+      account_settings_updated: 'Les paramètres de votre compte ont été mis à jour avec succès'
     }
   }
 };

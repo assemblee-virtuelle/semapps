@@ -234,10 +234,10 @@ const authProvider = ({
       throw new Error(
         'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the getAccountSettings method'
       );
-      
+
     try {
       const { json } = await httpClient(`${serverUrl}auth/account`, {
-        method: 'GET',
+        method: 'GET'
       });
       return json;
     } catch (e) {
@@ -259,10 +259,8 @@ const authProvider = ({
         body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
-
     } catch (e) {
-      
-      if(e.message === 'auth.account.invalid_password'){
+      if (e.message === 'auth.account.invalid_password') {
         throw new Error('app.notification.invalid_password');
       }
 

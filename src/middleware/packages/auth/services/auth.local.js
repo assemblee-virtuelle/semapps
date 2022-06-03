@@ -158,20 +158,12 @@ const AuthLocalService = {
         authorization: true
       };
 
-      const routes = [
-        loginRoute,
-        resetPasswordRoute,
-        setNewPasswordRoute,
-        accountSettingsRoute
-      ]
+      const routes = [loginRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
 
       if (this.settings.registrationAllowed) {
-        return [
-          ...routes,
-          signupRoute
-        ];
+        return [...routes, signupRoute];
       }
-      
+
       return routes;
     }
   }

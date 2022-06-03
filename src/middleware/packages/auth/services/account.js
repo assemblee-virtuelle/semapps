@@ -152,21 +152,21 @@ module.exports = {
       let params = {};
 
       if (!passwordMatch) {
-        throw new Error('auth.account.invalid_password')
+        throw new Error('auth.account.invalid_password');
       }
 
       if (newPassword) {
         const hashedPassword = await this.hashPassword(newPassword);
-        params = { ...params, hashedPassword }
+        params = { ...params, hashedPassword };
       }
 
       if (email !== account['email']) {
         const existing = await ctx.call('auth.account.findByEmail', { email });
         if (existing) {
-          throw new Error("email.already.exists")
+          throw new Error('email.already.exists');
         }
 
-        params = { ...params, email }
+        params = { ...params, email };
       }
 
       return await this._update(ctx, {
@@ -219,7 +219,7 @@ module.exports = {
     },
     async generateResetPasswordToken() {
       return new Promise(resolve => {
-        crypto.randomBytes(32, function (ex, buf) {
+        crypto.randomBytes(32, function(ex, buf) {
           if (ex) {
             reject(ex);
           }
