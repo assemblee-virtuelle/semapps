@@ -78,8 +78,6 @@ module.exports = {
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       let newTriples = await this.bodyToTriples(resource, contentType);
 
-      // const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
-
       // Filter out triples whose subject is not the resource itself
       // We don't want to update or delete resources with IDs
       oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);

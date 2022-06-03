@@ -85,8 +85,6 @@ module.exports = {
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
       let newTriples = await this.bodyToTriples(resource, contentType);
 
-      // const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
-
       oldTriples = this.convertBlankNodesToVars(oldTriples);
       newTriples = this.convertBlankNodesToVars(newTriples);
 
