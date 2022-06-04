@@ -25,3 +25,13 @@ services:
     container_name: fuseki_compact
     volumes:
       - ./data/rdf_data:/fuseki
+
+  fuseki_migrate:
+    build:
+      context: fuseki-docker
+      dockerfile: Dockerfile
+    entrypoint: /docker-migration-entrypoint.sh
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_migration
+    volumes:
+      - ./data/rdf_data:/fuseki
