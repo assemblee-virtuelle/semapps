@@ -25,6 +25,7 @@ module.exports = {
     baseUrl: null,
     mirrorGraphName: 'http://semapps.org/mirror',
     servers: [],
+    acceptFollowers: true,
     actor: {
       username: 'relay',
       name: 'Relay actor for Mirror service'
@@ -102,6 +103,7 @@ module.exports = {
     } while (!this.relayFollowersUri);
 
     // check if has followers (initialize value)
+    if (this.settings.acceptFollowers)
     this.hasFollowers = await this.checkHasFollowers();
 
     this.mirroredServers = [];
@@ -221,12 +223,12 @@ module.exports = {
       }
     },
     'activitypub.follow.added'(ctx) {
-      if (ctx.params.following === this.relayActorUri) {
+      if (ctx.params.following === this.relayActorUri && this.settings.acceptFollowers) {
         this.hasFollowers = true;
       }
     },
     async 'activitypub.follow.removed'(ctx) {
-      if (ctx.params.following === this.relayActorUri) {
+      if (ctx.params.following === this.relayActorUri && this.settings.acceptFollowers) {
         this.hasFollowers = await this.checkHasFollowers();
       }
     },
