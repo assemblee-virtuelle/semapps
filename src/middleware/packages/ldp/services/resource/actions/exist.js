@@ -16,8 +16,7 @@ module.exports = {
         uri: resourceUri,
         webId
       });
-    }
-    else {
+    } else {
       triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
         uri: resourceUri,
         webId,

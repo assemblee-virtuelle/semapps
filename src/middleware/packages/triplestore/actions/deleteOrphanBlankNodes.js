@@ -12,13 +12,13 @@ module.exports = {
   },
   async handler(ctx) {
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
-    const {graphName} = ctx.params;
+    const { graphName } = ctx.params;
     // Launch the query 3 times, so that blank nodes within orphan blank nodes are also deleted
     for (let i = 0; i < 3; i++) {
       await this.actions.update(
         {
           query: `
-          ${ graphName? 'WITH <'+graphName+'>' : ''}
+          ${graphName ? 'WITH <' + graphName + '>' : ''}
           DELETE {
             ?s ?p ?o .
           }

@@ -1,16 +1,14 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const {
-  isMirror
-} = require('../../../utils');
+const { isMirror } = require('../../../utils');
 
 // Important note: PATCH erase old data if they are literals (data properties), but not if they are URIs (relations),
 // as we assume that relations can be multiple, while data properties (eg. labels) should not be duplicated
 // TODO make sure that this conforms with the LDP specifications
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, body,...resource } = ctx.params;
+    const { containerUri, id, body, ...resource } = ctx.params;
 
     // PATCH have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
@@ -61,7 +59,7 @@ module.exports = {
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
-      if (isMirror(resourceUri,this.settings.baseUrl))
+      if (isMirror(resourceUri, this.settings.baseUrl))
         throw new MoleculerError('Mirrored resources cannot be patched', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {

@@ -15,7 +15,11 @@ module.exports = {
 
           this.logger.info(`Refreshing rights for container ${containerUri}...`);
 
-          const perms = await ctx.call('webacl.resource.hasRights', {resourceUri:containerUri, rights: {read:true}, webId:'anon'});
+          const perms = await ctx.call('webacl.resource.hasRights', {
+            resourceUri: containerUri,
+            rights: { read: true },
+            webId: 'anon'
+          });
 
           await ctx.call('webacl.resource.deleteAllRights', {
             resourceUri: containerUri
@@ -27,10 +31,14 @@ module.exports = {
             webId: 'system'
           });
 
-          const removePublicRead = perms.read && ( !containerRights.anon || !containerRights.anon.read )
-          const defaultRemovePublicRead = !containerRights.default || !containerRights.default.anon ||  !containerRights.default.anon.read
-          ctx.emit('webacl.resource.updated', { uri: containerUri, isContainer:true, removePublicRead, defaultRemovePublicRead }, { meta: { webId: null, dataset: null } });
-   
+          const removePublicRead = perms.read && (!containerRights.anon || !containerRights.anon.read);
+          const defaultRemovePublicRead =
+            !containerRights.default || !containerRights.default.anon || !containerRights.default.anon.read;
+          ctx.emit(
+            'webacl.resource.updated',
+            { uri: containerUri, isContainer: true, removePublicRead, defaultRemovePublicRead },
+            { meta: { webId: null, dataset: null } }
+          );
         }
       }
     }

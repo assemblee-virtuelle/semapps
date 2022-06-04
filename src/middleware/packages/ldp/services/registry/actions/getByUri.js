@@ -13,8 +13,7 @@ module.exports = {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
 
-    if (!containerUri && isMirror(resourceUri, this.settings.baseUrl))
-      return {}
+    if (!containerUri && isMirror(resourceUri, this.settings.baseUrl)) return {};
 
     const path = new URL(containerUri || getContainerFromUri(resourceUri)).pathname;
 

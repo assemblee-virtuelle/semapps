@@ -77,10 +77,7 @@ const parseSparql = async (req, res, next) => {
 };
 
 const parseTurtle = async (req, res, next) => {
-  if (
-    !req.$ctx.meta.parser &&
-      (req.headers['content-type'] && req.headers['content-type'].includes('turtle'))
-  ) {
+  if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
     req.$ctx.meta.parser = 'turtle';
     req.$params.body = await getRawBody(req);
   }

@@ -61,16 +61,15 @@ module.exports = {
         if (containerPath !== '/') {
           let parentContainerUri = getContainerFromUri(containerUri);
           // if it is the root container, add a trailing slash
-          if (urlJoin(parentContainerUri,'/') === urlJoin(this.settings.baseUrl,'/')) {
-            parentContainerUri = urlJoin(parentContainerUri,'/');
+          if (urlJoin(parentContainerUri, '/') === urlJoin(this.settings.baseUrl, '/')) {
+            parentContainerUri = urlJoin(parentContainerUri, '/');
           }
-          
+
           const parentExists = await ctx.call('ldp.container.exist', {
             containerUri: parentContainerUri,
             webId: 'system'
           });
           if (parentExists) {
-            
             await ctx.call('ldp.container.attach', {
               containerUri: parentContainerUri,
               resourceUri: containerUri,

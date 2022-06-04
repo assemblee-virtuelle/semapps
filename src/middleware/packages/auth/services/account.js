@@ -40,8 +40,7 @@ module.exports = {
           }
           i++;
         } while (!usernameValid);
-      }
-      else throw new Error('you must provide at least a username or an email address');
+      } else throw new Error('you must provide at least a username or an email address');
 
       return await this._create(ctx, {
         ...rest,
