@@ -1,10 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { 
-  getAclUriFromResourceUri, 
-  processRights,
-  FULL_AGENTCLASS_URI,
-  FULL_FOAF_AGENT
- } = require('../../../utils');
+const { getAclUriFromResourceUri, processRights, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } = require('../../../utils');
 
 module.exports = {
   action: {
@@ -50,10 +45,21 @@ module.exports = {
       });
 
       const defaultRightsUpdated = isContainer && processedRights.some(triple => triple.auth.includes('#Default'));
-      const removePublicRead = processedRights.some(triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-      const defaultRemovePublicRead = isContainer && processedRights.some(triple => triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-      
-      ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, defaultRemovePublicRead }, { meta: { webId: null, dataset: null } });
+      const removePublicRead = processedRights.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const defaultRemovePublicRead =
+        isContainer &&
+        processedRights.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
+
+      ctx.emit(
+        'webacl.resource.updated',
+        { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, defaultRemovePublicRead },
+        { meta: { webId: null, dataset: null } }
+      );
     }
   }
 };

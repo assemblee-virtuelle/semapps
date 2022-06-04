@@ -16,12 +16,12 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
-    const mirror = isMirror(containerUri,this.settings.baseUrl)
-    if ( mirror && !ctx.meta.forceMirror)
+    const mirror = isMirror(containerUri, this.settings.baseUrl);
+    if (mirror && !ctx.meta.forceMirror)
       throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
 
     if (new URL(containerUri).pathname == '/') {
-      containerUri = urlJoin(containerUri,'/')
+      containerUri = urlJoin(containerUri, '/');
       if (mirror) return; // indeed, we never have the root container on a mirror.
     }
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
@@ -33,9 +33,9 @@ module.exports = {
         DELETE
         WHERE
         { 
-          ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
+          ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
-          ${ mirror? '}' : ''}
+          ${mirror ? '}' : ''}
         }
       `,
       webId,

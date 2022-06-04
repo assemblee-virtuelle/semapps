@@ -12,17 +12,17 @@ module.exports = {
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
 
-    const mirror = isMirror(containerUri,this.settings.baseUrl)
+    const mirror = isMirror(containerUri, this.settings.baseUrl);
 
     return await ctx.call('triplestore.query', {
       query: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
-          ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
+          ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
           ?container a ldp:Container .
           FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
-          ${ mirror? '}' : ''}
+          ${mirror ? '}' : ''}
         }
       `,
       accept: MIME_TYPES.JSON,

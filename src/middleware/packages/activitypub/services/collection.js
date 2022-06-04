@@ -53,7 +53,8 @@ const CollectionService = {
      * Checks if the collection is empty
      * @param collectionUri The full URI of the collection
      * @return true if the collection is empty
-     */  
+     */
+
     async isEmpty(ctx) {
       const { collectionUri } = ctx.params;
       const res = await ctx.call('triplestore.query', {

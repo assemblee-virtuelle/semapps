@@ -1,9 +1,7 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const {
-  isMirror
-} = require('../../../utils');
+const { isMirror } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -53,8 +51,8 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
-      const mirror = isMirror(resourceUri,this.settings.baseUrl)
-      if ( mirror && !ctx.meta.forceMirror)
+      const mirror = isMirror(resourceUri, this.settings.baseUrl);
+      if (mirror && !ctx.meta.forceMirror)
         throw new MoleculerError('Mirrored resources cannot be modified with LDP PUT', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {
@@ -113,11 +111,11 @@ module.exports = {
 
         // Generate the query
         let query = '';
-        if (mirror) query += 'WITH <'+this.settings.mirrorGraphName+'> '; 
+        if (mirror) query += 'WITH <' + this.settings.mirrorGraphName + '> ';
         if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
         if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
         query += 'WHERE { ';
-        if (mirror) query += 'GRAPH <'+this.settings.mirrorGraphName+'> {'; 
+        if (mirror) query += 'GRAPH <' + this.settings.mirrorGraphName + '> {';
         if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
         if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
         if (mirror) query += '} ';
@@ -147,7 +145,7 @@ module.exports = {
             newData,
             webId
           },
-          { meta: { webId: null, dataset: null, isMirror:mirror } }
+          { meta: { webId: null, dataset: null, isMirror: mirror } }
         );
       }
 

@@ -46,7 +46,7 @@ const FusekiAdminService = {
         this.logger.info(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
 
-        if (dataset.endsWith('Acl') || dataset.endsWith('Mirror')) 
+        if (dataset.endsWith('Acl') || dataset.endsWith('Mirror'))
           throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
 
         const templateFilePath = path.join(__dirname, 'templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');

@@ -14,7 +14,7 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {}
   },
-  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry','ldp.void'],
+  dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry', 'ldp.void'],
   async created() {
     const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions, mirrorGraphName } = this.settings;
 

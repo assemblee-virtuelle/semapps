@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { Issuer, Strategy, custom } = require('openid-client');
 custom.setHttpOptionsDefaults({
-  timeout: 10000,
+  timeout: 10000
 });
 const AuthSSOMixin = require('../mixins/auth.sso');
 
@@ -24,11 +24,9 @@ const AuthOIDCService = {
   },
   async created() {
     this.passportId = 'oidc';
-
   },
   methods: {
     async getStrategy() {
-
       const issuer = await Issuer.discover(this.settings.issuer);
 
       const client = new issuer.Client({

@@ -106,17 +106,39 @@ module.exports = {
       });
 
       const defaultRightsUpdated =
-        isContainer && 
-        ( differenceAdd.some(triple => triple.auth.includes('#Default')) 
-        || differenceDelete.some(triple => triple.auth.includes('#Default')));
+        isContainer &&
+        (differenceAdd.some(triple => triple.auth.includes('#Default')) ||
+          differenceDelete.some(triple => triple.auth.includes('#Default')));
 
-      const addPublicRead = differenceAdd.some(triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-      const removePublicRead = differenceDelete.some(triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-      const defaultAddPublicRead = isContainer && differenceAdd.some(triple => triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
-      const defaultRemovePublicRead = isContainer && differenceDelete.some(triple => triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT);
+      const addPublicRead = differenceAdd.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const removePublicRead = differenceDelete.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const defaultAddPublicRead =
+        isContainer &&
+        differenceAdd.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
+      const defaultRemovePublicRead =
+        isContainer &&
+        differenceDelete.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
       ctx.emit(
         'webacl.resource.updated',
-        { uri: resourceUri, isContainer, defaultRightsUpdated, addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead },
+        {
+          uri: resourceUri,
+          isContainer,
+          defaultRightsUpdated,
+          addPublicRead,
+          removePublicRead,
+          defaultAddPublicRead,
+          defaultRemovePublicRead
+        },
         { meta: { webId: null, dataset: null } }
       );
     }

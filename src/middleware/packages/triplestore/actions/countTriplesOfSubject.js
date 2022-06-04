@@ -17,7 +17,7 @@ module.exports = {
     graphName: {
       type: 'string',
       optional: true
-    },
+    }
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -26,7 +26,7 @@ module.exports = {
     const results = await ctx.call('triplestore.query', {
       query: `
         SELECT ?p ?v
-        ${ctx.params.graphName ? 'FROM <'+ctx.params.graphName+'>' : ''}
+        ${ctx.params.graphName ? 'FROM <' + ctx.params.graphName + '>' : ''}
         WHERE {
           <${ctx.params.uri}> ?p ?v
         }

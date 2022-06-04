@@ -7,17 +7,21 @@ function getAclUriFromResourceUri(baseUrl, resourceUri) {
 
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 
-function createFragmentURL(baseUrl, serverUrl){
-  let fragment = 'me'
-  const res = serverUrl.match(regexProtocolAndHostAndPort)
-  if (res) fragment = res[2].replace('-','_').replace('.','_').replace(':','_')
+function createFragmentURL(baseUrl, serverUrl) {
+  let fragment = 'me';
+  const res = serverUrl.match(regexProtocolAndHostAndPort);
+  if (res)
+    fragment = res[2]
+      .replace('-', '_')
+      .replace('.', '_')
+      .replace(':', '_');
 
-  return urlJoin(baseUrl,'#'+fragment)
+  return urlJoin(baseUrl, '#' + fragment);
 }
 
 const isMirror = (resourceUri, baseUrl) => {
-  return !urlJoin(resourceUri,'/').startsWith(baseUrl)
-}
+  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+};
 
 const buildBlankNodesQuery = depth => {
   let construct = '',

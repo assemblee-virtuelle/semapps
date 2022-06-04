@@ -6,18 +6,11 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
-const {
-    createFragmentURL,
-    getContainerFromUri
-  } = require('@semapps/ldp/utils');
+const { createFragmentURL, getContainerFromUri } = require('@semapps/ldp/utils');
 
-  
-  const {
-    defaultToArray
-  } = require('@semapps/activitypub/utils');
+const { defaultToArray } = require('@semapps/activitypub/utils');
 
-
-const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .','gm')
+const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .', 'gm');
 
 module.exports = {
   name: 'mirror',
@@ -31,19 +24,31 @@ module.exports = {
       name: 'Relay actor for Mirror service'
     }
   },
-  dependencies: ['triplestore','webfinger','activitypub','activitypub.follow','ldp.void','auth.account','ldp.container', 'ldp.registry'],
+  dependencies: [
+    'triplestore',
+    'webfinger',
+    'activitypub',
+    'activitypub.follow',
+    'ldp.void',
+    'auth.account',
+    'ldp.container',
+    'ldp.registry'
+  ],
 
   async started() {
-
     this.excludedContainers = {};
 
     // Ensure services have been started
-    await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account','activitypub.follow']);
+    await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account', 'activitypub.follow']);
 
     const containers = await this.broker.call('ldp.registry.list');
-    Object.values(containers).filter(c => c.excludeFromMirror).map(c => {this.excludedContainers[c.path] = true;});
-    console.log(this.excludedContainers)
-    const services = await this.broker.call("$node.services");
+    Object.values(containers)
+      .filter(c => c.excludeFromMirror)
+      .map(c => {
+        this.excludedContainers[c.path] = true;
+      });
+    console.log(this.excludedContainers);
+    const services = await this.broker.call('$node.services');
 
     if (services.map(s => s.name).filter(s => s.startsWith('webacl')).length) {
       this.hasWebacl = true;
@@ -54,18 +59,22 @@ module.exports = {
 
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
-    this.logger.info('actorExist '+ actorExist)
+    this.logger.info('actorExist ' + actorExist);
 
-    const uri = urlJoin(this.settings.baseUrl,'/users',actorSettings.username)
+    const uri = urlJoin(this.settings.baseUrl, '/users', actorSettings.username);
     this.relayActorUri = uri;
 
     if (!actorExist) {
       this.logger.info(`MirrorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
-      await this.broker.call('auth.account.create', { 
-        username: actorSettings.username,
-        webId: uri,
-      },{ meta:{ isSystemCall:true } } );
+      await this.broker.call(
+        'auth.account.create',
+        {
+          username: actorSettings.username,
+          webId: uri
+        },
+        { meta: { isSystemCall: true } }
+      );
 
       await this.broker.call('ldp.container.post', {
         containerUri: getContainerFromUri(uri),
@@ -79,7 +88,6 @@ module.exports = {
         contentType: MIME_TYPES.JSON,
         webId: 'system'
       });
-
     }
 
     // wait until the outbox collection is created, and keep its uri, for later use
@@ -89,7 +97,7 @@ module.exports = {
         predicate: 'outbox',
         webId: 'system'
       });
-      if (this.relayOutboxUri === undefined) await delay(1000);    
+      if (this.relayOutboxUri === undefined) await delay(1000);
     } while (!this.relayOutboxUri);
 
     // wait until the followers collection is created, and keep its uri, for later use
@@ -99,24 +107,25 @@ module.exports = {
         predicate: 'followers',
         webId: 'system'
       });
-      if (this.relayFollowersUri === undefined) await delay(1000);    
+      if (this.relayFollowersUri === undefined) await delay(1000);
     } while (!this.relayFollowersUri);
 
     // check if has followers (initialize value)
-    if (this.settings.acceptFollowers)
-    this.hasFollowers = await this.checkHasFollowers();
+    if (this.settings.acceptFollowers) this.hasFollowers = await this.checkHasFollowers();
 
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
       for (let server of this.settings.servers) {
         try {
-
           // we do not await because we don't want to bloc the startup of the services.
-          const promise = this.actions.mirror( { serverUrl:server } );
-          promise.then( () =>  {this.mirroredServers.push(server);} )
-                 .catch(e => this.logger.error("Mirroring failed for "+server+" : "+e.message));
-        } catch(e) {
-          this.logger.error("Mirroring failed for "+server+" : "+e.message)
+          const promise = this.actions.mirror({ serverUrl: server });
+          promise
+            .then(() => {
+              this.mirroredServers.push(server);
+            })
+            .catch(e => this.logger.error('Mirroring failed for ' + server + ' : ' + e.message));
+        } catch (e) {
+          this.logger.error('Mirroring failed for ' + server + ' : ' + e.message);
         }
       }
     }
@@ -125,82 +134,87 @@ module.exports = {
     mirror: {
       visibility: 'public',
       params: {
-        serverUrl: { type: 'string', optional: false },
+        serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
-
         let { serverUrl } = ctx.params;
 
         // check if the server is already followed, in which case, we already did the mirror, we can skip.
 
-        const serverDomainName = new URL(serverUrl).host
-        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@'+serverDomainName });
+        const serverDomainName = new URL(serverUrl).host;
+        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
 
-        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', { follower: this.relayActorUri, following: remoteRelayActorUri});
+        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
+          follower: this.relayActorUri,
+          following: remoteRelayActorUri
+        });
 
         if (alreadyFollowing) {
-          this.logger.info("Already mirrored and following: "+serverUrl)
+          this.logger.info('Already mirrored and following: ' + serverUrl);
           return;
         }
 
         // if not, we will now mirror and then follow the relay actor
 
-        this.logger.info("Mirroring "+serverUrl)
+        this.logger.info('Mirroring ' + serverUrl);
 
-        const voidUrl = urlJoin(serverUrl,'/.well-known/void')
+        const voidUrl = urlJoin(serverUrl, '/.well-known/void');
 
         const response = await fetch(voidUrl, {
-            method: 'GET',
-            headers: {
-                'Accept':'application/ld+json'
-            }
+          method: 'GET',
+          headers: {
+            Accept: 'application/ld+json'
+          }
         });
 
-        if (!response.ok)
-            throw new MoleculerError('No VOID endpoint on the server ' + serverUrl, 404, 'NOT_FOUND');
-        
+        if (!response.ok) throw new MoleculerError('No VOID endpoint on the server ' + serverUrl, 404, 'NOT_FOUND');
+
         const json = await response.json();
         const firstServer = json['@graph'][0];
-        if (!firstServer || firstServer['@id'] !== createFragmentURL('',serverUrl))
-            throw new MoleculerError('The VOID answer does not contain valid information for ' + serverUrl, 400, 'INVALID');
-        
-        const partitions = firstServer['void:classPartition']
+        if (!firstServer || firstServer['@id'] !== createFragmentURL('', serverUrl))
+          throw new MoleculerError(
+            'The VOID answer does not contain valid information for ' + serverUrl,
+            400,
+            'INVALID'
+          );
+
+        const partitions = firstServer['void:classPartition'];
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
             //console.log(p['void:class'], p['void:entities'], p['void:uriSpace'])
 
             const rep = await fetch(p['void:uriSpace'], {
-                method: 'GET',
-                headers: {
-                    'Accept':'text/turtle'
-                }
+              method: 'GET',
+              headers: {
+                Accept: 'text/turtle'
+              }
             });
 
             if (rep.ok) {
-                let container = await rep.text();
-                //console.log(container)
+              let container = await rep.text();
+              //console.log(container)
 
-                const prefixes = [...container.matchAll(regexPrefix)];
+              const prefixes = [...container.matchAll(regexPrefix)];
 
-                let sparqlQuery = ''
-                for (const pref of prefixes) {
-                    sparqlQuery += 'PREFIX '+pref[1]+'\n'
-                }
-                sparqlQuery += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`
-                sparqlQuery += container.replace(regexPrefix, '')
-                sparqlQuery += '} }'
+              let sparqlQuery = '';
+              for (const pref of prefixes) {
+                sparqlQuery += 'PREFIX ' + pref[1] + '\n';
+              }
+              sparqlQuery += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
+              sparqlQuery += container.replace(regexPrefix, '');
+              sparqlQuery += '} }';
 
-                await ctx.call('triplestore.update', { query:sparqlQuery })
+              await ctx.call('triplestore.update', { query: sparqlQuery });
             }
           }
         }
 
-        this.logger.info("Mirroring done.")
+        this.logger.info('Mirroring done.');
 
         // now subscribing to the relay actor in order to receive updates (updateBot)
 
-        this.logger.info("Following remote relay actor "+remoteRelayActorUri)
+        this.logger.info('Following remote relay actor ' + remoteRelayActorUri);
 
         const followActivity = await ctx.call('activitypub.outbox.post', {
           collectionUri: this.relayOutboxUri,
@@ -210,7 +224,6 @@ module.exports = {
           object: remoteRelayActorUri,
           to: [remoteRelayActorUri]
         });
-        
       }
     }
   },
@@ -234,13 +247,21 @@ module.exports = {
     },
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && (await this.checkResourcePublic(resourceUri))) {
+      if (
+        this.hasFollowers &&
+        !this.containerExcludedFromMirror(resourceUri) &&
+        (await this.checkResourcePublic(resourceUri))
+      ) {
         this.create(resourceUri);
       }
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
-      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && (await this.checkResourcePublic(resourceUri))) {
+      if (
+        this.hasFollowers &&
+        !this.containerExcludedFromMirror(resourceUri) &&
+        (await this.checkResourcePublic(resourceUri))
+      ) {
         this.update(resourceUri);
       }
     },
@@ -251,34 +272,39 @@ module.exports = {
       }
     },
     async 'webacl.resource.created'(ctx) {
-      // We don't need to do anything because the resource is not created yet. 
+      // We don't need to do anything because the resource is not created yet.
     },
     async 'webacl.resource.updated'(ctx) {
-
-      const { uri, isContainer, addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead } = ctx.params;
+      const {
+        uri,
+        isContainer,
+        addPublicRead,
+        removePublicRead,
+        defaultAddPublicRead,
+        defaultRemovePublicRead
+      } = ctx.params;
       //console.log(this.hasWebacl,this.hasFollowers,!this.containerExcludedFromMirror(uri), uri)
       if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
         //console.log(addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead, uri )
-        
-        if ( addPublicRead ) { 
-          if (isContainer && await ctx.call('ldp.container.isEmpty',{containerUri:uri}) ) return;
+
+        if (addPublicRead) {
+          if (isContainer && (await ctx.call('ldp.container.isEmpty', { containerUri: uri }))) return;
           this.create(uri);
-        } else if ( removePublicRead ) { 
+        } else if (removePublicRead) {
           this.delete(uri);
         }
 
-        if ( defaultAddPublicRead ) {
+        if (defaultAddPublicRead) {
           const resources = await this.listAllResourcesInSubContainer(uri);
-          let containers = []
+          let containers = [];
           for (const res of resources) {
             if (!this.containerExcludedFromMirror(res)) {
-              const isContainer = await ctx.call('ldp.container.exist',{containerUri:res});
+              const isContainer = await ctx.call('ldp.container.exist', { containerUri: res });
               if (isContainer) {
-                const empty = await ctx.call('ldp.container.isEmpty',{containerUri:res});
-                if ( empty ) continue;
-                containers.push(res)
-              }
-              else if (containers.some(c => res.startsWith(c))) continue;
+                const empty = await ctx.call('ldp.container.isEmpty', { containerUri: res });
+                if (empty) continue;
+                containers.push(res);
+              } else if (containers.some(c => res.startsWith(c))) continue;
               this.create(res);
             }
           }
@@ -286,7 +312,7 @@ module.exports = {
           const resources = await this.listAllResourcesInSubContainer(uri);
           for (const res of resources) {
             if (!this.containerExcludedFromMirror(res)) {
-              const isPublic = await this.checkResourcePublic(res)
+              const isPublic = await this.checkResourcePublic(res);
               if (!isPublic) this.delete(res);
             }
           }
@@ -294,17 +320,17 @@ module.exports = {
       }
     },
     async 'webacl.resource.deleted'(ctx) {
-        // we don't do nothing because the resource will be deleted very soon afterwards, and ldp.resource.deleted will be emited
+      // we don't do nothing because the resource will be deleted very soon afterwards, and ldp.resource.deleted will be emited
     },
     'ldp.registry.registered'(ctx) {
-      const {container} = ctx.params
-      if (container.excludeFromMirror) this.excludedContainers[container.path] = true
-      console.log('++++++++++',container.path,this.excludedContainers)
+      const { container } = ctx.params;
+      if (container.excludeFromMirror) this.excludedContainers[container.path] = true;
+      console.log('++++++++++', container.path, this.excludedContainers);
     }
   },
   methods: {
     containerExcludedFromMirror(resourceUri) {
-      const path = (new URL(resourceUri)).pathname
+      const path = new URL(resourceUri).pathname;
       for (const c of Object.keys(this.excludedContainers)) {
         if (path.startsWith(c)) return true;
       }
@@ -356,15 +382,17 @@ module.exports = {
       const res = await this.broker.call('activitypub.collection.isEmpty', {
         collectionUri: this.relayFollowersUri
       });
-      return ! res
+      return !res;
     },
     async checkResourcePublic(resourceUri) {
-      
       if (!this.hasWebacl) return true;
 
-      const perms = await this.broker.call('webacl.resource.hasRights', {resourceUri, rights: {read:true}, webId:'anon'});
+      const perms = await this.broker.call('webacl.resource.hasRights', {
+        resourceUri,
+        rights: { read: true },
+        webId: 'anon'
+      });
       return perms.read;
-
     },
     async listAllResourcesInSubContainer(containerUri) {
       const res = await this.broker.call('triplestore.query', {
@@ -375,8 +403,8 @@ module.exports = {
           }
         `,
         webId: 'system'
-      });//            filter not exists { ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container> }
-      return res.map(o => o.object.value)
+      }); //            filter not exists { ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container> }
+      return res.map(o => o.object.value);
     },
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {
@@ -386,24 +414,36 @@ module.exports = {
     },
     async inboxReceived(ctx) {
       //console.log('Received ',ctx.params.activity)
-      const {activity} = ctx.params;
+      const { activity } = ctx.params;
 
       if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
         switch (activity.object.type) {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json()
-            await ctx.call('ldp.resource.create', { resource:newResource, webId: 'system', contentType: MIME_TYPES.JSON},{meta:{ forceMirror: true}})
+            newResource = await newResource.json();
+            await ctx.call(
+              'ldp.resource.create',
+              { resource: newResource, webId: 'system', contentType: MIME_TYPES.JSON },
+              { meta: { forceMirror: true } }
+            );
             break;
           }
           case ACTIVITY_TYPES.UPDATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json()
-            await ctx.call('ldp.resource.put', { resource:newResource, webId: 'system', contentType: MIME_TYPES.JSON},{meta:{ forceMirror: true}})
+            newResource = await newResource.json();
+            await ctx.call(
+              'ldp.resource.put',
+              { resource: newResource, webId: 'system', contentType: MIME_TYPES.JSON },
+              { meta: { forceMirror: true } }
+            );
             break;
           }
           case ACTIVITY_TYPES.DELETE: {
-            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object, webId: 'system'},{meta:{ forceMirror: true}})
+            await ctx.call(
+              'ldp.resource.delete',
+              { resourceUri: activity.object.object, webId: 'system' },
+              { meta: { forceMirror: true } }
+            );
             break;
           }
         }

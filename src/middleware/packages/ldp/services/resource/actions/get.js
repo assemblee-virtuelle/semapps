@@ -65,7 +65,7 @@ module.exports = {
         ...ctx.params
       };
 
-      const mirror = isMirror(resourceUri,this.settings.baseUrl);
+      const mirror = isMirror(resourceUri, this.settings.baseUrl);
 
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
@@ -82,12 +82,12 @@ module.exports = {
               ${dereferenceQuery.construct}
             }
             WHERE {
-              ${ mirror? 'GRAPH <'+this.settings.mirrorGraphName+'> {' : ''}
+              ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${blandNodeQuery.where}
               ${dereferenceQuery.where}
-              ${ mirror? '} .' : ''}
+              ${mirror ? '} .' : ''}
             }
           `,
           accept,
