@@ -30,7 +30,7 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError(msg, 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
+  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 const throw500 = msg => {
