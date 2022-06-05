@@ -17,14 +17,14 @@ module.exports = {
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
     if (isMirror(containerUri, this.settings.baseUrl))
-        throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
         //throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
-        throw new MoleculerError('Cannot attach non-existing resource or container: '+ resourceUri, 404, 'NOT_FOUND');
+        throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
       }
     }
 

@@ -114,7 +114,6 @@ const WebAclMiddleware = config => ({
 
         // if mirrored resource, bypass
 
-
         const containerUri = getContainerFromUri(resourceUri);
         if (containersWithDefaultAnonRead.includes(containerUri)) {
           return bypass();

@@ -123,7 +123,7 @@ module.exports = {
           // we do not await because we don't want to bloc the startup of the services.
           const promise = this.actions.mirror({ serverUrl: server });
           promise
-            .then((actorUri) => {
+            .then(actorUri => {
               this.mirroredServers.push(actorUri);
             })
             .catch(e => this.logger.error('Mirroring failed for ' + server + ' : ' + e.message));
@@ -363,12 +363,10 @@ module.exports = {
       return false;
     },
     async create(resourceUri) {
-
       // each time a resource is created, it is also attached to a container,
       // which triggers an update activity on that container to be sent to all followers.
       // for the sake of non redundancy, we therefor do nothing when a create happens.
       // the container update will retrieve the new resource anyway
-
       // const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
       //   collectionUri: this.relayOutboxUri,
       //   '@context': 'https://www.w3.org/ns/activitystreams',
@@ -447,8 +445,8 @@ module.exports = {
       if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
         // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
         if (!this.mirroredServers.includes(activity.actor)) {
-          console.log(this.mirroredServers)
-          this.logger.info('SECURITY ALTER : received announce from actor we are not following : '+activity.actor)
+          console.log(this.mirroredServers);
+          this.logger.info('SECURITY ALTER : received announce from actor we are not following : ' + activity.actor);
           return;
         }
         switch (activity.object.type) {

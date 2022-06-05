@@ -87,10 +87,10 @@ module.exports = {
 
       // Filter out triples whose subject is not the resource itself
       // We don't want to update or delete resources with IDs
-      // if it is a mirror, we allow other resources to be added here, 
+      // if it is a mirror, we allow other resources to be added here,
       // this is useful when PUT is used ona patched container that contains remote members
       // TODO: the only probem with that is that the remote mirrored members of a container are never deleted...
-      if (!mirror) { 
+      if (!mirror) {
         oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
         newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
       }

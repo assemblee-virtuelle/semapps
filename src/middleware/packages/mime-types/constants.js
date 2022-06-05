@@ -7,7 +7,7 @@ const MIME_TYPES = {
   CSV: 'text/csv',
   TSV: 'text/tab-separated-values',
   RDF: 'application/rdf+xml',
-  SPARQL_UPDATE: 'application/sparql-update',
+  SPARQL_UPDATE: 'application/sparql-update'
 };
 
 const TYPES_REPO = [
