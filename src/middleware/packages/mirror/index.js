@@ -251,7 +251,7 @@ module.exports = {
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
-        !isMirror(resourceUri,this.settings.baseUrl)
+        !isMirror(resourceUri, this.settings.baseUrl)
       ) {
         this.create(resourceUri);
       }
@@ -262,14 +262,18 @@ module.exports = {
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
-        !isMirror(resourceUri,this.settings.baseUrl)
+        !isMirror(resourceUri, this.settings.baseUrl)
       ) {
         this.update(resourceUri);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
-      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && !isMirror(resourceUri,this.settings.baseUrl)) {
+      if (
+        this.hasFollowers &&
+        !this.containerExcludedFromMirror(resourceUri) &&
+        !isMirror(resourceUri, this.settings.baseUrl)
+      ) {
         this.delete(resourceUri);
       }
     },
