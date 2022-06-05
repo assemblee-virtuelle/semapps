@@ -10,7 +10,7 @@ const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/l
 
 const { defaultToArray } = require('@semapps/activitypub/utils');
 
-const regexPrefix = new RegExp('^@prefix ([\\w]*: +<.*>) .', 'gm');
+const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 module.exports = {
   name: 'mirror',
@@ -123,8 +123,8 @@ module.exports = {
           // we do not await because we don't want to bloc the startup of the services.
           const promise = this.actions.mirror({ serverUrl: server });
           promise
-            .then(() => {
-              this.mirroredServers.push(server);
+            .then((actorUri) => {
+              this.mirroredServers.push(actorUri);
             })
             .catch(e => this.logger.error('Mirroring failed for ' + server + ' : ' + e.message));
         } catch (e) {
@@ -154,7 +154,7 @@ module.exports = {
 
         if (alreadyFollowing) {
           this.logger.info('Already mirrored and following: ' + serverUrl);
-          return;
+          return remoteRelayActorUri;
         }
 
         // if not, we will now mirror and then follow the relay actor
@@ -228,6 +228,8 @@ module.exports = {
           object: remoteRelayActorUri,
           to: [remoteRelayActorUri]
         });
+
+        return remoteRelayActorUri;
       }
     }
   },
@@ -269,6 +271,17 @@ module.exports = {
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
         this.update(resourceUri);
+      }
+    },
+    async 'ldp.container.patched'(ctx) {
+      const { containerUri } = ctx.params;
+      if (
+        this.hasFollowers &&
+        !this.containerExcludedFromMirror(containerUri) &&
+        (await this.checkResourcePublic(containerUri)) &&
+        !isMirror(containerUri, this.settings.baseUrl)
+      ) {
+        this.update(containerUri);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -350,17 +363,23 @@ module.exports = {
       return false;
     },
     async create(resourceUri) {
-      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
-        collectionUri: this.relayOutboxUri,
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        actor: this.relayActorUri,
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.CREATE,
-          object: resourceUri
-        },
-        to: await this.getFollowers()
-      });
+
+      // each time a resource is created, it is also attached to a container,
+      // which triggers an update activity on that container to be sent to all followers.
+      // for the sake of non redundancy, we therefor do nothing when a create happens.
+      // the container update will retrieve the new resource anyway
+
+      // const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
+      //   collectionUri: this.relayOutboxUri,
+      //   '@context': 'https://www.w3.org/ns/activitystreams',
+      //   actor: this.relayActorUri,
+      //   type: ACTIVITY_TYPES.ANNOUNCE,
+      //   object: {
+      //     type: ACTIVITY_TYPES.CREATE,
+      //     object: resourceUri
+      //   },
+      //   to: await this.getFollowers()
+      // });
     },
     async update(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
@@ -426,6 +445,12 @@ module.exports = {
       const { activity } = ctx.params;
 
       if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
+        // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
+        if (!this.mirroredServers.includes(activity.actor)) {
+          console.log(this.mirroredServers)
+          this.logger.info('SECURITY ALTER : received announce from actor we are not following : '+activity.actor)
+          return;
+        }
         switch (activity.object.type) {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });

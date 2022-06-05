@@ -21,8 +21,8 @@ module.exports = {
       throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
 
     if (new URL(containerUri).pathname == '/') {
-      containerUri = urlJoin(containerUri, '/');
       if (mirror) return; // indeed, we never have the root container on a mirror.
+      containerUri = urlJoin(containerUri, '/');
     }
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists && mirror) return;

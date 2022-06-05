@@ -11,18 +11,12 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let triplesNb;
-    if (!isMirror(resourceUri, this.settings.baseUrl)) {
-      triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resourceUri,
-        webId
-      });
-    } else {
-      triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-        uri: resourceUri,
-        webId,
-        graphName: this.settings.mirrorGraphName
-      });
-    }
+
+    triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
+      uri: resourceUri,
+      webId,
+      graphName: isMirror(resourceUri, this.settings.baseUrl) ? this.settings.mirrorGraphName : undefined
+    });
 
     return triplesNb > 0;
   }

@@ -50,8 +50,11 @@ module.exports = {
       await this.createDisassembly(ctx, disassembly, resource);
     }
 
+    if (contentType !== MIME_TYPES.JSON && !resource.body) 
+      throw new MoleculerError('The resource must contain a body member (a string)', 400, 'BAD_REQUEST');
+
     await ctx.call('triplestore.insert', {
-      resource,
+      resource: contentType === MIME_TYPES.JSON ? resource : resource.body,
       contentType,
       webId,
       graphName: mirror ? '<' + this.settings.mirrorGraphName + '>' : undefined

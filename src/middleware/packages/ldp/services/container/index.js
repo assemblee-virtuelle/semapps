@@ -10,6 +10,7 @@ const getUrisAction = require('./actions/getUris');
 const headAction = require('./actions/head');
 const includesAction = require('./actions/includes');
 const postAction = require('./actions/post');
+const patchAction = require('./actions/patch');
 
 module.exports = {
   name: 'ldp.container',
@@ -31,11 +32,13 @@ module.exports = {
     getUris: getUrisAction,
     includes: includesAction,
     post: postAction.action,
+    patch: patchAction.action,
     isEmpty: isEmptyAction,
     // Actions accessible through the API
     api_get: getAction.api,
     api_post: postAction.api,
-    api_head: headAction.api
+    api_head: headAction.api,
+    api_patch: patchAction.api
   },
   hooks: {
     before: {

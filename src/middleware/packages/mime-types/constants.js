@@ -6,7 +6,8 @@ const MIME_TYPES = {
   SPARQL_XML: 'application/sparql-results+xml',
   CSV: 'text/csv',
   TSV: 'text/tab-separated-values',
-  RDF: 'application/rdf+xml'
+  RDF: 'application/rdf+xml',
+  SPARQL_UPDATE: 'application/sparql-update',
 };
 
 const TYPES_REPO = [
@@ -33,6 +34,12 @@ const TYPES_REPO = [
     mimeFull: [MIME_TYPES.SPARQL_JSON],
     N3Mapping: '',
     fusekiMapping: MIME_TYPES.SPARQL_JSON
+  },
+  {
+    mime: MIME_TYPES.SPARQL_UPDATE,
+    mimeFull: [MIME_TYPES.SPARQL_UPDATE],
+    N3Mapping: '',
+    fusekiMapping: MIME_TYPES.SPARQL_UPDATE
   },
   {
     mime: MIME_TYPES.SPARQL_XML,
