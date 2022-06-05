@@ -66,91 +66,87 @@ module.exports = {
         let updates = { insert: [], delete: [] };
         parsedQuery.updates.map(p => updates[p.updateType].push(p[p.updateType][0]));
 
-        for (const ins of updates.insert) {
+        for (const inss of updates.insert) {
           // check that the containerUri is the same as specified in the params.
-          if (
-            ins.triples[0].subject.value === containerUri &&
-            ins.triples[0].predicate.value === 'http://www.w3.org/ns/ldp#contains'
-          ) {
-            const insUri = ins.triples[0].object.value;
-            try {
-              await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
-            } catch (e) {
-              if (e.code == 404 && isMirror(insUri, this.settings.baseUrl)) {
-                // we need to import the remote resource
-                this.logger.info('IMPORTING ' + insUri);
-                try {
-                  let newResource = await fetch(insUri, { headers: { Accept: MIME_TYPES.TURTLE } });
-                  newResource = await newResource.text();
+          for (const ins of inss.triples)
+            if (ins.subject.value === containerUri && ins.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
+              const insUri = ins.object.value;
+              try {
+                await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
+              } catch (e) {
+                if (e.code == 404 && isMirror(insUri, this.settings.baseUrl)) {
+                  // we need to import the remote resource
+                  this.logger.info('IMPORTING ' + insUri);
+                  try {
+                    let newResource = await fetch(insUri, { headers: { Accept: MIME_TYPES.TURTLE } });
+                    newResource = await newResource.text();
 
-                  const prefixes = [...newResource.matchAll(regexPrefix)];
+                    const prefixes = [...newResource.matchAll(regexPrefix)];
 
-                  let turtleToSparql = '';
-                  for (const pref of prefixes) {
-                    turtleToSparql += 'PREFIX ' + pref[1] + '\n';
+                    let turtleToSparql = '';
+                    for (const pref of prefixes) {
+                      turtleToSparql += 'PREFIX ' + pref[1] + '\n';
+                    }
+                    turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
+                    turtleToSparql += newResource.replace(regexPrefix, '');
+                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
+                      new URL(insUri).origin
+                    }> .`;
+                    turtleToSparql += '} }';
+
+                    await ctx.call('triplestore.update', { query: turtleToSparql });
+
+                    // now if the import went well, we can retry the attach
+                    await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
+                  } catch (e) {
+                    // fail silently
                   }
-                  turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
-                  turtleToSparql += newResource.replace(regexPrefix, '');
-                  turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
-                    new URL(insUri).origin
-                  }> .`;
-                  turtleToSparql += '} }';
-
-                  await ctx.call('triplestore.update', { query: turtleToSparql });
-
-                  // now if the import went well, we can retry the attach
-                  await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
-                } catch (e) {
-                  // fail silently
                 }
               }
             }
-          }
         }
 
-        for (const del of updates.delete) {
-          if (
-            del.triples[0].subject.value === containerUri &&
-            del.triples[0].predicate.value === 'http://www.w3.org/ns/ldp#contains'
-          ) {
-            const delUri = del.triples[0].object.value;
-            try {
-              await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
+        for (const dels of updates.delete) {
+          for (const del of dels.triples)
+            if (del.subject.value === containerUri && del.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
+              const delUri = del.object.value;
+              try {
+                await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
 
-              // if the resource is attached to any container, it must be deleted.
+                // if the resource is attached to any container, it must be deleted.
 
-              let remaining = await ctx.call('triplestore.query', {
-                query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`
-              });
-              remaining = Number(remaining[0].count.value);
-              if (remaining === 0) {
-                const isM = isMirror(delUri, this.settings.baseUrl);
+                let remaining = await ctx.call('triplestore.query', {
+                  query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`
+                });
+                remaining = Number(remaining[0].count.value);
+                if (remaining === 0) {
+                  const isM = isMirror(delUri, this.settings.baseUrl);
 
-                await ctx.call('triplestore.update', {
-                  query: `
+                  await ctx.call('triplestore.update', {
+                    query: `
                     DELETE
                     WHERE { 
                       ${isM ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
                       <${delUri}> ?p1 ?o1 . ${isM ? '}' : ''}
                     }
                   `,
-                  webId: 'system'
-                });
+                    webId: 'system'
+                  });
 
-                ctx.call('triplestore.deleteOrphanBlankNodes', {
-                  graphName: isM ? this.settings.mirrorGraphName : undefined
-                });
+                  ctx.call('triplestore.deleteOrphanBlankNodes', {
+                    graphName: isM ? this.settings.mirrorGraphName : undefined
+                  });
 
-                ctx.emit(
-                  'ldp.resource.forceDeletedOrphanMirror',
-                  { resourceUri: delUri },
-                  { meta: { webId: null, dataset: null, isMirror: true } }
-                );
+                  ctx.emit(
+                    'ldp.resource.forceDeletedOrphanMirror',
+                    { resourceUri: delUri },
+                    { meta: { webId: null, dataset: null, isMirror: true } }
+                  );
+                }
+              } catch (e) {
+                // fail silently
               }
-            } catch (e) {
-              // fail silently
             }
-          }
         }
       } catch (e) {
         console.log(e);
