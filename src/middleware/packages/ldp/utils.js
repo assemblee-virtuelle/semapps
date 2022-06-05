@@ -5,6 +5,8 @@ function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
 }
 
+const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
+
 const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 
 function createFragmentURL(baseUrl, serverUrl) {
@@ -176,5 +178,6 @@ module.exports = {
   getAclUriFromResourceUri,
   isMirror,
   createFragmentURL,
+  regexPrefix,
   regexProtocolAndHostAndPort
 };

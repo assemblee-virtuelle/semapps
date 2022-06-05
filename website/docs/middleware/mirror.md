@@ -116,4 +116,8 @@ Everytime some data changes occur on the remote server, your server will receive
 
 You can retrieve the mirrored data with `LDP GET` and you can also link to this data inside your containers, with `LDP PATCH`.
 
-When adding a remote resource to a local container with `PATCH`, if the remote server has not been mirrored yet locally, the mirror service will mirror only that resource. It will then periodically refresh that resource's data to keep it in sync with the remote server.
+### `ldp.container.patch`
+
+When attaching a remote resource to a local container with `PATCH`, if the remote server has not been mirrored yet locally, the mirror service will mirror only that resource. It will then periodically refresh that resource's data to keep it in sync with the remote server.
+
+This feature is independant of the mirror service and is always active when the ldp service is running.

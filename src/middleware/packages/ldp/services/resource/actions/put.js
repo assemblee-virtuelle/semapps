@@ -5,8 +5,7 @@ const { isMirror } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
-
+    const { containerUri, id, body, ...resource } = ctx.params;
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
@@ -22,6 +21,7 @@ module.exports = {
         resource,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
+        body,
         slug: id
       });
       ctx.meta.$statusCode = 204;
@@ -40,11 +40,12 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
+      body: { type: 'string', optional: true },
       contentType: { type: 'string' },
       disassembly: { type: 'array', optional: true }
     },
     async handler(ctx) {
-      let { resource, contentType } = ctx.params;
+      let { resource, contentType, body } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       let newData;
@@ -81,15 +82,15 @@ module.exports = {
       }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      let newTriples = await this.bodyToTriples(resource, contentType);
+      let newTriples = await this.bodyToTriples(body || resource, contentType);
 
       const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
       // Filter out triples whose subject is not the resource itself
       // We don't want to update or delete resources with IDs
       // if it is a mirror, we allow other resources to be added here,
-      // this is useful when PUT is used ona patched container that contains remote members
-      // TODO: the only probem with that is that the remote mirrored members of a container are never deleted...
+      // this is useful when PUT is used on a patched container that contains remote members
+
       if (!mirror) {
         oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
         newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);

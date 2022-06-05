@@ -11,6 +11,7 @@
     "bson": "^4.0.4",
     "jsonld-streaming-serializer": "^1.2.0",
     "moleculer": "^0.14.17",
+    "moleculer-schedule": "^0.2.3",
     "n3": "^1.8.0",
     "path-to-regexp": "^6.2.0",
     "rdf-data-model": "^1.0.0",

@@ -2,12 +2,37 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
-const { defaultToArray } = require('../../utils');
+const { defaultToArray, regexPrefix } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
+  async updateOrphanMirroredResources() {
+    this.logger.info('updateOrphanMirroredResources');
+    let orphans = await this.broker.call('triplestore.query', {
+      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#orphanMirroredResource> ?o } }`
+    });
+    for (const orphan of orphans) {
+      try {
+        const resourceUri = orphan.s.value;
+
+        let newResource = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.TURTLE } });
+        newResource = await newResource.text();
+        newResource += ` <${resourceUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
+          new URL(resourceUri).origin
+        }> .`;
+        await this.broker.call(
+          'ldp.resource.put',
+          { resource: { id: resourceUri }, body: newResource, webId: 'system', contentType: MIME_TYPES.TURTLE },
+          { meta: { forceMirror: true } }
+        );
+      } catch (e) {
+        // fail silently
+      }
+    }
+  },
   async streamToFile(inputStream, filePath) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -21,6 +46,7 @@ module.exports = {
     if (contentType === MIME_TYPES.JSON) {
       return await this.broker.call('jsonld.toQuads', { input: body });
     } else {
+      if (!(typeof body == 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
       return new Promise((resolve, reject) => {
         const textStream = streamifyString(body);
         let res = [];

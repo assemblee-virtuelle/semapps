@@ -214,6 +214,27 @@ module.exports = {
           }
         }
 
+        // unmarking any orphan mirrored resources that belong to this server we just mirrored
+        // because we don't need to periodically watch them anymore
+        let orphans = await this.broker.call('triplestore.query', {
+          query: `SELECT DISTINCT ?s WHERE { 
+          GRAPH <${this.settings.mirrorGraphName}> { 
+          ?s <http://semapps.org/ns/core#orphanMirroredResource> <${serverUrl}> } }`
+        });
+
+        for (const orphan of orphans) {
+          try {
+            const resourceUri = orphan.s.value;
+            await this.broker.call('triplestore.update', {
+              webId: 'system',
+              query: `DELETE WHERE { GRAPH <${this.settings.mirrorGraphName}> { 
+              <${resourceUri}> <http://semapps.org/ns/core#orphanMirroredResource> ?q. } }`
+            });
+          } catch (e) {
+            // fail silently
+          }
+        }
+
         this.logger.info('Mirroring done.');
 
         // now subscribing to the relay actor in order to receive updates (updateBot)
@@ -291,6 +312,12 @@ module.exports = {
         !this.containerExcludedFromMirror(resourceUri) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
+        this.delete(resourceUri);
+      }
+    },
+    async 'ldp.resource.forceDeletedOrphanMirror'(ctx) {
+      const { resourceUri } = ctx.params;
+      if (this.hasFollowers) {
         this.delete(resourceUri);
       }
     },

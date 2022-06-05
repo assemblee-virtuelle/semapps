@@ -4,8 +4,8 @@ const {
   negotiateContentType,
   negotiateAccept,
   parseJson,
-  parseFile,
   parseTurtle,
+  parseFile,
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
 

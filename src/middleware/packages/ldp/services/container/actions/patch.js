@@ -1,11 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror } = require('../../../utils');
+const { isMirror, regexPrefix } = require('../../../utils');
 
 var SparqlParser = require('sparqljs').Parser;
 var parser = new SparqlParser();
-
-const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 module.exports = {
   api: async function api(ctx) {
@@ -80,7 +78,7 @@ module.exports = {
             } catch (e) {
               if (e.code == 404 && isMirror(insUri, this.settings.baseUrl)) {
                 // we need to import the remote resource
-                this.logger.log('IMPORTING ' + insUri);
+                this.logger.info('IMPORTING ' + insUri);
                 try {
                   let newResource = await fetch(insUri, { headers: { Accept: MIME_TYPES.TURTLE } });
                   newResource = await newResource.text();
@@ -93,6 +91,9 @@ module.exports = {
                   }
                   turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
                   turtleToSparql += newResource.replace(regexPrefix, '');
+                  turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
+                    new URL(insUri).origin
+                  }> .`;
                   turtleToSparql += '} }';
 
                   await ctx.call('triplestore.update', { query: turtleToSparql });
@@ -115,12 +116,44 @@ module.exports = {
             const delUri = del.triples[0].object.value;
             try {
               await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
+
+              // if the resource is attached to any container, it must be deleted.
+
+              let remaining = await ctx.call('triplestore.query', {
+                query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`
+              });
+              remaining = Number(remaining[0].count.value);
+              if (remaining === 0) {
+                const isM = isMirror(delUri, this.settings.baseUrl);
+
+                await ctx.call('triplestore.update', {
+                  query: `
+                    DELETE
+                    WHERE { 
+                      ${isM ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+                      <${delUri}> ?p1 ?o1 . ${isM ? '}' : ''}
+                    }
+                  `,
+                  webId: 'system'
+                });
+
+                ctx.call('triplestore.deleteOrphanBlankNodes', {
+                  graphName: isM ? this.settings.mirrorGraphName : undefined
+                });
+
+                ctx.emit(
+                  'ldp.resource.forceDeletedOrphanMirror',
+                  { resourceUri: delUri },
+                  { meta: { webId: null, dataset: null, isMirror: true } }
+                );
+              }
             } catch (e) {
               // fail silently
             }
           }
         }
       } catch (e) {
+        console.log(e);
         throw new MoleculerError(`Invalid SPARQL UPDATE content`, 400, 'BAD_REQUEST');
       }
 

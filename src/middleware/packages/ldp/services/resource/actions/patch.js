@@ -43,6 +43,10 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      body: {
+        type: 'string',
+        optional: true
+      },
       contentType: {
         type: 'string'
       },
