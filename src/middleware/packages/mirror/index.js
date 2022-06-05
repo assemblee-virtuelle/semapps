@@ -6,7 +6,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
-const { createFragmentURL, getContainerFromUri } = require('@semapps/ldp/utils');
+const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
 
 const { defaultToArray } = require('@semapps/activitypub/utils');
 
@@ -250,7 +250,8 @@ module.exports = {
       if (
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
-        (await this.checkResourcePublic(resourceUri))
+        (await this.checkResourcePublic(resourceUri)) &&
+        !isMirror(resourceUri,this.settings.baseUrl)
       ) {
         this.create(resourceUri);
       }
@@ -260,14 +261,15 @@ module.exports = {
       if (
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
-        (await this.checkResourcePublic(resourceUri))
+        (await this.checkResourcePublic(resourceUri)) &&
+        !isMirror(resourceUri,this.settings.baseUrl)
       ) {
         this.update(resourceUri);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
-      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri)) {
+      if (this.hasFollowers && !this.containerExcludedFromMirror(resourceUri) && !isMirror(resourceUri,this.settings.baseUrl)) {
         this.delete(resourceUri);
       }
     },
