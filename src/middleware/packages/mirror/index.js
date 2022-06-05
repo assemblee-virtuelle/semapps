@@ -47,7 +47,7 @@ module.exports = {
       .map(c => {
         this.excludedContainers[c.path] = true;
       });
-    console.log(this.excludedContainers);
+
     const services = await this.broker.call('$node.services');
 
     if (services.map(s => s.name).filter(s => s.startsWith('webacl')).length) {
@@ -64,6 +64,7 @@ module.exports = {
     const uri = urlJoin(this.settings.baseUrl, '/users', actorSettings.username);
     this.relayActorUri = uri;
 
+    // creating the local actor 'relay'
     if (!actorExist) {
       this.logger.info(`MirrorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
@@ -112,6 +113,8 @@ module.exports = {
 
     // check if has followers (initialize value)
     if (this.settings.acceptFollowers) this.hasFollowers = await this.checkHasFollowers();
+
+    // STARTING TO MIRROR ALL THE SERVERS
 
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
@@ -178,11 +181,14 @@ module.exports = {
             'INVALID'
           );
 
+        // We mirror only the first server, meaning, not the mirrored data of the remote server. 
+        // If A mirrors B, and B also contains a mirror of C, then when A mirrors B, 
+        // A will only mirror what is proper to B, not the mirrored data of C
+
         const partitions = firstServer['void:classPartition'];
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
-            //console.log(p['void:class'], p['void:entities'], p['void:uriSpace'])
 
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
@@ -193,7 +199,6 @@ module.exports = {
 
             if (rep.ok) {
               let container = await rep.text();
-              //console.log(container)
 
               const prefixes = [...container.matchAll(regexPrefix)];
 
@@ -289,13 +294,16 @@ module.exports = {
         defaultAddPublicRead,
         defaultRemovePublicRead
       } = ctx.params;
-      //console.log(this.hasWebacl,this.hasFollowers,!this.containerExcludedFromMirror(uri), uri)
+
       if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
-        //console.log(addPublicRead, removePublicRead, defaultAddPublicRead, defaultRemovePublicRead, uri )
 
         if (addPublicRead) {
-          if (isContainer && (await ctx.call('ldp.container.isEmpty', { containerUri: uri }))) return;
+          // we do not send an activity for empty containers
+          if (isContainer && (await ctx.call('ldp.container.isEmpty', { containerUri: uri }))) 
+            return;
+          
           this.create(uri);
+
         } else if (removePublicRead) {
           this.delete(uri);
         }
@@ -306,11 +314,15 @@ module.exports = {
           for (const res of resources) {
             if (!this.containerExcludedFromMirror(res)) {
               const isContainer = await ctx.call('ldp.container.exist', { containerUri: res });
+              // we do not send an activity for empty containers, neither for resources that belong 
+              // to a container that we just sent an activity for. Because this activity about the container
+              // will trigger on the mirroring side, a download and insert of all resources inside that container
               if (isContainer) {
                 const empty = await ctx.call('ldp.container.isEmpty', { containerUri: res });
                 if (empty) continue;
                 containers.push(res);
               } else if (containers.some(c => res.startsWith(c))) continue;
+
               this.create(res);
             }
           }
@@ -331,7 +343,6 @@ module.exports = {
     'ldp.registry.registered'(ctx) {
       const { container } = ctx.params;
       if (container.excludeFromMirror) this.excludedContainers[container.path] = true;
-      console.log('++++++++++', container.path, this.excludedContainers);
     }
   },
   methods: {
@@ -354,7 +365,7 @@ module.exports = {
         },
         to: await this.getFollowers()
       });
-      //console.log(AnnounceActivity)
+
     },
     async update(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
@@ -368,7 +379,7 @@ module.exports = {
         },
         to: await this.getFollowers()
       });
-      //console.log(AnnounceActivity)
+
     },
     async delete(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
@@ -382,7 +393,7 @@ module.exports = {
         },
         to: await this.getFollowers()
       });
-      //console.log(AnnounceActivity)
+
     },
     async checkHasFollowers() {
       const res = await this.broker.call('activitypub.collection.isEmpty', {
@@ -409,7 +420,7 @@ module.exports = {
           }
         `,
         webId: 'system'
-      }); //            filter not exists { ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/ldp#Container> }
+      });
       return res.map(o => o.object.value);
     },
     async getFollowers() {
@@ -419,7 +430,7 @@ module.exports = {
       return result ? defaultToArray(result.items) : [];
     },
     async inboxReceived(ctx) {
-      //console.log('Received ',ctx.params.activity)
+
       const { activity } = ctx.params;
 
       if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {

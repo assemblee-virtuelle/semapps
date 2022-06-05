@@ -84,11 +84,11 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
     p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
     o: namedNode('http://rdfs.org/ns/void#Dataset')
   });
-  graph.push({
-    s: namedNode(thisServer),
-    p: namedNode('http://purl.org/dc/terms/modified'),
-    o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
-  });
+  // graph.push({
+  //   s: namedNode(thisServer),
+  //   p: namedNode('http://purl.org/dc/terms/modified'),
+  //   o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
+  // });
   graph.push({
     s: namedNode(thisServer),
     p: namedNode('http://rdfs.org/ns/void#feature'),
@@ -107,8 +107,6 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
     const types = await ctx.call('triplestore.query', {
       query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
     });
-
-    console.log(types);
 
     let partition = {
       'http://rdfs.org/ns/void#uriSpace': p,
@@ -165,11 +163,11 @@ module.exports = {
           p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           o: namedNode('http://rdfs.org/ns/void#Dataset')
         });
-        graph.push({
-          s: namedNode(thisServer),
-          p: namedNode('http://purl.org/dc/terms/modified'),
-          o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
-        });
+        // graph.push({
+        //   s: namedNode(thisServer),
+        //   p: namedNode('http://purl.org/dc/terms/modified'),
+        //   o: literal('2020-11-17', namedNode('http://www.w3.org/2001/XMLSchema#date'))
+        // });
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#feature'),
