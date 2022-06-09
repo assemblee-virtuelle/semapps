@@ -7,7 +7,7 @@ module.exports = {
   },
   created() {
     if (!this.settings.baseUrl) {
-      throw new Error("The baseUrl setting of the migration service is mandatory")
+      throw new Error('The baseUrl setting of the migration service is mandatory');
     }
   },
   actions: {
