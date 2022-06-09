@@ -2,6 +2,14 @@ const { getAclUriFromResourceUri } = require('@semapps/webacl');
 
 module.exports = {
   name: 'migration',
+  settings: {
+    baseUrl: undefined
+  },
+  created() {
+    if (!this.settings.baseUrl) {
+      throw new Error("The baseUrl setting of the migration service is mandatory")
+    }
+  },
   actions: {
     async replacePredicate(ctx) {
       const { oldPredicate, newPredicate, dataset } = ctx.params;

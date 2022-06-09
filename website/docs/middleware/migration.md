@@ -21,7 +21,10 @@ const { MigrationService } = require('@semapps/migration');
 const path = require('path');
 
 module.exports = {
-  mixins: [MigrationService]
+  mixins: [MigrationService],
+  settings: {
+    baseUrl: 'http://localhost:3000'
+  }
 }
 ```
 
