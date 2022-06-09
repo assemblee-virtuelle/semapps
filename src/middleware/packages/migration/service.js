@@ -1,5 +1,5 @@
 const { getAclUriFromResourceUri } = require('@semapps/webacl');
-const { getContainerFromUri } = require("@semapps/ldp");
+const { getContainerFromUri } = require('@semapps/ldp');
 
 module.exports = {
   name: 'migration',
