@@ -8,13 +8,17 @@ const fetchWikidata = async ({ keyword, locale }) => {
       keyword
     )}`
   );
-  const json = await response.json();
-  return json.search.map(r => ({
-    uri: r.concepturi,
-    label: capitalize(r.match.text),
-    summary: capitalize(r.description),
-    icon: LanguageIcon
-  }));
+  if (response.ok) {
+    const json = await response.json();
+    return json.search.map(r => ({
+      uri: r.concepturi,
+      label: capitalize(r.match.text),
+      summary: capitalize(r.description),
+      icon: LanguageIcon
+    }));
+  } else {
+    throw new Error('Failed to fetch Wikidata server');
+  }
 };
 
 export default fetchWikidata;

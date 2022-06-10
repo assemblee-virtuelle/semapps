@@ -8,12 +8,16 @@ const fetchESCO = async ({ keyword, locale }) => {
       keyword
     )}&language=${locale}&type=skill&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`
   );
-  const json = await response.json();
-  return json._embedded.results.map(r => ({
-    uri: r.uri,
-    label: capitalize(r.title),
-    icon: StarBorderIcon
-  }));
+  if (response.ok) {
+    const json = await response.json();
+    return json._embedded.results.map(r => ({
+      uri: r.uri,
+      label: capitalize(r.title),
+      icon: StarBorderIcon
+    }));
+  } else {
+    throw new Error('Failed to fetch ESCO server');
+  }
 };
 
 export default fetchESCO;
