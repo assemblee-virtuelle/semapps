@@ -2,11 +2,9 @@ import LanguageIcon from '@material-ui/icons/Language';
 
 const capitalize = s => (s && s[0].toUpperCase() + s.slice(1)) || '';
 
-const fetchWikidata = async ({ keyword, locale }) => {
+const fetchWikidata = (apiUrl = 'https://www.wikidata.org/w/api.php') => async ({ keyword, locale }) => {
   const response = await fetch(
-    `https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(
-      keyword
-    )}`
+    `${apiUrl}?action=wbsearchentities&format=json&language=${locale}&uselang=${locale}&type=item&limit=10&origin=*&search=${encodeURIComponent(keyword)}`
   );
   if (response.ok) {
     const json = await response.json();
