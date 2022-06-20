@@ -104,8 +104,8 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                   source="method"
                   label="Méthode d'importation"
                   choices={[
-                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
-                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' }
+                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
+                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
                   ]}
                 />
               }
