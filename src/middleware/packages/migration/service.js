@@ -1,7 +1,16 @@
 const { getAclUriFromResourceUri } = require('@semapps/webacl');
+const { getContainerFromUri } = require('@semapps/ldp');
 
 module.exports = {
   name: 'migration',
+  settings: {
+    baseUrl: undefined
+  },
+  created() {
+    if (!this.settings.baseUrl) {
+      throw new Error('The baseUrl setting of the migration service is mandatory');
+    }
+  },
   actions: {
     async replacePredicate(ctx) {
       const { oldPredicate, newPredicate, dataset } = ctx.params;
@@ -54,6 +63,20 @@ module.exports = {
           DELETE { ?s ?p <${oldResourceUri}> }
           INSERT { ?s ?p <${newResourceUri}> }
           WHERE { ?s ?p <${oldResourceUri}> }
+        `,
+        dataset,
+        webId: 'system'
+      });
+
+      const oldContainerUri = getContainerFromUri(oldResourceUri);
+      const newContainerUri = getContainerFromUri(newResourceUri);
+
+      await ctx.call('triplestore.update', {
+        query: `
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          DELETE { <${oldContainerUri}> ldp:contains <${newResourceUri}> }
+          INSERT { <${newContainerUri}> ldp:contains <${newResourceUri}> }
+          WHERE { <${oldContainerUri}> ldp:contains <${newResourceUri}> }
         `,
         dataset,
         webId: 'system'
