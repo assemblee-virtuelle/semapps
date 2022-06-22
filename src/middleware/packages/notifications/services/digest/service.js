@@ -38,7 +38,8 @@ const DigestNotificationsService = {
   actions: {
     async build(ctx) {
       const { frequency, timestamp } = ctx.params;
-      const success = [], failures = [];
+      const success = [],
+        failures = [];
 
       const currentDate = timestamp ? new Date(timestamp) : new Date();
 
@@ -114,7 +115,7 @@ const DigestNotificationsService = {
               });
             }
           }
-        } catch(e) {
+        } catch (e) {
           failures.push({
             error: e.message,
             subscription
@@ -122,7 +123,7 @@ const DigestNotificationsService = {
         }
       }
 
-      return ({ failures, success });
+      return { failures, success };
     }
   },
   methods: {
