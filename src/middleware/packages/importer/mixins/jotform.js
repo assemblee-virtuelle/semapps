@@ -1,5 +1,5 @@
 const ImporterMixin = require('./importer');
-const { convertToIsoString } = require("../utils");
+const { convertToIsoString } = require('../utils');
 
 module.exports = {
   mixins: [ImporterMixin],
@@ -32,7 +32,7 @@ module.exports = {
         let submissions = [];
         const result1 = await this.fetch(url);
         if (result1.responseCode === 200) {
-          for( const form of result1.content ) {
+          for (const form of result1.content) {
             const result2 = await this.fetch('https://eu-api.jotform.com/form/' + form.id + '/submissions');
             if (result2.responseCode === 200) {
               submissions.push(...result2.content);
@@ -49,6 +49,6 @@ module.exports = {
       } else {
         return false;
       }
-    },
+    }
   }
 };
