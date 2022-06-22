@@ -18,27 +18,37 @@ module.exports = {
   },
   created() {
     if (this.settings.source.jotform.type === 'submissions') {
-      this.settings.source.apiUrl = 'https://api.jotform.com';
+      this.settings.source.apiUrl = 'https://eu-api.jotform.com';
       this.settings.source.headers = { apikey: this.settings.source.jotform.apiKey };
-      this.settings.source.getAllCompact = 'https://api.jotform.com/user/forms';
-      this.settings.source.getOneFull = data => 'https://api.jotform.com/submission/' + data.id;
+      this.settings.source.getAllCompact = 'https://eu-api.jotform.com/user/forms';
+      this.settings.source.getOneFull = data => 'https://eu-api.jotform.com/submission/' + data.id;
     } else {
       throw new Error('The JotformImporterMixin can only import submissions for now');
     }
   },
   methods: {
     async list(url) {
-      if (this.settings.source.discourse.type === 'submissions') {
+      if (this.settings.source.jotform.type === 'submissions') {
         let submissions = [];
-        const forms = await this.fetch(url);
-
-        for( const form of forms ) {
-          const result = await this.fetch('https://api.jotform.com/form/' + form.id + '/submissions');
-          submissions.push(...result);
+        const result1 = await this.fetch(url);
+        if (result1.responseCode === 200) {
+          for( const form of result1.content ) {
+            const result2 = await this.fetch('https://eu-api.jotform.com/form/' + form.id + '/submissions');
+            if (result2.responseCode === 200) {
+              submissions.push(...result2.content);
+            }
+          }
         }
-
         return submissions;
       }
-    }
+    },
+    async getOne(url) {
+      const result = await this.fetch(url);
+      if (result.responseCode === 200) {
+        return result.content;
+      } else {
+        return false;
+      }
+    },
   }
 };
