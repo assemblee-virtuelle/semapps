@@ -45,8 +45,8 @@ const jsonContext = {
   'void:vocabulary': {
     '@type': '@id'
   },
-  'void:entities': { '@type': "xsd:integer" },
-  'void:class': { '@type': "@id" },
+  'void:entities': { '@type': 'xsd:integer' },
+  'void:class': { '@type': '@id' },
   'semapps:blankNodes': {
     '@type': '@id'
   }
@@ -138,7 +138,7 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     ontologies: []
   },
-  dependencies: ['ldp.registry', 'api','triplestore','jsonld'],
+  dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
     get: {
       visibility: 'public',
@@ -263,7 +263,7 @@ module.exports = {
     },
     api_get: async function api(ctx) {
       let accept = ctx.meta.headers.accept;
-      if (accept.includes("*/*")) accept = MIME_TYPES.JSON;
+      if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
       else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
         throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
@@ -307,7 +307,7 @@ module.exports = {
             return partition;
           })
       );
-      return res
+      return res;
       // .filter(c => c['http://rdfs.org/ns/void#entities']);
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {

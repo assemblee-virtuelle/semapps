@@ -42,16 +42,17 @@ module.exports = {
     const containers = await this.broker.call('ldp.registry.list');
 
     let actorContainer;
-    Object.values(containers)
-      .map(c => {
-        if (c.excludeFromMirror) this.excludedContainers[c.path] = true;
-        // we take the first container that accepts the type 'Application'
-        if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application')) actorContainer = c.path;
-      });
+    Object.values(containers).map(c => {
+      if (c.excludeFromMirror) this.excludedContainers[c.path] = true;
+      // we take the first container that accepts the type 'Application'
+      if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application'))
+        actorContainer = c.path;
+    });
 
     if (!actorContainer) {
-      const errorMsg = "MirrorService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file";
-      throw new Error(errorMsg)
+      const errorMsg =
+        "MirrorService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file";
+      throw new Error(errorMsg);
     }
 
     const services = await this.broker.call('$node.services');
@@ -99,10 +100,10 @@ module.exports = {
 
     // wait until the outbox and followers collection are created, and keep their uri, for later use
     const actor = await this.broker.call('activitypub.actor.awaitCreateComplete', {
-      actorUri: uri,
+      actorUri: uri
     });
-    this.relayOutboxUri = actor.outbox
-    this.relayFollowersUri = actor.followers
+    this.relayOutboxUri = actor.outbox;
+    this.relayFollowersUri = actor.followers;
 
     // check if has followers (initialize value)
     if (this.settings.acceptFollowers) this.hasFollowers = await this.checkHasFollowers();
@@ -182,9 +183,8 @@ module.exports = {
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
-
             // we skip empty containers
-            if (p['void:entities'] === "0") continue;
+            if (p['void:entities'] === '0') continue;
 
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
@@ -461,7 +461,7 @@ module.exports = {
       // const result = await this.broker.call('activitypub.follow.listFollowers', {
       //   collectionUri: this.relayFollowersUri
       // });
-      return [this.relayFollowersUri, PUBLIC_URI] //result ? defaultToArray(result.items) : [];
+      return [this.relayFollowersUri, PUBLIC_URI]; //result ? defaultToArray(result.items) : [];
     },
     async inboxReceived(ctx) {
       const { activity } = ctx.params;

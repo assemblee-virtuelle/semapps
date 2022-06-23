@@ -64,8 +64,8 @@ module.exports = {
         parsedQuery.updates.map(p => updates[p.updateType].push(p[p.updateType][0]));
 
         for (const inss of updates.insert) {
+          // check that the containerUri is the same as specified in the params. ignore if not.
           for (const ins of inss.triples)
-            // check that the containerUri is the same as specified in the params. ignore if not.
             if (ins.subject.value === containerUri && ins.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
               const insUri = ins.object.value;
               try {
