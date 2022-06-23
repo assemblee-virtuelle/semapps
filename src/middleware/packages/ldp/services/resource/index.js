@@ -58,8 +58,8 @@ module.exports = {
   methods,
   jobs: [
     {
-      rule: '0 * * * * *',
-      handler: 'updateOrphanMirroredResources'
+      rule: '0 * * * *',
+      handler: 'updateSingleMirroredResources'
     }
   ]
 };

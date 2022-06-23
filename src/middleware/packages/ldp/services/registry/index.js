@@ -30,7 +30,8 @@ module.exports = {
       await this.broker.waitForServices(['auth.account']);
     }
     if (this.settings.containers.length > 0) {
-      // Do not await the registerAllContainers, to avoid deadlock, as we need the service to finishe its initialization in order to be available for the WebACL middleware (which is called by the register action)
+      // Do not await the registerAllContainers, to avoid deadlock, as we need the service to finish its initialization
+      // in order to be available for the WebACL middleware (which is called by the register action)
       this.registerAllContainers();
       // this code below does not work as it does not respects the order of creation of containers.
       // Promise.all( this.settings.containers.map(
@@ -46,7 +47,7 @@ module.exports = {
       for (let container of this.settings.containers) {
         // Ensure backward compatibility
         if (typeof container === 'string') container = { path: container };
-        // Do not await this action, as we need the service to be available for the WebACL middleware
+        // we await each container registration so they happen in order (and the root container first)
         await this.actions.register(container);
       }
     },

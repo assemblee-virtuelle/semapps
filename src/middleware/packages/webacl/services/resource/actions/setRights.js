@@ -116,13 +116,13 @@ module.exports = {
       const removePublicRead = differenceDelete.some(
         triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
-      const defaultAddPublicRead =
+      const addDefaultPublicRead =
         isContainer &&
         differenceAdd.some(
           triple =>
             triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
         );
-      const defaultRemovePublicRead =
+      const removeDefaultPublicRead =
         isContainer &&
         differenceDelete.some(
           triple =>
@@ -136,8 +136,8 @@ module.exports = {
           defaultRightsUpdated,
           addPublicRead,
           removePublicRead,
-          defaultAddPublicRead,
-          defaultRemovePublicRead
+          addDefaultPublicRead,
+          removeDefaultPublicRead
         },
         { meta: { webId: null, dataset: null } }
       );

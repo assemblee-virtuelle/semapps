@@ -1,10 +1,8 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
-const { ACTOR_TYPES, ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { ACTOR_TYPES, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
-
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
 
@@ -29,7 +27,7 @@ module.exports = {
     'webfinger',
     'activitypub',
     'activitypub.follow',
-    'ldp.void',
+    'void',
     'auth.account',
     'ldp.container',
     'ldp.registry'
@@ -39,14 +37,22 @@ module.exports = {
     this.excludedContainers = {};
 
     // Ensure services have been started
-    await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account', 'activitypub.follow']);
+    // await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account', 'activitypub.follow']);
 
     const containers = await this.broker.call('ldp.registry.list');
+
+    let actorContainer;
     Object.values(containers)
-      .filter(c => c.excludeFromMirror)
       .map(c => {
-        this.excludedContainers[c.path] = true;
+        if (c.excludeFromMirror) this.excludedContainers[c.path] = true;
+        // we take the first container that accepts the type 'Application'
+        if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application')) actorContainer = c.path;
       });
+
+    if (!actorContainer) {
+      const errorMsg = "MirrorService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file";
+      throw new Error(errorMsg)
+    }
 
     const services = await this.broker.call('$node.services');
 
@@ -61,7 +67,7 @@ module.exports = {
 
     this.logger.info('actorExist ' + actorExist);
 
-    const uri = urlJoin(this.settings.baseUrl, '/users', actorSettings.username);
+    const uri = urlJoin(this.settings.baseUrl, actorContainer, actorSettings.username);
     this.relayActorUri = uri;
 
     // creating the local actor 'relay'
@@ -91,25 +97,12 @@ module.exports = {
       });
     }
 
-    // wait until the outbox collection is created, and keep its uri, for later use
-    do {
-      this.relayOutboxUri = await this.broker.call('activitypub.actor.getCollectionUri', {
-        actorUri: uri,
-        predicate: 'outbox',
-        webId: 'system'
-      });
-      if (this.relayOutboxUri === undefined) await delay(1000);
-    } while (!this.relayOutboxUri);
-
-    // wait until the followers collection is created, and keep its uri, for later use
-    do {
-      this.relayFollowersUri = await this.broker.call('activitypub.actor.getCollectionUri', {
-        actorUri: uri,
-        predicate: 'followers',
-        webId: 'system'
-      });
-      if (this.relayFollowersUri === undefined) await delay(1000);
-    } while (!this.relayFollowersUri);
+    // wait until the outbox and followers collection are created, and keep their uri, for later use
+    const actor = await this.broker.call('activitypub.actor.awaitCreateComplete', {
+      actorUri: uri,
+    });
+    this.relayOutboxUri = actor.outbox
+    this.relayFollowersUri = actor.followers
 
     // check if has followers (initialize value)
     if (this.settings.acceptFollowers) this.hasFollowers = await this.checkHasFollowers();
@@ -189,6 +182,10 @@ module.exports = {
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
+
+            // we skip empty containers
+            if (p['void:entities'] === "0") continue;
+
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
               headers: {
@@ -214,21 +211,21 @@ module.exports = {
           }
         }
 
-        // unmarking any orphan mirrored resources that belong to this server we just mirrored
+        // unmarking any single mirrored resources that belong to this server we just mirrored
         // because we don't need to periodically watch them anymore
-        let orphans = await this.broker.call('triplestore.query', {
+        let singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
           GRAPH <${this.settings.mirrorGraphName}> { 
-          ?s <http://semapps.org/ns/core#orphanMirroredResource> <${serverUrl}> } }`
+          ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
 
-        for (const orphan of orphans) {
+        for (const single of singles) {
           try {
-            const resourceUri = orphan.s.value;
+            const resourceUri = single.s.value;
             await this.broker.call('triplestore.update', {
               webId: 'system',
               query: `DELETE WHERE { GRAPH <${this.settings.mirrorGraphName}> { 
-              <${resourceUri}> <http://semapps.org/ns/core#orphanMirroredResource> ?q. } }`
+              <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
             });
           } catch (e) {
             // fail silently
@@ -280,7 +277,7 @@ module.exports = {
         (await this.checkResourcePublic(resourceUri)) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
-        this.create(resourceUri);
+        this.resourceCreated(resourceUri);
       }
     },
     async 'ldp.resource.updated'(ctx) {
@@ -291,7 +288,7 @@ module.exports = {
         (await this.checkResourcePublic(resourceUri)) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
-        this.update(resourceUri);
+        this.resourceUpdated(resourceUri);
       }
     },
     async 'ldp.container.patched'(ctx) {
@@ -302,7 +299,7 @@ module.exports = {
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
       ) {
-        this.update(containerUri);
+        this.resourceUpdated(containerUri);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -312,13 +309,13 @@ module.exports = {
         !this.containerExcludedFromMirror(resourceUri) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
-        this.delete(resourceUri);
+        this.resourceDeleted(resourceUri);
       }
     },
-    async 'ldp.resource.forceDeletedOrphanMirror'(ctx) {
+    async 'ldp.resource.deletedSingleMirror'(ctx) {
       const { resourceUri } = ctx.params;
       if (this.hasFollowers) {
-        this.delete(resourceUri);
+        this.resourceDeleted(resourceUri);
       }
     },
     async 'webacl.resource.created'(ctx) {
@@ -330,8 +327,8 @@ module.exports = {
         isContainer,
         addPublicRead,
         removePublicRead,
-        defaultAddPublicRead,
-        defaultRemovePublicRead
+        addDefaultPublicRead,
+        removeDefaultPublicRead
       } = ctx.params;
 
       if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
@@ -339,12 +336,12 @@ module.exports = {
           // we do not send an activity for empty containers
           if (isContainer && (await ctx.call('ldp.container.isEmpty', { containerUri: uri }))) return;
 
-          this.create(uri);
+          this.resourceCreated(uri);
         } else if (removePublicRead) {
-          this.delete(uri);
+          this.resourceDeleted(uri);
         }
 
-        if (defaultAddPublicRead) {
+        if (addDefaultPublicRead) {
           const resources = await this.listAllResourcesInSubContainer(uri);
           let containers = [];
           for (const res of resources) {
@@ -359,15 +356,15 @@ module.exports = {
                 containers.push(res);
               } else if (containers.some(c => res.startsWith(c))) continue;
 
-              this.create(res);
+              this.resourceCreated(res);
             }
           }
-        } else if (defaultRemovePublicRead) {
+        } else if (removeDefaultPublicRead) {
           const resources = await this.listAllResourcesInSubContainer(uri);
           for (const res of resources) {
             if (!this.containerExcludedFromMirror(res)) {
               const isPublic = await this.checkResourcePublic(res);
-              if (!isPublic) this.delete(res);
+              if (!isPublic) this.resourceDeleted(res);
             }
           }
         }
@@ -389,7 +386,7 @@ module.exports = {
       }
       return false;
     },
-    async create(resourceUri) {
+    async resourceCreated(resourceUri) {
       // each time a resource is created, it is also attached to a container,
       // which triggers an update activity on that container to be sent to all followers.
       // for the sake of non redundancy, we therefor do nothing when a create happens.
@@ -406,7 +403,7 @@ module.exports = {
       //   to: await this.getFollowers()
       // });
     },
-    async update(resourceUri) {
+    async resourceUpdated(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
         collectionUri: this.relayOutboxUri,
         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -419,7 +416,7 @@ module.exports = {
         to: await this.getFollowers()
       });
     },
-    async delete(resourceUri) {
+    async resourceDeleted(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
         collectionUri: this.relayOutboxUri,
         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -461,10 +458,10 @@ module.exports = {
       return res.map(o => o.object.value);
     },
     async getFollowers() {
-      const result = await this.broker.call('activitypub.follow.listFollowers', {
-        collectionUri: this.relayFollowersUri
-      });
-      return result ? defaultToArray(result.items) : [];
+      // const result = await this.broker.call('activitypub.follow.listFollowers', {
+      //   collectionUri: this.relayFollowersUri
+      // });
+      return [this.relayFollowersUri, PUBLIC_URI] //result ? defaultToArray(result.items) : [];
     },
     async inboxReceived(ctx) {
       const { activity } = ctx.params;
@@ -473,7 +470,7 @@ module.exports = {
         // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
         if (!this.mirroredServers.includes(activity.actor)) {
           console.log(this.mirroredServers);
-          this.logger.info('SECURITY ALTER : received announce from actor we are not following : ' + activity.actor);
+          this.logger.warn('SECURITY ALERT : received announce from actor we are not following : ' + activity.actor);
           return;
         }
         switch (activity.object.type) {

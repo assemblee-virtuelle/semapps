@@ -8,13 +8,13 @@ Only the public data can be mirrored. If your server is using webacl, then the `
 
 ## Note to developers of semapps
 
-If you are using `yarn` and its ability to create a dev env where the packages in semapps main repo are linked to your test instance (you probably do), then there is a new package called `@semapps/mirror` and it need to be linked locally.
+If you are using `yarn` and its ability to create a dev env where the packages in semapps main repo are linked to your test instance (you probably do), then there are 2 new packages called `@semapps/mirror` and `@semapps/void` that need to be linked locally.
 
 in `src/middleware` run the command `yarn run link-all`
 
-in your lcal test instance of semapps (whatever that be), if in your `package.json` file you had added 2 lines for the scripts `link-semapps-packages` and `unlink-semapps-packages`, then you should now add `@semapps/mirror` in those lines.
+in your local test instance of semapps (whatever that be), if in your `package.json` file you had added 2 lines for the scripts `link-semapps-packages` and `unlink-semapps-packages`, then you should now add `@semapps/mirror` and `@semapps/void` in those lines.
 
-then run the command `link-semapps-packages` from this test instance of the middleware.
+then run the command `yarn run link-semapps-packages` from this test instance of the middleware.
 
 ## Installation
 
@@ -56,9 +56,13 @@ the last line (about the volume) can be different on your setup. It has to be th
 
 ### Adding and configuring the service
 
-In order to use this service you will need to add `@semapps/mirror` to your npm `package.json`, by using the command `npm i @semapps/mirror --save`.
+In order to use this service you will need to add `@semapps/mirror` and `@semapps/void` to your npm `package.json`, by using the command 
+```
+npm i @semapps/void --save
+npm i @semapps/mirror --save
+```
 
-Then you have to create this new service somehow. If you use text files to configure your moleculer services, create a file `mirror.service.js` that will look someting like this : 
+Then you have to create those new services somehow. If you use text files to configure your moleculer services, create a file `mirror.service.js` that will look someting like this : 
 ```
 const MirrorService = require('@semapps/mirror');
 const CONFIG = require('../config'); // check this line. your config file might be somewhere else.
@@ -67,6 +71,20 @@ module.exports = {
   mixins: [MirrorService],
   settings: {
     baseUrl: CONFIG.HOME_URL,
+  } 
+};
+```
+and a file `void.service.js` that will look someting like this : 
+```
+const VoidService = require('@semapps/void');
+const ontologies = require('../ontologies'); // check this line. your ontologies file might be somewhere else.
+const CONFIG = require('../config'); // check this line. your config file might be somewhere else.
+
+module.exports = {
+  mixins: [VoidService],
+  settings: {
+    baseUrl: CONFIG.HOME_URL,
+    ontologies,
   } 
 };
 ```
@@ -83,7 +101,11 @@ If you want to mirror others, but not to offer any service of mirroring yourself
     acceptFollowers: false,
 ```
 
-An important step is also to make sure that your server has a `/users` container. The mirror service will create an ActivityPub actor there, with the name `relay`. The configuration of this container should look like this :
+An important step is also to make sure that your server has a container that accepts `Application` type.
+The mirror service will create an ActivityPub actor there, with the name `relay`.
+By example you could put the actor in the `/users` container.
+
+The configuration of this container should look like this in `containers.js` :
 ```
 {
   path: '/users',
@@ -95,7 +117,7 @@ An important step is also to make sure that your server has a `/users` container
 
 The `Application` in `acceptedTypes` is important.
 
-You most probably want to use the option `excludeFromMirror: true`. It will hide this container from the mirroring servers.
+You also most probably want to use the option `excludeFromMirror: true`. It will hide this container from the mirroring servers.
 
 If other containers need to be hidden and not available for mirroring, you can use this option too for them.
 
@@ -114,7 +136,7 @@ This graph is not directly editable.
 Then your server will follow the ActivityPub relay actor of the remote server you are mirroring.
 Everytime some data changes occur on the remote server, your server will receive an Annouce activity and will update its local mirror of the data.
 
-You can retrieve the mirrored data with `LDP GET` and you can also link to this data inside your containers, with `LDP PATCH`.
+You can retrieve the mirrored data with the action `ldp.resource.get` or via the SPARQL endpoint, and you can also link to this data inside your containers, with `LDP PATCH`.
 
 ### `ldp.container.patch`
 

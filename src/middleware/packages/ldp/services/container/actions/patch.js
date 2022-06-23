@@ -10,7 +10,6 @@ module.exports = {
     let { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
-      //const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
       if (ctx.meta.parser === 'sparql') {
         resourceUri = await ctx.call('ldp.container.patch', {
           containerUri,
@@ -19,8 +18,6 @@ module.exports = {
         });
       } else throw new MoleculerError(`the content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
       ctx.meta.$responseHeaders = {
-        //Location: resourceUri,
-        //Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
         'Content-Length': 0
       };
       ctx.meta.$statusCode = 204;
@@ -67,8 +64,8 @@ module.exports = {
         parsedQuery.updates.map(p => updates[p.updateType].push(p[p.updateType][0]));
 
         for (const inss of updates.insert) {
-          // check that the containerUri is the same as specified in the params.
           for (const ins of inss.triples)
+            // check that the containerUri is the same as specified in the params. ignore if not.
             if (ins.subject.value === containerUri && ins.predicate.value === 'http://www.w3.org/ns/ldp#contains') {
               const insUri = ins.object.value;
               try {
@@ -89,7 +86,7 @@ module.exports = {
                     }
                     turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
                     turtleToSparql += newResource.replace(regexPrefix, '');
-                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
+                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
                       new URL(insUri).origin
                     }> .`;
                     turtleToSparql += '} }';
@@ -99,7 +96,7 @@ module.exports = {
                     // now if the import went well, we can retry the attach
                     await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
                   } catch (e) {
-                    // fail silently
+                    this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e);
                   }
                 }
               }
@@ -138,7 +135,7 @@ module.exports = {
                   });
 
                   ctx.emit(
-                    'ldp.resource.forceDeletedOrphanMirror',
+                    'ldp.resource.deletedSingleMirror',
                     { resourceUri: delUri },
                     { meta: { webId: null, dataset: null, isMirror: true } }
                   );

@@ -148,7 +148,7 @@ module.exports = {
         const addPublicRead = difference.some(
           triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
         );
-        const defaultAddPublicRead =
+        const addDefaultPublicRead =
           isContainer &&
           difference.some(
             triple =>
@@ -156,7 +156,7 @@ module.exports = {
           );
         ctx.emit(
           'webacl.resource.updated',
-          { uri: resourceUri, isContainer, defaultRightsUpdated, addPublicRead, defaultAddPublicRead },
+          { uri: resourceUri, isContainer, defaultRightsUpdated, addPublicRead, addDefaultPublicRead },
           { meta: { webId: null, dataset: null } }
         );
       }

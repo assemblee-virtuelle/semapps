@@ -1,16 +1,17 @@
 {
-  "name": "@semapps/mirror",
+  "name": "@semapps/void",
   "version": "0.4.0-alpha.32",
-  "description": "Mirror module for SemApps",
+  "description": "Void module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/mime-types": "0.4.0-alpha.32",
-    "@semapps/activitypub": "0.4.0-alpha.32",
+    "@semapps/middlewares": "0.4.0-alpha.32",
     "@semapps/ldp": "0.4.0-alpha.32",
     "moleculer": "^0.14.17",
     "url-join": "^4.0.1",
-    "node-fetch": "^2.6.6"
+    "n3": "^1.8.0",
+    "jsonld-streaming-serializer": "^1.2.0"
   },
   "publishConfig": {
     "access": "public"
