@@ -227,6 +227,45 @@ const authProvider = ({
     } catch (e) {
       throw new Error('app.notification.new_password_error');
     }
+  },
+  getAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the getAccountSettings method'
+      );
+
+    try {
+      const { json } = await httpClient(`${serverUrl}auth/account`, {
+        method: 'GET'
+      });
+      return json;
+    } catch (e) {
+      throw new Error('app.notification.get_settings_error');
+    }
+  },
+  updateAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the updateAccountSettings method'
+      );
+
+    try {
+      const { email, currentPassword, newPassword } = params;
+
+      await httpClient(`${serverUrl}auth/account`, {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      if (e.message === 'auth.account.invalid_password') {
+        throw new Error('app.notification.invalid_password');
+      }
+
+      throw new Error('app.notification.update_settings_error');
+    }
   }
 });
 

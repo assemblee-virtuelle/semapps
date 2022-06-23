@@ -105,7 +105,7 @@ const RegistryService = {
           [collection.attachPredicate]: { '@id': collectionUri }
         },
         contentType: MIME_TYPES.JSON,
-        webId
+        webId: 'system'
       });
     },
     async deleteCollection(ctx) {

@@ -338,12 +338,20 @@ module.exports = {
       }
     },
     async processSynchronize(job) {
-      const interval = cronParser.parseExpression(this.settings.cronJob.time, {
-        currentDate: new Date(job.opts.timestamp),
-        tz: this.settings.cronJob.timeZone
-      });
-      const toDate = new Date(interval.next().toISOString());
-      const fromDate = new Date(interval.prev().toISOString());
+      let fromDate, toDate;
+
+      if (this.settings.cronJob.time) {
+        const interval = cronParser.parseExpression(this.settings.cronJob.time, {
+          currentDate: new Date((job.opts && job.opts.timestamp) || undefined),
+          tz: this.settings.cronJob.timeZone
+        });
+        toDate = new Date(interval.next().toISOString());
+        fromDate = new Date(interval.prev().toISOString());
+      } else {
+        toDate = new Date();
+        fromDate = new Date(Date.now() - 86400 * 1000);
+      }
+
       job.log('Looking for updates from ' + fromDate.toString() + ' to ' + toDate.toString());
 
       let deletedUris = {},

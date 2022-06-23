@@ -52,7 +52,8 @@ const englishMessages = {
       new_user_created: 'Your account has been successfully created',
       user_connected: 'You are now connected',
       user_disconnected: 'You are now disconnected',
-      bad_request: 'Bad request (Error message returned by the server: %{error})'
+      bad_request: 'Bad request (Error message returned by the server: %{error})',
+      account_settings_updated: 'Your account settings have been successfully updated'
     }
   }
 };
