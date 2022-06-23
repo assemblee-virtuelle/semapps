@@ -2,6 +2,18 @@ import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
 import jsonld from 'jsonld';
 
+const compare = (a, b) => {
+  switch(typeof a) {
+    case 'string':
+      return a.localeCompare(b);
+    case 'number':
+    case 'bigint':
+      return a - b;
+    default:
+      return 0;
+  }
+};
+
 const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
   const dataModel = resources[resourceId];
@@ -66,14 +78,14 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
     // TODO sort and paginate the results in the SPARQL query to improve performances
     if (params.sort) {
       returnData = returnData.sort((a, b) => {
-        if (a[params.sort.field] && b[params.sort.field]) {
+        if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
           if (params.sort.order === 'ASC') {
-            return a[params.sort.field].localeCompare(b[params.sort.field]);
+            return compare(a[params.sort.field], b[params.sort.field]);
           } else {
-            return b[params.sort.field].localeCompare(a[params.sort.field]);
+            return compare(b[params.sort.field], a[params.sort.field]);
           }
         } else {
-          return true;
+          return 0;
         }
       });
     }
