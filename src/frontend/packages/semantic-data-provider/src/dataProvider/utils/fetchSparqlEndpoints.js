@@ -3,7 +3,7 @@ import buildSparqlQuery from './buildSparqlQuery';
 import jsonld from 'jsonld';
 
 const compare = (a, b) => {
-  switch(typeof a) {
+  switch (typeof a) {
     case 'string':
       return a.localeCompare(b);
     case 'number':
