@@ -12,11 +12,19 @@ module.exports = {
     podProvider: false,
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
-    preferredViewForResource: null,
+    preferredViewForResource: null
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
-    const { baseUrl, containers, ontologies, podProvider, defaultContainerOptions, mirrorGraphName, preferredViewForResource } = this.settings;
+    const {
+      baseUrl,
+      containers,
+      ontologies,
+      podProvider,
+      defaultContainerOptions,
+      mirrorGraphName,
+      preferredViewForResource
+    } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
       settings: {

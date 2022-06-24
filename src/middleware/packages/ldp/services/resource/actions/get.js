@@ -21,15 +21,14 @@ module.exports = {
       ...ctx.meta.headers
     };
     try {
-
       if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
         const webId = ctx.meta.webId || 'anon';
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
         if (resourceExist) {
           const redirect = await this.settings.preferredViewForResource(resourceUri, preferredView);
           if (redirect && redirect !== resourceUri) {
-            ctx.meta.$statusCode = 302
-            ctx.meta.$location = redirect
+            ctx.meta.$statusCode = 302;
+            ctx.meta.$location = redirect;
             ctx.meta.$responseHeaders = {
               'Content-Length': 0
             };
@@ -44,7 +43,6 @@ module.exports = {
       });
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return res;
-
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -87,7 +85,6 @@ module.exports = {
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
       if (resourceExist) {
-
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
 
