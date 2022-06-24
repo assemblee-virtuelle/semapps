@@ -13,7 +13,6 @@ const negotiateType = function(incomingType) {
       accept: negotiatorType
     }
   });
-
   const rawNegotiatedAccept = negotiator.mediaType(availableMediaTypes);
   if (rawNegotiatedAccept !== undefined) {
     return TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegotiatedAccept))[0];
