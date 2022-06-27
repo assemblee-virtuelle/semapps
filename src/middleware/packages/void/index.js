@@ -43,6 +43,7 @@ const jsonContext = {
   },
   'void:entities': { '@type': 'xsd:integer' },
   'void:class': { '@type': '@id' },
+  'void:classPartition': { '@type': '@id' },
   'semapps:blankNodes': {
     '@type': '@id'
   }
