@@ -1,7 +1,7 @@
-import urlJoin from "url-join";
+import urlJoin from 'url-join';
 import getOne from './getOne';
 import uploadAllFiles from '../utils/uploadAllFiles';
-import findContainersWithTypes from "../utils/findContainersWithTypes";
+import findContainersWithTypes from '../utils/findContainersWithTypes';
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
@@ -16,8 +16,7 @@ const createMethod = config => async (resourceId, params) => {
     serverKey = Object.keys(dataModel.create.container)[0];
     containerUri = urlJoin(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
   } else {
-    serverKey =
-      dataModel.create?.server || Object.keys(dataServers).find(key => dataServers[key].default === true);
+    serverKey = dataModel.create?.server || Object.keys(dataServers).find(key => dataServers[key].default === true);
     if (!serverKey) throw new Error('You must define a server for the creation, or a container, or a default server');
 
     const containers = findContainersWithTypes(dataModel.types, [serverKey], dataServers);
@@ -33,7 +32,7 @@ const createMethod = config => async (resourceId, params) => {
     containerUri = containers[serverKeys[0]][0];
   }
 
-  if( params.data ) {
+  if (params.data) {
     if (dataModel.fieldsMapping?.title) {
       if (Array.isArray(dataModel.fieldsMapping.title)) {
         headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
@@ -60,7 +59,7 @@ const createMethod = config => async (resourceId, params) => {
     const resourceUri = responseHeaders.get('Location');
     return await getOne(config)(resourceId, { id: resourceUri });
   } else if (params.id) {
-    headers.set('Content-Type', 'application/sparql-update')
+    headers.set('Content-Type', 'application/sparql-update');
 
     await httpClient(containerUri, {
       method: 'PATCH',
