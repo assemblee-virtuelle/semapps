@@ -25,7 +25,7 @@ module.exports = {
         const webId = ctx.meta.webId || 'anon';
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
         if (resourceExist) {
-          const redirect = await this.settings.preferredViewForResource(resourceUri, preferredView);
+          const redirect = await this.settings.preferredViewForResource.bind(this)(resourceUri, preferredView);
           if (redirect && redirect !== resourceUri) {
             ctx.meta.$statusCode = 302;
             ctx.meta.$location = redirect;
