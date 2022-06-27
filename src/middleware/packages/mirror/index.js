@@ -458,8 +458,7 @@ module.exports = {
       return res.map(o => o.object.value);
     },
     async getFollowers() {
-
-      return [this.relayFollowersUri, PUBLIC_URI]; 
+      return [this.relayFollowersUri, PUBLIC_URI];
     },
     async inboxReceived(ctx) {
       const { activity } = ctx.params;
