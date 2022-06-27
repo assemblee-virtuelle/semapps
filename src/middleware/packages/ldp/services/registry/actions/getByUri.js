@@ -1,4 +1,4 @@
-const { getContainerFromUri } = require('../../../utils');
+const { getContainerFromUri, isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -12,6 +12,8 @@ module.exports = {
     if (!containerUri && !resourceUri) {
       throw new Error('The param containerUri or resourceUri must be provided to ldp.registry.getByUri');
     }
+
+    if (!containerUri && isMirror(resourceUri, this.settings.baseUrl)) return {};
 
     const path = new URL(containerUri || getContainerFromUri(resourceUri)).pathname;
 

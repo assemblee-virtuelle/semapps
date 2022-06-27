@@ -10,9 +10,11 @@
     "@semapps/triplestore": "0.4.0-alpha.34",
     "bson": "^4.0.4",
     "moleculer": "^0.14.17",
+    "moleculer-schedule": "^0.2.3",
     "path-to-regexp": "^6.2.0",
     "rdf-data-model": "^1.0.0",
     "rdf-parse": "^1.7.0",
+    "sparqljs": "^3.5.2",
     "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1"

@@ -1,11 +1,11 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { isMirror } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
-
+    const { containerUri, id, body, ...resource } = ctx.params;
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
@@ -21,6 +21,7 @@ module.exports = {
         resource,
         contentType: ctx.meta.headers['content-type'],
         containerUri,
+        body,
         slug: id
       });
       ctx.meta.$statusCode = 204;
@@ -39,16 +40,21 @@ module.exports = {
     params: {
       resource: { type: 'object' },
       webId: { type: 'string', optional: true },
+      body: { type: 'string', optional: true },
       contentType: { type: 'string' },
       disassembly: { type: 'array', optional: true }
     },
     async handler(ctx) {
-      let { resource, contentType } = ctx.params;
+      let { resource, contentType, body } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       let newData;
 
       const resourceUri = resource.id || resource['@id'];
+
+      const mirror = isMirror(resourceUri, this.settings.baseUrl);
+      if (mirror && !ctx.meta.forceMirror)
+        throw new MoleculerError('Mirrored resources cannot be modified with LDP PUT', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -64,7 +70,7 @@ module.exports = {
       });
 
       // Adds the default context, if it is missing
-      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      if (contentType === MIME_TYPES.JSON && !resource['@context'] && jsonContext) {
         resource = {
           '@context': jsonContext,
           ...resource
@@ -76,14 +82,19 @@ module.exports = {
       }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      let newTriples = await this.bodyToTriples(resource, contentType);
+      let newTriples = await this.bodyToTriples(body || resource, contentType);
 
       const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
       // Filter out triples whose subject is not the resource itself
       // We don't want to update or delete resources with IDs
-      oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-      newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+      // if it is a mirror, we allow other resources to be added here,
+      // this is useful when PUT is used on a patched container that contains remote members
+
+      if (!mirror) {
+        oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
+        newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+      }
 
       oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
       newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
@@ -106,14 +117,15 @@ module.exports = {
 
         // Generate the query
         let query = '';
+        if (mirror) query += 'WITH <' + this.settings.mirrorGraphName + '> ';
         if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
         if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-        query += `WHERE { `;
+        query += 'WHERE { ';
+        if (mirror) query += 'GRAPH <' + this.settings.mirrorGraphName + '> {';
         if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
         if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+        if (mirror) query += '} ';
         query += ` }`;
-
-        console.log('query', query);
 
         await ctx.call('triplestore.update', { query, webId });
 
@@ -137,7 +149,7 @@ module.exports = {
             newData,
             webId
           },
-          { meta: { webId: null, dataset: null } }
+          { meta: { webId: null, dataset: null, isMirror: mirror } }
         );
       }
 

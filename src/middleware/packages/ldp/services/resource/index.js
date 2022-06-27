@@ -9,12 +9,17 @@ const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
 
+const Schedule = require('moleculer-schedule');
+
 module.exports = {
   name: 'ldp.resource',
+  mixins: [Schedule],
   settings: {
     baseUrl: null,
     ontologies: [],
-    podProvider: false
+    podProvider: false,
+    mirrorGraphName: null,
+    preferredViewForResource: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -51,5 +56,11 @@ module.exports = {
       }
     }
   },
-  methods
+  methods,
+  jobs: [
+    {
+      rule: '0 * * * *',
+      handler: 'updateSingleMirroredResources'
+    }
+  ]
 };

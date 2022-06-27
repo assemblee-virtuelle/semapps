@@ -11,7 +11,8 @@ module.exports = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
-    readOnly: false
+    readOnly: false,
+    excludeFromMirror: false
   },
   dependencies: ['ldp'],
   async started() {
@@ -23,6 +24,7 @@ module.exports = {
       jsonContext: this.settings.jsonContext,
       dereference: this.settings.dereference,
       permissions: this.settings.permissions,
+      excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
         post: this.name + '.post',

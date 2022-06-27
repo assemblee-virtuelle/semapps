@@ -1,3 +1,6 @@
+const { MoleculerError } = require('moleculer').Errors;
+const { isMirror } = require('../../../utils');
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -13,11 +16,15 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
+    if (isMirror(containerUri, this.settings.baseUrl))
+      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
-        throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
+        //throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
+        throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
       }
     }
 

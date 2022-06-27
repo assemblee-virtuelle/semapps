@@ -39,6 +39,7 @@ module.exports = {
       ],
     },
     'middleware/migration',
+    'middleware/mirror',
     {
       type: 'category',
       label: 'Notifications',

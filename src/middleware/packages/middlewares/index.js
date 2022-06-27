@@ -30,7 +30,7 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError(msg, 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
+  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 const throw500 = msg => {
@@ -39,6 +39,8 @@ const throw500 = msg => {
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
+  // we keep the full list for further use
+  req.$ctx.meta.accepts = req.headers.accept;
   if (req.headers.accept === '*/*') req.headers.accept = undefined;
   if (req.headers.accept !== undefined) {
     try {
@@ -71,6 +73,14 @@ const parseSparql = async (req, res, next) => {
       (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
   ) {
     req.$ctx.meta.parser = 'sparql';
+    req.$params.body = await getRawBody(req);
+  }
+  next();
+};
+
+const parseTurtle = async (req, res, next) => {
+  if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
+    req.$ctx.meta.parser = 'turtle';
     req.$params.body = await getRawBody(req);
   }
   next();
@@ -166,6 +176,7 @@ module.exports = {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware,
   throw403,

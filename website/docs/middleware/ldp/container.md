@@ -26,6 +26,23 @@ The following service actions are available:
 | `containerUri` | `String`| **required** | URI of container to which the resource will be detached |
 | `resourceUri` | `String` | **required** | URI of resource to attach |
 
+### `ldp.container.patch`
+* Attach and/or detach resource(s) from a container
+* the format of the `update`string is as follow:
+```
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+INSERT DATA { <http://url/of/container> ldp:contains <http://url/of/resource/to/attach>. };
+DELETE DATA { <http://url/of/container> ldp:contains <http://url/of/resource/to/detach>. };
+```
+Any remote RDF resource can be attached to a container, given that its server can answer a GET request on it that returns its content in Turtle format.
+This means that even other LDP servers than semapps can have their resources linked to a container.
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `containerUri` | `String`| **required** | URI of container to which the resource will be detached |
+| `update` | `String` | **required** | SPARQL UPDATE string contains INSERT DATA and/or DELETE DATA statements |
+| `contentType` | `String` | **optional** | must be `application/sparql-update`) |
 
 ### `ldp.container.exist`
 * Check if a container exists

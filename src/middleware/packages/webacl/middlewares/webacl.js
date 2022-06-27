@@ -104,11 +104,15 @@ const WebAclMiddleware = config => ({
 
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
 
+        if (ctx.meta.isMirror) return bypass();
+
         // If the logged user is fetching is own POD, bypass ACL check
         // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
         if (config.podProvider && resourceUri.startsWith(webId + '/')) {
           return bypass();
         }
+
+        // if mirrored resource, bypass
 
         const containerUri = getContainerFromUri(resourceUri);
         if (containersWithDefaultAnonRead.includes(containerUri)) {
@@ -137,6 +141,7 @@ const WebAclMiddleware = config => ({
          */
         switch (action.name) {
           case 'ldp.resource.create':
+            if (ctx.meta.forceMirror) return next(ctx);
             // We must add the permissions before inserting the resource
             await addRightsToNewResource(ctx, ctx.params.resource['@id'] || ctx.params.resource.id, webId);
             break;
