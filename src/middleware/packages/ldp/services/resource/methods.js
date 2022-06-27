@@ -9,18 +9,18 @@ const { defaultToArray, regexPrefix } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
-  async updateOrphanMirroredResources() {
-    this.logger.info('updateOrphanMirroredResources');
-    let orphans = await this.broker.call('triplestore.query', {
-      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#orphanMirroredResource> ?o } }`
+  async updateSingleMirroredResources() {
+    this.logger.info('updateSingleMirroredResources');
+    let singles = await this.broker.call('triplestore.query', {
+      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#singleMirroredResource> ?o } }`
     });
-    for (const orphan of orphans) {
+    for (const single of singles) {
       try {
-        const resourceUri = orphan.s.value;
+        const resourceUri = single.s.value;
 
         let newResource = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.TURTLE } });
         newResource = await newResource.text();
-        newResource += ` <${resourceUri}> <http://semapps.org/ns/core#orphanMirroredResource> <${
+        newResource += ` <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
           new URL(resourceUri).origin
         }> .`;
         await this.broker.call(

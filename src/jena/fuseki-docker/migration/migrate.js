@@ -7,9 +7,9 @@ const matchAll = require("match-all");
 //const folder = path.join(__dirname,'configuration');
 const folder = path.join(path.parse(__dirname).root,'fuseki','configuration');
 
-const rdfsLabelRegex = new RegExp('^\\s*rdfs:label\\s*"([\\w\\s]+)"\\s*;\\s*$','gm')
-const fusekiNameRegex = new RegExp('^\\s*fuseki:name\\s*"([\\w]+)"\\s*;\\s*$','gm')
-const tdb2LocationRegex = new RegExp('^\\s*tdb2:location\\s*"([/\\\\:\\w]+)"\\s*;\\s*$','gm')
+const rdfsLabelRegex = new RegExp('^\\s*rdfs:label\\s*"([\\w\\s]+)"\\s*[;.]\\s*$','gm')
+const fusekiNameRegex = new RegExp('^\\s*fuseki:name\\s*"([\\w]+)"\\s*[;.]\\s*$','gm')
+const tdb2LocationRegex = new RegExp('^\\s*tdb2:location\\s*"([/\\\\:\\w]+)"\\s*[;.]\\s*$','gm')
 
 let template = fs.readFileSync(path.join(__dirname,'templates','dataset.ttl'), {encoding: 'utf8'} )
 let templateAcl = fs.readFileSync(path.join(__dirname,'templates','secure-dataset.ttl'), {encoding: 'utf8'} )

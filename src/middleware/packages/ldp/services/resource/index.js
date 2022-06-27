@@ -18,7 +18,8 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    mirrorGraphName: null
+    mirrorGraphName: null,
+    preferredViewForResource: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -58,8 +59,8 @@ module.exports = {
   methods,
   jobs: [
     {
-      rule: '0 * * * * *',
-      handler: 'updateOrphanMirroredResources'
+      rule: '0 * * * *',
+      handler: 'updateSingleMirroredResources'
     }
   ]
 };

@@ -48,7 +48,7 @@ module.exports = {
       const removePublicRead = processedRights.some(
         triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
-      const defaultRemovePublicRead =
+      const removeDefaultPublicRead =
         isContainer &&
         processedRights.some(
           triple =>
@@ -57,7 +57,7 @@ module.exports = {
 
       ctx.emit(
         'webacl.resource.updated',
-        { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, defaultRemovePublicRead },
+        { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, removeDefaultPublicRead },
         { meta: { webId: null, dataset: null } }
       );
     }

@@ -4,7 +4,7 @@ const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer
 const { DataFactory, Writer } = require('n3');
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort } = require('../../utils');
+const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
@@ -41,6 +41,9 @@ const jsonContext = {
   'void:vocabulary': {
     '@type': '@id'
   },
+  'void:entities': { '@type': 'xsd:integer' },
+  'void:class': { '@type': '@id' },
+  'void:classPartition': { '@type': '@id' },
   'semapps:blankNodes': {
     '@type': '@id'
   }
@@ -126,13 +129,13 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
 };
 
 module.exports = {
-  name: 'ldp.void',
+  name: 'void',
   settings: {
     baseUrl: null,
-    mirrorGraphName: null,
+    mirrorGraphName: 'http://semapps.org/mirror',
     ontologies: []
   },
-  dependencies: ['ldp.registry', 'api'],
+  dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
     get: {
       visibility: 'public',
@@ -257,11 +260,11 @@ module.exports = {
     },
     api_get: async function api(ctx) {
       let accept = ctx.meta.headers.accept;
-      if (accept == '*/*') accept = MIME_TYPES.JSON;
+      if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
       else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
         throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
 
-      return await ctx.call('ldp.void.get', {
+      return await ctx.call('void.get', {
         accept: accept
       });
     }
@@ -274,7 +277,7 @@ module.exports = {
         authorization: false,
         authentication: true,
         aliases: {
-          'GET /': [parseHeader, 'ldp.void.api_get']
+          'GET /': [parseHeader, 'void.api_get']
         }
       }
     });
@@ -290,7 +293,7 @@ module.exports = {
           .map(async c => {
             let partition = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              'http://rdfs.org/ns/void#class': c.acceptedTypes
+              'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
             };
             if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference;
 
@@ -301,7 +304,8 @@ module.exports = {
             return partition;
           })
       );
-      return res.filter(c => c['http://rdfs.org/ns/void#entities']);
+      return res;
+      // .filter(c => c['http://rdfs.org/ns/void#entities']);
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
       const prefix = getPrefixJSON(this.settings.ontologies);
