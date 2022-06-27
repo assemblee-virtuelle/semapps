@@ -4,12 +4,8 @@ const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer
 const { DataFactory, Writer } = require('n3');
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
-const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort } = require('@semapps/ldp/utils');
+const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
 const { parseHeader } = require('@semapps/middlewares');
-
-const defaultToArray = value => {
-  return !value ? undefined : Array.isArray(value) ? value : [value];
-};
 
 const prefixes = {
   dcterms: 'http://purl.org/dc/terms/',

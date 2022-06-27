@@ -42,7 +42,7 @@ module.exports = {
     const containers = await this.broker.call('ldp.registry.list');
 
     let actorContainer;
-    Object.values(containers).map(c => {
+    Object.values(containers).forEach(c => {
       if (c.excludeFromMirror) this.excludedContainers[c.path] = true;
       // we take the first container that accepts the type 'Application'
       if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application'))
@@ -458,10 +458,8 @@ module.exports = {
       return res.map(o => o.object.value);
     },
     async getFollowers() {
-      // const result = await this.broker.call('activitypub.follow.listFollowers', {
-      //   collectionUri: this.relayFollowersUri
-      // });
-      return [this.relayFollowersUri, PUBLIC_URI]; //result ? defaultToArray(result.items) : [];
+
+      return [this.relayFollowersUri, PUBLIC_URI]; 
     },
     async inboxReceived(ctx) {
       const { activity } = ctx.params;

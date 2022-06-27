@@ -96,7 +96,7 @@ module.exports = {
                     // now if the import went well, we can retry the attach
                     await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
                   } catch (e) {
-                    this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e);
+                    this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e.message);
                   }
                 }
               }

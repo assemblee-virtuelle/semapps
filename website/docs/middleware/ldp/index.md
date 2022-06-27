@@ -106,11 +106,13 @@ In order to configure this feature, you should add the following configurations 
 
 in your `ldp.service.js` file that bootstraps your LDP service, add this setting :
 ```
-   preferredViewForResource : function(resourceUri, containerPreferredView) {
+   preferredViewForResource : async function(resourceUri, containerPreferredView) {
       if (!containerPreferredView) return resourceUri;
       return 'https://yourFrontEndServer.com'+containerPreferredView+encodeURIComponent(resourceUri)+'/show'
     }
 ```
+It is a function that should return the redirect link. optionally this function can be async.
+Return `resourceUri` if you want to cancel the redirect.
 
 and in your `containers.js` config file, for each container that you want a redirect for, add this setting (example for users): 
 ```
