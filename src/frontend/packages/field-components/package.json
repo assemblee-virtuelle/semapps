@@ -1,6 +1,6 @@
 {
   "name": "@semapps/field-components",
-  "version": "0.4.0-alpha.25",
+  "version": "0.4.0-alpha.26",
   "description": "React-Admin field components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -14,7 +14,7 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.4.0-alpha.25",
+    "@semapps/semantic-data-provider": "0.4.0-alpha.26",
     "lodash.debounce": "^4.0.8"
   },
   "peerDependencies": {

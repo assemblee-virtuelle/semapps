@@ -21,6 +21,7 @@ module.exports = {
         'middleware/importer/discourse',
         'middleware/importer/drupal',
         'middleware/importer/gogocarto',
+        'middleware/importer/jotform',
         'middleware/importer/mobilizon',
         'middleware/importer/prestashop',
         'middleware/importer/yeswiki',
