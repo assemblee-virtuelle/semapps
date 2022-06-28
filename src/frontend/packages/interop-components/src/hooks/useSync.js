@@ -1,16 +1,19 @@
 import { useCallback } from 'react';
-import { useNotify } from 'react-admin';
-import { useCreateContainer } from '@semapps/semantic-data-provider';
+import { useNotify, useDataProvider, useRedirect } from 'react-admin';
 
 const useSync = resourceId => {
+  const dataProvider = useDataProvider();
   const notify = useNotify();
-  const createContainerUri = useCreateContainer(resourceId);
+  const redirect = useRedirect();
 
   return useCallback(
     async remoteRecordUri => {
-      notify("Cette méthode n'est pas disponible pour le moment", { type: 'error' });
+      await dataProvider.create(resourceId, { id: remoteRecordUri });
+
+      redirect('/' + resourceId + '/' + encodeURIComponent(remoteRecordUri) + '/show');
+      notify('La ressource a bien été importée', { type: 'success' });
     },
-    [notify, createContainerUri]
+    [dataProvider, redirect, notify]
   );
 };
 

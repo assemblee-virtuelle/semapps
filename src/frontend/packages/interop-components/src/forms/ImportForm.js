@@ -62,7 +62,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
     <Form
       onSubmit={onSubmit}
       decorators={[decorator]}
-      initialValues={{ method: 'fork' }}
+      initialValues={{ method: 'sync' }}
       render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
@@ -104,8 +104,8 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                   source="method"
                   label="Méthode d'importation"
                   choices={[
-                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
-                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' }
+                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
+                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
                   ]}
                 />
               }
@@ -122,7 +122,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
               startIcon={<SaveAltIcon />}
               variant="contained"
               color="primary"
-              disabled={!dirtyFields.remoteUri}
+              disabled={!dirtyFields.plainUri}
             >
               Importer
             </Button>
