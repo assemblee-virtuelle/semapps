@@ -13,31 +13,33 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   let sparqlJsParams = {
     queryType: 'CONSTRUCT',
     template: [triple(variable('s1'), variable('p1'), variable('o1'))],
-    where: [
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'in',
-          args: [variable('containerUri'), containers.map(containerUri => namedNode(containerUri))]
-        }
-      },
-      {
-        type: 'bgp',
-        triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
-      },
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'isiri',
-          args: [variable('s1')]
-        }
-      }
-    ],
+    where: [],
     type: 'query',
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
+
+  let containerWhere = [
+    {
+      type: 'filter',
+      expression: {
+        type: 'operation',
+        operator: 'in',
+        args: [variable('containerUri'), containers.map(containerUri => namedNode(containerUri))]
+      }
+    },
+    {
+      type: 'bgp',
+      triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
+    },
+    {
+      type: 'filter',
+      expression: {
+        type: 'operation',
+        operator: 'isiri',
+        args: [variable('s1')]
+      }
+    }
+  ];
 
   let resourceWhere = [];
 
@@ -139,19 +141,37 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
     resourceWhere = resourceWhere.concat(dereferenceQueryForSparqlJs.where);
     sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
+  } else {
+    resourceWhere.push({
+      type: 'bgp',
+      triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
+    })
   }
 
-  sparqlJsParams.where.push({
-    type: 'union',
-    patterns: [
-      resourceWhere,
-      {
-        type: 'graph',
-        name: namedNode('http://semapps.org/mirror'),
-        patterns: resourceWhere
-      }
-    ]
-  });
+  sparqlJsParams.where.push(
+    {
+      type: 'union',
+      patterns: [
+        containerWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: containerWhere
+        }
+      ]
+    },
+    {
+      type: 'union',
+      patterns: [
+        resourceWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: resourceWhere
+        }
+      ]
+    }
+  );
 
   return generator.stringify(sparqlJsParams);
 };
