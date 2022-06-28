@@ -6,10 +6,10 @@ const fetchVoidEndpoints = async config => {
     .map(([key, server]) =>
       config
         .httpClient(new URL('/.well-known/void', server.baseUrl), { noToken: !server.authServer })
-        .then(result => ({key, datasets: result.json['@graph']}))
+        .then(result => ({ key, datasets: result.json['@graph'] }))
         .catch(e => {
           if (e.status === 404) {
-            return {key, error: e};
+            return { key, error: e };
           } else {
             throw e;
           }
@@ -29,25 +29,30 @@ const fetchVoidEndpoints = async config => {
     if (result.datasets) {
       config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
 
-      for( let dataset of result.datasets ) {
-        const datasetServerKey = Object.keys(config.dataServers).find(key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl);
+      for (let dataset of result.datasets) {
+        const datasetServerKey = Object.keys(config.dataServers).find(
+          key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl
+        );
 
         // If the dataset is not part of a server mapped in the dataServers, ignore it
-        if( datasetServerKey ) {
+        if (datasetServerKey) {
           // If this is the local dataset, add the base information
           if (datasetServerKey === result.key) {
             config.dataServers[result.key].name = config.dataServers[result.key].name || dataset['dc:title'];
-            config.dataServers[result.key].description = config.dataServers[result.key].description || dataset['dc:description'];
-            config.dataServers[result.key].sparqlEndpoint = config.dataServers[result.key].sparqlEndpoint || dataset['void:sparqlEndpoint'];
+            config.dataServers[result.key].description =
+              config.dataServers[result.key].description || dataset['dc:description'];
+            config.dataServers[result.key].sparqlEndpoint =
+              config.dataServers[result.key].sparqlEndpoint || dataset['void:sparqlEndpoint'];
           }
 
-          config.dataServers[result.key].containers[datasetServerKey] = config.dataServers[result.key].containers[datasetServerKey] || {};
+          config.dataServers[result.key].containers[datasetServerKey] =
+            config.dataServers[result.key].containers[datasetServerKey] || {};
 
           for (let partition of dataset['void:classPartition']) {
-            for (let type of defaultToArray(partition['void:class']) ) {
+            for (let type of defaultToArray(partition['void:class'])) {
               const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
-              if( config.dataServers[result.key].containers[datasetServerKey][type] ) {
-                config.dataServers[result.key].containers[datasetServerKey][type].push(path)
+              if (config.dataServers[result.key].containers[datasetServerKey][type]) {
+                config.dataServers[result.key].containers[datasetServerKey][type].push(path);
               } else {
                 config.dataServers[result.key].containers[datasetServerKey][type] = [path];
               }

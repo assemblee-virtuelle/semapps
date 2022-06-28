@@ -145,7 +145,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     resourceWhere.push({
       type: 'bgp',
       triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
-    })
+    });
   }
 
   sparqlJsParams.where.push(
