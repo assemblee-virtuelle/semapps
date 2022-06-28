@@ -39,6 +39,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
 
+  let resourceWhere = [];
+
   if (filter && Object.keys(filter).length > 0) {
     const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
     const hasFullTextSearch = filter.q && filter.q.length > 0;
@@ -59,12 +61,12 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       */
       // initialize array in case of single value :
       [].concat(filter.sparqlWhere).forEach(sw => {
-        sparqlJsParams.where.push(sw);
+        resourceWhere.push(sw);
       });
     }
 
     if (hasFullTextSearch) {
-      sparqlJsParams.where.push({
+      resourceWhere.push({
         type: 'group',
         patterns: [
           {
@@ -124,7 +126,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
         const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
 
-        sparqlJsParams.where.unshift({
+        resourceWhere.unshift({
           type: 'bgp',
           triples: [triple(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
         });
@@ -135,14 +137,20 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
   // Dereference
   const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
   if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
-    sparqlJsParams.where = sparqlJsParams.where.concat(dereferenceQueryForSparqlJs.where);
+    resourceWhere = resourceWhere.concat(dereferenceQueryForSparqlJs.where);
     sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
   }
 
-  // End with this to improve performances
   sparqlJsParams.where.push({
-    type: 'bgp',
-    triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
+    type: 'union',
+    patterns: [
+      resourceWhere,
+      {
+        type: 'graph',
+        name: namedNode('http://semapps.org/mirror'),
+        patterns: resourceWhere
+      }
+    ]
   });
 
   return generator.stringify(sparqlJsParams);
