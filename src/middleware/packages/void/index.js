@@ -8,7 +8,7 @@ const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultTo
 const { parseHeader } = require('@semapps/middlewares');
 
 const prefixes = {
-  dcterms: 'http://purl.org/dc/terms/',
+  dc: 'http://purl.org/dc/terms/',
   void: 'http://rdfs.org/ns/void#',
   semapps: 'http://semapps.org/ns/core#'
 };
@@ -26,7 +26,7 @@ function streamToString(stream) {
 
 const jsonContext = {
   ...prefixes,
-  'dcterms:license': {
+  'dc:license': {
     '@type': '@id'
   },
   'void:feature': {
@@ -133,7 +133,9 @@ module.exports = {
   settings: {
     baseUrl: null,
     mirrorGraphName: 'http://semapps.org/mirror',
-    ontologies: []
+    ontologies: [],
+    title: null,
+    description: null
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
@@ -166,6 +168,20 @@ module.exports = {
           p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
           o: namedNode('http://rdfs.org/ns/void#Dataset')
         });
+        if (this.settings.title) {
+          graph.push({
+            s: namedNode(thisServer),
+            p: namedNode('http://purl.org/dc/terms/title'),
+            o: literal(this.settings.title)
+          });
+        }
+        if (this.settings.description) {
+          graph.push({
+            s: namedNode(thisServer),
+            p: namedNode('http://purl.org/dc/terms/description'),
+            o: literal(this.settings.description)
+          });
+        }
         // graph.push({
         //   s: namedNode(thisServer),
         //   p: namedNode('http://purl.org/dc/terms/modified'),
