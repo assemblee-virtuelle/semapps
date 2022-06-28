@@ -135,7 +135,8 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     ontologies: [],
     title: null,
-    description: null
+    description: null,
+    license: null
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
@@ -144,9 +145,6 @@ module.exports = {
       params: {
         accept: { type: 'string', optional: true },
         webId: { type: 'string', optional: true }
-      },
-      cache: {
-        keys: ['accept', 'webId', '#webId']
       },
       async handler(ctx) {
         let { webId, accept } = ctx.params;
@@ -180,6 +178,13 @@ module.exports = {
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/description'),
             o: literal(this.settings.description)
+          });
+        }
+        if (this.settings.license) {
+          graph.push({
+            s: namedNode(thisServer),
+            p: namedNode('http://purl.org/dc/terms/license'),
+            o: namedNode(this.settings.license)
           });
         }
         // graph.push({
@@ -238,7 +243,7 @@ module.exports = {
         for (const s of serversContainers.map(sc => sc.s.value)) {
           const res = s.match(regexProtocolAndHostAndPort);
           if (res) {
-            let name = res[0]; //.slice(0, -1)
+            let name = urlJoin(res[0], '/');
             let serverName = serversMap[name];
             if (!serverName) {
               serversMap[name] = [];
@@ -266,10 +271,10 @@ module.exports = {
 
         ctx.meta.$responseType = accept;
 
-        ctx.meta.$responseHeaders = {
-          'Cache-Control': 'private, max-age=86400',
-          Vary: 'authorization'
-        };
+        // ctx.meta.$responseHeaders = {
+        //   'Cache-Control': 'private, max-age=86400',
+        //   Vary: 'authorization'
+        // };
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
