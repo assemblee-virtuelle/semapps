@@ -29,11 +29,26 @@ const frenchAddressSearch = async query => {
   }
 };
 
+const frenchAddressReverseSearch = async (lat, lon) => {
+  const url = new URL('https://api-adresse.data.gouv.fr/reverse/');
+  url.searchParams.set('lat', lat);
+  url.searchParams.set('lon', lon);
+  const response = await fetch(url.toString());
+
+  if (response.ok) {
+    const json = await response.json();
+    return json.features.length > 0 ? json.features[0] : false;
+  } else {
+    return false;
+  }
+};
+
 const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();
 
 module.exports = {
   convertToIsoString,
   formatPhoneNumber,
   frenchAddressSearch,
+  frenchAddressReverseSearch,
   removeHtmlTags
 };

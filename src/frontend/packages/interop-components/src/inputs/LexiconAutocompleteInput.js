@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, useInput, useTranslate, useLocale } from 'react-admin';
+import { FieldTitle, useInput, useTranslate, useLocale, useNotify } from 'react-admin';
 import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import LanguageIcon from '@material-ui/icons/Language';
@@ -41,6 +41,7 @@ const LexiconAutocompleteInput = ({
   const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
+  const notify = useNotify();
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
@@ -55,9 +56,11 @@ const LexiconAutocompleteInput = ({
   const throttledFetchLexicon = useMemo(
     () =>
       throttle((keyword, callback) => {
-        fetchLexicon({ keyword, locale }).then(data => callback(data));
+        fetchLexicon({ keyword, locale })
+          .then(data => callback(data))
+          .catch(e => notify(e.message, 'error'));
       }, 200),
-    [locale, fetchLexicon]
+    [locale, fetchLexicon, notify]
   );
 
   useEffect(() => {

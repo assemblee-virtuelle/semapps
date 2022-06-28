@@ -63,8 +63,8 @@ npm i @semapps/mirror --save
 ```
 
 Then you have to create those new services somehow. If you use text files to configure your moleculer services, create a file `mirror.service.js` that will look someting like this : 
-```
-const MirrorService = require('@semapps/mirror');
+```js
+const { MirrorService } = require('@semapps/mirror');
 const CONFIG = require('../config'); // check this line. your config file might be somewhere else.
 
 module.exports = {
@@ -75,8 +75,8 @@ module.exports = {
 };
 ```
 and a file `void.service.js` that will look someting like this : 
-```
-const VoidService = require('@semapps/void');
+```js
+const { VoidService } = require('@semapps/void');
 const ontologies = require('../ontologies'); // check this line. your ontologies file might be somewhere else.
 const CONFIG = require('../config'); // check this line. your config file might be somewhere else.
 
