@@ -44,7 +44,7 @@ const domainMapping = {
     color: 'white',
     contrastText: '#f2690d'
   }
-}
+};
 const useStyles = makeStyles(theme => ({
   link: {
     textDecoration: 'unset',
@@ -65,27 +65,30 @@ const useStyles = makeStyles(theme => ({
 const MultiUrlField = ({ source, ...rest }) => {
   const record = useRecordContext();
   const classes = useStyles();
-  const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [record[source]] : [];
-  return (
-    urlArray.map(url => {
-      if( !url.startsWith('http') ) url = 'https://' + url;
-      const parsedUrl = new URL(url);
-      if( !parsedUrl ) return null;
-      const chip = domainMapping[parsedUrl.hostname] || { label: 'Site web', icon: <LanguageIcon />, color: '#ea', contrastText: 'black' };
-      return(
-        <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link}>
-          <Chip
-            icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText } })}
-            size="small"
-            label={chip.label}
-            classes={{ root: classes.chip, label: classes.label }}
-            style={{ color: chip.contrastText, backgroundColor: chip.color }}
-            {...rest}
-          />
-        </a>
-      )
-    })
-  );
+  const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
+  return urlArray.map(url => {
+    if (!url.startsWith('http')) url = 'https://' + url;
+    const parsedUrl = new URL(url);
+    if (!parsedUrl) return null;
+    const chip = domainMapping[parsedUrl.hostname] || {
+      label: 'Site web',
+      icon: <LanguageIcon />,
+      color: '#ea',
+      contrastText: 'black'
+    };
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link}>
+        <Chip
+          icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText } })}
+          size="small"
+          label={chip.label}
+          classes={{ root: classes.chip, label: classes.label }}
+          style={{ color: chip.contrastText, backgroundColor: chip.color }}
+          {...rest}
+        />
+      </a>
+    );
+  });
 };
 
 MultiUrlField.defaultProps = {
