@@ -271,10 +271,10 @@ module.exports = {
 
         ctx.meta.$responseType = accept;
 
-        // ctx.meta.$responseHeaders = {
-        //   'Cache-Control': 'private, max-age=86400',
-        //   Vary: 'authorization'
-        // };
+        ctx.meta.$responseHeaders = {
+          'Cache-Control': 'private, max-age=86400',
+          Vary: 'authorization'
+        };
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
@@ -326,7 +326,6 @@ module.exports = {
           })
       );
       return res;
-      // .filter(c => c['http://rdfs.org/ns/void#entities']);
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
       const prefix = getPrefixJSON(this.settings.ontologies);
