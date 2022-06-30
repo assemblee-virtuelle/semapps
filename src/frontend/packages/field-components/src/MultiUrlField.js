@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Chip, makeStyles } from '@material-ui/core';
+import { Chip, Avatar, makeStyles } from '@material-ui/core';
 import LanguageIcon from '@material-ui/icons/Language';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { FiGitlab } from 'react-icons/fi';
@@ -17,7 +17,7 @@ const defaultdomainMapping = {
     icon: <FiGitlab />,
     color: 'orange',
     contrastText: 'black'
-  }
+  },
   'opencollective.com': {
     label: 'Open Collective',
     icon: <Avatar src="https://opencollective.com/static/images/opencollective-icon.svg" />,
