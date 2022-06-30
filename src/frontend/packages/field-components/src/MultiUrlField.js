@@ -1,49 +1,29 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Chip, Avatar, makeStyles } from '@material-ui/core';
+import { Chip, makeStyles } from '@material-ui/core';
 import LanguageIcon from '@material-ui/icons/Language';
-import ForumIcon from '@material-ui/icons/Forum';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import { FiGitlab } from 'react-icons/fi';
-import VideocamOutlinedIcon from '@material-ui/icons/VideocamOutlined';
 
-const domainMapping = {
-  'forums.assemblee-virtuelle.org': {
-    label: 'Forum',
-    icon: <ForumIcon />,
-    color: '#28ccfb',
-    contrastText: 'white'
-  },
-  'chat.lescommuns.org': {
-    label: 'Chat',
-    icon: <Avatar src="/lescommuns.jpg" />,
-    color: 'white',
-    contrastText: 'black'
-  },
+const defaultdomainMapping = {
   'github.com': {
-    label: 'Github',
+    label: 'GitHub',
     icon: <GitHubIcon />,
     color: 'black',
     contrastText: 'white'
   },
   'gitlab.com': {
-    label: 'Gitlab',
+    label: 'GitLab',
     icon: <FiGitlab />,
     color: 'orange',
     contrastText: 'black'
-  },
+  }
   'opencollective.com': {
     label: 'Open Collective',
     icon: <Avatar src="https://opencollective.com/static/images/opencollective-icon.svg" />,
     color: 'white',
     contrastText: '#297EFF'
   },
-  'peertube.virtual-assembly.org': {
-    label: 'Peertube',
-    icon: <VideocamOutlinedIcon />,
-    color: 'white',
-    contrastText: '#f2690d'
-  }
 };
 const useStyles = makeStyles(theme => ({
   link: {
@@ -62,15 +42,16 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const MultiUrlField = ({ source, ...rest }) => {
+const MultiUrlField = ({ source, domainMapping, ...rest }) => {
+  const newDomainMapping = { ...defaultdomainMapping, ... domainMapping}
   const record = useRecordContext();
   const classes = useStyles();
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
-  return urlArray.map(url => {
+  return urlArray.map( (url, index) => {
     if (!url.startsWith('http')) url = 'https://' + url;
     const parsedUrl = new URL(url);
     if (!parsedUrl) return null;
-    const chip = domainMapping[parsedUrl.hostname] || {
+    const chip = newDomainMapping[parsedUrl.hostname] || {
       label: 'Site web',
       icon: <LanguageIcon />,
       color: '#ea',
