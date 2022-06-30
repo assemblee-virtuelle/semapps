@@ -23,7 +23,7 @@ const defaultdomainMapping = {
     icon: <Avatar src="https://opencollective.com/static/images/opencollective-icon.svg" />,
     color: 'white',
     contrastText: '#297EFF'
-  },
+  }
 };
 const useStyles = makeStyles(theme => ({
   link: {
@@ -43,11 +43,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MultiUrlField = ({ source, domainMapping, ...rest }) => {
-  const newDomainMapping = { ...defaultdomainMapping, ... domainMapping}
+  const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
   const record = useRecordContext();
   const classes = useStyles();
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
-  return urlArray.map( (url, index) => {
+  return urlArray.map((url, index) => {
     if (!url.startsWith('http')) url = 'https://' + url;
     const parsedUrl = new URL(url);
     if (!parsedUrl) return null;
