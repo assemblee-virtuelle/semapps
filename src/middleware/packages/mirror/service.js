@@ -303,7 +303,7 @@ module.exports = {
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri, oldData } = ctx.params;
+      const { resourceUri } = ctx.params;
       if (
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
@@ -463,7 +463,7 @@ module.exports = {
     async inboxReceived(ctx) {
       const { activity } = ctx.params;
 
-      if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
+      if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
         // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
         if (!this.mirroredServers.includes(activity.actor)) {
           console.log(this.mirroredServers);

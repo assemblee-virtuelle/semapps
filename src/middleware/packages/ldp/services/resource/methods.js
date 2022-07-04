@@ -5,7 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
-const { defaultToArray, regexPrefix } = require('../../utils');
+const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
