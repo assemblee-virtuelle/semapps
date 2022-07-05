@@ -90,6 +90,13 @@ const FollowService = {
       return await ctx.call('activitypub.collection.get', {
         collectionUri
       });
+    },
+    async listFollowing(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
+      });
     }
   },
   // TODO use ActivitiesHandlerMixin like LikeService

@@ -187,7 +187,7 @@ module.exports = {
         throw new Error('username.already.exists');
       }
 
-      // Ensure email or username doesn't already exist
+      // Ensure username doesn't already exist
       const usernameExists = await ctx.call('auth.account.usernameExists', { username });
       if (usernameExists) {
         throw new Error('username.already.exists');
