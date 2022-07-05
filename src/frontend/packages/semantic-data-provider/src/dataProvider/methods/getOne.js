@@ -17,25 +17,26 @@ const getOneMethod = config => async (resourceId, params) => {
     }
   }
 
-  if (dataModel.list?.dereference) {
-    for (const dereferenceItem of dataModel.list?.dereference) {
-      if (
-        data[dereferenceItem] &&
-        typeof data[dereferenceItem] === 'string' &&
-        data[dereferenceItem].startsWith('http')
-      ) {
-        try {
-          const dataToEmbed = await fetchResource(data[dereferenceItem], config);
-          delete dataToEmbed['@context'];
-          data[dereferenceItem] = dataToEmbed;
-        } catch (e) {
-          // Ignore errors (this may happen if user does not have rights to see the resource)
-        }
-      }
-    }
-  }
+  // TODO activate defaultFetchPlan option
+  // if (dataModel.list?.defaultFetchPlan) {
+  //   for (const node of dataModel.list?.defaultFetchPlan) {
+  //     if (
+  //       data[node] &&
+  //       typeof data[node] === 'string' &&
+  //       data[node].startsWith('http')
+  //     ) {
+  //       try {
+  //         const dataToEmbed = await fetchResource(data[node], config);
+  //         delete dataToEmbed['@context'];
+  //         data[node] = dataToEmbed;
+  //       } catch (e) {
+  //         // Ignore errors (this may happen if user does not have rights to see the resource)
+  //       }
+  //     }
+  //   }
+  // }
 
-  return { data: data };
+  return { data };
 };
 
 export default getOneMethod;

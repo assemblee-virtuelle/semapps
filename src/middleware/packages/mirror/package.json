@@ -1,16 +1,16 @@
 {
   "name": "@semapps/mirror",
-  "version": "0.4.0-alpha.32",
+  "version": "0.4.0-alpha.35",
   "description": "Mirror module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "0.4.0-alpha.32",
     "@semapps/activitypub": "0.4.0-alpha.32",
     "@semapps/ldp": "0.4.0-alpha.32",
+    "@semapps/mime-types": "0.4.0-alpha.32",
     "moleculer": "^0.14.17",
-    "url-join": "^4.0.1",
-    "node-fetch": "^2.6.6"
+    "node-fetch": "^2.6.6",
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"

@@ -1,12 +1,12 @@
-const getEmbedFrame = paths => {
+const getEmbedFrame = blankNodes => {
   let embedFrame = {},
     predicates;
-  if (paths) {
-    for (let path of paths) {
-      if (path.includes('/')) {
-        predicates = path.split('/').reverse();
+  if (blankNodes) {
+    for (let blankNode of blankNodes) {
+      if (blankNode.includes('/')) {
+        predicates = blankNode.split('/').reverse();
       } else {
-        predicates = [path];
+        predicates = [blankNode];
       }
       embedFrame = {
         ...embedFrame,
