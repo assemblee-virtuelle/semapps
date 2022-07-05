@@ -110,7 +110,7 @@ module.exports = {
         webId
       };
 
-      ctx.call('triplestore.deleteOrphanBlankNodes', { graph: mirror ? this.settings.mirrorGraphName : undefined });
+      ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: mirror ? this.settings.mirrorGraphName : undefined });
 
       if (!mirror) {
         ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null, isMirror: mirror } });

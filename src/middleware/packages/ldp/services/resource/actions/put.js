@@ -109,7 +109,7 @@ module.exports = {
           { meta: { $cache: false } }
         );
 
-        ctx.call('triplestore.deleteOrphanBlankNodes', { graph: this.settings.mirrorGraphName });
+        ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: this.settings.mirrorGraphName });
       } else {
         let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
         let newTriples = await this.bodyToTriples(body || resource, contentType);
