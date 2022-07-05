@@ -8,7 +8,7 @@ const fetchVoidEndpoints = async config => {
         .httpClient(new URL('/.well-known/void', server.baseUrl), { noToken: !server.authServer })
         .then(result => ({ key, datasets: result.json['@graph'] }))
         .catch(e => {
-          if (e.status === 404) {
+          if (e.status === 404 || e.status === 401) {
             return { key, error: e };
           } else {
             throw e;
