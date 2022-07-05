@@ -57,7 +57,7 @@ let containersWithDefaultAnonRead = [];
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
   async started(broker) {
-    if( !baseUrl ) throw new Error('The baseUrl config is missing for the WebACL middleware');
+    if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
     if (!podProvider) {
       const containers = await broker.call('ldp.container.getAll');
       for (let containerUri of containers) {
