@@ -276,6 +276,10 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
+const isMirror = (resourceUri, baseUrl) => {
+  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+};
+
 module.exports = {
   getSlugFromUri,
   getContainerFromUri,
@@ -302,5 +306,6 @@ module.exports = {
   FULL_AGENT_URI,
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
-  FULL_ACL_ANYAGENT
+  FULL_ACL_ANYAGENT,
+  isMirror
 };

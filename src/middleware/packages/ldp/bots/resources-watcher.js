@@ -22,21 +22,18 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
         this.resourceCreated(resourceUri, newData);
       }
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
-      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
         this.resourceUpdated(resourceUri, newData, oldData);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
-      if (ctx.meta.isMirror || !resourceUri) return;
       if (this.isMatching(resourceUri)) {
         this.resourceDeleted(resourceUri, oldData);
       }
