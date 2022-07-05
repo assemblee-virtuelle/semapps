@@ -1,6 +1,6 @@
 {
   "name": "@semapps/interop-components",
-  "version": "0.4.0-alpha.27",
+  "version": "0.4.0-alpha.28",
   "description": "React-Admin components to handle interoperability between SemApps instances",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.57",
-    "@semapps/input-components": "0.4.0-alpha.27",
-    "@semapps/semantic-data-provider": "0.4.0-alpha.27",
+    "@semapps/input-components": "0.4.0-alpha.28",
+    "@semapps/semantic-data-provider": "0.4.0-alpha.28",
     "autosuggest-highlight": "^3.1.1",
     "final-form-calculate": "^1.3.2",
     "lodash.throttle": "^4.1.1",
