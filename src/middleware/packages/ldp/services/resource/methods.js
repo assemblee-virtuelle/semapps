@@ -22,12 +22,9 @@ module.exports = {
         let resource = await response.json();
         resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
 
-        await this.broker.call(
-          'ldp.resource.put',
-          { resource, contentType: MIME_TYPES.JSON }
-        );
+        await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
       } catch (e) {
-        this.logger.warn("Failed to update single mirrored resource " + single.s.value);
+        this.logger.warn('Failed to update single mirrored resource ' + single.s.value);
         console.error(e);
       }
     }

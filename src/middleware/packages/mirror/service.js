@@ -474,26 +474,17 @@ module.exports = {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
             newResource = await newResource.json();
-            await ctx.call(
-              'ldp.resource.create',
-              { resource: newResource, contentType: MIME_TYPES.JSON }
-            );
+            await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
             break;
           }
           case ACTIVITY_TYPES.UPDATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
             newResource = await newResource.json();
-            await ctx.call(
-              'ldp.resource.put',
-              { resource: newResource, contentType: MIME_TYPES.JSON },
-            );
+            await ctx.call('ldp.resource.put', { resource: newResource, contentType: MIME_TYPES.JSON });
             break;
           }
           case ACTIVITY_TYPES.DELETE: {
-            await ctx.call(
-              'ldp.resource.delete',
-              { resourceUri: activity.object.object },
-            );
+            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
             break;
           }
         }
