@@ -14,7 +14,7 @@ module.exports = {
   name: 'mirror',
   settings: {
     baseUrl: null,
-    mirrorGraphName: 'http://semapps.org/mirror',
+    graphName: 'http://semapps.org/mirror',
     servers: [],
     acceptFollowers: true,
     actor: {
@@ -202,7 +202,7 @@ module.exports = {
               for (const pref of prefixes) {
                 sparqlQuery += 'PREFIX ' + pref[1] + '\n';
               }
-              sparqlQuery += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
+              sparqlQuery += `INSERT DATA { GRAPH <${this.settings.graphName}> { \n`;
               sparqlQuery += container.replace(regexPrefix, '');
               sparqlQuery += '} }';
 
@@ -215,7 +215,7 @@ module.exports = {
         // because we don't need to periodically watch them anymore
         let singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
-          GRAPH <${this.settings.mirrorGraphName}> { 
+          GRAPH <${this.settings.graphName}> { 
           ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
 
@@ -224,7 +224,7 @@ module.exports = {
             const resourceUri = single.s.value;
             await this.broker.call('triplestore.update', {
               webId: 'system',
-              query: `DELETE WHERE { GRAPH <${this.settings.mirrorGraphName}> { 
+              query: `DELETE WHERE { GRAPH <${this.settings.graphName}> { 
               <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
             });
           } catch (e) {
@@ -303,7 +303,7 @@ module.exports = {
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri, oldData } = ctx.params;
+      const { resourceUri } = ctx.params;
       if (
         this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
@@ -463,7 +463,7 @@ module.exports = {
     async inboxReceived(ctx) {
       const { activity } = ctx.params;
 
-      if (activity.type == ACTIVITY_TYPES.ANNOUNCE) {
+      if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
         // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
         if (!this.mirroredServers.includes(activity.actor)) {
           console.log(this.mirroredServers);
@@ -474,29 +474,17 @@ module.exports = {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
             newResource = await newResource.json();
-            await ctx.call(
-              'ldp.resource.create',
-              { resource: newResource, webId: 'system', contentType: MIME_TYPES.JSON },
-              { meta: { forceMirror: true } }
-            );
+            await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
             break;
           }
           case ACTIVITY_TYPES.UPDATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
             newResource = await newResource.json();
-            await ctx.call(
-              'ldp.resource.put',
-              { resource: newResource, webId: 'system', contentType: MIME_TYPES.JSON },
-              { meta: { forceMirror: true } }
-            );
+            await ctx.call('ldp.resource.put', { resource: newResource, contentType: MIME_TYPES.JSON });
             break;
           }
           case ACTIVITY_TYPES.DELETE: {
-            await ctx.call(
-              'ldp.resource.delete',
-              { resourceUri: activity.object.object, webId: 'system' },
-              { meta: { forceMirror: true } }
-            );
+            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
             break;
           }
         }

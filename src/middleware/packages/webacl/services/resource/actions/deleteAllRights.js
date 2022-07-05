@@ -11,7 +11,7 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        WITH ${this.settings.graphName}
+        WITH <${this.settings.graphName}>
         DELETE { ?auth ?p2 ?o }
         WHERE  { ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )

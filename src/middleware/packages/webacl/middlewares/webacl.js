@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getContainerFromUri } = require('../utils');
+const { getContainerFromUri, isMirror } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
@@ -54,10 +54,11 @@ const addRightsToNewUser = async (ctx, userUri) => {
 // TODO invalidate this cache when default permissions are changed
 let containersWithDefaultAnonRead = [];
 
-const WebAclMiddleware = config => ({
+const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
   async started(broker) {
-    if (!config.podProvider) {
+    if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
+    if (!podProvider) {
       const containers = await broker.call('ldp.container.getAll');
       for (let containerUri of containers) {
         const authorizations = await broker.call('triplestore.query', {
@@ -67,7 +68,7 @@ const WebAclMiddleware = config => ({
           PREFIX foaf: <http://xmlns.com/foaf/0.1/>
           SELECT ?auth
           WHERE {
-            GRAPH <http://semapps.org/webacl> {
+            GRAPH <${graphName}> {
               ?auth a acl:Authorization ;
                 acl:default <${containerUri}> ;
                 acl:agentClass foaf:Agent ;
@@ -104,15 +105,16 @@ const WebAclMiddleware = config => ({
 
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
 
-        if (ctx.meta.isMirror) return bypass();
-
-        // If the logged user is fetching is own POD, bypass ACL check
-        // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-        if (config.podProvider && resourceUri.startsWith(webId + '/')) {
+        // Bypass if mirrored resource as WebACL are not activated in mirror graph
+        if (isMirror(resourceUri, baseUrl)) {
           return bypass();
         }
 
-        // if mirrored resource, bypass
+        // If the logged user is fetching is own POD, bypass ACL check
+        // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
+        if (podProvider && resourceUri.startsWith(webId + '/')) {
+          return bypass();
+        }
 
         const containerUri = getContainerFromUri(resourceUri);
         if (containersWithDefaultAnonRead.includes(containerUri)) {
@@ -141,7 +143,8 @@ const WebAclMiddleware = config => ({
          */
         switch (action.name) {
           case 'ldp.resource.create':
-            if (ctx.meta.forceMirror) return next(ctx);
+            // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
+            if (isMirror(ctx.params.resource['@id'] || ctx.params.resource.id, baseUrl)) return next(ctx);
             // We must add the permissions before inserting the resource
             await addRightsToNewResource(ctx, ctx.params.resource['@id'] || ctx.params.resource.id, webId);
             break;

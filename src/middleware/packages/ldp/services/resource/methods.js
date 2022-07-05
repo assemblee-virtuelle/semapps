@@ -5,7 +5,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
-const { defaultToArray, regexPrefix } = require('../../utils');
+const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
@@ -18,18 +18,14 @@ module.exports = {
       try {
         const resourceUri = single.s.value;
 
-        let newResource = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.TURTLE } });
-        newResource = await newResource.text();
-        newResource += ` <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
-          new URL(resourceUri).origin
-        }> .`;
-        await this.broker.call(
-          'ldp.resource.put',
-          { resource: { id: resourceUri }, body: newResource, webId: 'system', contentType: MIME_TYPES.TURTLE },
-          { meta: { forceMirror: true } }
-        );
+        const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON } });
+        let resource = await response.json();
+        resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
+
+        await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
       } catch (e) {
-        // fail silently
+        this.logger.warn('Failed to update single mirrored resource ' + single.s.value);
+        console.error(e);
       }
     }
   },

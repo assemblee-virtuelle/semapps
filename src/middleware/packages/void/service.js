@@ -22,8 +22,6 @@ function streamToString(stream) {
   });
 }
 
-//const regexServer = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)\\/');
-
 const jsonContext = {
   ...prefixes,
   'dc:license': {
@@ -205,7 +203,7 @@ module.exports = {
 
         const services = await ctx.call('$node.services');
         const hasSparql =
-          services.filter(s => s.name == 'sparqlEndpoint').length > 0
+          services.filter(s => s.name === 'sparqlEndpoint').length > 0
             ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
@@ -271,10 +269,10 @@ module.exports = {
 
         ctx.meta.$responseType = accept;
 
-        // ctx.meta.$responseHeaders = {
-        //   'Cache-Control': 'private, max-age=86400',
-        //   Vary: 'authorization'
-        // };
+        ctx.meta.$responseHeaders = {
+          'Cache-Control': 'private, max-age=86400',
+          Vary: 'authorization'
+        };
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
@@ -326,7 +324,6 @@ module.exports = {
           })
       );
       return res;
-      // .filter(c => c['http://rdfs.org/ns/void#entities']);
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
       const prefix = getPrefixJSON(this.settings.ontologies);

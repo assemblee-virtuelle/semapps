@@ -41,7 +41,7 @@ module.exports = {
 
       let members = await ctx.call('triplestore.query', {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-          SELECT ?m WHERE { GRAPH ${this.settings.graphName}
+          SELECT ?m WHERE { GRAPH <${this.settings.graphName}>
           { <${groupUri}> vcard:hasMember ?m } }`,
         webId: 'system'
       });

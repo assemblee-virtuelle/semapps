@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const cronParser = require('cron-parser');
 const { promises: fsPromises } = require('fs');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
@@ -325,7 +325,7 @@ module.exports = {
             collectionUri: outbox,
             type,
             object: resourceUri,
-            to: followers
+            to: [followers, PUBLIC_URI]
           },
           { meta: { webId: this.settings.dest.actorUri } }
         );

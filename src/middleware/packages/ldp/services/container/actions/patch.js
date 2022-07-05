@@ -71,7 +71,7 @@ module.exports = {
               try {
                 await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
               } catch (e) {
-                if (e.code == 404 && isMirror(insUri, this.settings.baseUrl)) {
+                if (e.code === 404 && isMirror(insUri, this.settings.baseUrl)) {
                   // we need to import the remote resource
                   this.logger.info('IMPORTING ' + insUri);
                   try {

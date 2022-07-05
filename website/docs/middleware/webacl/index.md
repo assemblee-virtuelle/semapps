@@ -53,7 +53,11 @@ const { WebAclMiddleware } = require('@semapps/webacl');
 
 module.exports = {
   middlewares: [
-    WebAclMiddleware
+    WebAclMiddleware({
+      baseUrl: 'http://localhost:3000/', // Should be the same as the WebAclService
+      podProvider: false, // Default value
+      graphName: 'http://semapps.org/webacl' // Default value
+    })
   ]
 };
 ```
@@ -86,8 +90,12 @@ const { WebAclMiddleware, CacherMiddleware } = require('@semapps/webacl');
 
 module.exports = {
   middlewares: [
-    CacherMiddleware(...cacherConfig)
-    WebAclMiddleware,
+    CacherMiddleware(...cacherConfig),
+    WebAclMiddleware({
+      baseUrl: 'http://localhost:3000/',
+      podProvider: false, // Default value
+      graphName: 'http://semapps.org/webacl' // Default value
+    })
   ]
 };
 ```

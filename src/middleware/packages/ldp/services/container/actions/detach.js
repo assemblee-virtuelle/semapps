@@ -20,7 +20,7 @@ module.exports = {
     if (mirror && !ctx.meta.forceMirror)
       throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
 
-    if (new URL(containerUri).pathname == '/') {
+    if (new URL(containerUri).pathname === '/') {
       if (mirror) return; // indeed, we never have the root container on a mirror.
       containerUri = urlJoin(containerUri, '/');
     }

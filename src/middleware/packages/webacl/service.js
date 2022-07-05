@@ -7,7 +7,7 @@ module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: '<http://semapps.org/webacl>',
+    graphName: 'http://semapps.org/webacl',
     podProvider: false,
     superAdmins: []
   },
@@ -45,7 +45,7 @@ module.exports = {
       let hasWebAcl = false;
       try {
         await this.broker.call('triplestore.query', {
-          query: `ASK WHERE { GRAPH ${this.settings.graphName} { ?s ?p ?o } }`,
+          query: `ASK WHERE { GRAPH <${this.settings.graphName}> { ?s ?p ?o } }`,
           webId: 'anon'
         });
       } catch (e) {

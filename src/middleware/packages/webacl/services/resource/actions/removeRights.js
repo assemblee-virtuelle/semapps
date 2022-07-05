@@ -36,7 +36,7 @@ module.exports = {
         query: `
           PREFIX acl: <http://www.w3.org/ns/auth/acl#>
           DELETE DATA {
-            GRAPH ${this.settings.graphName} {
+            GRAPH <${this.settings.graphName}> {
               ${processedRights.map(right => `<${right.auth}> <${right.p}> <${right.o}> .`).join('\n')}
             }
           }

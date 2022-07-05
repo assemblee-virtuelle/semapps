@@ -132,7 +132,6 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       let { oldData, newData } = ctx.params;
-      if (ctx.meta.isMirror) return;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
       newData = await ctx.call('jsonld.expand', { input: newData });
 

@@ -26,7 +26,7 @@ const USER_GROUPS_QUERY = (member, ACLGraphName) => {
   return `SELECT ?group
   WHERE {
 	{ ?group vcard:hasMember <${member}> . }
-	UNION { GRAPH ${ACLGraphName} { ?group vcard:hasMember <${member}> . } }
+	UNION { GRAPH <${ACLGraphName}> { ?group vcard:hasMember <${member}> . } }
   UNION
    {
     ?group ?anyLink <${member}> .
@@ -55,7 +55,7 @@ const getUserGroups = async (ctx, user, graphName) => {
 };
 
 const AUTHORIZATION_NODE_QUERY = (mode, accesToOrDefault, resource, graphName) => `SELECT ?auth ?p ?o
-WHERE { GRAPH ${graphName} {
+WHERE { GRAPH <${graphName}> {
   ?auth a acl:Authorization ;
     acl:mode acl:${mode};
     acl:${accesToOrDefault} <${resource}>;
@@ -148,7 +148,7 @@ async function aclGroupExists(groupUri, ctx, graphName) {
     query: `
       PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
       ASK
-      WHERE { GRAPH ${graphName} {
+      WHERE { GRAPH <${graphName}> {
         <${groupUri}> a vcard:Group .
       } }
     `,
@@ -224,14 +224,14 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
   // removing the acl:agentGroup relation to some Authorizations
   await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-      DELETE WHERE { GRAPH ${graphName} { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
+      DELETE WHERE { GRAPH <${graphName}> { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
     webId: 'system'
   });
 
   // removing the Authorizations that are now empty
   await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-      WITH ${graphName}
+      WITH <${graphName}>
       DELETE { ?auth ?p ?o }
       WHERE { ?auth a acl:Authorization; ?p ?o
         FILTER NOT EXISTS { ?auth acl:agent ?z }
@@ -276,6 +276,10 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
+const isMirror = (resourceUri, baseUrl) => {
+  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+};
+
 module.exports = {
   getSlugFromUri,
   getContainerFromUri,
@@ -302,5 +306,6 @@ module.exports = {
   FULL_AGENT_URI,
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
-  FULL_ACL_ANYAGENT
+  FULL_ACL_ANYAGENT,
+  isMirror
 };
