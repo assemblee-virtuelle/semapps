@@ -1,4 +1,4 @@
-import buildDereferenceQuery from './buildDereferenceQuery';
+import buildBlankNodesQuery from './buildBlankNodesQuery';
 import DataFactory from '@rdfjs/data-model';
 const { literal, namedNode, triple, variable } = DataFactory;
 
@@ -7,37 +7,37 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', 'dereference', '_servers'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers'];
 
-const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
+const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, ontologies }) => {
   let sparqlJsParams = {
     queryType: 'CONSTRUCT',
     template: [triple(variable('s1'), variable('p1'), variable('o1'))],
-    where: [
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'in',
-          args: [variable('containerUri'), containers.map(containerUri => namedNode(containerUri))]
-        }
-      },
-      {
-        type: 'bgp',
-        triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
-      },
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'isiri',
-          args: [variable('s1')]
-        }
-      }
-    ],
+    where: [],
     type: 'query',
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
+
+  let containerWhere = [
+    {
+      type: 'values',
+      values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
+    },
+    {
+      type: 'bgp',
+      triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
+    },
+    {
+      type: 'filter',
+      expression: {
+        type: 'operation',
+        operator: 'isiri',
+        args: [variable('s1')]
+      }
+    }
+  ];
+
+  let resourceWhere = [];
 
   if (filter && Object.keys(filter).length > 0) {
     const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
@@ -59,12 +59,12 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       */
       // initialize array in case of single value :
       [].concat(filter.sparqlWhere).forEach(sw => {
-        sparqlJsParams.where.push(sw);
+        resourceWhere.push(sw);
       });
     }
 
     if (hasFullTextSearch) {
-      sparqlJsParams.where.push({
+      resourceWhere.push({
         type: 'group',
         patterns: [
           {
@@ -124,7 +124,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
           filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
         const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
 
-        sparqlJsParams.where.unshift({
+        resourceWhere.unshift({
           type: 'bgp',
           triples: [triple(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
         });
@@ -132,18 +132,42 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     });
   }
 
-  // Dereference
-  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
-    sparqlJsParams.where = sparqlJsParams.where.concat(dereferenceQueryForSparqlJs.where);
-    sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
+  // Blank nodes
+  const blankNodesQuery = buildBlankNodesQuery(blankNodes, ontologies);
+  if (blankNodesQuery && blankNodesQuery.construct) {
+    resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+    sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
+  } else {
+    resourceWhere.push({
+      type: 'bgp',
+      triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
+    });
   }
 
-  // End with this to improve performances
-  sparqlJsParams.where.push({
-    type: 'bgp',
-    triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
-  });
+  sparqlJsParams.where.push(
+    {
+      type: 'union',
+      patterns: [
+        containerWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: containerWhere
+        }
+      ]
+    },
+    {
+      type: 'union',
+      patterns: [
+        resourceWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: resourceWhere
+        }
+      ]
+    }
+  );
 
   return generator.stringify(sparqlJsParams);
 };
