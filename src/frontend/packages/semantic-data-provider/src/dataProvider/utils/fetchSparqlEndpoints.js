@@ -1,5 +1,6 @@
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
+import getBlankNodesFromDataServers from "./getBlankNodesFromDataServers";
 import jsonld from 'jsonld';
 
 const compare = (a, b) => {
@@ -18,29 +19,15 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const { dataServers, resources, httpClient, jsonContext, ontologies } = config;
   const dataModel = resources[resourceId];
 
-  // By default, embed only what we explicitly asked to dereference
-  // Otherwise we may have same-type resources embedded in other resources
-  // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
-  const frame =
-    dataModel.list?.explicitEmbedOnFraming !== false
-      ? {
-          '@context': jsonContext,
-          '@type': dataModel.types,
-          '@embed': '@never',
-          ...getEmbedFrame(params.filter?.dereference || dataModel.list?.dereference)
-        }
-      : {
-          '@context': jsonContext,
-          '@type': dataModel.types
-        };
-
   const sparqlQueryPromises = Object.keys(containers).map(
     serverKey =>
       new Promise((resolve, reject) => {
+        const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes || getBlankNodesFromDataServers(containers[serverKey], dataServers);
+
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
-          dereference: params.filter?.dereference || dataModel.list?.dereference,
+          blankNodes,
           ontologies
         });
 
@@ -50,6 +37,22 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           noToken: dataServers[serverKey].authServer !== true
         })
           .then(({ json }) => {
+            // By default, embed only the blank nodes we explicitly asked to dereference
+            // Otherwise we may have same-type resources embedded in other resources
+            // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
+            const frame =
+              dataModel.list?.explicitEmbedOnFraming !== false
+                ? {
+                  '@context': jsonContext,
+                  '@type': dataModel.types,
+                  '@embed': '@never',
+                  ...getEmbedFrame(blankNodes)
+                }
+                : {
+                  '@context': jsonContext,
+                  '@type': dataModel.types
+                };
+
             // omitGraph option force results to be in a @graph, even if we have a single result
             return jsonld.frame(json, frame, { omitGraph: false });
           })

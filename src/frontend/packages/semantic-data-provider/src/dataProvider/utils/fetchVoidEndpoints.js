@@ -28,6 +28,7 @@ const fetchVoidEndpoints = async config => {
     // Ignore unfetchable endpoints
     if (result.datasets) {
       config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
+      config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
 
       for (let dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
@@ -50,11 +51,18 @@ const fetchVoidEndpoints = async config => {
 
           for (let partition of dataset['void:classPartition']) {
             for (let type of defaultToArray(partition['void:class'])) {
+              // Set containers by type
               const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
               if (config.dataServers[result.key].containers[datasetServerKey][type]) {
                 config.dataServers[result.key].containers[datasetServerKey][type].push(path);
               } else {
                 config.dataServers[result.key].containers[datasetServerKey][type] = [path];
+              }
+
+              // Set blank nodes by containers
+              const blankNodes = defaultToArray(partition['semapps:blankNodes']);
+              if( blankNodes ) {
+                config.dataServers[result.key].blankNodes[partition['void:uriSpace']] = defaultToArray(partition['semapps:blankNodes']);
               }
             }
           }

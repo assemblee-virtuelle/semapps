@@ -1,4 +1,4 @@
-import buildDereferenceQuery from './buildDereferenceQuery';
+import buildBlankNodesQuery from './buildBlankNodesQuery';
 import DataFactory from '@rdfjs/data-model';
 const { literal, namedNode, triple, variable } = DataFactory;
 
@@ -7,9 +7,9 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', 'dereference', '_servers'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers'];
 
-const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
+const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, ontologies }) => {
   let sparqlJsParams = {
     queryType: 'CONSTRUCT',
     template: [triple(variable('s1'), variable('p1'), variable('o1'))],
@@ -132,11 +132,11 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     });
   }
 
-  // Dereference
-  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
-    resourceWhere = resourceWhere.concat(dereferenceQueryForSparqlJs.where);
-    sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
+  // Blank nodes
+  const blankNodesQuery = buildBlankNodesQuery(blankNodes, ontologies);
+  if (blankNodesQuery && blankNodesQuery.construct) {
+    resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+    sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
   } else {
     resourceWhere.push({
       type: 'bgp',

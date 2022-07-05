@@ -19,4 +19,4 @@ export { default as dataProvider } from './dataProvider/dataProvider';
 export { default as httpClient } from './httpClient';
 
 export { default as buildSparqlQuery } from './dataProvider/utils/buildSparqlQuery';
-export { default as buildDereferenceQuery } from './dataProvider/utils/buildDereferenceQuery';
+export { default as buildBlankNodesQuery } from './dataProvider/utils/buildBlankNodesQuery';
