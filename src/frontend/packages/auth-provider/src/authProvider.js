@@ -119,6 +119,10 @@ const authProvider = ({
   },
   checkError: error => Promise.resolve(),
   getPermissions: async uri => {
+    // Do not get permissions for servers other than the one used for auth
+    // as this will always fail as long as cross-servers auth is not available
+    if (!uri.startsWith(middlewareUri)) return false;
+
     if (!checkPermissions) return true;
 
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
@@ -130,9 +134,12 @@ const authProvider = ({
     return json['@graph'];
   },
   addPermission: async (uri, agentId, predicate, mode) => {
-    const aclUri = getAclUri(uri);
+    if (!uri || !uri.startsWith('http'))
+      throw new Error('The first parameter passed to addPermission must be an URL');
+    if (!uri.startsWith(middlewareUri))
+      new Error('Cannot add permissions on servers other than the one used for auth');
 
-    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+    const aclUri = getAclUri(uri);
 
     let authorization = {
       '@id': '#' + mode.replace('acl:', ''),
@@ -153,6 +160,8 @@ const authProvider = ({
   removePermission: async (uri, agentId, predicate, mode) => {
     if (!uri || !uri.startsWith('http'))
       throw new Error('The first parameter passed to removePermission must be an URL');
+    if (!uri.startsWith(middlewareUri))
+      throw new Error('Cannot remove permissions on servers other than the one used for auth');
 
     const aclUri = getAclUri(uri);
 
