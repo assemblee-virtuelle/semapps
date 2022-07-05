@@ -58,7 +58,7 @@ const buildBlankNodesQuery = (blankNodes, ontologies) => {
       const filterValue = predicate.split(':')[1];
       const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
 
-      if( !filterOntology ) throw new Error(`No ontology found with prefix: ${filterPrefix}`);
+      if (!filterOntology) throw new Error(`No ontology found with prefix: ${filterPrefix}`);
 
       const query = [
         quad(variable('s' + parentVarName), namedNode(filterOntology.url + filterValue), variable('s' + varName)),

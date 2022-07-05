@@ -134,10 +134,8 @@ const authProvider = ({
     return json['@graph'];
   },
   addPermission: async (uri, agentId, predicate, mode) => {
-    if (!uri || !uri.startsWith('http'))
-      throw new Error('The first parameter passed to addPermission must be an URL');
-    if (!uri.startsWith(middlewareUri))
-      new Error('Cannot add permissions on servers other than the one used for auth');
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+    if (!uri.startsWith(middlewareUri)) new Error('Cannot add permissions on servers other than the one used for auth');
 
     const aclUri = getAclUri(uri);
 

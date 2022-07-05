@@ -1,6 +1,6 @@
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
-import getBlankNodesFromDataServers from "./getBlankNodesFromDataServers";
+import getBlankNodesFromDataServers from './getBlankNodesFromDataServers';
 import jsonld from 'jsonld';
 
 const compare = (a, b) => {
@@ -22,7 +22,10 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const sparqlQueryPromises = Object.keys(containers).map(
     serverKey =>
       new Promise((resolve, reject) => {
-        const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes || getBlankNodesFromDataServers(containers[serverKey], dataServers);
+        const blankNodes =
+          params.filter?.blankNodes ||
+          dataModel.list?.blankNodes ||
+          getBlankNodesFromDataServers(containers[serverKey], dataServers);
 
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
@@ -43,15 +46,15 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
             const frame =
               dataModel.list?.explicitEmbedOnFraming !== false
                 ? {
-                  '@context': jsonContext,
-                  '@type': dataModel.types,
-                  '@embed': '@never',
-                  ...getEmbedFrame(blankNodes)
-                }
+                    '@context': jsonContext,
+                    '@type': dataModel.types,
+                    '@embed': '@never',
+                    ...getEmbedFrame(blankNodes)
+                  }
                 : {
-                  '@context': jsonContext,
-                  '@type': dataModel.types
-                };
+                    '@context': jsonContext,
+                    '@type': dataModel.types
+                  };
 
             // omitGraph option force results to be in a @graph, even if we have a single result
             return jsonld.frame(json, frame, { omitGraph: false });
