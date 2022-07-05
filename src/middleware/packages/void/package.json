@@ -1,17 +1,17 @@
 {
   "name": "@semapps/void",
-  "version": "0.4.0-alpha.32",
+  "version": "0.4.0-alpha.35",
   "description": "Void module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/mime-types": "0.4.0-alpha.32",
-    "@semapps/middlewares": "0.4.0-alpha.32",
     "@semapps/ldp": "0.4.0-alpha.32",
+    "@semapps/middlewares": "0.4.0-alpha.32",
+    "@semapps/mime-types": "0.4.0-alpha.32",
+    "jsonld-streaming-serializer": "^1.2.0",
     "moleculer": "^0.14.17",
-    "url-join": "^4.0.1",
     "n3": "^1.8.0",
-    "jsonld-streaming-serializer": "^1.2.0"
+    "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
