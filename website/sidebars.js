@@ -50,6 +50,7 @@ module.exports = {
       ],
     },
     'middleware/triplestore',
+    'middleware/void',
     {
       type: 'category',
       label: 'WebACL',

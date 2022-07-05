@@ -24,7 +24,7 @@ This package allows you to setup LDP direct containers in which LDP resources ca
 ## Install
 
 ```bash
-$ npm install @semapps/ldp --save
+$ yarn add @semapps/ldp
 ```
 
 ## Usage
@@ -61,13 +61,13 @@ module.exports = {
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `baseUrl`|`String` | **required**| Base URL of the LDP server |
-| `ontologies`| `[Object]`|**required** | List of ontology used (see example above) |
-| `containers`| `[Object]`| **required** | List of containers to set up, with their options |
-| `defaultContainerOptions`| `[Object]`| | Default options for all containers (see below) |
-| `preferredViewForResource`| `function`| | function called to generate a redirect to the preferre view (see below) |
+| Property | Type       | Default | Description                                                                       |
+| -------- |------------| ------- |-----------------------------------------------------------------------------------|
+| `baseUrl`| `String`   | **required**| Base URL of the LDP server                                                    |
+| `ontologies`| `[Array]`  |**required** | List of ontology used (see example above)                                  |
+| `containers`| `[Object]` | **required** | List of containers to set up, with their options                          |
+| `defaultContainerOptions`| `[Object]` | | Default options for all containers (see below)                            |
+| `preferredViewForResource`| `function` | | function called to generate a redirect to the preferre view (see below)  |
 
 ## Container options
 

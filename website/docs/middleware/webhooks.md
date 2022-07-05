@@ -18,7 +18,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 ## Install
 
 ```bash
-$ npm install @semapps/webhooks --save
+$ yarn add @semapps/webhooks
 ```
 
 ## Usage

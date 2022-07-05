@@ -17,7 +17,7 @@ This service implements the [HTTP Signature](https://tools.ietf.org/html/draft-c
 ## Install
 
 ```bash
-$ npm install @semapps/signature --save
+$ yarn add @semapps/signature
 ```
 
 ## Usage

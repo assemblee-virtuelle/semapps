@@ -19,7 +19,7 @@ This service allows you to authenticate users with an OIDC or CAS server, or wit
 ## Install
 
 ```bash
-$ npm install @semapps/auth --save
+$ yarn add @semapps/auth
 ```
 
 ## Usage

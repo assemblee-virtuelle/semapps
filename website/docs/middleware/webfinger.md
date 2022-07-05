@@ -17,7 +17,7 @@ This service implements the [WebFinger](https://en.wikipedia.org/wiki/WebFinger)
 ## Install
 
 ```bash
-$ npm install @semapps/webfinger --save
+$ yarn add @semapps/webfinger
 ```
 
 ## Usage

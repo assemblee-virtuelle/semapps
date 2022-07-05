@@ -25,7 +25,7 @@ This package allows you to handle rights through the [WebACL standard](https://g
 ## Install
 
 ```bash
-$ npm install @semapps/webacl --save
+$ yarn add @semapps/webacl
 ```
 
 ## Usage

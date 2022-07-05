@@ -17,7 +17,7 @@ This service allows you to do various operations with a Jena Fuseki instance, by
 ## Install
 
 ```bash
-$ npm install @semapps/fuseki-admin --save
+$ yarn add @semapps/fuseki-admin
 ```
 
 ## Usage

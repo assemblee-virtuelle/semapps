@@ -11,7 +11,7 @@ This package provide utilities to help migrate semantic data.
 ## Install
 
 ```bash
-$ npm install @semapps/migration --save
+$ yarn add @semapps/migration
 ```
 
 ## Usage
