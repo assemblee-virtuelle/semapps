@@ -44,7 +44,7 @@ module.exports = {
 
       // Deleting the group
       await ctx.call('triplestore.update', {
-        query: `DELETE WHERE { GRAPH ${this.settings.graphName} 
+        query: `DELETE WHERE { GRAPH <${this.settings.graphName}> 
                 { <${groupUri}> ?p ?o. } }`,
         webId: 'system'
       });

@@ -15,7 +15,7 @@ module.exports = {
     triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
       uri: resourceUri,
       webId,
-      graphName: isMirror(resourceUri, this.settings.baseUrl) ? this.settings.mirrorGraphName : undefined
+      graph: isMirror(resourceUri, this.settings.baseUrl) ? this.settings.mirrorGraphName : undefined
     });
 
     return triplesNb > 0;

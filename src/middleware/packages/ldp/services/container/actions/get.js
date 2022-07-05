@@ -100,8 +100,7 @@ module.exports = {
                   forceSemantic: true,
                   // We pass the following parameters only if they are explicit
                   ...explicitParams
-                },
-                { meta: { isMirror: isMirror(resourceUri, this.settings.baseUrl) } }
+                }
               );
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type

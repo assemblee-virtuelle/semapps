@@ -101,7 +101,7 @@ module.exports = {
 
       // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
       await ctx.call('triplestore.update', {
-        query: `INSERT DATA { GRAPH ${this.settings.graphName} { ${addRequest} } }; DELETE DATA { GRAPH ${this.settings.graphName} { ${deleteRequest} } }`,
+        query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
         webId: 'system'
       });
 

@@ -51,7 +51,7 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-        DELETE DATA { GRAPH ${this.settings.graphName}
+        DELETE DATA { GRAPH <${this.settings.graphName}>
           { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
         webId: 'system'
       });
