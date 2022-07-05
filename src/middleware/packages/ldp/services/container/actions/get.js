@@ -92,17 +92,13 @@ module.exports = {
                 return accumulator;
               }, {});
 
-              let resource = await ctx.call(
-                'ldp.resource.get',
-                {
-                  resourceUri,
-                  webId,
-                  forceSemantic: true,
-                  // We pass the following parameters only if they are explicit
-                  ...explicitParams
-                },
-                { meta: { isMirror: isMirror(resourceUri, this.settings.baseUrl) } }
-              );
+              let resource = await ctx.call('ldp.resource.get', {
+                resourceUri,
+                webId,
+                forceSemantic: true,
+                // We pass the following parameters only if they are explicit
+                ...explicitParams
+              });
 
               // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
               // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074

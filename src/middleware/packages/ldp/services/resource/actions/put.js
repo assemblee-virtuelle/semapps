@@ -52,10 +52,6 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
-      const mirror = isMirror(resourceUri, this.settings.baseUrl);
-      if (mirror && !ctx.meta.forceMirror)
-        throw new MoleculerError('Mirrored resources cannot be modified with LDP PUT', 403, 'FORBIDDEN');
-
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
@@ -81,53 +77,25 @@ module.exports = {
         await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PUT');
       }
 
-      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      let newTriples = await this.bodyToTriples(body || resource, contentType);
+      // If we put in the mirror graph, don't do a diff to increase performance
+      // We can avoid the diff because these data are not protected by WebACL
+      if (isMirror(resourceUri, this.settings.baseUrl)) {
+        await ctx.call('triplestore.update', {
+          query: `
+            DELETE
+            WHERE { 
+              GRAPH <${this.settings.mirrorGraphName}> {
+                <${resourceUri}> ?p1 ?o1 .
+              }
+            }
+          `
+        });
 
-      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
-
-      // Filter out triples whose subject is not the resource itself
-      // We don't want to update or delete resources with IDs
-      // if it is a mirror, we allow other resources to be added here,
-      // this is useful when PUT is used on a patched container that contains remote members
-
-      if (!mirror) {
-        oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-        newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
-      }
-
-      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
-      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
-
-      // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
-      // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
-      // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
-      const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
-
-      // If the exact same data have been posted, skip
-      if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
-        newData = oldData;
-      } else {
-        // Keep track of blank nodes to use in WHERE clause
-        const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-          triple => triple.object.termType === 'Variable'
-        );
-        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
-
-        // Generate the query
-        let query = '';
-        if (mirror) query += 'WITH <' + this.settings.mirrorGraphName + '> ';
-        if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
-        if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-        query += 'WHERE { ';
-        if (mirror) query += 'GRAPH <' + this.settings.mirrorGraphName + '> {';
-        if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
-        if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-        if (mirror) query += '} ';
-        query += ` }`;
-
-        await ctx.call('triplestore.update', { query, webId });
+        await ctx.call('triplestore.insert', {
+          resource,
+          contentType,
+          graphName: this.settings.mirrorGraphName
+        });
 
         // Get the new data, with the same formatting as the old data
         // We skip the cache because it has not been invalidated yet
@@ -141,16 +109,69 @@ module.exports = {
           { meta: { $cache: false } }
         );
 
-        ctx.emit(
-          'ldp.resource.updated',
-          {
-            resourceUri,
-            oldData,
-            newData,
-            webId
-          },
-          { meta: { webId: null, dataset: null, isMirror: mirror } }
-        );
+        ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: this.settings.mirrorGraphName });
+      } else {
+        let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
+        let newTriples = await this.bodyToTriples(body || resource, contentType);
+
+        const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
+
+        // Filter out triples whose subject is not the resource itself
+        // We don't want to update or delete resources with IDs
+        oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
+        newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+
+        oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
+        newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+
+        // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
+        // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
+        // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
+        const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+        const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
+
+        // If the exact same data have been posted, skip
+        if (triplesToAdd.length > 0 || triplesToRemove.length > 0) {
+          // Keep track of blank nodes to use in WHERE clause
+          const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
+            triple => triple.object.termType === 'Variable'
+          );
+          const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
+
+          // Generate the query
+          let query = '';
+          if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
+          if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+          query += 'WHERE { ';
+          if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
+          if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+          query += ` }`;
+
+          await ctx.call('triplestore.update', { query, webId });
+
+          // Get the new data, with the same formatting as the old data
+          // We skip the cache because it has not been invalidated yet
+          newData = await ctx.call(
+            'ldp.resource.get',
+            {
+              resourceUri,
+              accept: MIME_TYPES.JSON,
+              webId
+            },
+            { meta: { $cache: false } }
+          );
+
+          ctx.emit(
+            'ldp.resource.updated',
+            {
+              resourceUri,
+              oldData,
+              newData,
+              webId
+            },
+            { meta: { webId: null, dataset: null } }
+          );
+        }
       }
 
       return {

@@ -25,8 +25,6 @@ module.exports = {
     const resourceUri = resource.id || resource['@id'];
 
     const mirror = isMirror(resourceUri, this.settings.baseUrl);
-    if (mirror && !ctx.meta.forceMirror)
-      throw new MoleculerError('Mirrored resources cannot be created with LDP PUT', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -57,7 +55,7 @@ module.exports = {
       resource: contentType === MIME_TYPES.JSON ? resource : resource.body,
       contentType,
       webId,
-      graphName: mirror ? '<' + this.settings.mirrorGraphName + '>' : undefined
+      graphName: mirror ? this.settings.mirrorGraphName : undefined
     });
 
     const newData = await ctx.call(
@@ -77,7 +75,9 @@ module.exports = {
       webId
     };
 
-    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null, isMirror: mirror } });
+    if (!mirror) {
+      ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+    }
 
     return returnValues;
   }

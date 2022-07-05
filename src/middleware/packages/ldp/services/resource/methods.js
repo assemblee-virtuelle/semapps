@@ -18,18 +18,14 @@ module.exports = {
       try {
         const resourceUri = single.s.value;
 
-        let newResource = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.TURTLE } });
-        newResource = await newResource.text();
-        newResource += ` <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
-          new URL(resourceUri).origin
-        }> .`;
-        await this.broker.call(
-          'ldp.resource.put',
-          { resource: { id: resourceUri }, body: newResource, webId: 'system', contentType: MIME_TYPES.TURTLE },
-          { meta: { forceMirror: true } }
-        );
+        const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON } });
+        let resource = await response.json();
+        resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
+
+        await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
       } catch (e) {
-        // fail silently
+        this.logger.warn('Failed to update single mirrored resource ' + single.s.value);
+        console.error(e);
       }
     }
   },
