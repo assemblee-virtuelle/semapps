@@ -147,7 +147,7 @@ module.exports = {
           if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
           query += ` }`;
 
-          await ctx.call('triplestore.update', {query, webId});
+          await ctx.call('triplestore.update', { query, webId });
 
           // Get the new data, with the same formatting as the old data
           // We skip the cache because it has not been invalidated yet
