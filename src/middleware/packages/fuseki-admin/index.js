@@ -41,7 +41,7 @@ const FusekiAdminService = {
     },
     async createDataset(ctx) {
       const { dataset, secure } = ctx.params;
-      if( !dataset ) throw new Error('Unable to create dataset. The parameter dataset is missing');
+      if (!dataset) throw new Error('Unable to create dataset. The parameter dataset is missing');
       const exist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
       if (!exist) {
         this.logger.info(`Dataset ${dataset} doesn't exist. Creating it...`);
