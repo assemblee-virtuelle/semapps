@@ -74,6 +74,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                     label="Rechercher..."
                     reference={resource}
                     filter={{ _servers: '@remote' }}
+                    enableGetChoices={({ q }) => !!(q && q.length > 1)}
                     fullWidth
                   >
                     <MultiServerAutocompleteInput
