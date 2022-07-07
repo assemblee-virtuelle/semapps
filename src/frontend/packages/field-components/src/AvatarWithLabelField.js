@@ -44,7 +44,17 @@ const useStyles = makeStyles(theme => ({
 
 const handleClick = () => {};
 
-const AvatarWithLabelField = ({ record, label, defaultLabel, image, fallback, externalLink, labelColor, classes, ...rest }) => {
+const AvatarWithLabelField = ({
+  record,
+  label,
+  defaultLabel,
+  image,
+  fallback,
+  externalLink,
+  labelColor,
+  classes,
+  ...rest
+}) => {
   classes = useStyles(classes);
   if (!record) return null;
 
@@ -63,7 +73,7 @@ const AvatarWithLabelField = ({ record, label, defaultLabel, image, fallback, ex
           {...rest}
         />
       </div>
-      {externalLink ?
+      {externalLink ? (
         <Chip
           color={labelColor}
           className={classes.chip}
@@ -72,14 +82,9 @@ const AvatarWithLabelField = ({ record, label, defaultLabel, image, fallback, ex
           deleteIcon={<LaunchIcon className={classes.launchIcon} />}
           onDelete={handleClick}
         />
-        :
-        <Chip
-          color={labelColor}
-          className={classes.chip}
-          size="small"
-          label={computedLabel}
-        />
-      }
+      ) : (
+        <Chip color={labelColor} className={classes.chip} size="small" label={computedLabel} />
+      )}
     </Box>
   );
 };

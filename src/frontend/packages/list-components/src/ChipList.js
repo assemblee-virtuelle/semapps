@@ -11,7 +11,7 @@ import {
 import { makeStyles, LinearProgress } from '@material-ui/core';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import LaunchIcon from '@material-ui/icons/Launch';
-import { useGetExternalLink } from "@semapps/semantic-data-provider";
+import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,10 +20,10 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     textDecoration: 'none',
-    maxWidth: "100%",
+    maxWidth: '100%'
   },
   chipField: {
-    maxWidth: "100%",
+    maxWidth: '100%'
   },
   addIcon: {
     cursor: 'pointer',
@@ -75,9 +75,15 @@ const ChipList = props => {
         if (!data[id]) return null;
         const externalLink = getExternalLink(data[id]);
         if (externalLink) {
-          return(
+          return (
             <RecordContextProvider value={data[id]} key={id}>
-              <a href={externalLink} target="_blank" rel="noopener noreferrer" className={classes.link} onClick={stopPropagation}>
+              <a
+                href={externalLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={classes.link}
+                onClick={stopPropagation}
+              >
                 <ChipField
                   record={data[id]}
                   resource={resource}
@@ -93,7 +99,7 @@ const ChipList = props => {
                 />
               </a>
             </RecordContextProvider>
-          )
+          );
         } else if (linkType) {
           return (
             <RecordContextProvider value={data[id]} key={id}>

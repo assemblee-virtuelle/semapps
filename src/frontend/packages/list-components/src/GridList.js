@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useListContext, linkToRecord, Link } from 'react-admin';
 import { Grid } from '@material-ui/core';
-import { useGetExternalLink } from "@semapps/semantic-data-provider";
+import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 // useful to prevent click bubbling in a datagrid with rowClick
 const stopPropagation = e => e.stopPropagation();
@@ -65,7 +65,7 @@ GridList.defaultProps = {
   xs: 6,
   spacing: 3,
   linkType: 'edit',
-  externalLinks: false,
+  externalLinks: false
 };
 
 export default GridList;

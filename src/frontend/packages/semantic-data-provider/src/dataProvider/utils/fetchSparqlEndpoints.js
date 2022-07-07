@@ -60,12 +60,12 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
             return jsonld.frame(json, frame, { omitGraph: false });
           })
           .then(compactJson => {
-            if( compactJson['@id'] ) {
+            if (compactJson['@id']) {
               const { '@context': context, ...rest } = compactJson;
               compactJson = {
                 '@context': context,
                 '@graph': [rest]
-              }
+              };
             }
             resolve(compactJson['@graph'] || []);
           })
