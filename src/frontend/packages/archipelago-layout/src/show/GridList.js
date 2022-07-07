@@ -10,6 +10,9 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
+/**
+ * @deprecated Import it from @semapps/list-components instead
+ */
 const GridList = ({ children, linkType, spacing, xs, sm, md, lg, xl }) => {
   const { ids, data, basePath } = useListContext();
   return (

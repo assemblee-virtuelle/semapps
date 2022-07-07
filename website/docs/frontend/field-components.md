@@ -12,6 +12,37 @@ npm install @semapps/field-components --save
 
 ## Components
 
+### AvatarWithLabelField
+
+Same as React-Admin [ReferenceArrayField](https://marmelab.com/react-admin/Fields.html#referencearrayfield) but, if the user has a `acl:Append` right on the resource, he will have the possibility to add a new relationship through a modal.
+
+```jsx
+import { Show, SimpleShowLayout, ReferenceArrayField } from 'react-admin';
+import { GridList } from '@semapps/list-components';
+import { AvatarWithLabelField } from '@semapps/field-components';
+
+const PersonShow = props => (
+  <Show {...props}>
+    <SimpleShowLayout>
+      <ReferenceArrayField reference="Person" source="friendOf">
+        <GridList xs={6} sm={4} md={2} linkType="show">
+          <AvatarWithLabelField image="image" label="label" />
+        </GridList>
+      </ReferenceArrayField>
+    </SimpleShowLayout>
+  </Show>
+);
+```
+
+| Property       | Type                   | Default      | Description                                                                          |
+|----------------|------------------------|--------------|--------------------------------------------------------------------------------------|
+| `label`        | `Function` or `String` | **required** | A function which takes a record and returns a label, or the property to use          |
+| `image`        | `Function` or `String` | **required** | A function which takes a record and returns an image, or the property to use         |
+| `defaultLabel` | `String`               |              | Default label used if label is empty                                                 |
+| `fallback`     | `Function` or `String` |              | A function which takes a record and returns a fallback image, or the property to use |
+| `externalLink` | `Boolean`              | false        | If true, will display an icon next to the label showing this is an external link     |
+
+
 ### QuickAppendReferenceArrayField
 
 Same as React-Admin [ReferenceArrayField](https://marmelab.com/react-admin/Fields.html#referencearrayfield) but, if the user has a `acl:Append` right on the resource, he will have the possibility to add a new relationship through a modal.

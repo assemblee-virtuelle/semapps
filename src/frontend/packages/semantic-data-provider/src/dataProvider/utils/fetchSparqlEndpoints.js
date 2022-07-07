@@ -60,6 +60,13 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
             return jsonld.frame(json, frame, { omitGraph: false });
           })
           .then(compactJson => {
+            if( compactJson['@id'] ) {
+              const { '@context': context, ...rest } = compactJson;
+              compactJson = {
+                '@context': context,
+                '@graph': [rest]
+              }
+            }
             resolve(compactJson['@graph'] || []);
           })
           .catch(e => reject(e));
@@ -69,11 +76,15 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   // Run simultaneous SPARQL queries
   let results = await Promise.all(sparqlQueryPromises);
 
+  console.log('results', results);
+
   if (results.length === 0) {
     return { data: [], total: 0 };
   } else {
     // Merge all results in one array
-    results = [].concat.apply(...results);
+    results = [].concat(...results);
+
+    console.log('results 2', results);
 
     // Add id in addition to @id, as this is what React-Admin expects
     let returnData = results.map(item => {
