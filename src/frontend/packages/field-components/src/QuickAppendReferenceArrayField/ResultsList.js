@@ -76,7 +76,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
           .getList(reference, {
             pagination: { page: 1, perPage: 100 },
             sort: { field: dataModel?.fieldsMapping?.title, order: 'ASC' },
-            filter: { q: keyword }
+            filter: { q: keyword, _servers: '@all' }
           })
           .then(({ data }) => {
             const existingLinks = record[source]

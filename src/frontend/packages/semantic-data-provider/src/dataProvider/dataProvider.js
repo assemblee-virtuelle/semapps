@@ -43,7 +43,8 @@ const dataProvider = config => {
     deleteMany: waitForVoidEndpoints(deleteManyMethod(config)),
     // Custom methods
     getDataModels: waitForVoidEndpoints(getDataModelsMethod(config)),
-    getDataServers: waitForVoidEndpoints(getDataServersMethod(config))
+    getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
+    getLocalDataServers: getDataServersMethod(config)
   };
 };
 

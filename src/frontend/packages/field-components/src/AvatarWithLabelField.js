@@ -1,5 +1,6 @@
 import React from 'react';
-import { Typography, Box, makeStyles, Avatar } from '@material-ui/core';
+import { Box, makeStyles, Avatar, Chip } from '@material-ui/core';
+import LaunchIcon from '@material-ui/icons/Launch';
 
 const useStyles = makeStyles(theme => ({
   parent: props => ({
@@ -24,27 +25,36 @@ const useStyles = makeStyles(theme => ({
       height: '55%'
     }
   },
-  child: {
+  chip: {
     position: 'absolute',
     bottom: -10,
     left: 0,
     right: 0,
-    paddingTop: 2,
-    paddingBottom: 2,
+    paddingTop: 3,
+    paddingBottom: 3,
     paddingLeft: 6,
     paddingRight: 6,
-    marginBottom: 10
+    marginBottom: 10,
+    cursor: 'pointer'
   },
-  caption: {
-    color: 'black',
-    fontSize: 13
+  launchIcon: {
+    width: 14
   }
 }));
 
-/**
- * @deprecated Import it from @semapps/field-components instead
- */
-const AvatarField = ({ record, label, defaultLabel, image, fallback, variant, labelColor, classes, children }) => {
+const handleClick = () => {};
+
+const AvatarWithLabelField = ({
+  record,
+  label,
+  defaultLabel,
+  image,
+  fallback,
+  externalLink,
+  labelColor,
+  classes,
+  ...rest
+}) => {
   classes = useStyles(classes);
   if (!record) return null;
 
@@ -60,22 +70,28 @@ const AvatarField = ({ record, label, defaultLabel, image, fallback, variant, la
           alt={computedLabel}
           fallback={computedFallback}
           className={classes.avatar}
-          variant={variant}
-        >
-          {children}
-        </Avatar>
+          {...rest}
+        />
       </div>
-      <Box bgcolor={labelColor} className={classes.child} borderRadius={5}>
-        <Typography align="center" className={classes.caption} noWrap>
-          {computedLabel}
-        </Typography>
-      </Box>
+      {externalLink ? (
+        <Chip
+          color={labelColor}
+          className={classes.chip}
+          size="small"
+          label={computedLabel}
+          deleteIcon={<LaunchIcon className={classes.launchIcon} />}
+          onDelete={handleClick}
+        />
+      ) : (
+        <Chip color={labelColor} className={classes.chip} size="small" label={computedLabel} />
+      )}
     </Box>
   );
 };
 
-AvatarField.defaultProps = {
-  labelColor: 'secondary.main'
+AvatarWithLabelField.defaultProps = {
+  labelColor: 'secondary.main',
+  externalLink: false
 };
 
-export default AvatarField;
+export default AvatarWithLabelField;
