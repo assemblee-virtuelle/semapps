@@ -11,7 +11,7 @@ This package provide utilities to help migrate semantic data.
 ## Install
 
 ```bash
-$ npm install @semapps/migration --save
+$ yarn add @semapps/migration
 ```
 
 ## Usage
@@ -21,7 +21,10 @@ const { MigrationService } = require('@semapps/migration');
 const path = require('path');
 
 module.exports = {
-  mixins: [MigrationService]
+  mixins: [MigrationService],
+  settings: {
+    baseUrl: 'http://localhost:3000'
+  }
 }
 ```
 

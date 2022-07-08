@@ -6,7 +6,8 @@ const {
   buildDereferenceQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
+  isMirror
 } = require('../../../utils');
 
 module.exports = {

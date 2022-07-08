@@ -11,7 +11,7 @@ const ActorService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: resource => ({
-      '@type': ACTOR_TYPES.PERSON,
+      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
       name: undefined,
       preferredUsername: getSlugFromUri(resource.id || resource['@id'])
     }),
@@ -125,7 +125,9 @@ const ActorService = {
       return uri.startsWith(this.settings.baseUri);
     },
     isActor(resource) {
-      return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
+      return defaultToArray(resource['@type'] || resource.type || []).some(type =>
+        Object.values(ACTOR_TYPES).includes(type)
+      );
     }
   },
   events: {

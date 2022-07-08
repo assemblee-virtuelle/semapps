@@ -18,8 +18,10 @@ module.exports = {
       label: 'Importer',
       items: [
         'middleware/importer/index',
+        'middleware/importer/discourse',
         'middleware/importer/drupal',
         'middleware/importer/gogocarto',
+        'middleware/importer/jotform',
         'middleware/importer/mobilizon',
         'middleware/importer/prestashop',
         'middleware/importer/yeswiki',
@@ -37,6 +39,7 @@ module.exports = {
       ],
     },
     'middleware/migration',
+    'middleware/mirror',
     {
       type: 'category',
       label: 'Notifications',
@@ -47,6 +50,7 @@ module.exports = {
       ],
     },
     'middleware/triplestore',
+    'middleware/void',
     {
       type: 'category',
       label: 'WebACL',

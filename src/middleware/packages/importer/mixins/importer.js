@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const cronParser = require('cron-parser');
 const { promises: fsPromises } = require('fs');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
@@ -325,7 +325,7 @@ module.exports = {
             collectionUri: outbox,
             type,
             object: resourceUri,
-            to: followers
+            to: [followers, PUBLIC_URI]
           },
           { meta: { webId: this.settings.dest.actorUri } }
         );
@@ -338,12 +338,20 @@ module.exports = {
       }
     },
     async processSynchronize(job) {
-      const interval = cronParser.parseExpression(this.settings.cronJob.time, {
-        currentDate: new Date(job.opts.timestamp),
-        tz: this.settings.cronJob.timeZone
-      });
-      const toDate = new Date(interval.next().toISOString());
-      const fromDate = new Date(interval.prev().toISOString());
+      let fromDate, toDate;
+
+      if (this.settings.cronJob.time) {
+        const interval = cronParser.parseExpression(this.settings.cronJob.time, {
+          currentDate: new Date((job.opts && job.opts.timestamp) || undefined),
+          tz: this.settings.cronJob.timeZone
+        });
+        toDate = new Date(interval.next().toISOString());
+        fromDate = new Date(interval.prev().toISOString());
+      } else {
+        toDate = new Date();
+        fromDate = new Date(Date.now() - 86400 * 1000);
+      }
+
       job.log('Looking for updates from ' + fromDate.toString() + ' to ' + toDate.toString());
 
       let deletedUris = {},

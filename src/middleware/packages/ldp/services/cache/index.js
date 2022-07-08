@@ -66,6 +66,10 @@ module.exports = {
       const { containerUri } = ctx.params;
       await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
     },
+    async 'ldp.container.patched'(ctx) {
+      const { containerUri } = ctx.params;
+      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+    },
     async 'ldp.container.detached'(ctx) {
       const { containerUri } = ctx.params;
       await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });

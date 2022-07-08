@@ -2,7 +2,7 @@ import createMethod from './methods/create';
 import deleteMethod from './methods/delete';
 import deleteManyMethod from './methods/deleteMany';
 import getDataServersMethod from './methods/getDataServers';
-import getDataModelMethod from './methods/getDataModel';
+import getDataModelsMethod from './methods/getDataModels';
 import getListMethod from './methods/getList';
 import getManyMethod from './methods/getMany';
 import getManyReferenceMethod from './methods/getManyReference';
@@ -42,8 +42,9 @@ const dataProvider = config => {
     delete: waitForVoidEndpoints(deleteMethod(config)),
     deleteMany: waitForVoidEndpoints(deleteManyMethod(config)),
     // Custom methods
-    getDataModel: waitForVoidEndpoints(getDataModelMethod(config)),
-    getDataServers: waitForVoidEndpoints(getDataServersMethod(config))
+    getDataModels: waitForVoidEndpoints(getDataModelsMethod(config)),
+    getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
+    getLocalDataServers: getDataServersMethod(config)
   };
 };
 

@@ -119,6 +119,10 @@ const authProvider = ({
   },
   checkError: error => Promise.resolve(),
   getPermissions: async uri => {
+    // Do not get permissions for servers other than the one used for auth
+    // as this will always fail as long as cross-servers auth is not available
+    if (!uri.startsWith(middlewareUri)) return false;
+
     if (!checkPermissions) return true;
 
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
@@ -130,9 +134,10 @@ const authProvider = ({
     return json['@graph'];
   },
   addPermission: async (uri, agentId, predicate, mode) => {
-    const aclUri = getAclUri(uri);
-
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+    if (!uri.startsWith(middlewareUri)) new Error('Cannot add permissions on servers other than the one used for auth');
+
+    const aclUri = getAclUri(uri);
 
     let authorization = {
       '@id': '#' + mode.replace('acl:', ''),
@@ -153,6 +158,8 @@ const authProvider = ({
   removePermission: async (uri, agentId, predicate, mode) => {
     if (!uri || !uri.startsWith('http'))
       throw new Error('The first parameter passed to removePermission must be an URL');
+    if (!uri.startsWith(middlewareUri))
+      throw new Error('Cannot remove permissions on servers other than the one used for auth');
 
     const aclUri = getAclUri(uri);
 
@@ -226,6 +233,45 @@ const authProvider = ({
       });
     } catch (e) {
       throw new Error('app.notification.new_password_error');
+    }
+  },
+  getAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the getAccountSettings method'
+      );
+
+    try {
+      const { json } = await httpClient(`${serverUrl}auth/account`, {
+        method: 'GET'
+      });
+      return json;
+    } catch (e) {
+      throw new Error('app.notification.get_settings_error');
+    }
+  },
+  updateAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the updateAccountSettings method'
+      );
+
+    try {
+      const { email, currentPassword, newPassword } = params;
+
+      await httpClient(`${serverUrl}auth/account`, {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      if (e.message === 'auth.account.invalid_password') {
+        throw new Error('app.notification.invalid_password');
+      }
+
+      throw new Error('app.notification.update_settings_error');
     }
   }
 });

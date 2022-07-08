@@ -4,6 +4,7 @@ const {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
@@ -17,6 +18,7 @@ function getResourcesRoute(containerUri, readOnly = false) {
     negotiateAccept,
     parseSparql,
     parseJson,
+    parseTurtle,
     parseFile,
     addContainerUriMiddleware(containerUri)
   ];

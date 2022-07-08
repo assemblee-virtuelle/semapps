@@ -6,13 +6,13 @@ module.exports = {
     containerUri: null
   },
   methods: {
-    created(resourceUri, newData) {
+    resourceCreated(resourceUri, newData) {
       // This method can be implemented
     },
-    updated(resourceUri, newData, oldData) {
+    resourceUpdated(resourceUri, newData, oldData) {
       // This method can be implemented
     },
-    deleted(resourceUri, oldData) {
+    resourceDeleted(resourceUri, oldData) {
       // This method can be implemented
     },
     isMatching(resourceUri) {
@@ -23,19 +23,19 @@ module.exports = {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
       if (this.isMatching(resourceUri)) {
-        this.created(resourceUri, newData);
+        this.resourceCreated(resourceUri, newData);
       }
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
       if (this.isMatching(resourceUri)) {
-        this.updated(resourceUri, newData, oldData);
+        this.resourceUpdated(resourceUri, newData, oldData);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
       if (this.isMatching(resourceUri)) {
-        this.updated(resourceUri, oldData);
+        this.resourceDeleted(resourceUri, oldData);
       }
     }
   }

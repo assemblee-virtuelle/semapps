@@ -54,7 +54,7 @@ const WebfingerService = {
     async getRemoteUri(ctx) {
       const { account } = ctx.params;
       const domainName = account.split('@').pop();
-      const webfingerUrl = `https://${domainName}/.well-known/webfinger?resource=acct:${account}`;
+      const webfingerUrl = `http://${domainName}/.well-known/webfinger?resource=acct:${account}`;
 
       const response = await fetch(webfingerUrl);
 

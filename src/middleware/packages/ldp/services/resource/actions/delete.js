@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri } = require('../../../utils');
+const { getContainerFromUri, isMirror } = require('../../../utils');
 const fs = require('fs');
 
 module.exports = {
@@ -37,6 +37,8 @@ module.exports = {
       const { resourceUri } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
+
+      const mirror = isMirror(resourceUri, this.settings.baseUrl);
 
       const { disassembly } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -83,7 +85,9 @@ module.exports = {
         query: `
           DELETE
           WHERE { 
+            ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
             <${resourceUri}> ?p1 ?o1 .
+            ${mirror ? '}' : ''}
           }
         `,
         webId
@@ -106,9 +110,11 @@ module.exports = {
         webId
       };
 
-      ctx.call('triplestore.deleteOrphanBlankNodes');
+      ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: mirror ? this.settings.mirrorGraphName : undefined });
 
-      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      if (!mirror) {
+        ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null, isMirror: mirror } });
+      }
 
       return returnValues;
     }

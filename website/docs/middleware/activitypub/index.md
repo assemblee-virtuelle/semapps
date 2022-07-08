@@ -46,7 +46,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Install
 
 ```bash
-$ npm install @semapps/activitypub --save
+$ yarn add @semapps/activitypub
 ```
 
 ## Usage

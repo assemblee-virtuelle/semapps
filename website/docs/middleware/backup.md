@@ -17,7 +17,7 @@ This service allows you to backup the triples in a given dataset, as well as the
 ## Install
 
 ```bash
-$ npm install @semapps/backup --save
+$ yarn add @semapps/backup
 ```
 
 You will need to have `rsync`, `sshpass` and `openssh` installed on your server.

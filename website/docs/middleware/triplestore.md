@@ -20,7 +20,7 @@ This service allows you to interface with a [Jena Fuseki](https://jena.apache.or
 
 ## Install
 ```bash
-$ npm install @semapps/triplestore --save
+$ yarn add @semapps/triplestore
 ```
 
 ## Usage

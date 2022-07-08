@@ -1,6 +1,7 @@
 const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
 const DigestSubscriptionService = require('./subscription');
+const { TripleStoreAdapter } = require('@semapps/triplestore');
 
 const DigestNotificationsService = {
   name: 'digest',
@@ -11,6 +12,7 @@ const DigestNotificationsService = {
       // daily: '0 0 17 * * *',
     },
     timeZone: 'Europe/Paris',
+    subscriptionsDataset: 'settings',
     templateFolder: null,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: null,
@@ -20,7 +22,9 @@ const DigestNotificationsService = {
   },
   dependencies: ['digest.subscription'],
   created() {
-    this.broker.createService(DigestSubscriptionService);
+    this.broker.createService(DigestSubscriptionService, {
+      adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
+    });
   },
   async started() {
     if (!this.createJob)
@@ -34,7 +38,8 @@ const DigestNotificationsService = {
   actions: {
     async build(ctx) {
       const { frequency, timestamp } = ctx.params;
-      const returnValues = [];
+      const success = [],
+        failures = [];
 
       const currentDate = timestamp ? new Date(timestamp) : new Date();
 
@@ -48,69 +53,77 @@ const DigestNotificationsService = {
       const subscriptions = await ctx.call('digest.subscription.find', { query: { frequency } });
 
       for (let subscription of subscriptions) {
-        const subscriber = await ctx.call('activitypub.actor.get', { actorUri: subscription.webId });
-        const account = await ctx.call('auth.account.findByWebId', { webId: subscription.webId });
-        const newActivities = await ctx.call('activitypub.inbox.getByDates', {
-          collectionUri: subscriber.inbox,
-          fromDate: previousDate,
-          toDate: currentDate
-        });
+        try {
+          const subscriber = await ctx.call('activitypub.actor.get', { actorUri: subscription.webId });
+          const account = await ctx.call('auth.account.findByWebId', { webId: subscription.webId });
+          const newActivities = await ctx.call('activitypub.inbox.getByDates', {
+            collectionUri: subscriber.inbox,
+            fromDate: previousDate,
+            toDate: currentDate
+          });
 
-        if (newActivities.length > 0) {
-          let notifications = [],
-            notificationsByCategories = {};
+          if (newActivities.length > 0) {
+            let notifications = [],
+              notificationsByCategories = {};
 
-          // Map received activities to notifications
-          for (let activity of newActivities) {
-            const notification = await ctx.call('activity-mapping.map', {
-              activity,
-              locale: subscription.locale || account.locale
-            });
-            if (notification && (await this.filterNotification(notification, subscription))) {
-              notifications.push(notification);
-              if (notification.category) {
-                if (!notificationsByCategories[notification.category])
-                  notificationsByCategories[notification.category] = {
-                    category: notification.category,
-                    notifications: []
-                  };
-                notificationsByCategories[notification.category].notifications.push(notification);
+            // Map received activities to notifications
+            for (let activity of newActivities) {
+              const notification = await ctx.call('activity-mapping.map', {
+                activity,
+                locale: subscription.locale || account.locale
+              });
+              if (notification && (await this.filterNotification(notification, subscription, notifications))) {
+                notifications.push(notification);
+                if (notification.category) {
+                  if (!notificationsByCategories[notification.category])
+                    notificationsByCategories[notification.category] = {
+                      category: notification.category,
+                      notifications: []
+                    };
+                  notificationsByCategories[notification.category].notifications.push(notification);
+                }
               }
             }
-          }
 
-          // If we have at least one notification, send email
-          if (notifications.length > 0) {
-            await this.actions.send(
-              {
-                to: subscription.email || account.email,
-                template: 'digest',
-                locale: subscription.locale || account.locale,
-                data: {
-                  notifications,
-                  notificationsByCategories,
-                  subscription,
-                  subscriber,
-                  account
+            // If we have at least one notification, send email
+            if (notifications.length > 0) {
+              await this.actions.send(
+                {
+                  to: subscription.email || account.email,
+                  template: 'digest',
+                  locale: subscription.locale || account.locale,
+                  data: {
+                    notifications,
+                    notificationsByCategories,
+                    subscription,
+                    subscriber,
+                    account
+                  }
+                },
+                {
+                  parentCtx: ctx
                 }
-              },
-              {
-                parentCtx: ctx
-              }
-            );
+              );
 
-            returnValues.push({
-              email: subscription.email || account.email,
-              locale: subscription.locale || account.locale,
-              numNotifications: notifications.length,
-              categories: Object.keys(notificationsByCategories),
-              subscription
-            });
+              success.push({
+                email: subscription.email || account.email,
+                locale: subscription.locale || account.locale,
+                numNotifications: notifications.length,
+                categories: Object.keys(notificationsByCategories),
+                notificationsIds: notifications.map(n => n.id),
+                subscription
+              });
+            }
           }
+        } catch (e) {
+          failures.push({
+            error: e.message,
+            subscription
+          });
         }
       }
 
-      return returnValues;
+      return { failures, success };
     }
   },
   methods: {

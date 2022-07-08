@@ -16,6 +16,7 @@ const ActivityService = {
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,
+    excludeFromMirror: true,
     controlledActions: {
       // Activities shouldn't be handled manually
       patch: 'activitypub.activity.forbidden',

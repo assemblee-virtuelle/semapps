@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * @deprecated Import it from @semapps/field-components instead
+ */
 const AvatarField = ({ record, label, defaultLabel, image, fallback, variant, labelColor, classes, children }) => {
   classes = useStyles(classes);
   if (!record) return null;

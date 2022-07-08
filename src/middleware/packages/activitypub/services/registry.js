@@ -105,7 +105,7 @@ const RegistryService = {
           [collection.attachPredicate]: { '@id': collectionUri }
         },
         contentType: MIME_TYPES.JSON,
-        webId
+        webId: 'system'
       });
     },
     async deleteCollection(ctx) {
@@ -164,7 +164,6 @@ const RegistryService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
-
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
@@ -177,7 +176,6 @@ const RegistryService = {
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData, webId } = ctx.params;
-
       // Check if we need to create collection only if the type has changed
       if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);

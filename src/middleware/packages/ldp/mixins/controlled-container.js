@@ -11,7 +11,8 @@ module.exports = {
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
-    readOnly: false
+    readOnly: false,
+    excludeFromMirror: false
   },
   dependencies: ['ldp'],
   async started() {
@@ -23,6 +24,7 @@ module.exports = {
       jsonContext: this.settings.jsonContext,
       dereference: this.settings.dereference,
       permissions: this.settings.permissions,
+      excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
         post: this.name + '.post',
@@ -44,7 +46,10 @@ module.exports = {
       }
       return await ctx.call('ldp.container.post', ctx.params);
     },
-    list(ctx) {
+    async list(ctx) {
+      if (!ctx.params.containerUri) {
+        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      }
       return ctx.call('ldp.container.get', ctx.params);
     },
     get(ctx) {

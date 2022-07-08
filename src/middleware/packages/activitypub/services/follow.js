@@ -75,13 +75,27 @@ const FollowService = {
     async isFollowing(ctx) {
       const { follower, following } = ctx.params;
 
-      if (!this.isLocalActor(following))
+      if (!this.isLocalActor(follower))
         throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
 
-      const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+      const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
       return await ctx.call('activitypub.collection.includes', {
-        collectionUri: actor.followers,
-        itemUri: follower
+        collectionUri: actor.following,
+        itemUri: following
+      });
+    },
+    async listFollowers(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
+      });
+    },
+    async listFollowing(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
       });
     }
   },

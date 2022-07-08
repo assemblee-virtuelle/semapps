@@ -18,7 +18,7 @@ This service allows you to automatically generate inferences when resources are 
 ## Install
 
 ```bash
-$ npm install @semapps/inference --save
+$ yarn add @semapps/inference
 ```
 
 ## Usage

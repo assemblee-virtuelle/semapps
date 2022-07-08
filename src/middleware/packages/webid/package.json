@@ -1,16 +1,16 @@
 {
   "name": "@semapps/webid",
-  "version": "0.4.0-alpha.25",
+  "version": "0.4.0-alpha.36",
   "description": "WebID service for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
-    "@semapps/ldp": "0.4.0-alpha.25",
-    "@semapps/mime-types": "0.4.0-alpha.25",
+    "@semapps/ldp": "0.4.0-alpha.36",
+    "@semapps/mime-types": "0.4.0-alpha.36",
     "url-join": "^4.0.1"
   },
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+  "gitHead": "f65a5a67d02782b0539d12ed482e8cc4149e5d36"
 }

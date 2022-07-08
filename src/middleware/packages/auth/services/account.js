@@ -9,7 +9,7 @@ module.exports = {
   adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
   settings: {
     idField: '@id',
-    reservedUsernames: []
+    reservedUsernames: ['relay']
   },
   dependencies: ['triplestore'],
   actions: {
@@ -19,14 +19,14 @@ module.exports = {
 
       email = email && email.toLowerCase();
 
-      const emailExists = await ctx.call('auth.account.emailExists', { email });
+      const emailExists = !email ? false : await ctx.call('auth.account.emailExists', { email });
       if (emailExists) {
         throw new Error('email.already.exists');
       }
 
       if (username) {
-        await this.isValidUsername(ctx, username);
-      } else {
+        if (!ctx.meta.isSystemCall) await this.isValidUsername(ctx, username);
+      } else if (email) {
         // If username is not provided, find an username based on the email
         const usernameFromEmail = email.split('@')[0].toLowerCase();
         let usernameValid = false,
@@ -40,7 +40,7 @@ module.exports = {
           }
           i++;
         } while (!usernameValid);
-      }
+      } else throw new Error('you must provide at least a username or an email address');
 
       return await this._create(ctx, {
         ...rest,
@@ -134,6 +134,45 @@ module.exports = {
       });
 
       return resetPasswordToken;
+    },
+    async findSettingsByWebId(ctx) {
+      const { webId } = ctx.meta;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+
+      return {
+        email: account['email'],
+        preferredLocale: account['preferredLocale']
+      };
+    },
+    async updateAccountSettings(ctx) {
+      const { currentPassword, email, newPassword } = ctx.params;
+      const { webId } = ctx.meta;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+      const passwordMatch = await this.comparePassword(currentPassword, account.hashedPassword);
+      let params = {};
+
+      if (!passwordMatch) {
+        throw new Error('auth.account.invalid_password');
+      }
+
+      if (newPassword) {
+        const hashedPassword = await this.hashPassword(newPassword);
+        params = { ...params, hashedPassword };
+      }
+
+      if (email !== account['email']) {
+        const existing = await ctx.call('auth.account.findByEmail', { email });
+        if (existing) {
+          throw new Error('email.already.exists');
+        }
+
+        params = { ...params, email };
+      }
+
+      return await this._update(ctx, {
+        '@id': account['@id'],
+        ...params
+      });
     }
   },
   methods: {
@@ -148,7 +187,7 @@ module.exports = {
         throw new Error('username.already.exists');
       }
 
-      // Ensure email or username doesn't already exist
+      // Ensure username doesn't already exist
       const usernameExists = await ctx.call('auth.account.usernameExists', { username });
       if (usernameExists) {
         throw new Error('username.already.exists');

@@ -78,7 +78,7 @@ module.exports = {
         });
 
         if (!isMember) {
-          console.log(`User ${memberUri} is not member of superadmins group, adding it...`);
+          this.logger.info(`User ${memberUri} is not member of superadmins group, adding it...`);
           await this.actions.addMember({ groupUri, memberUri, webId: 'system' });
         }
       }

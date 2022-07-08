@@ -18,7 +18,7 @@ This service allows you to create and view WebID-conform profiles.
 ## Install
 
 ```bash
-$ npm install @semapps/webid --save
+$ yarn add @semapps/webid
 ```
 
 ## Usage

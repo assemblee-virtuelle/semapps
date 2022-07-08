@@ -38,7 +38,7 @@ const AuthMixin = {
       done(null, user);
     });
 
-    this.strategy = this.getStrategy();
+    this.strategy = await this.getStrategy();
 
     this.passport.use(this.passportId, this.strategy);
 

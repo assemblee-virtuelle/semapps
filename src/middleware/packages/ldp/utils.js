@@ -5,6 +5,26 @@ function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
 }
 
+const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
+
+const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
+
+function createFragmentURL(baseUrl, serverUrl) {
+  let fragment = 'me';
+  const res = serverUrl.match(regexProtocolAndHostAndPort);
+  if (res)
+    fragment = res[2]
+      .replace('-', '_')
+      .replace('.', '_')
+      .replace(':', '_');
+
+  return urlJoin(baseUrl, '#' + fragment);
+}
+
+const isMirror = (resourceUri, baseUrl) => {
+  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+};
+
 const buildBlankNodesQuery = depth => {
   let construct = '',
     where = '';
@@ -71,7 +91,7 @@ const buildDereferenceQuery = predicates => {
   let queries = [];
   const nodes = extractNodes(predicates);
 
-  if (nodes) {
+  if (nodes && nodes.length) {
     for (let node of nodes) {
       const parentNode = getParentNode(node);
       const predicate = getPredicate(node);
@@ -155,5 +175,9 @@ module.exports = {
   isContainer,
   defaultToArray,
   delay,
-  getAclUriFromResourceUri
+  getAclUriFromResourceUri,
+  isMirror,
+  createFragmentURL,
+  regexPrefix,
+  regexProtocolAndHostAndPort
 };
