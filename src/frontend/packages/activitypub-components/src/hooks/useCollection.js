@@ -32,6 +32,8 @@ const useCollection = predicateOrUrl => {
       .then(({ json }) => {
         if (json && json.items) {
           setItems(json.items);
+        } else if ( json && json.orderedItems ) {
+          setItems(json.orderedItems);
         } else {
           setItems([]);
         }
