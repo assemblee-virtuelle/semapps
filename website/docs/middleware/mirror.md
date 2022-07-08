@@ -23,6 +23,11 @@ $ yarn add @semapps/mirror
 
 If you were running a previous version of the middleware and/or of Jena Fuseki (before July 2022), you will need to migrate your dataset(s) configuration(s).
 
+- If your Docker containers are running, stop them
+```
+docker-compose down
+```
+
 - Remove the current image version of the Docker image
 ```
 docker image rm -f semapps/jena-fuseki-webacl
@@ -31,11 +36,6 @@ docker image rm -f semapps/jena-fuseki-webacl
 - Pull the newer version from Docker Hub
 ```
 docker image pull semapps/jena-fuseki-webacl 
-```
-
-- If your Docker containers are running, stop them
-```
-docker-compose down
 ```
 
 - Run the following command to launch the migration
