@@ -41,7 +41,9 @@ const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
   // we keep the full list for further use
   req.$ctx.meta.accepts = req.headers.accept;
-  if (req.headers.accept === '*/*') req.headers.accept = undefined;
+  if (req.headers.accept === '*/*') {
+    delete req.headers.accept;
+  }
   if (req.headers.accept !== undefined) {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
