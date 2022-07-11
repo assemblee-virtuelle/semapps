@@ -124,30 +124,36 @@ module.exports = {
             }
           });
         }
+        
+        if(!forceSemantic ){
+          let triples = await this.bodyToTriples(result, accept);
 
-        let triples = await this.bodyToTriples(result, accept);
+          let type = triples.find(q=>['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'].includes(q.predicate.value)).object.value
 
-        let type = triples.find(q=>['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'].includes(q.predicate.value)).object.value
+          if (['http://semapps.org/ns/core#File','semapps:File'].includes(type)) {
+            try {
+              const mimeType = triples.find(q=>['http://semapps.org/ns/core#mimeType','semapps:mimeType'].includes(q.predicate.value)).object.value
 
-        if (['http://semapps.org/ns/core#File','semapps:File'].includes(type) && !forceSemantic) {
-          try {
-            const mimeType = triples.find(q=>['http://semapps.org/ns/core#mimeType','semapps:mimeType'].includes(q.predicate.value)).object.value
-
-            // Overwrite response type set by the api action
-            ctx.meta.$responseType = mimeType;
-            // Since files are currently immutable, we set a maximum browser cache age
-            ctx.meta.$responseHeaders = {
-              'Cache-Control': 'public, max-age=31536000'
-            };
-            const localPath = triples.find(q=>['http://semapps.org/ns/core#localPath','semapps:localPath'].includes(q.predicate.value)).object.value
-            return fs.readFileSync(localPath);
-          } catch (e) {
-            throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
+              // Overwrite response type set by the api action
+              ctx.meta.$responseType = mimeType;
+              // Since files are currently immutable, we set a maximum browser cache age
+              ctx.meta.$responseHeaders = {
+                'Cache-Control': 'public, max-age=31536000'
+              };
+              const localPath = triples.find(q=>['http://semapps.org/ns/core#localPath','semapps:localPath'].includes(q.predicate.value)).object.value
+              return fs.readFileSync(localPath);
+            } catch (e) {
+              throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
+            }
+          } else {
+            return result;
           }
         } else {
-          return result;
+          return result
         }
-        
+
+
+
       } else {
         throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
       }
