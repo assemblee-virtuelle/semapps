@@ -151,9 +151,6 @@ module.exports = {
         } else {
           return result
         }
-
-
-
       } else {
         throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
       }
