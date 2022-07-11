@@ -140,7 +140,7 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     const { slug, ...resource } = entity;
-    resource['@id'] = resource.webId || this.baseUri + (slug || new ObjectID().toString());
+    resource['@id'] = this.baseUri + (slug || new ObjectID().toString());
 
     return this.broker
       .call('triplestore.insert', {
