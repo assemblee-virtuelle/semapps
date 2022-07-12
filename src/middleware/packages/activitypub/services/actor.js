@@ -21,18 +21,24 @@ const ActorService = {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+        try {
+          return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+        } catch(e) {
+          console.error(e);
+          return false;
+        }
       } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-        if (!response) return false;
+        if (!response.ok) return false;
         return await response.json();
       }
     },
     async getProfile(ctx) {
       const { actorUri, webId } = ctx.params;
       const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
-      if (actor.url) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
+      // If the URL is not in the same domain as the actor, it is most likely not a profile
+      if (actor.url && (new URL(actor.url)).host === (new URL(actorUri)).host ) {
+        return await ctx.call('activitypub.object.get', { objectUrl: actor.url });
       }
     },
     async appendActorData(ctx) {
