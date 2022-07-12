@@ -2,7 +2,7 @@
 title: ActivityMappingService
 ---
 
-Transform ActivityPub activities in other kind of objects, depending on the matching pattern. Used for notifications.
+Transform ActivityPub activities in other kind of objects, depending on the matching pattern
 
 
 ## Usage
@@ -40,7 +40,14 @@ module.exports = {
         },
         priority: 1 // Default. If higher, the matching pattern will be applied before the mappers with lower priority
       }
-    ]
+    ],
+    handlebars: {
+      helpers: {
+        // Custom Handlebars helpers. See https://handlebarsjs.com/guide/#custom-helpers
+        slice: (start, text) => text.slice(start),
+      } 
+    },
+    matchAnnouncedActivities: false // Set to true if you want announcted activities to be treated as the activity itself
   }
 };
 ```
