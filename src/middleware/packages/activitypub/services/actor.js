@@ -23,7 +23,7 @@ const ActorService = {
       if (this.isLocal(actorUri)) {
         try {
           return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
-        } catch(e) {
+        } catch (e) {
           console.error(e);
           return false;
         }
@@ -37,7 +37,7 @@ const ActorService = {
       const { actorUri, webId } = ctx.params;
       const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
       // If the URL is not in the same domain as the actor, it is most likely not a profile
-      if (actor.url && (new URL(actor.url)).host === (new URL(actorUri)).host ) {
+      if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
         return await ctx.call('activitypub.object.get', { objectUrl: actor.url });
       }
     },

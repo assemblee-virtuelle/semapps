@@ -68,7 +68,7 @@ const OutboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.outbox.posted', { activity }/*, { meta: { webId: null, dataset: null } }*/);
+      ctx.emit('activitypub.outbox.posted', { activity } /*, { meta: { webId: null, dataset: null } }*/);
 
       // TODO identify API calls so that we only set these headers if necessary
       // (They can enter into conflict with an usage of ctx.meta.$location)

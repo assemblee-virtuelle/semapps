@@ -1,6 +1,6 @@
 const Handlebars = require('handlebars');
 const matchActivity = require('../utils/matchActivity');
-const { ACTIVITY_TYPES } = require("../constants");
+const { ACTIVITY_TYPES } = require('../constants');
 
 const ActivityMappingService = {
   name: 'activity-mapping',
@@ -29,13 +29,14 @@ const ActivityMappingService = {
 
       // If the activity is an Announce, match the announced activity
       if (this.settings.matchAnnouncedActivities && activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-        const announcedActivity = typeof activity.object === 'string'
-          ? await ctx.call('activitypub.object.get', { objectUri: activity.object, actorUri: 'system' })
-          : activity.object;
+        const announcedActivity =
+          typeof activity.object === 'string'
+            ? await ctx.call('activitypub.object.get', { objectUri: activity.object, actorUri: 'system' })
+            : activity.object;
 
         activity = {
           actor: activity.actor, // Ensure the actor is defined
-          ...announcedActivity,
+          ...announcedActivity
         };
       }
 

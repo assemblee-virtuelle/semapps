@@ -55,7 +55,8 @@ const DispatchService = {
       return uri.startsWith(this.settings.baseUri);
     },
     async localPost(recipients, activity) {
-      const success = [], failures = [];
+      const success = [],
+        failures = [];
 
       for (const recipientUri of recipients) {
         try {
@@ -72,7 +73,7 @@ const DispatchService = {
           });
 
           success.push(recipientUri);
-        } catch(e) {
+        } catch (e) {
           this.logger.warn(`Error when posting activity to local actor ${recipientUri}: ${e.message}`);
           failures.push(recipientUri);
         }
@@ -90,7 +91,7 @@ const DispatchService = {
           webId: 'system'
         });
 
-        if( !recipientInbox ) return false;
+        if (!recipientInbox) return false;
 
         const body = JSON.stringify(activity);
 
@@ -110,7 +111,7 @@ const DispatchService = {
           },
           body
         });
-      } catch(e) {
+      } catch (e) {
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
         return false;
       }
@@ -138,13 +139,13 @@ const DispatchService = {
         const { activity, recipients } = job.data;
         const { success, failures } = await this.localPost(recipients, activity);
 
-        if( success.length === 0 ) {
+        if (success.length === 0) {
           job.moveToFailed({ message: 'No local recipients could be reached' }, true);
         } else {
           job.progress(100);
         }
 
-        return({ success, failures });
+        return { success, failures };
       }
     }
   }
