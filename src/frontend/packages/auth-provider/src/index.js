@@ -10,6 +10,7 @@ export { default as ShowWithPermissions } from './components/ShowWithPermissions
 export { default as ShowActions } from './components/ShowWithPermissions/ShowActions';
 
 export { default as SsoLoginPage, default as LoginPage } from './components/SsoLoginPage';
+export { default as PodLoginPage } from './components/PodLoginPage';
 export { default as LocalLoginPage } from './components/LocalLoginPage';
 export { default as LogoutButton } from './components/LogoutButton';
 export { default as ResourceWithPermissions } from './components/ResourceWithPermissions';

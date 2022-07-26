@@ -3,6 +3,7 @@ const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
+const AuthFormService = require('../services/form');
 
 const AuthMixin = {
   settings: {
@@ -12,11 +13,12 @@ const AuthMixin = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
-    accountsDataset: 'settings'
+    accountsDataset: 'settings',
+    form: null,
   },
   dependencies: ['api', 'webid'],
   async created() {
-    const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
+    const { jwtPath, reservedUsernames, accountsDataset, form } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
@@ -26,6 +28,12 @@ const AuthMixin = {
       settings: { reservedUsernames },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
+
+    if (form) {
+      await this.broker.createService(AuthFormService, {
+        settings: form
+      });
+    }
   },
   async started() {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
