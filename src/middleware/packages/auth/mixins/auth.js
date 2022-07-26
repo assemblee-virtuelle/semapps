@@ -14,7 +14,7 @@ const AuthMixin = {
     webIdSelection: [],
     accountSelection: [],
     accountsDataset: 'settings',
-    form: null,
+    form: null
   },
   dependencies: ['api', 'webid'],
   async created() {

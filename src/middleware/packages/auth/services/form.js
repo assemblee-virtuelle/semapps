@@ -32,14 +32,14 @@ module.exports = {
         try {
           const { token, newUser } = await ctx.call('auth.login', { username, password });
           return this.redirectToApp(ctx, redirect, token, newUser);
-        } catch(e) {
+        } catch (e) {
           return this.redirectToForm(ctx, { message: e.message, mode, redirect, username, password });
         }
       } else if (mode === 'signup') {
         try {
           const { token, newUser } = await ctx.call('auth.signup', { name, username, email, password });
           return this.redirectToApp(ctx, redirect, token, newUser);
-        } catch(e) {
+        } catch (e) {
           return this.redirectToForm(ctx, { message: e.message, mode, redirect, name, username, email, password });
         }
       }
@@ -108,6 +108,6 @@ module.exports = {
       url.searchParams.set('new', newUser ? 'true' : 'false');
       ctx.meta.$statusCode = 302;
       ctx.meta.$responseHeaders = { Location: url.toString() };
-    },
+    }
   }
 };

@@ -102,15 +102,20 @@ const PodLoginPage = ({ theme, history, location, podProviders, userResource, te
           {podProviders &&
             podProviders.map((podProvider, i) => {
               const url = new URL(podProvider);
-              url.searchParams.set('mode', 'login')
+              url.searchParams.set('mode', 'login');
               url.searchParams.set('redirect', window.location.href);
               return (
                 <CardActions key={i}>
-                  <Button fullWidth variant="outlined" type="submit" onClick={() => window.location.href = url.toString()}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    type="submit"
+                    onClick={() => (window.location.href = url.toString())}
+                  >
                     {url.host}
                   </Button>
                 </CardActions>
-              )
+              );
             })}
         </Card>
       </div>
