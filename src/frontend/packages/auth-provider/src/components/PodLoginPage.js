@@ -58,7 +58,9 @@ const PodLoginPage = ({ theme, history, location, podProviders, userResource, te
               Accept: 'application/json'
             }
           });
-          if (response.ok) {
+          if (!response.ok) {
+            notify('auth.message.unable_to_fetch_user_data', 'error');
+          } else {
             const data = await response.json();
             if (!authProvider.checkUser(data)) {
               notify('auth.message.user_not_allowed_to_login', 'error');

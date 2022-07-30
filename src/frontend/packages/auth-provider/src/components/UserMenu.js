@@ -38,8 +38,8 @@ const UserMenu = ({ logout, ...otherProps }) => {
     <RaUserMenu {...otherProps}>
       {identity && identity.id !== ''
         ? [
-            <ViewProfileMenu webId={identity.id} label={translate('auth.action.view_my_profile')} key="view" />,
-            <EditProfileMenu webId={identity.id} label={translate('auth.action.edit_my_profile')} key="edit" />,
+            <ViewProfileMenu webId={identity?.profileData?.id || identity.id} label={translate('auth.action.view_my_profile')} key="view" />,
+            <EditProfileMenu webId={identity?.profileData?.id || identity.id} label={translate('auth.action.edit_my_profile')} key="edit" />,
             React.cloneElement(logout, { key: 'logout' })
           ]
         : [
