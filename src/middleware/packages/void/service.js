@@ -269,10 +269,11 @@ module.exports = {
 
         ctx.meta.$responseType = accept;
 
-        ctx.meta.$responseHeaders = {
-          'Cache-Control': 'private, max-age=86400',
-          Vary: 'authorization'
-        };
+        // TODO use Etag instead to keep track of changes in VOID
+        // ctx.meta.$responseHeaders = {
+        //   'Cache-Control': 'private, max-age=86400',
+        //   Vary: 'authorization'
+        // };
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
       }
