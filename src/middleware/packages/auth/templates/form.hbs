@@ -12,6 +12,11 @@
             color: #b9cd00;
         }
 
+        .bottom-links {
+            margin-top: 10px;
+            text-align: center;
+        }
+
         /*! CSS Used from: https://www.colibris-lafabrique.org/sites/default/files/css/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css */
 
         form {
@@ -486,7 +491,7 @@
             <div class="region region-content">
                 <div class="block block-system block-main" id="block-system-main">
                     <div class="content">
-                        <form accept-charset="UTF-8" action="{{ path }}" id="user-profile-form" method="post">
+                        <form accept-charset="UTF-8" action="{{path}}" id="user-profile-form" method="post">
                             <input type="hidden" name="mode" value="{{mode}}">
                             <input type="hidden" name="redirect" value="{{redirect}}">
                             <div class="messages error" id="error-message" style="display: none"></div>
@@ -539,6 +544,17 @@
                                 <input class="form-submit" id="edit-submit" type="submit" value="Inscription">
                             {{else}}
                                 <input class="form-submit" id="edit-submit" type="submit" value="Connexion">
+                            {{/ifCond}}
+                        </div>
+                        <div class="bottom-links">
+                            {{#ifCond mode '===' 'signup' }}
+                                <a href="{{path}}?mode=login&redirect={{redirect}}">
+                                    Se connecter avec un compte existant
+                                </a>
+                            {{else}}
+                                <a href="{{path}}?mode=signup&redirect={{redirect}}">
+                                    Créer un nouveau compte
+                                </a>
                             {{/ifCond}}
                         </div>
                     </form>
