@@ -50,4 +50,4 @@ If you want to have some semantic data to start experimenting, please contact us
 
 ## Getting help
 
-Our [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org) is the main entry point for all people who want to contribute.
+Our [dev chatroom](https://chat.lescommuns.org/channel/semapps_dev) is the main entry point for all people who want to contribute.
