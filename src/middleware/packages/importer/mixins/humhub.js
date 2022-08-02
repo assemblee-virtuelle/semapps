@@ -4,6 +4,16 @@ const { convertToIsoString } = require('../utils');
 
 const allowedTypes = ['user', 'space', 'calendar', 'post'];
 
+const getSlugByUrl = url => {
+  if (url) {
+    const splitUrl = url.split('/');
+    let slug = splitUrl.pop();
+    // If slug is empty, there was an ending slash
+    if (!slug) slug = splitUrl.pop();
+    return slug;
+  }
+};
+
 module.exports = {
   mixins: [ImporterMixin],
   settings: {
@@ -11,12 +21,27 @@ module.exports = {
       humhub: {
         baseUrl: null,
         jwtToken: null,
-        type: null // 'user', 'space'
+        type: null // 'user', 'space', 'calendar', 'post'
       },
       fieldsMapping: {
-        slug: 'id_fiche',
-        created: data => convertToIsoString(data.date_creation_fiche),
-        updated: data => convertToIsoString(data.date_maj_fiche)
+        // We don't use arrow function as we need to have access to this.settings
+        slug: function(data) {
+          switch(this.settings.source.humhub.type) {
+            case 'user':
+            case 'space':
+              return getSlugByUrl(data.url);
+            case 'calendar':
+            case 'post':
+              return data.content.metadata.guid;
+          }
+        },
+        created: function(data) {
+          switch(this.settings.source.humhub.type) {
+            case 'calendar':
+            case 'post':
+              return convertToIsoString(data.content.metadata.created_at);
+          }
+        }
       }
     }
   },
@@ -55,15 +80,18 @@ module.exports = {
 
       return data;
     },
-    // async getOne(url) {
-    //   const results = await this.getOne(url);
-    //
-    //   // Append the members to the result
-    //   if (this.settings.source.humhub.type === 'space' && results) {
-    //     results.members = await this.fetch(urlJoin(url, 'membership'));
-    //   }
-    //
-    //   return results
-    // }
+    async getOne(url) {
+      const results = await this.getOne(url);
+
+      // Append the members to the result
+      if (this.settings.source.humhub.type === 'space' && results) {
+        // TODO use the list method but avoid a loop ? Maybe set another importer for memberships
+        // Currently if there is more than 100 members, it will fail to get them all
+        const members = await this.fetch(urlJoin(url, 'membership'));
+        results.members = members.results;
+      }
+
+      return results
+    }
   }
 };

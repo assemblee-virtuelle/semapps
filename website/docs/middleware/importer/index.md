@@ -30,6 +30,8 @@ We provide a number of pre-configured importers, some of which work "out of the 
 - [Discourse](discourse.md)
 - [Drupal](drupal.md)
 - [GoGoCarto](gogocarto.md)
+- [HumHub](humhub.md)
+- [JotForm](jotform.md)
 - [PrestaShop](prestashop.md)
 - [Mobilizon](mobilizon.md)
 - [YesWiki](yeswiki.md)
@@ -90,6 +92,13 @@ module.exports = {
       time: null, // For example '0 0 4 * * *' for every night at 4am 
       timeZone: 'Europe/Paris'
     }
+  },
+  methods: {
+    transform(data) {
+      return({
+        ...data
+      });
+    }
   }
 };
 ```
@@ -100,6 +109,11 @@ module.exports = {
 ### `freshImport`
 
 Delete all imported data and re-import them from the source.
+
+##### Parameters
+| Property | Type      | Default | Description                               |
+|----------|-----------|---------|-------------------------------------------|
+| `clear`  | `Boolean` | true    | Clear existing objects before reimporting |
 
 ### `synchronize`
 
@@ -112,6 +126,22 @@ If the `cronJob.time` setting is defined, this action will be called automatical
 ### `deleteImported`
 
 Delete all imported data. Called at the start of the `freshImport` action.
+
+### `list`
+
+Return results of the `list` method (see below). Useful if you want to fetch the API without importing data.
+
+| Property | Type     | Default                     | Description                |
+|----------|----------|-----------------------------|----------------------------|
+| `url`    | `String` | `source.getAllFull` setting | URL that you want to fetch |
+
+### `getOne`
+
+Return a single data through the `getOne` method (see below). Useful if you want to fetch the API without importing data.
+
+| Property | Type     | Default      | Description                                                                |
+|----------|----------|--------------|----------------------------------------------------------------------------|
+| `data`   | `Object` | **required** | Object that will be passed to `source.getOneFull` to find the URL to fetch |
 
 
 ## Methods
@@ -148,3 +178,7 @@ This method accepts a single argument which can be either:
 If the argument is an URL, the remote endpoint is fetched (using the `source.headers` and `source.fetchOptions` settings) and the JSON-parsed result is returned.
 
 If the argument is a path, the local file is read and the JSON-parsed result is returned.
+
+### `prepare`
+
+Called before a fresh import or a synchronization.

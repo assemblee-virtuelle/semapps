@@ -94,9 +94,11 @@ module.exports = {
   },
   actions: {
     async freshImport(ctx) {
-      this.logger.info('Clearing all existing data...');
+      if (ctx.params.clear === undefined || ctx.params.clear === true) {
+        this.logger.info('Clearing all existing data...');
 
-      // await this.actions.deleteImported();
+        await this.actions.deleteImported();
+      }
 
       await this.prepare();
 
