@@ -90,7 +90,7 @@ const AvatarWithLabelField = ({
 };
 
 AvatarWithLabelField.defaultProps = {
-  labelColor: 'secondary.main',
+  labelColor: 'secondary',
   externalLink: false
 };
 
