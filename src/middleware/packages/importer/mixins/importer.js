@@ -94,11 +94,17 @@ module.exports = {
   },
   actions: {
     async freshImport(ctx) {
-      this.logger.info('Clearing all existing data...');
+      if (ctx.params.clear === undefined || ctx.params.clear === true) {
+        this.logger.info('Clearing all existing data...');
 
-      await this.actions.deleteImported();
+        await this.actions.deleteImported();
+      }
+
+      await this.prepare();
 
       if (this.settings.source.getAllCompact) {
+        this.logger.info('Fetching compact list...');
+
         const compactResults = await this.list(this.settings.source.getAllCompact);
 
         if (compactResults) {
@@ -125,6 +131,8 @@ module.exports = {
           );
         }
       } else if (this.settings.source.getAllFull) {
+        this.logger.info('Fetching full list...');
+
         const fullResults = await this.list(this.settings.source.getAllFull);
 
         if (fullResults) {
@@ -213,9 +221,9 @@ module.exports = {
                 ...resource,
                 ...oldDataToKeep,
                 'dc:source': sourceUri,
-                'dc:created': this.getField('created', data),
-                'dc:modified': this.getField('updated', data),
-                'dc:creator': this.settings.dest.actorUri
+                'dc:created': resource['dc:created'] || this.getField('created', data),
+                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
               contentType: MIME_TYPES.JSON,
               webId: 'system'
@@ -227,15 +235,19 @@ module.exports = {
         } else {
           this.logger.info('Importing ' + sourceUri + '...');
 
+          if (!this.settings.dest.containerUri) {
+            throw new Error(`Cannot import as dest.containerUri setting is not defined`);
+          }
+
           destUri = await ctx.call('ldp.container.post', {
             containerUri: this.settings.dest.containerUri,
             slug: this.getField('slug', data),
             resource: {
               ...resource,
               'dc:source': sourceUri,
-              'dc:created': this.getField('created', data),
-              'dc:modified': this.getField('updated', data),
-              'dc:creator': this.settings.dest.actorUri
+              'dc:created': resource['dc:created'] || this.getField('created', data),
+              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
             },
             contentType: MIME_TYPES.JSON,
             webId: 'system'
@@ -260,11 +272,20 @@ module.exports = {
 
       this.imported = {};
     },
+    async list(ctx) {
+      return await this.list(ctx.params.url || this.settings.source.getAllFull);
+    },
+    async getOne(ctx) {
+      return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
+    },
     getImported() {
       return this.imported;
     }
   },
   methods: {
+    async prepare() {
+      // Things to do before processing data
+    },
     async transform(data) {
       return data;
     },
@@ -339,6 +360,8 @@ module.exports = {
     },
     async processSynchronize(job) {
       let fromDate, toDate;
+
+      await this.prepare();
 
       if (this.settings.cronJob.time) {
         const interval = cronParser.parseExpression(this.settings.cronJob.time, {

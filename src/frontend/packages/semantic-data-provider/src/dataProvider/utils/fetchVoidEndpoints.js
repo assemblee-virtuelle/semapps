@@ -49,7 +49,7 @@ const fetchVoidEndpoints = async config => {
           config.dataServers[result.key].containers[datasetServerKey] =
             config.dataServers[result.key].containers[datasetServerKey] || {};
 
-          for (let partition of dataset['void:classPartition']) {
+          for (let partition of defaultToArray(dataset['void:classPartition'])) {
             for (let type of defaultToArray(partition['void:class'])) {
               // Set containers by type
               const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');

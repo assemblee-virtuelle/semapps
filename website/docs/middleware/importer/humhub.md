@@ -1,29 +1,24 @@
 ---
-title: YesWiki
+title: HumHub
 ---
 
-This mixin allows you to import JSON data from [YesWiki](https://yeswiki.net), and more specifically from [Bazar forms](https://yeswiki.net/?DocumentationBazaR).
+This mixin allows you to import elements from [HumHub](https://humhub.com).
 
 
 ## Usage
 
 ```js
-const { YesWikiImporterMixin } = require('@semapps/importer');
+const { HumHubImporterMixin } = require('@semapps/importer');
 
 module.exports = {
   name: 'my-importer',
-  mixins: [YesWikiImporterMixin],
+  mixins: [HumHubImporterMixin],
   settings: {
     source: {
-      yeswiki: {
-        baseUrl: null, // Base URL of the YesWiki instance
-        oldApi: false, // Use ?BazaR/json instead of ?api/forms
-        formId: null // ID of the Bazar form you wish to import
-      },
-      // If you protected the API, fill the user and password below
-      basicAuth: {
-        user: null,
-        password: null
+      humhub: {
+        baseUrl: null, // Base URL of the HumHub instance
+        jwtToken: null, // JWT token to access the API
+        type: null // 'user', 'space', 'calendar', 'post'
       },
       // ... see ImporterMixin settings for other source config available
     },
@@ -49,4 +44,3 @@ module.exports = {
   }
 };
 ```
-

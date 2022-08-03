@@ -1,5 +1,6 @@
 const Handlebars = require('handlebars');
 const matchActivity = require('../utils/matchActivity');
+const { ACTIVITY_TYPES } = require('../constants');
 
 const ActivityMappingService = {
   name: 'activity-mapping',
@@ -7,7 +8,8 @@ const ActivityMappingService = {
     mappers: [],
     handlebars: {
       helpers: {}
-    }
+    },
+    matchAnnouncedActivities: false
   },
   async started() {
     this.mappers = [];
@@ -23,7 +25,20 @@ const ActivityMappingService = {
   },
   actions: {
     async map(ctx) {
-      const { activity, locale, ...rest } = ctx.params;
+      let { activity, locale, ...rest } = ctx.params;
+
+      // If the activity is an Announce, match the announced activity
+      if (this.settings.matchAnnouncedActivities && activity.type === ACTIVITY_TYPES.ANNOUNCE) {
+        const announcedActivity =
+          typeof activity.object === 'string'
+            ? await ctx.call('activitypub.object.get', { objectUri: activity.object, actorUri: 'system' })
+            : activity.object;
+
+        activity = {
+          actor: activity.actor, // Ensure the actor is defined
+          ...announcedActivity
+        };
+      }
 
       for (const mapper of this.mappers) {
         const dereferencedActivity = await this.matchActivity(mapper.match, activity);

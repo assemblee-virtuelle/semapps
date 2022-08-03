@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 const { delay } = require('../utils');
+const fetch = require('node-fetch');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -19,29 +20,39 @@ const ObjectService = {
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
-        return await ctx.call(controlledActions.get || 'ldp.resource.get', {
+        return await ctx.call(controlledActions ? controlledActions.get : 'ldp.resource.get', {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON,
           webId: actorUri,
           ...rest
         });
       } catch (e) {
-        if (!actorUri || actorUri === 'system' || actorUri === 'anon') {
-          throw new Error(
-            'No valid actor URI provided to activitypub.object.get (provided: ' +
-              actorUri +
-              '), cannot get object ' +
-              objectUri +
-              ' through proxy'
-          );
+        if (e.code === 404) {
+          // TODO only do this for distant objects
+          // If the object was not found in cache, try to query it distantly
+          if (actorUri && actorUri !== 'system' && actorUri !== 'anon') {
+            return await ctx.call('activitypub.proxy.query', {
+              resourceUri: objectUri,
+              actorUri
+            });
+            // TODO put results in cache ?
+          } else {
+            const response = await fetch(objectUri, {
+              headers: {
+                Accept: 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              return await response.json();
+            } else {
+              throw new Error(`Unable to fetch remote object: ${objectUri}`);
+            }
+          }
+        } else {
+          // Rethrow error if not 404
+          throw e;
         }
-        // If the object was not found in cache, try to query it distantly
-        // TODO only do this for distant objects
-        return await ctx.call('activitypub.proxy.query', {
-          resourceUri: objectUri,
-          actorUri
-        });
-        // TODO put in cache results ??
       }
     },
     async awaitCreateComplete(ctx) {

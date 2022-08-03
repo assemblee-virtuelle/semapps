@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRecordContext } from 'react-admin';
 import { Box, makeStyles, Avatar, Chip } from '@material-ui/core';
 import LaunchIcon from '@material-ui/icons/Launch';
 
@@ -45,7 +46,6 @@ const useStyles = makeStyles(theme => ({
 const handleClick = () => {};
 
 const AvatarWithLabelField = ({
-  record,
   label,
   defaultLabel,
   image,
@@ -56,7 +56,7 @@ const AvatarWithLabelField = ({
   ...rest
 }) => {
   classes = useStyles(classes);
-  if (!record) return null;
+  const record = useRecordContext();
 
   const computedLabel = (typeof label === 'function' ? label(record) : record[label]) || defaultLabel;
   const computedImage = typeof image === 'function' ? image(record) : record[image];
@@ -90,7 +90,7 @@ const AvatarWithLabelField = ({
 };
 
 AvatarWithLabelField.defaultProps = {
-  labelColor: 'secondary.main',
+  labelColor: 'secondary',
   externalLink: false
 };
 
