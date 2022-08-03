@@ -22,12 +22,12 @@ const AuthSSOMixin = {
 
       const profileData = this.settings.selectSsoData ? await this.settings.selectSsoData(ssoData) : ssoData;
 
-      console.log('~~~~~~~~ find ',profileData.email );
+      console.log('~~~~~~~~ find ', profileData.email);
 
       // TODO use UUID to identify unique accounts with SSO
       const existingAccounts = await ctx.call('auth.account.find', { query: { email: profileData.email } });
 
-      console.log('~~~~~~~~ existingAccounts ',existingAccounts );
+      console.log('~~~~~~~~ existingAccounts ', existingAccounts);
 
       let accountData, webId, newUser;
       if (existingAccounts.length > 0) {
