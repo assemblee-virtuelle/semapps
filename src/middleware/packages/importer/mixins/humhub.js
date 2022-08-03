@@ -26,7 +26,7 @@ module.exports = {
       fieldsMapping: {
         // We don't use arrow function as we need to have access to this.settings
         slug: function(data) {
-          switch(this.settings.source.humhub.type) {
+          switch (this.settings.source.humhub.type) {
             case 'user':
             case 'space':
               return getSlugByUrl(data.url);
@@ -36,7 +36,7 @@ module.exports = {
           }
         },
         created: function(data) {
-          switch(this.settings.source.humhub.type) {
+          switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
@@ -49,7 +49,8 @@ module.exports = {
     const { baseUrl, jwtToken, type } = this.settings.source.humhub;
 
     if (!jwtToken) throw new Error('The source.humhub.jwtSettings setting is missing');
-    if (!allowedTypes.includes(type)) throw new Error('Only the following types are allowed: ' + allowedTypes.join(', '));
+    if (!allowedTypes.includes(type))
+      throw new Error('Only the following types are allowed: ' + allowedTypes.join(', '));
 
     this.settings.source.headers.Authorization = `Bearer ${jwtToken}`;
 
@@ -60,13 +61,15 @@ module.exports = {
   },
   methods: {
     async list(url) {
-      let results, data = [], page = 0;
+      let results,
+        data = [],
+        page = 0;
 
       do {
         page++;
-        results = await this.fetch(`${url}?per-page=100&page=${page}` );
+        results = await this.fetch(`${url}?per-page=100&page=${page}`);
         data.push(...results.results);
-      } while(results.links.next);
+      } while (results.links.next);
 
       // Append the members to the result
       if (this.settings.source.humhub.type === 'space') {
@@ -91,7 +94,7 @@ module.exports = {
         results.members = members.results;
       }
 
-      return results
+      return results;
     }
   }
 };
