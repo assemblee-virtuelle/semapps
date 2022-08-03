@@ -5,7 +5,6 @@ import findContainersWithPaths from '../utils/findContainersWithPath';
 
 const getListMethod = config => async (resourceId, params = {}) => {
   let { dataServers, resources } = config;
-  console.log(resources, resourceId);
   const dataModel = resources[resourceId];
 
   if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);

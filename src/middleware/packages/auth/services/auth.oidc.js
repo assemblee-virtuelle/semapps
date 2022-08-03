@@ -54,7 +54,6 @@ const AuthOIDCService = {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: userinfo })
             .then(loginData => {
-              console.log('loginData',loginData);
               done(null, loginData);
             })
             .catch(e => {
