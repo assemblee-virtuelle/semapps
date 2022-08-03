@@ -75,11 +75,13 @@ const fetchContainers = async (containers, resourceId, params, config) => {
     }
 
     if (params.sort) {
+      // console.log(returnData,params.sort);
       returnData = returnData.sort((a, b) => {
         if (a[params.sort.field] && b[params.sort.field]) {
           if (params.sort.order === 'ASC') {
             return a[params.sort.field].localeCompare(b[params.sort.field]);
           } else {
+            // console.log(b,a);
             return b[params.sort.field].localeCompare(a[params.sort.field]);
           }
         } else {
