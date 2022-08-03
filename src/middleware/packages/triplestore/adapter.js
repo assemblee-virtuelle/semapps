@@ -39,6 +39,7 @@ class TripleStoreAdapter {
    *  - query
    */
   find(params) {
+    console.log('~~~~~~~~~~~~~~~~~~ FIND');
     const { query } = params;
     return this.broker
       .call('triplestore.query', {
@@ -197,7 +198,7 @@ class TripleStoreAdapter {
                       .join(' . ')
                   : ''
               }
-            } 
+            }
             WHERE {
               <${_id}> ?p ?o .
             }
