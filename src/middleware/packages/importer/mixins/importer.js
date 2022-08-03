@@ -221,9 +221,9 @@ module.exports = {
                 ...resource,
                 ...oldDataToKeep,
                 'dc:source': sourceUri,
-                'dc:created': this.getField('created', data),
-                'dc:modified': this.getField('updated', data),
-                'dc:creator': this.settings.dest.actorUri
+                'dc:created': resource['dc:created'] || this.getField('created', data),
+                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
               contentType: MIME_TYPES.JSON,
               webId: 'system'
@@ -245,9 +245,9 @@ module.exports = {
             resource: {
               ...resource,
               'dc:source': sourceUri,
-              'dc:created': this.getField('created', data),
-              'dc:modified': this.getField('updated', data),
-              'dc:creator': this.settings.dest.actorUri
+              'dc:created': resource['dc:created'] || this.getField('created', data),
+              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
             },
             contentType: MIME_TYPES.JSON,
             webId: 'system'
