@@ -45,16 +45,7 @@ const useStyles = makeStyles(theme => ({
 
 const handleClick = () => {};
 
-const AvatarWithLabelField = ({
-  label,
-  defaultLabel,
-  image,
-  fallback,
-  externalLink,
-  labelColor,
-  classes,
-  ...rest
-}) => {
+const AvatarWithLabelField = ({ label, defaultLabel, image, fallback, externalLink, labelColor, classes, ...rest }) => {
   classes = useStyles(classes);
   const record = useRecordContext();
 

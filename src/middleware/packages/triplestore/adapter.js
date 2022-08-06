@@ -197,7 +197,7 @@ class TripleStoreAdapter {
                       .join(' . ')
                   : ''
               }
-            } 
+            }
             WHERE {
               <${_id}> ?p ?o .
             }
