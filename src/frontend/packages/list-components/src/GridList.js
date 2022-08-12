@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useListContext, linkToRecord, Link } from 'react-admin';
+import { useListContext, linkToRecord, Link, RecordContextProvider } from 'react-admin';
 import { Grid } from '@material-ui/core';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
@@ -53,7 +53,9 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
 
         return (
           <Grid item key={id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
-            {child}
+            <RecordContextProvider value={data[id]} key={id}>
+              {child}
+            </RecordContextProvider>
           </Grid>
         );
       })}
