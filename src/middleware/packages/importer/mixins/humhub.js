@@ -57,7 +57,12 @@ module.exports = {
     const apiPath = `/api/v1/${type}`;
     this.settings.source.apiUrl = urlJoin(baseUrl, apiPath);
     this.settings.source.getAllFull = this.settings.source.apiUrl;
-    this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/${data.id}`;
+
+    if (type === 'calendar') {
+      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/entry/${data.id}`;
+    } else {
+      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/${data.id}`;
+    }
   },
   methods: {
     async list(url) {
@@ -84,7 +89,7 @@ module.exports = {
       return data;
     },
     async getOne(url) {
-      const results = await this.getOne(url);
+      const results = await this.fetch(url);
 
       // Append the members to the result
       if (this.settings.source.humhub.type === 'space' && results) {
