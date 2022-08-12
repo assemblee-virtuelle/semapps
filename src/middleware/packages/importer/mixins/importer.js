@@ -379,18 +379,28 @@ module.exports = {
 
       let deletedUris = {},
         createdUris = {},
-        updatedUris = {};
-      const compactResults = await this.list(this.settings.source.getAllCompact);
+        updatedUris = {},
+        newSourceUris = [],
+        mappedFullResults = {};
 
-      if (!compactResults) {
-        job.moveToFailed('Unable to fetch ' + this.settings.source.getAllCompact);
+      const results = await this.list(this.settings.source.getAllCompact || this.settings.source.getAllFull);
+
+      if (!results) {
+        job.moveToFailed('Unable to fetch ' + (this.settings.source.getAllCompact || this.settings.source.getAllFull));
         return;
       }
 
       job.progress(5);
 
-      const newSourceUris = compactResults.map(data => this.settings.source.getOneFull(data));
       const oldSourceUris = Object.keys(this.imported);
+
+      if (this.settings.source.getAllCompact) {
+        newSourceUris = results.map(data => this.settings.source.getOneFull(data))
+      } else {
+        // If we have no compact results, put the data in an object so that we can easily use it with importOne
+        mappedFullResults = Object.fromEntries(results.map(data => ([this.settings.source.getOneFull(data), data])));
+        newSourceUris = Object.keys(mappedFullResults);
+      }
 
       job.progress(10);
 
@@ -425,7 +435,7 @@ module.exports = {
       for (let sourceUri of urisToCreate) {
         this.logger.info('Resource ' + sourceUri + ' did not exist, importing it...');
 
-        const destUri = await this.actions.importOne({ sourceUri });
+        const destUri = await this.actions.importOne({ sourceUri, data: mappedFullResults[sourceUri] });
 
         if (destUri) {
           await this.postActivity(ACTIVITY_TYPES.CREATE, destUri);
@@ -443,7 +453,7 @@ module.exports = {
       // UPDATED RESOURCES
       ///////////////////////////////////////////
 
-      const urisToUpdate = compactResults
+      const urisToUpdate = results
         .filter(data => {
           // If an updated field is available in compact results, filter out items outside of the time frame
           const updated = this.getField('updated', data);
@@ -453,7 +463,7 @@ module.exports = {
         .filter(uri => !urisToCreate.includes(uri));
 
       for (let sourceUri of urisToUpdate) {
-        const result = await this.actions.importOne({ sourceUri, destUri: this.imported[sourceUri] });
+        const result = await this.actions.importOne({ sourceUri, destUri: this.imported[sourceUri], data: mappedFullResults[sourceUri] });
 
         if (result === false) {
           await this.broker.call('ldp.resource.delete', {
