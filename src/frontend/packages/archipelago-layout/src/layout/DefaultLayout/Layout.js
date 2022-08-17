@@ -4,18 +4,17 @@ import { makeStyles, Typography } from '@material-ui/core';
 import AppBar from './AppBar';
 import TreeMenu from './TreeMenu/TreeMenu';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   appFrame: {
-    marginTop: 56
-  },
-  title: {
-    position: 'absolute',
-    top: 80,
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden'
+    marginTop: 56,
+    [theme.breakpoints.up('sm')]: {
+      '& #main-content': {
+        paddingTop: 8, 
+        paddingLeft: 5
+      }
+    }
   }
-});
+}));
 
 const Layout = ({ appBar, menu, userMenu, children, ...otherProps }) => {
   const classes = useStyles();

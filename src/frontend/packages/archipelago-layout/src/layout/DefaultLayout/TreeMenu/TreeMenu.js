@@ -1,13 +1,36 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
-import { useMediaQuery, Box } from '@material-ui/core';
+import { useMediaQuery, Box, makeStyles } from '@material-ui/core';
 import { getResources } from 'react-admin';
 import DefaultIcon from '@material-ui/icons/ViewList';
 import SubMenu from './SubMenu';
 import ResourceMenuLink from './ResourceMenuLink';
 
+const useStyles = makeStyles((theme) => ({
+  treeMenu: {
+    '& .MuiMenuItem-root': {
+      display: 'block',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      maxWidth: 240,
+      '& > .MuiListItemIcon-root': {
+        verticalAlign: 'middle',
+      }
+    }
+  }
+  /*
+  treeMenu: {
+    '& .MuiMenuItem-root': {
+      whiteSpace: 'normal',
+      maxWidth: 240,
+    }
+  }
+  */
+}));
+
 const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
+  const classes = useStyles();
   const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
   // const open = useSelector(state => state.admin.ui.sidebarOpen);
   const resources = useSelector(getResources);
@@ -44,7 +67,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   }, [categories, resources, currentResourceName, openAll]);
 
   return (
-    <Box mt={2}>
+    <Box mt={2} className={classes.treeMenu}>
       {categories.map(category => (
         <SubMenu
           key={category.name}
