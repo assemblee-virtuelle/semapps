@@ -8,30 +8,49 @@ import SubMenu from './SubMenu';
 import ResourceMenuLink from './ResourceMenuLink';
 
 const useStyles = makeStyles((theme) => ({
-  treeMenu: {
-    '& .MuiMenuItem-root': {
-      display: 'block',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      maxWidth: 240,
-      '& > .MuiListItemIcon-root': {
-        verticalAlign: 'middle',
+    treeMenuOneRowLabel: {
+      '& .MuiMenuItem-root': {
+        display: 'block',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        maxWidth: 240,
+        '& > .MuiListItemIcon-root': {
+          verticalAlign: 'middle',
+        }
       }
-    }
-  }
-  /*
-  treeMenu: {
-    '& .MuiMenuItem-root': {
-      whiteSpace: 'normal',
-      maxWidth: 240,
-    }
-  }
-  */
+    },
+    treeMenu: (props) => ({
+      '& .MuiMenuItem-root': {
+        whiteSpace: 'normal',
+        maxWidth: 240,
+        maxHeight: 10 + (24 * props.labelNbRows),
+        paddingLeft: 56,
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: '-webkit-box',
+        "-webkit-line-clamp": props.labelNbRows,
+        "-webkit-box-orient": 'vertical',
+        '& > .MuiListItemIcon-root': {
+          position: 'absolute',
+          left: 16
+        }
+      },
+      '& .MuiCollapse-root': {
+        '& .MuiMenuItem-root': {
+          paddingLeft: 72,
+          '& > .MuiListItemIcon-root': {
+            left: 32
+          }
+        }
+      }
+    })
 }));
 
-const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
-  const classes = useStyles();
+const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false, labelNbRows = 1 }) => {
   const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const isSmall = useMediaQuery(theme => theme.breakpoints.only('sm'));
+  labelNbRows = isSmall ? 1 : labelNbRows;
+  const classes = useStyles({labelNbRows});
   // const open = useSelector(state => state.admin.ui.sidebarOpen);
   const resources = useSelector(getResources);
 
@@ -67,7 +86,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   }, [categories, resources, currentResourceName, openAll]);
 
   return (
-    <Box mt={2} className={classes.treeMenu}>
+    <Box mt={2} className={labelNbRows===1 ? classes.treeMenuOneRowLabel :  classes.treeMenu}>
       {categories.map(category => (
         <SubMenu
           key={category.name}
