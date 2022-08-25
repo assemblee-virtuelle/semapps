@@ -60,8 +60,8 @@ const AvatarWithLabelField = ({ label, defaultLabel, image, fallback, externalLi
           src={computedImage || computedFallback}
           alt={computedLabel}
           fallback={computedFallback}
-          className={classes.avatar}
           {...rest}
+          className={classes.avatar}
         />
       </div>
       {externalLink ? (

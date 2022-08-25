@@ -26,7 +26,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
             <a href={externalLink} target="_blank" rel="noopener noreferrer" onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 record: data[id],
-                basePath,
+                basePath : children.props.basePath||basePath,
                 externalLink: true,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
@@ -38,7 +38,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
             <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 record: data[id],
-                basePath,
+                basePath : children.props.basePath||basePath,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
               })}
@@ -47,7 +47,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
         } else {
           child = React.cloneElement(React.Children.only(children), {
             record: data[id],
-            basePath
+            basePath : children.props.basePath||basePath
           });
         }
 
