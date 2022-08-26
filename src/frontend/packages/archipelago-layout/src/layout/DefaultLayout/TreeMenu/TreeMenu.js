@@ -23,12 +23,12 @@ const useStyles = makeStyles(theme => ({
     '& .MuiMenuItem-root': {
       whiteSpace: 'normal',
       maxWidth: 240,
-      maxHeight: 10 + 24 * props.labelNbRows,
+      maxHeight: 10 + 24 * props.labelNbLines,
       paddingLeft: 56,
       textOverflow: 'ellipsis',
       overflow: 'hidden',
       display: '-webkit-box',
-      '-webkit-line-clamp': props.labelNbRows,
+      '-webkit-line-clamp': props.labelNbLines,
       '-webkit-box-orient': 'vertical',
       '& > .MuiListItemIcon-root': {
         position: 'absolute',
@@ -46,11 +46,11 @@ const useStyles = makeStyles(theme => ({
   })
 }));
 
-const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false, labelNbRows = 1 }) => {
+const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false, labelNbLines = 1 }) => {
   const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const isSmall = useMediaQuery(theme => theme.breakpoints.only('sm'));
-  labelNbRows = isSmall ? 1 : labelNbRows;
-  const classes = useStyles({ labelNbRows });
+  labelNbLines = isSmall ? 1 : labelNbLines;
+  const classes = useStyles({ labelNbLines });
   // const open = useSelector(state => state.admin.ui.sidebarOpen);
   const resources = useSelector(getResources);
 
@@ -86,7 +86,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false, labelNb
   }, [categories, resources, currentResourceName, openAll]);
 
   return (
-    <Box mt={2} className={labelNbRows === 1 ? classes.treeMenuOneRowLabel : classes.treeMenu}>
+    <Box mt={2} className={labelNbLines === 1 ? classes.treeMenuOneRowLabel : classes.treeMenu}>
       {categories.map(category => (
         <SubMenu
           key={category.name}

@@ -16,9 +16,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const Layout = ({ appBar, menu, userMenu, children, labelNbRows, ...otherProps }) => {
+const Layout = ({ appBar, menu, userMenu, children, labelNbLines, ...otherProps }) => {
   const classes = useStyles();
-  const LayoutTreeMenu = useMemo(() => (props) => <TreeMenu {...props} labelNbRows={labelNbRows} />,[labelNbRows]);
+  const LayoutTreeMenu = useMemo(() => (props) => <TreeMenu {...props} labelNbLines={labelNbLines} />,[labelNbLines]);
   return (
     <RaLayout
       {...otherProps}
