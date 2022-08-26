@@ -1,6 +1,6 @@
 import md5 from 'crypto-js/md5';
 import { namedNode, triple, variable } from '@rdfjs/data-model';
-import resolvePrefix from "./resolvePrefix";
+import resolvePrefix from './resolvePrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = blankNodes => {
@@ -67,10 +67,7 @@ const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
       construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
       where: {
         type: 'union',
-        patterns: [
-          baseQuery.where,
-          ...buildUnionQuery(queries)
-        ]
+        patterns: [baseQuery.where, ...buildUnionQuery(queries)]
       }
     };
   } else {

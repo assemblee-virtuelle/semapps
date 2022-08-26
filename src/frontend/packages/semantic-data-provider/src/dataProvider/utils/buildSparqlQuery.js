@@ -1,7 +1,7 @@
 import DataFactory from '@rdfjs/data-model';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
-import resolvePrefix from "./resolvePrefix";
+import resolvePrefix from './resolvePrefix';
 const { literal, namedNode, triple, variable } = DataFactory;
 
 const SparqlGenerator = require('sparqljs').Generator;
@@ -114,7 +114,13 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
     // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
     Object.entries(filter).forEach(([predicate, object]) => {
       if (!reservedFilterKeys.includes(predicate)) {
-        resourceWhere.unshift(triple(variable('s1'), namedNode(resolvePrefix(predicate, ontologies)), namedNode(resolvePrefix(object, ontologies))));
+        resourceWhere.unshift(
+          triple(
+            variable('s1'),
+            namedNode(resolvePrefix(predicate, ontologies)),
+            namedNode(resolvePrefix(object, ontologies))
+          )
+        );
       }
     });
   }
