@@ -395,10 +395,10 @@ module.exports = {
       const oldSourceUris = Object.keys(this.imported);
 
       if (this.settings.source.getAllCompact) {
-        newSourceUris = results.map(data => this.settings.source.getOneFull(data))
+        newSourceUris = results.map(data => this.settings.source.getOneFull(data));
       } else {
         // If we have no compact results, put the data in an object so that we can easily use it with importOne
-        mappedFullResults = Object.fromEntries(results.map(data => ([this.settings.source.getOneFull(data), data])));
+        mappedFullResults = Object.fromEntries(results.map(data => [this.settings.source.getOneFull(data), data]));
         newSourceUris = Object.keys(mappedFullResults);
       }
 
@@ -463,7 +463,11 @@ module.exports = {
         .filter(uri => !urisToCreate.includes(uri));
 
       for (let sourceUri of urisToUpdate) {
-        const result = await this.actions.importOne({ sourceUri, destUri: this.imported[sourceUri], data: mappedFullResults[sourceUri] });
+        const result = await this.actions.importOne({
+          sourceUri,
+          destUri: this.imported[sourceUri],
+          data: mappedFullResults[sourceUri]
+        });
 
         if (result === false) {
           await this.broker.call('ldp.resource.delete', {
