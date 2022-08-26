@@ -15,18 +15,16 @@ import { shallowEqual, useSelector } from 'react-redux';
  * );
  */
 
-const ReferenceFilterCounter = ({source, id}) => {
+const ReferenceFilterCounter = ({ source, id }) => {
   const resourceContext = useResourceContext();
   const { data } = useGetList(resourceContext);
   return (
     <>
       &nbsp;
-      <span className='filter-count'>
-        {'(' + Object.values(data).filter(d => d[source]===id).length + ')'}
-      </span>
+      <span className="filter-count">{'(' + Object.values(data).filter(d => d[source] === id).length + ')'}</span>
     </>
-  )
-}
+  );
+};
 
 const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
   const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
@@ -39,20 +37,18 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
         .map(id => (
           <FilterListItem
             key={id}
-            label={ 
-                <span className='filter-label'>
-                  {data[id]['pair:label']}
-                  {showCounters && 
-                    <ReferenceFilterCounter source={source} id={id} />
-                  }
-                </span>
-              }
+            label={
+              <span className="filter-label">
+                {data[id]['pair:label']}
+                {showCounters && <ReferenceFilterCounter source={source} id={id} />}
+              </span>
+            }
             value={{ [source]: id }}
           />
         ))}
     </FilterList>
   );
-}; 
+};
 
 ReferenceFilter.defaultProps = {
   limit: 25,
