@@ -27,10 +27,15 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           dataModel.list?.blankNodes ||
           getBlankNodesFromDataServers(containers[serverKey], dataServers);
 
+        const predicates =
+          params.filter?._predicates ||
+          dataModel.list?.predicates;
+
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
           blankNodes,
+          predicates,
           ontologies
         });
 
