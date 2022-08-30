@@ -22,7 +22,10 @@ const useStyles = makeStyles(theme => ({
 const MarkdownInput = props => {
   const classes = useStyles();
   const { validate } = props;
-  const isRequired = useMemo(() => !!validate && !![].concat(validate).find(v => v.toString() === required().toString()), [validate]);
+  const isRequired = useMemo(
+    () => !!validate && !![].concat(validate).find(v => v.toString() === required().toString()),
+    [validate]
+  );
   const [tab, setTab] = useState('write');
   const {
     input: { value, onChange, onBlur },
