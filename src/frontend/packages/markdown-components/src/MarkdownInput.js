@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
 import { useInput, InputHelperText, Labeled, required } from 'react-admin';
 import { FormControl, FormHelperText, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
-  validationRequired: {
+  validationError: {
     '& .MuiFormLabel-root': {
-      color: '#f44336',
+      color: '#f44336'
     },
     '& .mde-text': {
       outline: '-webkit-focus-ring-color auto 1px',
@@ -16,12 +16,13 @@ const useStyles = makeStyles(theme => ({
       outlineStyle: 'auto',
       outlineWidth: 1
     }
-  },
+  }
 }));
 
 const MarkdownInput = props => {
   const classes = useStyles();
   const { validate } = props;
+  const isRequired = useMemo(() => !!validate && !![].concat(validate).find(v => v.toString() === required().toString()), [validate]);
   const [tab, setTab] = useState('write');
   const {
     input: { value, onChange, onBlur },
@@ -29,8 +30,8 @@ const MarkdownInput = props => {
   } = useInput(props);
 
   return (
-    <FormControl fullWidth className={`ra-input-mde ${((error==='ra.validation.required') ? classes.validationRequired : '')}`} >
-      <Labeled {...props} isRequired={validate.toString()!==required.toString()} >
+    <FormControl fullWidth className={`ra-input-mde ${!!error ? classes.validationError : ''}`}>
+      <Labeled {...props} isRequired={isRequired}>
         <ReactMde
           value={value}
           onChange={value => onChange(value)}
@@ -38,13 +39,13 @@ const MarkdownInput = props => {
           generateMarkdownPreview={async markdown => <Markdown>{markdown}</Markdown>}
           selectedTab={tab}
           childProps={{
-            textArea: {onBlur: ()=>onBlur()} 
+            textArea: { onBlur: () => onBlur() }
           }}
           {...props}
         />
       </Labeled>
       <FormHelperText error={!!error} margin="dense" variant="outlined">
-        <InputHelperText error={error} helperText={props.helperText} touched={error||touched} />
+        <InputHelperText error={error} helperText={props.helperText} touched={error || touched} />
       </FormHelperText>
     </FormControl>
   );
