@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
       marginBlockStart: '0.5em',
       marginBlockEnd: '0.5em'
     },
-    marginBottom: -19
+    marginBottom: -19 // To hide helper text block
   },
   button: {
     marginBottom: 15
