@@ -7,7 +7,13 @@ const useDataModel = resourceId => {
   const [dataModel, setDataModel] = useState();
 
   useEffect(() => {
-    dataProvider.getDataModels().then(results => setDataModel(results[resourceId]));
+    dataProvider.getDataModels().then(results => {
+      if (results[resourceId]) {
+        setDataModel(results[resourceId]);
+      } else {
+        throw new Error('No data model found for resource ' + resourceId);
+      }
+    });
   }, [dataProvider, resourceId, setDataModel]);
 
   return dataModel;

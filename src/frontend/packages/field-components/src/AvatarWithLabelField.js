@@ -64,7 +64,7 @@ const AvatarWithLabelField = ({ label, defaultLabel, image, fallback, externalLi
           className={classes.avatar}
         />
       </div>
-      {externalLink ? (
+      {!computedLabel ? null : externalLink ? (
         <Chip
           color={labelColor}
           className={classes.chip}

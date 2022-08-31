@@ -10,7 +10,8 @@ const LikeService = require('./services/like');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
-const { ACTOR_TYPES } = require('./constants');
+const ReplyService = require('./services/reply');
+const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -26,11 +27,21 @@ const ActivityPubService = {
     dispatch: {
       queueServiceUrl: null,
       delay: 0
+    },
+    like: {
+      attachToObjectTypes: null,
+      attachToActorTypes: null
+    },
+    follow: {
+      attachToActorTypes: null
+    },
+    reply: {
+      attachToObjectTypes: null
     }
   },
   dependencies: ['api'],
   async created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, dispatch } = this.settings;
+    const { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -71,7 +82,8 @@ const ActivityPubService = {
 
     this.broker.createService(FollowService, {
       settings: {
-        baseUri
+        baseUri,
+        attachToActorTypes: follow.attachToActorTypes || Object.values(ACTOR_TYPES)
       }
     });
 
@@ -79,7 +91,16 @@ const ActivityPubService = {
 
     this.broker.createService(LikeService, {
       settings: {
-        baseUri
+        baseUri,
+        attachToObjectTypes: like.attachToObjectTypes || Object.values(OBJECT_TYPES),
+        attachToActorTypes: like.attachToActorTypes || Object.values(ACTOR_TYPES)
+      }
+    });
+
+    this.broker.createService(ReplyService, {
+      settings: {
+        baseUri,
+        attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES)
       }
     });
 
