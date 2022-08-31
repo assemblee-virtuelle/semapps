@@ -1,8 +1,8 @@
 import React from 'react';
-import { useRecordContext } from "react-admin";
-import PostCommentForm from "./PostCommentForm";
-import CommentsList from "./CommentsList";
-import useCollection from "../../hooks/useCollection";
+import { useRecordContext } from 'react-admin';
+import PostCommentForm from './PostCommentForm';
+import CommentsList from './CommentsList';
+import useCollection from '../../hooks/useCollection';
 
 const CommentsField = ({ source, context, helperText, userResource, mentions }) => {
   const record = useRecordContext();
@@ -10,7 +10,14 @@ const CommentsField = ({ source, context, helperText, userResource, mentions }) 
   if (!userResource) throw new Error('No userResource defined for CommentsField');
   return (
     <>
-      <PostCommentForm context={context} helperText={helperText} userResource={userResource} mentions={mentions} addItem={addItem} removeItem={removeItem} />
+      <PostCommentForm
+        context={context}
+        helperText={helperText}
+        userResource={userResource}
+        mentions={mentions}
+        addItem={addItem}
+        removeItem={removeItem}
+      />
       <CommentsList comments={comments} loading={loading} userResource={userResource} />
     </>
   );
@@ -18,7 +25,7 @@ const CommentsField = ({ source, context, helperText, userResource, mentions }) 
 
 CommentsField.defaultProps = {
   addLabel: true,
-  label: "Commentaires",
+  label: 'Commentaires',
   source: 'id', // Ensure the field is always displayed
   context: 'id'
 };

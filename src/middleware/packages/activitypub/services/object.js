@@ -20,7 +20,7 @@ const ObjectService = {
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
-        return await ctx.call((controlledActions && controlledActions.get) ? controlledActions.get : 'ldp.resource.get', {
+        return await ctx.call(controlledActions && controlledActions.get ? controlledActions.get : 'ldp.resource.get', {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON,
           webId: actorUri,
@@ -103,7 +103,10 @@ const ObjectService = {
           });
 
           if (!container)
-            throw new Error(`Cannot create resource of type "${activity.object.type || activity.object['@type']}", no matching containers were found!`);
+            throw new Error(
+              `Cannot create resource of type "${activity.object.type ||
+                activity.object['@type']}", no matching containers were found!`
+            );
 
           if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });

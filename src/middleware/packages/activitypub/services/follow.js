@@ -7,7 +7,7 @@ const FollowService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
-    attachToActorTypes: null,
+    attachToActorTypes: null
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {

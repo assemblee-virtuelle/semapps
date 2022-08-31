@@ -1,17 +1,17 @@
-import { ReactRenderer } from '@tiptap/react'
-import tippy from 'tippy.js'
-import MentionsList from './MentionsList'
+import { ReactRenderer } from '@tiptap/react';
+import tippy from 'tippy.js';
+import MentionsList from './MentionsList';
 
 const renderMentions = () => {
-  let component
-  let popup
+  let component;
+  let popup;
 
   return {
     onStart: props => {
       component = new ReactRenderer(MentionsList, {
         props,
-        editor: props.editor,
-      })
+        editor: props.editor
+      });
 
       popup = tippy('body', {
         getReferenceClientRect: props.clientRect,
@@ -20,33 +20,33 @@ const renderMentions = () => {
         showOnCreate: true,
         interactive: true,
         trigger: 'manual',
-        placement: 'bottom-start',
-      })
+        placement: 'bottom-start'
+      });
     },
 
     onUpdate(props) {
-      component.updateProps(props)
+      component.updateProps(props);
 
       popup[0].setProps({
-        getReferenceClientRect: props.clientRect,
-      })
+        getReferenceClientRect: props.clientRect
+      });
     },
 
     onKeyDown(props) {
       if (props.event.key === 'Escape') {
-        popup[0].hide()
+        popup[0].hide();
 
-        return true
+        return true;
       }
 
-      return component.ref?.onKeyDown(props)
+      return component.ref?.onKeyDown(props);
     },
 
     onExit() {
-      popup[0].destroy()
-      component.destroy()
-    },
-  }
+      popup[0].destroy();
+      component.destroy();
+    }
+  };
 };
 
 export default renderMentions;

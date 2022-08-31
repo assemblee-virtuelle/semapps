@@ -51,10 +51,13 @@ const ReplyService = {
             }
           },
           activity
-        )
+        );
       },
       async onEmit(ctx, activity, emitterUri) {
-        await this.actions.addReply({ objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id }, { parentCtx: ctx });
+        await this.actions.addReply(
+          { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+          { parentCtx: ctx }
+        );
       }
     },
     deleteReply: {
@@ -73,7 +76,10 @@ const ReplyService = {
         );
       },
       async onEmit(ctx, activity, emitterUri) {
-        await this.actions.removeReply({ objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id }, { parentCtx: ctx });
+        await this.actions.removeReply(
+          { objectUri: activity.object.inReplyTo.id, replyUri: activity.object.id },
+          { parentCtx: ctx }
+        );
       }
     }
   }
