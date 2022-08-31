@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   items: {
@@ -32,52 +32,52 @@ export default forwardRef((props, ref) => {
   const classes = useStyles();
 
   const selectItem = index => {
-    const item = props.items[index]
+    const item = props.items[index];
 
     if (item) {
-      props.command({ id: item })
+      props.command({ id: item });
     }
-  }
+  };
 
   const upHandler = () => {
-    setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length)
-  }
+    setSelectedIndex((selectedIndex + props.items.length - 1) % props.items.length);
+  };
 
   const downHandler = () => {
-    setSelectedIndex((selectedIndex + 1) % props.items.length)
-  }
+    setSelectedIndex((selectedIndex + 1) % props.items.length);
+  };
 
   const enterHandler = () => {
-    selectItem(selectedIndex)
-  }
+    selectItem(selectedIndex);
+  };
 
-  useEffect(() => setSelectedIndex(0), [props.items])
+  useEffect(() => setSelectedIndex(0), [props.items]);
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }) => {
       if (event.key === 'ArrowUp') {
-        upHandler()
-        return true
+        upHandler();
+        return true;
       }
 
       if (event.key === 'ArrowDown') {
-        downHandler()
-        return true
+        downHandler();
+        return true;
       }
 
       if (event.key === 'Enter') {
-        enterHandler()
-        return true
+        enterHandler();
+        return true;
       }
 
-      return false
-    },
-  }))
+      return false;
+    }
+  }));
 
   return (
     <div className={classes.items}>
-      {props.items.length
-        ? props.items.map((item, index) => (
+      {props.items.length ? (
+        props.items.map((item, index) => (
           <button
             className={classes.item + (index === selectedIndex ? ' selected' : '')}
             key={index}
@@ -86,8 +86,9 @@ export default forwardRef((props, ref) => {
             {item.label}
           </button>
         ))
-        : <div className={classes.item}>Aucun résultat</div>
-      }
+      ) : (
+        <div className={classes.item}>Aucun résultat</div>
+      )}
     </div>
-  )
-})
+  );
+});

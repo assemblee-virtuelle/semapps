@@ -11,7 +11,7 @@ const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
 const ReplyService = require('./services/reply');
-const { ACTOR_TYPES, OBJECT_TYPES} = require('./constants');
+const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -37,7 +37,7 @@ const ActivityPubService = {
     },
     reply: {
       attachToObjectTypes: null
-    },
+    }
   },
   dependencies: ['api'],
   async created() {

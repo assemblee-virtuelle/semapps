@@ -1,8 +1,8 @@
 import React from 'react';
-import { TextField, RichTextField, DateField } from "react-admin";
-import { Box, Typography, CircularProgress, makeStyles } from "@material-ui/core";
-import { ReferenceField, useDataModel } from "@semapps/semantic-data-provider";
-import { AvatarWithLabelField } from "@semapps/field-components";
+import { TextField, RichTextField, DateField } from 'react-admin';
+import { Box, Typography, CircularProgress, makeStyles } from '@material-ui/core';
+import { ReferenceField, useDataModel } from '@semapps/semantic-data-provider';
+import { AvatarWithLabelField } from '@semapps/field-components';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles(() => ({
     left: 0,
     bottom: 0,
     width: 64,
-    height: 64,
+    height: 64
   },
   text: {
     paddingTop: 2,
@@ -52,37 +52,39 @@ const useStyles = makeStyles(() => ({
 const CommentsList = ({ comments, userResource, loading }) => {
   const classes = useStyles();
   const userDataModel = useDataModel(userResource);
-  return(
+  return (
     <Box position="relative">
-      {comments && comments.sort((a, b) => new Date(b.published) - new Date(a.published))
-        .map(comment => (
-          <Box className={classes.container}>
-            <Box className={classes.avatar}>
-              <ReferenceField record={comment} reference="Person" source="attributedTo" linkType={false}>
-                <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
-              </ReferenceField>
-            </Box>
-            <Box className={classes.text}>
-              <Typography variant="body2">
-                <ReferenceField record={comment} reference="Person" source="attributedTo">
-                  <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
+      {comments &&
+        comments
+          .sort((a, b) => new Date(b.published) - new Date(a.published))
+          .map(comment => (
+            <Box className={classes.container}>
+              <Box className={classes.avatar}>
+                <ReferenceField record={comment} reference="Person" source="attributedTo" linkType={false}>
+                  <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
                 </ReferenceField>
-                &nbsp;•&nbsp;
-                <DateField record={comment} variant="body2" source="published" showTime />
-              </Typography>
-              <RichTextField record={comment} variant="body1" source="content" className={classes.content} />
+              </Box>
+              <Box className={classes.text}>
+                <Typography variant="body2">
+                  <ReferenceField record={comment} reference="Person" source="attributedTo">
+                    <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
+                  </ReferenceField>
+                  &nbsp;•&nbsp;
+                  <DateField record={comment} variant="body2" source="published" showTime />
+                </Typography>
+                <RichTextField record={comment} variant="body1" source="content" className={classes.content} />
+              </Box>
             </Box>
-          </Box>
-        ))}
-      {loading &&
+          ))}
+      {loading && (
         <Box minHeight={200}>
           <Box alignItems="center" className={classes.loading}>
             <CircularProgress size={60} thickness={6} />
           </Box>
         </Box>
-      }
+      )}
     </Box>
-  )
+  );
 };
 
 export default CommentsList;

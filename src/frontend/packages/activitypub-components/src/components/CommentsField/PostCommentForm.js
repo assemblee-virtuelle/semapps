@@ -4,10 +4,10 @@ import { RichTextInput, DefaultEditorOptions } from 'ra-richtext-tiptap';
 import { Form } from 'react-final-form';
 import { Button, Box, makeStyles, Avatar } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
-import { useDataModel } from "@semapps/semantic-data-provider";
+import { useDataModel } from '@semapps/semantic-data-provider';
 import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
-import CustomMention from "./CustomMention";
+import CustomMention from './CustomMention';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     bottom: 0,
     width: 64,
-    height: 64,
+    height: 64
   },
   editorContent: {
     '& > div': {
@@ -58,49 +58,55 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
   const outbox = useOutbox();
   const [expanded, setExpanded] = useState(false);
 
-  const onSubmit = useCallback(async (values, { reset }) => {
-    const document = new DOMParser().parseFromString(values.comment, 'text/html');
-    const mentions = Array.from(document.body.getElementsByClassName('mention'));
-    let mentionedUsersUris = [];
+  const onSubmit = useCallback(
+    async (values, { reset }) => {
+      const document = new DOMParser().parseFromString(values.comment, 'text/html');
+      const mentions = Array.from(document.body.getElementsByClassName('mention'));
+      let mentionedUsersUris = [];
 
-    mentions.forEach(node => {
-      const userUri = node.attributes['data-mention-id'].value;
-      const userLabel = node.attributes['data-mention-label'].value;
-      const link = document.createElement('a');
-      link.setAttribute('href', new URL(window.location.href).origin + '/' + userResource + '/' + encodeURIComponent(userUri) + '/show');
-      link.textContent = '@' + userLabel;
-      node.parentNode.replaceChild(link, node);
-      mentionedUsersUris.push(userUri);
-    });
+      mentions.forEach(node => {
+        const userUri = node.attributes['data-mention-id'].value;
+        const userLabel = node.attributes['data-mention-label'].value;
+        const link = document.createElement('a');
+        link.setAttribute(
+          'href',
+          new URL(window.location.href).origin + '/' + userResource + '/' + encodeURIComponent(userUri) + '/show'
+        );
+        link.textContent = '@' + userLabel;
+        node.parentNode.replaceChild(link, node);
+        mentionedUsersUris.push(userUri);
+      });
 
-    if (document.body.innerHTML === 'undefined') {
-      notify('Votre commentaire est vide', 'error');
-    } else {
-      const tempId = Date.now();
+      if (document.body.innerHTML === 'undefined') {
+        notify('Votre commentaire est vide', 'error');
+      } else {
+        const tempId = Date.now();
 
-      const note = {
-        type: OBJECT_TYPES.NOTE,
-        attributedTo: outbox.owner,
-        content: document.body.innerHTML,
-        inReplyTo: record[context],
-        published: (new Date()).toISOString()
-      };
+        const note = {
+          type: OBJECT_TYPES.NOTE,
+          attributedTo: outbox.owner,
+          content: document.body.innerHTML,
+          inReplyTo: record[context],
+          published: new Date().toISOString()
+        };
 
-      try {
-        addItem({ id: tempId, ...note });
-        reset();
-        setExpanded(false);
-        await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
-        notify('Commentaire posté avec succès', 'success');
-      } catch (e) {
-        removeItem(tempId);
-        notify(e.message, 'error');
+        try {
+          addItem({ id: tempId, ...note });
+          reset();
+          setExpanded(false);
+          await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
+          notify('Commentaire posté avec succès', 'success');
+        } catch (e) {
+          removeItem(tempId);
+          notify(e.message, 'error');
+        }
       }
-    }
-  }, [outbox, notify, setExpanded, addItem, removeItem]);
+    },
+    [outbox, notify, setExpanded, addItem, removeItem]
+  );
 
   // Don't init the comment field until the mentions are loaded, as the suggestion field can only be initialized once
-  if( mentions && !mentions.items ) return null;
+  if (mentions && !mentions.items) return null;
 
   return (
     <Form
@@ -110,17 +116,14 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
         // Hack to clear comment input when form is reset
         // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
         if (pristine) {
-          const commentElement = document.getElementById("comment");
+          const commentElement = document.getElementById('comment');
           if (commentElement) commentElement.innerHTML = '';
         }
 
         return (
           <form onSubmit={handleSubmit} className={classes.form}>
             <Box className={classes.container}>
-              <Avatar
-                src={identity?.webIdData?.[userDataModel?.fieldsMapping?.image]}
-                className={classes.avatar}
-              />
+              <Avatar src={identity?.webIdData?.[userDataModel?.fieldsMapping?.image]} className={classes.avatar} />
               <RichTextInput
                 source="comment"
                 label=""
@@ -129,27 +132,39 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
                 classes={{ editorContent: classes.editorContent }}
                 editorOptions={{
                   ...DefaultEditorOptions,
-                  onFocus() { setExpanded(true) },
+                  onFocus() {
+                    setExpanded(true);
+                  },
                   extensions: [
                     ...DefaultEditorOptions.extensions,
-                    mentions ? CustomMention.configure({
-                      HTMLAttributes: {
-                        class: 'mention',
-                      },
-                      suggestion: mentions,
-                    }) : null
-                  ],
+                    mentions
+                      ? CustomMention.configure({
+                          HTMLAttributes: {
+                            class: 'mention'
+                          },
+                          suggestion: mentions
+                        })
+                      : null
+                  ]
                 }}
                 helperText={helperText}
               />
-              {expanded &&
-                <Button type="submit" size="small" variant="contained" color="primary" endIcon={<SendIcon />} disabled={submitting} className={classes.button}>
+              {expanded && (
+                <Button
+                  type="submit"
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  endIcon={<SendIcon />}
+                  disabled={submitting}
+                  className={classes.button}
+                >
                   Envoyer
                 </Button>
-              }
+              )}
             </Box>
           </form>
-        )
+        );
       }}
     />
   );

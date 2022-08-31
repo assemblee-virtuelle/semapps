@@ -126,7 +126,7 @@ const RegistryService = {
           for (let container of Object.values(containers)) {
             const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
             this.logger.info('Looking for resources in container ' + containerUri);
-            const resources = await ctx.call('ldp.container.getUris', { containerUri })
+            const resources = await ctx.call('ldp.container.getUris', { containerUri });
             for (let resourceUri of resources) {
               await this.actions.createAndAttachCollection({
                 objectUri: resourceUri,
