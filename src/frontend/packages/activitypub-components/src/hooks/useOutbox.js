@@ -21,22 +21,18 @@ const useOutbox = () => {
   const post = useCallback(
     async activity => {
       const token = localStorage.getItem('token');
-      try {
-        const { headers } = await fetchUtils.fetchJson(outboxUrl, {
-          method: 'POST',
-          body: JSON.stringify({
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            ...activity
-          }),
-          headers: new Headers({
-            'Content-Type': 'application/ld+json',
-            Authorization: `Bearer ${token}`
-          })
-        });
-        return headers.get('Location');
-      } catch (e) {
-        return false;
-      }
+      const { headers } = await fetchUtils.fetchJson(outboxUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          ...activity
+        }),
+        headers: new Headers({
+          'Content-Type': 'application/ld+json',
+          Authorization: `Bearer ${token}`
+        })
+      });
+      return headers.get('Location');
     },
     [outboxUrl]
   );

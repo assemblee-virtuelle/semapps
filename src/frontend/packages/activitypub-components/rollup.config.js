@@ -15,7 +15,10 @@ const external = createFilter(
     'react-router',
     'react-redux',
     '@material-ui/**',
-    '@semapps/**'
+    '@semapps/**',
+    'ra-richtext-tiptap',
+    '@tiptap/**',
+    'tippy.js'
   ],
   null,
   { resolve: false }
