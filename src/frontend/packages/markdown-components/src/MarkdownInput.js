@@ -28,7 +28,7 @@ const MarkdownInput = props => {
   );
   const [tab, setTab] = useState('write');
   const {
-    input: { value, onChange, onBlur },
+    input: { value, onChange },
     meta: { error, touched }
   } = useInput(props);
 
@@ -41,9 +41,6 @@ const MarkdownInput = props => {
           onTabChange={tab => setTab(tab)}
           generateMarkdownPreview={async markdown => <Markdown>{markdown}</Markdown>}
           selectedTab={tab}
-          childProps={{
-            textArea: { onBlur: () => onBlur() }
-          }}
           {...props}
         />
       </Labeled>
