@@ -6,13 +6,16 @@ const FollowService = {
   name: 'activitypub.follow',
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null
+    baseUri: null,
+    attachToActorTypes: null,
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {
+    const { attachToActorTypes } = this.settings;
+
     await this.broker.call('activitypub.registry.register', {
       path: '/followers',
-      attachToTypes: Object.values(ACTOR_TYPES),
+      attachToTypes: attachToActorTypes,
       attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
       ordered: false,
       dereferenceItems: false,
@@ -21,7 +24,7 @@ const FollowService = {
 
     await this.broker.call('activitypub.registry.register', {
       path: '/following',
-      attachToTypes: Object.values(ACTOR_TYPES),
+      attachToTypes: attachToActorTypes,
       attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
       ordered: false,
       dereferenceItems: false,
@@ -34,19 +37,23 @@ const FollowService = {
 
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-        await ctx.call('activitypub.collection.attach', {
-          collectionUri: actor.followers,
-          item: follower
-        });
+        if (actor.followers) {
+          await ctx.call('activitypub.collection.attach', {
+            collectionUri: actor.followers,
+            item: follower
+          });
+        }
       }
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-        await ctx.call('activitypub.collection.attach', {
-          collectionUri: actor.following,
-          item: following
-        });
+        if (actor.following) {
+          await ctx.call('activitypub.collection.attach', {
+            collectionUri: actor.following,
+            item: following
+          });
+        }
       }
 
       ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
@@ -56,19 +63,23 @@ const FollowService = {
 
       if (this.isLocalActor(following)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
-        await ctx.call('activitypub.collection.detach', {
-          collectionUri: actor.followers,
-          item: follower
-        });
+        if (actor.followers) {
+          await ctx.call('activitypub.collection.detach', {
+            collectionUri: actor.followers,
+            item: follower
+          });
+        }
       }
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
         const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
-        await ctx.call('activitypub.collection.detach', {
-          collectionUri: actor.following,
-          item: following
-        });
+        if (actor.following) {
+          await ctx.call('activitypub.collection.detach', {
+            collectionUri: actor.following,
+            item: following
+          });
+        }
       }
 
       ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
@@ -109,6 +120,15 @@ const FollowService = {
         const { '@context': context, ...activityObject } = activity;
         const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
 
+        await this.actions.addFollower(
+          {
+            follower: activity.actor,
+            following: activity.object
+          },
+          { parentCtx: ctx }
+        );
+
+        // TODO don't accept Follow request if actor doesn't have followers/following collections
         await ctx.call('activitypub.outbox.post', {
           collectionUri: actor.outbox,
           '@context': 'https://www.w3.org/ns/activitystreams',
@@ -117,14 +137,6 @@ const FollowService = {
           object: activityObject,
           to: activity.actor
         });
-
-        await this.actions.addFollower(
-          {
-            follower: activity.actor,
-            following: activity.object
-          },
-          { parentCtx: ctx }
-        );
       }
     },
     acceptFollow: {
