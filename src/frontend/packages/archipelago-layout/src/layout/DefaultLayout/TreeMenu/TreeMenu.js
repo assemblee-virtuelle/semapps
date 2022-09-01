@@ -22,6 +22,9 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
     setOpenSubMenus(state => ({ ...state, [menu]: !state[menu] }));
   };
 
+  // Get menu root items
+  const menuRootItems = useMemo(() => resources.filter(r => !r.options.parent), [resources]);
+
   // Calculate available categories
   const categories = useMemo(() => {
     const names = resources.reduce((categories, resource) => {
@@ -45,28 +48,33 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
 
   return (
     <Box mt={2}>
-      {categories.map(category => (
-        <SubMenu
-          key={category.name}
-          handleToggle={() => handleToggle(category.name)}
-          isOpen={openSubMenus[category.name]}
-          sidebarIsOpen
-          name={(category.options && category.options.label) || category.name}
-          icon={category.icon ? <category.icon /> : <DefaultIcon />}
-          dense={dense}
-        >
-          {resources
-            .filter(resource => resource.hasList && resource.options.parent === category.name)
-            .map(resource => (
-              <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
-            ))}
-        </SubMenu>
+      {menuRootItems.map(menuRootItem => (
+        <Box key={menuRootItem.name}>
+          {categories.includes(menuRootItem) ? (
+            <SubMenu
+              key={menuRootItem.name}
+              handleToggle={() => handleToggle(menuRootItem.name)}
+              isOpen={openSubMenus[menuRootItem.name]}
+              sidebarIsOpen
+              name={(menuRootItem.options && menuRootItem.options.label) || menuRootItem.name}
+              icon={menuRootItem.icon ? <menuRootItem.icon /> : <DefaultIcon />}
+              dense={dense}
+            >
+              {resources
+                .filter(resource => resource.hasList && resource.options.parent === menuRootItem.name)
+                .map(resource => (
+                  <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
+                ))}
+            </SubMenu>
+          ) : (
+            <>
+              {menuRootItem.hasList && (
+                <ResourceMenuLink key={menuRootItem.name} resource={menuRootItem} onClick={onMenuClick} open={true} />
+              )}
+            </>
+          )}
+        </Box>
       ))}
-      {resources
-        .filter(resource => resource.hasList && (!resource.options || !resource.options.parent))
-        .map(resource => (
-          <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
-        ))}
       {isXSmall && logout}
     </Box>
   );
