@@ -21,10 +21,10 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   const handleToggle = menu => {
     setOpenSubMenus(state => ({ ...state, [menu]: !state[menu] }));
   };
-  
+
   // Get menu root items
-  const menuRootItems = useMemo(() => resources.filter(r => !r.options.parent),[resources])
-  
+  const menuRootItems = useMemo(() => resources.filter(r => !r.options.parent), [resources]);
+
   // Calculate available categories
   const categories = useMemo(() => {
     const names = resources.reduce((categories, resource) => {
@@ -50,7 +50,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
     <Box mt={2}>
       {menuRootItems.map(menuRootItem => (
         <Box key={menuRootItem.name}>
-          { categories.includes(menuRootItem) ? (
+          {categories.includes(menuRootItem) ? (
             <SubMenu
               key={menuRootItem.name}
               handleToggle={() => handleToggle(menuRootItem.name)}
@@ -64,14 +64,13 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
                 .filter(resource => resource.hasList && resource.options.parent === menuRootItem.name)
                 .map(resource => (
                   <ResourceMenuLink key={resource.name} resource={resource} onClick={onMenuClick} open={true} />
-                ))
-              }
+                ))}
             </SubMenu>
           ) : (
             <>
-              { menuRootItem.hasList &&
+              {menuRootItem.hasList && (
                 <ResourceMenuLink key={menuRootItem.name} resource={menuRootItem} onClick={onMenuClick} open={true} />
-              }
+              )}
             </>
           )}
         </Box>
