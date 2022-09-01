@@ -116,3 +116,31 @@ const App = () => (
 Additionally, you should use the `<ListWithPermissions />`, `<ShowWithPermissions />` and `<EditWithPermissions />` components instead of React-Admin's default `<List />`, `<Show />` and `<Edit />` components.
 
 This will hide the Create, Edit and Delete buttons to users who are not allowed to do these actions, and show a Permissions button to users who have `acl:Control` over a resource or a container.
+
+## Components
+
+### AuthDialog
+
+```js
+const MyPage = () => {
+  const [openAuth, setOpenAuth] = useState(false);
+  return(
+    <>
+      <Button onClick={() => setOpenAuth(true)}>
+        Protected action
+      </Button>
+      <AuthDialog open={openAuth} onClose={() => setOpenAuth(false)} />
+    </>
+  );
+};
+```
+
+| Property   | Type       | Default                    | Description                        |
+|------------|------------|----------------------------|------------------------------------|
+| `open`     | `Boolean`  | **required**               | True if the dialog is open         |
+| `onClose`  | `Function` | **required**               | Function to close the dialog       |
+| `redirect` | `String`   | Current path               | Path where to redirect after login |
+| `title`    | `String`   | "Login required"           | Title of the dialog                |
+| `message`  | `String`   | "Please login to continue" | Content of the dialog              |
+
+All other props are passed to the underlying Material-UI [Dialog](https://v4.mui.com/api/dialog/) component.
