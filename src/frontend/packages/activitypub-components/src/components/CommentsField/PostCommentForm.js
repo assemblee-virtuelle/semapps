@@ -5,7 +5,7 @@ import { Form } from 'react-final-form';
 import { Button, Box, makeStyles, Avatar } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import { useDataModel } from '@semapps/semantic-data-provider';
-import { AuthDialog } from "@semapps/auth-provider";
+import { AuthDialog } from '@semapps/auth-provider';
 import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
@@ -173,7 +173,6 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
                   </Button>
                 )}
               </Box>
-
             </form>
           );
         }}

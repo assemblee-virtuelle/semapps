@@ -28,7 +28,7 @@ const SearchForm = () => {
   const location = useLocation();
   const matches = location.pathname.match(/^\/([^/]+)/);
   const currentType = matches ? matches[1] : 'Organization';
-  
+
   const store = useStore();
   const state = store.getState();
   const qFilter = state?.admin?.resources[location.pathname.split('/')[1]]?.list?.params?.filter?.q;
@@ -44,7 +44,7 @@ const SearchForm = () => {
   return (
     <Form
       onSubmit={onSubmit}
-      initialValues={{ type: currentType, filter:qFilter ? qFilter : '' }}
+      initialValues={{ type: currentType, filter: qFilter ? qFilter : '' }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>
