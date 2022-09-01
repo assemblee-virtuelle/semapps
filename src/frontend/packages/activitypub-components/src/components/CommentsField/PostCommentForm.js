@@ -5,6 +5,7 @@ import { Form } from 'react-final-form';
 import { Button, Box, makeStyles, Avatar } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import { useDataModel } from '@semapps/semantic-data-provider';
+import { AuthDialog } from "@semapps/auth-provider";
 import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
@@ -57,6 +58,7 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
   const notify = useNotify();
   const outbox = useOutbox();
   const [expanded, setExpanded] = useState(false);
+  const [openAuth, setOpenAuth] = useState(false);
 
   const onSubmit = useCallback(
     async (values, { reset }) => {
@@ -105,68 +107,83 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
     [outbox, notify, setExpanded, addItem, removeItem]
   );
 
-  // Don't init the comment field until the mentions are loaded, as the suggestion field can only be initialized once
-  if (mentions && !mentions.items) return null;
+  const openAuthIfDisconnected = useCallback(() => {
+    if (!identity.id) {
+      setOpenAuth(true);
+    }
+  }, [identity, setOpenAuth]);
+
+  // Don't init the editor options until mentions and identity are loaded, as they can only be initialized once
+  if ((mentions && !mentions.items) || !identity) return null;
 
   return (
-    <Form
-      onSubmit={onSubmit}
-      subscription={{ submitting: true, pristine: true }}
-      render={({ handleSubmit, submitting, pristine }) => {
-        // Hack to clear comment input when form is reset
-        // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
-        if (pristine) {
-          const commentElement = document.getElementById('comment');
-          if (commentElement) commentElement.innerHTML = '';
-        }
+    <>
+      <Form
+        onSubmit={onSubmit}
+        subscription={{ submitting: true, pristine: true }}
+        render={({ handleSubmit, submitting, pristine }) => {
+          // Hack to clear comment input when form is reset
+          // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
+          if (pristine) {
+            const commentElement = document.getElementById('comment');
+            if (commentElement) commentElement.innerHTML = '';
+          }
+          return (
+            <form onSubmit={handleSubmit} className={classes.form}>
+              <Box className={classes.container} onClick={openAuthIfDisconnected}>
+                <Avatar src={identity?.webIdData?.[userDataModel?.fieldsMapping?.image]} className={classes.avatar} />
+                <RichTextInput
+                  source="comment"
+                  label=""
+                  toolbar={null}
+                  fullWidth
+                  classes={{ editorContent: classes.editorContent }}
+                  editorOptions={{
+                    ...DefaultEditorOptions,
+                    onFocus() {
+                      setExpanded(true);
+                    },
+                    extensions: [
+                      ...DefaultEditorOptions.extensions,
+                      mentions
+                        ? CustomMention.configure({
+                            HTMLAttributes: {
+                              class: 'mention'
+                            },
+                            suggestion: mentions
+                          })
+                        : null
+                    ],
+                    // Disable editor if user is not connected
+                    editable: !!identity.id
+                  }}
+                  helperText={helperText}
+                />
+                {expanded && (
+                  <Button
+                    type="submit"
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    endIcon={<SendIcon />}
+                    disabled={submitting}
+                    className={classes.button}
+                  >
+                    Envoyer
+                  </Button>
+                )}
+              </Box>
 
-        return (
-          <form onSubmit={handleSubmit} className={classes.form}>
-            <Box className={classes.container}>
-              <Avatar src={identity?.webIdData?.[userDataModel?.fieldsMapping?.image]} className={classes.avatar} />
-              <RichTextInput
-                source="comment"
-                label=""
-                toolbar={null}
-                fullWidth
-                classes={{ editorContent: classes.editorContent }}
-                editorOptions={{
-                  ...DefaultEditorOptions,
-                  onFocus() {
-                    setExpanded(true);
-                  },
-                  extensions: [
-                    ...DefaultEditorOptions.extensions,
-                    mentions
-                      ? CustomMention.configure({
-                          HTMLAttributes: {
-                            class: 'mention'
-                          },
-                          suggestion: mentions
-                        })
-                      : null
-                  ]
-                }}
-                helperText={helperText}
-              />
-              {expanded && (
-                <Button
-                  type="submit"
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                  endIcon={<SendIcon />}
-                  disabled={submitting}
-                  className={classes.button}
-                >
-                  Envoyer
-                </Button>
-              )}
-            </Box>
-          </form>
-        );
-      }}
-    />
+            </form>
+          );
+        }}
+      />
+      <AuthDialog
+        open={openAuth}
+        onClose={() => setOpenAuth(false)}
+        message="Pour poster un commentaire, vous devez être connecté."
+      />
+    </>
   );
 };
 
