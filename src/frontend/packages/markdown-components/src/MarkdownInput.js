@@ -7,12 +7,12 @@ import { FormControl, FormHelperText, makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   validationError: {
     '& .MuiFormLabel-root': {
-      color: '#f44336'
+      color: theme.palette.error.main
     },
     '& .mde-text': {
       outline: '-webkit-focus-ring-color auto 1px',
       outlineOffset: 0,
-      outlineColor: '#f44336',
+      outlineColor: theme.palette.error.main,
       outlineStyle: 'auto',
       outlineWidth: 1
     }
