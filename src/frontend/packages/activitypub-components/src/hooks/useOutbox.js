@@ -61,7 +61,7 @@ const useOutbox = () => {
       body: query,
       headers: new Headers({
         Accept: 'application/ld+json',
-        Authorization: 'Bearer ' + token
+        Authorization: token ? `Bearer ${token}` : undefined
       })
     });
 
