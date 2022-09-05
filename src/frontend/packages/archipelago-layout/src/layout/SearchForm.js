@@ -3,7 +3,7 @@ import { getResources } from 'react-admin';
 import { Grid, Select, MenuItem, TextField, Button } from '@material-ui/core';
 import { Form, Field } from 'react-final-form';
 import { useHistory, useLocation } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useSelector, useStore } from 'react-redux';
 
 const FilterText = ({ input, ...otherProps }) => <TextField {...input} {...otherProps} />;
 
@@ -29,18 +29,22 @@ const SearchForm = () => {
   const matches = location.pathname.match(/^\/([^/]+)/);
   const currentType = matches ? matches[1] : 'Organization';
 
+  const store = useStore();
+  const state = store.getState();
+  const qFilter = state?.admin?.resources[location.pathname.split('/')[1]]?.list?.params?.filter?.q;
+
   const onSubmit = ({ filter, type }) => {
     if (filter) {
       history.push(`/${type}?filter=${encodeURIComponent(`{"q": "${filter}"}`)}`);
     } else {
-      history.push(`/${type}`);
+      history.push(`/${type}?filter=${encodeURIComponent(`{}`)}`);
     }
   };
 
   return (
     <Form
       onSubmit={onSubmit}
-      initialValues={{ type: currentType }}
+      initialValues={{ type: currentType, filter: qFilter ? qFilter : '' }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={2}>

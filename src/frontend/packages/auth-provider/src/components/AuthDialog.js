@@ -9,15 +9,15 @@ const AuthDialog = ({ open, onClose, title, message, redirect, ...rest }) => {
     <Dialog open={open} onClose={onClose} {...rest}>
       <DialogTitle>{translate(title)}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          {translate(message)}
-        </DialogContentText>
+        <DialogContentText>{translate(message)}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>
-          {translate('ra.action.cancel')}
-        </Button>
-        <Button onClick={() => login({ redirect: redirect || (window.location.pathname + window.location.search) })} color="primary" variant="contained">
+        <Button onClick={onClose}>{translate('ra.action.cancel')}</Button>
+        <Button
+          onClick={() => login({ redirect: redirect || window.location.pathname + window.location.search })}
+          color="primary"
+          variant="contained"
+        >
           {translate('auth.action.login')}
         </Button>
       </DialogActions>
