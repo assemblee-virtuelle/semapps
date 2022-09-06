@@ -1,14 +1,56 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
-import { useMediaQuery, Box } from '@material-ui/core';
+import { useMediaQuery, Box, makeStyles } from '@material-ui/core';
 import { getResources } from 'react-admin';
 import DefaultIcon from '@material-ui/icons/ViewList';
 import SubMenu from './SubMenu';
 import ResourceMenuLink from './ResourceMenuLink';
 
-const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
+const useStyles = makeStyles(theme => ({
+  treeMenuOneRowLabel: {
+    '& .MuiMenuItem-root': {
+      display: 'block',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      maxWidth: 240,
+      '& > .MuiListItemIcon-root': {
+        verticalAlign: 'middle'
+      }
+    }
+  },
+  treeMenu: props => ({
+    '& .MuiMenuItem-root': {
+      whiteSpace: 'normal',
+      maxWidth: 240,
+      maxHeight: 10 + 24 * props.labelNbLines,
+      paddingLeft: 56,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      display: '-webkit-box',
+      '-webkit-line-clamp': props.labelNbLines,
+      '-webkit-box-orient': 'vertical',
+      '& > .MuiListItemIcon-root': {
+        position: 'absolute',
+        left: 16
+      }
+    },
+    '& .MuiCollapse-root': {
+      '& .MuiMenuItem-root': {
+        paddingLeft: 72,
+        '& > .MuiListItemIcon-root': {
+          left: 32
+        }
+      }
+    }
+  })
+}));
+
+const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false, labelNbLines = 1 }) => {
   const isXSmall = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const isSmall = useMediaQuery(theme => theme.breakpoints.only('sm'));
+  labelNbLines = isSmall ? 1 : labelNbLines;
+  const classes = useStyles({ labelNbLines });
   // const open = useSelector(state => state.admin.ui.sidebarOpen);
   const resources = useSelector(getResources);
 
@@ -47,7 +89,7 @@ const TreeMenu = ({ onMenuClick, logout, dense = false, openAll = false }) => {
   }, [categories, resources, currentResourceName, openAll]);
 
   return (
-    <Box mt={2}>
+    <Box mt={2} className={labelNbLines === 1 ? classes.treeMenuOneRowLabel : classes.treeMenu}>
       {menuRootItems.map(menuRootItem => (
         <Box key={menuRootItem.name}>
           {categories.includes(menuRootItem) ? (
