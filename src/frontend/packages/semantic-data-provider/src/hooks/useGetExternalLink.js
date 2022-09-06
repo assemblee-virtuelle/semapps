@@ -28,6 +28,8 @@ const useGetExternalLink = componentExternalLinks => {
       // If the component explicitly asks not to display as external links, use an internal link
       if (computedComponentExternalLinks === false) return false;
 
+      if (!record?.id) return false;
+
       const serverBaseUrl = Object.keys(serversExternalLinks).find(baseUrl => record?.id.startsWith(baseUrl));
       // If no matching data servers could be found, assume we have an internal link
       if (!serverBaseUrl) return false;

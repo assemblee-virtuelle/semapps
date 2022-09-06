@@ -1,6 +1,6 @@
 import md5 from 'crypto-js/md5';
-import DataFactory from '@rdfjs/data-model';
-const { namedNode, quad, variable } = DataFactory;
+import { namedNode, triple, variable } from '@rdfjs/data-model';
+import resolvePrefix from './resolvePrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = blankNodes => {
@@ -35,18 +35,13 @@ const buildUnionQuery = queries =>
     }
     return {
       type: 'bgp',
-      triples: triples
+      triples
     };
   });
 
-const buildBlankNodesQuery = (blankNodes, ontologies) => {
+const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
   let queries = [];
   const nodes = extractNodes(blankNodes);
-
-  const firstQuery = {
-    type: 'bgp',
-    triples: [quad(variable('s1'), variable('p1'), variable('o1'))]
-  };
 
   if (nodes && ontologies && ontologies.length > 0) {
     for (let node of nodes) {
@@ -54,15 +49,10 @@ const buildBlankNodesQuery = (blankNodes, ontologies) => {
       const predicate = getPredicate(node);
       const varName = generateSparqlVarName(node);
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
-      const filterPrefix = predicate.split(':')[0];
-      const filterValue = predicate.split(':')[1];
-      const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
-
-      if (!filterOntology) throw new Error(`No ontology found with prefix: ${filterPrefix}`);
 
       const query = [
-        quad(variable('s' + parentVarName), namedNode(filterOntology.url + filterValue), variable('s' + varName)),
-        quad(variable('s' + varName), variable('p' + varName), variable('o' + varName))
+        triple(variable('s' + parentVarName), namedNode(resolvePrefix(predicate, ontologies)), variable('s' + varName)),
+        triple(variable('s' + varName), variable('p' + varName), variable('o' + varName))
       ];
 
       queries.push({
@@ -77,7 +67,7 @@ const buildBlankNodesQuery = (blankNodes, ontologies) => {
       construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
       where: {
         type: 'union',
-        patterns: [firstQuery, ...buildUnionQuery(queries)]
+        patterns: [baseQuery.where, ...buildUnionQuery(queries)]
       }
     };
   } else {

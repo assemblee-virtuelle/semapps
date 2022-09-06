@@ -62,7 +62,10 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
             history.replace('/login');
           } else {
             localStorage.setItem('token', token);
-            if (searchParams.has('new') && searchParams.get('new') === 'true') {
+            if (searchParams.has('redirect')) {
+              notify('auth.message.user_connected', 'info');
+              history.push(searchParams.get('redirect'));
+            } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
               notify('auth.message.new_user_created', 'info');
               history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
             } else {

@@ -32,7 +32,9 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      let redirectUrl = url.origin + '/login?login=true';
+      if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
+      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(redirectUrl);
     }
   },
   signup: async params => {

@@ -33,6 +33,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - ObjectService
 - OutboxService
 - ProxyService
+- ReplyService
 - RegistryService
 
 ## Other services
@@ -58,9 +59,20 @@ module.exports = {
   mixins: [ActivityPubService],
   settings: {
     baseUri: 'http://localhost:3000/',
-    additionalContext: {
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    }
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+    dispatch: {
+      queueServiceUrl: null
+    },
+    like: {
+      attachToObjectTypes: null,
+      attachToActorTypes: null
+    },
+    follow: {
+      attachToActorTypes: null
+    },
+    reply: {
+      attachToObjectTypes: null
+    },
   }
 };
 ```
@@ -85,7 +97,7 @@ module.exports = {
 
 ### Queue federation POSTs
 
-If you want to make sure no data is lost when trying to POST to remote ActivityPub servers, you can set the `queueServiceUrl` settings. 
+If you want to make sure no data is lost when trying to POST to remote ActivityPub servers, you can set the `dispatch.queueServiceUrl` settings. 
 
 The [Bull](https://github.com/OptimalBits/bull) task manager will queue the task and you will be able to retry it if it fails.
 
@@ -97,8 +109,12 @@ This is done automatically when a `webid.created` event is detected.
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `baseUri` | `String` | **required** | Base URI of your web server |
-| `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish. |
-| `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs. |
+| Property                     | Type                | Default         | Description                                                                                                                            |
+|------------------------------|---------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `baseUri`                    | `String`            | **required**    | Base URI of your web server                                                                                                            |
+| `jsonContext`                | `String` or `Object` | 'https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'                | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.                                     |
+| `dispatch.queueServiceUrl`   | `String`            |                 | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs. |
+| `like.attachToObjectTypes`   | `Array`             | All AS objects  | The ActivityStreams objects which will be attached a `likes` collection                                                                |
+| `like.attachToActorsTypes`   | `Array`             | All AS actors   | The ActivityStreams actors which will be attached a `liked` collection                                                                 |
+| `follow.attachToActorsTypes` | `Array`             | All AS actors   | The ActivityStreams actors which will be attached a `followers` and `following` collections                                            |
+| `reply.attachToObjectTypes`  | `Array`             | All AS objects  | The ActivityStreams objects which will be attached a `replies` collection                                                              |

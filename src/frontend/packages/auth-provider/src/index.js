@@ -9,6 +9,7 @@ export { default as PermissionsButton } from './components/PermissionsButton/Per
 export { default as ShowWithPermissions } from './components/ShowWithPermissions/ShowWithPermissions';
 export { default as ShowActions } from './components/ShowWithPermissions/ShowActions';
 
+export { default as AuthDialog } from './components/AuthDialog';
 export { default as SsoLoginPage, default as LoginPage } from './components/SsoLoginPage';
 export { default as LocalLoginPage } from './components/LocalLoginPage';
 export { default as LogoutButton } from './components/LogoutButton';

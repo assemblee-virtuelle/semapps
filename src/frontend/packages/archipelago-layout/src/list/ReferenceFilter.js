@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterList, FilterListItem, useGetList, getResources } from 'react-admin';
+import { FilterList, FilterListItem, useGetList, getResources, useResourceContext } from 'react-admin';
 import { shallowEqual, useSelector } from 'react-redux';
 
 /**
@@ -14,7 +14,19 @@ import { shallowEqual, useSelector } from 'react-redux';
  *   </Card>
  * );
  */
-const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon }) => {
+
+const ReferenceFilterCounter = ({ source, id }) => {
+  const resourceContext = useResourceContext();
+  const { data } = useGetList(resourceContext);
+  return (
+    <>
+      &nbsp;
+      <span className="filter-count">{'(' + Object.values(data).filter(d => d[source] === id).length + ')'}</span>
+    </>
+  );
+};
+
+const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
   const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
   const resources = useSelector(getResources, shallowEqual);
   const currentResource = resources.filter(r => r?.name === reference)[0];
@@ -23,14 +35,24 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
       {ids
         .filter(id => !inverseSource || data[id][inverseSource])
         .map(id => (
-          <FilterListItem key={id} label={data[id]['pair:label']} value={{ [source]: id }} />
+          <FilterListItem
+            key={id}
+            label={
+              <span className="filter-label">
+                {data[id]['pair:label']}
+                {showCounters && <ReferenceFilterCounter source={source} id={id} />}
+              </span>
+            }
+            value={{ [source]: id }}
+          />
         ))}
     </FilterList>
   );
 };
 
 ReferenceFilter.defaultProps = {
-  limit: 25
+  limit: 25,
+  showCounters: true
 };
 
 export default ReferenceFilter;
