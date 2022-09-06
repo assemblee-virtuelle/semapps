@@ -8,7 +8,7 @@ Only public data can be mirrored. If your server is using the [WebAclService](we
 
 ## Dependencies
 
-- [ActivityPubService](activitypub/index)
+- [ActivityPubService](activitypub/index.md)
 - [LdpService](ldp/index.md)
 - [WebfingerService](webfinger.md)
 - [VoidService](void.md)
