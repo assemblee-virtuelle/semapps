@@ -6,7 +6,7 @@ module.exports = {
   settings: {
     baseUrl: null
   },
-  dependencies: ['fuseki-admin', 'ldp', 'auth.account', 'api'],
+  dependencies: ['dataset', 'ldp', 'auth.account', 'api'],
   async started() {
     // Container with actors
     await this.broker.call('ldp.registry.register', {
@@ -32,7 +32,7 @@ module.exports = {
       const { username } = ctx.params;
       if (!username) throw new Error('Cannot create pod without a username');
 
-      await ctx.call('fuseki-admin.createDataset', {
+      await ctx.call('dataset.create', {
         dataset: username,
         secure: true
       });

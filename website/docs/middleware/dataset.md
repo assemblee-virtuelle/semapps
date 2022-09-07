@@ -1,8 +1,8 @@
 ---
-title: Fuseki Admin
+title: Dataset
 ---
 
-This service allows you to do various operations with a Jena Fuseki instance, by calling its API.
+This service allows you to manage datasets in a Jena Fuseki instance, through its API.
 
 ## Features
 
@@ -17,16 +17,16 @@ This service allows you to do various operations with a Jena Fuseki instance, by
 ## Install
 
 ```bash
-$ yarn add @semapps/fuseki-admin
+$ yarn add @semapps/dataset
 ```
 
 ## Usage
 
 ```js
-const { FusekiAdminService } = require('@semapps/fuseki-admin');
+const { DatasetService } = require('@semapps/dataset');
 
 module.exports = {
-  mixins: [FusekiAdminService],
+  mixins: [DatasetService],
   settings: {
     url: 'http://localhost:3030/',
     user: 'admin',
@@ -48,7 +48,7 @@ module.exports = {
 
 The following service actions are available:
 
-### `datasetExist`
+### `exist`
 
 Check if a dataset already exists.
 
@@ -60,14 +60,14 @@ Check if a dataset already exists.
 ##### Return
 True if the dataset exists
 
-### `listAllDatasets`
+### `list`
 
 Return a list of all existing datasets in the Fuseki instance.
 
 ##### Return
 An array with the names of all existing datasets.
 
-### `createDataset`
+### `create`
 
 Create a dataset if it doesn't already exist.
 
@@ -77,9 +77,18 @@ Create a dataset if it doesn't already exist.
 | `dataset` | `String` | **required** | Name of the dataset |
 | `secure` | `Boolean` | false | If true, Fuseki will check permissions with WebACL for this dataset. Only works with the [semapps/jena-fuseki-webacl](https://hub.docker.com/repository/docker/semapps/jena-fuseki-webacl) Docker image |
 
-### `backupDataset`
+### `backup`
 
 Generate a compressed backup of all the triples in the dataset (through [Fuseki protocol](https://jena.apache.org/documentation/fuseki2/fuseki-server-protocol.html)).
+
+##### Parameters
+| Property | Type | Default | Description |
+| -------- | ---- | ------- | ----------- |
+| `dataset` | `String` | **required** | Name of the dataset |
+
+### `waitForCreation`
+
+Wait for the dataset to have been created.
 
 ##### Parameters
 | Property | Type | Default | Description |

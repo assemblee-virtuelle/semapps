@@ -3,7 +3,7 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { AuthLocalService } = require('@semapps/auth');
-const FusekiAdminService = require('@semapps/fuseki-admin');
+const { DatasetService } = require('@semapps/dataset');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { JsonLdService } = require('@semapps/jsonld');
@@ -32,7 +32,7 @@ const initialize = async () => {
   await broker.createService({
     mixins: [ApiGatewayService]
   });
-  await broker.createService(FusekiAdminService, {
+  await broker.createService(DatasetService, {
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,

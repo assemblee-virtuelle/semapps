@@ -11,7 +11,7 @@ module.exports = {
     },
     'middleware/auth',
     'middleware/backup',
-    'middleware/fuseki-admin',
+    'middleware/dataset',
     'middleware/signature',
     {
       type: 'category',

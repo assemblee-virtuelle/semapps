@@ -24,7 +24,7 @@ const BackupService = {
       timeZone: 'Europe/Paris'
     }
   },
-  dependencies: ['fuseki-admin'],
+  dependencies: ['dataset'],
   started() {
     const { cronJob } = this.settings;
 
@@ -46,10 +46,10 @@ const BackupService = {
       }
 
       // Generate new backup of all datasets
-      const datasets = await ctx.call('fuseki-admin.listAllDatasets');
+      const datasets = await ctx.call('dataset.list');
       for (const dataset of datasets) {
         this.logger.info('Backing up dataset: ' + dataset);
-        await ctx.call('fuseki-admin.backupDataset', { dataset });
+        await ctx.call('dataset.backup', { dataset });
       }
 
       await this.actions.copyToRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' });

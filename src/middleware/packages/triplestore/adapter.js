@@ -15,9 +15,9 @@ class TripleStoreAdapter {
   }
 
   async connect() {
-    await this.broker.waitForServices(['fuseki-admin', 'triplestore', 'jsonld'], 120000);
+    await this.broker.waitForServices(['dataset', 'triplestore', 'jsonld'], 120000);
 
-    await this.broker.call('fuseki-admin.createDataset', {
+    await this.broker.call('dataset.create', {
       dataset: this.dataset,
       secure: false
     });

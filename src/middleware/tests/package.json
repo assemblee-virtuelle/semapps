@@ -10,7 +10,7 @@
   "dependencies": {
     "@semapps/activitypub": "0.4.0-alpha.42",
     "@semapps/auth": "0.4.0-alpha.42",
-    "@semapps/fuseki-admin": "0.4.0-alpha.42",
+    "@semapps/dataset": "0.4.0-alpha.42",
     "@semapps/jsonld": "0.4.0-alpha.42",
     "@semapps/ldp": "0.4.0-alpha.42",
     "@semapps/middlewares": "0.4.0-alpha.42",

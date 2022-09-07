@@ -5,8 +5,8 @@ const format = require('string-template');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
-const FusekiAdminService = {
-  name: 'fuseki-admin',
+const DatasetService = {
+  name: 'dataset',
   settings: {
     url: null,
     user: null,
@@ -18,31 +18,23 @@ const FusekiAdminService = {
     };
   },
   actions: {
-    async datasetExist(ctx) {
+    async backup(ctx) {
       const { dataset } = ctx.params;
-      const response = await fetch(this.settings.url + '$/datasets/' + dataset, {
-        headers: this.headers
-      });
-      // const json = await response.json();
-      // console.log('json', json);
-      return response.status === 200;
-    },
-    async listAllDatasets(ctx) {
-      const response = await fetch(this.settings.url + '$/datasets', {
+
+      // Ask Fuseki to backup the given dataset
+      let response = await fetch(this.settings.url + '$/backup/' + dataset, {
+        method: 'POST',
         headers: this.headers
       });
 
-      if (response.ok) {
-        const json = await response.json();
-        return json.datasets.map(dataset => dataset['ds.name'].substring(1));
-      } else {
-        return [];
-      }
+      // Wait for backup to complete
+      const { taskId } = await response.json();
+      await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
     },
-    async createDataset(ctx) {
+    async create(ctx) {
       const { dataset, secure } = ctx.params;
       if (!dataset) throw new Error('Unable to create dataset. The parameter dataset is missing');
-      const exist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
+      const exist = await this.actions.exist({ dataset }, { parentCtx: ctx });
       if (!exist) {
         this.logger.info(`Dataset ${dataset} doesn't exist. Creating it...`);
         let response;
@@ -60,7 +52,7 @@ const FusekiAdminService = {
         });
 
         if (response.status === 200) {
-          await this.actions.waitForDatasetCreation({ dataset }, { parentCtx: ctx });
+          await this.actions.waitForCreation({ dataset }, { parentCtx: ctx });
           this.logger.info(`Created ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
         } else {
           console.log(await response.text());
@@ -68,25 +60,31 @@ const FusekiAdminService = {
         }
       }
     },
-    async backupDataset(ctx) {
+    async exist(ctx) {
       const { dataset } = ctx.params;
-
-      // Ask Fuseki to backup the given dataset
-      let response = await fetch(this.settings.url + '$/backup/' + dataset, {
-        method: 'POST',
+      const response = await fetch(this.settings.url + '$/datasets/' + dataset, {
+        headers: this.headers
+      });
+      return response.status === 200;
+    },
+    async list() {
+      const response = await fetch(this.settings.url + '$/datasets', {
         headers: this.headers
       });
 
-      // Wait for backup to complete
-      const { taskId } = await response.json();
-      await this.actions.waitForTaskCompletion({ taskId }, { parentCtx: ctx });
+      if (response.ok) {
+        const json = await response.json();
+        return json.datasets.map(dataset => dataset['ds.name'].substring(1));
+      } else {
+        return [];
+      }
     },
-    async waitForDatasetCreation(ctx) {
+    async waitForCreation(ctx) {
       const { dataset } = ctx.params;
       let datasetExist;
       do {
         await delay(1000);
-        datasetExist = await this.actions.datasetExist({ dataset }, { parentCtx: ctx });
+        datasetExist = await this.actions.exist({ dataset }, { parentCtx: ctx });
       } while (!datasetExist);
     },
     async waitForTaskCompletion(ctx) {
@@ -109,4 +107,4 @@ const FusekiAdminService = {
   }
 };
 
-module.exports = FusekiAdminService;
+module.exports = DatasetService;

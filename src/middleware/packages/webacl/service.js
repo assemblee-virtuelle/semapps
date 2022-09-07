@@ -40,7 +40,7 @@ module.exports = {
   async started() {
     if (!this.settings.podProvider) {
       // Testing if there is a secure graph. you should not start the webAcl service if you created an unsecure main dataset.
-      await this.broker.waitForServices(['triplestore', 'fuseki-admin', 'auth']);
+      await this.broker.waitForServices(['triplestore', 'dataset', 'auth']);
 
       let hasWebAcl = false;
       try {
@@ -53,7 +53,7 @@ module.exports = {
       }
       if (!hasWebAcl) {
         throw new Error(
-          'Error when starting the webAcl service: the main dataset is not secure. You must use the fuseki-admin.createDataset action with the secure param'
+          'Error when starting the webAcl service: the main dataset is not secure. You must use the dataset.create action with the secure param'
         );
       }
     }

@@ -2,7 +2,7 @@ const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService } = require('@semapps/ldp');
-const FusekiAdminService = require('@semapps/fuseki-admin');
+const { DatasetService } = require('@semapps/dataset');
 const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
 const { TripleStoreService } = require('@semapps/triplestore');
 const EventsWatcher = require('../middleware/EventsWatcher');
@@ -22,7 +22,7 @@ const initialize = async () => {
 
   await broker.createService(ApiGatewayService);
   await broker.createService(JsonLdService);
-  await broker.createService(FusekiAdminService, {
+  await broker.createService(DatasetService, {
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,

@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/fuseki-admin",
+  "name": "@semapps/dataset",
   "version": "0.4.0-alpha.42",
-  "description": "Fuseki administration module for SemApps",
+  "description": "Dataset management module for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {

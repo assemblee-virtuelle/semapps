@@ -45,7 +45,7 @@ module.exports = {
     if (!dataset) throw new Error('No dataset defined for triplestore insert: ' + rdf);
 
     // Handle wildcard
-    const datasets = dataset === '*' ? await ctx.call('fuseki-admin.listAllDatasets') : [dataset];
+    const datasets = dataset === '*' ? await ctx.call('dataset.list') : [dataset];
 
     for (let dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
