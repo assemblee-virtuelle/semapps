@@ -3,6 +3,7 @@
     "@vocab": "_:",
     "pair": "http://virtual-assembly.org/ontologies/pair#",
     "mp": "http://virtual-assembly.org/ontologies/pair-mp#",
+    "tutor": "http://virtual-assembly.org/ontologies/pair-tutor#",
     "apods": "http://activitypods.org/ns/core#",
 
     "as": "https://www.w3.org/ns/activitystreams#",
@@ -768,6 +769,25 @@
     },
     "vcard:photo": {
       "@type": "@id"
+    },
+
+    "tutor:currentLesson": {
+      "@type": "@id"
+    },
+    "tutor:hasRegistration": {
+      "@type": "@id"
+    },
+    "tutor:registeredFor": {
+      "@type": "@id"
+    },
+    "tutor:registrant": {
+      "@type": "@id"
+    },
+    "tutor:registrationFor": {
+      "@type": "@id"
+    },
+    "tutor:lessonStarted": {
+      "@type": "xsd:dateTime"
     }
   }
 }

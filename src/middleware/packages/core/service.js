@@ -5,9 +5,11 @@ const { ActivityPubService } = require('@semapps/activitypub');
 const { DatasetService } = require('@semapps/dataset');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
+const { MirrorService } = require('@semapps/mirror');
 const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
+const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const defaultContainers = require('./config/containers.json');
@@ -45,7 +47,7 @@ const CoreService = {
     let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one
-    const defaultJsonContext = urlJoin(baseUrl, '_system', 'context.json');
+    const defaultJsonContext = urlJoin(baseUrl, 'context.json');
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
@@ -97,7 +99,7 @@ const CoreService = {
         },
         async started() {
           if (triplestore.dataset) {
-            await this.actions.createDataset({
+            await this.actions.create({
               dataset: triplestore.dataset,
               secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
             });
@@ -114,7 +116,7 @@ const CoreService = {
             ? undefined
             : [
               {
-                path: '_system/context.json',
+                path: 'context.json',
                 file: path.resolve(__dirname, './config/context.json'),
               },
             ],
@@ -145,6 +147,15 @@ const CoreService = {
       });
     }
 
+    if (this.settings.mirror !== false) {
+      this.broker.createService(MirrorService, {
+        settings: {
+          baseUrl,
+          ...this.settings.mirror
+        },
+      });
+    }
+
     if (this.settings.signature !== false) {
       this.broker.createService(SignatureService, {
         settings: {
@@ -171,6 +182,16 @@ const CoreService = {
           jenaUser: triplestore.user,
           jenaPassword: triplestore.password,
           ...this.settings.triplestore
+        },
+      });
+    }
+
+    if (this.settings.void !== false) {
+      this.broker.createService(VoidService, {
+        settings: {
+          baseUrl,
+          ontologies: ontologies || defaultOntologies,
+          ...this.settings.void
         },
       });
     }
