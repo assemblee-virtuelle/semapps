@@ -1,0 +1,8 @@
+[
+  {
+    "path": "/bots",
+    "acceptedTypes": ["Application"],
+    "dereference": ["sec:publicKey"],
+    "readOnly": true
+  }
+]

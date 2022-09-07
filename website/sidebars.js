@@ -1,6 +1,7 @@
 module.exports = {
   guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
   middleware: [
+    'middleware/core',
     {
       type: 'category',
       label: 'ActivityPub',
