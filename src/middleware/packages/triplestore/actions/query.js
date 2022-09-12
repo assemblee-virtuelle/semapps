@@ -23,7 +23,7 @@ module.exports = {
   async handler(ctx) {
     const { accept, query } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error('No dataset defined for triplestore query: ' + query);
 
