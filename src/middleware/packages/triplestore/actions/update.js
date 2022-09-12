@@ -23,7 +23,7 @@ module.exports = {
     if (!dataset) throw new Error('No dataset defined for triplestore update: ' + query);
 
     // Handle wildcard
-    const datasets = dataset === '*' ? await ctx.call('dataset.list') : [dataset];
+    const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
     for (let dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
