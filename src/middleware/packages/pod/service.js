@@ -32,7 +32,7 @@ module.exports = {
       const { username } = ctx.params;
       if (!username) throw new Error('Cannot create pod without a username');
 
-      await ctx.call('dataset.create', {
+      await ctx.call('triplestore.dataset.create', {
         dataset: username,
         secure: true
       });
