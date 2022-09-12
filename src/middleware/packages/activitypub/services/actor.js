@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { delay, defaultToArray } = require('../utils');
+const { delay, defaultToArray, selectActorData } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -10,11 +10,7 @@ const ActorService = {
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    selectActorData: resource => ({
-      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
-      name: undefined,
-      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    }),
+    selectActorData,
     podProvider: false
   },
   actions: {
