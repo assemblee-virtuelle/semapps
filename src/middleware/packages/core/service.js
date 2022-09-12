@@ -154,25 +154,23 @@ const CoreService = {
     }
 
     if (this.settings.triplestore !== false) {
-      this.broker.createService(TripleStoreService,
-        {
-          settings: {
-            url: triplestore.url,
-            user: triplestore.user,
-            password: triplestore.password,
-            mainDataset: triplestore.mainDataset,
-            ...this.settings.triplestore
-          },
-          async started() {
-            if (triplestore.mainDataset) {
-              await this.broker.call('triplestore.dataset.create', {
-                dataset: triplestore.mainDataset,
-                secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
-              });
-            }
-          }
+      this.broker.createService(TripleStoreService, {
+        settings: {
+          url: triplestore.url,
+          user: triplestore.user,
+          password: triplestore.password,
+          mainDataset: triplestore.mainDataset,
+          ...this.settings.triplestore
         },
-      );
+        async started() {
+          if (triplestore.mainDataset) {
+            await this.broker.call('triplestore.dataset.create', {
+              dataset: triplestore.mainDataset,
+              secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
+            });
+          }
+        }
+      });
     }
 
     if (this.settings.void !== false) {

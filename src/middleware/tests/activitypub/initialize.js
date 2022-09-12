@@ -38,7 +38,7 @@ const initialize = async () => {
       containers,
       mirror: false,
       void: false
-    },
+    }
   });
 
   await broker.createService(AuthLocalService, {

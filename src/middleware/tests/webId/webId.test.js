@@ -29,7 +29,7 @@ beforeAll(async () => {
       },
       ontologies,
       containers: ['/users']
-    },
+    }
   });
   broker.createService(WebIdService, {
     settings: {
