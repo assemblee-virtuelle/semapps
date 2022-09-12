@@ -35,7 +35,7 @@ beforeAll(async () => {
       ontologies,
       containers: ['/resources'],
       activitypub: false
-    },
+    }
   });
 
   const app = express();

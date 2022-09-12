@@ -46,7 +46,7 @@ const initialize = async () => {
       ontologies,
       containers,
       activitypub: false
-    },
+    }
   });
 
   // Drop all existing triples, then restart broker so that default containers are recreated

@@ -34,7 +34,7 @@ beforeAll(async () => {
       },
       ontologies,
       containers: ['/resources']
-    },
+    }
   });
 
   const app = express();
@@ -68,7 +68,7 @@ afterAll(async () => {
 });
 
 const console = require('console');
-const {containers} = require("@semapps/activitypub");
+const { containers } = require('@semapps/activitypub');
 
 describe('middleware CRUD group with perms', () => {
   test('Ensure a call as anonymous to webacl.group.create succeeds', async () => {
