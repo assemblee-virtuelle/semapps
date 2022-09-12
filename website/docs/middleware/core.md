@@ -4,17 +4,16 @@ title: Core
 
 This service allows you to easily configure standard SemApps services. It is offered as a convenience, but you can still create them individually.
 
-## Services included
+## Sub-services
 
 - [ActivityPubService](activitypub/index.md)
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [DatasetService](dataset.md)
 - JsonLdService
 - [LdpService](ldp/index.md)
 - [MirrorService](mirror.md)
 - [SignatureService](signature.md)
 - SparqlEndpointService
-- [TripleStoreService](triplestore.md)
+- [TripleStoreService](triplestore/index.md)
 - [VoidService](void.md)
 - [WebAclService](webacl/index.md)
 - [WebfingerService](webfinger.md)
@@ -40,7 +39,7 @@ module.exports = {
       url: 'http://localhost:3030/',
       user: 'admin',
       password: 'admin',
-      dataset: 'localData',
+      mainDataset: 'localData',
     },
     containers: [], // See the LdpService docs for the expected format
     // Optional. If not set, default values will be used

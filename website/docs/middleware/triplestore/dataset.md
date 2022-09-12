@@ -10,40 +10,6 @@ This service allows you to manage datasets in a Jena Fuseki instance, through it
 - Generate compressed backups og a given dataset
 - Wait for a Fuseki task to be completed
 
-## Dependencies
-
-- None
-
-## Install
-
-```bash
-$ yarn add @semapps/dataset
-```
-
-## Usage
-
-```js
-const { DatasetService } = require('@semapps/dataset');
-
-module.exports = {
-  mixins: [DatasetService],
-  settings: {
-    url: 'http://localhost:3030/',
-    user: 'admin',
-    password: 'admin'
-  }
-};
-```
-
-## Service settings
-
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `url` | `String` | **required** | Base URL of the Fuseki instance |
-| `user` | `String` | **required** | User with access to admin operations |
-| `password` | `String` | **required** | Password for the above user |
-
-
 ## Actions
 
 The following service actions are available:

@@ -12,7 +12,6 @@ module.exports = {
     },
     'middleware/auth',
     'middleware/backup',
-    'middleware/dataset',
     'middleware/signature',
     {
       type: 'category',
@@ -51,7 +50,14 @@ module.exports = {
         'middleware/notifications/single-mail',
       ],
     },
-    'middleware/triplestore',
+    {
+      type: 'category',
+      label: 'Triplestore',
+      items: [
+        'middleware/triplestore/index',
+        'middleware/triplestore/dataset',
+      ],
+    },
     'middleware/void',
     {
       type: 'category',

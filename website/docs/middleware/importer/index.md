@@ -12,7 +12,7 @@ This package allows you to import JSON data from URLs or local files, and to syn
 
 ## Dependencies
 
-- [TripleStoreService](../triplestore.md)
+- [TripleStoreService](../triplestore/index.md)
 - [ActivityPubService](../activitypub/index.md)
 
 ## Install

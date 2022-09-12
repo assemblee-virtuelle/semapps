@@ -11,7 +11,7 @@ This package allows you to handle rights through the [WebACL standard](https://g
 
 ## Dependencies
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [TripleStoreService](../triplestore.md)
+- [TripleStoreService](../triplestore/index.md)
 
 ## Sub-services
 - [WebAclResourceService](resource.md)
@@ -75,7 +75,7 @@ It is important to know if your Fuseki dataset is secured with WebACL or not.
 
 Here are some important notes:
 
-- To create a new secured dataset, you should use the [Dataset](../dataset.md) service, and more specifically the `dataset.create` action with the param `secure: true`. It will load the appropriate config.
+- To create a new secured dataset, you should use the [Dataset](../triplestore/dataset.md) service, and more specifically the `dataset.create` action with the param `secure: true`. It will load the appropriate config.
 - If you create a new dataset through the Fuseki frontend, it will **not** be secured.
 - You should never use the `DROP+ALL` command on a secured dataset, as it will break all the internal config. Use `CLEAR+ALL` instead.
 - Removing a dataset through the Fuseki frontend will not remove the data and will create problems if you create a new dataset with the same name. So to correctly remove a dataset, you should do a `rm -Rf` on the two folders in the `databases` folders: datasetName and datasetNameAcl.

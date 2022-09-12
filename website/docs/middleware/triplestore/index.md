@@ -5,47 +5,48 @@ title: TripleStore
 This service allows you to interface with a [Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) triple store.
 
 ## Features
-* Basic triple store operations
-  * Query
-  * Update
-  * Insert
-  * Delete
-* Basic utilities
-  * Count number of triples of a subject
-  * Drop all triples in a dataset
+
+- Basic triplestore operations (Query, Update, Insert, Delete)
+- Dataset management
+
+## Sub-services
+
+- [DatasetService](dataset.md)
 
 ## Dependencies
 
 - None
 
 ## Install
+
 ```bash
 $ yarn add @semapps/triplestore
 ```
 
 ## Usage
+
 ```js
 const { TripleStoreService } = require('@semapps/triplestore');
 
 module.exports = {
   mixins: [TripleStoreService],
   settings: {
-    sparqlEndpoint: 'http://localhost:3030/',
+    url: 'http://localhost:3030/',
+    user: 'admin',
+    password: 'admin',
     mainDataset: 'myDataSet',
-    jenaUser: 'admin',
-    jenaPassword: 'admin'
   }
 };
 ```
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `sparqlEndpoint`|`String`|**required** | Jena Fuseki's root URI |
-| `mainDataset`|`String`| **required** | Used dataset |
-| `jenaUser`| `String` | **required** | Jena Fuseki's admin login |
-| `jenaPassword` | `String` | **required** | Jena Fuseki's admin password |
+| Property      | Type     | Default      | Description                  |
+|---------------|----------|--------------|------------------------------|
+| `url`         | `String` | **required** | Jena Fuseki's root URL       |
+| `user`        | `String` | **required** | Jena Fuseki's admin login    |
+| `password`    | `String` | **required** | Jena Fuseki's admin password |
+| `mainDataset` | `String` | **required** | Default dataset              |
 
 ## Actions
 

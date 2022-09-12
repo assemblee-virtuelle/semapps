@@ -14,7 +14,7 @@ This service takes the ActivityPub activities in the inbox of subscribers, turns
 
 First you need to create subscriptions using the `digest.subscription` sub-service.
 
-This sub-service use the [TripleStoreAdapter](../triplestore.md) so you can use methods like `create`, `update`, `remove`, etc, of Moleculer's [Database Adapters](https://moleculer.services/docs/0.14/moleculer-db.html).
+This sub-service use the [TripleStoreAdapter](../triplestore/index.md) so you can use methods like `create`, `update`, `remove`, etc, of Moleculer's [Database Adapters](https://moleculer.services/docs/0.14/moleculer-db.html).
 
 The following properties are available:
 

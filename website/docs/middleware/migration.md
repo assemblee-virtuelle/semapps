@@ -5,7 +5,7 @@ title: Migration utilities
 This package provide utilities to help migrate semantic data.
 
 ## Dependencies
-- [TripleStoreService](triplestore.md)
+- [TripleStoreService](triplestore/index.md)
 - [LdpService](ldp/index.md)
 
 ## Install

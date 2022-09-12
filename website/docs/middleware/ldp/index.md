@@ -11,7 +11,7 @@ This package allows you to setup LDP direct containers in which LDP resources ca
 
 ## Dependencies
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [TripleStoreService](../triplestore.md)
+- [TripleStoreService](../triplestore/index.md)
 
 ## Sub-services
 - [LdpResourceService](resource.md)
