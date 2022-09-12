@@ -7,16 +7,34 @@ const dropAll = require('./actions/dropAll');
 const insert = require('./actions/insert');
 const query = require('./actions/query');
 const update = require('./actions/update');
+const DatasetService = require('./subservices/dataset');
 
 const TripleStoreService = {
   name: 'triplestore',
   settings: {
-    sparqlEndpoint: null,
-    mainDataset: null, // Default dataset
-    jenaUser: null,
-    jenaPassword: null
+    url: null,
+    user: null,
+    password: null,
+    defaultDataset: null,
+    // Sub-services customization
+    dataset: {},
   },
   dependencies: ['jsonld'],
+  async created() {
+    const { url, user, password, defaultDataset, dataset } = this.settings;
+    this.subservices = {};
+
+    if (dataset !== false) {
+      this.subservices.dataset = this.broker.createService(DatasetService, {
+        settings: {
+          url,
+          user,
+          password,
+          ...dataset
+        }
+      });
+    }
+  },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
   },
@@ -36,7 +54,7 @@ const TripleStoreService = {
         headers: {
           ...headers,
           Authorization:
-            'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64')
+            'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
         }
       });
 
