@@ -1,13 +1,9 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { DatasetService } = require('@semapps/dataset');
-const { LdpService } = require('@semapps/ldp');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
+const { CoreService } = require('@semapps/core');
+const { WebAclMiddleware } = require('@semapps/webacl');
 const ontologies = require('../ontologies');
 const express = require('express');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
 const supertest = require('supertest');
 const urlJoin = require('url-join');
@@ -27,44 +23,18 @@ const broker = new ServiceBroker({
 let expressMocked = undefined;
 
 beforeAll(async () => {
-  broker.createService(JsonLdService);
-  broker.createService(DatasetService, {
-    settings: {
-      url: CONFIG.SPARQL_ENDPOINT,
-      user: CONFIG.JENA_USER,
-      password: CONFIG.JENA_PASSWORD
-    },
-    async started() {
-      await this.actions.createDataset({
-        dataset: CONFIG.MAIN_DATASET,
-        secure: true
-      });
-    }
-  });
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  broker.createService(LdpService, {
+  await broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
       ontologies,
       containers: ['/resources']
-    }
-  });
-  broker.createService(WebAclService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL
-    }
-  });
-  broker.createService(SparqlEndpointService, {
-    settings: {
-      defaultAccept: 'application/ld+json'
-    }
+    },
   });
 
   const app = express();
@@ -98,6 +68,7 @@ afterAll(async () => {
 });
 
 const console = require('console');
+const {containers} = require("@semapps/activitypub");
 
 describe('middleware CRUD group with perms', () => {
   test('Ensure a call as anonymous to webacl.group.create succeeds', async () => {

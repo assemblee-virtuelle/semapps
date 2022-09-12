@@ -2,7 +2,6 @@ const path = require('path');
 const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
-const { DatasetService } = require('@semapps/dataset');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
 const { MirrorService } = require('@semapps/mirror');
@@ -24,7 +23,7 @@ const CoreService = {
       url: null,
       user: null,
       password: null,
-      dataset: null
+      mainDataset: null
     },
     // Optional
     containers: null,
@@ -33,7 +32,6 @@ const CoreService = {
     // Services configurations
     activitypub: {},
     api: {},
-    dataset: {},
     jsonld: {},
     ldp: {},
     mirror: {},
@@ -89,25 +87,6 @@ const CoreService = {
       });
     }
 
-    if (this.settings.dataset !== false && this.settings.triplestore !== false) {
-      this.broker.createService(DatasetService, {
-        settings: {
-          url: triplestore.url,
-          user: triplestore.user,
-          password: triplestore.password,
-          ...this.settings.dataset
-        },
-        async started() {
-          if (triplestore.dataset) {
-            await this.actions.create({
-              dataset: triplestore.dataset,
-              secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
-            });
-          }
-        }
-      });
-    }
-
     if (this.settings.jsonld !== false) {
       this.broker.createService(JsonLdService, {
         settings: {
@@ -147,7 +126,7 @@ const CoreService = {
       });
     }
 
-    if (this.settings.mirror !== false) {
+    if (this.settings.mirror !== false || this.settings.activitypub !== false) {
       this.broker.createService(MirrorService, {
         settings: {
           baseUrl,
@@ -175,15 +154,25 @@ const CoreService = {
     }
 
     if (this.settings.triplestore !== false) {
-      this.broker.createService(TripleStoreService, {
-        settings: {
-          sparqlEndpoint: triplestore.url,
-          mainDataset: triplestore.dataset,
-          jenaUser: triplestore.user,
-          jenaPassword: triplestore.password,
-          ...this.settings.triplestore
-        }
-      });
+      this.broker.createService(TripleStoreService,
+        {
+          settings: {
+            url: triplestore.url,
+            user: triplestore.user,
+            password: triplestore.password,
+            mainDataset: triplestore.mainDataset,
+            ...this.settings.triplestore
+          },
+          async started() {
+            if (triplestore.mainDataset) {
+              await this.broker.call('triplestore.dataset.create', {
+                dataset: triplestore.mainDataset,
+                secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
+              });
+            }
+          }
+        },
+      );
     }
 
     if (this.settings.void !== false) {

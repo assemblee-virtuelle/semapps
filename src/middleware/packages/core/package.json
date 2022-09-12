@@ -6,7 +6,6 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/activitypub": "0.4.0-alpha.42",
-    "@semapps/dataset": "file:../dataset",
     "@semapps/jsonld": "0.4.0-alpha.42",
     "@semapps/ldp": "0.4.0-alpha.42",
     "@semapps/mirror": "0.4.0-alpha.42",
