@@ -40,7 +40,7 @@ module.exports = {
   async started() {
     if (!this.settings.podProvider) {
       // Testing if there is a secure graph. you should not start the webAcl service if you created an unsecure main dataset.
-      await this.broker.waitForServices(['triplestore', 'dataset', 'auth']);
+      await this.broker.waitForServices(['triplestore', 'auth']);
 
       let hasWebAcl = false;
       try {

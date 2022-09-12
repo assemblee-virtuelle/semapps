@@ -27,7 +27,7 @@ module.exports = {
 
     for (let dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
-      await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
+      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',

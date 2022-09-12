@@ -30,7 +30,7 @@ module.exports = {
     const acceptNegotiatedType = negotiateType(accept);
     const acceptType = acceptNegotiatedType.mime;
 
-    const response = await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'query'), {
+    const response = await this.fetch(urlJoin(this.settings.url, dataset, 'query'), {
       body: query,
       headers: {
         'Content-Type': 'application/sparql-query',

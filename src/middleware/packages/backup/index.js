@@ -24,7 +24,7 @@ const BackupService = {
       timeZone: 'Europe/Paris'
     }
   },
-  dependencies: ['dataset'],
+  dependencies: ['triplestore'],
   started() {
     const { cronJob } = this.settings;
 

@@ -49,7 +49,7 @@ module.exports = {
 
     for (let dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
-      await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
+      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
         headers: {
           'Content-Type': 'application/sparql-update',
