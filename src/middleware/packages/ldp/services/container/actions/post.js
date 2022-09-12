@@ -82,6 +82,9 @@ module.exports = {
         );
       }
 
+      // We must add this first, so that the container's ACLs are taken into account
+      // But this create race conditions, especially when testing, since uncreated resources are linked to containers
+      // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
         webId
