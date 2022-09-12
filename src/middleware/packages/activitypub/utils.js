@@ -69,11 +69,11 @@ const selectActorData = resource => {
   const resourceType = defaultToArray(resource.type || resource['@type']);
   // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
   const includeActorType = resourceType ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type)) : false;
-  return({
+  return {
     '@type': includeActorType ? ACTOR_TYPES.PERSON : undefined,
     name: undefined,
     preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-  });
+  };
 };
 
 module.exports = {
