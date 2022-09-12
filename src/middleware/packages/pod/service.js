@@ -6,7 +6,7 @@ module.exports = {
   settings: {
     baseUrl: null
   },
-  dependencies: ['dataset', 'ldp', 'auth.account', 'api'],
+  dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
   async started() {
     // Container with actors
     await this.broker.call('ldp.registry.register', {
