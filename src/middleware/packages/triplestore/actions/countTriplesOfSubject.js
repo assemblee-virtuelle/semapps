@@ -21,7 +21,7 @@ module.exports = {
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     const results = await ctx.call('triplestore.query', {
       query: `

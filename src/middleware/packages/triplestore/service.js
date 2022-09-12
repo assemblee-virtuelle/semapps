@@ -15,13 +15,13 @@ const TripleStoreService = {
     url: null,
     user: null,
     password: null,
-    defaultDataset: null,
+    mainDataset: null,
     // Sub-services customization
     dataset: {},
   },
   dependencies: ['jsonld'],
   async created() {
-    const { url, user, password, defaultDataset, dataset } = this.settings;
+    const { url, user, password, dataset } = this.settings;
     this.subservices = {};
 
     if (dataset !== false) {
