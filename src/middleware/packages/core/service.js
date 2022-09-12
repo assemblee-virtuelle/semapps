@@ -24,7 +24,7 @@ const CoreService = {
       url: null,
       user: null,
       password: null,
-      dataset: null,
+      dataset: null
     },
     // Optional
     containers: null,
@@ -54,8 +54,8 @@ const CoreService = {
         settings: {
           baseUri: baseUrl,
           jsonContext: jsonContext || defaultJsonContext,
-          ...this.settings.activitypub,
-        },
+          ...this.settings.activitypub
+        }
       });
     }
 
@@ -65,27 +65,27 @@ const CoreService = {
           cors: {
             origin: '*',
             methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'HEAD', 'OPTIONS'],
-            exposedHeaders: '*',
+            exposedHeaders: '*'
           },
           httpServerTimeout: 300000,
-          ...this.settings.api,
+          ...this.settings.api
         },
         methods: {
           authenticate(ctx, route, req, res) {
             if (req.headers.signature) {
-              return ctx.call('signature.authenticate', {route, req, res});
+              return ctx.call('signature.authenticate', { route, req, res });
             } else {
-              return ctx.call('auth.authenticate', {route, req, res});
+              return ctx.call('auth.authenticate', { route, req, res });
             }
           },
           authorize(ctx, route, req, res) {
             if (req.headers.signature) {
-              return ctx.call('signature.authorize', {route, req, res});
+              return ctx.call('signature.authorize', { route, req, res });
             } else {
-              return ctx.call('auth.authorize', {route, req, res});
+              return ctx.call('auth.authorize', { route, req, res });
             }
-          },
-        },
+          }
+        }
       });
     }
 
@@ -95,7 +95,7 @@ const CoreService = {
           url: triplestore.url,
           user: triplestore.user,
           password: triplestore.password,
-          ...this.settings.dataset,
+          ...this.settings.dataset
         },
         async started() {
           if (triplestore.dataset) {
@@ -115,19 +115,19 @@ const CoreService = {
           localContextFiles: jsonContext
             ? undefined
             : [
-              {
-                path: 'context.json',
-                file: path.resolve(__dirname, './config/context.json'),
-              },
-            ],
+                {
+                  path: 'context.json',
+                  file: path.resolve(__dirname, './config/context.json')
+                }
+              ],
           remoteContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',
-              file: path.resolve(__dirname, './config/context-as.json'),
-            },
+              file: path.resolve(__dirname, './config/context-as.json')
+            }
           ],
-          ...this.settings.jsonld,
-        },
+          ...this.settings.jsonld
+        }
       });
     }
 
@@ -141,9 +141,9 @@ const CoreService = {
           ...this.settings.ldp,
           defaultContainerOptions: {
             jsonContext: jsonContext || defaultJsonContext,
-            ...this.settings.ldp.defaultContainerOptions,
-          },
-        },
+            ...this.settings.ldp.defaultContainerOptions
+          }
+        }
       });
     }
 
@@ -152,7 +152,7 @@ const CoreService = {
         settings: {
           baseUrl,
           ...this.settings.mirror
-        },
+        }
       });
     }
 
@@ -161,7 +161,7 @@ const CoreService = {
         settings: {
           actorsKeyPairsDir: path.resolve(baseDir, './actors'),
           ...this.settings.signature
-        },
+        }
       });
     }
 
@@ -170,7 +170,7 @@ const CoreService = {
         settings: {
           defaultAccept: 'application/ld+json',
           ...this.settings.sparqlEndpoint
-        },
+        }
       });
     }
 
@@ -182,7 +182,7 @@ const CoreService = {
           jenaUser: triplestore.user,
           jenaPassword: triplestore.password,
           ...this.settings.triplestore
-        },
+        }
       });
     }
 
@@ -192,7 +192,7 @@ const CoreService = {
           baseUrl,
           ontologies: ontologies || defaultOntologies,
           ...this.settings.void
-        },
+        }
       });
     }
 
@@ -201,7 +201,7 @@ const CoreService = {
         settings: {
           baseUrl,
           ...this.settings.webacl
-        },
+        }
       });
     }
 
@@ -210,10 +210,10 @@ const CoreService = {
         settings: {
           baseUrl,
           ...this.settings.webfinger
-        },
+        }
       });
     }
-  },
+  }
 };
 
 module.exports = CoreService;
