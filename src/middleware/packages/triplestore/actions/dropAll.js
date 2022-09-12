@@ -14,7 +14,7 @@ module.exports = {
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
       body: 'update=CLEAR+ALL',

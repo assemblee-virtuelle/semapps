@@ -11,7 +11,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
     const { graphName } = ctx.params;
     // Launch the query 3 times, so that blank nodes within orphan blank nodes are also deleted
     for (let i = 0; i < 3; i++) {

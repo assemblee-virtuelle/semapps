@@ -1,12 +1,13 @@
 const fetch = require('node-fetch');
 const fsPromises = require('fs').promises;
 const path = require('path');
+const urlJoin = require('url-join');
 const format = require('string-template');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const DatasetService = {
-  name: 'dataset',
+  name: 'triplestore.dataset',
   settings: {
     url: null,
     user: null,
@@ -22,7 +23,7 @@ const DatasetService = {
       const { dataset } = ctx.params;
 
       // Ask Fuseki to backup the given dataset
-      let response = await fetch(this.settings.url + '$/backup/' + dataset, {
+      const response = await fetch(urlJoin(this.settings.url, '$/backup', dataset), {
         method: 'POST',
         headers: this.headers
       });
@@ -42,10 +43,10 @@ const DatasetService = {
         if (dataset.endsWith('Acl') || dataset.endsWith('Mirror'))
           throw new Error(`Error when creating dataset ${dataset}. Its name cannot end with Acl or Mirror`);
 
-        const templateFilePath = path.join(__dirname, 'templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
+        const templateFilePath = path.join(__dirname, '../templates', secure ? 'secure-dataset.ttl' : 'dataset.ttl');
         const template = await fsPromises.readFile(templateFilePath, 'utf8');
         const assembler = format(template, { dataset: dataset });
-        response = await fetch(this.settings.url + '$/datasets', {
+        response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
           method: 'POST',
           headers: { ...this.headers, 'Content-Type': 'text/turtle' },
           body: assembler
@@ -55,20 +56,20 @@ const DatasetService = {
           await this.actions.waitForCreation({ dataset }, { parentCtx: ctx });
           this.logger.info(`Created ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
         } else {
-          console.log(await response.text());
+          this.logger.info(await response.text());
           throw new Error(`Error when creating ${secure ? 'secure' : 'unsecure'} dataset ${dataset}`);
         }
       }
     },
     async exist(ctx) {
       const { dataset } = ctx.params;
-      const response = await fetch(this.settings.url + '$/datasets/' + dataset, {
+      const response = await fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
         headers: this.headers
       });
       return response.status === 200;
     },
     async list() {
-      const response = await fetch(this.settings.url + '$/datasets', {
+      const response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
         headers: this.headers
       });
 
@@ -94,7 +95,7 @@ const DatasetService = {
       do {
         await delay(1000);
 
-        const response = await fetch(this.settings.url + '$/tasks/' + taskId, {
+        const response = await fetch(urlJoin(this.settings.url, '$/tasks/', `${taskId}`), {
           method: 'GET',
           headers: this.headers
         });

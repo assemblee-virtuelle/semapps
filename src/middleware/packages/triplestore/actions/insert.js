@@ -28,7 +28,7 @@ module.exports = {
   async handler(ctx) {
     const { resource, contentType, graphName } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.defaultDataset;
 
     let rdf;
     if (contentType !== MIME_TYPES.JSON) {
