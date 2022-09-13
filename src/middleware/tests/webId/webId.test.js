@@ -3,7 +3,7 @@ const { CoreService } = require('@semapps/core');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require("path");
+const path = require('path');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
@@ -32,7 +32,7 @@ beforeAll(async () => {
       mirror: false,
       void: false,
       webacl: false,
-      webfinger: false,
+      webfinger: false
     }
   });
   broker.createService(WebIdService, {

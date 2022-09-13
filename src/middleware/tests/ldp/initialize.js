@@ -1,13 +1,13 @@
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
-const { AuthLocalService } = require("@semapps/auth");
-const { WebIdService } = require("@semapps/webid");
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require("path");
-const {getPrefixJSON} = require("@semapps/ldp");
+const path = require('path');
+const { getPrefixJSON } = require('@semapps/ldp');
 
 const containers = [
   {
@@ -54,7 +54,7 @@ const initialize = async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false,
+      webfinger: false
     }
   });
 
@@ -62,7 +62,7 @@ const initialize = async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET,
+      accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
 

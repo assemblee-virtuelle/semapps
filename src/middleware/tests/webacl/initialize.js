@@ -1,14 +1,14 @@
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
-const { AuthLocalService } = require("@semapps/auth");
-const { WebIdService } = require("@semapps/webid");
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require("path");
-const express = require("express");
-const ApiGatewayService = require("moleculer-web");
-const supertest = require("supertest");
+const path = require('path');
+const express = require('express');
+const ApiGatewayService = require('moleculer-web');
+const supertest = require('supertest');
 
 const initialize = async () => {
   const broker = new ServiceBroker({
@@ -36,7 +36,7 @@ const initialize = async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false,
+      webfinger: false
     }
   });
 
@@ -44,7 +44,7 @@ const initialize = async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET,
+      accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
 

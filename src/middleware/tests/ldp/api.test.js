@@ -2,9 +2,9 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { CoreService } = require('@semapps/core');
-const { AuthLocalService } = require("@semapps/auth");
-const { WebIdService } = require("@semapps/webid");
-const { getPrefixJSON } = require("@semapps/ldp");
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
+const { getPrefixJSON } = require('@semapps/ldp');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const express = require('express');
 const supertest = require('supertest');
@@ -50,7 +50,7 @@ beforeAll(async () => {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET,
+      accountsDataset: CONFIG.SETTINGS_DATASET
     }
   });
 

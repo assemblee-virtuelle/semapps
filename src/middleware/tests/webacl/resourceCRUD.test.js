@@ -4,7 +4,7 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-let expressMocked , broker;
+let expressMocked, broker;
 
 beforeAll(async () => {
   ({ broker, expressMocked } = await initialize());
