@@ -126,7 +126,7 @@ const CoreService = {
       });
     }
 
-    if (this.settings.mirror !== false || this.settings.activitypub !== false) {
+    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
       this.broker.createService(MirrorService, {
         settings: {
           baseUrl,
