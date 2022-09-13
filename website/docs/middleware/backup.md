@@ -12,7 +12,7 @@ This service allows you to backup the triples in a given dataset, as well as the
 
 ## Dependencies
 
-- [FusekiAdminService](fuseki-admin.md)
+- [DatasetService](dataset.md)
 
 ## Install
 

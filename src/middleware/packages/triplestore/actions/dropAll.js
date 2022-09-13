@@ -16,7 +16,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
+    return await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
       body: 'update=CLEAR+ALL',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

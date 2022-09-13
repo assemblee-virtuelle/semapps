@@ -1,7 +1,7 @@
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { JsonLdService } = require('@semapps/jsonld');
-const FusekiAdminService = require('@semapps/fuseki-admin');
+const { DatasetService } = require('@semapps/dataset');
 const { LdpService } = require('@semapps/ldp');
 const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -29,7 +29,7 @@ let expressMocked = undefined;
 
 beforeAll(async () => {
   broker.createService(JsonLdService);
-  broker.createService(FusekiAdminService, {
+  broker.createService(DatasetService, {
     settings: {
       url: CONFIG.SPARQL_ENDPOINT,
       user: CONFIG.JENA_USER,
