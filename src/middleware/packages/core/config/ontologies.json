@@ -78,5 +78,10 @@
     "prefix": "tutor",
     "owl": "https://raw.githubusercontent.com/reconnexion/minicourses/master/ontology/pair-tutor.owl",
     "url": "http://virtual-assembly.org/ontologies/pair-tutor#"
+  },
+  {
+    "prefix": "oasis",
+    "owl": "",
+    "url": "http://cooperative-oasis.org/ns/core#"
   }
 ]
