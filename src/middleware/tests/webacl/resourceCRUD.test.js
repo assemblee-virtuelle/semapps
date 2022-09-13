@@ -1,97 +1,13 @@
-const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { DatasetService } = require('@semapps/dataset');
-const { LdpService } = require('@semapps/ldp');
-const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const ontologies = require('../ontologies');
-const express = require('express');
-const { WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
-const supertest = require('supertest');
+const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-const broker = new ServiceBroker({
-  middlewares: [WebAclMiddleware],
-  logger: {
-    type: 'Console',
-    options: {
-      level: 'error'
-    }
-  }
-});
-
-let expressMocked = undefined;
+let expressMocked, broker;
 
 beforeAll(async () => {
-  broker.createService(JsonLdService);
-  broker.createService(DatasetService, {
-    settings: {
-      url: CONFIG.SPARQL_ENDPOINT,
-      user: CONFIG.JENA_USER,
-      password: CONFIG.JENA_PASSWORD
-    },
-    async started() {
-      await this.actions.createDataset({
-        dataset: CONFIG.MAIN_DATASET,
-        secure: true
-      });
-    }
-  });
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  broker.createService(LdpService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL,
-      ontologies,
-      containers: ['/resources']
-    }
-  });
-  broker.createService(WebAclService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL
-    }
-  });
-  broker.createService(SparqlEndpointService, {
-    settings: {
-      defaultAccept: 'application/ld+json'
-    }
-  });
-
-  const app = express();
-  const apiGateway = broker.createService({
-    mixins: [ApiGatewayService],
-    settings: {
-      server: false,
-      cors: {
-        origin: '*',
-        exposedHeaders: '*'
-      }
-    },
-    methods: {
-      authenticate(ctx, route, req, res) {
-        return Promise.resolve(null);
-      },
-      authorize(ctx, route, req, res) {
-        return Promise.resolve(ctx);
-      }
-    }
-  });
-  app.use(apiGateway.express());
-
-  await broker.start();
-
-  expressMocked = supertest(app);
+  ({ broker, expressMocked } = await initialize());
 });
 
 afterAll(async () => {

@@ -1,5 +1,5 @@
 ---
-title: Mirror service
+title: Mirror
 ---
 
 This service enables your server to become a mirror of one or more other SemApps servers, and/or to offer the option to other SemApps servers to mirror you.

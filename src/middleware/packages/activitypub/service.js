@@ -12,6 +12,7 @@ const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
 const ReplyService = require('./services/reply');
 const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
+const { selectActorData } = require('./utils');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -19,11 +20,7 @@ const ActivityPubService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
-    selectActorData: resource => ({
-      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
-      name: undefined,
-      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    }),
+    selectActorData,
     dispatch: {
       queueServiceUrl: null,
       delay: 0

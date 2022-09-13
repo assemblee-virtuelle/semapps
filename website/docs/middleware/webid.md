@@ -13,7 +13,7 @@ This service allows you to create and view WebID-conform profiles.
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [LdpService](ldp/index.md)
-- [TripleStoreService](triplestore.md)
+- [TripleStoreService](triplestore/index.md)
 
 ## Install
 

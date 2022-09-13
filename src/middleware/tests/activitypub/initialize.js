@@ -1,23 +1,17 @@
 const fse = require('fs-extra');
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
 const { AuthLocalService } = require('@semapps/auth');
-const { DatasetService } = require('@semapps/dataset');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService, getPrefixJSON } = require('@semapps/ldp');
-const { ActivityPubService, containers } = require('@semapps/activitypub');
-const { SignatureService } = require('@semapps/signature');
+const { CoreService } = require('@semapps/core');
+const { WebAclMiddleware } = require('@semapps/webacl');
+const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
 
 const initialize = async () => {
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware],
+    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
@@ -29,76 +23,29 @@ const initialize = async () => {
   // Remove all actors keys
   await fse.emptyDir(path.resolve(__dirname, './actors'));
 
-  await broker.createService({
-    mixins: [ApiGatewayService]
-  });
-  await broker.createService(DatasetService, {
+  await broker.createService(CoreService, {
     settings: {
-      url: CONFIG.SPARQL_ENDPOINT,
-      user: CONFIG.JENA_USER,
-      password: CONFIG.JENA_PASSWORD
-    },
-    async started() {
-      await this.actions.createDataset({
-        dataset: CONFIG.MAIN_DATASET,
-        secure: true
-      });
+      baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
+      containers,
+      mirror: false,
+      void: false
     }
   });
+
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, './jwt')
     }
   });
-  await broker.createService(JsonLdService, {
-    settings: {
-      remoteContextFiles: [
-        {
-          uri: 'https://www.w3.org/ns/activitystreams',
-          file: path.resolve(__dirname, '../context-as.json')
-        }
-      ]
-    }
-  });
-  await broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  await broker.createService(LdpService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL,
-      ontologies,
-      containers,
-      defaultContainerOptions: {
-        jsonContext: [
-          'https://www.w3.org/ns/activitystreams',
-          'https://w3id.org/security/v1',
-          getPrefixJSON(ontologies)
-        ]
-      }
-    }
-  });
-  await broker.createService(WebAclService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL
-    }
-  });
-  await broker.createService(ActivityPubService, {
-    settings: {
-      baseUri: CONFIG.HOME_URL,
-      additionalContext: getPrefixJSON(ontologies)
-    }
-  });
-  broker.createService(SignatureService, {
-    settings: {
-      actorsKeyPairsDir: path.resolve(__dirname, './actors')
-    }
-  });
+
   broker.createService(WebIdService, {
     settings: {
       usersContainer: CONFIG.HOME_URL + 'actors/'

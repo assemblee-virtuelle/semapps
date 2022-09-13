@@ -53,7 +53,7 @@ module.exports = {
       }
       if (!hasWebAcl) {
         throw new Error(
-          'Error when starting the webAcl service: the main dataset is not secure. You must use the dataset.create action with the secure param'
+          'Error when starting the webAcl service: the main dataset is not secure. You must use the triplestore.dataset.create action with the `secure: true` param'
         );
       }
     }

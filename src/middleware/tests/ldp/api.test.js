@@ -1,10 +1,11 @@
+const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService } = require('@semapps/ldp');
-const { DatasetService } = require('@semapps/dataset');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
+const { CoreService } = require('@semapps/core');
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
+const { getPrefixJSON } = require('@semapps/ldp');
+const { WebAclMiddleware } = require('@semapps/webacl');
 const express = require('express');
 const supertest = require('supertest');
 const EventsWatcher = require('../middleware/EventsWatcher');
@@ -13,44 +14,49 @@ const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher, WebAclMiddleware],
-  logger: false
+  middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
 });
 let expressMocked = undefined;
 
 beforeAll(async () => {
-  broker.createService(JsonLdService);
-  broker.createService(DatasetService, {
-    settings: {
-      url: CONFIG.SPARQL_ENDPOINT,
-      user: CONFIG.JENA_USER,
-      password: CONFIG.JENA_PASSWORD
-    },
-    async started() {
-      await this.actions.createDataset({
-        dataset: CONFIG.MAIN_DATASET,
-        secure: true
-      });
-    }
-  });
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  broker.createService(LdpService, {
+  broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
       ontologies,
-      containers: ['resources']
+      jsonContext: getPrefixJSON(ontologies),
+      containers: ['/resources'],
+      api: false,
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false
     }
   });
-  broker.createService(WebAclService, {
+
+  await broker.createService(AuthLocalService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
     }
   });
 
