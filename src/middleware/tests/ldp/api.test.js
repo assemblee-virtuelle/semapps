@@ -1,6 +1,10 @@
+const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
 const { CoreService } = require('@semapps/core');
+const { AuthLocalService } = require("@semapps/auth");
+const { WebIdService } = require("@semapps/webid");
+const { getPrefixJSON } = require("@semapps/ldp");
 const { WebAclMiddleware } = require('@semapps/webacl');
 const express = require('express');
 const supertest = require('supertest');
@@ -10,8 +14,13 @@ const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher, WebAclMiddleware],
-  logger: false
+  middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
 });
 let expressMocked = undefined;
 
@@ -19,6 +28,7 @@ beforeAll(async () => {
   broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
       triplestore: {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
@@ -26,9 +36,27 @@ beforeAll(async () => {
         mainDataset: CONFIG.MAIN_DATASET
       },
       ontologies,
+      jsonContext: getPrefixJSON(ontologies),
       containers: ['/resources'],
       api: false,
-      activitypub: false
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false
+    }
+  });
+
+  await broker.createService(AuthLocalService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET,
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
     }
   });
 

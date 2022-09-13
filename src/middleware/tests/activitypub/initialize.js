@@ -8,11 +8,10 @@ const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
 
 const initialize = async () => {
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware],
+    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
@@ -34,7 +33,6 @@ const initialize = async () => {
         password: CONFIG.JENA_PASSWORD,
         mainDataset: CONFIG.MAIN_DATASET
       },
-      ontologies,
       containers,
       mirror: false,
       void: false

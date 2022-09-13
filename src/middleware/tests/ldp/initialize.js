@@ -1,9 +1,13 @@
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
+const { AuthLocalService } = require("@semapps/auth");
+const { WebIdService } = require("@semapps/webid");
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
+const path = require("path");
+const {getPrefixJSON} = require("@semapps/ldp");
 
 const containers = [
   {
@@ -25,7 +29,7 @@ const containers = [
 
 const initialize = async () => {
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware],
+    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
     logger: {
       type: 'Console',
       options: {
@@ -37,6 +41,7 @@ const initialize = async () => {
   await broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
       triplestore: {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
@@ -44,8 +49,26 @@ const initialize = async () => {
         mainDataset: CONFIG.MAIN_DATASET
       },
       ontologies,
+      jsonContext: getPrefixJSON(ontologies),
       containers,
-      activitypub: false
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false,
+    }
+  });
+
+  await broker.createService(AuthLocalService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET,
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
     }
   });
 

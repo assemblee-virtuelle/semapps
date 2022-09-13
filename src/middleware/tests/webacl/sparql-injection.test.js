@@ -1,74 +1,18 @@
-const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
-const { CoreService } = require('@semapps/core');
-const { WebAclMiddleware } = require('@semapps/webacl');
-const ontologies = require('../ontologies');
-const express = require('express');
-const CONFIG = require('../config');
-const supertest = require('supertest');
 const urlJoin = require('url-join');
+const CONFIG = require('../config');
+const initialize = require("./initialize");
 
 jest.setTimeout(20000);
 
-const broker = new ServiceBroker({
-  middlewares: [WebAclMiddleware],
-  logger: {
-    type: 'Console',
-    options: {
-      level: 'error'
-    }
-  }
-});
-
-let expressMocked = undefined;
+let expressMocked , broker;
 
 beforeAll(async () => {
-  await broker.createService(CoreService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL,
-      triplestore: {
-        url: CONFIG.SPARQL_ENDPOINT,
-        user: CONFIG.JENA_USER,
-        password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
-      },
-      ontologies,
-      containers: ['/resources'],
-      activitypub: false
-    }
-  });
-
-  const app = express();
-  const apiGateway = broker.createService({
-    mixins: [ApiGatewayService],
-    settings: {
-      server: false,
-      cors: {
-        origin: '*',
-        exposedHeaders: '*'
-      }
-    },
-    methods: {
-      authenticate(ctx, route, req, res) {
-        return Promise.resolve(null);
-      },
-      authorize(ctx, route, req, res) {
-        return Promise.resolve(ctx);
-      }
-    }
-  });
-  app.use(apiGateway.express());
-
-  await broker.start();
-
-  expressMocked = supertest(app);
+  ({ broker, expressMocked } = await initialize());
 });
 
 afterAll(async () => {
   await broker.stop();
 });
-
-const console = require('console');
 
 describe('pentest for the ACL groups API', () => {
   test('Ensure an injection with > in addMember fails', async () => {
