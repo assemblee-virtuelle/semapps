@@ -83,5 +83,10 @@
     "prefix": "oasis",
     "owl": "",
     "url": "http://cooperative-oasis.org/ns/core#"
+  },
+  {
+    "prefix": "og",
+    "owl": "https://raw.githubusercontent.com/assemblee-virtuelle/organigraph/master/ontology/organigraph.owl",
+    "url": "http://virtual-assembly.org/ontologies/organigraph#"
   }
 ]
