@@ -60,13 +60,13 @@ const CommentsList = ({ comments, userResource, loading }) => {
           .map(comment => (
             <Box className={classes.container}>
               <Box className={classes.avatar}>
-                <ReferenceField record={comment} reference="Person" source="attributedTo" linkType={false}>
+                <ReferenceField record={comment} reference="Person" source="attributedTo" linkType="show">
                   <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
                 </ReferenceField>
               </Box>
               <Box className={classes.text}>
                 <Typography variant="body2">
-                  <ReferenceField record={comment} reference="Person" source="attributedTo">
+                  <ReferenceField record={comment} reference="Person" source="attributedTo" linkType="show">
                     <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
                   </ReferenceField>
                   &nbsp;•&nbsp;
