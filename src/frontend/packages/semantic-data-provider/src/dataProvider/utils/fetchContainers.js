@@ -61,16 +61,23 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         delete params.filter.a;
       }
 
-      // Remove search params from filter
-      if (params.filter.q) {
-        delete params.filter.q;
-      }
       if (Object.keys(params.filter).length > 0) {
-        returnData = returnData.filter(resource =>
-          Object.entries(params.filter).some(([k, v]) =>
-            Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k] === v
-          )
-        );
+        returnData = returnData.filter(resource => {
+          return Object.entries(params.filter).some(([k, v]) => {
+            if (k == 'q') {
+              // if fiter is q, all properties have to be checked
+              return Object.entries(resource).some(([kr, vr]) => {
+                if (!isobject(vr)) {
+                  return Array.isArray(vr) ? vr.some(va=>va.includes(v)) : vr.includes(v)
+                } else {
+                  return false;
+                }
+              })
+            } else {
+              return Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k].includes(v)
+            }
+          })
+        });
       }
     }
 
