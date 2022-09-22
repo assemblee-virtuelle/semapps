@@ -1,4 +1,5 @@
 import jsonld from 'jsonld';
+import isobject from 'isobject';
 
 export const isType = (type, resource) => {
   const resourceType = resource.type || resource['@type'];
