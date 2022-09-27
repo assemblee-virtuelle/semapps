@@ -119,6 +119,19 @@ This will hide the Create, Edit and Delete buttons to users who are not allowed 
 
 ## Components
 
+### SsoLoginPage
+
+Login page to use with a SSO authentication.
+
+| Property          | Type      | Default                    | Description                                                                                           |
+|-------------------|-----------|----------------------------|-------------------------------------------------------------------------------------------------------|
+| `userResource`    | `String`  | "Person"                   | True if the dialog is open                                                                            |
+| `text`            | `Element` |                            | Text to show above the SSO button                                                                     |
+| `propertiesExist` | `Array`   |                            | Properties to check after the user has been created. Useful when collections are added asynchronously |
+| `title`           | `String`  | "Login required"           | Title of the dialog                                                                                   |
+| `message`         | `String`  | "Please login to continue" | Content of the dialog                                                                                 |
+
+
 ### AuthDialog
 
 ```js
