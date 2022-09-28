@@ -69,15 +69,15 @@ const fetchContainers = async (containers, resourceId, params, config) => {
               // if fiter is q, all properties have to be checked
               return Object.entries(resource).some(([kr, vr]) => {
                 if (!isobject(vr)) {
-                  return Array.isArray(vr) ? vr.some(va=>va.includes(v)) : vr.includes(v)
+                  return Array.isArray(vr) ? vr.some(va => va.includes(v)) : vr.includes(v);
                 } else {
                   return false;
                 }
-              })
+              });
             } else {
-              return Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k].includes(v)
+              return Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k].includes(v);
             }
-          })
+          });
         });
       }
     }
