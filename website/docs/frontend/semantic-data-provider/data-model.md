@@ -13,7 +13,7 @@ All the configs are solely for this given resource.
 ```js
 const dataModel = {
   User: {
-    class: 'foaf:Person',
+    types: 'foaf:Person',
     list: {
       servers: '@all',
       containers: {}, // Si spécifié, bypass la valeur servers. On passe quand même par SPARQL pour faire la requête.
@@ -36,9 +36,11 @@ const dataModel = {
 };
 ```
 
+## Parameters
+
 | Property                      | Type                | Default      | Description                                                                                                                               |
 |-------------------------------|---------------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| `class`                       | `String`            | **required** | Type of resource                                                                                                                          |
+| `types`                       | `Array` or `String  | **required** | Type(s) of resources to fetch or create                                                                                                   |
 | `list.servers`                | `Array` or `String` | "@all"       | The servers where to fetch the resource.                                                                                                  |
 | `list.containers`             | `Array` or `String` |              | URL(s) of the container(s) to fetch. If specified, will bypass the `list.servers` config.                                                 |
 | `list.blankNodes`             | `Array`             |              | Predicates listed are blank nodes and will be dereferenced in SPARQL queries. Automatically set if VoID endpoints are found.              |
@@ -56,7 +58,11 @@ const dataModel = {
 
 For the `list.servers` and `create.server` config, you can use either the server key (the main key defined in the dataServers config) or the following special keys:
 
-- `@all`: All the servers defined 
 - `@default`: The server with the config `default: true`
 - `@auth`: The server with the config `authServer: true`
 - `@pod`: The server with the config `pod: true`
+
+For the `list.servers` config, you can use these additional special keys:
+
+- `@all`: All the servers defined
+- `@remote`: All servers which are not the default server

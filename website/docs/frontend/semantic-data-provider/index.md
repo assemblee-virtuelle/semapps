@@ -31,7 +31,7 @@ const App = () => (
 ```
 
 The semantic data provider rely on two important configuration:
-- The [Data Servers](data-servers), which describes the servers to which we want to connect and what they contain. Most of these information can be guessed from the VOID endpoint(s).
+- The [Data Servers](data-servers), which describes the servers to which we want to connect and what they contain.
 - The [Data Model](data-model), which describes how we want the data to be displayed in React-Admin.
 
 ## Settings
@@ -69,6 +69,83 @@ const ontologies = [
 
 ### `jsonContext`
 
-If set, all SPARQL results returned will be framed with this context.
+All SPARQL results returned will be framed with this context.
 
-If not set, the ontologies set above will be set.
+If it is not set, the ontologies set above will be used.
+
+
+## Hooks
+
+### useContainers
+
+Returns a list of containers linked with a given resource.
+
+```js
+const containers = useContainers(resourceId, serverKeys);
+```
+
+#### Parameters
+
+| Property     | Type                | Default      | Description                          |
+|--------------|---------------------|--------------|--------------------------------------|
+| `resourceId` | `String`            | **required** | React-Admin resource ID              |
+| `serverKeys` | `Array` or `String` | "@all"       | The servers where the containers are |
+
+#### Return value
+
+Array of containers URIs.
+
+
+### useCreateContainer
+
+Get the URI of the container where to create a new resource.
+
+```js
+const createContainerUri = useCreateContainer(resourceId);
+```
+
+#### Parameters
+
+| Property     | Type                | Default      | Description                          |
+|--------------|---------------------|--------------|--------------------------------------|
+| `resourceId` | `String`            | **required** | React-Admin resource ID              |
+
+#### Return value
+
+URI of the container where to create a new resource.
+
+
+### useDataModel
+
+Get the [data model](data-model) config of the given resource, including data fetched through VoID endpoints.
+
+```js
+const dataModel = useDataModel(resourceId);
+```
+
+#### Parameters
+
+| Property     | Type       | Default      | Description                          |
+|--------------|------------|--------------|--------------------------------------|
+| `resourceId` | `String`   | **required** | React-Admin resource ID              |
+
+#### Return value
+
+The [data model](data-model) config of the given resource.
+
+
+### useDataModels
+
+Get the [data model](data-model) config of all the resources, including data fetched through VoID endpoints.
+
+```js
+const dataModel = useDataModels();
+```
+
+### useDataServers
+
+Get the [data servers](data-servers) config, including data fetched through VoID endpoints.
+
+```js
+const dataServers = useDataServers();
+```

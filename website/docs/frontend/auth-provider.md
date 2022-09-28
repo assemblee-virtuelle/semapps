@@ -2,9 +2,9 @@
 title: Auth Provider
 ---
 
-React-Admin use [Auth Providers](https://marmelab.com/react-admin/doc/3.19/Authentication.html) to authenticate users on
+React-Admin use [auth providers](https://marmelab.com/react-admin/doc/3.19/Authentication.html) to authenticate users on
 your application. We have developped an Auth Provider which is specifically designed to connect to a SemApps-based
-server. It works with OIDC, Cas or local authentication.
+server. It works with [OIDC](../middleware/auth#oidc), [Cas](../middleware/auth#cas) or [local](../middleware/auth#local-accounts) authentication.
 
 ## Installation
 
@@ -79,31 +79,9 @@ This function receives user data and must return true or false, depending on whe
 
 ### `localAccounts`
 
-If you use the `LocalLoginPage` instead of the `SsoLoginPage`, you must set `localAccounts: true`.
+If you use the [LocalLoginPage](#localloginpage) instead of the [SsoLoginPage](#ssologinpage), you must set `localAccounts: true`.
 
 ## Components
-
-### LocalLoginPage
-
-Login/signup page to use with a local authentication.
-
-| Property          | Type      | Default                    | Description                                                                                           |
-|-------------------|-----------|----------------------------|-------------------------------------------------------------------------------------------------------|
-| `userResource`    | `String`  | "Person"                   | True if the dialog is open                                                                            |
-| `text`            | `Element` |                            | Text to show above the SSO button                                                                     |
-| `propertiesExist` | `Array`   |                            | Properties to check after the user has been created. Useful when collections are added asynchronously |
-
-
-### SsoLoginPage
-
-Login page to use with a SSO authentication.
-
-| Property          | Type      | Default                    | Description                                                                                           |
-|-------------------|-----------|----------------------------|-------------------------------------------------------------------------------------------------------|
-| `userResource`    | `String`  | "Person"                   | True if the dialog is open                                                                            |
-| `text`            | `Element` |                            | Text to show above the SSO button                                                                     |
-| `propertiesExist` | `Array`   |                            | Properties to check after the user has been created. Useful when collections are added asynchronously |
-
 
 ### AuthDialog
 
@@ -130,3 +108,92 @@ const MyPage = () => {
 | `message`  | `String`   | "Please login to continue" | Content of the dialog              |
 
 All other props are passed to the underlying Material-UI [Dialog](https://v4.mui.com/api/dialog/) component.
+
+
+### LocalLoginPage
+
+Login/signup page to use with a [local authentication](../middleware/auth#local-accounts).
+
+
+### SsoLoginPage
+
+Login page to use with a [SSO authentication](../middleware/auth#oidc) (OIDC/Cas).
+
+| Property          | Type      | Default                    | Description                                                                                           |
+|-------------------|-----------|----------------------------|-------------------------------------------------------------------------------------------------------|
+| `userResource`    | `String`  | "Person"                   | True if the dialog is open                                                                            |
+| `text`            | `Element` |                            | Text to show above the SSO button                                                                     |
+| `propertiesExist` | `Array`   |                            | Properties to check after the user has been created. Useful when collections are added asynchronously |
+
+
+## Hooks
+
+### useAgents
+
+Return a list of WAC agents (users, groups or classes) based on the URI of a resource or a container.
+
+```js
+const { agents, addPermission, removePermission } = useAgents(uri);
+```
+
+#### Parameters
+
+| Property | Type | Default | Description                           |
+|----------| ---- | ------- |---------------------------------------|
+| `uri`    | `String`  | **required** | URI of the resource or container      |
+
+#### Return values
+
+| Property           | Type       | Description                                               |
+|--------------------|------------|-----------------------------------------------------------|
+| `agents`           | `Array`    | Array of objects with `id`, `predicate` and `permissions` |
+| `addPermission`    | `Function` | Function to add a new permission                          |
+| `removePermission` | `Function` | Function to remove an existing permission                 |
+
+
+### useCheckAuthenticated
+
+Return the identity of the logged-in user. If user is not logged, redirect to the login page.
+
+```js
+const { identity, loading } = useCheckAuthenticated();
+```
+
+#### Return values
+
+| Property   | Type      | Description                                                 |
+|------------|-----------|-------------------------------------------------------------|
+| `identity` | `Object`  | Object returned by the auth provider's `getIdentity` method |
+| `loading`  | `Boolean` | True if the user data is loading                            |
+
+
+### useCheckPermissions
+
+Check if the logged-in user has the right to access the resource or container with a given mode.
+
+```js
+const { permissions } = useCheckPermissions(uri, mode, redirectUrl);
+```
+
+#### Parameters
+
+| Property      | Type     | Default      | Description                                                             |
+|---------------|----------|--------------|-------------------------------------------------------------------------|
+| `uri`         | `String` | **required** | URI of the resource or container                                        |
+| `mode`        | `String` | **required** | "list", "edit", "create" or "show"                                      |
+| `redirectUrl` | `String` | "/"           | Path to redirect to if the user doesn't have the required permissions  |
+
+#### Return value
+
+| Property      | Type      | Description                                        |
+|---------------|-----------|----------------------------------------------------|
+| `permissions` | `Object`  | Permissions of the logged-in user for the resource |
+
+
+### useSignup
+
+Return the `signup` method of the auth provider. Used by the [LocalLoginPage](#localloginpage).
+
+```js
+const signup = useSignup();
+```
