@@ -26,15 +26,13 @@ module.exports = {
       logo: {
         alt: 'Logo Semapps',
         src: 'img/logo.png',
-        srcDark: 'img/logo_dark.png',
-        href: 'https://semapps.org/',
-        target: '_self',
+        srcDark: 'img/logo_dark.png'
       },
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
         {to: 'docs/middleware/auth', label: 'Middleware', position: 'left'},
-        {to: 'docs/frontend/auth-provider', label: 'Frontend', position: 'left'},
+        {to: 'docs/frontend/introduction', label: 'Frontend', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {to: 'blog', label: 'Blog', position: 'left'},
         {

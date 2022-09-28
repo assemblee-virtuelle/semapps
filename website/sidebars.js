@@ -75,6 +75,16 @@ module.exports = {
     'middleware/webid'
   ],
   Frontend: [
+    'frontend/introduction',
+    {
+      type: 'category',
+      label: 'Semantic Data Provider',
+      items: [
+        'frontend/semantic-data-provider/index',
+        'frontend/semantic-data-provider/data-servers',
+        'frontend/semantic-data-provider/data-model',
+      ],
+    },
     'frontend/auth-provider',
     'frontend/activitypub-components',
     'frontend/date-components',
