@@ -21,7 +21,8 @@ const App = () => (
       dataServers: { ... },
       resources: { ... },
       ontologies: { ... },
-      jsonContext: 'http://localhost:3000/context.json'
+      jsonContext: 'http://localhost:3000/context.json',
+      returnFailedResources: false
     })}
   >
     <Resource name="Project" ... />
@@ -72,6 +73,13 @@ const ontologies = [
 All SPARQL results returned will be framed with this context.
 
 If it is not set, the ontologies set above will be used.
+
+
+### `returnFailedResources`
+
+If true, the `getMany` method will not fail completely if one resource is missing. 
+
+Missing resources will be returned with only their `@id`.
 
 
 ## Hooks
