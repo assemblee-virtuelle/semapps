@@ -4,7 +4,7 @@ import { Form } from 'react-final-form';
 import createDecorator from 'final-form-calculate';
 import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import { ReferenceInput, useContainers } from '@semapps/semantic-data-provider';
+import { ReferenceInput, useContainers, useDataModel } from '@semapps/semantic-data-provider';
 import { MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
 import useSync from '../hooks/useSync';
@@ -44,6 +44,7 @@ const decorator = createDecorator(
 const ImportForm = ({ basePath, record, resource, stripProperties }) => {
   const classes = useStyles();
   const containers = useContainers(resource, '@remote');
+  const dataModel = useDataModel(resource);
   const fork = useFork(resource);
   const sync = useSync(resource);
 
@@ -57,6 +58,8 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
     },
     [fork, sync, stripProperties]
   );
+
+  if (!dataModel) return null;
 
   return (
     <Form
@@ -73,12 +76,12 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                     source="remoteUri"
                     label="Rechercher..."
                     reference={resource}
-                    filter={{ _servers: '@remote' }}
+                    filter={{ _servers: '@remote', _predicates: [dataModel?.fieldsMapping?.title] }}
                     enableGetChoices={({ q }) => !!(q && q.length > 1)}
                     fullWidth
                   >
                     <MultiServerAutocompleteInput
-                      optionText="pair:label"
+                      optionText={dataModel?.fieldsMapping?.title}
                       shouldRenderSuggestions={value => value.length > 1}
                       resettable
                     />
