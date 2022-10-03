@@ -1,6 +1,4 @@
 // General layout
-import RedirectByType from './show/RedirectByType';
-
 export { default as Layout } from './layout/DefaultLayout/Layout';
 export { default as AppBar } from './layout/DefaultLayout/AppBar';
 export { default as TopToolbar } from './layout/DefaultLayout/TopToolbar';
@@ -20,10 +18,7 @@ export { default as EditActions } from './edit/EditActions';
 export { default as AccordionList } from './list/AccordionList';
 export { default as List } from './list/List';
 export { default as ListActions } from './list/ListActions';
-export { default as MultiViewsList } from './list/MultiViewsList';
 export { default as TabsMenu } from './list/TabsMenu';
-export { default as SimpleList } from './list/SimpleList';
-export { default as MasonryList } from './list/MasonryList';
 export { default as ReferenceFilter } from './list/ReferenceFilter';
 
 // Show page
@@ -46,7 +41,6 @@ export { default as UserIcon } from './show/UserIcon';
 
 // Fields
 export { default as MarkdownField } from './fields/MarkdownField';
-export { default as SeparatedListField } from './fields/SeparatedListField';
 export { default as AvatarField } from './fields/AvatarField';
 
 // Inputs
