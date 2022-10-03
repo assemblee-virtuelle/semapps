@@ -64,7 +64,7 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
           if (propertiesExist.length > 0) {
             let allPropertiesExist = propertiesExist.every(p => userData[p]);
             while (!allPropertiesExist) {
-              console.log('Waiting for all properties to have been created', propertiesExist)
+              console.log('Waiting for all properties to have been created', propertiesExist);
               await delay(500);
               ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
               allPropertiesExist = propertiesExist.every(p => userData[p]);
@@ -129,7 +129,6 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
     </ThemeProvider>
   );
 };
-
 
 SsoLoginPage.defaultProps = {
   propertiesExist: [],
