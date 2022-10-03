@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * @deprecated
+ */
 const AccordionList = ({ date, title, content }) => {
   const classes = useStyles();
   const { ids, data, resource, basePath } = useListContext();

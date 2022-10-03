@@ -10,6 +10,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/**
+ * @deprecated Moved to OrganiGraph
+ */
 const TabsMenu = () => {
   const history = useHistory();
 

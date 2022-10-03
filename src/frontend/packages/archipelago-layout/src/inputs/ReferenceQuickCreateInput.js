@@ -22,6 +22,9 @@ const useStyles = makeStyles({
   }
 });
 
+/**
+ * @deprecated Does not work
+ */
 const ReferenceQuickCreateInput = ({ label, reference, source, children }) => {
   const classes = useStyles();
 
