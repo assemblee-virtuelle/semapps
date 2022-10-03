@@ -21,6 +21,9 @@ module.exports = {
     }
   },
   themeConfig: {
+    prism: {
+      theme: require('prism-react-renderer/themes/shadesOfPurple'),
+    },
     navbar: {
       title: 'SemApps',
       logo: {

@@ -56,6 +56,40 @@ while uploads handled through SemApps return only an URL.
 ```
 
 
+### MultiUrlField
+
+Display a list of MUI [Chips](https://v4.mui.com/components/chips/), with an icon, color and label which depends on the 
+domain of URLs provided. Domain mapping is provided for:
+
+- Facebook
+- Twitter
+- Instagram
+- YouTube
+- GitHub
+- GitLab
+- OpenCollective
+
+If no mapping is found, it will display a standard chip.
+
+![](images/multiurlfield.png)
+
+You can pass your own mapping through the `domainMapping` prop, with an object with this shape:
+
+```js
+import GitHubIcon from '@material-ui/icons/GitHub';
+
+const domainMapping = {
+  'github.com': {
+    label: 'GitHub',
+    icon: <GitHubIcon />,
+    color: 'black',
+    contrastText: 'white'
+  },
+  ...
+};
+```
+
+
 ### QuickAppendReferenceArrayField
 
 Same as React-Admin [ReferenceArrayField](https://marmelab.com/react-admin/Fields.html#referencearrayfield) but, if the user has a `acl:Append` right on the resource, he will have the possibility to add a new relationship through a modal.
