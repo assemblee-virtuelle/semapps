@@ -19,6 +19,6 @@ const EditWithPermissions = props => {
 
 EditWithPermissions.defaultProps = {
   actions: <EditActionsWithPermissions />
-}
+};
 
 export default EditWithPermissions;
