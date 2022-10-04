@@ -1,26 +1,26 @@
 import React from 'react';
 import { CreateButton, ExportButton, useResourceDefinition, TopToolbar, usePermissionsOptimized } from 'react-admin';
 import { useMediaQuery } from '@material-ui/core';
-import { useCreateContainer } from "@semapps/semantic-data-provider";
+import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
-import { rightsToCreate, rightsToControl } from "../../constants";
+import { rightsToCreate, rightsToControl } from '../../constants';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActionsWithPermissions = ({
-   bulkActions,
-   basePath,
-   currentSort,
-   displayedFilters,
-   exporter,
-   filters,
-   filterValues,
-   onUnselectItems,
-   resource,
-   selectedIds,
-   showFilter,
-   total,
-   ...rest
- }) => {
+  bulkActions,
+  basePath,
+  currentSort,
+  displayedFilters,
+  exporter,
+  filters,
+  filterValues,
+  onUnselectItems,
+  resource,
+  selectedIds,
+  showFilter,
+  total,
+  ...rest
+}) => {
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const resourceDefinition = useResourceDefinition(rest);
   const createContainerUri = useCreateContainer(resource);
@@ -35,7 +35,9 @@ const ListActionsWithPermissions = ({
           filterValues,
           context: 'button'
         })}
-      {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && <CreateButton basePath={basePath} />}
+      {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && (
+        <CreateButton basePath={basePath} />
+      )}
       {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
         <PermissionsButton basePath={basePath} record={createContainerUri} />
       )}
