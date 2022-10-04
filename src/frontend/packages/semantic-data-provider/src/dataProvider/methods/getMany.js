@@ -9,10 +9,10 @@ const getManyMethod = config => async (resourceId, params) => {
       getOne(config)(resourceId, { id: typeof id === 'object' ? id['@id'] : id })
         .then(({ data }) => {
           console.log('data', data);
-          return data
+          return data;
         })
-        .catch((e) => {
-          console.log('catch', e)
+        .catch(e => {
+          console.log('catch', e);
           // Catch if one resource fails to load
           // Otherwise no references will be show if only one is missing
           // See https://github.com/marmelab/react-admin/issues/5190
