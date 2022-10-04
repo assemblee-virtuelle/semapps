@@ -22,14 +22,32 @@
   justify-content: center;
 }
 
+.feature {
+  margin-bottom: 20px;
+}
+
 .features {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  padding: 2rem 0 4rem;
   width: 100%;
 }
 
 .featureImage {
   height: 200px;
   width: 200px;
+}
+
+.presentationTitle {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 32pt;
+}
+
+.round {
+  height: 95px;
+  width: 95px;
+  background-color: #2c6f8b;
+  border-radius: 50%;
+  display: inline-block;
 }
