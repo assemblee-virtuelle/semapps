@@ -1,8 +1,8 @@
 import React from 'react';
 import { TextField, RichTextField, DateField } from 'react-admin';
 import { Box, Typography, CircularProgress, makeStyles } from '@material-ui/core';
-import { ReferenceField, useDataModel } from '@semapps/semantic-data-provider';
-import { AvatarWithLabelField } from '@semapps/field-components';
+import { useDataModel } from '@semapps/semantic-data-provider';
+import { AvatarWithLabelField, ReferenceField } from '@semapps/field-components';
 
 const useStyles = makeStyles(() => ({
   container: {

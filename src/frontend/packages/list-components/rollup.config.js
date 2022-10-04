@@ -16,6 +16,7 @@ const external = createFilter(
     'react-router',
     'react-redux',
     '@material-ui/**',
+    'react-masonry-css',
     '@semapps/**'
   ],
   null,

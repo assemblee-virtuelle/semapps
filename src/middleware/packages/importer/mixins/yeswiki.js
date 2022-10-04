@@ -23,7 +23,8 @@ module.exports = {
       // Note: the form_id parameter is not used by YesWiki, but it allows to have a different base URL for each Bazar list
       this.settings.source.apiUrl = `${baseUrl}?BazaR/json&demand=entry&form_id=${formId}`;
       this.settings.source.getAllFull = `${baseUrl}?BazaR/json&demand=entries&id=${formId}`;
-      this.settings.source.getOneFull = data => `${baseUrl}?BazaR/json&demand=entry&form_id=${formId}&id_fiche=${data.id_fiche}`;
+      this.settings.source.getOneFull = data =>
+        `${baseUrl}?BazaR/json&demand=entry&form_id=${formId}&id_fiche=${data.id_fiche}`;
     } else {
       const apiPath = `api/forms/${formId}/entries/json`;
       this.settings.source.apiUrl = `${baseUrl}?${apiPath}`;

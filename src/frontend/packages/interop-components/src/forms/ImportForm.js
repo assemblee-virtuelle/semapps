@@ -4,8 +4,8 @@ import { Form } from 'react-final-form';
 import createDecorator from 'final-form-calculate';
 import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import { ReferenceInput, useContainers, useDataModel } from '@semapps/semantic-data-provider';
-import { MultiServerAutocompleteInput } from '@semapps/input-components';
+import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
+import { ReferenceInput, MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
 import useSync from '../hooks/useSync';
 
