@@ -1,9 +1,9 @@
 import React from 'react';
 import { usePermissionsOptimized, ShowButton, ListButton, TopToolbar } from 'react-admin';
-import PermissionsButton from '../PermissionsButton/PermissionsButton';
+import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToControl } from '../../constants';
 
-const EditActions = ({ basePath, record, hasList, hasShow }) => {
+const EditActionsWithPermissions = ({ basePath, record, hasList, hasShow }) => {
   const { permissions } = usePermissionsOptimized(record.id);
   return (
     <TopToolbar>
@@ -16,4 +16,4 @@ const EditActions = ({ basePath, record, hasList, hasShow }) => {
   );
 };
 
-export default EditActions;
+export default EditActionsWithPermissions;
