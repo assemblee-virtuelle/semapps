@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { List } from 'react-admin';
 import { useLocation } from 'react-router';
 import ListActionsWithViews from './ListActionsWithViews';
-import ListViewContext from "./ListViewContext";
+import ListViewContext from './ListViewContext';
 
 const MultiViewsList = ({ children, actions, views, ListComponent, ...otherProps }) => {
   const query = new URLSearchParams(useLocation().search);
