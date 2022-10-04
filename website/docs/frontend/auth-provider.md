@@ -65,9 +65,7 @@ If you wish to force all users to login, you can pass a `allowAnonymous: false` 
 
 If you want to check permissions based on WebACL, you need to set `checkPermissions: true`.
 
-Additionally, you should use the `<ListWithPermissions />`, `<ShowWithPermissions />` and `<EditWithPermissions />` components instead of React-Admin's default `<List />`, `<Show />` and `<Edit />` components.
-
-This will hide the Create, Edit and Delete buttons to users who are not allowed to do these actions, and show a Permissions button to users who have `acl:Control` over a resource or a container.
+Additionally, you should use the [page components](#pages-components) below instead of React-Admin's default `Create`, `Edit`, `List` and `Show` components.
 
 ### `checkUser`
 
@@ -81,7 +79,34 @@ This function receives user data and must return true or false, depending on whe
 
 If you use the [LocalLoginPage](#localloginpage) instead of the [SsoLoginPage](#ssologinpage), you must set `localAccounts: true`.
 
-## Components
+
+## Pages components
+
+### CreateWithPermissions
+
+Same as React-Admin [Create](https://marmelab.com/react-admin/doc/3.19/CreateEdit.html) component, except:
+- It ensures the logged-in user has the right to create a new resource.
+
+### EditWithPermissions
+
+Same as React-Admin [Edit](https://marmelab.com/react-admin/doc/3.19/CreateEdit.html) component, except:
+- It ensures the logged-in user has the right to edit the resource.
+- It displays the Permissions button (through an `EditActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
+- It does not show the delete button if user doesn't have a `acl:write` right (through an `EditToolbarWithPermissions` component which can be imported independently).
+
+### ListWithPermissions
+
+Same as React-Admin [List](https://marmelab.com/react-admin/doc/3.19/List.html#the-list-component) component, except:
+- It displays the Permissions button (through a `ListActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
+
+### ShowWithPermissions
+
+Same as React-Admin [Show](https://marmelab.com/react-admin/doc/3.19/Show.html#the-show-component) component, except:
+- It ensures the logged-in user has the right to view the resource
+- It displays the Permissions button (through a `ShowActionsWithPermissions` component which can be imported independently) if the logged-in user has `acl:Control` right.
+
+
+## Other components
 
 ### AuthDialog
 
