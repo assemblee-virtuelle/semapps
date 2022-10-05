@@ -155,7 +155,7 @@ const PersonList = props => (
 | `actions`       | `Component` | `<ListActions>` | Actions to show in addition to the buttons to switch between views.                 |
 
 
-## ReferenceFilter
+### ReferenceFilter
 
 List resources linked to the list, and allow to filter them. To be used inside a [aside component](https://marmelab.com/react-admin/doc/3.19/List.html#aside-aside-component)
 
