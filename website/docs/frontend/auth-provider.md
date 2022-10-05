@@ -16,7 +16,7 @@ npm install @semapps/auth-provider
 
 ```jsx
 import { Admin } from 'react-admin';
-import { authProvider, SsoLoginPage, LoginPage } from '@semapps/auth-provider';
+import { authProvider, SsoLoginPage, LogoutButton } from '@semapps/auth-provider';
 import { httpClient } from '@semapps/semantic-data-provider';
 
 const App = () => (

@@ -153,3 +153,31 @@ const PersonList = props => (
 | `views`         | `Object`    | **required**    | List of views. See above for the expected format.                                   |
 | `ListComponent` | `Element`   | `List`          | The top-level List component to use. Default to React-Admin default List component. |
 | `actions`       | `Component` | `<ListActions>` | Actions to show in addition to the buttons to switch between views.                 |
+
+
+## ReferenceFilter
+
+List resources linked to the list, and allow to filter them. To be used inside a [aside component](https://marmelab.com/react-admin/doc/3.19/List.html#aside-aside-component)
+
+```js
+const FilterAside = () => (
+  <Card>
+    <CardContent>
+      <FilterLiveSearch source="label" />
+      <ReferenceFilter reference="Topic" source="hasTopic" inverseSource="topicOf" />
+    </CardContent>
+  </Card>
+);
+```
+
+| Property        | Type      | Default           | Description                                                                                                                           |
+|-----------------|-----------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------|
+| `reference`     | `String`  | **required**      | ID of the resource being referenced                                                                                                   |
+| `source`        | `String`  | **required**      | Predicate on the main list which match this reference.                                                                                |
+| `inverseSource` | `String`  |                   | Inverse predicate. Allow to display only elements with matching resources.                                                            |
+| `sort`          | `String`  |                   | Sort results. Same format as lists [sort](https://marmelab.com/react-admin/doc/3.19/List.html#sort-default-sort-field--order) option. |
+| `filter`        | `String`  |                   | Filter results. Same format as lists [filter](https://marmelab.com/react-admin/doc/3.19/List.html#filter-permanent-filter) option.    |
+| `limit`         | `Number`  | 25                | Limit the number of results.                                                                                                          |
+| `label`         | `String`  | Reference's label | Label to show at the top of the list.                                                                                                 |
+| `icon`          | `Element` | Reference's icon  | Icon to show next to the label.                                                                                                       |
+| `showCounters`  | `Boolean` | true              | If true, will display a counter next to each result.                                                                                  |

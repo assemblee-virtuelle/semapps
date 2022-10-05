@@ -14,7 +14,7 @@ npm install @semapps/field-components --save
 
 ### AvatarWithLabelField
 
-Same as React-Admin [ReferenceArrayField](https://marmelab.com/react-admin/Fields.html#referencearrayfield) but, if the user has a `acl:Append` right on the resource, he will have the possibility to add a new relationship through a modal.
+Display the user avatar in a round image and a label below.
 
 ```jsx
 import { Show, SimpleShowLayout, ReferenceArrayField } from 'react-admin';
