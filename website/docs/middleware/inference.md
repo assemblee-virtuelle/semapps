@@ -44,10 +44,10 @@ module.exports = {
 
 ## Service settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `baseUrl`|`String` | **required**| Base URL of the LDP server |
-| `ontologies`| `[Object]`|**required** | List of ontology used (see example above) |
+| Property           | Type         | Default      | Description                               |
+|--------------------|--------------|--------------|-------------------------------------------|
+| `baseUrl` `String` | **required** |              | Base URL of the LDP server                |
+| `ontologies`       | `[Object] `  | **required** | List of ontology used (see example above) |
 
 ## Notes
 

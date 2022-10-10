@@ -36,8 +36,8 @@ module.exports = {
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
+| Property         | Type     | Default      | Description                                      |
+|------------------|----------|--------------|--------------------------------------------------|
 | `usersContainer` | `String` | **required** | URI of the container where WebIDs will be stored |
 
 ## Actions
@@ -47,13 +47,13 @@ The following service actions are available:
 ### `create`
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `email` | `string` | **required** | Email address |
-| `nick` | `string` | First part of the email address | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
+| Property     | Type     | Default                         | Description    |
+|--------------|----------|---------------------------------|----------------|
+| `email`      | `string` | **required**                    | Email address  |
+| `nick`       | `string` | First part of the email address | Nickname       |
+| `name`       | `string` | name                            | Name           |
+| `familyName` | `string` | null                            | Family name    |
+| `homepage`   | `string` | null                            | User's website |
 
 ##### Return
 `Object` - Created profile
@@ -61,9 +61,9 @@ The following service actions are available:
 ### `view`
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
+| Property  | Type     | Default                      | Description  |
+|-----------|----------|------------------------------|--------------|
+| `userId`  | `string` | The webId of the logged user | User's slug  |
 
 ##### Return
 `Object` - User's profile
@@ -71,14 +71,14 @@ The following service actions are available:
 ### `edit`
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
-| `email` | `string` | null | Email address |
-| `nick` | `string` | null | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
+| Property     | Type     | Default                      | Description    |
+|--------------|----------|------------------------------|----------------|
+| `userId`     | `string` | The webId of the logged user | User's slug    |
+| `email`      | `string` | null                         | Email address  |
+| `nick`       | `string` | null                         | Nickname       |
+| `name`       | `string` | name                         | Name           |
+| `familyName` | `string` | null                         | Family name    |
+| `homepage`   | `string` | null                         | User's website |
 
 ##### Return
 `Object` - Modified profile

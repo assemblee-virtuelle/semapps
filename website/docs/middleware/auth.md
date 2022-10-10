@@ -15,6 +15,7 @@ This service allows you to authenticate users with an OIDC or CAS server, or wit
 ## Sub-services
 - AuthAccountService
 - AuthJWTService
+- AuthMailService
 
 ## Install
 

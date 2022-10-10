@@ -37,6 +37,7 @@ module.exports = {
       ],
     },
     'middleware/inference',
+    'middleware/jsonld',
     {
       type: 'category',
       label: 'LDP',

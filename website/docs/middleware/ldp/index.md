@@ -61,13 +61,13 @@ module.exports = {
 
 ## Settings
 
-| Property | Type       | Default | Description                                                                       |
-| -------- |------------| ------- |-----------------------------------------------------------------------------------|
-| `baseUrl`| `String`   | **required**| Base URL of the LDP server                                                    |
-| `ontologies`| `[Array]`  |**required** | List of ontology used (see example above)                                  |
-| `containers`| `[Object]` | **required** | List of containers to set up, with their options                          |
-| `defaultContainerOptions`| `[Object]` | | Default options for all containers (see below)                            |
-| `preferredViewForResource`| `function` | | function called to generate a redirect to the preferre view (see below)  |
+| Property                   | Type        | Default      | Description                                                             |
+|----------------------------|-------------|--------------|-------------------------------------------------------------------------|
+| `baseUrl`                  | `String`    | **required** | Base URL of the LDP server                                              |
+| `ontologies`               | `[Array]`   | **required** | List of ontology used (see example above)                               |
+| `containers`               | `[Object]`  | **required** | List of containers to set up, with their options                        |
+| `defaultContainerOptions`  | `[Object]`  |              | Default options for all containers (see below)                          |
+| `preferredViewForResource` | `function`  |              | function called to generate a redirect to the preferre view (see below) |
 
 ## Container options
 
@@ -80,20 +80,20 @@ module.exports = {
 | `permissions`             | `Object` or `Function` |               | If the WebACL service is activated, permissions of the container itself                                                                                |
 | `newResourcesPermissions` | `Object` or `Function` |               | If the WebACL service is activated, permissions to add to new resources. [See the docs here](../webacl/index.md#default-permissions-for-new-resources) |
 | `readOnly`                | `Boolean`              | `false`       | Do not set `POST`, `PATCH`, `PUT` and `DELETE` routes for the container and its resources                                                              |
-| `preferredView`                  | `String`               |  | A part of the final URL for redirecting to the preferred view of the resource. Each container can have a different prefix that you will concatenate with the rest to form a full URL, see the `preferredViewForResource` below.                                                                 |
+| `preferredView`           | `String`               |               | A part of the final URL for redirecting to the preferred view of the resource. Each container can have a different prefix that you will concatenate with the rest to form a full URL, see the `preferredViewForResource` below.                                                                 |
 
 ## API routes
 
 These routes are automatically added to the `ApiGateway` service.
 
-| Route | Action called |
-| -------- | ---- |
-| `GET /<container>` | `ldp.container.get` |
-| `POST /<container>` | `ldp.container.post` |
-| `PATCH /<container>` | `ldp.container.patch` |
-| `GET /<container>/<resource>` | `ldp.resource.get` |
-| `PATCH /<container>/<resource>` | `ldp.resource.patch` |
-| `PUT /<container>/<resource>` | `ldp.resource.put` |
+| Route                            | Action called         |
+|----------------------------------|-----------------------|
+| `GET /<container>`               | `ldp.container.get`   |
+| `POST /<container>`              | `ldp.container.post`  |
+| `PATCH /<container>`             | `ldp.container.patch` |
+| `GET /<container>/<resource>`    | `ldp.resource.get`    |
+| `PATCH /<container>/<resource>`  | `ldp.resource.patch`  |
+| `PUT /<container>/<resource>`    | `ldp.resource.put`    |
 | `DELETE /<container>/<resource>` | `ldp.resource.delete` |
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.

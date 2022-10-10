@@ -8,11 +8,11 @@ This service allows you to easily configure standard SemApps services. It is off
 
 - [ActivityPubService](activitypub/index.md)
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- JsonLdService
+- [JsonLdService](jsonld.md)
 - [LdpService](ldp/index.md)
 - [MirrorService](mirror.md)
 - [SignatureService](signature.md)
-- SparqlEndpointService
+- [SparqlEndpointService](sparql-endpoint.md)
 - [TripleStoreService](triplestore/index.md)
 - [VoidService](void.md)
 - [WebAclService](webacl/index.md)

@@ -36,11 +36,10 @@ module.exports = {
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `baseUrl` | `String` |  | Base URL of the server. Used to find the domain name if it is not set.
-| `domainName` | `String` |  | Domain name used for the user@domain webfinger identifier. If not set, the domain name will be guessed from the users' container.
-
+| Property     | Type      | Default | Description                                                                                                                       |
+|--------------|-----------|---------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `baseUrl`    | `String`  |         | Base URL of the server. Used to find the domain name if it is not set.                                                            |
+| `domainName` | `String`  |         | Domain name used for the user@domain webfinger identifier. If not set, the domain name will be guessed from the users' container. |
 
 ## Discovering an user with Webfinger
 
