@@ -77,7 +77,7 @@ module.exports = {
     'middleware/webhooks',
     'middleware/webid'
   ],
-  Frontend: [
+  frontend: [
     'frontend/introduction',
     {
       type: 'category',
@@ -97,6 +97,11 @@ module.exports = {
     'frontend/interop-components',
     'frontend/list-components',
     'frontend/markdown-components'
+  ],
+  triplestore: [
+    'triplestore/introduction',
+    'triplestore/migrating-datasets',
+    'triplestore/compacting-datasets'
   ],
   contribute: {
     'SemApps core': ['contribute/code','contribute/coding-conventions'],

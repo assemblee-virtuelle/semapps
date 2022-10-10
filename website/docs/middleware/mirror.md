@@ -21,36 +21,14 @@ $ yarn add @semapps/mirror
 
 ## Dataset migration
 
-If you were running a previous version of the middleware and/or of Jena Fuseki (before July 2022), you will need to migrate your dataset(s) configuration(s).
+If you were running a previous version of Jena Fuseki (before July 2022), you will need to migrate your dataset(s) 
+configuration(s). First remove the current version of the docker image:
 
-- If your Docker containers are running, stop them
-```
-docker-compose down
-```
-
-- Remove the current image version of the Docker image
 ```
 docker image rm -f semapps/jena-fuseki-webacl
 ```
 
-- Pull the newer version from Docker Hub
-```
-docker image pull semapps/jena-fuseki-webacl 
-```
-
-- Run the following command to launch the migration
-```
-docker run -v "$(pwd)"/data/fuseki:/fuseki --entrypoint /docker-migration-entrypoint.sh semapps/jena-fuseki-webacl
-```
-
-> **Warning**: the volume can be different on your setup. It has to be the exact same as the volumes line of the `fuseki` service present in your docker-compose file.
-
-- You can check that everything went well with the migration by starting the shell environment of the fuseki service (`docker-compose exec fuseki bash`), and doing `cat /fuseki/configuration/migration.log`. If you see some errors in this file, or if your dataset configuration files were not standard and you had modified them, then you need to do the migration manually. you can find the previous version of your configuration files with the extension `.bak`. To see the format of the dataset configuration you want to achieve manually, please refer to the templates [here](https://github.com/assemblee-virtuelle/semapps/tree/next/src/jena/fuseki-docker/migration/templates).
-
-- You can now restart your Docker containers. Fuseki should be ready to support the mirror service.
-```
-docker-compose up -d
-```
+Then follow the guide on dataset migration [here](../triplestore/migrating-datasets).
 
 ## Usage
 
