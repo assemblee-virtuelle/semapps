@@ -1,6 +1,7 @@
 module.exports = {
   guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
   middleware: [
+    'middleware/introduction',
     'middleware/core',
     {
       type: 'category',
@@ -8,6 +9,7 @@ module.exports = {
       items: [
         'middleware/activitypub/index',
         'middleware/activitypub/activities-handler',
+        'middleware/activitypub/activity-mapping',
       ],
     },
     'middleware/auth',
@@ -50,6 +52,7 @@ module.exports = {
         'middleware/notifications/single-mail',
       ],
     },
+    'middleware/sparql-endpoint',
     {
       type: 'category',
       label: 'Triplestore',

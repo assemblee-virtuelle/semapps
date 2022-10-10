@@ -34,7 +34,7 @@ module.exports = {
       items: [
         {to: 'docs/about', label: 'About', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
-        {to: 'docs/middleware/auth', label: 'Middleware', position: 'left'},
+        {to: 'docs/middleware/introduction', label: 'Middleware', position: 'left'},
         {to: 'docs/frontend/introduction', label: 'Frontend', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {to: 'blog', label: 'Blog', position: 'left'},
