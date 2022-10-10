@@ -148,12 +148,13 @@ const PersonList = props => (
 );
 ```
 
-| Property        | Type        | Default         | Description                                                                         |
-|-----------------|-------------|-----------------|-------------------------------------------------------------------------------------|
-| `views`         | `Object`    | **required**    | List of views. See above for the expected format.                                   |
-| `ListComponent` | `Element`   | `List`          | The top-level List component to use. Default to React-Admin default List component. |
-| `actions`       | `Component` | `<ListActions>` | Actions to show in addition to the buttons to switch between views.                 |
+| Property        | Type        | Default                    | Description                                                                         |
+|-----------------|-------------|----------------------------|-------------------------------------------------------------------------------------|
+| `views`         | `Object`    | **required**               | List of views. See above for the expected format.                                   |
+| `ListComponent` | `Element`   | `List`                     | The top-level List component to use. Default to React-Admin default List component. |
+| `actions`       | `Component` | `<ListActionsWithViews />` | Actions to show in addition to the buttons to switch between views.                 |
 
+> Note: if you wish to include the buttons to switch views in another `actions` component, use the `ViewsButtons` component also exported from this package. 
 
 ### ReferenceFilter
 
