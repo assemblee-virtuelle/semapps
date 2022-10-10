@@ -6,8 +6,11 @@ module.exports = {
     {
       type: 'category',
       label: 'ActivityPub',
+      link: {
+        type: 'doc',
+        id: 'middleware/activitypub/index'
+      },
       items: [
-        'middleware/activitypub/index',
         'middleware/activitypub/activities-handler',
         'middleware/activitypub/activity-mapping',
       ],
@@ -18,8 +21,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Importer',
+      link: {
+        type: 'doc',
+        id: 'middleware/importer/index'
+      },
       items: [
-        'middleware/importer/index',
         'middleware/importer/discourse',
         'middleware/importer/drupal',
         'middleware/importer/gogocarto',
@@ -34,8 +40,11 @@ module.exports = {
     {
       type: 'category',
       label: 'LDP',
+      link: {
+        type: 'doc',
+        id: 'middleware/ldp/index'
+      },
       items: [
-        'middleware/ldp/index',
         'middleware/ldp/resource',
         'middleware/ldp/container',
         'middleware/ldp/document-tagger',
@@ -46,8 +55,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Notifications',
+      link: {
+        type: 'doc',
+        id: 'middleware/notifications/index'
+      },
       items: [
-        'middleware/notifications/index',
         'middleware/notifications/digest',
         'middleware/notifications/single-mail',
       ],
@@ -56,8 +68,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Triplestore',
+      link: {
+        type: 'doc',
+        id: 'middleware/triplestore/index'
+      },
       items: [
-        'middleware/triplestore/index',
         'middleware/triplestore/dataset',
       ],
     },
@@ -65,8 +80,11 @@ module.exports = {
     {
       type: 'category',
       label: 'WebACL',
+      link: {
+        type: 'doc',
+        id: 'middleware/webacl/index'
+      },
       items: [
-        'middleware/webacl/index',
         'middleware/webacl/resource',
         'middleware/webacl/group',
         'middleware/webacl/authorizer',
@@ -82,8 +100,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Semantic Data Provider',
+      link: {
+        type: 'doc',
+        id: 'frontend/semantic-data-provider/index'
+      },
       items: [
-        'frontend/semantic-data-provider/index',
         'frontend/semantic-data-provider/data-servers',
         'frontend/semantic-data-provider/data-model',
       ],
