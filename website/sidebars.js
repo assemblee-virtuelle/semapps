@@ -48,6 +48,7 @@ module.exports = {
       items: [
         'middleware/ldp/resource',
         'middleware/ldp/container',
+        'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
       ],
     },

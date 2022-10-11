@@ -1,8 +1,6 @@
 const createSlug = require('speakingurl');
 const ObjectID = require('bson').ObjectID;
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
