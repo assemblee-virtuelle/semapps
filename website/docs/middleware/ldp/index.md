@@ -2,7 +2,7 @@
 title: LDP
 ---
 
-This package allows you to setup LDP direct containers in which LDP resources can be manipulated.
+This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) containers in which LDP resources can be manipulated.
 
 ## Features
 - Handles triples, turtle and JSON-LD format
