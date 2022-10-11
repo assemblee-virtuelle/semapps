@@ -17,9 +17,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](../ldp/index.md)
-- [WebfingerService](../webfinger.md)
-- [SignatureService](../signature.md)
+- [LdpService](../ldp)
+- [WebfingerService](../webfinger)
+- [SignatureService](../signature)
 
 ## Sub-services
 

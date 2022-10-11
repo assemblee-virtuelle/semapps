@@ -4,12 +4,11 @@ title: HTTP & LD Signature
 
 This service implements the [HTTP Signature](https://tools.ietf.org/html/draft-cavage-http-signatures-12) and 
 [Linked Data Signature](https://ldapwiki.com/wiki/Linked%20Data%20Signatures) protocols, which allow to send messages 
-in a secure way between servers. It is used in particular with the [ActivityPub](activitypub/index.md) federation 
+in a secure way between servers. It is used in particular with the [ActivityPub](activitypub) federation 
 mechanism.
 
 
 ## Features
-
 - Generate actors key pair
 - Sign and verify HTTP signature
 - Build and verify HTTP digest
@@ -17,7 +16,6 @@ mechanism.
 - Sign and verify LD signature (*not implemented yet*)
 
 ## Dependencies
-
 - None
 
 
@@ -78,7 +76,47 @@ const ApiService = {
 | `actorsKeyPairsDir` | `String` | **required** | Path to where the actor's key pair will be stored. |
 
 
+## Actions
+
+The following service actions are available.
+
+
+### `authenticate`
+
+To be used with the ApiGateway (see above)
+
+
+### `authorize`
+
+To be used with the ApiGateway (see above)
+
+
+### `deleteActorKeyPair`
+
+Delete the private/public key pair of a given actor.
+
+##### Parameters
+| Property   | Type     | Default      | Description       |
+|------------|----------|--------------|-------------------|
+| `actorUri` | `String` | **required** | URI of the actor  |
+
+
+### `getActorPublicKey`
+
+Get the public key of a given actor
+
+##### Parameters
+| Property   | Type     | Default      | Description      |
+|------------|----------|--------------|------------------|
+| `actorUri` | `String` | **required** | URI of the actor |
+
+##### Return
+`String` - The actor's public key.
+
+
 ### `generateActorKeyPair`
+
+Generate the private/public key pair for a given actor.
 
 ##### Parameters
 | Property   | Type     | Default      | Description                                            |
@@ -90,6 +128,8 @@ const ApiService = {
 
 
 ### `generateSignatureHeaders`
+
+Generate a HTTP signature based on the actor's private key and the body of the message.
 
 ##### Parameters
 | Property   | Type     | Default      | Description                                                                                     |
@@ -104,6 +144,8 @@ const ApiService = {
 
 
 ### `verifyDigest`
+
+Verify that the digest of the header is valid.
 
 ##### Parameters
 | Property  | Type     | Default      | Description                                                  |

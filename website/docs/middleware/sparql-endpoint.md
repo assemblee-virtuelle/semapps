@@ -3,12 +3,12 @@ title: SPARQL endpoint
 ---
 
 This service allows you to offer a public query-only [SPARQL](https://fr.wikipedia.org/wiki/SPARQL) endpoint, deployed
-on the `/sparql` path. It channels all requests to the [TripleStoreService](./triplestore/index.md).
+on the `/sparql` path. It channels all requests to the [TripleStoreService](./triplestore).
 
 
 ## Dependencies
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [TripleStoreService](./triplestore/index.md)
+- [TripleStoreService](triplestore)
 
 ## Install
 

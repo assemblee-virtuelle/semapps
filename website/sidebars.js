@@ -1,7 +1,7 @@
 module.exports = {
   guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
   middleware: [
-    'middleware/introduction',
+    'middleware/index',
     'middleware/core',
     {
       type: 'category',
@@ -98,7 +98,7 @@ module.exports = {
     'middleware/webid'
   ],
   frontend: [
-    'frontend/introduction',
+    'frontend/index',
     {
       type: 'category',
       label: 'Semantic Data Provider',
@@ -122,7 +122,7 @@ module.exports = {
     'frontend/markdown-components'
   ],
   triplestore: [
-    'triplestore/introduction',
+    'triplestore/index',
     'triplestore/migrating-datasets',
     'triplestore/compacting-datasets'
   ],

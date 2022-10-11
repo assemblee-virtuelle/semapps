@@ -4,14 +4,14 @@ title: Mirror
 
 This service enables your server to become a mirror of one or more other SemApps servers, and/or to offer the option to other SemApps servers to mirror you.
 
-Only public data can be mirrored. If your server is using the [WebAclService](webacl/index.md), then the anonymous `acl:Read` permission should be set for the data to be mirrored.
+Only public data can be mirrored. If your server is using the [WebAclService](webacl), then the anonymous `acl:Read` permission should be set for the data to be mirrored.
 
 ## Dependencies
 
-- [ActivityPubService](activitypub/index.md)
-- [LdpService](ldp/index.md)
-- [WebfingerService](webfinger.md)
-- [VoidService](void.md)
+- [ActivityPubService](activitypub)
+- [LdpService](ldp)
+- [WebfingerService](webfinger)
+- [VoidService](void)
 
 ## Install
 

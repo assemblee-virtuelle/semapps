@@ -9,9 +9,9 @@ architecture, ease of horizontal scaling) without the difficulty of setting up s
 
 Every building block of SemApps is a Moleculer [service](https://moleculer.services/docs/0.14/services.html), this way 
 you can compose the backend that you need, only including the standards that you need. Services are grouped by packages,
-which are usually named after a web semantic standard. Each package thus includes one or more services.
+which are usually named after a semantic web standard. Each package thus includes one or more services.
 
-The microservice architecture also make it easy to add new services depending on your specific needs. Your services can
+The microservice architecture also makes it easy to add new services depending on your specific needs. Your services can
 call [actions](https://moleculer.services/docs/0.14/actions.html) of SemApps services, or listen to
 [events](https://moleculer.services/docs/0.14/events.html) sent by them.
 

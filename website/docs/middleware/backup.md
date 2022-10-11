@@ -14,7 +14,7 @@ This service allows you to backup the triples in a given dataset, as well as the
 
 ## Dependencies
 
-- [TripleStoreService](triplestore/index.md)
+- [TripleStoreService](triplestore)
 
 
 ## Install

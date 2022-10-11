@@ -11,7 +11,7 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 
 ## Dependencies
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [TripleStoreService](../triplestore/index.md)
+- [TripleStoreService](../triplestore)
 
 ## Sub-services
 - [LdpResourceService](resource.md)
@@ -83,7 +83,7 @@ The following options can be set for each container, or they can be set in the `
 |---------------------------|------------------------|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `accept`                  | `String`               | "text/turtle" | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                                                                       |
 | `acceptedTypes`           | `Array`                |               | RDF classes accepted in this container. This is not enforced but used by some services to identify containers.                                         |
-| `excludeFromMirror`       | `Boolean`              | false         | If true, other servers will not be able to [mirror](mirror) this container.                                                                            |
+| `excludeFromMirror`       | `Boolean`              | false         | If true, other servers will not be able to [mirror](../mirror) this container.                                                                         |
 | `jsonContext`             | `Any`                  |               | JSON context to use to format results                                                                                                                  |
 | `dereference`             | `Array`                |               | Blank nodes to dereference, prefixed with their ontology. You can define sub-predicates separated by `/`                                               |
 | `queryDepth`              | `Integer`              | 0             | Depth of blank nodes to dereference (Deprecated. Will be removed in a future minor release.)                                                           |

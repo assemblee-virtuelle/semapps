@@ -2,7 +2,7 @@
 title: LdpContainerService
 ---
 
-This service is automatically created by the [LdpService](index)
+This service is automatically created by the [LdpService](index) with the key `ldp.container`.
 
 
 ## Actions

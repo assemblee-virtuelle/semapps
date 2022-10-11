@@ -12,8 +12,8 @@ This service allows you to automatically generate inferences when resources are 
 - More inference types are planned in the future
 
 ## Dependencies
-- [TripleStoreService](triplestore/index.md)
-- [LdpService](ldp/index.md)
+- [TripleStoreService](triplestore)
+- [LdpService](ldp)
 
 ## Install
 
