@@ -13,7 +13,7 @@ This service implements the [VoID](https://www.w3.org/TR/void/) protocol, which 
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](ldp/index.md)
+- [LdpService](ldp)
 
 ## Install
 

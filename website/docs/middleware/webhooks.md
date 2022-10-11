@@ -13,7 +13,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](ldp/index.md)
+- [LdpService](ldp)
 
 ## Install
 
