@@ -32,8 +32,8 @@ const App = () => (
 ```
 
 The semantic data provider rely on two important configuration:
-- The [Data Servers](data-servers), which describes the servers to which we want to connect and what they contain.
-- The [Data Model](data-model), which describes how we want the data to be displayed in React-Admin.
+- The [Data Servers](data-servers.md), which describes the servers to which we want to connect and what they contain.
+- The [Data Model](data-model.md), which describes how we want the data to be displayed in React-Admin.
 
 ## Settings
 

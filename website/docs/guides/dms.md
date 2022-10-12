@@ -4,11 +4,11 @@ title: Add a Data Management System
 
 ### Purpose
 
-The SemApps project is primarily focused on the backend. You need a frontend if you want to interact with the semantic data that are managed by the backend.
+The SemApps project is primarily focused on the backend. You will need a frontend if you want to interact with the semantic data that are managed by the backend.
 
 However, it is important for many projects to offer visibility on the data they manage, and thus we have provided tools to help you easily build a Data Management System (DMS).
 
-The DMS you will create on this guide is based on [React-Admin](https://marmelab.com/react-admin/), a complete framework to build backoffices with React. Used by thousands of developers, it is easy to adapt to your needs.
+The DMS you will create on this guide is based on [React-Admin](https://marmelab.com/react-admin/), a complete framework to build apps with React. Used by thousands of developers, it is easy to adapt to your needs.
 
 In this guide, you will :
 - **Create a DMS** using React-Admin;
@@ -26,7 +26,7 @@ You will of course also need a LDP server, configured with a SPARQL endpoint. Pl
 
 We provide a [custom template](https://create-react-app.dev/docs/custom-templates/) for Create-React-App to ease the creation of the DMS.
 
-To use it, run this command in the same directory where you ran the *moleculer init assemblee-virtuelle/semapps-template-ldp my-project* command:
+To use it, run this command:
 
 ```bash
 npx create-react-app my-dms --template @semapps/dms
@@ -40,17 +40,17 @@ cd my-dms
 
 ### Launch the DMS
 
-To launch your DMS, run the following command:
+To launch the DMS, run the following command:
 
 ```bash
 npm start
 ```
 
-Your instance of the DMS is available at http://localhost:5000.
+Your instance of the DMS is available at [http://localhost:5000](http://localhost:5000).
 
-You should get something like this:
+If you followed the previous guide until the end, you should see the Note that you POSTed:
 
-![](dms_resources/homepage_dms.jpg)
+![](dms_resources/homepage_dms.png)
 
 ### Configuration
 
@@ -63,27 +63,30 @@ PORT=5000
 
 ## Adding more resources
 
-### Add more people
+### Add and modify data
 
-As we have done in the guide about the LDP server (, you can try to add new people, change their name or surname, and try to remove them.
+As we have done in the guide about the LDP server, you can try to add new notes, change their content, and try to remove them.
 
-If everything works well, the changes should appear both on the LDP server (http://localhost:3000/) and on the Jena Fuseki instance corresponding to the semantic database (http://localhost:3030/).
+The [semantic data provider](../frontend/semantic-data-provider) will convert these operations to LDP or SPARQL queries. 
+You can have a look at the Network tab in your browser console to see how this works behind the scene.
 
 ### Add more types of data
 
-By default, the template will be configured to have one type of resource, of the semantic type `foaf:Person`. You can change this by editing the `./src/config/resources.js` file:
+By default, the template is configured to have one type of resource, of the semantic type `as:Note`. 
+You can change this by editing the `src/config/resources.js` file:
 
 ```
 export default {
-  Person: {
-    types: ['foaf:Person'],
-    containerUri: process.env.REACT_APP_MIDDLEWARE_URL + 'resources'
+  Note: {
+    types: ['as:Note'],
   }
 };
 ```
 
-If no `types` are defined for the resource, React-Admin will fetch the data from the LDP container at the URL `containerUri`.
+The URL of the container is found by looking at the VoID endpoint that your newly-created LDP server provides. You can
+see what it looks like by going to [http://localhost:3000/.well-known/void](http://localhost:3000/.well-known/void).
 
-If `types` are defined, the `containerUri` field is required only if you need to create new data.
+Try adding a React-Admin resource of type `as:Person` since it is also configured on your LDP server !
 
-You can then modify the `./src/App.js` component to list the resources, define an edit form, etc. Please see the example provided, and read the excellent [React-Admin documentation](https://marmelab.com/react-admin/Readme.html).
+You will then need modify the `src/App.js` file which list the resources, define an edit form, etc. 
+Please see the examples provided, and read the excellent [React-Admin documentation](https://marmelab.com/react-admin/Readme.html).

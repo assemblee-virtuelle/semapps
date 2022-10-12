@@ -1,4 +1,3 @@
-# Linked Data Management System react template
+# Data Management System template
 
-## Introduction
- build a DMS REACT app for semapps
+See [this guide](https://semapps.org/docs/guides/dms) for information.

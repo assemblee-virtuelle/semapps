@@ -137,6 +137,7 @@ Content-Length: 97
 {
   "@context": "https://www.w3.org/ns/activitystreams",
   "type": "Note",
+  "name": "My first note",
   "content": "Hello world !"
 }
 ```
@@ -160,6 +161,7 @@ You should get this result:
     {
       "id": "http://localhost:3000/notes/603288b18391d7738ebba0fe",
       "type": "Note",
+      "name": "My first note",
       "content": "Hello world !"
     }
   ]
@@ -182,6 +184,6 @@ WHERE {
 
 You should get the following result:
 
-![](ldp_resources/query_result.jpg)
+![](ldp_resources/query_result.png)
 
 Your first note has been added to the database : the LDP server works!
