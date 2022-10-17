@@ -2,7 +2,7 @@
 title: TripleStore
 ---
 
-This service allows you to interface with a [Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) triple store.
+This service allows you to interface with a Jena Fuseki [triple store](../../triplestore).
 
 ## Features
 
@@ -52,79 +52,93 @@ module.exports = {
 
 The following service actions are available:
 
-### `triplestore.query`
-* Execute a SPARQL Query and return result in accept type provided
-* SELECT, CONSTRUCT, ASK queries are supported
-* Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+
+### `countTripleOfSubject`
+- Count all triples associated with a subject
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `query` | `String`  | null| SPARQL query to execute |
-| `accept` | `String` | **required** | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId` | `String` | Logged user's webId | User doing the action |
-
-##### Return
-`String` or `Object` depending on accept
-
-### `triplestore.update`
-* Execute a SPARQL update query
-* DELETE, INSERT queries supported (see [specifications](https://www.w3.org/TR/sparql11-update/))
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `query` | `String`  | null| SPARQL Update to execute |
-| `webId` | `string` | Logged user's webId | User doing the action |
-
-##### Return
-None
-
-### `triplestore.insert`
-* Insert a list of triples
-* Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `resource` | `Object`, `String` | **required** | Triples to insert  |
-| `contentType` | `String` | `text/turtle` | Type of data provided (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId` | `String` | Logged user's webId | User doing the action |
-
-##### Return
-None
-
-### `delete`
-*  Delete all triples associated with a subject
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `uri` | `String`  | **required** | Subject |
-| `webId` | `String` | Logged user's webId | User doing the action |
-
-##### Return
-None
-
-### `triplestore.countTripleOfSubject`
-* Count all triples associated with a subject
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `uri` | `String`  | **required** | Subject |
-| `webId` | `String` | Logged user's webId | User doing the action |
+| Property    | Type     | Default              | Description                            |
+|-------------|----------|----------------------|----------------------------------------|
+| `uri`       | `String` | **required**         | Subject                                |
+| `webId`     | `String` | Logged user's webId  | User doing the action                  |
+| `dataset`   | `String` | Main dataset         | Dataset where to execute the operation |
+| `graphName` | `String` | Default graph        | Graph where to execute the operation   |
 
 ##### Return
 `Integer` - Number of triples associated with the given subject
 
-### `triplestore.dropAll`
-* Delete all triples on the dataset
+
+### `deleteOrphanBlankNodes`
+- Delete all orphan blank nodes in a given dataset and graph
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `webId` | `String` | Logged user's webId | User doing the action |
+| Property    | Type     | Default       | Description                            |
+|-------------|----------|---------------|----------------------------------------|
+| `dataset`   | `String` | Main dataset  | Dataset where to execute the operation |
+| `graphName` | `String` | Default graph | Graph where to execute the operation   |
 
 ##### Return
 None
+
+
+### `dropAll`
+- Delete all triples on the given dataset
+
+##### Parameters
+| Property  | Type     | Default              | Description                            |
+|-----------|----------|----------------------|----------------------------------------|
+| `webId`   | `String` | Logged user's webId  | User doing the action                  |
+| `dataset` | `String` | Main dataset         | Dataset where to execute the operation |
+
+##### Return
+None
+
+
+### `insert`
+- Insert a list of triples
+- Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+
+##### Parameters
+| Property      | Type               | Default             | Description                                                                             |
+|---------------|--------------------|---------------------|-----------------------------------------------------------------------------------------|
+| `resource`    | `Object`, `String` | **required**        | Triples to insert                                                                       |
+| `contentType` | `String`           | `text/turtle`       | Type of data provided (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId`       | `String`           | Logged user's webId | User doing the action                                                                   |
+| `dataset`     | `String`           | Main dataset        | Dataset where to insert the data                                                        |
+| `graphName`   | `String`           | Default graph       | Graph where to insert the data                                                          |
+
+##### Return
+None
+
+
+### `query`
+- Execute a SPARQL Query and return result in accept type provided
+- SELECT, CONSTRUCT, ASK queries are supported
+- Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
+
+##### Parameters
+| Property  | Type     | Default             | Description                                                                      |
+|-----------|----------|---------------------|----------------------------------------------------------------------------------|
+| `query`   | `String` | **required**        | SPARQL query to execute                                                          |
+| `accept`  | `String` | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
+| `webId`   | `String` | Logged user's webId | User doing the action                                                            |
+| `dataset` | `String` | Main dataset        | Dataset where to execute the query                                               |
+
+##### Return
+`String` or `Object` depending on accept
+
+
+### `update`
+- Execute a SPARQL update query
+- DELETE, INSERT queries supported (see [specifications](https://www.w3.org/TR/sparql11-update/))
+
+##### Parameters
+| Property  | Type     | Default             | Description                            |
+|-----------|----------|---------------------|----------------------------------------|
+| `query`   | `String` | null                | SPARQL Update to execute               |
+| `webId`   | `string` | Logged user's webId | User doing the action                  |
+| `dataset` | `String` | Main dataset        | Dataset where to execute the operation |
+
+##### Return
+None
+

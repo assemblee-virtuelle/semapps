@@ -6,48 +6,59 @@ As a developer, you can choose to use SemApps as a library for your own project,
 
 On the other hand, if you want to contribute to the core of SemApps, this page is for you.
 
-## Launch the stack locally
 
-In a few commands, you can launch the full SemApps stack with:
+## Linking SemApps packages from other projects
 
-- Middleware
-- Frontend ([DMS](guides/dms.md))
-- A Jena Fuseki instance
+To modify packages on the SemApps repository and see the changes before they are published, we recommend to use [`yarn link`](https://classic.yarnpkg.com/en/docs/cli/link/).
 
-### First time
+### Middleware packages
 
-You will need to install:
-
-- [docker](https://docs.docker.com/install/)
-- [docker-compose](https://docs.docker.com/compose/install/)
-- [make](https://www.gnu.org/software/make/)
-
-Then you can do:
-
-```
-git clone https://github.com/assemblee-virtuelle/semapps.git
-cd semapps
-make init
-make build
-make start
-```
-### Logs
-
-```
-make log
+```bash
+cd /SEMAPPS_REPO/src/middleware
+yarn run link-all
+cd /PRODUCT_REPO/middleware
+yarn run link-semapps-packages
 ```
 
-### Stop
+### Frontend packages
 
+```bash
+cd /SEMAPPS_REPO/src/frontend
+yarn run link-all
+cd /PRODUCT_REPO/frontend
+yarn run link-semapps-packages
 ```
-make stop
+
+Additionally, frontend packages need to be rebuilt, or your changes will not be taken into account.
+You can use `yarn run build` to build a package once, or `yarn run dev` to rebuild a package on every change.
+
+
+## Publishing packages
+
+This requires to have write rights on the @semapps NPM packages. Ask us if you need it !
+
+### Middleware packages
+
+```bash
+cd src/middleware
+yarn run version
+yarn run publish
 ```
 
-## Getting data
+> Do not forget to create a release from the newly-created [tag](https://github.com/assemblee-virtuelle/semapps/tags)
 
-If you want to have some semantic data to start experimenting, please contact us.
+### Frontend packages
+
+```bash
+cd src/frontend
+yarn run build   # Build all frontend packages
+yarn run version
+yarn run publish
+```
+
+> Do not forget to create a release from the newly-created [tag](https://github.com/assemblee-virtuelle/semapps/tags)
 
 
 ## Getting help
 
-Our [Riot/Matrix chatroom](https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org) is the main entry point for all people who want to contribute.
+Our [chatroom](https://chat.lescommuns.org/channel/semapps_dev) is the main entry point for all people who want to contribute.

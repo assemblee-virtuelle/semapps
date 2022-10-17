@@ -4,16 +4,11 @@ title: WebID
 
 This service allows you to create and view WebID-conform profiles.
 
-## Features
-
-- CRUD operations in WebID
-- Storage in triple store
 
 ## Dependencies
 
-- [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](ldp/index.md)
-- [TripleStoreService](triplestore/index.md)
+- [LdpService](ldp)
+
 
 ## Install
 
@@ -34,11 +29,17 @@ module.exports = {
 };
 ```
 
+> Note: the users' container must be set through the LdpService
+
+
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `usersContainer` | `String` | **required** | URI of the container where WebIDs will be stored |
+| Property         | Type      | Default                                | Description                                      |
+|------------------|-----------|----------------------------------------|--------------------------------------------------|
+| `baseUrl`        | `String`  | **required** if `podProvider` is true  | Base URL of the instance                         |
+| `usersContainer` | `String`  | **required** if `podProvider` is false | URI of the container where WebIDs will be stored |
+| `podProvider`    | `Boolean` | false                                  | Set to true if you are setting up a POD provider |
+
 
 ## Actions
 
@@ -47,46 +48,44 @@ The following service actions are available:
 ### `create`
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `email` | `string` | **required** | Email address |
-| `nick` | `string` | First part of the email address | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
+| Property     | Type     | Default                         | Description    |
+|--------------|----------|---------------------------------|----------------|
+| `email`      | `string` | **required**                    | Email address  |
+| `nick`       | `string` | First part of the email address | Nickname       |
+| `name`       | `string` | name                            | Name           |
+| `familyName` | `string` | null                            | Family name    |
+| `homepage`   | `string` | null                            | User's website |
 
 ##### Return
 `Object` - Created profile
 
-### `view`
-
-##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
-
-##### Return
-`Object` - User's profile
 
 ### `edit`
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `userId` | `string` | The webId of the logged user | User's slug  |
-| `email` | `string` | null | Email address |
-| `nick` | `string` | null | Nickname |
-| `name` | `string` | name | Name |
-| `familyName` | `string` | null | Family name |
-| `homepage` | `string` | null | User's website |
+| Property     | Type     | Default                      | Description    |
+|--------------|----------|------------------------------|----------------|
+| `userId`     | `string` | The webId of the logged user | User's slug    |
+| `email`      | `string` | null                         | Email address  |
+| `nick`       | `string` | null                         | Nickname       |
+| `name`       | `string` | name                         | Name           |
+| `familyName` | `string` | null                         | Family name    |
+| `homepage`   | `string` | null                         | User's website |
 
 ##### Return
 `Object` - Modified profile
 
-### `list`
+
+### `view`
+
+##### Parameters
+| Property  | Type     | Default                      | Description  |
+|-----------|----------|------------------------------|--------------|
+| `userId`  | `string` | The webId of the logged user | User's slug  |
 
 ##### Return
-`String` - LDP container with all registered users
+`Object` - User's profile
+
 
 ## Events
 

@@ -13,7 +13,7 @@ This service allows to create incoming [webhooks](https://en.wikipedia.org/wiki/
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](ldp/index.md)
+- [LdpService](ldp)
 
 ## Install
 
@@ -30,8 +30,8 @@ module.exports = {
   mixins: [WebhooksService],
   settings: {
     containerUri: "http://localhost:3000/webhooks/",
-    usersContainer: "http://localhost:3000/users/",
-    allowedActions: ['myAction']
+    allowedActions: ['myAction'],
+    
   },
   actions: {
     async myAction(ctx) {
@@ -42,19 +42,30 @@ module.exports = {
 }
 ```
 
-## Generating new webhooks
+## Settings
+
+| Property         | Type                | Default                                     | Description                                                 |
+|------------------|---------------------|---------------------------------------------|-------------------------------------------------------------|
+| `containerUri`   | `String`            | **required**                                | Container where the webhooks will be stored.                |
+| `allowedActions` | `Array`             | **required**                                | Name of the webhook actions which can be used               |
+| `context`        | `Array` or `Object` | { "@vocab": "http://semapps.org/ns/core#" } | JSON-LD context used when returning the webhook information |
+
+
+## Use cases
+
+### Generating new webhooks
 
 You generate a webhook by providing a user and an action. The action must be in the list of `allowedActions`, in the settings.
 
-### Through the command line
+#### Through the command line
 
 Start Moleculer in REPL mode and call the `generate` action like this:
 
-```
+```bash
 mol$ call webhooks.generate --userId myUser --action myAction
 ```
 
-### Through a secured endpoint
+#### Through a secured endpoint
 
 `POST` to the `/webhooks` endpoint as a logged-in user, providing the action that will be handled by this endpoint as JSON.
 
@@ -69,12 +80,12 @@ Authorization: Bearer XXX
 }
 ```
 
-## Posting to a webhook
+### Posting to a webhook
 
 When you generate a webhook, you will receive an URI in response. You can then post JSON data to this webhook. It will be handled by the action(s) you defined.
 
 
-## Queuing incoming POSTs
+### Queuing incoming POSTs
 
 If you wish, you can use the [Bull](https://github.com/OptimalBits/bull) task manager to queue incoming POSTs and make sure no data is lost.
 
@@ -90,4 +101,4 @@ module.exports = {
 };
 ```
 
-Please look at the official documentation for more information.
+Please look at the Bull service's official documentation for more information.

@@ -2,12 +2,15 @@
 title: WebAclResourceService
 ---
 
+This service is automatically created by the [WebAclService](index) with the key `webacl.ressource`.
+
+
 ## Actions
 
 The following service actions are available:
 
 
-### `webacl.resource.addRights`
+### `addRights`
 - Add some permissions to a resource
 - Only available if the user has Control access to the resource.
 - Does not take into account the `acl:mode` nor `acl:default` triples that are sent.
@@ -22,7 +25,7 @@ The following service actions are available:
 
 Here's the format for the `additionalRights` parameter:
 
-```js
+```
 {
   anon: {
     read: boolean,
@@ -76,7 +79,7 @@ Note that this limitation is not present in the `PATCH` HTTP method, but only if
 Null
 
 
-### `webacl.resource.awaitReadRights`
+### `awaitReadRights`
 - Wait until the given user has the right to read the given resource
 
 ##### Parameters
@@ -90,7 +93,7 @@ Null
 Null
 
 
-### `webacl.resource.deleteAllRights`
+### `deleteAllRights`
 - Remove all rights on a given resource.
 
 ##### Parameters
@@ -102,7 +105,7 @@ Null
 Null
 
 
-### `webacl.resource.getRights`
+### `getRights`
 - If the user has Control permission on the resource, return all the permissions on that resource.
 - If the user doesn't have Control permission, return only the permissions related to the specific user that is doing the request.
 - Return the permissions grouped by the Authorization node they belong to.
@@ -124,7 +127,7 @@ Null
 Turtle or JSON-LD. See above.
 
 
-### `webacl.resource.hasRights`
+### `hasRights`
 - Checks if a user (or the logged-in user) has some rights on a resource.
 
 ##### Parameters
@@ -146,14 +149,14 @@ An object containing the permissions you asked for:
 ```
 
 
-### `webacl.resource.refreshContainersRights`
+### `refreshContainersRights`
 - Remove all rights from the containers and add those defined in the containers `permissions` option
 
 ##### Return
 Null
 
 
-### `webacl.resource.removeRights`
+### `removeRights`
 - This action can only be called by other Moleculer services.
 - If you remove a right which doesn't exist, no error will be thrown.
 
@@ -167,7 +170,7 @@ Null
 Null
 
 
-### `webacl.resource.setRights`
+### `setRights`
 - Change all the permissions of a resource so that they become like in the document that is sent by the user.
 - Only available if the user has Control access to the resource.
 - The former permissions that are not present in the document will be removed.

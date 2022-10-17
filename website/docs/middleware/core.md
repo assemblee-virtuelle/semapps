@@ -6,17 +6,17 @@ This service allows you to easily configure standard SemApps services. It is off
 
 ## Sub-services
 
-- [ActivityPubService](activitypub/index.md)
+- [ActivityPubService](activitypub)
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- JsonLdService
-- [LdpService](ldp/index.md)
-- [MirrorService](mirror.md)
-- [SignatureService](signature.md)
-- SparqlEndpointService
-- [TripleStoreService](triplestore/index.md)
+- [JsonLdService](jsonld)
+- [LdpService](ldp)
+- [MirrorService](mirror)
+- [SignatureService](signature)
+- [SparqlEndpointService](sparql-endpoint)
+- [TripleStoreService](triplestore)
 - [VoidService](void.md)
-- [WebAclService](webacl/index.md)
-- [WebfingerService](webfinger.md)
+- [WebAclService](webacl)
+- [WebfingerService](webfinger)
 
 ## Install
 
@@ -51,3 +51,9 @@ module.exports = {
 
 Additionally, you can pass custom configurations to the sub-services by using their name as a key (`activitypub`, `ldp`, etc.). 
 If you do not wish not to instantiate a particular service, you can pass `false`.
+
+### Setup the WebAclMiddleware
+
+Unless you disable the WebAclService, you will need to setup the WebAclMiddleware in your `moleculer.config.js` file.
+
+Please see the [WebAclService](./webacl) documentation for more information.

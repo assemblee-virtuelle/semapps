@@ -2,7 +2,8 @@
 title: Input Components
 ---
 
-New [React-Admin inputs](https://marmelab.com/react-admin/Inputs.html) to be used in SemApps projects.
+New [React-Admin inputs](https://marmelab.com/react-admin/doc/3.19/Inputs.html) to be used in SemApps projects.
+
 
 ## Installation
 
@@ -10,11 +11,18 @@ New [React-Admin inputs](https://marmelab.com/react-admin/Inputs.html) to be use
 npm install @semapps/input-components --save
 ```
 
+
 ## Components
+
+### MultiLinesInput
+
+A multi-lines [TextInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#textinput), which returns an array with
+each line as an element. Can be used with [MultiUrlField](field-components).
+
 
 ### MultiServerAutocompleteInput
 
-Same as React-Admin [AutocompleteInput](https://marmelab.com/react-admin/Inputs.html#autocompleteinput) but displays the name of the data server where the resource is coming from.
+Same as React-Admin [AutocompleteInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#autocompleteinput) but displays the name of the data server where the resource is coming from.
 
 ```jsx
 import { ReferenceInput } from 'react-admin';
@@ -29,7 +37,8 @@ export const TopicInput = props => (
 
 ### MultiServerAutocompleteArrayInput
 
-Same as React-Admin [AutocompleteArrayInput](https://marmelab.com/react-admin/Inputs.html#autocompletearrayinput) but displays the name of the data server (in grey and italic).
+Same as React-Admin [AutocompleteArrayInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#autocompletearrayinput) 
+but displays the name of the data server (in grey and italic).
 
 ```jsx
 import { ReferenceArrayInput } from 'react-admin';
@@ -55,3 +64,15 @@ overrides: {
   }
 }
 ```
+
+
+### ReferenceArrayInput
+
+Same as React-Admin [ReferenceArrayInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#referencearrayinput) but, 
+if there is a single value, transform the string into an array. Also, if the value is dereferenced, only keep it's `@id`.
+
+
+### ReferenceInput
+
+Same as React-Admin [ReferenceInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#referenceinput) but, if the
+value is dereferenced, only keep it's `@id`.

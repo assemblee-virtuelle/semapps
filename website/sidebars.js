@@ -1,13 +1,18 @@
 module.exports = {
   guides: ['guides/ldp-server','guides/dms','guides/activitypub'],
   middleware: [
+    'middleware/index',
     'middleware/core',
     {
       type: 'category',
       label: 'ActivityPub',
+      link: {
+        type: 'doc',
+        id: 'middleware/activitypub/index'
+      },
       items: [
-        'middleware/activitypub/index',
         'middleware/activitypub/activities-handler',
+        'middleware/activitypub/activity-mapping',
       ],
     },
     'middleware/auth',
@@ -16,8 +21,11 @@ module.exports = {
     {
       type: 'category',
       label: 'Importer',
+      link: {
+        type: 'doc',
+        id: 'middleware/importer/index'
+      },
       items: [
-        'middleware/importer/index',
         'middleware/importer/discourse',
         'middleware/importer/drupal',
         'middleware/importer/gogocarto',
@@ -29,13 +37,18 @@ module.exports = {
       ],
     },
     'middleware/inference',
+    'middleware/jsonld',
     {
       type: 'category',
       label: 'LDP',
+      link: {
+        type: 'doc',
+        id: 'middleware/ldp/index'
+      },
       items: [
-        'middleware/ldp/index',
         'middleware/ldp/resource',
         'middleware/ldp/container',
+        'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
       ],
     },
@@ -44,17 +57,24 @@ module.exports = {
     {
       type: 'category',
       label: 'Notifications',
+      link: {
+        type: 'doc',
+        id: 'middleware/notifications/index'
+      },
       items: [
-        'middleware/notifications/index',
         'middleware/notifications/digest',
         'middleware/notifications/single-mail',
       ],
     },
+    'middleware/sparql-endpoint',
     {
       type: 'category',
       label: 'Triplestore',
+      link: {
+        type: 'doc',
+        id: 'middleware/triplestore/index'
+      },
       items: [
-        'middleware/triplestore/index',
         'middleware/triplestore/dataset',
       ],
     },
@@ -62,8 +82,11 @@ module.exports = {
     {
       type: 'category',
       label: 'WebACL',
+      link: {
+        type: 'doc',
+        id: 'middleware/webacl/index'
+      },
       items: [
-        'middleware/webacl/index',
         'middleware/webacl/resource',
         'middleware/webacl/group',
         'middleware/webacl/authorizer',
@@ -74,7 +97,20 @@ module.exports = {
     'middleware/webhooks',
     'middleware/webid'
   ],
-  Frontend: [
+  frontend: [
+    'frontend/index',
+    {
+      type: 'category',
+      label: 'Semantic Data Provider',
+      link: {
+        type: 'doc',
+        id: 'frontend/semantic-data-provider/index'
+      },
+      items: [
+        'frontend/semantic-data-provider/data-servers',
+        'frontend/semantic-data-provider/data-model',
+      ],
+    },
     'frontend/auth-provider',
     'frontend/activitypub-components',
     'frontend/date-components',
@@ -84,6 +120,11 @@ module.exports = {
     'frontend/interop-components',
     'frontend/list-components',
     'frontend/markdown-components'
+  ],
+  triplestore: [
+    'triplestore/index',
+    'triplestore/migrating-datasets',
+    'triplestore/compacting-datasets'
   ],
   contribute: {
     'SemApps core': ['contribute/code','contribute/coding-conventions'],

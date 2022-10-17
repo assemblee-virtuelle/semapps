@@ -15,6 +15,7 @@ This service allows you to authenticate users with an OIDC or CAS server, or wit
 ## Sub-services
 - AuthAccountService
 - AuthJWTService
+- AuthMailService
 
 ## Install
 
@@ -183,17 +184,17 @@ A JWT token you can use in your app.
 
 Sent when a new user registers.
 
-##### Parameters
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `webId` | `String` | URI of the user |
-| `profileData` | `Object` | User's data |
+##### Payload
+| Property      | Type     | Description     |
+|---------------|----------|-----------------|
+| `webId`       | `String` | URI of the user |
+| `profileData` | `Object` | User's data     |
 
 ### `auth.connected`
 
 Sent when an user logins.
 
-##### Parameters
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `webId` | `String` | URI of the user |
+##### Payload
+| Property | Type     | Description     |
+|----------|----------|-----------------|
+| `webId`  | `String` | URI of the user |
