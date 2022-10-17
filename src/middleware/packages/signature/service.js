@@ -109,6 +109,12 @@ const SignatureService = {
     async verifyHttpSignature(ctx) {
       const { url, path, method, headers } = ctx.params;
 
+      // If there is a x-forwarded-host header, set is as host
+      // This is the default behavior for Express server but the ApiGateway doesn't use Express
+      if (headers['x-forwarded-host']) {
+        headers.host = headers['x-forwarded-host'];
+      }
+
       const parsedSignature = parseRequest({
         url: path || url.replace(new URL(url).origin, ''), // URL without domain name
         method,
