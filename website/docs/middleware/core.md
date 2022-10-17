@@ -51,3 +51,9 @@ module.exports = {
 
 Additionally, you can pass custom configurations to the sub-services by using their name as a key (`activitypub`, `ldp`, etc.). 
 If you do not wish not to instantiate a particular service, you can pass `false`.
+
+### Setup the WebAclMiddleware
+
+Unless you disable the WebAclService, you will need to setup the WebAclMiddleware in your `moleculer.config.js` file.
+
+Please see the [WebAclService](./webacl) documentation for more information.
