@@ -1,3 +1,4 @@
 module.exports = {
-  MirrorService: require('./service')
+  MirrorService: require('./service'),
+  botsContainer: require('./bots-container.json')
 };
