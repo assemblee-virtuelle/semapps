@@ -3,6 +3,8 @@ const fs = require('fs');
 const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
 
+const imagesMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+
 module.exports = {
   visibility: 'public',
   params: {
@@ -27,7 +29,7 @@ module.exports = {
       throw new MoleculerError(e, 500, 'Server Error');
     }
 
-    return {
+    const metadata = {
       '@context': { '@vocab': 'http://semapps.org/ns/core#' },
       '@id': resourceUri,
       '@type': 'semapps:File',
@@ -36,5 +38,11 @@ module.exports = {
       localPath,
       fileName
     };
+
+    if (imagesMimeTypes.includes(file.mimetype)) {
+      await this.actions.compressImage({ metadata }, { parentCtx: ctx });
+    }
+
+    return metadata;
   }
 };

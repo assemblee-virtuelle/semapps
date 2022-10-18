@@ -92,7 +92,7 @@ module.exports = {
 
       try {
         if (file) {
-          resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
+          resource = await ctx.call('ldp.file.upload', { resourceUri, file });
         }
 
         const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });

@@ -1,6 +1,7 @@
 const LdpContainerService = require('./services/container');
 const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
+const LdpFileService = require('./services/file');
 const LdpRegistryService = require('./services/registry');
 
 module.exports = {
@@ -45,6 +46,12 @@ module.exports = {
         preferredViewForResource
       },
       hooks: this.schema.hooksResource || {}
+    });
+
+    await this.broker.createService(LdpFileService, {
+      settings: {
+        baseUrl
+      }
     });
 
     await this.broker.createService(LdpRegistryService, {

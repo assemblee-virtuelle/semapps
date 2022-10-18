@@ -1,3 +1,4 @@
+const ScheduleMixin = require('moleculer-schedule');
 const getAction = require('./actions/get');
 const createAction = require('./actions/create');
 const patchAction = require('./actions/patch');
@@ -5,15 +6,12 @@ const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const generateIdAction = require('./actions/generateId');
-const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
 
-const Schedule = require('moleculer-schedule');
-
 module.exports = {
   name: 'ldp.resource',
-  mixins: [Schedule],
+  mixins: [ScheduleMixin],
   settings: {
     baseUrl: null,
     ontologies: [],
@@ -26,7 +24,6 @@ module.exports = {
     exist: existAction,
     generateId: generateIdAction,
     create: createAction,
-    upload: uploadAction,
     // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,
