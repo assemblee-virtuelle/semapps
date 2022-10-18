@@ -75,6 +75,7 @@ const parseSparql = async (req, res, next) => {
       (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
   ) {
     req.$ctx.meta.parser = 'sparql';
+    // TODO Store in req.$ctx.meta.rawBody
     req.$params.body = await getRawBody(req);
   }
   next();
@@ -83,6 +84,7 @@ const parseSparql = async (req, res, next) => {
 const parseTurtle = async (req, res, next) => {
   if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
     req.$ctx.meta.parser = 'turtle';
+    // TODO Store in req.$ctx.meta.rawBody
     req.$params.body = await getRawBody(req);
   }
   next();
@@ -103,6 +105,8 @@ const parseJson = async (req, res, next) => {
     if (body) {
       const json = JSON.parse(body);
       req.$params = { ...json, ...req.$params };
+      // Keep raw body in meta as we need it for digest header verification
+      req.$ctx.meta.rawBody = body;
     }
     req.$ctx.meta.parser = 'json';
   }
