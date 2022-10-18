@@ -1,17 +1,17 @@
 const path = require('path');
 const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
+const { Errors: E } = require("moleculer-web");
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
-const { MirrorService } = require('@semapps/mirror');
+const { MirrorService, botsContainer } = require('@semapps/mirror');
 const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
 const { VoidService } = require('@semapps/void');
 const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
-const defaultContainers = require('./config/containers.json');
 const defaultOntologies = require('./config/ontologies.json');
 
 const CoreService = {
@@ -72,15 +72,21 @@ const CoreService = {
           authenticate(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authenticate', { route, req, res });
-            } else {
+            } else if (req.headers.authorization) {
               return ctx.call('auth.authenticate', { route, req, res });
+            } else {
+              ctx.meta.webId = 'anon';
+              return Promise.resolve(null);
             }
           },
           authorize(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authorize', { route, req, res });
-            } else {
+            } else if (req.headers.authorization) {
               return ctx.call('auth.authorize', { route, req, res });
+            } else {
+              ctx.meta.webId = 'anon';
+              return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
             }
           }
         }
@@ -116,7 +122,7 @@ const CoreService = {
         settings: {
           baseUrl,
           ontologies: ontologies || defaultOntologies,
-          containers: containers || defaultContainers,
+          containers: containers || (this.settings.mirror !== false ? [botsContainer] : []),
           ...this.settings.ldp,
           defaultContainerOptions: {
             jsonContext: jsonContext || defaultJsonContext,
