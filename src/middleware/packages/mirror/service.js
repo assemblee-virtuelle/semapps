@@ -167,24 +167,27 @@ module.exports = {
         if (!response.ok) throw new MoleculerError('No VOID endpoint on the server ' + serverUrl, 404, 'NOT_FOUND');
 
         const json = await response.json();
-        const firstServer = json['@graph'][0];
-        if (!firstServer || firstServer['@id'] !== createFragmentURL('', serverUrl))
+        let mapServers = {};
+        for (let s of json['@graph']) { mapServers[s['@id']] = s; }
+        const server = mapServers[createFragmentURL('', serverUrl)];
+        if (!server)
           throw new MoleculerError(
             'The VOID answer does not contain valid information for ' + serverUrl,
             400,
             'INVALID'
           );
 
-        // We mirror only the first server, meaning, not the mirrored data of the remote server.
+        // We mirror only the relevant server, meaning, not the mirrored data of the remote server.
         // If A mirrors B, and B also contains a mirror of C, then when A mirrors B,
         // A will only mirror what is proper to B, not the mirrored data of C
 
-        const partitions = firstServer['void:classPartition'];
+        const partitions = server['void:classPartition'];
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
-            // we skip empty containers
-            if (p['void:entities'] === '0') continue;
+            console.log(p)
+            // we skip empty containers and doNotMirror containers
+            if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
 
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
@@ -245,7 +248,7 @@ module.exports = {
           type: ACTIVITY_TYPES.FOLLOW,
           object: remoteRelayActorUri,
           to: [remoteRelayActorUri]
-        });
+        }, { meta: { skipSignature: true } });
 
         return remoteRelayActorUri;
       }
