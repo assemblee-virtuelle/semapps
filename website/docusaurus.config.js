@@ -37,7 +37,7 @@ module.exports = {
         srcDark: 'img/logo_dark.png'
       },
       items: [
-        {to: 'docs/about', label: 'About', position: 'left'},
+        {to: 'team', label: 'Team', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
         {to: 'docs/middleware', label: 'Middleware', position: 'left'},
         {to: 'docs/frontend', label: 'Frontend', position: 'left'},
@@ -56,7 +56,6 @@ module.exports = {
       ],
     },
     footer: {
-      style: 'dark',
       links: [
         {
           title: 'Guides',
@@ -120,4 +119,5 @@ module.exports = {
       },
     ],
   ],
+  plugins: ['docusaurus-plugin-sass'],
 };

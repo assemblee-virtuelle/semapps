@@ -3,91 +3,189 @@ import classnames from 'classnames';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import useBaseUrl from '@docusaurus/useBaseUrl';
-import styles from './styles.module.css';
+import Head from '@docusaurus/Head';
+import styles from './index/index.module.scss';
+import { AnimationOnScroll } from 'react-animation-on-scroll';
+import "animate.css/animate.min.css";
+import Carousel from 'react-material-ui-carousel';
+import { Paper, Button } from '@mui/material';
+import Product from './index/product';
+import Tool from './index/tool';
+import Website from './index/website';
 
-const features = [
-  {
-    title: <>Standard & semantic</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
-    description: (
-      <>
-        Based on semantic web standards & the SOLID specification, Semapps is built on the roots of the web and brings out its full potential.
-      </>
-    ),
-  },
-  {
-    title: <>Decentralized & federated</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
-    description: (
-      <>
-        Allowing multiple platforms to be both self-hosted and linked together, Semapps gives you back control and allows you to leverage network effects.
-      </>
-    ),
-  },
-  {
-    title: <>Modular</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
-    description: (
-      <>
-        Built on a micro-services architecture, SemApps is fully customizable, it ensures a high level of flexibility, sobriety and scalability.
-      </>
-    ),
-  },
-];
-
-function Feature({imageUrl, title, description}) {
-  const imgUrl = useBaseUrl(imageUrl);
-  return (
-    <div className={classnames('col col--4', styles.feature)}>
-      {imgUrl && (
-        <div className="text--center">
-          <img className={styles.featureImage} src={imgUrl} alt={title} />
-        </div>
-      )}
-      <h3>{title}</h3>
-      <p>{description}</p>
-    </div>
-  );
-}
 
 function Home() {
   const context = useDocusaurusContext();
-  const {siteConfig = {}} = context;
+  const { siteConfig = {} } = context;
+  
+  var carouselItems = [
+      {
+        label: 'Les chemins de la transition',
+        link: 'https://lescheminsdelatransition.org/',
+        image: 'img/cdlt.jpg'
+      },
+      {
+        label: 'Les chemins de la transition',
+        link: 'https://lescheminsdelatransition.org/',
+        image: 'img/cdlt.jpg'
+      }
+  ]
+  
   return (
     <Layout
       title={`${siteConfig.title} - A toolbox for semantic web applications`}
       description={`${siteConfig.title} - A toolbox for semantic web applications`}>
-      <header className={classnames('hero hero--primary', styles.heroBanner)}>
-        <div className="container">
-          <h1 className="hero__title">{siteConfig.title}</h1>
-          <p className="hero__subtitle">{siteConfig.tagline}</p>
-          <div className={styles.buttons}>
-            <Link
-              className={classnames(
-                'button button--outline button--secondary button--lg',
-                styles.getStarted,
-              )}
-              to={useBaseUrl('docs/about')}>
-              Discover
-            </Link>
+
+      <Head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/brands.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/brands.min.js"></script>
+      </Head>
+
+      <div className={styles.layoutContainer}>
+
+        <section className={styles.hero}>
+          <div className={styles.Wrapper}>
+            <div className={styles.heroContainer}>
+              <div className={styles.heroImageContainer}>
+                <img src="img/toolbox.jpg" />
+              </div>
+              <div className={styles.heroTextContainer}>
+                <h1 className={styles.heroTitle}>SemApps</h1>
+                <div className={styles.heroSubtitle}>
+                  <p>An open source <strong>toolbox</strong></p>
+                  <p>to help you easily build</p>
+                  <p><strong>semantic web</strong> applications</p>
+                </div>
+                <div className={styles.heroIcons}>
+                  <img src="img/sw-icon.svg" />
+                  <img src="img/react-icon.svg" />
+                  <img src="img/ra-icon.svg" />
+                  <img src="img/solid-icon.svg" />
+                  <img src="img/activitypub-icon.svg" />
+                </div>
+                <AnimationOnScroll animateIn="animate__slideInLeft">
+                  <div className={styles.av}><span>SemApps is co-built as part of the Virtual Assembly</span> <img src="img/av-icon.png" /></div>
+                </AnimationOnScroll>
+               </div>
+            </div>
           </div>
-        </div>
-      </header>
-      <main>
-        {features && features.length && (
-          <section className={styles.features}>
-            <div className="container">
-              <div className="row">
-                {features.map((props, idx) => (
-                  <Feature key={idx} {...props} />
-                ))}
+        </section>
+
+        <section className={classnames(styles.tools, styles.contrast)}>
+          <div className={styles.wrapper}>
+            <h2>What's in the box ?</h2>
+            <ul>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='LDP' content='Read and write data through a standard API' />
+              </li>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='ActivityPub' content='Let actors communicate with each others.' />
+              </li>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='SPARQL' content='Make advanced queries through semantic data.' />
+              </li>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='WebId' content='Identify users accross plateforms' />
+              </li>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='WebAcl' content='Manage and verify rights of users' />
+              </li>
+              <li className={styles.toolCard}>
+                <Tool styles={styles} label='ShEx(soon)' content='Validate submitted data.' />
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section className={styles.products}>
+          <div className={styles.wrapper}>
+            <h2>Products built with <span className={styles.primary}>SemApps</span></h2>
+            <ul>
+              <li className={styles.productCard}>
+                <Product 
+                  styles={styles}
+                  label='Archipelago' 
+                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  image='img/archipelago.png' 
+                  github='https://github.com/assemblee-virtuelle/archipelago'
+                  link='https://archipel.assemblee-virtuelle.org/'
+                />
+              </li>
+              <li className={styles.productCard}>
+                <Product 
+                  styles={styles}
+                  label='OrganiGraph' 
+                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  image='img/Organigraph.png' 
+                  github='https://github.com/assemblee-virtuelle/archipelago'
+                  link='https://archipel.assemblee-virtuelle.org/'
+                />
+              </li>
+              <li className={styles.productCard}>
+                <Product 
+                  styles={styles}
+                  label='ActivityPods' 
+                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  image='img/activity-pods.png' 
+                  github='https://github.com/assemblee-virtuelle/archipelago'
+                  link='https://archipel.assemblee-virtuelle.org/'
+                />
+              </li>
+              <li className={styles.productCard}>
+                <Product 
+                  styles={styles}
+                  label='Minicourses' 
+                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  image='img/minicourses.png' 
+                  github='https://github.com/assemblee-virtuelle/archipelago'
+                  link='https://archipel.assemblee-virtuelle.org/'
+                />
+              </li>
+              <li className={styles.productCard}>
+                <Product 
+                  styles={styles}
+                  label='ActivityPub-Mailer' 
+                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  image='' 
+                  github='https://github.com/assemblee-virtuelle/archipelago'
+                  link='https://archipel.assemblee-virtuelle.org/'
+                />
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section className={classnames(styles.websites, styles.contrast)}>
+          <div className={styles.wrapper}>
+            <h2>Websites made with <span className={styles.primary}>SemApps</span></h2>
+            <Carousel     
+              indicatorIconButtonProps={{className: 'indicatorIcon_src-pages-index-module'}}
+              activeIndicatorIconButtonProps={{className: 'activeIndicatorIcon_src-pages-index-module'}}
+            >
+              { carouselItems.map( (item, i) => <Website key={i} styles={styles} label={item.label} link={item.link} image={item.image} /> ) }
+            </Carousel>
+          </div>
+        </section>
+
+        <section className={styles.clients}>
+          <div className={styles.wrapper}>
+            <h2><span className={styles.primary}>SemApps</span> clients</h2>
+            <div className={styles.ClientlogosContainer}>
+              <div className={styles.Clientlogo}>
+                <img src="img/ademe.svg" />
+              </div>
+              <div className={styles.Clientlogo}>
+                <img src="img/ademe.svg" />
               </div>
             </div>
-          </section>
-        )}
-      </main>
-    </Layout>
+          </div>
+        </section>
+
+      </div>
+
+    </Layout >
   );
 }
 
