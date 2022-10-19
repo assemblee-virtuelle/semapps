@@ -185,7 +185,6 @@ module.exports = {
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
-            console.log(p)
             // we skip empty containers and doNotMirror containers
             if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
 
@@ -248,7 +247,7 @@ module.exports = {
           type: ACTIVITY_TYPES.FOLLOW,
           object: remoteRelayActorUri,
           to: [remoteRelayActorUri]
-        }, { meta: { skipSignature: true } });
+        });
 
         return remoteRelayActorUri;
       }
