@@ -1,8 +1,11 @@
 import React from 'react';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
+import GitHubIcon from '@mui/icons-material/GitHub';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import styles from './index.module.scss';
 
-const Product = ({ styles, image, label, description, github, link }) => {
+const Product = ({ image, label, description, github, link }) => {
   return (
     <>
       <div className={styles.imageContainer}>
@@ -24,10 +27,10 @@ const Product = ({ styles, image, label, description, github, link }) => {
       <div className={styles.separator}>&nbsp;</div>
       <div className={styles.linksContainer}>
         { github && 
-          <a href={github} target='_blank'><i className='fa-brands fa-github'></i></a>
+          <a href={github} target='_blank'><GitHubIcon /></a>
         }
         { link && 
-          <a href={link} target='_blank'><i className='fa-solid fa-up-right-from-square'></i></a>
+          <a href={link} target='_blank'><OpenInNewIcon /></a>
         }        
       </div>
     </>

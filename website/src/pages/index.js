@@ -9,9 +9,9 @@ import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
 import Carousel from 'react-material-ui-carousel';
 import { Paper, Button } from '@mui/material';
-import Product from './index/product';
-import Tool from './index/tool';
-import Website from './index/website';
+import Product from './index/Product';
+import Tool from './index/Tool';
+import Website from './index/Website';
 
 
 function Home() {
@@ -35,13 +35,6 @@ function Home() {
     <Layout
       title={`${siteConfig.title} - A toolbox for semantic web applications`}
       description={`${siteConfig.title} - A toolbox for semantic web applications`}>
-
-      <Head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/brands.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/brands.min.js"></script>
-      </Head>
 
       <div className={styles.layoutContainer}>
 
@@ -81,22 +74,22 @@ function Home() {
             <h2>What's in the box ?</h2>
             <ul>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='LDP' content='Read and write data through a standard API' />
+                <Tool label='LDP' content='Read and write data through a standard API' />
               </li>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='ActivityPub' content='Let actors communicate with each others.' />
+                <Tool label='ActivityPub' content='Let actors communicate with each others.' />
               </li>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='SPARQL' content='Make advanced queries through semantic data.' />
+                <Tool label='SPARQL' content='Make advanced queries through semantic data.' />
               </li>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='WebId' content='Identify users accross plateforms' />
+                <Tool label='WebId' content='Identify users accross plateforms' />
               </li>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='WebAcl' content='Manage and verify rights of users' />
+                <Tool label='WebAcl' content='Manage and verify rights of users' />
               </li>
               <li className={styles.toolCard}>
-                <Tool styles={styles} label='ShEx(soon)' content='Validate submitted data.' />
+                <Tool label='ShEx(soon)' content='Validate submitted data.' />
               </li>
             </ul>
           </div>
@@ -108,7 +101,6 @@ function Home() {
             <ul>
               <li className={styles.productCard}>
                 <Product 
-                  styles={styles}
                   label='Archipelago' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/archipelago.png' 
@@ -118,7 +110,6 @@ function Home() {
               </li>
               <li className={styles.productCard}>
                 <Product 
-                  styles={styles}
                   label='OrganiGraph' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/Organigraph.png' 
@@ -128,7 +119,6 @@ function Home() {
               </li>
               <li className={styles.productCard}>
                 <Product 
-                  styles={styles}
                   label='ActivityPods' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/activity-pods.png' 
@@ -138,7 +128,6 @@ function Home() {
               </li>
               <li className={styles.productCard}>
                 <Product 
-                  styles={styles}
                   label='Minicourses' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/minicourses.png' 
@@ -148,7 +137,6 @@ function Home() {
               </li>
               <li className={styles.productCard}>
                 <Product 
-                  styles={styles}
                   label='ActivityPub-Bridge' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/activitypub-bridge.png' 
@@ -167,7 +155,7 @@ function Home() {
               indicatorIconButtonProps={{className: 'indicatorIcon_src-pages-index-index-module'}}
               activeIndicatorIconButtonProps={{className: 'activeIndicatorIcon_src-pages-index-index-module'}}
             >
-              { carouselItems.map( (item, i) => <Website key={i} styles={styles} label={item.label} link={item.link} image={item.image} /> ) }
+              { carouselItems.map( (item, i) => <Website key={i} label={item.label} link={item.link} image={item.image} /> ) }
             </Carousel>
           </div>
         </section>

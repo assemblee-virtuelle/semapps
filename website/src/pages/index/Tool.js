@@ -1,12 +1,14 @@
 import React from 'react';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
+import styles from './index.module.scss';
+import CubesIcon from './CubesIcon';
 
-const Tool = ({ styles, label, content }) => {
+const Tool = ({ label, content }) => {
   return (
     <>
       <div className={styles.iconContainer}>
-        <i className='fa-solid fa-cubes'></i>
+        <CubesIcon />
       </div>
       <div className={styles.textContainer}>
         <h3>{label}</h3>

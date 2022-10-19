@@ -7,8 +7,8 @@ import Head from '@docusaurus/Head';
 import styles from './team/team.module.scss';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
-import Member from './team/member';
-import Subtitle from './team/subtitle';
+import Member from './team/Member';
+import Subtitle from './team/Subtitle';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -17,14 +17,6 @@ function Home() {
     <Layout
       title={`${siteConfig.title} - A toolbox for semantic web applications`}
       description={`${siteConfig.title} - A toolbox for semantic web applications`}>
-
-      <Head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/brands.min.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/all.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/js/brands.min.js"></script>
-      </Head>
 
       <div className={classnames(styles.layoutContainer, styles.teamContainer)}>
 
@@ -141,7 +133,9 @@ function Home() {
                   label='Vincent Farcy' 
                   image='/img/vincent-farcy.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
-                  roles={[]}
+                  roles={[
+                    'Web development'
+                  ]}
                   linkedIn='https://www.linkedin.com/in/vincentfarcy/'
                   twitter=''
                   github='https://github.com/VincentFarcy'

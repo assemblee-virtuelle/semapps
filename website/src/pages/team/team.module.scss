@@ -108,10 +108,14 @@
       justify-content: center;
     }
 
-    .memberLinks>* {
-      font-size: 24px;
+    .memberLinks a>* {
+      font-size: 32px;
       color: var(--color-white);
       margin: 16px 6px;
+      transition: color .25s;
+      &:hover, &:active {
+        color: var(--color-primary);
+      }
     }
   }
 }
