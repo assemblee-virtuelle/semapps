@@ -28,10 +28,10 @@ const DispatchService = {
         } else {
           // If the QueueService mixin is available, use it
           if (this.createJob) {
-            this.createJob('remotePost', activity.actor, { recipientUri, activity, skipSignature: ctx.meta.skipSignature });
+            this.createJob('remotePost', activity.actor, { recipientUri, activity });
           } else {
             // Send directly
-            await this.remotePost(recipientUri, activity, !ctx.meta.skipSignature);
+            await this.remotePost(recipientUri, activity);
           }
         }
       }
@@ -39,10 +39,10 @@ const DispatchService = {
       if (localRecipients.length > 0) {
         // If the QueueService mixin is available, use it
         if (this.createJob) {
-          this.createJob('localPost', activity.actor, { recipients: localRecipients, activity, skipSignature: ctx.meta.skipSignature });
+          this.createJob('localPost', activity.actor, { recipients: localRecipients, activity });
         } else {
           // Call directly
-          await this.localPost(localRecipients, activity, !ctx.meta.skipSignature);
+          await this.localPost(localRecipients, activity);
         }
       }
     },
@@ -83,7 +83,7 @@ const DispatchService = {
 
       return { success, failures };
     },
-    async remotePost(recipientUri, activity, sign = true) {
+    async remotePost(recipientUri, activity) {
       try {
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,
@@ -94,15 +94,13 @@ const DispatchService = {
         if (!recipientInbox) return false;
 
         const body = JSON.stringify(activity);
-        let signatureHeaders = {};
-        if (sign) {
-          signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-            url: recipientInbox,
-            method: 'POST',
-            body,
-            actorUri: activity.actor
-          });
-        }
+
+        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
+          url: recipientInbox,
+          method: 'POST',
+          body,
+          actorUri: activity.actor
+        });
 
         // Post activity to the inbox of the remote actor
         return await fetch(recipientInbox, {
@@ -123,8 +121,8 @@ const DispatchService = {
     remotePost: {
       name: '*',
       async process(job) {
-        const { activity, recipientUri, skipSignature } = job.data;
-        const response = await this.remotePost(recipientUri, activity, !skipSignature);
+        const { activity, recipientUri } = job.data;
+        const response = await this.remotePost(recipientUri, activity);
 
         if (!response.ok) {
           job.moveToFailed({ message: 'Unable to send to remote actor ' + recipientUri }, true);
@@ -138,8 +136,8 @@ const DispatchService = {
     localPost: {
       name: '*',
       async process(job) {
-        const { activity, recipients, skipSignature } = job.data;
-        const { success, failures } = await this.localPost(recipients, activity, !skipSignature);
+        const { activity, recipients } = job.data;
+        const { success, failures } = await this.localPost(recipients, activity);
 
         if (success.length === 0) {
           job.moveToFailed({ message: 'No local recipients could be reached' }, true);
