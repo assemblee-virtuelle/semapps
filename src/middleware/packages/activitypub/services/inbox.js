@@ -39,23 +39,23 @@ const InboxService = {
         return;
       }
 
-      if (!ctx.meta.skipSignatureValidation) {
-        const validDigest = await ctx.call('signature.verifyDigest', {
-          body: ctx.meta.rawBody, // Stored by parseJson middleware
-          headers: ctx.meta.headers
-        });
+      // if (!ctx.meta.skipSignatureValidation) {
+      //   const validDigest = await ctx.call('signature.verifyDigest', {
+      //     body: ctx.meta.rawBody, // Stored by parseJson middleware
+      //     headers: ctx.meta.headers
+      //   });
 
-        const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
-          url: collectionUri,
-          method: 'POST',
-          headers: ctx.meta.headers
-        });
+      //   const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
+      //     url: collectionUri,
+      //     method: 'POST',
+      //     headers: ctx.meta.headers
+      //   });
 
-        if (!validDigest || !validSignature) {
-          ctx.meta.$statusCode = 401;
-          return;
-        }
-      }
+      //   if (!validDigest || !validSignature) {
+      //     ctx.meta.$statusCode = 401;
+      //     return;
+      //   }
+      // }
 
       // TODO check activity is valid
 
