@@ -40,7 +40,7 @@ module.exports = {
     };
 
     if (imagesMimeTypes.includes(file.mimetype)) {
-      await this.actions.compressImage({ metadata }, { parentCtx: ctx });
+      await this.actions.reduceImage({ metadata }, { parentCtx: ctx });
     }
 
     return metadata;

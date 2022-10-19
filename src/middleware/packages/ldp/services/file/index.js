@@ -1,4 +1,4 @@
-const compressImageAction = require('./actions/compressImage');
+const reduceImageAction = require('./actions/reduceImage');
 const uploadAction = require('./actions/upload');
 const methods = require('./methods');
 
@@ -8,7 +8,7 @@ module.exports = {
     baseUrl: null,
   },
   actions: {
-    compressImage: compressImageAction,
+    reduceImage: reduceImageAction,
     upload: uploadAction
   },
   methods

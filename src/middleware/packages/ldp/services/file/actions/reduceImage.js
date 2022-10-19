@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const {MIME_TYPES} = require("@semapps/mime-types");
+const { MIME_TYPES } = require("@semapps/mime-types");
 
 const imagesMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 
@@ -14,7 +14,7 @@ module.exports = {
 
     if (!metadata) {
       if (!resourceUri) {
-        throw new Error('ldp.file.compressImage require a resourceUri or metadata param');
+        throw new Error('ldp.file.reduceImage require a resourceUri or metadata param');
       }
 
       metadata = await ctx.call('ldp.resource.get', {
@@ -29,14 +29,14 @@ module.exports = {
     console.log('metadata', metadata)
 
     if (metadata['@type'] !== 'semapps:File') {
-      throw new Error(resourceUri + ' is not a file, cannot compress.');
+      throw new Error(resourceUri + ' is not a file, cannot reduce.');
     }
 
     if (imagesMimeTypes.includes(metadata.mimetype)) {
-      throw new Error(resourceUri + ' is not an allowed image type, cannot compress.');
+      throw new Error(resourceUri + ' is not an allowed image type, cannot reduce.');
     }
 
-    const { width, height } = await sharp(metadata.localPath).metadata();
+    const { width, height, format } = await sharp(metadata.localPath).metadata();
 
     if (width > 1000) {
       // We cannot write directly to the input file, so write to a buffer first
