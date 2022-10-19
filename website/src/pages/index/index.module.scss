@@ -60,7 +60,11 @@
   }
 
   section.hero {
-    padding-top: 0
+    padding-top: 0;
+    @media (max-width: 600px) {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
   }
 
   section.hero .heroContainer {
@@ -70,7 +74,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
     @media (min-width: 997px) {
       flex-direction: row;
       height: 600px;
@@ -80,8 +83,9 @@
   section.hero .heroImageContainer {
     width: 500px;
     max-width: 100%;
-
+    margin-top: 32px;
     @media (min-width: 997px) {
+      margin-top: unset;
       height: 450px;
       width: 700px;
     }
@@ -97,14 +101,13 @@
     width: 480px;
     max-width: 100%;
     background-color: white;
-    margin-top: -64px;
+    margin-top: -40px;
     padding: 0 16px 16px;
     border-radius: 4px;
-
-    @media (min-width: 600px) {
+    @media (min-width: 450px) {
+      margin-top: -58px;
       padding: 0 32px 32px;
     }
-
     @media (min-width: 997px) {
       margin-top: 64px;
       padding: 32px;
@@ -124,7 +127,6 @@
 
   section.hero .heroTextContainer {
     text-align: center;
-
     @media (min-width: 997px) {
       text-align: left;
     }
@@ -132,8 +134,12 @@
     .heroTitle {
       font-weight: bold;
       font-size: 50px;
+      margin-top: 24px;
       margin-bottom: 24px;
       color: #3AA2A5;
+      @media (min-width: 600px) {
+        margin-top: 0;
+      }
     }
 
     .heroSubtitle {
@@ -150,7 +156,6 @@
     font-style: italic;
     animation: fadeInLeft;
     animation-duration: 1.5s;
-
     @media (min-width: 997px) {
       justify-content: flex-start;
     }
@@ -198,12 +203,10 @@
     align-items: center;
     height: 100px;
     width: 100%;
-
     @media (min-width: 600px) {
       width: 50%;
       margin: 32px 0;
     }
-
     @media (min-width: 997px) {
       width: calc(100% / 3);
     }
@@ -219,7 +222,6 @@
     border-radius: 50%;
     background-color: var(--color-tertiary);
     color: var(--color-primary);
-
     @media (min-width: 600px) {
       font-size: 50px;
       min-width: 100px;
@@ -286,7 +288,7 @@
   }
 
   section.products .productCard {
-    margin: 32px 16px 16px;
+    margin: 32px 0 16px;
     transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     border-radius: 4px;
     box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
@@ -297,7 +299,9 @@
     justify-content: center;
     align-items: center;
     border-radius: 16px;
-
+    @media (min-width: 600px) {
+      margin: 32px 20px 16px;
+    }
     &>* {
       width: calc(100% - 32px);
     }
@@ -323,13 +327,11 @@
     border-radius: 16px;
     overflow: hidden;
     background-color: var(--color-primary);
-
     &>* {
       height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-
       & img {
         height: 90%;
         border-radius: 16px;
@@ -368,41 +370,32 @@
     h2 {
       margin-bottom: 64px;
     }
-
     .websiteCard {
       margin-top: 32px;
     }
-
     .imageContainer {
       display: flex;
       justify-content: center;
       overflow: hidden;
       margin: 0;
-
       @media (min-width: 600px) {
         margin: 0 32px;
       }
     }
-
     h3 {
       margin: 32px 0;
       color: var(--color-white);
       text-align: center;
     }
-
     .indicatorIcon {
       color: var(--color-primary);
       margin: 16px 8px 0;
-
       &:hover {
         color: var(--color-black);
       }
-
     }
-
     .activeIndicatorIcon {
       opacity: .25;
-
       &:hover {
         color: var(--color-primary);
       }
@@ -411,17 +404,18 @@
 
   section.clients {
     background-color: #f5f5f5;
-  }
-
-  section.clients .ClientlogosContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  section.clients .ClientlogosContainer img {
-    height: 120px;
-    margin: 16px;
+    .clientlogosContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .clientlogosContainer img {
+      height: 120px;
+      margin: 16px;
+      &.small {
+        height: 60px;
+      }
+    }
   }
 }

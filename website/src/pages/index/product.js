@@ -8,7 +8,7 @@ const Product = ({ styles, image, label, description, github, link }) => {
       <div className={styles.imageContainer}>
         <AnimationOnScroll animateIn="animate__fadeIn" duration={2}>
           { image &&
-            <img src={image} />
+            <img src={image} alt={label} />
           }
         </AnimationOnScroll>
       </div>

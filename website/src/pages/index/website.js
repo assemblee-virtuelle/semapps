@@ -7,7 +7,7 @@ const Website = ({ styles, label, image, link }) => {
     <>
       <a className={styles.websiteCard} href={link} target='_blank'>
         <div className={styles.imageContainer}>
-          <img src={image} />
+          <img src={image} alt={label} />
         </div>
         <h3>{label}</h3>
       </a>

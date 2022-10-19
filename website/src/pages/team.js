@@ -8,6 +8,7 @@ import styles from './team/team.module.scss';
 import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
 import Member from './team/member';
+import Subtitle from './team/subtitle';
 
 function Home() {
   const context = useDocusaurusContext();
@@ -29,7 +30,7 @@ function Home() {
 
         <section className={styles.teamIntro}>
           <h1>Semapps and the virtual assembly</h1>
-          <div className={styles.image}><img src="/img/av-baniere.png" /></div>
+          <div className={styles.image}><img src="/img/av-baniere.png" alt="virtual assembly banner" /></div>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio alias quas non dolor assumenda voluptatem aliquid sapiente illo, veniam omnis!</p>
           <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, inventore.</p>
         </section>
@@ -37,16 +38,10 @@ function Home() {
         <section className={classnames(styles.teamMembers, styles.contrast)}>
           <div className={styles.wrapper}>
             <h2>Team</h2>
-            <div className={styles.memberSubtitleContainer}>
-              <AnimationOnScroll animateIn="animate__slideInRight" duration={2}>
-                <h3>Core team</h3>
-              </AnimationOnScroll>
-              <div className={styles.border}>&nbsp;</div>
-            </div>
+            <Subtitle label='Core team' />
             <ul>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Sébastien Rosset' 
                   image='/img/srosset.jpg' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -64,7 +59,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Simon Louvet' 
                   image='/img/simon-louvet.jpg' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -79,7 +73,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Niko Bonnieure' 
                   image='img/blank-profile-picture.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -91,7 +84,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Pierre Bouvier-Muller' 
                   image='/img/pierre-bouvier-muller.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -105,7 +97,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Guillaume Rouyer' 
                   image='/img/guillaume-rouyer.jpg' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -119,7 +110,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Yannick Duthé' 
                   image='/img/yannick-duthe.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -135,7 +125,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Bastien Siguier' 
                   image='/img/bastien-siguier.jfif' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -149,7 +138,6 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Vincent Farcy' 
                   image='/img/vincent-farcy.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
@@ -160,14 +148,10 @@ function Home() {
                 />
               </li>
             </ul>
-            <div className={styles.memberSubtitleContainer}>
-              <h3>Technical advisors</h3>
-              <div className={styles.border}></div>
-            </div>
+            <Subtitle label='Technical advisors' />
             <ul>
               <li className={styles.memberCard}>
                 <Member 
-                  styles={styles}
                   label='Thomas Francart' 
                   image='/img/Thomas-Francart.jpg' 
                   description='Knowledge Graph and Semantic Web senior consultant'

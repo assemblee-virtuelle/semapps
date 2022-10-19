@@ -49,7 +49,7 @@ function Home() {
           <div className={styles.Wrapper}>
             <div className={styles.heroContainer}>
               <div className={styles.heroImageContainer}>
-                <img src="img/toolbox.jpg" />
+                <img src="img/toolbox.jpg" alt="semapps toolbox" />
               </div>
               <div className={styles.heroTextContainer}>
                 <h1 className={styles.heroTitle}>SemApps</h1>
@@ -59,14 +59,17 @@ function Home() {
                   <p><strong>semantic web</strong> applications</p>
                 </div>
                 <div className={styles.heroIcons}>
-                  <img src="img/sw-icon.svg" />
-                  <img src="img/react-icon.svg" />
-                  <img src="img/ra-icon.svg" />
-                  <img src="img/solid-icon.svg" />
-                  <img src="img/activitypub-icon.svg" />
+                  <img src="img/sw-icon.svg" alt="semantic web icon" />
+                  <img src="img/react-icon.svg" alt="semantic react icon" />
+                  <img src="img/ra-icon.svg" alt="react admin icon "/>
+                  <img src="img/solid-icon.svg" alt="solid icon" />
+                  <img src="img/activitypub-icon.svg" alt="activitypub icon" />
                 </div>
                 <AnimationOnScroll animateIn="animate__slideInLeft">
-                  <div className={styles.av}><span>SemApps is co-built as part of the Virtual Assembly</span> <img src="img/av-icon.png" /></div>
+                  <div className={styles.av}>
+                    <span>SemApps is co-built as part of the Virtual Assembly</span>
+                    <img src="img/av-icon.png" alt="virtual assembly icon" />
+                  </div>
                 </AnimationOnScroll>
                </div>
             </div>
@@ -119,8 +122,8 @@ function Home() {
                   label='OrganiGraph' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/Organigraph.png' 
-                  github='https://github.com/assemblee-virtuelle/archipelago'
-                  link='https://archipel.assemblee-virtuelle.org/'
+                  github='https://github.com/assemblee-virtuelle/organigraph'
+                  link=''
                 />
               </li>
               <li className={styles.productCard}>
@@ -129,8 +132,8 @@ function Home() {
                   label='ActivityPods' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/activity-pods.png' 
-                  github='https://github.com/assemblee-virtuelle/archipelago'
-                  link='https://archipel.assemblee-virtuelle.org/'
+                  github='https://github.com/assemblee-virtuelle/activitypods'
+                  link=''
                 />
               </li>
               <li className={styles.productCard}>
@@ -139,18 +142,18 @@ function Home() {
                   label='Minicourses' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
                   image='img/minicourses.png' 
-                  github='https://github.com/assemblee-virtuelle/archipelago'
-                  link='https://archipel.assemblee-virtuelle.org/'
+                  github='https://github.com/assemblee-virtuelle/minicourses'
+                  link=''
                 />
               </li>
               <li className={styles.productCard}>
                 <Product 
                   styles={styles}
-                  label='ActivityPub-Mailer' 
+                  label='ActivityPub-Bridge' 
                   description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
-                  image='' 
-                  github='https://github.com/assemblee-virtuelle/archipelago'
-                  link='https://archipel.assemblee-virtuelle.org/'
+                  image='img/activitypub-bridge.png' 
+                  github='https://github.com/assemblee-virtuelle/activitypub-bridge'
+                  link=''
                 />
               </li>
             </ul>
@@ -161,8 +164,8 @@ function Home() {
           <div className={styles.wrapper}>
             <h2>Websites made with <span className={styles.primary}>SemApps</span></h2>
             <Carousel     
-              indicatorIconButtonProps={{className: 'indicatorIcon_src-pages-index-module'}}
-              activeIndicatorIconButtonProps={{className: 'activeIndicatorIcon_src-pages-index-module'}}
+              indicatorIconButtonProps={{className: 'indicatorIcon_src-pages-index-index-module'}}
+              activeIndicatorIconButtonProps={{className: 'activeIndicatorIcon_src-pages-index-index-module'}}
             >
               { carouselItems.map( (item, i) => <Website key={i} styles={styles} label={item.label} link={item.link} image={item.image} /> ) }
             </Carousel>
@@ -172,12 +175,12 @@ function Home() {
         <section className={styles.clients}>
           <div className={styles.wrapper}>
             <h2><span className={styles.primary}>SemApps</span> clients</h2>
-            <div className={styles.ClientlogosContainer}>
-              <div className={styles.Clientlogo}>
-                <img src="img/ademe.svg" />
+            <div className={styles.clientlogosContainer}>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-colibris.svg" alt="colibri logo" />
               </div>
-              <div className={styles.Clientlogo}>
-                <img src="img/ademe.svg" />
+              <div className={styles.clientlogo}>
+                <img src="img/collectif-emploi.png" alt="collectif emploi logo" className={styles.small} />
               </div>
             </div>
           </div>

@@ -6,6 +6,7 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'assemblee-virtuelle', // Usually your GitHub org/user name.
   projectName: 'semapps', // Usually your repo name.
+  /*
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'fr'],
@@ -20,6 +21,7 @@ module.exports = {
       }
     }
   },
+  */
   themeConfig: {
     docs: {
       sidebar: {
@@ -29,13 +31,18 @@ module.exports = {
     prism: {
       theme: require('prism-react-renderer/themes/shadesOfPurple'),
     },
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true
+    },
     navbar: {
       title: 'SemApps',
+      /*
       logo: {
         alt: 'Logo Semapps',
         src: 'img/logo.png',
-        srcDark: 'img/logo_dark.png'
       },
+      */
       items: [
         {to: 'team', label: 'Team', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
@@ -49,10 +56,12 @@ module.exports = {
           label: 'GitHub',
           position: 'right',
         },
+        /*
         {
           type: 'localeDropdown',
           position: 'right',
         },
+        */
       ],
     },
     footer: {

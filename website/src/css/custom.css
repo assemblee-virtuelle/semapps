@@ -6,7 +6,14 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #3AA2A5;
+  --color-white: #f5f5f5;
+  --color-black: black;
+  --color-primary: #3AA2A5;
+  --color-secondary: #282c34;
+  --color-tertiary: #435B5B;
+  --color-secondary-darken: #20232a;
+  
+  --ifm-color-primary: var(--color-primary);
   /*
   --ifm-color-primary-dark: #186e93;
   --ifm-color-primary-darker: #0d5777;
@@ -16,11 +23,13 @@
   --ifm-color-primary-lightest: #c5dbe5;
   */
   --ifm-code-font-size: 95%;
-  --ifm-navbar-background-color: #20232a;
-  --ifm-navbar-link-color: #f5f5f5;
-  --ifm-footer-background-color: #20232a;
-  --ifm-footer-color: #f5f5f5;
-  --ifm-footer-link-color: #f5f5f5;
+  --ifm-navbar-background-color: var(--color-secondary-darken);
+  --ifm-navbar-link-color: var(--color-white);
+  --ifm-footer-background-color: var(--color-secondary-darken);
+  --ifm-footer-color: var(--color-white);
+  --ifm-footer-link-color: var(--color-white);
+  --ifm-menu-color: var(--color-white);
+  --ifm-menu-color-background-hover: var(--color-primary);
 }
 
 .docusaurus-highlight-code-line {
@@ -28,4 +37,17 @@
   display: block;
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
+}
+
+.navbar__items svg, .navbar-sidebar button {
+  color: var(--color-white);
+}
+aside .menu__link:not(.menu__link--active):not(:hover) {
+  color: var(--color-secondary-darken);
+}
+aside .menu__list-item-collapsible--active {
+  background-color: rgba(0,0,0,0.05);
+}
+aside .menu__list-item-collapsible--active a:hover {
+  color: var(--color-white);
 }
