@@ -70,7 +70,7 @@ function Home() {
                   roles={[]}
                   linkedIn=''
                   twitter=''
-                  github=''
+                  github='https://github.com/nikoPLP'
                 />
               </li>
               <li className={styles.memberCard}>
@@ -83,7 +83,7 @@ function Home() {
                   ]}
                   linkedIn='https://www.linkedin.com/in/bouviermullerp/'
                   twitter=''
-                  github=''
+                  github='https://github.com/bouviermullerp'
                 />
               </li>
               <li className={styles.memberCard}>
@@ -96,7 +96,7 @@ function Home() {
                   ]}
                   linkedIn='https://www.linkedin.com/in/guillaume-rouyer-paris/'
                   twitter=''
-                  github=''
+                  github='https://github.com/GuillaumeAV'
                 />
               </li>
               <li className={styles.memberCard}>
@@ -111,7 +111,7 @@ function Home() {
                   ]}
                   linkedIn='https://www.linkedin.com/in/yannick-duthe-569a741b/'
                   twitter=''
-                  github=''
+                  github='https://github.com/fluidlog'
                 />
               </li>
               <li className={styles.memberCard}>
@@ -124,7 +124,7 @@ function Home() {
                   ]}
                   linkedIn='https://www.linkedin.com/in/bastien-siguier/'
                   twitter=''
-                  github=''
+                  github='https://github.com/BastienSig'
                 />
               </li>
               <li className={styles.memberCard}>
@@ -154,7 +154,7 @@ function Home() {
                   ]}
                   linkedIn='https://www.linkedin.com/in/thomasfrancart/'
                   twitter=''
-                  github=''
+                  github='https://github.com/tfrancart'
                 />
               </li>
             </ul>
