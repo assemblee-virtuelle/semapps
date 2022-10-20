@@ -87,7 +87,7 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
 };
 
-const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers, mirrorGraph, ctx, nextScalar) => {
+const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers, mirrorGraph, ctx, nextScalar, originalVoid) => {
   let thisServer = createFragmentURL(baseUrl, serverUrl);
 
   graph.push({
@@ -114,6 +114,19 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
       o: namedNode(hasSparql)
     });
 
+  let partitionsMap = {};
+  if (originalVoid) {
+    const originalPartitions = originalVoid['void:classPartition'];
+
+    if (originalPartitions) {
+      for (const p of defaultToArray(originalPartitions)) {
+        // we skip empty containers and doNotMirror containers
+        if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
+        partitionsMap[p['void:uriSpace']] = p;
+      }
+    }
+  }
+
   for (const [i, p] of containers.entries()) {
     const types = await ctx.call('triplestore.query', {
       query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
@@ -124,7 +137,10 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
       'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
     };
 
-    //if (dereference) partition['http://semapps.org/ns/core#blankNodes'] = dereference
+    let dereference = partitionsMap[p]
+    if (dereference) {
+      partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
+    }
 
     const count = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
@@ -263,18 +279,40 @@ module.exports = {
 
         // TODO : fetch the void file from remote servers instead ?
 
-        for (const server of Object.keys(serversMap)) {
+        for (const serverUrl of Object.keys(serversMap)) {
+
+          const voidUrl = urlJoin(serverUrl, '/.well-known/void');
+
+          let originalVoid;
+          try {
+            const response = await fetch(voidUrl, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/ld+json'
+              }
+            });
+            if (response.ok) {
+              const json = await response.json();
+
+              let mapServers = {};
+              for (let s of json['@graph']) { mapServers[s['@id']] = s; }
+              const server = mapServers[createFragmentURL('', serverUrl)];
+              originalVoid = server;
+            }
+          } catch (e) { }
+
           await addMirrorServer(
             url,
-            server,
+            serverUrl,
             graph,
             hasSparql,
-            serversMap[server],
+            serversMap[serverUrl],
             this.settings.mirrorGraphName,
             ctx,
-            scalar
+            scalar,
+            originalVoid
           );
-          scalar += serversMap[server].length;
+          scalar += serversMap[serverUrl].length;
         }
 
         ctx.meta.$responseType = accept;
