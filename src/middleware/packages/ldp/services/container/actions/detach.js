@@ -1,5 +1,6 @@
 const { isMirror } = require('../../../utils');
 const urlJoin = require('url-join');
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   visibility: 'public',

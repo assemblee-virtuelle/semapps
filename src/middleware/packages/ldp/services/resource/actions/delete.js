@@ -94,7 +94,7 @@ module.exports = {
       });
 
       // We must detach the resource from the container after deletion, otherwise the permissions will fail
-      await ctx.call('ldp.container.detach', {
+      if (!ctx.meta.forceMirror) await ctx.call('ldp.container.detach', {
         containerUri: getContainerFromUri(resourceUri),
         resourceUri,
         webId
