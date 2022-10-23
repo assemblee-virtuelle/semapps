@@ -14,7 +14,7 @@ const Member = ({ image, label, description, roles=[], linkedIn, twitter, github
       </div>
       <div className={styles.textContainer}>
         <div className={styles.memberName}>{label}</div>
-        <div className={styles.memberDescription}>{description}</div>
+        <div className={styles.memberDescription} dangerouslySetInnerHTML={{__html: description}} />
         <ul className={styles.memberRoles}>
           {roles.map(role => <li>{role}</li>)}
         </ul>

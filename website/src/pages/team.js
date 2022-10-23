@@ -22,8 +22,9 @@ function Home() {
         <section className={styles.teamIntro}>
           <h1>Semapps and the virtual assembly</h1>
           <div className={styles.image}><img src="/img/av-baniere.png" alt="virtual assembly banner" /></div>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio alias quas non dolor assumenda voluptatem aliquid sapiente illo, veniam omnis!</p>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem, inventore.</p>
+          <p>SemApps is a software project hosted within the Virtual Assembly.</p>
+          <p>It has been nourished since 2013 by the collective intelligence of the community, which was among the first in the world to position itself on the SOLID project (even before it existed!). Since then, other software based on SOLID / ActivityPub / Semantic Web have joined the Virtual Assembly ecosystem.</p>
+          <p>They are ideal partners for SemApps to prototype the decentralization of the web and the federation of its communities.</p>
         </section>
 
         <section className={classnames(styles.teamMembers, styles.contrast)}>
@@ -35,7 +36,7 @@ function Home() {
                 <Member 
                   label='Sébastien Rosset' 
                   image='/img/srosset.jpg' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Web maker since 1995. Want to build a web that has a real & positive impact on society.'
                   roles={[
                     'Facilitation',
                     'Communication',
@@ -58,14 +59,14 @@ function Home() {
                     'Economic sustainability'
                   ]}
                   linkedIn='https://www.linkedin.com/in/simon-louvet-a9842018/'
-                  twitter='https://twitter.com/simonlouvet'
+                  twitter=''
                   github='https://github.com/simonLouvet'
                 />
               </li>
               <li className={styles.memberCard}>
                 <Member 
                   label='Niko Bonnieure' 
-                  image='img/blank-profile-picture.png' 
+                  image='img/niko.png' 
                   description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
                   roles={[]}
                   linkedIn=''
@@ -90,9 +91,10 @@ function Home() {
                 <Member 
                   label='Guillaume Rouyer' 
                   image='/img/guillaume-rouyer.jpg' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Co-founder of <a href="https://virtual-assembly.org/">Virtual Assembly</a> / <a href="https://lescheminsdelatransition.org/">Transition Pathways]</a>, PhD student at Ademe / UTT / Data Players'
                   roles={[
-                    'Mediation'
+                    'Product manager',
+                    'Economic sustainability'
                   ]}
                   linkedIn='https://www.linkedin.com/in/guillaume-rouyer-paris/'
                   twitter=''
@@ -103,7 +105,7 @@ function Home() {
                 <Member 
                   label='Yannick Duthé' 
                   image='/img/yannick-duthe.png' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Dev JS, React, D3, <a href="https://flod.io">https://flod.io</a> project owner (based on SemApps)'
                   roles={[
                     'Onboarding',
                     'Information',
@@ -131,7 +133,7 @@ function Home() {
                 <Member 
                   label='Vincent Farcy' 
                   image='/img/vincent-farcy.png' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Freelance developer on meaningful projects'
                   roles={[
                     'Web development'
                   ]}

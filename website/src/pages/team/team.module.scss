@@ -18,6 +18,7 @@
 
     p {
       line-height: 28px;
+      margin-bottom: 8px;
     }
 
     .image img {
@@ -91,7 +92,14 @@
 
     .memberDescription {
       line-height: 125%;
-      margin-bottom: 8px
+      margin-bottom: 8px;
+      a {
+        color: var(--color-primary);
+        text-decoration: underline;
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
 
     .memberRoles li {

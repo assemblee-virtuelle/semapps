@@ -23,8 +23,18 @@ function Home() {
         image: 'img/cdlt.jpg'
       },
       {
-        label: 'Les chemins de la transition',
-        link: 'https://lescheminsdelatransition.org/',
+        label: 'Acteurs solidarité Aurba',
+        link: 'https://acteurs-solidarite.aurba.org/',
+        image: 'img/cdlt.jpg'
+      },
+      {
+        label: 'Les 100 lieux nourriciers',
+        link: 'https://100lieuxnourriciers.fr/',
+        image: 'img/cdlt.jpg'
+      },
+      {
+        label: 'Bienvenue Chez Moi',
+        link: 'https://bienvenuechezmoi.org/',
         image: 'img/cdlt.jpg'
       }
   ]
@@ -72,22 +82,22 @@ function Home() {
             <h2>What's in the box ?</h2>
             <ul>
               <li className={styles.toolCard}>
-                <Tool label='LDP' content='Read and write data through a standard API' />
+                <Tool label='LDP' content='Read and write data through a standard API' link='' link2='https://www.w3.org/2012/ldp/wiki/Main_Page' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='ActivityPub' content='Let actors communicate with each others.' />
+                <Tool label='ActivityPub' content='Let actors communicate with each others.' link='https://activitypub.rocks/' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='SPARQL' content='Make advanced queries through semantic data.' />
+                <Tool label='SPARQL' content='Make advanced queries through semantic data.' link='https://www.w3.org/wiki/SPARQL' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='WebId' content='Identify users accross plateforms' />
+                <Tool label='WebId' content='Identify users accross plateforms' link='https://www.w3.org/wiki/WebID' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='WebAcl' content='Manage and verify rights of users' />
+                <Tool label='WebAcl' content='Manage and verify rights of users' link='https://www.w3.org/wiki/WebAccessControl' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='ShEx(soon)' content='Validate submitted data.' />
+                <Tool label='ShEx(soon)' content='Validate submitted data.' link='https://github.com/shexSpec/shex/wiki/ShEx' />
               </li>
             </ul>
           </div>
@@ -100,7 +110,15 @@ function Home() {
               <li className={styles.productCard}>
                 <Product 
                   label='Archipelago' 
-                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  description='
+                    <p>Fostering interconnections between communities by creating synergies between their platforms.</p>
+                    <p>A collaborative, interoperable and modular knowledge management system, compliant with most semantic web specifications: LDP, SPARQL, ActivityPub, WAC, WebID.</p>
+                    <p>Based on linked data & semantic web technologies, it allows the co-production of knowledge graphs.
+                      Built on open standards, it enables the development of interoperable information systems.
+                      Designed on a modular architecture, it gives everyone the opportunity to build and customize platforms on demand.
+                      Thanks to the micro-service architecture of <a href="https://github.com/assemblee-virtuelle/semapps">SemApps</a>,
+                      it is easy to extend it with your own business logic.</p>
+                  ' 
                   image='img/archipelago.png' 
                   github='https://github.com/assemblee-virtuelle/archipelago'
                   link='https://archipel.assemblee-virtuelle.org/'
@@ -109,7 +127,11 @@ function Home() {
               <li className={styles.productCard}>
                 <Product 
                   label='OrganiGraph' 
-                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  description='
+                    <p>Open-source software developed with the objective of helping organizations make their operations visible.</p>
+                    <p>It allows to visualize the structure of the organization (in the form of a hierarchy of "circles") and, for each circle, to see its sub-circles, the people involved, the meeting schedule, documents, news, etc.</p>
+                    <p>A simple tool that allows anyone to see what is going on and potentially get involved.</p>
+                  ' 
                   image='img/Organigraph.png' 
                   github='https://github.com/assemblee-virtuelle/organigraph'
                   link=''
@@ -118,7 +140,15 @@ function Home() {
               <li className={styles.productCard}>
                 <Product 
                   label='ActivityPods' 
-                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  description='
+                    <p>ActivityPub + Solid PODS</p>
+                    <p>Check out
+                      <a href="/assemblee-virtuelle/activitypods/blob/master/proposal/proposal-english.pdf">these slides</a>
+                      (<a href="/assemblee-virtuelle/activitypods/blob/master/proposal/proposal-french.pdf">french version</a>) for more information about this project !</p>
+                    <p>You can also 
+                      <a href="https://vimeo.com/691410463" rel="nofollow">watch our presentation at Solid World</a> (starts at 19:00) 
+                      or <a href="https://chat.lescommuns.org/channel/activitypods" rel="nofollow">join our dedicated chatroom</a>.</p>
+                  '
                   image='img/activity-pods.png' 
                   github='https://github.com/assemblee-virtuelle/activitypods'
                   link=''
@@ -127,7 +157,7 @@ function Home() {
               <li className={styles.productCard}>
                 <Product 
                   label='Minicourses' 
-                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  description='Build minicourses with image and texts and allow subscribers to receive them by email in the chosen frequency.' 
                   image='img/minicourses.png' 
                   github='https://github.com/assemblee-virtuelle/minicourses'
                   link=''
@@ -136,7 +166,10 @@ function Home() {
               <li className={styles.productCard}>
                 <Product 
                   label='ActivityPub-Bridge' 
-                  description='Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta, at ipsum numquam sapiente ipsam sit.' 
+                  description='
+                    <p>Subscribe to ActivityPub actors and send their activities in given chat channels.</p>
+                    <p>Currently only supports <a href="https://mattermost.com" rel="nofollow">Mattermost</a>. Slack and Rocketchat support coming soon.</p>
+                  ' 
                   image='img/activitypub-bridge.png' 
                   github='https://github.com/assemblee-virtuelle/activitypub-bridge'
                   link=''
@@ -160,8 +193,17 @@ function Home() {
 
         <section className={styles.clients}>
           <div className={styles.wrapper}>
-            <h2><span className={styles.primary}>SemApps</span> clients</h2>
+            <h2><span className={styles.primary}>SemApps</span> users</h2>
             <div className={styles.clientlogosContainer}>
+              <div className={styles.clientlogo}>
+                <img src="img/ademe.svg" alt="ademe logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-afaup.webp" alt="afaup logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/av-baniere.png" alt="av logo" />
+              </div>
               <div className={styles.clientlogo}>
                 <img src="img/logo-colibris.svg" alt="colibri logo" />
               </div>

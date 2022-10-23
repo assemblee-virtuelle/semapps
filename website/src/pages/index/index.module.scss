@@ -252,6 +252,12 @@
     color: inherit;
     text-decoration: none;
     margin-bottom: 16px;
+    a {
+      color: inherit;
+      &:hover {
+        color:var(--color-primary);
+      }
+    }
   }
 
   section.tools .borderContainer {
@@ -299,9 +305,10 @@
     box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
     background-color: white;
     width: 320px;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     border-radius: 16px;
     @media (min-width: 600px) {
@@ -310,13 +317,6 @@
     &>* {
       width: calc(100% - 32px);
     }
-  }
-
-  section.products .label {
-    font-size: 12px;
-    text-align: left;
-    color: rgba(0, 0, 0, .4);
-    margin-bottom: 8px;
   }
 
   section.products .separator {
@@ -344,8 +344,19 @@
     }
   }
 
-  section.products .productCard .textContainer p {
+  section.products .productCard .textContainer div {
     line-height: 125%;
+    text-align: justify;
+    p { 
+      margin-bottom: 8px;
+    }
+    a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      &:hover {
+        text-decoration: none;
+      }
+    }
   }
 
   section.products .linksContainer {

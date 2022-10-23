@@ -16,13 +16,11 @@ const Product = ({ image, label, description, github, link }) => {
         </AnimationOnScroll>
       </div>
       <div className={styles.titleContainer}>
-        <div className={styles.label}>Name:</div>
         <h3>{label}</h3>
       </div>
       <div className={styles.separator}>&nbsp;</div>
       <div className={styles.textContainer}>
-        <div className={styles.label}>Description:</div>
-        <p>{description}</p>
+        <div dangerouslySetInnerHTML={{__html: description}} />
       </div>
       <div className={styles.separator}>&nbsp;</div>
       <div className={styles.linksContainer}>
