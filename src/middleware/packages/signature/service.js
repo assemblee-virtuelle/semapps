@@ -13,6 +13,9 @@ const SignatureService = {
   settings: {
     actorsKeyPairsDir: null
   },
+  started() {
+    this.remoteActorPublicKeyCache = {};
+  },
   actions: {
     async getActorPublicKey(ctx) {
       const { actorUri } = ctx.params;
@@ -183,6 +186,11 @@ const SignatureService = {
     },
     // TODO use cache mechanisms
     async getRemoteActorPublicKey(actorUri) {
+
+      if (this.remoteActorPublicKeyCache[actorUri]) {
+        return this.remoteActorPublicKeyCache[actorUri]
+      }
+
       // TODO use activitypub.actor.get
       const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
       if (!response) return false;
@@ -190,6 +198,7 @@ const SignatureService = {
       const actor = await response.json();
       if (!actor || !actor.publicKey) return false;
 
+      this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
       return actor.publicKey.publicKeyPem;
     },
     async getKeyPaths(ctx, actorUri) {
