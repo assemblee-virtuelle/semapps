@@ -47,6 +47,11 @@ const CoreService = {
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
 
+    // relay service will automatically start if we want mirror and activitypub services
+    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
+      this.settings.activitypub.relay = this.settings.activitypub.relay || {};
+    }
+
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
         settings: {
@@ -100,11 +105,11 @@ const CoreService = {
           localContextFiles: jsonContext
             ? undefined
             : [
-                {
-                  path: 'context.json',
-                  file: path.resolve(__dirname, './config/context.json')
-                }
-              ],
+              {
+                path: 'context.json',
+                file: path.resolve(__dirname, './config/context.json')
+              }
+            ],
           remoteContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',

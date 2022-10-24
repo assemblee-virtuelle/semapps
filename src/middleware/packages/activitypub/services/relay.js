@@ -175,11 +175,9 @@ const RelayService = {
                     remoteRelayActorUri = this.cacheRelayWebfingers[serverDomainName];
                 } else {
                     remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
-                    // TODO: deal with error
-                    this.cacheRelayWebfingers[serverDomainName] = remoteRelayActorUri;
                 }
-
                 if (remoteRelayActorUri) {
+                    this.cacheRelayWebfingers[serverDomainName] = remoteRelayActorUri;
                     const OfferActivity = await ctx.call('activitypub.outbox.post', {
                         collectionUri: this.relayOutboxUri,
                         '@context': 'https://www.w3.org/ns/activitystreams',
@@ -196,6 +194,36 @@ const RelayService = {
                         },
                         to: [remoteRelayActorUri]
                     });
+                }
+                else {
+                    // no relay actor on the other side, let's try a PUT instead
+                    try {
+                        const response = await fetch(ctx.params.subject, {
+                            method: 'GET',
+                            headers: {
+                                Accept: 'application/ld+json'
+                            }
+                        });
+                        if (response.ok) {
+
+                            let json = await response.json();
+
+                            if (ctx.params.add) {
+                                json[ctx.params.predicate] = { id: ctx.params.object };
+                            } else {
+                                let expanded_resource = await ctx.call('jsonld.expand', { input: json });
+                                delete expanded_resource[0]?.[ctx.params.predicate];
+                                json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
+                            }
+                            const res = await fetch(ctx.params.subject, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/ld+json'
+                                },
+                                body: JSON.stringify(json)
+                            });
+                        }
+                    } catch (e) { }
                 }
             }
         }

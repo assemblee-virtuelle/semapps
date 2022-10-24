@@ -35,8 +35,7 @@ const ActivityPubService = {
     },
     reply: {
       attachToObjectTypes: null
-    },
-    relay: { type: 'object', optional: true }
+    }
   },
   dependencies: ['api'],
   async created() {
