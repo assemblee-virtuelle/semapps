@@ -19,6 +19,36 @@ module.exports = {
         this.inverseRelations = { ...this.inverseRelations, ...result };
       }
     }
+    console.log(this.inverseRelations)
+    const services = await this.broker.call('$node.services');
+    if (services.map(s => s.name).filter(s => s.startsWith('activitypub.relay')).length) {
+      this.hasRelayService = true;
+      await this.broker.waitForServices(['activitypub.relay']);
+    }
+  },
+  actions: {
+    remote: {
+      visibility: 'public',
+      params: {
+        subject: { type: 'string', optional: false },
+        predicate: { type: 'string', optional: false },
+        object: { type: 'string', optional: false },
+        add: { type: 'boolean', optional: false }, // add or remove
+      },
+      async handler(ctx) {
+        // only accept remote inferences if we locally manage this inference (prevent malicious triple injection)
+        if (this.inverseRelations[ctx.params.predicate]) {
+          const the_triple = triple(namedNode(ctx.params.subject), namedNode(ctx.params.predicate), namedNode(ctx.params.object));
+          triples = await this.filterMissingResources(ctx, [the_triple]);
+
+          if (triples.length > 0) {
+            let query = ctx.params.add ? this.generateInsertQuery(triples) : this.generateDeleteQuery(triples);
+            await ctx.call('triplestore.update', { query, webId: 'system' });
+            this.cleanResourcesCache(ctx, triples);
+          }
+        }
+      }
+    }
   },
   methods: {
     findInverseRelations(owlFile) {
@@ -52,21 +82,20 @@ module.exports = {
           .catch(err => reject(err));
       });
     },
-    generateInverseTriples(resource) {
+    async generateInverseTriples(resource) {
       let inverseTriples = [];
-      Object.keys(resource).forEach(property => {
+      for (const property of Object.keys(resource)) {
         if (this.inverseRelations[property]) {
-          resource[property].forEach(uri => {
-            // Filter out remote URLs as we can't add them to the local dataset
+          for (const uri of resource[property]) {
             // uri['@id'] can be undefined if context bad configuration ("@type": "@id" not configured for property)
-            if (uri['@id'] && uri['@id'].startsWith(this.settings.baseUrl)) {
+            if (uri['@id']) {
               inverseTriples.push(
                 triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id']))
               );
             }
-          });
+          }
         }
-      });
+      }
 
       return inverseTriples;
     },
@@ -91,6 +120,17 @@ module.exports = {
         }
       }
     },
+    splitLocalAndRemote(triples) {
+      let locals = [];
+      let remotes = [];
+      for (let triple of triples) {
+        if (triple.subject.id.startsWith(this.settings.baseUrl))
+          locals.push(triple);
+        else
+          remotes.push(triple);
+      }
+      return [locals, remotes];
+    },
     async filterMissingResources(ctx, triples) {
       let existingTriples = [];
       for (let triple of triples) {
@@ -104,30 +144,61 @@ module.exports = {
       return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
     }
   },
+
   events: {
     async 'ldp.resource.created'(ctx) {
       let { newData } = ctx.params;
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToAdd = this.generateInverseTriples(newData[0]);
+      let triplesToAdd = await this.generateInverseTriples(newData[0]);
+
+      let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
       // Avoid adding inverse link to non-existent resources
-      triplesToAdd = await this.filterMissingResources(ctx, triplesToAdd);
+      triplesToAdd = await this.filterMissingResources(ctx, addLocals);
 
+      // local data
       if (triplesToAdd.length > 0) {
         await ctx.call('triplestore.update', { query: this.generateInsertQuery(triplesToAdd), webId: 'system' });
         this.cleanResourcesCache(ctx, triplesToAdd);
       }
+
+      // remote data
+      if (this.hasRelayService) {
+        for (let triple of addRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: true,
+          });
+        }
+      }
+
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
 
-      let triplesToRemove = this.generateInverseTriples(oldData[0]);
+      let triplesToRemove = await this.generateInverseTriples(oldData[0]);
 
-      if (triplesToRemove.length > 0) {
-        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(triplesToRemove), webId: 'system' });
-        this.cleanResourcesCache(ctx, triplesToRemove);
+      let [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
+
+      if (removeLocals.length > 0) {
+        await ctx.call('triplestore.update', { query: this.generateDeleteQuery(removeLocals), webId: 'system' });
+        this.cleanResourcesCache(ctx, removeLocals);
+      }
+
+      // remote data
+      if (this.hasRelayService) {
+        for (let triple of removeRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: false,
+          });
+        }
       }
     },
     async 'ldp.resource.updated'(ctx) {
@@ -135,31 +206,60 @@ module.exports = {
       oldData = await ctx.call('jsonld.expand', { input: oldData });
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToRemove = this.generateInverseTriples(oldData[0]);
-      let triplesToAdd = this.generateInverseTriples(newData[0]);
+      let triplesToRemove = await this.generateInverseTriples(oldData[0]);
+      let triplesToAdd = await this.generateInverseTriples(newData[0]);
 
       // Filter out triples which are removed and added at the same time
       let filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
       let filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
 
+      let [addLocals, addRemotes] = this.splitLocalAndRemote(filteredTriplesToAdd);
+      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(filteredTriplesToRemove);
+
+      // Dealing with locals first
+
       // Avoid adding inverse link to non-existent resources
-      filteredTriplesToAdd = await this.filterMissingResources(ctx, filteredTriplesToAdd);
+      addLocals = await this.filterMissingResources(ctx, addLocals);
 
-      if (filteredTriplesToRemove.length > 0) {
+      if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', {
-          query: this.generateDeleteQuery(filteredTriplesToRemove),
+          query: this.generateDeleteQuery(removeLocals),
           webId: 'system'
         });
-        this.cleanResourcesCache(ctx, filteredTriplesToRemove);
+        this.cleanResourcesCache(ctx, removeLocals);
       }
 
-      if (filteredTriplesToAdd.length > 0) {
+      if (addLocals.length > 0) {
         await ctx.call('triplestore.update', {
-          query: this.generateInsertQuery(filteredTriplesToAdd),
+          query: this.generateInsertQuery(addLocals),
           webId: 'system'
         });
-        this.cleanResourcesCache(ctx, filteredTriplesToAdd);
+        this.cleanResourcesCache(ctx, addLocals);
       }
+
+      // Dealing with remotes
+
+      // remote relationships are sent to relay actor of remote server
+      if (this.hasRelayService) {
+
+        for (let triple of addRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: true,
+          });
+        }
+        for (let triple of removeRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: false,
+          });
+        }
+      }
+
     }
   }
 };
