@@ -164,6 +164,27 @@ module.exports = {
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
+    getRemote: {
+      visibility: 'public',
+      params: {
+        serverUrl: { type: 'string', optional: false },
+      },
+      async handler(ctx) {
+        try {
+          const voidUrl = urlJoin(ctx.params.serverUrl, '/.well-known/void');
+          const response = await fetch(voidUrl, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/ld+json'
+            }
+          });
+          if (response.ok) {
+            const json = await response.json();
+            return json
+          }
+        } catch (e) { this.logger.warn("Silently ignored error when fetching void endpoint: " + e.message) }
+      }
+    },
     get: {
       visibility: 'public',
       params: {
@@ -279,25 +300,14 @@ module.exports = {
 
         for (const serverUrl of Object.keys(serversMap)) {
 
-          const voidUrl = urlJoin(serverUrl, '/.well-known/void');
-
           let originalVoid;
-          try {
-            const response = await fetch(voidUrl, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/ld+json'
-              }
-            });
-            if (response.ok) {
-              const json = await response.json();
-
-              let mapServers = {};
-              for (let s of json['@graph']) { mapServers[s['@id']] = s; }
-              const server = mapServers[createFragmentURL('', serverUrl)];
-              originalVoid = server;
-            }
-          } catch (e) { }
+          const json = await ctx.call('void.getRemote', { serverUrl });
+          if (json) {
+            let mapServers = {};
+            for (let s of json['@graph']) { mapServers[s['@id']] = s; }
+            const server = mapServers[createFragmentURL('', serverUrl)];
+            originalVoid = server;
+          }
 
           await addMirrorServer(
             url,
