@@ -191,9 +191,7 @@ module.exports = {
           if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
           if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
           query += ` }`;
-
-          console.log('ALLLLLLO');
-
+          
           this.logger.info('PUT query', query)
 
           await ctx.call('triplestore.update', {
