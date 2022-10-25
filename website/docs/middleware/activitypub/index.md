@@ -7,7 +7,6 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Features
 
 - Store activities, actors and objects in the triple store
-- Handle all kind of ontologies (see `additionalContext` setting)
 - Allow to create actors when new [WebIDs](../webid.md) are created
 - Currently supported activities:
   - `Create`
@@ -18,9 +17,9 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Dependencies
 
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
-- [LdpService](../ldp/index.md)
-- [WebfingerService](../webfinger.md)
-- [SignatureService](../signature.md)
+- [LdpService](../ldp)
+- [WebfingerService](../webfinger)
+- [SignatureService](../signature)
 
 ## Sub-services
 
@@ -33,6 +32,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - ObjectService
 - OutboxService
 - ProxyService
+- ReplyService
 - RegistryService
 
 ## Other services
@@ -46,7 +46,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 ## Install
 
 ```bash
-$ npm install @semapps/activitypub --save
+$ yarn add @semapps/activitypub
 ```
 
 ## Usage
@@ -58,9 +58,20 @@ module.exports = {
   mixins: [ActivityPubService],
   settings: {
     baseUri: 'http://localhost:3000/',
-    additionalContext: {
-      foaf: 'http://xmlns.com/foaf/0.1/'
-    }
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+    dispatch: {
+      queueServiceUrl: null
+    },
+    like: {
+      attachToObjectTypes: null,
+      attachToActorTypes: null
+    },
+    follow: {
+      attachToActorTypes: null
+    },
+    reply: {
+      attachToObjectTypes: null
+    },
   }
 };
 ```
@@ -85,7 +96,7 @@ module.exports = {
 
 ### Queue federation POSTs
 
-If you want to make sure no data is lost when trying to POST to remote ActivityPub servers, you can set the `queueServiceUrl` settings. 
+If you want to make sure no data is lost when trying to POST to remote ActivityPub servers, you can set the `dispatch.queueServiceUrl` settings. 
 
 The [Bull](https://github.com/OptimalBits/bull) task manager will queue the task and you will be able to retry it if it fails.
 
@@ -97,8 +108,74 @@ This is done automatically when a `webid.created` event is detected.
 
 ## Settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `baseUri` | `String` | **required** | Base URI of your web server |
-| `additionalContext` | `Object` |  | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish. |
-| `queueServiceUrl` | `String` |  | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs. |
+| Property                     | Type                | Default         | Description                                                                                                                            |
+|------------------------------|---------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| `baseUri`                    | `String`            | **required**    | Base URI of your web server                                                                                                            |
+| `jsonContext`                | `String` or `Object` | 'https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'                | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.                                     |
+| `dispatch.queueServiceUrl`   | `String`            |                 | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs. |
+| `like.attachToObjectTypes`   | `Array`             | All AS objects  | The ActivityStreams objects which will be attached a `likes` collection                                                                |
+| `like.attachToActorsTypes`   | `Array`             | All AS actors   | The ActivityStreams actors which will be attached a `liked` collection                                                                 |
+| `follow.attachToActorsTypes` | `Array`             | All AS actors   | The ActivityStreams actors which will be attached a `followers` and `following` collections                                            |
+| `reply.attachToObjectTypes`  | `Array`             | All AS objects  | The ActivityStreams objects which will be attached a `replies` collection                                                              |
+
+
+## Events
+
+The following events are emitted by the different ActivityPub sub-services.
+
+### `activitypub.follow.added`
+Sent after an actor follows another one.
+
+##### Payload
+| Property    | Type     | Description                     |
+|-------------|----------|---------------------------------|
+| `follower`  | `String` | URI of the actor being followed |
+| `following` | `String` | URI of the actor following      |
+
+### `activitypub.follow.removed`
+Sent after an actor stops following another one.
+
+##### Payload
+| Property    | Type     | Description                                 |
+|-------------|----------|---------------------------------------------|
+| `follower`  | `String` | URI of the actor not being followed anymore |
+| `following` | `String` | URI of the actor following                  |
+
+
+### `activitypub.inbox.received`
+Sent after an actor receives an activity in his inbox.
+
+##### Payload
+| Property     | Type     | Description             |
+|--------------|----------|-------------------------|
+| `activity`   | `Object` | Activity payload        |
+| `recipients` | `Array`  | List of recipients URIs |
+
+
+### `activitypub.like.added`
+Sent after an actor likes an object
+
+##### Payload
+| Property    | Type     | Description       |
+|-------------|----------|-------------------|
+| `actorUri`  | `String` | URI of the actor  |
+| `objectUri` | `String` | URI of the object |
+
+
+### `activitypub.like.removed`
+Sent after an actor stops liking an object
+
+##### Payload
+| Property    | Type     | Description       |
+|-------------|----------|-------------------|
+| `actorUri`  | `String` | URI of the actor  |
+| `objectUri` | `String` | URI of the object |
+
+
+### `activitypub.outbox.posted`
+Sent after an actor sends an activity through his outbox.
+
+##### Payload
+| Property     | Type     | Description             |
+|--------------|----------|-------------------------|
+| `activity`   | `Object` | Activity payload        |

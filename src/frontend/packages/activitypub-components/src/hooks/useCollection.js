@@ -22,9 +22,10 @@ const useCollection = predicateOrUrl => {
     if (!collectionUrl) return;
 
     setLoading(true);
+    const token = localStorage.getItem('token');
     const headers = new Headers({
       Accept: 'application/ld+json',
-      Authorization: 'Bearer ' + localStorage.getItem('token')
+      Authorization: token ? `Bearer ${token}` : undefined
     });
 
     fetchUtils
@@ -32,6 +33,8 @@ const useCollection = predicateOrUrl => {
       .then(({ json }) => {
         if (json && json.items) {
           setItems(json.items);
+        } else if (json && json.orderedItems) {
+          setItems(json.orderedItems);
         } else {
           setItems([]);
         }

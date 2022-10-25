@@ -4,6 +4,7 @@ const {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware
 } = require('@semapps/middlewares');
@@ -17,6 +18,7 @@ function getContainerRoute(containerUri, readOnly = false) {
     negotiateAccept,
     parseSparql,
     parseJson,
+    parseTurtle,
     parseFile,
     addContainerUriMiddleware(containerUri)
   ];
@@ -30,7 +32,8 @@ function getContainerRoute(containerUri, readOnly = false) {
   if (!readOnly) {
     aliases = {
       ...aliases,
-      'POST /': [...middlewares, 'ldp.container.api_post']
+      'POST /': [...middlewares, 'ldp.container.api_post'],
+      // 'PATCH /': [...middlewares, 'ldp.container.api_patch']
     };
   }
 
@@ -46,7 +49,7 @@ function getContainerRoute(containerUri, readOnly = false) {
       aliases = {
         ...aliases,
         'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
-        'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
+        // 'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
         'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
       };
     }

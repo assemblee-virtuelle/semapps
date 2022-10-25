@@ -1,14 +1,24 @@
 export { default as authProvider } from './authProvider';
 
-export { default as EditWithPermissions } from './components/EditWithPermissions/EditWithPermissions';
-export { default as DeleteButtonWithPermissions } from './components/EditWithPermissions/DeleteButtonWithPermissions';
-export { default as EditToolbarWithPermissions } from './components/EditWithPermissions/EditToolbarWithPermissions';
-export { default as EditActions } from './components/EditWithPermissions/EditActions';
-export { default as ListWithPermissions } from './components/ListWithPermissions/ListWithPermissions';
-export { default as PermissionsButton } from './components/PermissionsButton/PermissionsButton';
-export { default as ShowWithPermissions } from './components/ShowWithPermissions/ShowWithPermissions';
-export { default as ShowActions } from './components/ShowWithPermissions/ShowActions';
+// Create
+export { default as CreateWithPermissions } from './crud/create/CreateWithPermissions';
 
+// Edit
+export { default as EditWithPermissions } from './crud/edit/EditWithPermissions';
+export { default as EditActionsWithPermissions } from './crud/edit/EditActionsWithPermissions';
+export { default as EditToolbarWithPermissions } from './crud/edit/EditToolbarWithPermissions';
+export { default as DeleteButtonWithPermissions } from './crud/edit/DeleteButtonWithPermissions';
+
+// List
+export { default as ListWithPermissions } from './crud/list/ListWithPermissions';
+export { default as ListActionsWithPermissions } from './crud/list/ListActionsWithPermissions';
+
+// Show
+export { default as ShowWithPermissions } from './crud/show/ShowWithPermissions';
+export { default as ShowActionsWithPermissions } from './crud/show/ShowActionsWithPermissions';
+
+export { default as PermissionsButton } from './components/PermissionsButton/PermissionsButton';
+export { default as AuthDialog } from './components/AuthDialog';
 export { default as SsoLoginPage, default as LoginPage } from './components/SsoLoginPage';
 export { default as LocalLoginPage } from './components/LocalLoginPage';
 export { default as LogoutButton } from './components/LogoutButton';

@@ -1,36 +1,36 @@
-name: Integration tests
-
-on:
-  pull_request:
-    paths:
-      - '**.js'
-
-jobs:
-  # Label of the container job
-  runner-job:
-    # You must use a Linux environment when using service containers or container jobs
-    runs-on: ubuntu-latest
-
-    # Service containers to run with `runner-job`
-    services:
-      fuseki_tests:
-        image: semapps/jena-fuseki-webacl
-        ports:
-          - "3040:3030"
-        env:
-          ADMIN_PASSWORD: "admin"
-
-    steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '12.19.1'
-
-      - name: Install NPM packages
-        run: |
-          ( cd ./src/middleware && yarn install )
-          ( cd ./src/middleware && yarn run bootstrap )
-
-      - name: Run integration tests
-        run: ( cd ./src/middleware/tests && yarn run test )
+#name: Integration tests
+#
+#on:
+#  pull_request:
+#    paths:
+#      - '**.js'
+#
+#jobs:
+#  # Label of the container job
+#  runner-job:
+#    # You must use a Linux environment when using service containers or container jobs
+#    runs-on: ubuntu-latest
+#
+#    # Service containers to run with `runner-job`
+#    services:
+#      fuseki_tests:
+#        image: semapps/jena-fuseki-webacl
+#        ports:
+#          - "3040:3030"
+#        env:
+#          ADMIN_PASSWORD: "admin"
+#
+#    steps:
+#      - uses: actions/checkout@v1
+#
+#      - uses: actions/setup-node@v2
+#        with:
+#          node-version: '12.19.1'
+#
+#      - name: Install NPM packages
+#        run: |
+#          ( cd ./src/middleware && yarn install )
+#          ( cd ./src/middleware && yarn run bootstrap )
+#
+#      - name: Run integration tests
+#        run: ( cd ./src/middleware/tests && yarn run test )

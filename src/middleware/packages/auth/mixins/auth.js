@@ -38,7 +38,7 @@ const AuthMixin = {
       done(null, user);
     });
 
-    this.strategy = this.getStrategy();
+    this.strategy = await this.getStrategy();
 
     this.passport.use(this.passportId, this.strategy);
 
@@ -65,7 +65,7 @@ const AuthMixin = {
           return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
       } else {
-        // No token, anonymous error
+        // No token
         ctx.meta.webId = 'anon';
         return Promise.resolve(null);
       }

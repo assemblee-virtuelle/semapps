@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { getSlugFromUri } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
-const { delay, defaultToArray } = require('../utils');
+const { delay, defaultToArray, selectActorData } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -10,29 +10,31 @@ const ActorService = {
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    selectActorData: resource => ({
-      '@type': ACTOR_TYPES.PERSON,
-      name: undefined,
-      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    }),
+    selectActorData,
     podProvider: false
   },
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+        try {
+          return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+        } catch (e) {
+          console.error(e);
+          return false;
+        }
       } else {
         const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-        if (!response) return false;
+        if (!response.ok) return false;
         return await response.json();
       }
     },
     async getProfile(ctx) {
       const { actorUri, webId } = ctx.params;
       const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
-      if (actor.url) {
-        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
+      // If the URL is not in the same domain as the actor, it is most likely not a profile
+      if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
+        return await ctx.call('activitypub.object.get', { objectUrl: actor.url });
       }
     },
     async appendActorData(ctx) {
@@ -125,7 +127,9 @@ const ActorService = {
       return uri.startsWith(this.settings.baseUri);
     },
     isActor(resource) {
-      return defaultToArray(resource['@type'] || resource.type).some(type => Object.values(ACTOR_TYPES).includes(type));
+      return defaultToArray(resource['@type'] || resource.type || []).some(type =>
+        Object.values(ACTOR_TYPES).includes(type)
+      );
     }
   },
   events: {

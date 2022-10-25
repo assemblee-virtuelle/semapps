@@ -45,7 +45,11 @@ const throw500 = msg => {
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  if (req.headers.accept === '*/*') req.headers.accept = undefined;
+  // we keep the full list for further use
+  req.$ctx.meta.accepts = req.headers.accept;
+  if (req.headers.accept === '*/*') {
+    delete req.headers.accept;
+  }
   if (req.headers.accept !== undefined) {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
@@ -77,6 +81,16 @@ const parseSparql = async (req, res, next) => {
       (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
   ) {
     req.$ctx.meta.parser = 'sparql';
+    // TODO Store in req.$ctx.meta.rawBody
+    req.$params.body = await getRawBody(req);
+  }
+  next();
+};
+
+const parseTurtle = async (req, res, next) => {
+  if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
+    req.$ctx.meta.parser = 'turtle';
+    // TODO Store in req.$ctx.meta.rawBody
     req.$params.body = await getRawBody(req);
   }
   next();
@@ -91,25 +105,26 @@ const parseJson = async (req, res, next) => {
   } catch (e) {
     // Do nothing if mime type is not found
   }
-
   try {
-    if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
-      const body = await getRawBody(req);
-      if (body) {
-        const json = JSON.parse(body);
-        req.$params = { ...json, ...req.$params };
-      }
-      req.$ctx.meta.parser = 'json';
+  if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
+    const body = await getRawBody(req);
+    if (body) {
+      const json = JSON.parse(body);
+      req.$params = { ...json, ...req.$params };
+      // Keep raw body in meta as we need it for digest header verification
+      req.$ctx.meta.rawBody = body;
     }
-    next();
-  } catch (e) {
+    req.$ctx.meta.parser = 'json';
+  }
+  next();
+} catch (e) {
     //call next step of api resolutions (middlewares) with error = return http error
     next(e);
   }
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$ctx.meta.parser && (req.method == 'POST' || req.method == 'PUT')) {
+  if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
       let files = [];
@@ -177,6 +192,7 @@ module.exports = {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware,
   throw403,

@@ -6,7 +6,8 @@ const {
   buildDereferenceQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
+  isMirror
 } = require('../../../utils');
 
 module.exports = {
@@ -109,7 +110,6 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
-              console.error('Error requesting resource: ', resourceUri);
               // Ignore a resource if it is not found
               if (e.name !== 'MoleculerError') throw e;
             }

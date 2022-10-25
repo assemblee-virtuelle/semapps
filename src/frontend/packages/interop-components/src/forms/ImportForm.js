@@ -4,8 +4,8 @@ import { Form } from 'react-final-form';
 import createDecorator from 'final-form-calculate';
 import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import { ReferenceInput, useContainers } from '@semapps/semantic-data-provider';
-import { MultiServerAutocompleteInput } from '@semapps/input-components';
+import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
+import { ReferenceInput, MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
 import useSync from '../hooks/useSync';
 
@@ -44,6 +44,7 @@ const decorator = createDecorator(
 const ImportForm = ({ basePath, record, resource, stripProperties }) => {
   const classes = useStyles();
   const containers = useContainers(resource, '@remote');
+  const dataModel = useDataModel(resource);
   const fork = useFork(resource);
   const sync = useSync(resource);
 
@@ -58,11 +59,13 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
     [fork, sync, stripProperties]
   );
 
+  if (!dataModel) return null;
+
   return (
     <Form
       onSubmit={onSubmit}
       decorators={[decorator]}
-      initialValues={{ method: 'fork' }}
+      initialValues={{ method: 'sync' }}
       render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
@@ -73,11 +76,12 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                     source="remoteUri"
                     label="Rechercher..."
                     reference={resource}
-                    filter={{ _servers: '@remote' }}
+                    filter={{ _servers: '@remote', _predicates: [dataModel?.fieldsMapping?.title] }}
+                    enableGetChoices={({ q }) => !!(q && q.length > 1)}
                     fullWidth
                   >
                     <MultiServerAutocompleteInput
-                      optionText="pair:label"
+                      optionText={dataModel?.fieldsMapping?.title}
                       shouldRenderSuggestions={value => value.length > 1}
                       resettable
                     />
@@ -104,8 +108,8 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
                   source="method"
                   label="Méthode d'importation"
                   choices={[
-                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
-                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' }
+                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
+                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
                   ]}
                 />
               }
@@ -122,7 +126,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
               startIcon={<SaveAltIcon />}
               variant="contained"
               color="primary"
-              disabled={!dirtyFields.remoteUri}
+              disabled={!dirtyFields.plainUri}
             >
               Importer
             </Button>

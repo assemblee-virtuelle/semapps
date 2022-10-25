@@ -8,23 +8,41 @@ const {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   getContainerFromUri,
-  getSlugFromUri
+  getSlugFromUri,
+  isMirror
 } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
     const resourceUri = urlJoin(containerUri, id);
-    const { accept, controlledActions } = {
+    const { accept, controlledActions, preferredView } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.meta.headers
     };
     try {
-      ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return await ctx.call(controlledActions.get || 'ldp.resource.get', {
+      if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
+        const webId = ctx.meta.webId || 'anon';
+        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+        if (resourceExist) {
+          const redirect = await this.settings.preferredViewForResource.bind(this)(resourceUri, preferredView);
+          if (redirect && redirect !== resourceUri) {
+            ctx.meta.$statusCode = 302;
+            ctx.meta.$location = redirect;
+            ctx.meta.$responseHeaders = {
+              'Content-Length': 0
+            };
+            return;
+          }
+        }
+      }
+
+      const res = await ctx.call(controlledActions.get || 'ldp.resource.get', {
         resourceUri,
         accept
       });
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      return res;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -70,6 +88,8 @@ module.exports = {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
 
+        const mirror = isMirror(resourceUri, this.settings.baseUrl);
+
         let result = await ctx.call('triplestore.query', {
           query: `
             ${getPrefixRdf(this.settings.ontologies)}
@@ -79,10 +99,12 @@ module.exports = {
               ${dereferenceQuery.construct}
             }
             WHERE {
+              ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${blandNodeQuery.where}
               ${dereferenceQuery.where}
+              ${mirror ? '} .' : ''}
             }
           `,
           accept,
@@ -105,13 +127,15 @@ module.exports = {
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
           try {
+            const file = fs.readFileSync(result['semapps:localPath']);
             // Overwrite response type set by the api action
             ctx.meta.$responseType = result['semapps:mimeType'];
             // Since files are currently immutable, we set a maximum browser cache age
+            // We do that after the file is read, otherwise the error 404 will be cached by the browser
             ctx.meta.$responseHeaders = {
               'Cache-Control': 'public, max-age=31536000'
             };
-            return fs.readFileSync(result['semapps:localPath']);
+            return file;
           } catch (e) {
             throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
           }

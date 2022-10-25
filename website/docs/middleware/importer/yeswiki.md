@@ -17,6 +17,7 @@ module.exports = {
     source: {
       yeswiki: {
         baseUrl: null, // Base URL of the YesWiki instance
+        oldApi: false, // Use ?BazaR/json instead of ?api/forms
         formId: null // ID of the Bazar form you wish to import
       },
       // If you protected the API, fill the user and password below

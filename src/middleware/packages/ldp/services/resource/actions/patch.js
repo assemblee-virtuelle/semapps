@@ -1,13 +1,14 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { isMirror } = require('../../../utils');
 
 // Important note: PATCH erase old data if they are literals (data properties), but not if they are URIs (relations),
 // as we assume that relations can be multiple, while data properties (eg. labels) should not be duplicated
 // TODO make sure that this conforms with the LDP specifications
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, ...resource } = ctx.params;
+    const { containerUri, id, body, ...resource } = ctx.params;
 
     // PATCH have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
@@ -18,6 +19,7 @@ module.exports = {
     try {
       await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
         resource,
+        body,
         contentType: ctx.meta.headers['content-type']
       });
       ctx.meta.$statusCode = 204;
@@ -41,6 +43,10 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      body: {
+        type: 'string',
+        optional: true
+      },
       contentType: {
         type: 'string'
       },
@@ -50,12 +56,15 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      let { resource, contentType, webId } = ctx.params;
+      let { resource, contentType, webId, body } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       let newData;
 
       const resourceUri = resource.id || resource['@id'];
       if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
+
+      if (isMirror(resourceUri, this.settings.baseUrl))
+        throw new MoleculerError('Mirrored resources cannot be patched', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -83,7 +92,7 @@ module.exports = {
       }
 
       let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      let newTriples = await this.bodyToTriples(resource, contentType);
+      let newTriples = await this.bodyToTriples(body || resource, contentType);
 
       oldTriples = this.convertBlankNodesToVars(oldTriples);
       newTriples = this.convertBlankNodesToVars(newTriples);

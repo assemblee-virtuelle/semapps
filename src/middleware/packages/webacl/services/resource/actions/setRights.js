@@ -101,16 +101,44 @@ module.exports = {
 
       // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
       await ctx.call('triplestore.update', {
-        query: `INSERT DATA { GRAPH ${this.settings.graphName} { ${addRequest} } }; DELETE DATA { GRAPH ${this.settings.graphName} { ${deleteRequest} } }`,
+        query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
         webId: 'system'
       });
 
       const defaultRightsUpdated =
-        (isContainer && differenceAdd.some(triple => triple.auth.includes('#Default'))) ||
-        differenceDelete.some(triple => triple.auth.includes('#Default'));
+        isContainer &&
+        (differenceAdd.some(triple => triple.auth.includes('#Default')) ||
+          differenceDelete.some(triple => triple.auth.includes('#Default')));
+
+      const addPublicRead = differenceAdd.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const removePublicRead = differenceDelete.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const addDefaultPublicRead =
+        isContainer &&
+        differenceAdd.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
+      const removeDefaultPublicRead =
+        isContainer &&
+        differenceDelete.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
       ctx.emit(
         'webacl.resource.updated',
-        { uri: resourceUri, isContainer, defaultRightsUpdated },
+        {
+          uri: resourceUri,
+          isContainer,
+          defaultRightsUpdated,
+          addPublicRead,
+          removePublicRead,
+          addDefaultPublicRead,
+          removeDefaultPublicRead
+        },
         { meta: { webId: null, dataset: null } }
       );
     }

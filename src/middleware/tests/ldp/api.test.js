@@ -1,26 +1,103 @@
+const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService } = require('@semapps/ldp');
-const FusekiAdminService = require('@semapps/fuseki-admin');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
+const { CoreService } = require('@semapps/core');
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
+const { getPrefixJSON } = require('@semapps/ldp');
+const { WebAclMiddleware } = require('@semapps/webacl');
 const express = require('express');
 const supertest = require('supertest');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const initialize = require('./initialize');
 
 jest.setTimeout(20000);
-let broker;
+const broker = new ServiceBroker({
+  middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
+});
 let expressMocked = undefined;
 
 beforeAll(async () => {
-  broker = await initialize();
-  apiGateway = await broker.getLocalService('api');
+  broker.createService(CoreService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
+      ontologies,
+      jsonContext: getPrefixJSON(ontologies),
+      containers: ['/resources'],
+      api: false,
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false
+    }
+  });
+
+  await broker.createService(AuthLocalService, {
+    settings: {
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
+    }
+  });
+
   const app = express();
+  const apiGateway = broker.createService({
+    mixins: [ApiGatewayService],
+    settings: {
+      server: false,
+      cors: {
+        origin: '*',
+        exposedHeaders: '*'
+      }
+    },
+    methods: {
+      authenticate(ctx, route, req, res) {
+        return Promise.resolve(null);
+      },
+      authorize(ctx, route, req, res) {
+        return Promise.resolve(ctx);
+      }
+    }
+  });
   app.use(apiGateway.express());
+
+  // Drop all existing triples, then restart broker so that default containers are recreated
+  await broker.start();
+  await broker.call('triplestore.dropAll', { webId: 'system' });
+  await broker.stop();
+  await broker.start();
+
+  // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'resources',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+
   expressMocked = supertest(app);
 });
 
@@ -44,6 +121,7 @@ describe('CRUD Project', () => {
         label: 'myLabel'
       })
       .set('content-type', 'application/ld+json');
+
     let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
     expect(location).not.toBeNull();
 
@@ -66,25 +144,25 @@ describe('CRUD Project', () => {
     expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);
   }, 20000);
 
-  test('Update one project', async () => {
-    const body = {
-      '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-      },
-      description: 'myProjectUpdated'
-    };
-
-    await expressMocked
-      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .send(body)
-      .set('content-type', 'application/ld+json');
-
-    const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .set('Accept', 'application/ld+json');
-    expect(response.body['pair:description']).toBe('myProjectUpdated');
-    expect(response.body['pair:label']).toBe('myLabel');
-  }, 20000);
+  // test('Update one project', async () => {
+  //   const body = {
+  //     '@context': {
+  //       '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+  //     },
+  //     description: 'myProjectUpdated'
+  //   };
+  //
+  //   await expressMocked
+  //     .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+  //     .send(body)
+  //     .set('content-type', 'application/ld+json');
+  //
+  //   const response = await expressMocked
+  //     .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+  //     .set('Accept', 'application/ld+json');
+  //   expect(response.body['pair:description']).toBe('myProjectUpdated');
+  //   expect(response.body['pair:label']).toBe('myLabel');
+  // }, 20000);
 
   test('Replace one project', async () => {
     const body = {

@@ -1,7 +1,7 @@
+import urlJoin from 'url-join';
 import getOne from './getOne';
 import uploadAllFiles from '../utils/uploadAllFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
-import urlJoin from 'url-join';
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
@@ -11,21 +11,12 @@ const createMethod = config => async (resourceId, params) => {
 
   const headers = new Headers();
 
-  if (dataModel.fieldsMapping?.title) {
-    if (Array.isArray(dataModel.fieldsMapping.title)) {
-      headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
-    } else {
-      headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
-    }
-  }
-
   let containerUri, serverKey;
   if (dataModel.create?.container) {
     serverKey = Object.keys(dataModel.create.container)[0];
     containerUri = urlJoin(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
   } else {
-    serverKey =
-      dataModel.create?.server || Object.keys(config.dataServers).find(key => config.dataServers[key].default === true);
+    serverKey = dataModel.create?.server || Object.keys(dataServers).find(key => dataServers[key].default === true);
     if (!serverKey) throw new Error('You must define a server for the creation, or a container, or a default server');
 
     const containers = findContainersWithTypes(dataModel.types, [serverKey], dataServers);
@@ -41,23 +32,48 @@ const createMethod = config => async (resourceId, params) => {
     containerUri = containers[serverKeys[0]][0];
   }
 
-  // Upload files, if there are any
-  params.data = await uploadAllFiles(params.data, config);
+  if (params.data) {
+    if (dataModel.fieldsMapping?.title) {
+      if (Array.isArray(dataModel.fieldsMapping.title)) {
+        headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
+      } else {
+        headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
+      }
+    }
 
-  const { headers: responseHeaders } = await httpClient(containerUri, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      '@context': jsonContext,
-      '@type': dataModel.types,
-      ...params.data
-    }),
-    noToken: dataServers[serverKey].authServer !== true
-  });
+    // Upload files, if there are any
+    params.data = await uploadAllFiles(params.data, config);
 
-  // Retrieve newly-created resource
-  const resourceUri = responseHeaders.get('Location');
-  return await getOne(config)(resourceId, { id: resourceUri });
+    const { headers: responseHeaders } = await httpClient(containerUri, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        '@context': jsonContext,
+        '@type': dataModel.types,
+        ...params.data
+      }),
+      noToken: dataServers[serverKey].authServer !== true
+    });
+
+    // Retrieve newly-created resource
+    const resourceUri = responseHeaders.get('Location');
+    return await getOne(config)(resourceId, { id: resourceUri });
+  } else if (params.id) {
+    headers.set('Content-Type', 'application/sparql-update');
+
+    await httpClient(containerUri, {
+      method: 'PATCH',
+      headers,
+      body: `
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        INSERT DATA { <${containerUri}> ldp:contains <${params.id}>. };
+      `,
+      noToken: dataServers[serverKey].authServer !== true
+    });
+
+    // Create must return the new data, so get them from the remote URI
+    return await getOne(config)(resourceId, { id: params.id });
+  }
 };
 
 export default createMethod;

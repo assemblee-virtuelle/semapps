@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
-import { buildDereferenceQuery } from '@semapps/semantic-data-provider';
+import { buildBlankNodesQuery } from '@semapps/semantic-data-provider';
 
 const useInbox = () => {
   const { identity } = useGetIdentity();
@@ -22,7 +22,7 @@ const useInbox = () => {
       if (!sparqlEndpoint || !inboxUrl) return;
 
       const token = localStorage.getItem('token');
-      const dereferenceQuery = buildDereferenceQuery(['as:object']);
+      const blankNodesQuery = buildBlankNodesQuery(['as:object']);
 
       let filtersWhereQuery = '';
       if (filters) {
@@ -38,14 +38,14 @@ const useInbox = () => {
         PREFIX as: <https://www.w3.org/ns/activitystreams#>
         CONSTRUCT {
           ?s1 ?p1 ?o1 .
-          ${dereferenceQuery.construct}
+          ${blankNodesQuery.construct}
         }
         WHERE {
           <${inboxUrl}> as:items ?s1 .
           ?s1 ?p1 ?o1 .
           FILTER( (isIRI(?s1)) ) .
           ${filtersWhereQuery}
-          ${dereferenceQuery.where}
+          ${blankNodesQuery.where}
         }
       `;
 
@@ -54,7 +54,7 @@ const useInbox = () => {
         body: query,
         headers: new Headers({
           Accept: 'application/ld+json',
-          Authorization: 'Bearer ' + token
+          Authorization: token ? `Bearer ${token}` : undefined
         })
       });
 

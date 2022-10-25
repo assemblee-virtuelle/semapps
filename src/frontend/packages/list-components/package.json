@@ -1,6 +1,6 @@
 {
   "name": "@semapps/list-components",
-  "version": "0.4.0-alpha.25",
+  "version": "0.4.0-alpha.38",
   "description": "React-Admin list components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -12,6 +12,9 @@
   "scripts": {
     "pre-publish": "rollup --sourcemap --config",
     "dev": "rollup --watch --sourcemap --config"
+  },
+  "dependencies": {
+    "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
     "react": "^16.13.1 || ^17.0.0",

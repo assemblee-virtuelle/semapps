@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
-import { buildDereferenceQuery } from '@semapps/semantic-data-provider';
+import { buildBlankNodesQuery } from '@semapps/semantic-data-provider';
 
 const useOutbox = () => {
   const { identity } = useGetIdentity();
@@ -21,22 +21,18 @@ const useOutbox = () => {
   const post = useCallback(
     async activity => {
       const token = localStorage.getItem('token');
-      try {
-        const { headers } = await fetchUtils.fetchJson(outboxUrl, {
-          method: 'POST',
-          body: JSON.stringify({
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            ...activity
-          }),
-          headers: new Headers({
-            'Content-Type': 'application/ld+json',
-            Authorization: `Bearer ${token}`
-          })
-        });
-        return headers.get('Location');
-      } catch (e) {
-        return false;
-      }
+      const { headers } = await fetchUtils.fetchJson(outboxUrl, {
+        method: 'POST',
+        body: JSON.stringify({
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          ...activity
+        }),
+        headers: new Headers({
+          'Content-Type': 'application/ld+json',
+          Authorization: `Bearer ${token}`
+        })
+      });
+      return headers.get('Location');
     },
     [outboxUrl]
   );
@@ -45,18 +41,18 @@ const useOutbox = () => {
     if (!sparqlEndpoint || !outboxUrl) return;
 
     const token = localStorage.getItem('token');
-    const dereferenceQuery = buildDereferenceQuery(['as:object']);
+    const blankNodesQuery = buildBlankNodesQuery(['as:object']);
 
     const query = `
       PREFIX as: <https://www.w3.org/ns/activitystreams#>
       CONSTRUCT {
         ?s1 ?p1 ?o1 .
-        ${dereferenceQuery.construct}
+        ${blankNodesQuery.construct}
       }
       WHERE {
         <${outboxUrl}> as:items ?s1 .
         ?s1 ?p1 ?o1 .
-        ${dereferenceQuery.where}
+        ${blankNodesQuery.where}
       }
     `;
 
@@ -65,7 +61,7 @@ const useOutbox = () => {
       body: query,
       headers: new Headers({
         Accept: 'application/ld+json',
-        Authorization: 'Bearer ' + token
+        Authorization: token ? `Bearer ${token}` : undefined
       })
     });
 

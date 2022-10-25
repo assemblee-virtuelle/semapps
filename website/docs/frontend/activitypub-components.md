@@ -27,6 +27,37 @@ export const MyPage = (props) => (
 );
 ```
 
+### CommentsField
+
+Display a form to attach comments to the current resource, as well as the list of existing comments (located in the `replies` collection). A comment is an ActivityPub `Note` and it is linked to the original resource with the `inReplyOf` property.
+
+```jsx
+import { Show, SimpleShowLayout } from 'react-admin';
+import { CommentsField } from '@semapps/activitypub-components';
+
+const DocumentShow = props => {
+  const mentions = useMentions('Person');
+  return (
+    <Show {...props}>
+      <SimpleShowLayout>
+        <CommentsField
+          userResource="Person"
+          mentions={mentions}
+        />
+      </SimpleShowLayout>
+    </Show>
+  );
+}
+```
+
+| Property       | Type     | Default        | Description                                                                                                        |
+|----------------|----------|----------------|--------------------------------------------------------------------------------------------------------------------|
+| `userResource` | `String` | **required**   | React-Admin resource ID for users                                                                                  |
+| `label`        | `String` | "Commentaires" | The label to use for the field                                                                                     |
+| `mentions`     | `Object` |                | A tiptap [suggestion](https://tiptap.dev/api/utilities/suggestion) object. If present, it allows to mention users. |
+
+> To display the users' avatars, the `fieldsMapping.image` property must be defined in the data model of the user resource.
+
 ### ReferenceCollectionField
 
 This component can be used like React-Admin [ReferenceField](https://marmelab.com/react-admin/Fields.html#referencefield). It fetches the collection associated with a resource, and display it in a list. Internally, it uses the CollectionList component.
@@ -136,3 +167,9 @@ export const MyPage = (props) => {
   );
 };
 ```
+
+### useMentions
+
+Returns a tiptap [suggestion](https://tiptap.dev/api/utilities/suggestion) object, allowing to mention users.
+
+See the `CommentsField` component above for an example.

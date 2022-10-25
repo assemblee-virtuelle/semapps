@@ -2,7 +2,8 @@ const englishMessages = {
   auth: {
     dialog: {
       container_permissions: 'Container permissions',
-      resource_permissions: 'Resource permissions'
+      resource_permissions: 'Resource permissions',
+      login_required: 'Login required'
     },
     action: {
       permissions: 'Permissions',
@@ -53,7 +54,8 @@ const englishMessages = {
       user_connected: 'You are now connected',
       user_disconnected: 'You are now disconnected',
       bad_request: 'Bad request (Error message returned by the server: %{error})',
-      account_settings_updated: 'Your account settings have been successfully updated'
+      account_settings_updated: 'Your account settings have been successfully updated',
+      login_to_continue: 'Please login to continue'
     }
   }
 };

@@ -1,5 +1,7 @@
-import buildDereferenceQuery from './buildDereferenceQuery';
 import DataFactory from '@rdfjs/data-model';
+import buildBaseQuery from './buildBaseQuery';
+import buildBlankNodesQuery from './buildBlankNodesQuery';
+import resolvePrefix from './resolvePrefix';
 const { literal, namedNode, triple, variable } = DataFactory;
 
 const SparqlGenerator = require('sparqljs').Generator;
@@ -7,37 +9,36 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', 'dereference', '_servers'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontologies }) => {
+const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicates, ontologies }) => {
+  const baseQuery = buildBaseQuery(predicates, ontologies);
+
   let sparqlJsParams = {
     queryType: 'CONSTRUCT',
-    template: [triple(variable('s1'), variable('p1'), variable('o1'))],
-    where: [
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'in',
-          args: [variable('containerUri'), containers.map(containerUri => namedNode(containerUri))]
-        }
-      },
-      {
-        type: 'bgp',
-        triples: [triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1'))]
-      },
-      {
-        type: 'filter',
-        expression: {
-          type: 'operation',
-          operator: 'isiri',
-          args: [variable('s1')]
-        }
-      }
-    ],
+    template: baseQuery.construct,
+    where: [],
     type: 'query',
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
+
+  let containerWhere = [
+    {
+      type: 'values',
+      values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
+    },
+    triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
+    {
+      type: 'filter',
+      expression: {
+        type: 'operation',
+        operator: 'isiri',
+        args: [variable('s1')]
+      }
+    }
+  ];
+
+  let resourceWhere = [];
 
   if (filter && Object.keys(filter).length > 0) {
     const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
@@ -59,22 +60,19 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
       */
       // initialize array in case of single value :
       [].concat(filter.sparqlWhere).forEach(sw => {
-        sparqlJsParams.where.push(sw);
+        resourceWhere.push(sw);
       });
     }
 
     if (hasFullTextSearch) {
-      sparqlJsParams.where.push({
+      resourceWhere.push({
         type: 'group',
         patterns: [
           {
             queryType: 'SELECT',
             variables: [variable('s1')],
             where: [
-              {
-                type: 'bgp',
-                triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
-              },
+              triple(variable('s1'), variable('p1'), variable('o1')),
               {
                 type: 'filter',
                 expression: {
@@ -114,36 +112,52 @@ const buildSparqlQuery = ({ containers, params: { filter }, dereference, ontolog
     // Other filters
     // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
     // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
-    Object.keys(filter).forEach(filterKey => {
-      if (!reservedFilterKeys.includes(filterKey)) {
-        const filterItem = filterKey === 'a' ? filter[filterKey] : filterKey;
-        const filterPrefix = filterItem.split(':')[0];
-        const filterValue = filterItem.split(':')[1];
-        const filterOntology = ontologies.find(ontology => ontology.prefix === filterPrefix);
-        const filterPredicateValue =
-          filterKey === 'a' ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' : filterOntology.url + filterValue;
-        const filterObjectValue = filterKey === 'a' ? filterOntology.url + filterValue : filter[filterKey];
-
-        sparqlJsParams.where.unshift({
-          type: 'bgp',
-          triples: [triple(variable('s1'), namedNode(filterPredicateValue), namedNode(filterObjectValue))]
-        });
+    Object.entries(filter).forEach(([predicate, object]) => {
+      if (!reservedFilterKeys.includes(predicate)) {
+        resourceWhere.unshift(
+          triple(
+            variable('s1'),
+            namedNode(resolvePrefix(predicate, ontologies)),
+            namedNode(resolvePrefix(object, ontologies))
+          )
+        );
       }
     });
   }
 
-  // Dereference
-  const dereferenceQueryForSparqlJs = buildDereferenceQuery(dereference, ontologies);
-  if (dereferenceQueryForSparqlJs && dereferenceQueryForSparqlJs.construct) {
-    sparqlJsParams.where = sparqlJsParams.where.concat(dereferenceQueryForSparqlJs.where);
-    sparqlJsParams.template = sparqlJsParams.template.concat(dereferenceQueryForSparqlJs.construct);
+  // Blank nodes
+  const blankNodesQuery = buildBlankNodesQuery(blankNodes, baseQuery, ontologies);
+  if (blankNodesQuery && blankNodesQuery.construct) {
+    resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+    sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
+  } else {
+    resourceWhere.push(baseQuery.where);
   }
 
-  // End with this to improve performances
-  sparqlJsParams.where.push({
-    type: 'bgp',
-    triples: [triple(variable('s1'), variable('p1'), variable('o1'))]
-  });
+  sparqlJsParams.where.push(
+    {
+      type: 'union',
+      patterns: [
+        containerWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: containerWhere
+        }
+      ]
+    },
+    {
+      type: 'union',
+      patterns: [
+        resourceWhere,
+        {
+          type: 'graph',
+          name: namedNode('http://semapps.org/mirror'),
+          patterns: resourceWhere
+        }
+      ]
+    }
+  );
 
   return generator.stringify(sparqlJsParams);
 };

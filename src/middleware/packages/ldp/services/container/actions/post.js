@@ -82,6 +82,9 @@ module.exports = {
         );
       }
 
+      // We must add this first, so that the container's ACLs are taken into account
+      // But this create race conditions, especially when testing, since uncreated resources are linked to containers
+      // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
       await ctx.call('triplestore.insert', {
         resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
         webId
@@ -118,6 +121,17 @@ module.exports = {
         {
           containerUri,
           resourceUri
+        },
+        { meta: { webId: null, dataset: null } }
+      );
+
+      // this is usefull to propagate the attachement to mirroring servers.
+      // we prefer not to use the event ldp.container.attached for that purpose
+      // (because it would trigger too many activities in case of a long PATCH)
+      ctx.emit(
+        'ldp.container.patched',
+        {
+          containerUri
         },
         { meta: { webId: null, dataset: null } }
       );

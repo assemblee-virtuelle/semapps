@@ -2,6 +2,7 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 const { delay } = require('../utils');
+const fetch = require('node-fetch');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -19,29 +20,39 @@ const ObjectService = {
 
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
       try {
-        return await ctx.call(controlledActions.get || 'ldp.resource.get', {
+        return await ctx.call(controlledActions && controlledActions.get ? controlledActions.get : 'ldp.resource.get', {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON,
           webId: actorUri,
           ...rest
         });
       } catch (e) {
-        if (!actorUri || actorUri === 'system' || actorUri === 'anon') {
-          throw new Error(
-            'No valid actor URI provided to activitypub.object.get (provided: ' +
-              actorUri +
-              '), cannot get object ' +
-              objectUri +
-              ' through proxy'
-          );
+        if (e.code === 404) {
+          // TODO only do this for distant objects
+          // If the object was not found in cache, try to query it distantly
+          if (actorUri && actorUri !== 'system' && actorUri !== 'anon') {
+            return await ctx.call('activitypub.proxy.query', {
+              resourceUri: objectUri,
+              actorUri
+            });
+            // TODO put results in cache ?
+          } else {
+            const response = await fetch(objectUri, {
+              headers: {
+                Accept: 'application/json'
+              }
+            });
+
+            if (response.ok) {
+              return await response.json();
+            } else {
+              throw new Error(`Unable to fetch remote object: ${objectUri}`);
+            }
+          }
+        } else {
+          // Rethrow error if not 404
+          throw e;
         }
-        // If the object was not found in cache, try to query it distantly
-        // TODO only do this for distant objects
-        return await ctx.call('activitypub.proxy.query', {
-          resourceUri: objectUri,
-          actorUri
-        });
-        // TODO put in cache results ??
       }
     },
     async awaitCreateComplete(ctx) {
@@ -66,11 +77,6 @@ const ObjectService = {
       let activityType = activity.type || activity['@type'],
         objectUri;
 
-      if (typeof activity.object === 'string') {
-        // If the object passed is an URI, there is nothing to process
-        return activity;
-      }
-
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
         let { to, '@id': id, ...object } = activity;
@@ -86,10 +92,19 @@ const ObjectService = {
 
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
+          // If the object passed is an URI, this is an announcement and there is nothing to process
+          if (typeof activity.object === 'string') break;
+
           let containerUri;
           const container = await ctx.call('ldp.registry.getByType', {
             type: activity.object.type || activity.object['@type']
           });
+
+          if (!container)
+            throw new Error(
+              `Cannot create resource of type "${activity.object.type ||
+                activity.object['@type']}", no matching containers were found!`
+            );
 
           if (this.settings.podProvider) {
             const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
@@ -109,6 +124,9 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.UPDATE: {
+          // If the object passed is an URI, this is an announcement and there is nothing to process
+          if (typeof activity.object === 'string') break;
+
           await ctx.call('ldp.resource.patch', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
@@ -119,8 +137,9 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.DELETE: {
+          // TODO ensure that this is not an announcement (like for Update and Create)
           await ctx.call('ldp.resource.delete', {
-            resourceUri: activity.object,
+            resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
             webId: actorUri
           });
           break;

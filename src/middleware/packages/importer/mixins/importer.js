@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const cronParser = require('cron-parser');
 const { promises: fsPromises } = require('fs');
-const { ACTIVITY_TYPES } = require('@semapps/activitypub');
+const { ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
@@ -94,11 +94,17 @@ module.exports = {
   },
   actions: {
     async freshImport(ctx) {
-      this.logger.info('Clearing all existing data...');
+      if (ctx.params.clear === undefined || ctx.params.clear === true) {
+        this.logger.info('Clearing all existing data...');
 
-      await this.actions.deleteImported();
+        await this.actions.deleteImported();
+      }
+
+      await this.prepare();
 
       if (this.settings.source.getAllCompact) {
+        this.logger.info('Fetching compact list...');
+
         const compactResults = await this.list(this.settings.source.getAllCompact);
 
         if (compactResults) {
@@ -125,6 +131,8 @@ module.exports = {
           );
         }
       } else if (this.settings.source.getAllFull) {
+        this.logger.info('Fetching full list...');
+
         const fullResults = await this.list(this.settings.source.getAllFull);
 
         if (fullResults) {
@@ -213,9 +221,9 @@ module.exports = {
                 ...resource,
                 ...oldDataToKeep,
                 'dc:source': sourceUri,
-                'dc:created': this.getField('created', data),
-                'dc:modified': this.getField('updated', data),
-                'dc:creator': this.settings.dest.actorUri
+                'dc:created': resource['dc:created'] || this.getField('created', data),
+                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
               },
               contentType: MIME_TYPES.JSON,
               webId: 'system'
@@ -227,15 +235,19 @@ module.exports = {
         } else {
           this.logger.info('Importing ' + sourceUri + '...');
 
+          if (!this.settings.dest.containerUri) {
+            throw new Error(`Cannot import as dest.containerUri setting is not defined`);
+          }
+
           destUri = await ctx.call('ldp.container.post', {
             containerUri: this.settings.dest.containerUri,
             slug: this.getField('slug', data),
             resource: {
               ...resource,
               'dc:source': sourceUri,
-              'dc:created': this.getField('created', data),
-              'dc:modified': this.getField('updated', data),
-              'dc:creator': this.settings.dest.actorUri
+              'dc:created': resource['dc:created'] || this.getField('created', data),
+              'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
             },
             contentType: MIME_TYPES.JSON,
             webId: 'system'
@@ -260,11 +272,20 @@ module.exports = {
 
       this.imported = {};
     },
+    async list(ctx) {
+      return await this.list(ctx.params.url || this.settings.source.getAllFull);
+    },
+    async getOne(ctx) {
+      return await this.getOne(this.settings.source.getOneFull(ctx.params.data));
+    },
     getImported() {
       return this.imported;
     }
   },
   methods: {
+    async prepare() {
+      // Things to do before processing data
+    },
     async transform(data) {
       return data;
     },
@@ -325,7 +346,7 @@ module.exports = {
             collectionUri: outbox,
             type,
             object: resourceUri,
-            to: followers
+            to: [followers, PUBLIC_URI]
           },
           { meta: { webId: this.settings.dest.actorUri } }
         );
@@ -339,6 +360,8 @@ module.exports = {
     },
     async processSynchronize(job) {
       let fromDate, toDate;
+
+      await this.prepare();
 
       if (this.settings.cronJob.time) {
         const interval = cronParser.parseExpression(this.settings.cronJob.time, {
@@ -356,18 +379,28 @@ module.exports = {
 
       let deletedUris = {},
         createdUris = {},
-        updatedUris = {};
-      const compactResults = await this.list(this.settings.source.getAllCompact);
+        updatedUris = {},
+        newSourceUris = [],
+        mappedFullResults = {};
 
-      if (!compactResults) {
-        job.moveToFailed('Unable to fetch ' + this.settings.source.getAllCompact);
+      const results = await this.list(this.settings.source.getAllCompact || this.settings.source.getAllFull);
+
+      if (!results) {
+        job.moveToFailed('Unable to fetch ' + (this.settings.source.getAllCompact || this.settings.source.getAllFull));
         return;
       }
 
       job.progress(5);
 
-      const newSourceUris = compactResults.map(data => this.settings.source.getOneFull(data));
       const oldSourceUris = Object.keys(this.imported);
+
+      if (this.settings.source.getAllCompact) {
+        newSourceUris = results.map(data => this.settings.source.getOneFull(data));
+      } else {
+        // If we have no compact results, put the data in an object so that we can easily use it with importOne
+        mappedFullResults = Object.fromEntries(results.map(data => [this.settings.source.getOneFull(data), data]));
+        newSourceUris = Object.keys(mappedFullResults);
+      }
 
       job.progress(10);
 
@@ -402,7 +435,7 @@ module.exports = {
       for (let sourceUri of urisToCreate) {
         this.logger.info('Resource ' + sourceUri + ' did not exist, importing it...');
 
-        const destUri = await this.actions.importOne({ sourceUri });
+        const destUri = await this.actions.importOne({ sourceUri, data: mappedFullResults[sourceUri] });
 
         if (destUri) {
           await this.postActivity(ACTIVITY_TYPES.CREATE, destUri);
@@ -420,7 +453,7 @@ module.exports = {
       // UPDATED RESOURCES
       ///////////////////////////////////////////
 
-      const urisToUpdate = compactResults
+      const urisToUpdate = results
         .filter(data => {
           // If an updated field is available in compact results, filter out items outside of the time frame
           const updated = this.getField('updated', data);
@@ -430,7 +463,11 @@ module.exports = {
         .filter(uri => !urisToCreate.includes(uri));
 
       for (let sourceUri of urisToUpdate) {
-        const result = await this.actions.importOne({ sourceUri, destUri: this.imported[sourceUri] });
+        const result = await this.actions.importOne({
+          sourceUri,
+          destUri: this.imported[sourceUri],
+          data: mappedFullResults[sourceUri]
+        });
 
         if (result === false) {
           await this.broker.call('ldp.resource.delete', {

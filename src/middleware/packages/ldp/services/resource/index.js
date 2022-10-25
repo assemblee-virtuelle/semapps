@@ -1,6 +1,6 @@
 const getAction = require('./actions/get');
 const createAction = require('./actions/create');
-const patchAction = require('./actions/patch');
+// const patchAction = require('./actions/patch');
 const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
@@ -9,12 +9,17 @@ const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
 
+const Schedule = require('moleculer-schedule');
+
 module.exports = {
   name: 'ldp.resource',
+  mixins: [Schedule],
   settings: {
     baseUrl: null,
     ontologies: [],
-    podProvider: false
+    podProvider: false,
+    mirrorGraphName: null,
+    preferredViewForResource: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -25,8 +30,8 @@ module.exports = {
     // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,
-    api_patch: patchAction.api,
-    patch: patchAction.action,
+    // api_patch: patchAction.api,
+    // patch: patchAction.action,
     api_delete: deleteAction.api,
     delete: deleteAction.action,
     api_put: putAction.api,
@@ -51,5 +56,11 @@ module.exports = {
       }
     }
   },
-  methods
+  methods,
+  jobs: [
+    {
+      rule: '0 * * * *',
+      handler: 'updateSingleMirroredResources'
+    }
+  ]
 };

@@ -116,53 +116,53 @@ describe('Resource CRUD operations', () => {
     });
   }, 20000);
 
-  test('Patch resource with multiple blank nodes', async () => {
-    await broker.call('ldp.resource.patch', {
-      resource: {
-        '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-        },
-        '@id': project1['@id'],
-        description: 'myProjectUpdated',
-        affiliates: { '@id': 'http://localhost:3000/users/simon' },
-        hasLocation: [
-          {
-            label: 'Compiègne',
-            description: 'The place to be'
-          },
-          {
-            label: 'Nantes'
-          }
-        ]
-      },
-      accept: MIME_TYPES.JSON,
-      contentType: MIME_TYPES.JSON
-    });
-
-    const updatedProject = await broker.call('ldp.resource.get', {
-      resourceUri: project1['@id'],
-      accept: MIME_TYPES.JSON
-    });
-
-    expect(updatedProject).toMatchObject({
-      'pair:description': 'myProjectUpdated',
-      'pair:label': 'myTitle',
-      'pair:affiliates': [
-        { '@id': 'http://localhost:3000/users/simon' },
-        { '@id': 'http://localhost:3000/users/sebastien' },
-        { '@id': 'http://localhost:3000/users/guillaume' }
-      ],
-      'pair:hasLocation': [
-        {
-          'pair:label': 'Compiègne',
-          'pair:description': 'The place to be'
-        },
-        {
-          'pair:label': 'Nantes'
-        }
-      ]
-    });
-  }, 20000);
+  // test('Patch resource with multiple blank nodes', async () => {
+  //   await broker.call('ldp.resource.patch', {
+  //     resource: {
+  //       '@context': {
+  //         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+  //       },
+  //       '@id': project1['@id'],
+  //       description: 'myProjectUpdated',
+  //       affiliates: { '@id': 'http://localhost:3000/users/simon' },
+  //       hasLocation: [
+  //         {
+  //           label: 'Compiègne',
+  //           description: 'The place to be'
+  //         },
+  //         {
+  //           label: 'Nantes'
+  //         }
+  //       ]
+  //     },
+  //     accept: MIME_TYPES.JSON,
+  //     contentType: MIME_TYPES.JSON
+  //   });
+  //
+  //   const updatedProject = await broker.call('ldp.resource.get', {
+  //     resourceUri: project1['@id'],
+  //     accept: MIME_TYPES.JSON
+  //   });
+  //
+  //   expect(updatedProject).toMatchObject({
+  //     'pair:description': 'myProjectUpdated',
+  //     'pair:label': 'myTitle',
+  //     'pair:affiliates': [
+  //       { '@id': 'http://localhost:3000/users/simon' },
+  //       { '@id': 'http://localhost:3000/users/sebastien' },
+  //       { '@id': 'http://localhost:3000/users/guillaume' }
+  //     ],
+  //     'pair:hasLocation': [
+  //       {
+  //         'pair:label': 'Compiègne',
+  //         'pair:description': 'The place to be'
+  //       },
+  //       {
+  //         'pair:label': 'Nantes'
+  //       }
+  //     ]
+  //   });
+  // }, 20000);
 
   test('Put resource', async () => {
     await broker.call('ldp.resource.put', {

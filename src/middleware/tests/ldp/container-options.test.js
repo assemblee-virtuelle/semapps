@@ -1,6 +1,7 @@
 const CONFIG = require('../config');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
+const { CoreService } = require('@semapps/core');
 
 jest.setTimeout(20000);
 let broker;

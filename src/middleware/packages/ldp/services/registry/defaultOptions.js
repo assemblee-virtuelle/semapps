@@ -4,6 +4,7 @@ module.exports = {
   queryDepth: 0,
   dereference: [],
   readOnly: false,
+  excludeFromMirror: false,
   newResourcesPermissions: webId => {
     switch (webId) {
       case 'anon':

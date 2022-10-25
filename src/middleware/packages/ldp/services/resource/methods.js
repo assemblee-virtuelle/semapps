@@ -2,6 +2,7 @@ const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable, literal, namedNode, quad } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 const ObjectID = require('bson').ObjectID;
 
@@ -9,6 +10,26 @@ const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
+  async updateSingleMirroredResources() {
+    this.logger.info('updateSingleMirroredResources');
+    let singles = await this.broker.call('triplestore.query', {
+      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#singleMirroredResource> ?o } }`
+    });
+    for (const single of singles) {
+      try {
+        const resourceUri = single.s.value;
+
+        const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON } });
+        let resource = await response.json();
+        resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
+
+        await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
+      } catch (e) {
+        this.logger.warn('Failed to update single mirrored resource ' + single.s.value);
+        console.error(e);
+      }
+    }
+  },
   async streamToFile(inputStream, filePath) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -22,6 +43,7 @@ module.exports = {
     if (contentType === MIME_TYPES.JSON) {
       return await this.broker.call('jsonld.toQuads', { input: body });
     } else {
+      if (!(typeof body == 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
       return new Promise((resolve, reject) => {
         const textStream = streamifyString(body);
         let res = [];
@@ -49,29 +71,12 @@ module.exports = {
       return triple;
     });
   },
-  addDiscriminentToBlankNodes(triples) {
-    const subjects = triples
-      .map(t => t.subject)
-      .filter(s => {
-        return s.termType === 'Variable';
-      })
-      .reduce((previousValue, currentValue) => {
-        if (!previousValue.map(s => s.value).includes(currentValue.value)) {
-          return [...previousValue, currentValue];
-        } else {
-          return previousValue;
-        }
-      }, []);
-    const disriminents = subjects.map(s => {
-      return quad(s, namedNode('http://semapps.org/ns/core#discriminent'), literal(new ObjectID().toString()));
-    });
 
-    return [...triples, ...disriminents];
-  },
   // Exclude from triples1 the triples which also exist in triples2
   getTriplesDifference(triples1, triples2) {
     return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
   },
+
   nodeToString(node) {
     switch (node.termType) {
       case 'Variable':

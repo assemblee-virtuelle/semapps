@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGetOne, LinearProgress } from 'react-admin';
-import { ReferenceArrayField } from '@semapps/semantic-data-provider';
+import { ReferenceArrayField } from '@semapps/field-components';
 
 const CollectionList = ({ collectionUrl, resource, children, ...rest }) => {
   if (React.Children.count(children) !== 1) {

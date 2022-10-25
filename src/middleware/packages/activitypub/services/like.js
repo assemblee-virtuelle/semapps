@@ -6,13 +6,17 @@ const LikeService = {
   name: 'activitypub.like',
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null
+    baseUri: null,
+    attachToActorTypes: null,
+    attachToObjectTypes: null
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
   async started() {
+    const { attachToActorTypes, attachToObjectTypes } = this.settings;
+
     await this.broker.call('activitypub.registry.register', {
       path: '/liked',
-      attachToTypes: Object.values(ACTOR_TYPES),
+      attachToTypes: attachToActorTypes,
       attachPredicate: 'https://www.w3.org/ns/activitystreams#liked',
       ordered: false,
       dereferenceItems: false,
@@ -21,7 +25,7 @@ const LikeService = {
 
     await this.broker.call('activitypub.registry.register', {
       path: '/likes',
-      attachToTypes: Object.values(OBJECT_TYPES),
+      attachToTypes: attachToObjectTypes,
       attachPredicate: 'https://www.w3.org/ns/activitystreams#likes',
       ordered: false,
       dereferenceItems: false,
@@ -80,19 +84,35 @@ const LikeService = {
   },
   activities: {
     likeObject: {
-      match: {
-        type: ACTIVITY_TYPES.LIKE
+      match(activity) {
+        return this.matchActivity(
+          {
+            type: ACTIVITY_TYPES.LIKE,
+            object: {
+              type: this.settings.attachToObjectTypes
+            }
+          },
+          activity
+        );
       },
       async onEmit(ctx, activity) {
         await this.actions.addLike({ actorUri: activity.actor, objectUri: activity.object }, { parentCtx: ctx });
       }
     },
     unlikeObject: {
-      match: {
-        type: ACTIVITY_TYPES.UNDO,
-        object: {
-          type: ACTIVITY_TYPES.LIKE
-        }
+      match(activity) {
+        return this.matchActivity(
+          {
+            type: ACTIVITY_TYPES.UNDO,
+            object: {
+              type: ACTIVITY_TYPES.LIKE,
+              object: {
+                type: this.settings.attachToObjectTypes
+              }
+            }
+          },
+          activity
+        );
       },
       async onEmit(ctx, activity) {
         await this.actions.removeLike(

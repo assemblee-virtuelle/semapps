@@ -45,8 +45,6 @@ const RegistryService = {
         for (let container of Object.values(containers)) {
           // Add a corresponding API route
           await this.actions.addApiRoute({ collection: ctx.params, container });
-
-          // TODO go through all objects in the matching containers and ensure the collection is attached
         }
       }
     },
@@ -117,6 +115,28 @@ const RegistryService = {
         // Delete the collection
         await ctx.call('activitypub.collection.remove', { collectionUri, webId: 'system' });
       }
+    },
+    async createAndAttachMissingCollections(ctx) {
+      for (let collection of this.registeredCollections) {
+        this.logger.info('Looking for containers with types: ' + JSON.stringify(collection.attachToTypes));
+        // Find all containers where we want to attach this collection
+        const containers = this.getContainersByType(collection.attachToTypes);
+        if (containers) {
+          // Go through each container
+          for (let container of Object.values(containers)) {
+            const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
+            this.logger.info('Looking for resources in container ' + containerUri);
+            const resources = await ctx.call('ldp.container.getUris', { containerUri });
+            for (let resourceUri of resources) {
+              await this.actions.createAndAttachCollection({
+                objectUri: resourceUri,
+                collection,
+                webId: 'system'
+              });
+            }
+          }
+        }
+      }
     }
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
@@ -164,7 +184,6 @@ const RegistryService = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
-
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
       for (let collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
@@ -177,7 +196,6 @@ const RegistryService = {
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData, webId } = ctx.params;
-
       // Check if we need to create collection only if the type has changed
       if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);

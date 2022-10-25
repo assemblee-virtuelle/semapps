@@ -35,16 +35,25 @@ module.exports = {
     api_removeMember: removeMemberAction.api
   },
   async started() {
-    if (this.settings.podProvider && this.settings.superAdmins.length > 0) {
-      throw new Error('You cannot create a superadmin group in a POD provider config');
-    }
+    if (this.settings.superAdmins && this.settings.superAdmins.length > 0) {
+      if (this.settings.podProvider) {
+        throw new Error('You cannot create a superadmin group in a POD provider config');
+      }
 
-    if (!this.settings.podProvider) {
       const groupExists = await this.actions.exist({ groupSlug: 'superadmins', webId: 'system' });
 
       if (!groupExists) {
         this.logger.info("Super admin group doesn't exist, creating it...");
         await this.actions.create({ groupSlug: 'superadmins', webId: 'system' });
+      }
+
+      const rootContainerExist = await this.broker.call('ldp.container.exist', {
+        containerUri: this.settings.baseUrl,
+        webId: 'system'
+      });
+
+      if (!rootContainerExist) {
+        throw new Error('To give superadmins rights, you must setup a root container');
       }
 
       // Give full rights to root container
@@ -78,7 +87,7 @@ module.exports = {
         });
 
         if (!isMember) {
-          console.log(`User ${memberUri} is not member of superadmins group, adding it...`);
+          this.logger.info(`User ${memberUri} is not member of superadmins group, adding it...`);
           await this.actions.addMember({ groupUri, memberUri, webId: 'system' });
         }
       }
