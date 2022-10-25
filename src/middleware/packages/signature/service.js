@@ -15,7 +15,7 @@ const SignatureService = {
   },
   started() {
     this.remoteActorPublicKeyCache = {};
-  }
+  },
   created() {
     if (!this.settings.actorsKeyPairsDir) {
       throw new Error('You must set the actorsKeyPairsDir setting in the signature service');
