@@ -19,7 +19,6 @@ module.exports = {
         this.inverseRelations = { ...this.inverseRelations, ...result };
       }
     }
-    console.log(this.inverseRelations)
     const services = await this.broker.call('$node.services');
     if (services.map(s => s.name).filter(s => s.startsWith('activitypub.relay')).length) {
       this.hasRelayService = true;

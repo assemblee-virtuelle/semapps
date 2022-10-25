@@ -43,7 +43,7 @@ module.exports = {
       dataset
     });
 
-    ctx.emit(
+    if (!mirror) ctx.emit(
       'ldp.container.detached',
       {
         containerUri,

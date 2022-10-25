@@ -120,18 +120,8 @@ module.exports = {
         'ldp.container.attached',
         {
           containerUri,
-          resourceUri
-        },
-        { meta: { webId: null, dataset: null } }
-      );
-
-      // this is usefull to propagate the attachement to mirroring servers.
-      // we prefer not to use the event ldp.container.attached for that purpose
-      // (because it would trigger too many activities in case of a long PATCH)
-      ctx.emit(
-        'ldp.container.patched',
-        {
-          containerUri
+          resourceUri,
+          fromContainerPost: true,
         },
         { meta: { webId: null, dataset: null } }
       );
