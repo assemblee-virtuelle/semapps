@@ -200,7 +200,7 @@ module.exports = {
     async 'ldp.container.posted'(ctx) {
       const { resourceUri, containerUri } = ctx.params;
       if (
-        !this.containerExcludedFromMirror(resourceUri) &&
+        !this.containerExcludedFromMirror(containerUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
