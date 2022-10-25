@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
-const { ACTOR_TYPES, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
+const { ACTOR_TYPES, ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
@@ -63,6 +63,20 @@ module.exports = {
     }
   },
   actions: {
+    checkValidRemoteRelay: {
+      visibility: 'public',
+      params: {
+        actor: { type: 'string', optional: false }
+      },
+      async handler(ctx) {
+        // check that the sending actor is in our list of mirroredServers (security: if not it is some spamming or malicious attempt)
+        if (!this.mirroredServers.includes(ctx.params.actor)) {
+          this.logger.warn('SECURITY ALERT : received announce from actor we are not following : ' + ctx.params.actor);
+          return false;
+        }
+        return true;
+      }
+    },
     mirror: {
       visibility: 'public',
       params: {
@@ -85,7 +99,7 @@ module.exports = {
           return remoteRelayActorUri;
         }
 
-        // if not, we will now mirror and then follow the relay actor
+        // if not, we will now mirror and then follow the remote relay actor
 
         this.logger.info('Mirroring ' + serverUrl);
 
@@ -183,14 +197,14 @@ module.exports = {
     }
   },
   events: {
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
+    async 'ldp.container.posted'(ctx) {
+      const { resourceUri, containerUri } = ctx.params;
       if (
         !this.containerExcludedFromMirror(resourceUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
         !isMirror(resourceUri, this.settings.baseUrl)
       ) {
-        this.resourceCreated(resourceUri);
+        this.resourceCreated(containerUri, resourceUri);
       }
     },
     async 'ldp.resource.updated'(ctx) {
@@ -203,14 +217,24 @@ module.exports = {
         this.resourceUpdated(resourceUri);
       }
     },
-    async 'ldp.container.patched'(ctx) {
-      const { containerUri } = ctx.params;
+    async 'ldp.container.attached'(ctx) {
+      const { containerUri, resourceUri } = ctx.params;
       if (
         !this.containerExcludedFromMirror(containerUri) &&
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
       ) {
-        this.resourceUpdated(containerUri);
+        this.resourceContainer(containerUri, resourceUri, true);
+      }
+    },
+    async 'ldp.container.detached'(ctx) {
+      const { containerUri, resourceUri } = ctx.params;
+      if (
+        !this.containerExcludedFromMirror(containerUri) &&
+        (await this.checkResourcePublic(containerUri)) &&
+        !isMirror(containerUri, this.settings.baseUrl)
+      ) {
+        this.resourceContainer(containerUri, resourceUri, false);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -294,20 +318,17 @@ module.exports = {
       }
       return false;
     },
-    async resourceCreated(resourceUri) {
-      // each time a resource is created, it is also attached to a container,
-      // which triggers an update activity on that container to be sent to all followers.
-      // for the sake of non redundancy, we therefor do nothing when a create happens.
-      // the container update will retrieve the new resource anyway
-      // const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
-      //   activity: {
-      //     type: ACTIVITY_TYPES.ANNOUNCE,
-      //     object: {
-      //       type: ACTIVITY_TYPES.CREATE,
-      //       object: resourceUri
-      //     }
-      //   }
-      // });
+    async resourceCreated(containerUri, resourceUri) {
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: ACTIVITY_TYPES.CREATE,
+            object: resourceUri,
+            target: containerUri,
+          }
+        }
+      });
     },
     async resourceUpdated(resourceUri) {
       const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
@@ -327,6 +348,22 @@ module.exports = {
           object: {
             type: ACTIVITY_TYPES.DELETE,
             object: resourceUri
+          }
+        }
+      });
+    },
+    async resourceContainer(containerUri, resourceUri, attach) {
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: attach ? ACTIVITY_TYPES.ADD : ACTIVITY_TYPES.REMOVE,
+            object: {
+              type: OBJECT_TYPES.RELATIONSHIP,
+              subject: containerUri,
+              relationship: 'http://www.w3.org/ns/ldp#contains',
+              object: resourceUri,
+            }
           }
         }
       });

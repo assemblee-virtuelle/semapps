@@ -86,9 +86,8 @@ module.exports = {
                     }
                     turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
                     turtleToSparql += newResource.replace(regexPrefix, '');
-                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
-                      new URL(insUri).origin
-                    }> .`;
+                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${new URL(insUri).origin
+                      }> .`;
                     turtleToSparql += '} }';
 
                     await ctx.call('triplestore.update', { query: turtleToSparql });
@@ -110,7 +109,7 @@ module.exports = {
               try {
                 await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
 
-                // if the resource is attached to any container, it must be deleted.
+                // if the resource is not attached to any container anymore, it must be deleted.
 
                 let remaining = await ctx.call('triplestore.query', {
                   query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`

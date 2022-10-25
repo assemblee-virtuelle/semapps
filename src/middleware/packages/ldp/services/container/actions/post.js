@@ -115,23 +115,24 @@ module.exports = {
         // Re-throw the error so that it's displayed by the API function
         throw e;
       }
+      // console.log("emit ldp.container.attached")
+      // ctx.emit(
+      //   'ldp.container.attached',
+      //   {
+      //     containerUri,
+      //     resourceUri
+      //   },
+      //   { meta: { webId: null, dataset: null } }
+      // );
 
+      // this is usefull to propagate the attachement to mirroring servers.
+      // we prefer not to use the event ldp.container.attached and ldp.resource.created for that purpose
+      // (because the order in which they arrive to mirroring servers is unknwon and leas to race condition)
       ctx.emit(
-        'ldp.container.attached',
+        'ldp.container.posted',
         {
           containerUri,
           resourceUri
-        },
-        { meta: { webId: null, dataset: null } }
-      );
-
-      // this is usefull to propagate the attachement to mirroring servers.
-      // we prefer not to use the event ldp.container.attached for that purpose
-      // (because it would trigger too many activities in case of a long PATCH)
-      ctx.emit(
-        'ldp.container.patched',
-        {
-          containerUri
         },
         { meta: { webId: null, dataset: null } }
       );

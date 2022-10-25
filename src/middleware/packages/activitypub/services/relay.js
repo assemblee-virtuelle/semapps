@@ -257,6 +257,15 @@ const RelayService = {
         async getFollowers() {
             return [this.relayFollowersUri, PUBLIC_URI];
         },
+        prepare_triple(expanded_activity) {
+            let triple = expanded_activity[0]['https://www.w3.org/ns/activitystreams#object']?.[0]?.['https://www.w3.org/ns/activitystreams#object']?.[0];
+            if (triple) {
+                triple.subject = triple['https://www.w3.org/ns/activitystreams#subject']?.[0]?.['@id'];
+                triple.object = triple['https://www.w3.org/ns/activitystreams#object']?.[0]?.['@id'];
+                triple.relationship = triple['https://www.w3.org/ns/activitystreams#relationship']?.[0]?.['@id'];
+            }
+            return triple
+        },
         async inboxReceived(ctx) {
             const { activity } = ctx.params;
             let expanded_activity = await ctx.call('jsonld.expand', { input: activity });
@@ -277,11 +286,8 @@ const RelayService = {
                                 return;
                             }
                         }
-                        let triple = expanded_activity[0]['https://www.w3.org/ns/activitystreams#object']?.[0]?.['https://www.w3.org/ns/activitystreams#object']?.[0];
+                        let triple = this.prepare_triple(expanded_activity);
                         if (triple) {
-                            triple.subject = triple['https://www.w3.org/ns/activitystreams#subject']?.[0]?.['@id'];
-                            triple.object = triple['https://www.w3.org/ns/activitystreams#object']?.[0]?.['@id'];
-                            triple.relationship = triple['https://www.w3.org/ns/activitystreams#relationship']?.[0]?.['@id'];
                             if (isMirror(triple.subject, this.settings.baseUri)) {
                                 this.logger.warn('Attempt at offering an inverse relationship on a mirrored resource. aborting');
                                 return;
@@ -298,18 +304,14 @@ const RelayService = {
                     }
                 }
             } else if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-                // check that the sending actor is in our list of mirroredServers (security: if not it is some spamming or malicious attempt)
-                // if (!this.mirroredServers.includes(activity.actor)) {
-                //     console.log(this.mirroredServers);
-                //     this.logger.warn('SECURITY ALERT : received announce from actor we are not following : ' + activity.actor);
-                //     return;
-                // }
 
+                if (!await ctx.call('mirror.checkValidRemoteRelay', { actor: activity.actor })) return;
                 switch (activity.object.type) {
                     case ACTIVITY_TYPES.CREATE: {
                         let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
                         newResource = await newResource.json();
                         await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
+                        await ctx.call('ldp.container.attach', { containerUri: activity.object.target, resourceUri: activity.object.object }, { meta: { forceMirror: true } });
                         break;
                     }
                     case ACTIVITY_TYPES.UPDATE: {
@@ -320,6 +322,22 @@ const RelayService = {
                     }
                     case ACTIVITY_TYPES.DELETE: {
                         await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
+                        break;
+                    }
+                    case ACTIVITY_TYPES.ADD: {
+                        const relation = activity.object.object;
+                        if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
+                        let triple = this.prepare_triple(expanded_activity);
+                        if (triple)
+                            await ctx.call('ldp.container.attach', { containerUri: triple.subject, resourceUri: triple.object }, { meta: { forceMirror: true } });
+                        break;
+                    }
+                    case ACTIVITY_TYPES.REMOVE: {
+                        const relation = activity.object.object;
+                        if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
+                        let triple = this.prepare_triple(expanded_activity);
+                        if (triple)
+                            await ctx.call('ldp.container.detach', { containerUri: triple.subject, resourceUri: triple.object }, { meta: { forceMirror: true } });
                         break;
                     }
                 }
