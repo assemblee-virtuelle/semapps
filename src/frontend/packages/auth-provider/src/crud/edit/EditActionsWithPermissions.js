@@ -4,7 +4,7 @@ import PermissionsButton from '../../components/PermissionsButton/PermissionsBut
 import { rightsToControl } from '../../constants';
 
 const EditActionsWithPermissions = ({ basePath, record, hasList, hasShow }) => {
-  const { permissions } = usePermissionsOptimized(record.id);
+  const { permissions } = usePermissionsOptimized(record?.id);
   return (
     <TopToolbar>
       {hasList && <ListButton basePath={basePath} record={record} />}
