@@ -197,16 +197,6 @@ module.exports = {
     }
   },
   events: {
-    async 'ldp.container.posted'(ctx) {
-      const { resourceUri, containerUri } = ctx.params;
-      if (
-        !this.containerExcludedFromMirror(containerUri) &&
-        (await this.checkResourcePublic(resourceUri)) &&
-        !isMirror(resourceUri, this.settings.baseUrl)
-      ) {
-        this.resourceCreated(containerUri, resourceUri);
-      }
-    },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
       if (
@@ -218,8 +208,17 @@ module.exports = {
       }
     },
     async 'ldp.container.attached'(ctx) {
-      const { containerUri, resourceUri } = ctx.params;
-      if (
+      const { containerUri, resourceUri, fromContainerPost } = ctx.params;
+      if (fromContainerPost) {
+        // we use the attached to container event to detect the creation of a new resource
+        if (
+          !this.containerExcludedFromMirror(containerUri) &&
+          (await this.checkResourcePublic(resourceUri)) &&
+          !isMirror(resourceUri, this.settings.baseUrl)
+        ) {
+          this.resourceCreated(containerUri, resourceUri);
+        }
+      } else if (
         !this.containerExcludedFromMirror(containerUri) &&
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
