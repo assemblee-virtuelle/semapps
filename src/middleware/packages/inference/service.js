@@ -27,7 +27,7 @@ module.exports = {
     }
   },
   actions: {
-    remote: {
+    addFromRemote: {
       visibility: 'public',
       params: {
         subject: { type: 'string', optional: false },
@@ -82,7 +82,7 @@ module.exports = {
           .catch(err => reject(err));
       });
     },
-    async generateInverseTriples(resource) {
+    generateInverseTriples(resource) {
       let inverseTriples = [];
       for (const property of Object.keys(resource)) {
         if (this.inverseRelations[property]) {
@@ -150,7 +150,7 @@ module.exports = {
       let { newData } = ctx.params;
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToAdd = await this.generateInverseTriples(newData[0]);
+      let triplesToAdd = this.generateInverseTriples(newData[0]);
 
       let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
@@ -180,7 +180,7 @@ module.exports = {
       let { oldData } = ctx.params;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
 
-      let triplesToRemove = await this.generateInverseTriples(oldData[0]);
+      let triplesToRemove = this.generateInverseTriples(oldData[0]);
 
       let [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
@@ -206,8 +206,8 @@ module.exports = {
       oldData = await ctx.call('jsonld.expand', { input: oldData });
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToRemove = await this.generateInverseTriples(oldData[0]);
-      let triplesToAdd = await this.generateInverseTriples(newData[0]);
+      let triplesToRemove = this.generateInverseTriples(oldData[0]);
+      let triplesToAdd = this.generateInverseTriples(newData[0]);
 
       // Filter out triples which are removed and added at the same time
       let filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);

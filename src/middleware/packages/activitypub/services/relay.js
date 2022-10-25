@@ -1,14 +1,11 @@
 const urlJoin = require('url-join');
-const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
 const { ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
+const { getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
 
 const { defaultToArray } = require('@semapps/activitypub/utils');
-
-const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
 
 const RelayService = {
     name: 'activitypub.relay',
@@ -32,9 +29,6 @@ const RelayService = {
     ],
 
     async started() {
-
-        // Ensure services have been started
-        // await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account', 'activitypub.follow']);
 
         const containers = await this.broker.call('ldp.registry.list');
 
@@ -178,7 +172,7 @@ const RelayService = {
                 }
                 if (remoteRelayActorUri) {
                     this.cacheRelayWebfingers[serverDomainName] = remoteRelayActorUri;
-                    const OfferActivity = await ctx.call('activitypub.outbox.post', {
+                    await ctx.call('activitypub.outbox.post', {
                         collectionUri: this.relayOutboxUri,
                         '@context': 'https://www.w3.org/ns/activitystreams',
                         actor: this.relayActorUri,
@@ -223,7 +217,9 @@ const RelayService = {
                                 body: JSON.stringify(json)
                             });
                         }
-                    } catch (e) { }
+                    } catch (e) {
+                        this.logger.warn(`Error while connecting to remove server for offering inverse relationship: ${e.message}`);
+                    }
                 }
             }
         }
@@ -287,7 +283,7 @@ const RelayService = {
                                 return;
                             }
                             if (triple.subject && triple.relationship && triple.object) {
-                                await ctx.call('inference.remote', {
+                                await ctx.call('inference.addFromRemote', {
                                     subject: triple.subject,
                                     predicate: triple.relationship,
                                     object: triple.object,
