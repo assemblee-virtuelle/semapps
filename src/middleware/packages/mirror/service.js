@@ -15,7 +15,7 @@ module.exports = {
   settings: {
     baseUrl: null,
     graphName: 'http://semapps.org/mirror',
-    servers: [],
+    servers: []
   },
   dependencies: [
     'triplestore',
@@ -116,7 +116,9 @@ module.exports = {
 
         const json = await response.json();
         let mapServers = {};
-        for (let s of json['@graph']) { mapServers[s['@id']] = s; }
+        for (let s of json['@graph']) {
+          mapServers[s['@id']] = s;
+        }
         const server = mapServers[createFragmentURL('', serverUrl)];
         if (!server)
           throw new MoleculerError(
@@ -238,10 +240,7 @@ module.exports = {
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri } = ctx.params;
-      if (
-        !this.containerExcludedFromMirror(resourceUri) &&
-        !isMirror(resourceUri, this.settings.baseUrl)
-      ) {
+      if (!this.containerExcludedFromMirror(resourceUri) && !isMirror(resourceUri, this.settings.baseUrl)) {
         this.resourceDeleted(resourceUri);
       }
     },
@@ -324,7 +323,7 @@ module.exports = {
           object: {
             type: ACTIVITY_TYPES.CREATE,
             object: resourceUri,
-            target: containerUri,
+            target: containerUri
           }
         }
       });
@@ -361,7 +360,7 @@ module.exports = {
               type: OBJECT_TYPES.RELATIONSHIP,
               subject: containerUri,
               relationship: 'http://www.w3.org/ns/ldp#contains',
-              object: resourceUri,
+              object: resourceUri
             }
           }
         }
@@ -388,6 +387,6 @@ module.exports = {
         webId: 'system'
       });
       return res.map(o => o.object.value);
-    },
+    }
   }
 };

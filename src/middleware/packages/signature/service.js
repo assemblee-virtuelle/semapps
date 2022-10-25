@@ -193,9 +193,8 @@ const SignatureService = {
     },
     // TODO use cache mechanisms
     async getRemoteActorPublicKey(actorUri) {
-
       if (this.remoteActorPublicKeyCache[actorUri]) {
-        return this.remoteActorPublicKeyCache[actorUri]
+        return this.remoteActorPublicKeyCache[actorUri];
       }
 
       // TODO use activitypub.actor.get

@@ -37,16 +37,17 @@ module.exports = {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
       dataset,
-      graphName: mirror ? this.settings.mirrorGraphName : undefined,
+      graphName: mirror ? this.settings.mirrorGraphName : undefined
     });
 
-    if (!mirror) ctx.emit(
-      'ldp.container.attached',
-      {
-        containerUri,
-        resourceUri
-      },
-      { meta: { webId: null, dataset: null } }
-    );
+    if (!mirror)
+      ctx.emit(
+        'ldp.container.attached',
+        {
+          containerUri,
+          resourceUri
+        },
+        { meta: { webId: null, dataset: null } }
+      );
   }
 };

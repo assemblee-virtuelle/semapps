@@ -32,12 +32,16 @@ module.exports = {
         subject: { type: 'string', optional: false },
         predicate: { type: 'string', optional: false },
         object: { type: 'string', optional: false },
-        add: { type: 'boolean', optional: false }, // add or remove
+        add: { type: 'boolean', optional: false } // add or remove
       },
       async handler(ctx) {
         // only accept remote inferences if we locally manage this inference (prevent malicious triple injection)
         if (this.inverseRelations[ctx.params.predicate]) {
-          const the_triple = triple(namedNode(ctx.params.subject), namedNode(ctx.params.predicate), namedNode(ctx.params.object));
+          const the_triple = triple(
+            namedNode(ctx.params.subject),
+            namedNode(ctx.params.predicate),
+            namedNode(ctx.params.object)
+          );
           triples = await this.filterMissingResources(ctx, [the_triple]);
 
           if (triples.length > 0) {
@@ -123,10 +127,8 @@ module.exports = {
       let locals = [];
       let remotes = [];
       for (let triple of triples) {
-        if (triple.subject.id.startsWith(this.settings.baseUrl))
-          locals.push(triple);
-        else
-          remotes.push(triple);
+        if (triple.subject.id.startsWith(this.settings.baseUrl)) locals.push(triple);
+        else remotes.push(triple);
       }
       return [locals, remotes];
     },
@@ -169,11 +171,10 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true,
+            add: true
           });
         }
       }
-
     },
     async 'ldp.resource.deleted'(ctx) {
       let { oldData } = ctx.params;
@@ -195,7 +196,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false,
+            add: false
           });
         }
       }
@@ -240,13 +241,12 @@ module.exports = {
 
       // remote relationships are sent to relay actor of remote server
       if (this.hasRelayService) {
-
         for (let triple of addRemotes) {
           await this.broker.call('activitypub.relay.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true,
+            add: true
           });
         }
         for (let triple of removeRemotes) {
@@ -254,11 +254,10 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false,
+            add: false
           });
         }
       }
-
     }
   }
 };

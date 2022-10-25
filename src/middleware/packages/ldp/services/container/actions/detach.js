@@ -43,13 +43,14 @@ module.exports = {
       dataset
     });
 
-    if (!mirror) ctx.emit(
-      'ldp.container.detached',
-      {
-        containerUri,
-        resourceUri
-      },
-      { meta: { webId: null, dataset: null } }
-    );
+    if (!mirror)
+      ctx.emit(
+        'ldp.container.detached',
+        {
+          containerUri,
+          resourceUri
+        },
+        { meta: { webId: null, dataset: null } }
+      );
   }
 };

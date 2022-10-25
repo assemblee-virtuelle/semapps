@@ -78,16 +78,23 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
     blank.data.push({
       s: blankNode('b' + scalar),
       p: namedNode('http://semapps.org/ns/core#doNotMirror'),
-      o: literal(
-        true,
-        namedNode('http://www.w3.org/2001/XMLSchema#boolean')
-      )
+      o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
     });
 
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
 };
 
-const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers, mirrorGraph, ctx, nextScalar, originalVoid) => {
+const addMirrorServer = async (
+  baseUrl,
+  serverUrl,
+  graph,
+  hasSparql,
+  containers,
+  mirrorGraph,
+  ctx,
+  nextScalar,
+  originalVoid
+) => {
   let thisServer = createFragmentURL(baseUrl, serverUrl);
 
   graph.push({
@@ -137,7 +144,7 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
       'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
     };
 
-    let dereference = partitionsMap[p]
+    let dereference = partitionsMap[p];
     if (dereference) {
       partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
     }
@@ -167,7 +174,7 @@ module.exports = {
     getRemote: {
       visibility: 'public',
       params: {
-        serverUrl: { type: 'string', optional: false },
+        serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
         try {
@@ -180,9 +187,11 @@ module.exports = {
           });
           if (response.ok) {
             const json = await response.json();
-            return json
+            return json;
           }
-        } catch (e) { this.logger.warn("Silently ignored error when fetching void endpoint: " + e.message) }
+        } catch (e) {
+          this.logger.warn('Silently ignored error when fetching void endpoint: ' + e.message);
+        }
       }
     },
     get: {
@@ -299,12 +308,13 @@ module.exports = {
         }
 
         for (const serverUrl of Object.keys(serversMap)) {
-
           let originalVoid;
           const json = await ctx.call('void.getRemote', { serverUrl });
           if (json) {
             let mapServers = {};
-            for (let s of json['@graph']) { mapServers[s['@id']] = s; }
+            for (let s of json['@graph']) {
+              mapServers[s['@id']] = s;
+            }
             const server = mapServers[createFragmentURL('', serverUrl)];
             originalVoid = server;
           }

@@ -1,7 +1,7 @@
 const path = require('path');
 const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
-const { Errors: E } = require("moleculer-web");
+const { Errors: E } = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
@@ -39,7 +39,7 @@ const CoreService = {
     sparqlEndpoint: {},
     void: {},
     webacl: {},
-    webfinger: {},
+    webfinger: {}
   },
   created() {
     let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
@@ -105,11 +105,11 @@ const CoreService = {
           localContextFiles: jsonContext
             ? undefined
             : [
-              {
-                path: 'context.json',
-                file: path.resolve(__dirname, './config/context.json')
-              }
-            ],
+                {
+                  path: 'context.json',
+                  file: path.resolve(__dirname, './config/context.json')
+                }
+              ],
           remoteContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',

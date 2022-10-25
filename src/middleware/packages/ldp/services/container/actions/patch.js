@@ -86,8 +86,9 @@ module.exports = {
                     }
                     turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
                     turtleToSparql += newResource.replace(regexPrefix, '');
-                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${new URL(insUri).origin
-                      }> .`;
+                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
+                      new URL(insUri).origin
+                    }> .`;
                     turtleToSparql += '} }';
 
                     await ctx.call('triplestore.update', { query: turtleToSparql });

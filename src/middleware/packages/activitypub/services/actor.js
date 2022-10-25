@@ -28,7 +28,7 @@ const ActorService = {
         }
       } else {
         if (this.remoteActorsCache[actorUri]) {
-          return this.remoteActorsCache[actorUri]
+          return this.remoteActorsCache[actorUri];
         } else {
           const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
           if (!response.ok) return false;
