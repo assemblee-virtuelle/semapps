@@ -182,7 +182,7 @@ module.exports = {
             const json = await response.json();
             return json
           }
-        } catch (e) { }
+        } catch (e) { this.logger.warn("Silently ignored error when fetching void endpoint: " + e.message) }
       }
     },
     get: {
