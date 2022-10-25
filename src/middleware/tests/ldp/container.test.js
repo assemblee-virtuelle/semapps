@@ -8,17 +8,8 @@ const { CoreService } = require('@semapps/core');
 jest.setTimeout(20000);
 let broker;
 
-beforeAll(() => {
-  return new Promise((resolve, reject) => {
-    initialize()
-      .then(brokerProvided => {
-        broker = brokerProvided;
-        resolve();
-      })
-      .catch(e => {
-        reject(e);
-      });
-  });
+beforeAll(async () => {
+  broker = await initialize();
 });
 
 afterAll(async () => {
