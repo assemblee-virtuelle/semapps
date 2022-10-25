@@ -30,7 +30,7 @@ const CoreService = {
     jsonContext: null,
     ontologies: null,
     // Services configurations
-    activitypub: {},
+    activitypub: {}, // if you want the relay service to run, insert a relay:{ /* relay options*/ } inside the activitypub config.
     api: {},
     jsonld: {},
     ldp: {},
@@ -39,7 +39,7 @@ const CoreService = {
     sparqlEndpoint: {},
     void: {},
     webacl: {},
-    webfinger: {}
+    webfinger: {},
   },
   created() {
     let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;

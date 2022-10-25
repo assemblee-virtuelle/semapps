@@ -39,7 +39,7 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   async created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow, relay } = this.settings;
+    let { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow, relay } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -102,7 +102,8 @@ const ActivityPubService = {
       }
     });
 
-    if (relay) {
+    if (relay === true || typeof relay === 'object') {
+      if (relay === true) relay = {};
       this.broker.createService(RelayService, {
         settings: {
           baseUri,
