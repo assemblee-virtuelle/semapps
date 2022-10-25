@@ -298,8 +298,6 @@ module.exports = {
           }
         }
 
-        // TODO : fetch the void file from remote servers instead ?
-
         for (const serverUrl of Object.keys(serversMap)) {
 
           let originalVoid;

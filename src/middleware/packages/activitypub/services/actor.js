@@ -13,6 +13,9 @@ const ActorService = {
     selectActorData,
     podProvider: false
   },
+  started() {
+    this.remoteActorsCache = {};
+  },
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
@@ -24,9 +27,15 @@ const ActorService = {
           return false;
         }
       } else {
-        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-        if (!response.ok) return false;
-        return await response.json();
+        if (this.remoteActorsCache[actorUri]) {
+          return this.remoteActorsCache[actorUri]
+        } else {
+          const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+          if (!response.ok) return false;
+          const actor = await response.json();
+          this.remoteActorsCache[actorUri] = actor;
+          return actor;
+        }
       }
     },
     async getProfile(ctx) {
