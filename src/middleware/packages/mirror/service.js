@@ -224,7 +224,7 @@ module.exports = {
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
       ) {
-        this.resourceContainer(containerUri, resourceUri, true);
+        this.resourceContainerUpdated(containerUri, resourceUri, true);
       }
     },
     async 'ldp.container.detached'(ctx) {
@@ -234,7 +234,7 @@ module.exports = {
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
       ) {
-        this.resourceContainer(containerUri, resourceUri, false);
+        this.resourceContainerUpdated(containerUri, resourceUri, false);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
@@ -352,7 +352,7 @@ module.exports = {
         }
       });
     },
-    async resourceContainer(containerUri, resourceUri, attach) {
+    async resourceContainerUpdated(containerUri, resourceUri, attach) {
       const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
         activity: {
           type: ACTIVITY_TYPES.ANNOUNCE,
