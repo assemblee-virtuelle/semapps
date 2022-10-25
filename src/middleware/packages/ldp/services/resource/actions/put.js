@@ -1,29 +1,16 @@
 const urlJoin = require('url-join');
-const {
-  MoleculerError
-} = require('moleculer').Errors;
-const {
-  MIME_TYPES
-} = require('@semapps/mime-types');
-const {
-  isMirror
-} = require('../../../utils');
+const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { isMirror } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
-    const {
-      containerUri,
-      id,
-      body,
-      ...resource
-    } = ctx.params;
+    const { containerUri, id, body, ...resource } = ctx.params;
     // PUT have to stay in same container and @id can't be different
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
 
-    const {
-      controlledActions
-    } = await ctx.call('ldp.registry.getByUri', {
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', {
       resourceUri: resource['@id']
     });
 
@@ -73,23 +60,14 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      let {
-        resource,
-        contentType,
-        body
-      } = ctx.params;
-      let {
-        webId
-      } = ctx.params;
+      let { resource, contentType, body } = ctx.params;
+      let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
       let newData;
 
       const resourceUri = resource.id || resource['@id'];
 
-      const {
-        disassembly,
-        jsonContext
-      } = {
+      const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', {
           resourceUri
         })),
@@ -139,11 +117,13 @@ module.exports = {
         // Get the new data, with the same formatting as the old data
         // We skip the cache because it has not been invalidated yet
         newData = await ctx.call(
-          'ldp.resource.get', {
+          'ldp.resource.get',
+          {
             resourceUri,
             accept: MIME_TYPES.JSON,
             webId
-          }, {
+          },
+          {
             meta: {
               $cache: false
             }
@@ -191,8 +171,8 @@ module.exports = {
           if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
           if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
           query += ` }`;
-          
-          this.logger.info('PUT query', query)
+
+          this.logger.info('PUT query', query);
 
           await ctx.call('triplestore.update', {
             query,
@@ -202,11 +182,13 @@ module.exports = {
           // Get the new data, with the same formatting as the old data
           // We skip the cache because it has not been invalidated yet
           newData = await ctx.call(
-            'ldp.resource.get', {
+            'ldp.resource.get',
+            {
               resourceUri,
               accept: MIME_TYPES.JSON,
               webId
-            }, {
+            },
+            {
               meta: {
                 $cache: false
               }
@@ -214,12 +196,14 @@ module.exports = {
           );
 
           ctx.emit(
-            'ldp.resource.updated', {
+            'ldp.resource.updated',
+            {
               resourceUri,
               oldData,
               newData,
               webId
-            }, {
+            },
+            {
               meta: {
                 webId: null,
                 dataset: null

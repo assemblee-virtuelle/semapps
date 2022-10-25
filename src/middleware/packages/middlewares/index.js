@@ -106,18 +106,18 @@ const parseJson = async (req, res, next) => {
     // Do nothing if mime type is not found
   }
   try {
-  if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
-    const body = await getRawBody(req);
-    if (body) {
-      const json = JSON.parse(body);
-      req.$params = { ...json, ...req.$params };
-      // Keep raw body in meta as we need it for digest header verification
-      req.$ctx.meta.rawBody = body;
+    if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
+      const body = await getRawBody(req);
+      if (body) {
+        const json = JSON.parse(body);
+        req.$params = { ...json, ...req.$params };
+        // Keep raw body in meta as we need it for digest header verification
+        req.$ctx.meta.rawBody = body;
+      }
+      req.$ctx.meta.parser = 'json';
     }
-    req.$ctx.meta.parser = 'json';
-  }
-  next();
-} catch (e) {
+    next();
+  } catch (e) {
     //call next step of api resolutions (middlewares) with error = return http error
     next(e);
   }

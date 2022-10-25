@@ -1,7 +1,7 @@
 const path = require('path');
 const urlJoin = require('url-join');
 const ApiGatewayService = require('moleculer-web');
-const { Errors: E } = require("moleculer-web");
+const { Errors: E } = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
@@ -42,7 +42,6 @@ const CoreService = {
     webfinger: {}
   },
   created() {
-
     let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one

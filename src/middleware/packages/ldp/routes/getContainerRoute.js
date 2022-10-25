@@ -32,7 +32,7 @@ function getContainerRoute(containerUri, readOnly = false) {
   if (!readOnly) {
     aliases = {
       ...aliases,
-      'POST /': [...middlewares, 'ldp.container.api_post'],
+      'POST /': [...middlewares, 'ldp.container.api_post']
       // 'PATCH /': [...middlewares, 'ldp.container.api_patch']
     };
   }

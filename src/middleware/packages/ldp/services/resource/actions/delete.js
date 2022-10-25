@@ -90,13 +90,13 @@ module.exports = {
       );
       // Generate the query
       let query = '';
-      query += `DELETE {`
-      query += triplesToRemove.length > 0 ? this.triplesToString(triplesToRemove) : ''
-      query += `}`
+      query += `DELETE {`;
+      query += triplesToRemove.length > 0 ? this.triplesToString(triplesToRemove) : '';
+      query += `}`;
       query += `WHERE { `;
-      query += mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''
-      query += existingBlankNodes.length > 0 ? this.triplesToString(existingBlankNodes): '';
-      query += mirror ? '}' : ''
+      query += mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : '';
+      query += existingBlankNodes.length > 0 ? this.triplesToString(existingBlankNodes) : '';
+      query += mirror ? '}' : '';
       query += ` }`;
 
       // await ctx.call('triplestore.update', {
@@ -111,7 +111,7 @@ module.exports = {
       //   webId
       // });
 
-      this.logger.info('DELETE query', query)
+      this.logger.info('DELETE query', query);
 
       await ctx.call('triplestore.update', {
         query,
