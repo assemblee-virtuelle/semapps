@@ -26,6 +26,8 @@ module.exports = {
       webId
     });
 
+    // TODO: emit an event that will be handled by mirror service.
+
     ctx.call('triplestore.deleteOrphanBlankNodes');
   }
 };

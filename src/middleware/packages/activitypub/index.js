@@ -13,6 +13,7 @@ module.exports = {
   OutboxService: require('./services/outbox'),
   ProxyService: require('./services/proxy'),
   RegistryService: require('./services/registry'),
+  RelayService: require('./services/relay'),
   // Other services
   ActivityMappingService: require('./services/activity-mapping'),
   // Mixins

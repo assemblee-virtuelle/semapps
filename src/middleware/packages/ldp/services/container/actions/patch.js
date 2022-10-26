@@ -110,7 +110,7 @@ module.exports = {
               try {
                 await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
 
-                // if the resource is attached to any container, it must be deleted.
+                // if the resource is not attached to any container anymore, it must be deleted.
 
                 let remaining = await ctx.call('triplestore.query', {
                   query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`
