@@ -20,23 +20,23 @@ function Home() {
       {
         label: 'Les chemins de la transition',
         link: 'https://lescheminsdelatransition.org/',
-        image: 'img/cdlt.jpg'
+        image: 'img/cdlt-cover.png'
       },
       {
         label: 'Acteurs solidarité Aurba',
         link: 'https://acteurs-solidarite.aurba.org/',
-        image: 'img/cdlt.jpg'
+        image: 'img/aurba-cover.png'
       },
       {
         label: 'Les 100 lieux nourriciers',
         link: 'https://100lieuxnourriciers.fr/',
-        image: 'img/cdlt.jpg'
-      },
+        image: 'img/100-lieux-cover.png'
+      }/*,
       {
         label: 'Bienvenue Chez Moi',
         link: 'https://bienvenuechezmoi.org/',
         image: 'img/cdlt.jpg'
-      }
+      }*/
   ]
   
   return (
@@ -191,24 +191,54 @@ function Home() {
           </div>
         </section>
 
-        <section className={styles.clients}>
+        <section className={styles.users}>
           <div className={styles.wrapper}>
             <h2><span className={styles.primary}>SemApps</span> users</h2>
-            <div className={styles.clientlogosContainer}>
-              <div className={styles.clientlogo}>
-                <img src="img/ademe.svg" alt="ademe logo" />
+            <div className={styles.userLogosContainer}>
+              <div className={styles.userLogo}>
+                <img src="img/logo-4ch-fb.png" alt="4ch logo" className={styles.sm} />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/logo-afaup.webp" alt="afaup logo" />
+                <img src="img/logo-ademe.webp" alt="ademe logo" />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/av-baniere.png" alt="av logo" />
+                <img src="img/logo-afaup.png" alt="afaup logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-av.jpg" alt="av logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-aurba.jpg" alt="aurba logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-classe-dehors.png" alt="classe dehors logo" />
               </div>
               <div className={styles.clientlogo}>
                 <img src="img/logo-colibris.svg" alt="colibri logo" />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/collectif-emploi.png" alt="collectif emploi logo" className={styles.small} />
+                <img src="img/collectif-emploi.png" alt="collectif emploi logo" className={styles.xs} />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-dfc.png" alt="data food consortium logo" className={styles.sm}  />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-flodio.png" alt="flodio logo" className={styles.sm} />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-lacoop.webp" alt="la coop des territoires logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-cdlt.png" alt="la coop des territoires logo" />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-petr.png" alt="PETR Maconnais Sud Bourgogne logo" className={styles.sm} />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-energie-partagee.png" alt="Prats ENR Énergie Partagée logo" className={styles.sm} />
+              </div>
+              <div className={styles.clientlogo}>
+                <img src="img/logo-utt.png" alt="Utt logo" className={styles.sm} />
               </div>
             </div>
           </div>

@@ -53,7 +53,7 @@ function Home() {
                 <Member 
                   label='Simon Louvet' 
                   image='/img/simon-louvet.jpg' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Technical Director at Data Players'
                   roles={[
                     'Development',
                     'Economic sustainability'
@@ -67,7 +67,7 @@ function Home() {
                 <Member 
                   label='Niko Bonnieure' 
                   image='img/niko.png' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Software engineer specialized in semantic web, P2P and security.'
                   roles={[]}
                   linkedIn=''
                   twitter=''
@@ -78,7 +78,7 @@ function Home() {
                 <Member 
                   label='Pierre Bouvier-Muller' 
                   image='/img/pierre-bouvier-muller.png' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Mediation & Digital Responsibility'
                   roles={[
                     'Mediation'
                   ]}
@@ -120,7 +120,7 @@ function Home() {
                 <Member 
                   label='Bastien Siguier' 
                   image='/img/bastien-siguier.jfif' 
-                  description='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam, fuga?'
+                  description='Dev Ops, Designer / Software Developer and business relations'
                   roles={[
                     'Instances hosting'
                   ]}
