@@ -1,6 +1,5 @@
 const getAction = require('./actions/get');
 const createAction = require('./actions/create');
-const patchAction = require('./actions/patch');
 const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
@@ -30,8 +29,6 @@ module.exports = {
     // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,
-    api_patch: patchAction.api,
-    patch: patchAction.action,
     api_delete: deleteAction.api,
     delete: deleteAction.action,
     api_put: putAction.api,

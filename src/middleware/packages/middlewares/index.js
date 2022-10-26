@@ -30,11 +30,17 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
+  throw new MoleculerError(JSON.stringify(msg), 403, 'ACCESS_DENIED', {
+    status: 'Forbidden',
+    text: JSON.stringify(msg)
+  });
 };
 
 const throw500 = msg => {
-  throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
+  throw new MoleculerError(JSON.stringify(msg), 500, 'INTERNAL_SERVER_ERROR', {
+    status: 'Server Error',
+    text: JSON.stringify(msg)
+  });
 };
 
 const negotiateAccept = (req, res, next) => {
@@ -100,17 +106,22 @@ const parseJson = async (req, res, next) => {
     // Do nothing if mime type is not found
   }
 
-  if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
-    const body = await getRawBody(req);
-    if (body) {
-      const json = JSON.parse(body);
-      req.$params = { ...json, ...req.$params };
-      // Keep raw body in meta as we need it for digest header verification
-      req.$ctx.meta.rawBody = body;
+  try {
+    if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
+      const body = await getRawBody(req);
+      if (body) {
+        const json = JSON.parse(body);
+        req.$params = { ...json, ...req.$params };
+        // Keep raw body in meta as we need it for digest header verification
+        req.$ctx.meta.rawBody = body;
+      }
+      req.$ctx.meta.parser = 'json';
     }
-    req.$ctx.meta.parser = 'json';
+    next();
+  } catch (e) {
+    next(e);
   }
-  next();
+
 };
 
 const parseFile = (req, res, next) => {

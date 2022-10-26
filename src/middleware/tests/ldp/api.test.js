@@ -144,26 +144,6 @@ describe('CRUD Project', () => {
     expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);
   }, 20000);
 
-  test('Update one project', async () => {
-    const body = {
-      '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-      },
-      description: 'myProjectUpdated'
-    };
-
-    await expressMocked
-      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .send(body)
-      .set('content-type', 'application/ld+json');
-
-    const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .set('Accept', 'application/ld+json');
-    expect(response.body['pair:description']).toBe('myProjectUpdated');
-    expect(response.body['pair:label']).toBe('myLabel');
-  }, 20000);
-
   test('Replace one project', async () => {
     const body = {
       '@context': {

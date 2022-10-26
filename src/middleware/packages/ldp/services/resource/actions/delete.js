@@ -35,26 +35,25 @@ module.exports = {
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
-      let { webId } = ctx.params;
-      webId = webId || ctx.meta.webId || 'anon';
+       let { webId } = ctx.params;
+       webId = webId || ctx.meta.webId || 'anon';
 
-      const mirror = isMirror(resourceUri, this.settings.baseUrl);
+       const mirror = isMirror(resourceUri, this.settings.baseUrl);
 
-      const { disassembly } = {
-        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-        ...ctx.params
-      };
+       const { disassembly } = {
+         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
+         ...ctx.params
+       };
 
-      // Save the current data, to be able to send it through the event
-      // If the resource does not exist, it will throw a 404 error
-      let oldData = await ctx.call('ldp.resource.get', {
-        resourceUri,
-        accept: MIME_TYPES.JSON,
-        queryDepth: 1,
-        forceSemantic: true,
-        webId
-      });
-
+       // Save the current data, to be able to send it through the event
+       // If the resource does not exist, it will throw a 404 error
+       let oldData = await ctx.call('ldp.resource.get', {
+         resourceUri,
+         accept: MIME_TYPES.JSON,
+         queryDepth: 1,
+         forceSemantic: true,
+         webId
+       });
       if (disassembly) {
         await this.deleteDisassembly(ctx, disassembly, oldData);
       }
@@ -63,35 +62,33 @@ module.exports = {
       // TODO when fixed, remove the call to triplestore.deleteOrphanBlankNodes below
       // const blandNodeQuery = buildBlankNodesQuery(3);
       //
-      // // The resource must be deleted after the blank node, otherwise the permissions will fail
-      // const query =  `
-      //   DELETE {
-      //     ${blandNodeQuery.construct}
-      //     <${resourceUri}> ?p1 ?dataProp1 .
-      //   }
-      //   WHERE {
-      //     {
-      //       ${blandNodeQuery.where}
-      //       <${resourceUri}> ?p1 ?o1 .
-      //     }
-      //     UNION
-      //     {
-      //       <${resourceUri}> ?p1 ?dataProp1 .
-      //     }
-      //   }
-      // `;
+
+
+      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
+      oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
+      oldTriples = this.convertBlankNodesToVars(oldTriples);
+      const triplesToRemove = this.getTriplesDifference(oldTriples, []);
+      const existingBlankNodes = oldTriples.filter(
+        triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+      );
+      // Generate the query
+      let query = '';
+      query += `DELETE {`;
+      query += triplesToRemove.length > 0 ? this.triplesToString(triplesToRemove) : '';
+      query += `}`;
+      query += `WHERE { `;
+      query += mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : '';
+      query += existingBlankNodes.length > 0 ? this.triplesToString(existingBlankNodes) : '';
+      query += mirror ? '}' : '';
+      query += ` }`;
+
+      this.logger.info('DELETE query', query);
 
       await ctx.call('triplestore.update', {
-        query: `
-          DELETE
-          WHERE { 
-            ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
-            <${resourceUri}> ?p1 ?o1 .
-            ${mirror ? '}' : ''}
-          }
-        `,
+        query,
         webId
       });
+
 
       // We must detach the resource from the container after deletion, otherwise the permissions will fail
       await ctx.call('ldp.container.detach', {

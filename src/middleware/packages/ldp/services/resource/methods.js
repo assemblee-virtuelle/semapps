@@ -62,10 +62,10 @@ module.exports = {
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
-        triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
+        triple.subject = variable(triple.subject.value);
       }
       if (triple.object.termType === 'BlankNode') {
-        triple.object = variable(blankNodesVarsMap[triple.object.value]);
+        triple.object = variable(triple.object.value);
       }
       return triple;
     });
