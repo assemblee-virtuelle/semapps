@@ -446,13 +446,13 @@
       flex-wrap: wrap;
     }
     .userLogosContainer img {
-      height: 120px;
-      margin: 16px;
+      height: 100px;
+      margin: 24px;
       &.sm {
-        height: 90px;
+        height: 75px;
       }
       &.xs {
-        height: 60px;
+        height: 50px;
       }
     }
   }
