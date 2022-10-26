@@ -31,12 +31,12 @@ function Home() {
         label: 'Les 100 lieux nourriciers',
         link: 'https://100lieuxnourriciers.fr/',
         image: 'img/100-lieux-cover.png'
-      }/*,
+      },
       {
         label: 'Bienvenue Chez Moi',
         link: 'https://bienvenuechezmoi.org/',
-        image: 'img/cdlt.jpg'
-      }*/
+        image: 'img/bienvenue-chez-moi.png'
+      }
   ]
   
   return (
