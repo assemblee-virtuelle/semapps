@@ -121,7 +121,6 @@ const parseJson = async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-
 };
 
 const parseFile = (req, res, next) => {

@@ -1,7 +1,5 @@
 const CONFIG = require('../config');
-const {
-  MIME_TYPES
-} = require('@semapps/mime-types');
+const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);
@@ -26,7 +24,8 @@ describe('Resource CRUD operations', () => {
         '@type': 'Project',
         description: 'myProject',
         label: 'myTitle',
-        affiliates: [{
+        affiliates: [
+          {
             '@id': 'http://localhost:3000/users/guillaume'
           },
           {
@@ -123,7 +122,6 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
   }, 20000);
 
-
   test('Put resource with multiple blank nodes', async () => {
     let resourceUpdated = {
       '@context': {
@@ -134,14 +132,15 @@ describe('Resource CRUD operations', () => {
       affiliates: {
         '@id': 'http://localhost:3000/users/pierre'
       },
-      hasLocation: [{
+      hasLocation: [
+        {
           label: 'Nantes'
         },
         {
           label: 'Compiegne'
         }
       ]
-    }
+    };
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
       accept: MIME_TYPES.JSON,
@@ -158,7 +157,8 @@ describe('Resource CRUD operations', () => {
       'pair:affiliates': {
         '@id': 'http://localhost:3000/users/pierre'
       },
-      'pair:hasLocation': [{
+      'pair:hasLocation': [
+        {
           'pair:label': 'Nantes'
         },
         {
@@ -169,10 +169,11 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject['pair:label']).toBeUndefined();
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
 
-
-    resourceUpdated['hasLocation'] = [{
-      'label': 'Compiegne'
-    }]
+    resourceUpdated['hasLocation'] = [
+      {
+        label: 'Compiegne'
+      }
+    ];
 
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
@@ -195,13 +196,17 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    resourceUpdated['hasLocation'] = [{
-      'label': 'Compiegne'
-    }, {
-      'label': 'Nantes'
-    }, {
-      'label': 'Oloron'
-    }]
+    resourceUpdated['hasLocation'] = [
+      {
+        label: 'Compiegne'
+      },
+      {
+        label: 'Nantes'
+      },
+      {
+        label: 'Oloron'
+      }
+    ];
 
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
@@ -219,15 +224,18 @@ describe('Resource CRUD operations', () => {
       'pair:affiliates': {
         '@id': 'http://localhost:3000/users/pierre'
       },
-      'pair:hasLocation': [{
-        'pair:label': 'Compiegne'
-      }, {
-        'pair:label': 'Nantes'
-      }, {
-        'pair:label': 'Oloron'
-      }]
+      'pair:hasLocation': [
+        {
+          'pair:label': 'Compiegne'
+        },
+        {
+          'pair:label': 'Nantes'
+        },
+        {
+          'pair:label': 'Oloron'
+        }
+      ]
     });
-
   }, 20000);
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
