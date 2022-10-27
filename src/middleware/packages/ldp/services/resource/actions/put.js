@@ -130,8 +130,10 @@ module.exports = {
         const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
         const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
-        // If the exact same data have been posted, skip
-        if (triplesToAdd.length > 0 || triplesToRemove.length > 0) {
+        if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
+          // If the exact same data have been posted, skip
+          newData = oldData;
+        } else {
           // Keep track of blank nodes to use in WHERE clause
           const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
             triple => triple.object.termType === 'Variable'
