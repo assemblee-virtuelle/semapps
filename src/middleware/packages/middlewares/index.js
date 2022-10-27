@@ -30,17 +30,11 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError(JSON.stringify(msg), 403, 'ACCESS_DENIED', {
-    status: 'Forbidden',
-    text: JSON.stringify(msg)
-  });
+  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 const throw500 = msg => {
-  throw new MoleculerError(JSON.stringify(msg), 500, 'INTERNAL_SERVER_ERROR', {
-    status: 'Server Error',
-    text: JSON.stringify(msg)
-  });
+  throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
 const negotiateAccept = (req, res, next) => {

@@ -31,7 +31,6 @@ module.exports = {
         list: this.name + '.list',
         get: this.name + '.get',
         create: this.name + '.create',
-        patch: this.name + '.patch',
         put: this.name + '.put',
         delete: this.name + '.delete',
         ...this.settings.controlledActions
@@ -57,9 +56,6 @@ module.exports = {
     },
     create(ctx) {
       return ctx.call('ldp.resource.create', ctx.params);
-    },
-    patch(ctx) {
-      return ctx.call('ldp.resource.patch', ctx.params);
     },
     put(ctx) {
       return ctx.call('ldp.resource.put', ctx.params);

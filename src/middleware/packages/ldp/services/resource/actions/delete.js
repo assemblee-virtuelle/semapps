@@ -6,9 +6,7 @@ module.exports = {
   api: async function api(ctx) {
     const { typeURL, id, containerUri } = ctx.params;
     const resourceUri = `${containerUri || this.settings.baseUrl + typeURL}/${id}`;
-    const { controlledActions } = await ctx.call('ldp.registry.getByUri', {
-      containerUri
-    });
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
 
     try {
       await ctx.call(controlledActions.delete || 'ldp.resource.delete', {
@@ -29,10 +27,7 @@ module.exports = {
     visibility: 'public',
     params: {
       resourceUri: 'string',
-      webId: {
-        type: 'string',
-        optional: true
-      },
+      webId: { type: 'string', optional: true },
       disassembly: {
         type: 'array',
         optional: true
@@ -46,9 +41,7 @@ module.exports = {
       const mirror = isMirror(resourceUri, this.settings.baseUrl);
 
       const { disassembly } = {
-        ...(await ctx.call('ldp.registry.getByUri', {
-          resourceUri
-        })),
+        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
 
@@ -61,6 +54,7 @@ module.exports = {
         forceSemantic: true,
         webId
       });
+
       if (disassembly) {
         await this.deleteDisassembly(ctx, disassembly, oldData);
       }
@@ -69,38 +63,43 @@ module.exports = {
       // TODO when fixed, remove the call to triplestore.deleteOrphanBlankNodes below
       // const blandNodeQuery = buildBlankNodesQuery(3);
       //
-
-      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
-      oldTriples = this.convertBlankNodesToVars(oldTriples);
-      const triplesToRemove = this.getTriplesDifference(oldTriples, []);
-      const existingBlankNodes = oldTriples.filter(
-        triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
-      );
-      // Generate the query
-      let query = '';
-      query += `DELETE {`;
-      query += triplesToRemove.length > 0 ? this.triplesToString(triplesToRemove) : '';
-      query += `}`;
-      query += `WHERE { `;
-      query += mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : '';
-      query += existingBlankNodes.length > 0 ? this.triplesToString(existingBlankNodes) : '';
-      query += mirror ? '}' : '';
-      query += ` }`;
-
-      this.logger.info('DELETE query', query);
+      // // The resource must be deleted after the blank node, otherwise the permissions will fail
+      // const query =  `
+      //   DELETE {
+      //     ${blandNodeQuery.construct}
+      //     <${resourceUri}> ?p1 ?dataProp1 .
+      //   }
+      //   WHERE {
+      //     {
+      //       ${blandNodeQuery.where}
+      //       <${resourceUri}> ?p1 ?o1 .
+      //     }
+      //     UNION
+      //     {
+      //       <${resourceUri}> ?p1 ?dataProp1 .
+      //     }
+      //   }
+      // `;
 
       await ctx.call('triplestore.update', {
-        query,
+        query: `
+          DELETE
+          WHERE {
+            ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+            <${resourceUri}> ?p1 ?o1 .
+            ${mirror ? '}' : ''}
+          }
+        `,
         webId
       });
 
       // We must detach the resource from the container after deletion, otherwise the permissions will fail
-      await ctx.call('ldp.container.detach', {
-        containerUri: getContainerFromUri(resourceUri),
-        resourceUri,
-        webId
-      });
+      if (!ctx.meta.forceMirror)
+        await ctx.call('ldp.container.detach', {
+          containerUri: getContainerFromUri(resourceUri),
+          resourceUri,
+          webId
+        });
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);
@@ -112,18 +111,10 @@ module.exports = {
         webId
       };
 
-      ctx.call('triplestore.deleteOrphanBlankNodes', {
-        graphName: mirror ? this.settings.mirrorGraphName : undefined
-      });
+      ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: mirror ? this.settings.mirrorGraphName : undefined });
 
       if (!mirror) {
-        ctx.emit('ldp.resource.deleted', returnValues, {
-          meta: {
-            webId: null,
-            dataset: null,
-            isMirror: mirror
-          }
-        });
+        ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null, isMirror: mirror } });
       }
 
       return returnValues;

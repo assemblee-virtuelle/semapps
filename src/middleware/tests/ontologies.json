@@ -33,5 +33,10 @@
     "prefix": "pair",
     "owl": "",
     "url": "http://virtual-assembly.org/ontologies/pair#"
+  },
+  {
+    "prefix": "petr",
+    "owl": "",
+    "url": "https://data.petr-msb.data-players.com/ontology#"
   }
 ]

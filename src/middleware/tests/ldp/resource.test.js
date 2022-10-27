@@ -125,6 +125,7 @@ describe('Resource CRUD operations', () => {
   test('Put resource with multiple blank nodes', async () => {
     let resourceUpdated = {
       '@context': {
+        'petr':'https://data.petr-msb.data-players.com/ontology#',
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
       '@id': project1['@id'],
@@ -236,6 +237,108 @@ describe('Resource CRUD operations', () => {
         }
       ]
     });
+
+
+    resourceUpdated['hasLocation'] = [
+      {
+        label: 'Compiegne'
+      },
+      {
+        label: 'Nantes'
+      },
+      {
+        label: 'Oloron'
+      }
+    ];
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'pair:affiliates': {
+        '@id': 'http://localhost:3000/users/pierre'
+      },
+      'pair:hasLocation': [
+        {
+          'pair:label': 'Compiegne'
+        },
+        {
+          'pair:label': 'Nantes'
+        },
+        {
+          'pair:label': 'Oloron'
+        }
+      ]
+    });
+
+    resourceUpdated['hasLocation'] = undefined;
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject['pair:hasLocation']).toBeUndefined();
+
+    resourceUpdated['petr:openingTimesDay'] = [
+      {"petr:endingTime": "2021-10-07T09:40:56.131Z", "petr:startingTime": "2021-10-07T06:40:56.123Z"}
+    ];
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'petr:openingTimesDay': {"petr:endingTime": "2021-10-07T09:40:56.131Z", "petr:startingTime": "2021-10-07T06:40:56.123Z"}
+    });
+
+    resourceUpdated['petr:openingTimesDay'] = [
+      {"petr:endingTime": "2021-10-07T09:40:56.131Z", "petr:startingTime": "2021-10-07T06:40:56.123Z"},
+      {"petr:startingTime": "2021-10-07T10:44:54.883Z", "petr:endingTime": "2021-10-07T16:44:54.888Z"}
+    ];
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'petr:openingTimesDay': [
+        {"petr:endingTime": "2021-10-07T09:40:56.131Z", "petr:startingTime": "2021-10-07T06:40:56.123Z"},
+        {"petr:startingTime": "2021-10-07T10:44:54.883Z", "petr:endingTime": "2021-10-07T16:44:54.888Z"}
+      ]
+    });
+
   }, 20000);
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
