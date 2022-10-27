@@ -28,7 +28,7 @@ module.exports = {
     create: createAction,
     upload: uploadAction,
     // TODO remove lagacy patch action. uses by activity pub
-    patch : patchAction.action,
+    patch: patchAction.action,
     // Actions accessible through the API
     api_get: getAction.api,
     get: getAction.action,
