@@ -30,7 +30,7 @@ const CoreService = {
     jsonContext: null,
     ontologies: null,
     // Services configurations
-    activitypub: {},
+    activitypub: {}, // if you want the relay service to run, insert a relay:{ /* relay options*/ } inside the activitypub config.
     api: {},
     jsonld: {},
     ldp: {},
@@ -46,6 +46,11 @@ const CoreService = {
 
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
+
+    // relay service will automatically start if we want mirror and activitypub services
+    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
+      this.settings.activitypub.relay = this.settings.activitypub.relay || {};
+    }
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {

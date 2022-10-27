@@ -33,7 +33,6 @@ const WebfingerService = {
       if (matches) {
         const username = matches[1];
         const accounts = await ctx.call('auth.account.find', { query: { username } });
-
         if (accounts.length > 0) {
           return {
             subject: resource,

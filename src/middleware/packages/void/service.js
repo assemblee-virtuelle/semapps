@@ -40,6 +40,7 @@ const jsonContext = {
     '@type': '@id'
   },
   'void:entities': { '@type': 'xsd:integer' },
+  'void:doNotMirror': { '@type': 'xsd:boolean' },
   'void:class': { '@type': '@id' },
   'void:classPartition': { '@type': '@id' },
   'semapps:blankNodes': {
@@ -73,11 +74,27 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
       p: namedNode('http://semapps.org/ns/core#blankNodes'),
       o: partition['http://semapps.org/ns/core#blankNodes'].map(bn => namedNode(bn))
     });
+  if (partition['http://semapps.org/ns/core#doNotMirror'])
+    blank.data.push({
+      s: blankNode('b' + scalar),
+      p: namedNode('http://semapps.org/ns/core#doNotMirror'),
+      o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
+    });
 
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
 };
 
-const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers, mirrorGraph, ctx, nextScalar) => {
+const addMirrorServer = async (
+  baseUrl,
+  serverUrl,
+  graph,
+  hasSparql,
+  containers,
+  mirrorGraph,
+  ctx,
+  nextScalar,
+  originalVoid
+) => {
   let thisServer = createFragmentURL(baseUrl, serverUrl);
 
   graph.push({
@@ -104,6 +121,19 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
       o: namedNode(hasSparql)
     });
 
+  let partitionsMap = {};
+  if (originalVoid) {
+    const originalPartitions = originalVoid['void:classPartition'];
+
+    if (originalPartitions) {
+      for (const p of defaultToArray(originalPartitions)) {
+        // we skip empty containers and doNotMirror containers
+        if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
+        partitionsMap[p['void:uriSpace']] = p;
+      }
+    }
+  }
+
   for (const [i, p] of containers.entries()) {
     const types = await ctx.call('triplestore.query', {
       query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
@@ -114,7 +144,10 @@ const addMirrorServer = async (baseUrl, serverUrl, graph, hasSparql, containers,
       'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
     };
 
-    //if (dereference) partition['http://semapps.org/ns/core#blankNodes'] = dereference
+    let dereference = partitionsMap[p];
+    if (dereference) {
+      partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
+    }
 
     const count = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
@@ -138,6 +171,29 @@ module.exports = {
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
+    getRemote: {
+      visibility: 'public',
+      params: {
+        serverUrl: { type: 'string', optional: false }
+      },
+      async handler(ctx) {
+        try {
+          const voidUrl = urlJoin(ctx.params.serverUrl, '/.well-known/void');
+          const response = await fetch(voidUrl, {
+            method: 'GET',
+            headers: {
+              Accept: 'application/ld+json'
+            }
+          });
+          if (response.ok) {
+            const json = await response.json();
+            return json;
+          }
+        } catch (e) {
+          this.logger.warn('Silently ignored error when fetching void endpoint: ' + e.message);
+        }
+      }
+    },
     get: {
       visibility: 'public',
       params: {
@@ -251,20 +307,30 @@ module.exports = {
           }
         }
 
-        // TODO : fetch the void file from remote servers instead ?
+        for (const serverUrl of Object.keys(serversMap)) {
+          let originalVoid;
+          const json = await ctx.call('void.getRemote', { serverUrl });
+          if (json) {
+            let mapServers = {};
+            for (let s of json['@graph']) {
+              mapServers[s['@id']] = s;
+            }
+            const server = mapServers[createFragmentURL('', serverUrl)];
+            originalVoid = server;
+          }
 
-        for (const server of Object.keys(serversMap)) {
           await addMirrorServer(
             url,
-            server,
+            serverUrl,
             graph,
             hasSparql,
-            serversMap[server],
+            serversMap[serverUrl],
             this.settings.mirrorGraphName,
             ctx,
-            scalar
+            scalar,
+            originalVoid
           );
-          scalar += serversMap[server].length;
+          scalar += serversMap[serverUrl].length;
         }
 
         ctx.meta.$responseType = accept;
@@ -309,14 +375,14 @@ module.exports = {
 
       const res = await Promise.all(
         Object.values(registeredContainers)
-          .filter(c => c.acceptedTypes && !c.excludeFromMirror)
+          .filter(c => c.acceptedTypes)
           .map(async c => {
             let partition = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
               'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
             };
             if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference;
-
+            if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
               query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
             });

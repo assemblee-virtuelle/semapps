@@ -1,5 +1,6 @@
 const { isMirror } = require('../../../utils');
 const urlJoin = require('url-join');
+const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   visibility: 'public',
@@ -42,13 +43,14 @@ module.exports = {
       dataset
     });
 
-    ctx.emit(
-      'ldp.container.detached',
-      {
-        containerUri,
-        resourceUri
-      },
-      { meta: { webId: null, dataset: null } }
-    );
+    if (!mirror)
+      ctx.emit(
+        'ldp.container.detached',
+        {
+          containerUri,
+          resourceUri
+        },
+        { meta: { webId: null, dataset: null } }
+      );
   }
 };
