@@ -97,7 +97,7 @@ function Home() {
                 <Tool label='WebAcl' content='Manage and verify rights of users' link='https://www.w3.org/wiki/WebAccessControl' />
               </li>
               <li className={styles.toolCard}>
-                <Tool label='ShEx(soon)' content='Validate submitted data.' link='https://github.com/shexSpec/shex/wiki/ShEx' />
+                <Tool label='ShEx (soon)' content='Validate submitted data.' link='https://github.com/shexSpec/shex/wiki/ShEx' />
               </li>
             </ul>
           </div>
@@ -113,11 +113,6 @@ function Home() {
                   description='
                     <p>Fostering interconnections between communities by creating synergies between their platforms.</p>
                     <p>A collaborative, interoperable and modular knowledge management system, compliant with most semantic web specifications: LDP, SPARQL, ActivityPub, WAC, WebID.</p>
-                    <p>Based on linked data & semantic web technologies, it allows the co-production of knowledge graphs.
-                      Built on open standards, it enables the development of interoperable information systems.
-                      Designed on a modular architecture, it gives everyone the opportunity to build and customize platforms on demand.
-                      Thanks to the micro-service architecture of <a href="https://github.com/assemblee-virtuelle/semapps">SemApps</a>,
-                      it is easy to extend it with your own business logic.</p>
                   ' 
                   image='img/archipelago.png' 
                   github='https://github.com/assemblee-virtuelle/archipelago'
@@ -141,13 +136,7 @@ function Home() {
                 <Product 
                   label='ActivityPods' 
                   description='
-                    <p>ActivityPub + Solid PODS</p>
-                    <p>Check out
-                      <a href="/assemblee-virtuelle/activitypods/blob/master/proposal/proposal-english.pdf">these slides</a>
-                      (<a href="/assemblee-virtuelle/activitypods/blob/master/proposal/proposal-french.pdf">french version</a>) for more information about this project !</p>
-                    <p>You can also 
-                      <a href="https://vimeo.com/691410463" rel="nofollow">watch our presentation at Solid World</a> (starts at 19:00) 
-                      or <a href="https://chat.lescommuns.org/channel/activitypods" rel="nofollow">join our dedicated chatroom</a>.</p>
+                    <p>A new kind of architecture which makes use of two important standards: (1) PODs (Personal Online Datastore), the masterpiece of the Solid project led by Tim Berners-Lee (2) ActivityPub, which enables communication between the PODs through a shared vocabulary.</p>
                   '
                   image='img/activity-pods.png' 
                   github='https://github.com/assemblee-virtuelle/activitypods'

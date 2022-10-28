@@ -20,9 +20,9 @@ function Home() {
       <div className={classnames(styles.layoutContainer, styles.teamContainer)}>
 
         <section className={styles.teamIntro}>
-          <h1>Semapps and the virtual assembly</h1>
+          <h1>SemApps and Virtual Assembly</h1>
           <div className={styles.image}><img src="/img/av-baniere.png" alt="virtual assembly banner" /></div>
-          <p>SemApps is a software project hosted within the Virtual Assembly.</p>
+          <p>SemApps is a software project hosted within Virtual Assembly.</p>
           <p>It has been nourished since 2013 by the collective intelligence of the community, which was among the first in the world to position itself on the SOLID project (even before it existed!). Since then, other software based on SOLID / ActivityPub / Semantic Web have joined the Virtual Assembly ecosystem.</p>
           <p>They are ideal partners for SemApps to prototype the decentralization of the web and the federation of its communities.</p>
         </section>
