@@ -447,7 +447,11 @@
     }
     .userLogosContainer img {
       height: 100px;
-      margin: 24px;
+      margin: 25px;
+      &.lg {
+        height: 125px;
+        margin: 12.5px 25px;
+      }
       &.sm {
         height: 75px;
       }

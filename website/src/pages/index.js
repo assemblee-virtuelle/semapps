@@ -50,7 +50,7 @@ function Home() {
           <div className={styles.Wrapper}>
             <div className={styles.heroContainer}>
               <div className={styles.heroImageContainer}>
-                <img src="img/toolbox.jpg" alt="semapps toolbox" />
+                <img src="img/dreamstime_s_23213432.jpg" alt="semapps toolbox" />
               </div>
               <div className={styles.heroTextContainer}>
                 <h1 className={styles.heroTitle}>SemApps</h1>
@@ -132,7 +132,7 @@ function Home() {
                     <p>It allows to visualize the structure of the organization (in the form of a hierarchy of "circles") and, for each circle, to see its sub-circles, the people involved, the meeting schedule, documents, news, etc.</p>
                     <p>A simple tool that allows anyone to see what is going on and potentially get involved.</p>
                   ' 
-                  image='img/Organigraph.png' 
+                  image='img/organigraph.png' 
                   github='https://github.com/assemblee-virtuelle/organigraph'
                   link=''
                 />
@@ -199,7 +199,7 @@ function Home() {
                 <img src="img/logo-4ch-fb.png" alt="4ch logo" className={styles.sm} />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/logo-ademe.webp" alt="ademe logo" />
+                <img src="img/logo-ademe.png" alt="ademe logo" className={styles.lg} />
               </div>
               <div className={styles.clientlogo}>
                 <img src="img/logo-afaup.png" alt="afaup logo" />
@@ -208,10 +208,10 @@ function Home() {
                 <img src="img/logo-av.jpg" alt="av logo" />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/logo-aurba.jpg" alt="aurba logo" />
+                <img src="img/logo-aurba.png" alt="aurba logo" />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/logo-classe-dehors.png" alt="classe dehors logo" />
+                <img src="img/logo-classe-dehors.png" alt="classe dehors logo" className={styles.lg} />
               </div>
               <div className={styles.clientlogo}>
                 <img src="img/logo-colibris.svg" alt="colibri logo" />
@@ -226,7 +226,7 @@ function Home() {
                 <img src="img/logo-flodio.png" alt="flodio logo" className={styles.sm} />
               </div>
               <div className={styles.clientlogo}>
-                <img src="img/logo-lacoop.webp" alt="la coop des territoires logo" />
+                <img src="img/logo-lacoop.png" alt="la coop des territoires logo" />
               </div>
               <div className={styles.clientlogo}>
                 <img src="img/logo-cdlt.png" alt="la coop des territoires logo" />
