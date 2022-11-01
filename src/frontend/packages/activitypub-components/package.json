@@ -17,10 +17,12 @@
     "@semapps/auth-provider": "0.4.0-alpha.39",
     "@semapps/field-components": "0.4.0-alpha.39",
     "@semapps/semantic-data-provider": "0.4.0-alpha.39",
+    "@rdfjs/data-model": "^1.3.4",
     "@tiptap/core": "^2.0.0-beta.95",
     "@tiptap/extension-mention": "^2.0.0-beta.95",
     "@tiptap/suggestion": "^2.0.0-beta.95",
     "ra-richtext-tiptap": "^0.0.1",
+    "sparqljs": "^3.5.1",
     "tippy.js": "^6.3.7"
   },
   "peerDependencies": {
