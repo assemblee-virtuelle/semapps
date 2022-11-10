@@ -56,9 +56,10 @@ const getUserGroups = async (ctx, user, graphName) => {
 
 const AUTHORIZATION_NODE_QUERY = (mode, accesToOrDefault, resource, graphName) => `SELECT ?auth ?p ?o
 WHERE { GRAPH <${graphName}> {
-  ?auth a acl:Authorization ;
-    acl:mode acl:${mode};
+  ?auth
     acl:${accesToOrDefault} <${resource}>;
+    acl:mode acl:${mode};
+    a acl:Authorization ;
     ?p ?o.
 } }`;
 
