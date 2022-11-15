@@ -5,7 +5,7 @@ import { useMediaQuery, Drawer, Box, IconButton, makeStyles } from '@material-ui
 import CircularProgress from '@material-ui/core/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import MarkerCluster from './MarkerCluster';
+import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 import CloseIcon from '@material-ui/icons/Close';
@@ -126,24 +126,7 @@ const MapList = ({
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
-      {groupClusters ? <MarkerCluster showCoverageOnHover={false}>{markers}</MarkerCluster> : markers}
-      {/*<Marker position={[51.505, -0.09]}>*/}
-      {/*  <Popup>*/}
-      {/*    A pretty CSS3 popup. <br /> Easily customizable.*/}
-      {/*  </Popup>*/}
-      {/*</Marker>*/}
-      {/*<MarkerClusterGroup showCoverageOnHover={false}>*/}
-      {/*  {addressPoints.map((address, index) => (*/}
-      {/*    <Marker*/}
-      {/*      // icon={customIcon}*/}
-      {/*      key={index}*/}
-      {/*      position={[address[0], address[1]]}*/}
-      {/*      title={address[2]}*/}
-      {/*    >*/}
-
-      {/*    </Marker>*/}
-      {/*  ))}*/}
-      {/*</MarkerClusterGroup>*/}
+      {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
       <Drawer anchor="bottom" open={!!drawerRecord} onClose={() => setDrawerRecord(null)}>
         <Box p={1} position="relative">

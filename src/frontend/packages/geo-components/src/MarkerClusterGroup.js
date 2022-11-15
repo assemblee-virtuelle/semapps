@@ -13,8 +13,6 @@ function createMarkerCluster({ children: _c, ...props }, context) {
       : (clusterProps[propName] = prop)
   )
 
-  console.log('L.MarkerClusterGroup', L.MarkerClusterGroup);
-
   const instance = new L.MarkerClusterGroup(clusterProps)
 
   // Initializing event listeners
@@ -31,6 +29,6 @@ function createMarkerCluster({ children: _c, ...props }, context) {
   }
 }
 
-const MarkerCluster = createPathComponent(createMarkerCluster)
+const MarkerClusterGroup = createPathComponent(createMarkerCluster)
 
-export default MarkerCluster;
+export default MarkerClusterGroup;

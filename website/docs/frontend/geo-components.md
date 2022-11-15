@@ -4,17 +4,19 @@ title: Geo Components
 
 ## Installation
 
-In addition to this component, you need to install `leaflet` and `leaflet.markercluster`
+In addition to this component, you need to install `leaflet`, `leaflet-defaulticon-compatibility` and `leaflet.markercluster`
 
 ```bash
-npm install @semapps/geo-components leaflet leaflet.markercluster
+npm install @semapps/geo-components leaflet@^1.8.0 leaflet-defaulticon-compatibility@0.1.1 leaflet.markercluster@^1.5.3
 ```
 
 You must also include the following CSS files:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
-<link rel="stylesheet" href="https://unpkg.com/react-leaflet-markercluster@3.0.0-rc1/dist/styles.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-defaulticon-compatibility@0.1.1/dist/leaflet-defaulticon-compatibility.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 ```
 
 ## Components
@@ -63,17 +65,17 @@ const MyList = props => (
 );
 ```
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `latitude` | `Function` | **required** | A function which takes a record and returns a latitude |
-| `longitude` | `Function` | **required** | A function which takes a record and returns a longitude |
-| `label` | `Function` | | A function which takes a record and returns a label to be displayed in the popup. This is not used if `popupContent` is provided. |
-| `description` | `Function` | | A function which takes a record and returns a description to be displayed in the popup. This is not used if `popupContent` is provided. |
-| `popupContent` | `React Component` |  | A React component to customize the content of the popup (see above) |
-| `height` | `Number` | 700 | The height in pixel of the map |
-| `groupClusters` | `Boolean` | true | If true, markers which are close will be grouped in a cluster. |
-| `boundToMarkers` | `Boolean` | false | If true, center the map around the markers. |
-| `connectMarkers` | `Boolean` | false | If true, trace lines between the markers. The order depends on the list parameters |
+| Property         | Type              | Default      | Description                                                                                                                             |
+|------------------|-------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| `latitude`       | `Function`        | **required** | A function which takes a record and returns a latitude                                                                                  |
+| `longitude`      | `Function`        | **required** | A function which takes a record and returns a longitude                                                                                 |
+| `label`          | `Function`        |              | A function which takes a record and returns a label to be displayed in the popup. This is not used if `popupContent` is provided.       |
+| `description`    | `Function`        |              | A function which takes a record and returns a description to be displayed in the popup. This is not used if `popupContent` is provided. |
+| `popupContent`   | `React Component` |              | A React component to customize the content of the popup (see above)                                                                     |
+| `height`         | `Number`          | 700          | The height in pixel of the map                                                                                                          |
+| `groupClusters`  | `Boolean`         | true         | If true, markers which are close will be grouped in a cluster.                                                                          |
+| `boundToMarkers` | `Boolean`         | false        | If true, center the map around the markers.                                                                                             |
+| `connectMarkers` | `Boolean`         | false        | If true, trace lines between the markers. The order depends on the list parameters                                                      |
 
 You can also provide all the options of [LeafletJS Map](https://leafletjs.com/reference-1.7.1.html#map) (`center`, `zoom`, `scrollWheelZoom`...).
 
@@ -99,13 +101,13 @@ export const MyShow = (props) => (
 );
 ```
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `latitude` | `Function` | **required** | A function which takes a record and returns a latitude |
-| `longitude` | `Function` | **required** | A function which takes a record and returns a longitude |
-| `address` | `Function` | **required** | A function which takes a record and returns a text to display above the map |
-| `typographyProps` | `Object` | | Props passed down to the Typography element used to display the text above the map |
-| `height` | `Number` | 400 | The height in pixel of the map |
+| Property          | Type       | Default      | Description                                                                        |
+|-------------------|------------|--------------|------------------------------------------------------------------------------------|
+| `latitude`        | `Function` | **required** | A function which takes a record and returns a latitude                             |
+| `longitude`       | `Function` | **required** | A function which takes a record and returns a longitude                            |
+| `address`         | `Function` | **required** | A function which takes a record and returns a text to display above the map        |
+| `typographyProps` | `Object`   |              | Props passed down to the Typography element used to display the text above the map |
+| `height`          | `Number`   | 400          | The height in pixel of the map                                                     |
 
 You can also provide all the options of [LeafletJS Map](https://leafletjs.com/reference-1.7.1.html#map) (`center`, `zoom`, `scrollWheelZoom`...).
 
@@ -146,11 +148,11 @@ export const MyCreate = (props) => (
 
 > The `extractContext` utility function allows you to more easily select amongst MapBox data.
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `source` | `String` | **required** | Standard React-Admin prop to identify the field to be created or modified. |
-| `mapboxConfig` | `Object` | **required** | Parameters to pass to the [MapBox forward geocoding API](https://docs.mapbox.com/api/search/geocoding/#forward-geocoding). The `access_token` property is required. |
-| `parse` | `Function` | | A function to format a MapBox `Feature` according to your needs. You can find its properties [here](https://docs.mapbox.com/api/search/geocoding/#geocoding-response-object). |
-| `optionText` | `String` or `Function` | **required** | What property to display in the input when a resource is loaded. You can also pass a function, which takes the full record as an input and returns the label. |
+| Property       | Type                   | Default      | Description                                                                                                                                                                   |
+|----------------|------------------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `source`       | `String`               | **required** | Standard React-Admin prop to identify the field to be created or modified.                                                                                                    |
+| `mapboxConfig` | `Object`               | **required** | Parameters to pass to the [MapBox forward geocoding API](https://docs.mapbox.com/api/search/geocoding/#forward-geocoding). The `access_token` property is required.           |
+| `parse`        | `Function`             |              | A function to format a MapBox `Feature` according to your needs. You can find its properties [here](https://docs.mapbox.com/api/search/geocoding/#geocoding-response-object). |
+| `optionText`   | `String` or `Function` | **required** | What property to display in the input when a resource is loaded. You can also pass a function, which takes the full record as an input and returns the label.                 |
 
 Any other prop will be passed down to the `TextField` base component.
