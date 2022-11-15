@@ -19,6 +19,10 @@ You must also include the following CSS files:
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 ```
 
+:::caution
+The `react-leaflet` package used by this package requires React 18 !
+:::
+
 ## Components
 
 ### MapList
