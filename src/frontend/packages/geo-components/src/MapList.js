@@ -3,8 +3,9 @@ import { useListContext } from 'react-admin';
 import { useLocation } from 'react-router';
 import { useMediaQuery, Drawer, Box, IconButton, makeStyles } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
+import MarkerCluster from './MarkerCluster';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 import CloseIcon from '@material-ui/icons/Close';
@@ -46,7 +47,7 @@ const MapList = ({
   const { ids, data, basePath, loading } = useListContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
-  const [map, setMap] = useState(null);
+  // const [map, setMap] = useState(null);
   const classes = useStyles();
 
   // Get the zoom and center from query string, if available
@@ -78,16 +79,16 @@ const MapList = ({
       <React.Fragment key={i}>
         <Marker
           position={[record.latitude, record.longitude]}
-          eventHandlers={
-            xs
-              ? {
-                  click: () => {
-                    map.setView([record.latitude, record.longitude]);
-                    setDrawerRecord(record);
-                  }
-                }
-              : undefined
-          }
+          // eventHandlers={
+          //   xs
+          //     ? {
+          //         click: () => {
+          //           map.setView([record.latitude, record.longitude]);
+          //           setDrawerRecord(record);
+          //         }
+          //       }
+          //     : undefined
+          // }
         >
           {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
         </Marker>
@@ -114,7 +115,6 @@ const MapList = ({
       center={!boundToMarkers ? center : undefined}
       zoom={!boundToMarkers ? zoom : undefined}
       bounds={bounds}
-      whenCreated={setMap}
       {...otherProps}
     >
       <TileLayer
@@ -126,7 +126,24 @@ const MapList = ({
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
-      {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
+      {groupClusters ? <MarkerCluster showCoverageOnHover={false}>{markers}</MarkerCluster> : markers}
+      {/*<Marker position={[51.505, -0.09]}>*/}
+      {/*  <Popup>*/}
+      {/*    A pretty CSS3 popup. <br /> Easily customizable.*/}
+      {/*  </Popup>*/}
+      {/*</Marker>*/}
+      {/*<MarkerClusterGroup showCoverageOnHover={false}>*/}
+      {/*  {addressPoints.map((address, index) => (*/}
+      {/*    <Marker*/}
+      {/*      // icon={customIcon}*/}
+      {/*      key={index}*/}
+      {/*      position={[address[0], address[1]]}*/}
+      {/*      title={address[2]}*/}
+      {/*    >*/}
+
+      {/*    </Marker>*/}
+      {/*  ))}*/}
+      {/*</MarkerClusterGroup>*/}
       <QueryStringUpdater />
       <Drawer anchor="bottom" open={!!drawerRecord} onClose={() => setDrawerRecord(null)}>
         <Box p={1} position="relative">
