@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useListContext } from 'react-admin';
 import { useLocation } from 'react-router';
-import { useMediaQuery, Drawer, Box, IconButton, makeStyles } from '@material-ui/core';
+import { useMediaQuery, Box, makeStyles } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
-import CloseIcon from '@material-ui/icons/Close';
+import MobileDrawer from "./MobileDrawer";
 
 const useStyles = makeStyles(() => ({
   loading: {
@@ -21,12 +21,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  closeButton: {
-    position: 'absolute',
-    zIndex: 1400,
-    top: 0,
-    right: 0
   }
 }));
 
@@ -47,7 +41,6 @@ const MapList = ({
   const { ids, data, basePath, loading } = useListContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
-  // const [map, setMap] = useState(null);
   const classes = useStyles();
 
   // Get the zoom and center from query string, if available
@@ -79,16 +72,13 @@ const MapList = ({
       <React.Fragment key={i}>
         <Marker
           position={[record.latitude, record.longitude]}
-          // eventHandlers={
-          //   xs
-          //     ? {
-          //         click: () => {
-          //           map.setView([record.latitude, record.longitude]);
-          //           setDrawerRecord(record);
-          //         }
-          //       }
-          //     : undefined
-          // }
+          eventHandlers={
+            xs
+              ? {
+                  click: () => setDrawerRecord(record)
+                }
+              : undefined
+          }
         >
           {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
         </Marker>
@@ -128,14 +118,12 @@ const MapList = ({
       )}
       {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
-      <Drawer anchor="bottom" open={!!drawerRecord} onClose={() => setDrawerRecord(null)}>
-        <Box p={1} position="relative">
-          <IconButton onClick={() => setDrawerRecord(null)} className={classes.closeButton}>
-            <CloseIcon />
-          </IconButton>
-          {drawerRecord && React.createElement(popupContent, { record: drawerRecord, basePath })}
-        </Box>
-      </Drawer>
+      <MobileDrawer
+        record={drawerRecord}
+        basePath={basePath}
+        popupContent={popupContent}
+        onClose={() => setDrawerRecord(null)}
+      />
     </MapContainer>
   );
 };
