@@ -1,27 +1,41 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
 const { isMirror } = require('../../../utils');
+const SparqlParser = require('sparqljs').Parser;
 
-// Important note: PATCH erase old data if they are literals (data properties), but not if they are URIs (relations),
-// as we assume that relations can be multiple, while data properties (eg. labels) should not be duplicated
-// TODO make sure that this conforms with the LDP specifications
+const parser = new SparqlParser();
+const ACCEPTED_OPERATIONS = ['insert', 'delete'];
+
+function checkTriplesSubjectIsResource(triples, resourceUri) {
+  for (const triple of triples) {
+    switch (triple.subject.termType) {
+      case 'NamedNode':
+        // Ensure the subject is the same as the patched resource
+        if (triple.subject.value !== resourceUri) {
+          throw new MoleculerError('The SPARQL request must modify only the patched resource', 400, 'BAD_REQUEST');
+        }
+        break;
+      case 'BlankNode':
+        // Accept blank nodes, as they are necessarily linked to the patched resource
+        break;
+    }
+  }
+}
+
 module.exports = {
   api: async function api(ctx) {
-    const { containerUri, id, body, ...resource } = ctx.params;
-
-    // PATCH have to stay in same container and @id can't be different
-    // TODO generate an error instead of overwriting the ID
-    resource['@id'] = urlJoin(containerUri, id);
-
-    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
-
+    let { containerUri, id, body } = ctx.params;
+    const resourceUri = urlJoin(containerUri, id);
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
     try {
-      await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
-        resource,
-        body,
-        contentType: ctx.meta.headers['content-type']
-      });
+      if (ctx.meta.parser === 'sparql') {
+        await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
+          resourceUri,
+          sparqlUpdate: body
+        });
+      } else {
+        throw new MoleculerError(`The content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
+      }
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
@@ -36,131 +50,96 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: {
-        type: 'object'
+      resourceUri: {
+        type: 'string'
+      },
+      sparqlUpdate: {
+        type: 'string',
+        optional: true
       },
       webId: {
         type: 'string',
         optional: true
-      },
-      body: {
-        type: 'string',
-        optional: true
-      },
-      contentType: {
-        type: 'string'
-      },
-      disassembly: {
-        type: 'array',
-        optional: true
       }
     },
     async handler(ctx) {
-      let { resource, contentType, webId, body } = ctx.params;
+      let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
-      let newData;
-
-      const resourceUri = resource.id || resource['@id'];
-      if (!resourceUri) throw new MoleculerError('No resource ID provided', 400, 'BAD_REQUEST');
 
       if (isMirror(resourceUri, this.settings.baseUrl))
         throw new MoleculerError('Mirrored resources cannot be patched', 403, 'FORBIDDEN');
 
-      const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-        ...ctx.params
+      if (sparqlUpdate) {
+        let parsedQuery;
+
+        try {
+          parsedQuery = parser.parse(sparqlUpdate);
+        } catch (e) {
+          throw new MoleculerError(`Invalid SPARQL Update: ${sparqlUpdate}`, 400, 'BAD_REQUEST');
+        }
+
+        if (parsedQuery.type !== 'update')
+          throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
+
+        const operations = Object.fromEntries(parsedQuery.updates
+          .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
+          .map(p => [p.updateType, p[p.updateType][0].triples])
+        );
+
+        if (Object.values(operations).length === 0)
+          throw new MoleculerError('Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA', 400, 'BAD_REQUEST');
+
+        triplesToAdd = operations.insert || [];
+        triplesToRemove = operations.delete || [];
+      }
+
+      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
+      checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
+
+      // Rebuild the sparql update to reduce security risks
+      sparqlUpdate = {
+        type: 'update',
+        updates: [
+          {
+            updateType: 'insert',
+            insert: [
+              {
+                type: 'bgp',
+                triples: triplesToAdd
+              }
+            ]
+          },
+          {
+            updateType: 'delete',
+            delete: [
+              {
+                type: 'bgp',
+                triples: triplesToRemove
+              }
+            ]
+          }
+        ]
       };
 
-      // Save the current data, to be able to send it through the event
-      // If the resource does not exist, it will throw a 404 error
-      const oldData = await ctx.call('ldp.resource.get', {
-        resourceUri,
-        accept: MIME_TYPES.JSON,
+      await ctx.call('triplestore.update', {
+        query: sparqlUpdate,
         webId
-      });
+      })
 
-      // Adds the default context, if it is missing
-      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-        resource = {
-          '@context': jsonContext,
-          ...resource
-        };
-      }
+      const returnValues = {
+        resourceUri,
+        triplesToAdd,
+        triplesToRemove,
+        webId
+      };
 
-      if (disassembly && contentType === MIME_TYPES.JSON) {
-        await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PATCH');
-      }
-
-      let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
-      let newTriples = await this.bodyToTriples(body || resource, contentType);
-
-      const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
-
-      oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
-      newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
-
-      // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
-      // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
-      const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
-
-      // We want to remove in old triples only the triples for which we have provided a new literal value
-      const literalTriplesToAdd = triplesToAdd.filter(t => t.object.termType === 'Literal');
-      const triplesToRemove = oldTriples.filter(ot =>
-        literalTriplesToAdd.some(
-          nt => nt.subject.value === ot.subject.value && nt.predicate.value === ot.predicate.value
-        )
+      ctx.emit(
+        'ldp.resource.patched',
+        returnValues,
+        { meta: { webId: null, dataset: null } }
       );
 
-      // The exact same data have been posted, skip
-      if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
-        newData = oldData;
-      } else {
-        // Keep track of blank nodes to use in WHERE clause
-        const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-          triple => triple.object.termType === 'Variable'
-        );
-        const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
-
-        // Generate the query
-        let query = '';
-        if (triplesToRemove.length > 0) query += `DELETE { ${this.triplesToString(triplesToRemove)} } `;
-        if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
-        query += `WHERE { `;
-        if (existingBlankNodes.length > 0) query += this.triplesToString(existingBlankNodes);
-        if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
-        query += ` }`;
-
-        await ctx.call('triplestore.update', { query, webId });
-
-        // Get the new data, with the same formatting as the old data
-        newData = await ctx.call(
-          'ldp.resource.get',
-          {
-            resourceUri,
-            accept: MIME_TYPES.JSON,
-            webId
-          },
-          { meta: { $cache: false } }
-        );
-
-        ctx.emit(
-          'ldp.resource.updated',
-          {
-            resourceUri,
-            oldData,
-            newData,
-            webId
-          },
-          { meta: { webId: null, dataset: null } }
-        );
-      }
-
-      return {
-        resourceUri,
-        oldData,
-        newData,
-        webId
-      };
+      return returnValues;
     }
   }
 };
