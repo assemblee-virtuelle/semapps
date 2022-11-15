@@ -7,6 +7,32 @@ const { isMirror } = require('../../../utils');
 // as we assume that relations can be multiple, while data properties (eg. labels) should not be duplicated
 // TODO make sure that this conforms with the LDP specifications
 module.exports = {
+  api: async function api(ctx) {
+    const { containerUri, id, body, ...resource } = ctx.params;
+
+    // PATCH have to stay in same container and @id can't be different
+    // TODO generate an error instead of overwriting the ID
+    resource['@id'] = urlJoin(containerUri, id);
+
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
+
+    try {
+      await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
+        resource,
+        body,
+        contentType: ctx.meta.headers['content-type']
+      });
+      ctx.meta.$statusCode = 204;
+      ctx.meta.$responseHeaders = {
+        Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
+        'Content-Length': 0
+      };
+    } catch (e) {
+      console.error(e);
+      ctx.meta.$statusCode = e.code || 500;
+      ctx.meta.$statusMessage = e.message;
+    }
+  },
   action: {
     visibility: 'public',
     params: {

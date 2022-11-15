@@ -49,6 +49,7 @@ function getContainerRoute(containerUri, readOnly = false) {
       aliases = {
         ...aliases,
         'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
+        'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
         'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
       };
     }
