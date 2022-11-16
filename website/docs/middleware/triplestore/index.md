@@ -117,12 +117,12 @@ None
 - Accept triples, turtle or JSON-LD (see `@semapps/mime-types` package)
 
 ##### Parameters
-| Property  | Type     | Default             | Description                                                                      |
-|-----------|----------|---------------------|----------------------------------------------------------------------------------|
-| `query`   | `String` | **required**        | SPARQL query to execute                                                          |
-| `accept`  | `String` | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`) |
-| `webId`   | `String` | Logged user's webId | User doing the action                                                            |
-| `dataset` | `String` | Main dataset        | Dataset where to execute the query                                               |
+| Property  | Type                 | Default             | Description                                                                                             |
+|-----------|----------------------|---------------------|---------------------------------------------------------------------------------------------------------|
+| `query`   | `String` or `Object` | **required**        | SPARQL query to execute (as a string or [SPARQL.js](https://github.com/RubenVerborgh/SPARQL.js) object) |
+| `accept`  | `String`             | **required**        | Type to return (`application/ld+json`, `text/turtle` or `application/n-triples`)                        |
+| `webId`   | `String`             | Logged user's webId | User doing the action                                                                                   |
+| `dataset` | `String`             | Main dataset        | Dataset where to execute the query                                                                      |
 
 ##### Return
 `String` or `Object` depending on accept
@@ -133,11 +133,11 @@ None
 - DELETE, INSERT queries supported (see [specifications](https://www.w3.org/TR/sparql11-update/))
 
 ##### Parameters
-| Property  | Type     | Default             | Description                            |
-|-----------|----------|---------------------|----------------------------------------|
-| `query`   | `String` | null                | SPARQL Update to execute               |
-| `webId`   | `string` | Logged user's webId | User doing the action                  |
-| `dataset` | `String` | Main dataset        | Dataset where to execute the operation |
+| Property  | Type                 | Default             | Description                                                                                              |
+|-----------|----------------------|---------------------|----------------------------------------------------------------------------------------------------------|
+| `query`   | `String` or `Object` | **required**        | SPARQL Update to execute (as a string or [SPARQL.js](https://github.com/RubenVerborgh/SPARQL.js) object) |
+| `webId`   | `string`             | Logged user's webId | User doing the action                                                                                    |
+| `dataset` | `String`             | Main dataset        | Dataset where to execute the operation                                                                   |
 
 ##### Return
 None
