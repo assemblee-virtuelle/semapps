@@ -9,7 +9,7 @@ import "animate.css/animate.min.css";
 import Member from './team/Member';
 import Subtitle from './team/Subtitle';
 
-function Home() {
+function Team() {
   const context = useDocusaurusContext();
   const { siteConfig = {} } = context;
   return (
@@ -165,8 +165,8 @@ function Home() {
 
       </div>
 
-    </Layout >
+    </Layout>
   );
 }
 
-export default Home;
+export default Team;

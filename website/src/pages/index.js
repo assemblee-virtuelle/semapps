@@ -235,7 +235,7 @@ function Home() {
 
       </div>
 
-    </Layout >
+    </Layout>
   );
 }
 
