@@ -57,6 +57,14 @@ module.exports = {
         type: 'string',
         optional: true
       },
+      triplesToAdd: {
+        type: 'object',
+        optional: true
+      },
+      triplesToRemove: {
+        type: 'object',
+        optional: true
+      },
       webId: {
         type: 'string',
         optional: true
@@ -81,45 +89,42 @@ module.exports = {
         if (parsedQuery.type !== 'update')
           throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
-        const operations = Object.fromEntries(parsedQuery.updates
+        const triplesByOperation = Object.fromEntries(parsedQuery.updates
           .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
           .map(p => [p.updateType, p[p.updateType][0].triples])
         );
 
-        if (Object.values(operations).length === 0)
+        if (Object.values(triplesByOperation).length === 0)
           throw new MoleculerError('Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA', 400, 'BAD_REQUEST');
 
-        triplesToAdd = operations.insert || [];
-        triplesToRemove = operations.delete || [];
+        triplesToAdd = triplesByOperation.insert;
+        triplesToRemove = triplesByOperation.delete;
       }
 
-      checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
-      checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
+      if (!triplesToAdd && !triplesToRemove)
+        throw new MoleculerError('No triples to add or to remove', 400, 'BAD_REQUEST');
 
       // Rebuild the sparql update to reduce security risks
       sparqlUpdate = {
         type: 'update',
-        updates: [
-          {
-            updateType: 'insert',
-            insert: [
-              {
-                type: 'bgp',
-                triples: triplesToAdd
-              }
-            ]
-          },
-          {
-            updateType: 'delete',
-            delete: [
-              {
-                type: 'bgp',
-                triples: triplesToRemove
-              }
-            ]
-          }
-        ]
+        updates: []
       };
+
+      if (triplesToAdd) {
+        checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
+        sparqlUpdate.updates.push({
+          updateType: 'insert',
+          insert: [{ type: 'bgp', triples: triplesToAdd }]
+        });
+      }
+
+      if (triplesToRemove) {
+        checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
+        sparqlUpdate.updates.push({
+          updateType: 'delete',
+          delete: [{ type: 'bgp', triples: triplesToRemove }]
+        });
+      }
 
       await ctx.call('triplestore.update', {
         query: sparqlUpdate,
