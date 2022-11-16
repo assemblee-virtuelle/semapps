@@ -58,11 +58,11 @@ module.exports = {
         optional: true
       },
       triplesToAdd: {
-        type: 'object',
+        type: 'array',
         optional: true
       },
       triplesToRemove: {
-        type: 'object',
+        type: 'array',
         optional: true
       },
       webId: {

@@ -1,6 +1,7 @@
 const CONFIG = require('../config');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const initialize = require('./initialize');
+const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
 
 jest.setTimeout(20000);
 let broker;
@@ -396,6 +397,113 @@ describe('Resource CRUD operations', () => {
       '@id': themeUri,
       '@type': 'pair:Theme',
       'pair:label': 'Permaculture'
+    });
+  }, 20000);
+
+  test('PATCH resource', async () => {
+    const projectUri = await broker.call('ldp.container.post', {
+      containerUri: CONFIG.HOME_URL + 'resources',
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'pair:Project',
+        label: 'SemanticApps'
+      },
+      contentType: MIME_TYPES.JSON,
+      slug: 'SemApps'
+    });
+
+    await broker.call('ldp.resource.patch', {
+      resourceUri: projectUri,
+      triplesToAdd: [
+        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemApps')),
+        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#comment'), literal('An open source toolbox to help you easily build semantic web applications'))
+      ],
+      triplesToRemove: [
+        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemanticApps'))
+      ],
+      contentType: MIME_TYPES.JSON
+    });
+
+    const project = await broker.call('ldp.resource.get', {
+      resourceUri: projectUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(project).toMatchObject({
+      '@id': projectUri,
+      'pair:label': 'SemApps',
+      'pair:comment': 'An open source toolbox to help you easily build semantic web applications'
+    });
+  }, 20000);
+
+  test('PATCH resource with blank nodes', async () => {
+    const projectUri = await broker.call('ldp.container.post', {
+      containerUri: CONFIG.HOME_URL + 'resources',
+      resource: {
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'pair:Project',
+        label: 'ActivityPods'
+      },
+      contentType: MIME_TYPES.JSON,
+      slug: 'ActivityPods'
+    });
+
+    await broker.call('ldp.resource.patch', {
+      resourceUri: projectUri,
+      triplesToAdd: [
+        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
+        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris')),
+      ],
+      contentType: MIME_TYPES.JSON
+    });
+
+    let project = await broker.call('ldp.resource.get', {
+      resourceUri: projectUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(project).toMatchObject({
+      '@id': projectUri,
+      'pair:label': 'ActivityPods',
+      'pair:hasLocation': {
+        '@type': 'pair:Place',
+        'pair:label': 'Paris'
+      }
+    });
+
+    await broker.call('ldp.resource.patch', {
+      resourceUri: projectUri,
+      triplesToAdd: [
+        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
+        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne')),
+      ],
+      contentType: MIME_TYPES.JSON
+    });
+
+    project = await broker.call('ldp.resource.get', {
+      resourceUri: projectUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(project).toMatchObject({
+      '@id': projectUri,
+      'pair:label': 'ActivityPods',
+      'pair:hasLocation': expect.arrayContaining([
+        {
+          '@type': 'pair:Place',
+          'pair:label': 'Paris'
+        },
+        {
+          '@type': 'pair:Place',
+          'pair:label': 'Compiègne'
+        }
+      ])
     });
   }, 20000);
 

@@ -37,7 +37,12 @@ beforeAll(async () => {
       },
       ontologies,
       jsonContext: getPrefixJSON(ontologies),
-      containers: ['/resources'],
+      containers: [
+        {
+          path: '/resources',
+          dereference: ['pair:hasLocation']
+        }
+      ],
       api: false,
       activitypub: false,
       mirror: false,
@@ -162,6 +167,56 @@ describe('CRUD Project', () => {
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
     expect(response.body['pair:label']).toBeUndefined();
+  }, 20000);
+
+  test('Patch one project', async () => {
+    const body = `
+      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+      INSERT DATA {
+        <${projet1['@id']}> pair:label "myLabel" .
+        <${projet1['@id']}> pair:description "myProjectPatched" .
+      };
+      DELETE DATA {
+        <${projet1['@id']}> pair:description "myProjectUpdated" .
+      };
+    `;
+
+    await expressMocked
+      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/sparql-update');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:label']).toBe('myLabel');
+    expect(response.body['pair:description']).toBe('myProjectPatched');
+  }, 20000);
+
+  test('Patch one project with blank nodes', async () => {
+    const body = `
+      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+      INSERT DATA {
+        <${projet1['@id']}> pair:hasLocation [
+          a pair:Place ;
+          pair:label "Paris"
+        ]
+      }
+    `;
+
+    await expressMocked
+      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/sparql-update');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:hasLocation']).toMatchObject({
+      '@type': 'pair:Place',
+      'pair:label': 'Paris'
+    });
+    expect(response.body['pair:description']).toBe('myProjectPatched');
   }, 20000);
 
   test('Delete project', async () => {
