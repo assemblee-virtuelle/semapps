@@ -15,8 +15,8 @@ const containers = [
     dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay']
   },
   {
-  path: '/resources2',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress','pair:hasTopic', 'petr:openingTimesDay']
+    path: '/resources2',
+    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay']
   },
   {
     path: '/organizations',

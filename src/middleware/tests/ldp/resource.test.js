@@ -267,21 +267,20 @@ describe('Resource CRUD operations', () => {
       'pair:affiliates': {
         '@id': 'http://localhost:3000/users/pierre'
       },
-      'pair:hasLocation':
-        {
-          'pair:label': 'Compiegne'
-        }
+      'pair:hasLocation': {
+        'pair:label': 'Compiegne'
+      }
     });
 
     resourceUpdated['hasLocation'] = [
       {
         label: 'Compiegne',
-        description : 'the place to be'
+        description: 'the place to be'
       },
       {
         label: 'Compiegne',
-        description : 'or not'
-      },
+        description: 'or not'
+      }
     ];
 
     await broker.call('ldp.resource.put', {
@@ -301,15 +300,15 @@ describe('Resource CRUD operations', () => {
         '@id': 'http://localhost:3000/users/pierre'
       },
       'pair:hasLocation': [
-         {
-           'pair:label': 'Compiegne',
-           'pair:description': 'the place to be'
-         },
-         {
-           'pair:label': 'Compiegne',
-           'pair:description': 'or not'
-         }
-       ]
+        {
+          'pair:label': 'Compiegne',
+          'pair:description': 'the place to be'
+        },
+        {
+          'pair:label': 'Compiegne',
+          'pair:description': 'or not'
+        }
+      ]
     });
 
     resourceUpdated['hasLocation'] = undefined;
@@ -375,7 +374,6 @@ describe('Resource CRUD operations', () => {
     });
   }, 20000);
 
-
   test('Post resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
     let resourceToPost = {
       '@context': {
@@ -386,8 +384,8 @@ describe('Resource CRUD operations', () => {
       label: 'myTitle',
       hasLocation: {
         label: 'Paris',
-        hasPostalAddress :{
-          addressCountry : "France"
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       }
     };
@@ -406,26 +404,26 @@ describe('Resource CRUD operations', () => {
     expect(project2).toMatchObject({
       'pair:hasLocation': {
         'pair:label': 'Paris',
-        'pair:hasPostalAddress' :{
-          'pair:addressCountry' : "France"
+        'pair:hasPostalAddress': {
+          'pair:addressCountry': 'France'
         }
       }
     });
 
-    resourceToPost.hasLocation=[
+    resourceToPost.hasLocation = [
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "France"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       },
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "USA"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'USA'
         }
       }
-    ]
+    ];
 
     const resourceUri3 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
@@ -433,44 +431,42 @@ describe('Resource CRUD operations', () => {
       containerUri: CONFIG.HOME_URL + 'resources2'
     });
 
-
     const project3 = await broker.call('ldp.resource.get', {
-      resourceUri : resourceUri3,
+      resourceUri: resourceUri3,
       accept: MIME_TYPES.JSON
     });
-
 
     expect(project3).toMatchObject({
       'pair:hasLocation': [
         {
           'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "France"
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'France'
           }
         },
         {
           'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "USA"
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'USA'
           }
         }
       ]
     });
 
-    resourceToPost.hasLocation=[
+    resourceToPost.hasLocation = [
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "France"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       },
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "France"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       }
-    ]
+    ];
 
     const resourceUri4 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
@@ -478,28 +474,22 @@ describe('Resource CRUD operations', () => {
       containerUri: CONFIG.HOME_URL + 'resources2'
     });
 
-
     const project4 = await broker.call('ldp.resource.get', {
-      resourceUri : resourceUri4,
+      resourceUri: resourceUri4,
       accept: MIME_TYPES.JSON
     });
 
-
     expect(project4).toMatchObject({
       'pair:hasLocation': {
-          'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "France"
-          }
+        'pair:label': 'Paris',
+        'pair:hasPostalAddress': {
+          'pair:addressCountry': 'France'
         }
+      }
     });
-
-
   }, 20000);
 
-
   test('Put resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
-
     let resourceUpdated = {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -508,20 +498,19 @@ describe('Resource CRUD operations', () => {
       description: 'myProjectUpdatedAgain',
       hasLocation: [
         {
-          label: "Paris",
-          hasPostalAddress :{
-            addressCountry : "France"
+          label: 'Paris',
+          hasPostalAddress: {
+            addressCountry: 'France'
           }
         },
         {
-          label: "Paris",
-          hasPostalAddress :{
-            addressCountry : "USA"
+          label: 'Paris',
+          hasPostalAddress: {
+            addressCountry: 'USA'
           }
         }
       ]
     };
-
 
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
@@ -536,35 +525,36 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:hasLocation':  [{
+      'pair:hasLocation': [
+        {
           'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "France"
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'France'
           }
         },
         {
           'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "USA"
+          'pair:hasPostalAddress': {
+            'pair:addressCountry': 'USA'
           }
-        }]
+        }
+      ]
     });
 
-    resourceUpdated.hasLocation=[
+    resourceUpdated.hasLocation = [
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "France"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       },
       {
-        label: "Paris",
-        hasPostalAddress :{
-          addressCountry : "France"
+        label: 'Paris',
+        hasPostalAddress: {
+          addressCountry: 'France'
         }
       }
-    ]
-
+    ];
 
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
@@ -579,14 +569,13 @@ describe('Resource CRUD operations', () => {
 
     expect(updatedProject).toMatchObject({
       'pair:description': 'myProjectUpdatedAgain',
-      'pair:hasLocation':  {
-          'pair:label': 'Paris',
-          'pair:hasPostalAddress' :{
-            'pair:addressCountry' : "France"
-          }
+      'pair:hasLocation': {
+        'pair:label': 'Paris',
+        'pair:hasPostalAddress': {
+          'pair:addressCountry': 'France'
         }
+      }
     });
-
   }, 20000);
 
   // Ensure dereferenced resources with IDs are not deleted by PUT

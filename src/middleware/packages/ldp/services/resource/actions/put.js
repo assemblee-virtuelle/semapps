@@ -99,13 +99,13 @@ module.exports = {
       if (isMirror(resourceUri, this.settings.baseUrl)) {
         await ctx.call('triplestore.update', {
           query: `
-                 DELETE
-                 WHERE {
-                   GRAPH <${this.settings.mirrorGraphName}> {
-                     <${resourceUri}> ?p1 ?o1 .
-                   }
+               DELETE
+               WHERE {
+                 GRAPH <${this.settings.mirrorGraphName}> {
+                   <${resourceUri}> ?p1 ?o1 .
                  }
-               `
+               }
+             `
         });
 
         await ctx.call('triplestore.insert', {

@@ -127,51 +127,53 @@ module.exports = {
     return blankNodesVars;
   },
 
-  async buildJsonVariable(identifier,triples) {
-    const blankVariables = triples.filter(t=>t.subject.value.localeCompare(identifier)==0);
-    let json={};
-    let allIdentifiers=[identifier];
+  async buildJsonVariable(identifier, triples) {
+    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) == 0);
+    let json = {};
+    let allIdentifiers = [identifier];
     for (var blankVariable of blankVariables) {
-      if(blankVariable.object.termType=="Variable" ){
-        const jsonVariable = await this.buildJsonVariable(blankVariable.object.value,triples);
-        json[blankVariable.predicate.value]=jsonVariable.json;
-        allIdentifiers=allIdentifiers.concat(jsonVariable.allIdentifiers);
-      }else{
-        json[blankVariable.predicate.value]=blankVariable.object.value;
+      if (blankVariable.object.termType == 'Variable') {
+        const jsonVariable = await this.buildJsonVariable(blankVariable.object.value, triples);
+        json[blankVariable.predicate.value] = jsonVariable.json;
+        allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
+      } else {
+        json[blankVariable.predicate.value] = blankVariable.object.value;
       }
     }
-    return {json,allIdentifiers}
+    return { json, allIdentifiers };
   },
 
   async removeDuplicatedVariables(triples) {
-    const roots = triples.filter(n=>n.object.termType=="Variable" && n.subject.termType!="Variable");
-    const rootsIdentifiers = roots.reduce((previousValue, currentValue)=>{
+    const roots = triples.filter(n => n.object.termType == 'Variable' && n.subject.termType != 'Variable');
+    const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
       let result = previousValue;
-      if(!result.find(i=>i.localeCompare(currentValue.object.value)===0)){
-        result.push(currentValue.object.value)
+      if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
+        result.push(currentValue.object.value);
       }
       return result;
-    },[]);
+    }, []);
     let rootsJson = [];
     for (var rootIdentifier of rootsIdentifiers) {
-      const jsonVariable =await this.buildJsonVariable(rootIdentifier,triples);
+      const jsonVariable = await this.buildJsonVariable(rootIdentifier, triples);
       rootsJson.push({
         rootIdentifier,
-        stringified:JSON.stringify(jsonVariable.json),
-        allIdentifiers:jsonVariable.allIdentifiers
+        stringified: JSON.stringify(jsonVariable.json),
+        allIdentifiers: jsonVariable.allIdentifiers
       });
     }
-    let keepVariables =[];
-    let duplicatedVariables =[];
+    let keepVariables = [];
+    let duplicatedVariables = [];
     for (var rootJson of rootsJson) {
-      if (keepVariables.find(kp=>kp.stringified.localeCompare(rootJson.stringified)===0)){
+      if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
         duplicatedVariables.push(rootJson);
-      }else{
+      } else {
         keepVariables.push(rootJson);
       }
     }
-    let allRemovedIdentifiers = duplicatedVariables.map(dv=>dv.allIdentifiers).flat();
-    let removedDuplicatedVariables = triples.filter(t=>!allRemovedIdentifiers.includes(t.object.value) &&  !allRemovedIdentifiers.includes(t.subject.value) )
+    let allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
+    let removedDuplicatedVariables = triples.filter(
+      t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
+    );
     return removedDuplicatedVariables;
   },
 

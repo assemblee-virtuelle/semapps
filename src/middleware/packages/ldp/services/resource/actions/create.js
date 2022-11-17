@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    let { resource, contentType , body} = ctx.params;
+    let { resource, contentType, body } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const resourceUri = resource.id || resource['@id'];
@@ -61,9 +61,7 @@ module.exports = {
 
     let triplesToAdd = newTriples.reverse();
 
-    const newBlankNodes = newTriples.filter(
-      triple => triple.object.termType === 'Variable'
-    );
+    const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
 
     // Generate the query
     let query = '';
