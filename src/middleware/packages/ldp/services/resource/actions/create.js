@@ -77,13 +77,6 @@ module.exports = {
       webId
     });
 
-    // await ctx.call('triplestore.insert', {
-    //   resource: contentType === MIME_TYPES.JSON ? resource : resource.body,
-    //   contentType,
-    //   webId,
-    //   graphName: mirror ? this.settings.mirrorGraphName : undefined
-    // });
-
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
