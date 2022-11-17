@@ -116,9 +116,8 @@ module.exports = {
     }
   },
   /*
+   * LEGACY / uses by PATCH which will be refactor / TODO remove
    * Go through all blank nodes in the provided triples, and map them using the last part of the predicate
-   * http://virtual-assembly.org/ontologies/pair#hasLocation -> ?hasLocation
-   * TODO: make it work with /
    */
   mapBlankNodesOnVars(triples) {
     let blankNodesVars = {};
@@ -127,6 +126,7 @@ module.exports = {
       .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
     return blankNodesVars;
   },
+
   async buildJsonVariable(identifier,triples) {
     const blankVariables = triples.filter(t=>t.subject.value.localeCompare(identifier)==0);
     let json={};
@@ -174,7 +174,6 @@ module.exports = {
     let removedDuplicatedVariables = triples.filter(t=>!allRemovedIdentifiers.includes(t.object.value) &&  !allRemovedIdentifiers.includes(t.subject.value) )
     return removedDuplicatedVariables;
   },
-
 
   triplesToString(triples) {
     return triples

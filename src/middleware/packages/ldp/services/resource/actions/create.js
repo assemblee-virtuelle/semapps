@@ -19,7 +19,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    let { resource, contentType } = ctx.params;
+    let { resource, contentType , body} = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     const resourceUri = resource.id || resource['@id'];
@@ -51,12 +51,40 @@ module.exports = {
     if (contentType !== MIME_TYPES.JSON && !resource.body)
       throw new MoleculerError('The resource must contain a body member (a string)', 400, 'BAD_REQUEST');
 
-    await ctx.call('triplestore.insert', {
-      resource: contentType === MIME_TYPES.JSON ? resource : resource.body,
-      contentType,
-      webId,
-      graphName: mirror ? this.settings.mirrorGraphName : undefined
+    let newTriples = await this.bodyToTriples(body || resource, contentType);
+    // see PUT
+    newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
+    // see PUT
+    newTriples = this.convertBlankNodesToVars(newTriples);
+    // see PUT
+    newTriples = await this.removeDuplicatedVariables(newTriples);
+
+    let triplesToAdd = newTriples.reverse();
+
+    const newBlankNodes = newTriples.filter(
+      triple => triple.object.termType === 'Variable'
+    );
+
+    // Generate the query
+    let query = '';
+    if (triplesToAdd.length > 0) query += `INSERT { ${this.triplesToString(triplesToAdd)} } `;
+    query += 'WHERE { ';
+    if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
+    query += ` }`;
+
+    this.logger.info('POST query', query);
+
+    await ctx.call('triplestore.update', {
+      query,
+      webId
     });
+
+    // await ctx.call('triplestore.insert', {
+    //   resource: contentType === MIME_TYPES.JSON ? resource : resource.body,
+    //   contentType,
+    //   webId,
+    //   graphName: mirror ? this.settings.mirrorGraphName : undefined
+    // });
 
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',

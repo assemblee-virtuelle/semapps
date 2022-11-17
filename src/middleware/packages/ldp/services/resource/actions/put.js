@@ -146,6 +146,9 @@ module.exports = {
         oldTriples = this.convertBlankNodesToVars(oldTriples);
         newTriples = this.convertBlankNodesToVars(newTriples);
 
+        // same values blackNodes removing because those duplicated values blank nodes cause indiscriminate blank resultings in bug wahen trying to delete both
+        newTriples = await this.removeDuplicatedVariables(newTriples);
+
         // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
         // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
         // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")

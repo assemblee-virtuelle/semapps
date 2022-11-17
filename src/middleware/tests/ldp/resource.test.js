@@ -14,6 +14,7 @@ afterAll(async () => {
 
 describe('Resource CRUD operations', () => {
   let project1;
+  let project2;
 
   test('Post resource in container', async () => {
     const resourceUri = await broker.call('ldp.container.post', {
@@ -122,7 +123,7 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
   }, 20000);
 
-  test('Put resource with multiple blank nodes', async () => {
+  test('Put resource with multiple blank nodes including same values', async () => {
     let resourceUpdated = {
       '@context': {
         petr: 'https://data.petr-msb.data-players.com/ontology#',
@@ -243,10 +244,10 @@ describe('Resource CRUD operations', () => {
         label: 'Compiegne'
       },
       {
-        label: 'Nantes'
+        label: 'Compiegne'
       },
       {
-        label: 'Oloron'
+        label: 'Compiegne'
       }
     ];
 
@@ -266,17 +267,49 @@ describe('Resource CRUD operations', () => {
       'pair:affiliates': {
         '@id': 'http://localhost:3000/users/pierre'
       },
-      'pair:hasLocation': [
+      'pair:hasLocation':
         {
           'pair:label': 'Compiegne'
-        },
-        {
-          'pair:label': 'Nantes'
-        },
-        {
-          'pair:label': 'Oloron'
         }
-      ]
+    });
+
+    resourceUpdated['hasLocation'] = [
+      {
+        label: 'Compiegne',
+        description : 'the place to be'
+      },
+      {
+        label: 'Compiegne',
+        description : 'or not'
+      },
+    ];
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project1['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'pair:affiliates': {
+        '@id': 'http://localhost:3000/users/pierre'
+      },
+      'pair:hasLocation': [
+         {
+           'pair:label': 'Compiegne',
+           'pair:description': 'the place to be'
+         },
+         {
+           'pair:label': 'Compiegne',
+           'pair:description': 'or not'
+         }
+       ]
     });
 
     resourceUpdated['hasLocation'] = undefined;
@@ -340,6 +373,220 @@ describe('Resource CRUD operations', () => {
         { 'petr:startingTime': '2021-10-07T10:44:54.883Z', 'petr:endingTime': '2021-10-07T16:44:54.888Z' }
       ]
     });
+  }, 20000);
+
+
+  test('Post resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
+    let resourceToPost = {
+      '@context': {
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+      },
+      '@type': 'Project',
+      description: 'myProject',
+      label: 'myTitle',
+      hasLocation: {
+        label: 'Paris',
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      }
+    };
+
+    const resourceUri = await broker.call('ldp.container.post', {
+      resource: resourceToPost,
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'resources2'
+    });
+
+    project2 = await broker.call('ldp.resource.get', {
+      resourceUri,
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(project2).toMatchObject({
+      'pair:hasLocation': {
+        'pair:label': 'Paris',
+        'pair:hasPostalAddress' :{
+          'pair:addressCountry' : "France"
+        }
+      }
+    });
+
+    resourceToPost.hasLocation=[
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      },
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "USA"
+        }
+      }
+    ]
+
+    const resourceUri3 = await broker.call('ldp.container.post', {
+      resource: resourceToPost,
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'resources2'
+    });
+
+
+    const project3 = await broker.call('ldp.resource.get', {
+      resourceUri : resourceUri3,
+      accept: MIME_TYPES.JSON
+    });
+
+
+    expect(project3).toMatchObject({
+      'pair:hasLocation': [
+        {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "France"
+          }
+        },
+        {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "USA"
+          }
+        }
+      ]
+    });
+
+    resourceToPost.hasLocation=[
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      },
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      }
+    ]
+
+    const resourceUri4 = await broker.call('ldp.container.post', {
+      resource: resourceToPost,
+      contentType: MIME_TYPES.JSON,
+      containerUri: CONFIG.HOME_URL + 'resources2'
+    });
+
+
+    const project4 = await broker.call('ldp.resource.get', {
+      resourceUri : resourceUri4,
+      accept: MIME_TYPES.JSON
+    });
+
+
+    expect(project4).toMatchObject({
+      'pair:hasLocation': {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "France"
+          }
+        }
+    });
+
+
+  }, 20000);
+
+
+  test('Put resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
+
+    let resourceUpdated = {
+      '@context': {
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+      },
+      '@id': project2['@id'],
+      description: 'myProjectUpdatedAgain',
+      hasLocation: [
+        {
+          label: "Paris",
+          hasPostalAddress :{
+            addressCountry : "France"
+          }
+        },
+        {
+          label: "Paris",
+          hasPostalAddress :{
+            addressCountry : "USA"
+          }
+        }
+      ]
+    };
+
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    let updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project2['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'pair:hasLocation':  [{
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "France"
+          }
+        },
+        {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "USA"
+          }
+        }]
+    });
+
+    resourceUpdated.hasLocation=[
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      },
+      {
+        label: "Paris",
+        hasPostalAddress :{
+          addressCountry : "France"
+        }
+      }
+    ]
+
+
+    await broker.call('ldp.resource.put', {
+      resource: resourceUpdated,
+      accept: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
+    });
+
+    updatedProject = await broker.call('ldp.resource.get', {
+      resourceUri: project2['@id'],
+      accept: MIME_TYPES.JSON
+    });
+
+    expect(updatedProject).toMatchObject({
+      'pair:description': 'myProjectUpdatedAgain',
+      'pair:hasLocation':  {
+          'pair:label': 'Paris',
+          'pair:hasPostalAddress' :{
+            'pair:addressCountry' : "France"
+          }
+        }
+    });
+
   }, 20000);
 
   // Ensure dereferenced resources with IDs are not deleted by PUT
