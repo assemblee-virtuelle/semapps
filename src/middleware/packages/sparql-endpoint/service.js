@@ -1,4 +1,6 @@
+const urlJoin = require("url-join");
 const { Errors: E } = require('moleculer-web');
+const { quad, namedNode, blankNode } = require('rdf-data-model');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
@@ -41,26 +43,22 @@ const SparqlEndpointService = {
 
       return response;
     }
+  },
+  events: {
+    async 'auth.registered'(ctx) {
+      const { webId } = ctx.params;
+      if (this.settings.podProvider) {
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: webId,
+          triplesToAdd: [
+            quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
+            quad(blankNode('b_0'), namedNode('http://rdfs.org/ns/void#sparqlEndpoint'), blankNode(urlJoin(webId, 'sparql'))),
+          ],
+          webId: 'system'
+        });
+      }
+    }
   }
-  // TODO restore this when https://github.com/assemblee-virtuelle/semapps/issues/893 will be fixed
-  // events: {
-  //   async 'auth.registered'(ctx) {
-  //     const { webId } = ctx.params;
-  //
-  //     if( this.settings.podProvider ) {
-  //       await ctx.call('ldp.resource.patch', {
-  //         resource: {
-  //           '@id': webId,
-  //           endpoints: {
-  //             'void:sparqlEndpoint': urlJoin(webId, 'sparql'),
-  //           }
-  //         },
-  //         contentType: MIME_TYPES.JSON,
-  //         webId: 'system'
-  //       });
-  //     }
-  //   }
-  // }
 };
 
 module.exports = SparqlEndpointService;

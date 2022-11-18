@@ -1,9 +1,9 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
-const { MIME_TYPES } = require('@semapps/mime-types');
+const { quad, namedNode } = require('rdf-data-model');
 const getCollectionRoute = require('../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri } = require('../utils');
-const { ACTOR_TYPES } = require('../constants');
+const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX} = require('../constants');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -92,19 +92,16 @@ const RegistryService = {
         // Create the collection
         await ctx.call('activitypub.collection.create', { collectionUri, webId });
 
+        // Attach it to the object
+        await ctx.call('ldp.resource.patch', {
+          resourceUri: objectUri,
+          triplesToAdd: [quad(namedNode(objectUri), namedNode(collection.attachPredicate), namedNode(collectionUri))],
+          webId: 'system'
+        });
+
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
         this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
       }
-
-      // Attach it to the object (do that even if collection exist, in case it's not correctly attached)
-      await ctx.call('ldp.resource.patch', {
-        resource: {
-          id: objectUri,
-          [collection.attachPredicate]: { '@id': collectionUri }
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
     },
     async deleteCollection(ctx) {
       const { objectUri, collection } = ctx.params;
@@ -155,10 +152,12 @@ const RegistryService = {
       types = defaultToArray(types);
       return types
         ? this.registeredCollections.filter(collection =>
-            types.some(type =>
-              Array.isArray(collection.attachToTypes)
-                ? collection.attachToTypes.includes(type)
-                : collection.attachToTypes === type
+            types
+              .map(type => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
+              .some(type =>
+                Array.isArray(collection.attachToTypes)
+                  ? collection.attachToTypes.includes(type)
+                  : collection.attachToTypes === type
             )
           )
         : [];
@@ -175,7 +174,7 @@ const RegistryService = {
       );
     },
     isActor(types) {
-      return defaultToArray(types).some(type => Object.values(ACTOR_TYPES).includes(type));
+      return defaultToArray(types).some(type => [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type));
     },
     hasTypeChanged(oldData, newData) {
       return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
@@ -205,6 +204,22 @@ const RegistryService = {
             await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
           } else {
             await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+          }
+        }
+      }
+    },
+    async 'ldp.resource.patched'(ctx) {
+      const { resourceUri, triplesToAdd, webId } = ctx.params;
+      for (let triple of triplesToAdd) {
+        if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
+          const collections = this.getCollectionsByType(triple.object.value);
+          for (let collection of collections) {
+            if (this.isActor(triple.object.value)) {
+              // If the resource is an actor, use the resource URI as the webId
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+            } else {
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+            }
           }
         }
       }

@@ -16,6 +16,7 @@
     "moleculer-db": "^0.8.15",
     "moleculer-web": "^0.10.0-beta1",
     "node-fetch": "^2.6.6",
+    "rdf-data-model": "1.0.0",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

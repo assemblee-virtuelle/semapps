@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const { getSlugFromUri } = require('@semapps/ldp');
+const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTOR_TYPES } = require('../constants');
-const { delay, defaultToArray, selectActorData } = require('../utils');
+const { ACTOR_TYPES, AS_PREFIX } = require('../constants');
+const { delay, defaultToArray, getSlugFromUri } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -10,7 +10,7 @@ const ActorService = {
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    selectActorData,
+    selectActorData: null,
     podProvider: false
   },
   started() {
@@ -48,17 +48,32 @@ const ActorService = {
     },
     async appendActorData(ctx) {
       const { actorUri } = ctx.params;
+      const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
+      let propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
 
-      const currentData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
-      const actorData = this.settings.selectActorData(currentData);
+      if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
+        // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
+        const resourceType = defaultToArray(userData.type || userData['@type']);
+        const includeActorType = resourceType ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type)) : false;
+        if (!includeActorType) {
+          propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = AS_PREFIX + 'Person';
+        }
+      }
 
-      if (actorData) {
+      if (!propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername']) {
+        propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(userData.id || userData['@id']);
+      }
+
+      if (Object.keys(propertiesToAdd).length > 0) {
         await ctx.call('ldp.resource.patch', {
-          resource: {
-            '@id': actorUri,
-            ...actorData
-          },
-          contentType: MIME_TYPES.JSON,
+          resourceUri: actorUri,
+          triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
+            quad(
+              namedNode(actorUri),
+              namedNode(predicate),
+              typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
+            )
+          ),
           webId: 'system'
         });
       }
@@ -71,15 +86,12 @@ const ActorService = {
         const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
 
         await ctx.call('ldp.resource.patch', {
-          resource: {
-            '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-            '@id': actorUri,
-            publicKey: {
-              owner: actorUri,
-              publicKeyPem: publicKey
-            }
-          },
-          contentType: MIME_TYPES.JSON,
+          resourceUri: actorUri,
+          triplesToAdd: [
+            quad(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b_0')),
+            quad(blankNode('b_0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
+            quad(blankNode('b_0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey)),
+          ],
           webId: 'system'
         });
       }

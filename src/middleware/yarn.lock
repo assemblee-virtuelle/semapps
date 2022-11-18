@@ -8297,7 +8297,7 @@ rdf-data-factory@^1.0.4, rdf-data-factory@^1.1.0:
   dependencies:
     "@rdfjs/types" "*"
 
-rdf-data-model@^1.0.0:
+rdf-data-model@1.0.0, rdf-data-model@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/rdf-data-model/-/rdf-data-model-1.0.0.tgz#e768e1c2cd904c186471b20d1a4fce77c7712a4b"
   integrity sha1-52jhws2QTBhkcbINGk/Od8dxKks=
