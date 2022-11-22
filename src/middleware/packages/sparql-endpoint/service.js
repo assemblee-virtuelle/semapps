@@ -1,6 +1,6 @@
 const urlJoin = require("url-join");
 const { Errors: E } = require('moleculer-web');
-const { quad, namedNode, blankNode } = require('rdf-data-model');
+const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {

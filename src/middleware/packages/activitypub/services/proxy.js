@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { quad, namedNode, blankNode } = require('rdf-data-model');
+const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');

@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
+const { quad, namedNode, blankNode, literal } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES, AS_PREFIX } = require('../constants');
 const { delay, defaultToArray, getSlugFromUri } = require('../utils');

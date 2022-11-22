@@ -1,6 +1,6 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const { variable } = require('rdf-data-model');
+const { variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');

@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
-const { quad, namedNode } = require('rdf-data-model');
+const { quad, namedNode } = require('@rdfjs/data-model');
 const getCollectionRoute = require('../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri } = require('../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX} = require('../constants');
