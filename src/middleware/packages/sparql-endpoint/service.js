@@ -52,7 +52,7 @@ const SparqlEndpointService = {
           resourceUri: webId,
           triplesToAdd: [
             quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
-            quad(blankNode('b_0'), namedNode('http://rdfs.org/ns/void#sparqlEndpoint'), blankNode(urlJoin(webId, 'sparql'))),
+            quad(blankNode('b_0'), namedNode('http://rdfs.org/ns/void#sparqlEndpoint'), namedNode(urlJoin(webId, 'sparql'))),
           ],
           webId: 'system'
         });

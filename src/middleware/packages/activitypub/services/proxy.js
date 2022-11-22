@@ -85,7 +85,7 @@ const ProxyService = {
           resourceUri: webId,
           triplesToAdd: [
             quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
-            quad(blankNode('b_0'), namedNode('https://www.w3.org/ns/activitystreams#proxyUrl'), blankNode(urlJoin(webId, 'proxy'))),
+            quad(blankNode('b_0'), namedNode('https://www.w3.org/ns/activitystreams#proxyUrl'), namedNode(urlJoin(webId, 'proxy'))),
           ],
           webId: 'system'
         });
