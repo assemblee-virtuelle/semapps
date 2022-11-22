@@ -57,9 +57,9 @@ module.exports = {
     // see PUT
     newTriples = this.convertBlankNodesToVars(newTriples);
     // see PUT
-    newTriples = await this.removeDuplicatedVariables(newTriples);
+    newTriples = this.removeDuplicatedVariables(newTriples);
 
-    let triplesToAdd = newTriples.reverse();
+    const triplesToAdd = newTriples.reverse();
 
     const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
 

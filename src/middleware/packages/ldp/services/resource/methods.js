@@ -127,13 +127,13 @@ module.exports = {
     return blankNodesVars;
   },
 
-  async buildJsonVariable(identifier, triples) {
+  buildJsonVariable(identifier, triples) {
     const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) == 0);
     let json = {};
     let allIdentifiers = [identifier];
     for (var blankVariable of blankVariables) {
       if (blankVariable.object.termType == 'Variable') {
-        const jsonVariable = await this.buildJsonVariable(blankVariable.object.value, triples);
+        const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
         json[blankVariable.predicate.value] = jsonVariable.json;
         allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
       } else {
@@ -143,7 +143,7 @@ module.exports = {
     return { json, allIdentifiers };
   },
 
-  async removeDuplicatedVariables(triples) {
+  removeDuplicatedVariables(triples) {
     const roots = triples.filter(n => n.object.termType == 'Variable' && n.subject.termType != 'Variable');
     const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
       let result = previousValue;
@@ -154,7 +154,7 @@ module.exports = {
     }, []);
     let rootsJson = [];
     for (var rootIdentifier of rootsIdentifiers) {
-      const jsonVariable = await this.buildJsonVariable(rootIdentifier, triples);
+      const jsonVariable = this.buildJsonVariable(rootIdentifier, triples);
       rootsJson.push({
         rootIdentifier,
         stringified: JSON.stringify(jsonVariable.json),
