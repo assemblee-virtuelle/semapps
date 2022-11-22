@@ -85,7 +85,7 @@ module.exports = {
           .catch(err => reject(err));
       });
     },
-    generateInverseTriples(resource) {
+    generateInverseTriplesFromResource(resource) {
       let inverseTriples = [];
       for (const property of Object.keys(resource)) {
         if (this.inverseRelations[property]) {
@@ -99,7 +99,17 @@ module.exports = {
           }
         }
       }
-
+      return inverseTriples;
+    },
+    generateInverseTriples(triples) {
+      let inverseTriples = [];
+      for (const triple of triples) {
+        if (this.inverseRelations[triple.predicate.value]) {
+          inverseTriples.push(
+            triple(namedNode(triples.object.value), namedNode(this.inverseRelations[triple.predicate.value]), namedNode(triples.subject.value))
+          );
+        }
+      }
       return inverseTriples;
     },
     triplesToString(triples) {
@@ -151,7 +161,7 @@ module.exports = {
       let { newData } = ctx.params;
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToAdd = this.generateInverseTriples(newData[0]);
+      let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
       let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
@@ -180,7 +190,7 @@ module.exports = {
       let { oldData } = ctx.params;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
 
-      let triplesToRemove = this.generateInverseTriples(oldData[0]);
+      let triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
       let [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
@@ -206,8 +216,8 @@ module.exports = {
       oldData = await ctx.call('jsonld.expand', { input: oldData });
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToRemove = this.generateInverseTriples(oldData[0]);
-      let triplesToAdd = this.generateInverseTriples(newData[0]);
+      let triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
+      let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
       // Filter out triples which are removed and added at the same time
       let filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
@@ -258,6 +268,58 @@ module.exports = {
           });
         }
       }
-    }
+    },
+    async 'ldp.resource.patched'(ctx) {
+      const { triplesAdded, triplesRemoved } = ctx.params;
+
+      const triplesToAdd = this.generateInverseTriples(triplesAdded);
+      const triplesToRemove = this.generateInverseTriples(triplesRemoved);
+
+      let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
+      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
+
+      // Dealing with locals first
+
+      // Avoid adding inverse link to non-existent resources
+      addLocals = await this.filterMissingResources(ctx, addLocals);
+
+      if (removeLocals.length > 0) {
+        await ctx.call('triplestore.update', {
+          query: this.generateDeleteQuery(removeLocals),
+          webId: 'system'
+        });
+        this.cleanResourcesCache(ctx, removeLocals);
+      }
+
+      if (addLocals.length > 0) {
+        await ctx.call('triplestore.update', {
+          query: this.generateInsertQuery(addLocals),
+          webId: 'system'
+        });
+        this.cleanResourcesCache(ctx, addLocals);
+      }
+
+      // Dealing with remotes
+
+      // remote relationships are sent to relay actor of remote server
+      if (this.hasRelayService) {
+        for (let triple of addRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: true
+          });
+        }
+        for (let triple of removeRemotes) {
+          await this.broker.call('activitypub.relay.offerInference', {
+            subject: triple.subject.id,
+            predicate: triple.predicate.id,
+            object: triple.object.id,
+            add: false
+          });
+        }
+      }
+    },
   }
 };

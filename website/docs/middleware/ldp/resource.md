@@ -180,12 +180,12 @@ Sent after a resource is deleted.
 Sent after a resource is patched
 
 ##### Payload
-| Property          | Type     | Description                                                                                        |
-|-------------------|----------|----------------------------------------------------------------------------------------------------|
-| `resourceUri`     | `String` | URI of the updated resource                                                                        |
-| `triplesToAdd`    | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `triplesToRemove` | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
-| `webId`           | `String` | User who did the action                                                                            |
+| Property         | Type     | Description                                                                                        |
+|------------------|----------|----------------------------------------------------------------------------------------------------|
+| `resourceUri`    | `String` | URI of the updated resource                                                                        |
+| `triplesAdded`   | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
+| `triplesRemoved` | `Array`  | Array of triples conforming with the [RDF.js data model](https://github.com/rdfjs-base/data-model) |
+| `webId`          | `String` | User who did the action                                                                            |
 
 
 ### `ldp.resource.updated`

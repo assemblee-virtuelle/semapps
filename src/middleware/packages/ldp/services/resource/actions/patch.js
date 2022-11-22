@@ -133,8 +133,8 @@ module.exports = {
 
       const returnValues = {
         resourceUri,
-        triplesToAdd,
-        triplesToRemove,
+        triplesAdded: triplesToAdd,
+        triplesRemoved: triplesToRemove,
         webId
       };
 

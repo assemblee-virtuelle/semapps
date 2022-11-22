@@ -209,8 +209,8 @@ const RegistryService = {
       }
     },
     async 'ldp.resource.patched'(ctx) {
-      const { resourceUri, triplesToAdd, webId } = ctx.params;
-      for (let triple of triplesToAdd) {
+      const { resourceUri, triplesAdded, webId } = ctx.params;
+      for (let triple of triplesAdded) {
         if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
           const collections = this.getCollectionsByType(triple.object.value);
           for (let collection of collections) {
