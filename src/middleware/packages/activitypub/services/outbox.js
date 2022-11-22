@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const ControlledCollectionMixin = require('../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, objectIdToCurrent } = require('../utils');
+const { collectionPermissionsWithAnonRead } = require('../utils');
 const { ACTOR_TYPES } = require('../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
 

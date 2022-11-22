@@ -1,4 +1,4 @@
-const { OBJECT_TYPES } = require('./constants');
+const { ACTIVITY_TYPES } = require('./constants');
 
 const objectCurrentToId = activityJson => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
@@ -16,11 +16,11 @@ const objectCurrentToId = activityJson => {
 };
 
 const objectIdToCurrent = activityJson => {
-  // If the activity has an object predicate, and this object is a real object (not an activity)
+  // If the activity has an object predicate, and this object is not an activity
   if (
     activityJson.object &&
     typeof activityJson.object === 'object' &&
-    Object.values(OBJECT_TYPES).includes(activityJson.object.type)
+    !Object.values(ACTIVITY_TYPES).includes(activityJson.object.type)
   ) {
     const { id, '@id': arobaseId, ...object } = activityJson.object;
     return {
