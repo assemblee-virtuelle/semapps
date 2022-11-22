@@ -62,6 +62,10 @@ module.exports = {
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;
       this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
+    },
+    async 'ldp.resource.patched'(ctx) {
+      const { resourceUri } = ctx.params;
+      this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
     }
   },
   hooks: {
