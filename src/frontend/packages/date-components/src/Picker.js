@@ -1,8 +1,10 @@
 import React, { useCallback } from 'react';
-import { useInput, useTranslate, FieldTitle } from 'react-admin';
+import { useInput, useTranslate, FieldTitle, InputHelperText } from 'react-admin';
+import { IconButton } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { dateTimeFormatter, dateTimeParser } from './utils';
+import ClearIcon from '@material-ui/icons/Clear';
 
 const sanitizeRestProps = ({
   allowEmpty,
@@ -53,6 +55,7 @@ const Picker = ({
   providerOptions: { utils, locale },
   pickerVariant = 'dialog',
   stringFormat = 'ISO',
+  allowClear,
   ...rest
 }) => {
   const translate = useTranslate();
@@ -80,6 +83,11 @@ const Picker = ({
       : input.onChange(null);
   }, []);
 
+  const handleClear = useCallback(e => {
+    e.stopPropagation();
+    input.onChange(null);
+  }, []);
+
   return (
     <MuiPickersUtilsProvider utils={utils || DateFnsUtils} locale={locale}>
       <PickerComponent
@@ -87,18 +95,27 @@ const Picker = ({
         InputLabelProps={{
           shrink: true
         }}
+        InputProps={{
+          endAdornment: allowClear ? (
+            <IconButton onClick={handleClear}>
+              <ClearIcon />
+            </IconButton>
+          ) : (
+            undefined
+          )
+        }}
         label={<FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />}
         variant={pickerVariant}
         inputVariant={variant}
         margin={margin}
         error={!!(touched && error)}
-        helperText=" "
+        helperText={<InputHelperText touched={touched} error={error} helperText={helperText} />}
         clearLabel={translate('ra.action.clear_input_value')}
         cancelLabel={translate('ra.action.cancel')}
         {...options}
         {...sanitizeRestProps(rest)}
         value={input.value ? new Date(input.value) : null}
-        onChange={date => handleChange(date)}
+        onChange={handleChange}
         onBlur={() =>
           input.onBlur(
             input.value
@@ -120,7 +137,9 @@ Picker.defaultProps = {
   providerOptions: {
     utils: DateFnsUtils,
     locale: undefined
-  }
+  },
+  // Avoid saving an empty string in the dataset
+  parse: value => (value === '' ? null : value)
 };
 
 export default Picker;

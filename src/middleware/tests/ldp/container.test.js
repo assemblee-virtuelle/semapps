@@ -48,7 +48,7 @@ describe('LDP container tests', () => {
   });
 
   test('Post a resource in a container', async () => {
-    resourceUri = await broker.call('ldp.resource.post', {
+    resourceUri = await broker.call('ldp.container.post', {
       containerUri: CONFIG.HOME_URL + 'resources',
       contentType: MIME_TYPES.JSON,
       resource: {
@@ -81,7 +81,7 @@ describe('LDP container tests', () => {
 
   test('Post a resource in a non-existing container', async () => {
     await expect(
-      broker.call('ldp.resource.post', {
+      broker.call('ldp.container.post', {
         containerUri: CONFIG.HOME_URL + 'unknownContainer',
         contentType: MIME_TYPES.JSON,
         resource: {
@@ -92,7 +92,7 @@ describe('LDP container tests', () => {
           label: 'My project'
         }
       })
-    ).rejects.toThrow('Cannot create resource in non-existing container ' + CONFIG.HOME_URL + 'unknownContainer');
+    ).rejects.toThrow();
   });
 
   test('Attach a resource to a non-existing container', async () => {
@@ -130,7 +130,7 @@ describe('LDP container tests', () => {
   });
 
   test('Get container with filters param', async () => {
-    await broker.call('ldp.resource.post', {
+    await broker.call('ldp.container.post', {
       containerUri: CONFIG.HOME_URL + 'resources',
       contentType: MIME_TYPES.JSON,
       resource: {

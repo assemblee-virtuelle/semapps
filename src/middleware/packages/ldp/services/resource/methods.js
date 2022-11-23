@@ -1,13 +1,57 @@
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
-const { variable } = require('rdf-data-model');
+const { variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { MoleculerError } = require('moleculer').Errors;
 const fs = require('fs');
 
 const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
+  async updateSingleMirroredResources() {
+    this.logger.info('updateSingleMirroredResources');
+    let singles = await this.broker.call('triplestore.query', {
+      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#singleMirroredResource> ?o } }`
+    });
+    for (const single of singles) {
+      try {
+        const resourceUri = single.s.value;
+
+        const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON } });
+        if (response.status == 403 || response.status == 404 || response.status == 401) {
+          // remove the resource from cache and from its containers
+          await this.broker.call(
+            'ldp.resource.delete',
+            { resourceUri, webId: 'system' },
+            { meta: { forceMirror: true } }
+          );
+          // get the list of all the containers that contain this mirrored resource we are removing
+          const containers = await this.broker.call('triplestore.query', {
+            query: `SELECT ?container WHERE { ?container <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`
+          });
+          for (let containerUri of containers.map(c => c.container.value)) {
+            await this.broker.call(
+              'ldp.container.detach',
+              { containerUri, resourceUri, webId: 'system' },
+              { meta: { forceMirror: true } }
+            );
+          }
+        } else {
+          // update the local cache
+          let resource = await response.json();
+          resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
+
+          await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
+        }
+      } catch (e) {
+        // connection errors are not counted as errors that indicate the resource is gone.
+        // those error just indicate that the remote server is not responding. can be temporary.
+        this.logger.warn('Failed to update single mirrored resource' + single.s.value);
+        console.error(e);
+      }
+    }
+  },
   async streamToFile(inputStream, filePath) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
@@ -17,18 +61,21 @@ module.exports = {
         .on('error', reject);
     });
   },
-
   async bodyToTriples(body, contentType) {
-    return new Promise((resolve, reject) => {
-      if (contentType === 'application/ld+json' && typeof body === 'object') body = JSON.stringify(body);
-      const textStream = streamifyString(body);
-      let res = [];
-      rdfParser
-        .parse(textStream, { contentType })
-        .on('data', quad => res.push(quad))
-        .on('error', error => reject(error))
-        .on('end', () => resolve(res));
-    });
+    if (contentType === MIME_TYPES.JSON) {
+      return await this.broker.call('jsonld.toQuads', { input: body });
+    } else {
+      if (!(typeof body == 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
+      return new Promise((resolve, reject) => {
+        const textStream = streamifyString(body);
+        let res = [];
+        rdfParser
+          .parse(textStream, { contentType })
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
+          .on('end', () => resolve(res));
+      });
+    }
   },
   // Filter out triples whose subject is not the resource itself
   // We don't want to update or delete resources with IDs
@@ -38,10 +85,10 @@ module.exports = {
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
     return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
-        triple.subject = variable(blankNodesVarsMap[triple.subject.value]);
+        triple.subject = variable(triple.subject.value);
       }
       if (triple.object.termType === 'BlankNode') {
-        triple.object = variable(blankNodesVarsMap[triple.object.value]);
+        triple.object = variable(triple.object.value);
       }
       return triple;
     });
@@ -68,17 +115,53 @@ module.exports = {
         throw new Error('Unknown node type: ' + node.termType);
     }
   },
-  /*
-   * Go through all blank nodes in the provided triples, and map them using the last part of the predicate
-   * http://virtual-assembly.org/ontologies/pair#hasLocation -> ?hasLocation
-   * TODO: make it work with /
-   */
-  mapBlankNodesOnVars(triples) {
-    let blankNodesVars = {};
-    triples
-      .filter(triple => triple.object.termType === 'BlankNode')
-      .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
-    return blankNodesVars;
+  buildJsonVariable(identifier, triples) {
+    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) === 0);
+    let json = {};
+    let allIdentifiers = [identifier];
+    for (var blankVariable of blankVariables) {
+      if (blankVariable.object.termType === 'Variable') {
+        const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
+        json[blankVariable.predicate.value] = jsonVariable.json;
+        allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
+      } else {
+        json[blankVariable.predicate.value] = blankVariable.object.value;
+      }
+    }
+    return { json, allIdentifiers };
+  },
+  removeDuplicatedVariables(triples) {
+    const roots = triples.filter(n => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
+    const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
+      let result = previousValue;
+      if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
+        result.push(currentValue.object.value);
+      }
+      return result;
+    }, []);
+    let rootsJson = [];
+    for (var rootIdentifier of rootsIdentifiers) {
+      const jsonVariable = this.buildJsonVariable(rootIdentifier, triples);
+      rootsJson.push({
+        rootIdentifier,
+        stringified: JSON.stringify(jsonVariable.json),
+        allIdentifiers: jsonVariable.allIdentifiers
+      });
+    }
+    let keepVariables = [];
+    let duplicatedVariables = [];
+    for (var rootJson of rootsJson) {
+      if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
+        duplicatedVariables.push(rootJson);
+      } else {
+        keepVariables.push(rootJson);
+      }
+    }
+    let allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
+    let removedDuplicatedVariables = triples.filter(
+      t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
+    );
+    return removedDuplicatedVariables;
   },
   triplesToString(triples) {
     return triples
@@ -101,7 +184,7 @@ module.exports = {
         const uriAdded = [];
         for (let resource of disassemblyValue) {
           let { id, ...resourceWithoutId } = resource;
-          const newResourceUri = await ctx.call('ldp.resource.post', {
+          const newResourceUri = await ctx.call('ldp.container.post', {
             containerUri: disassemblyConfig.container,
             resource: {
               '@context': newData['@context'],
@@ -139,7 +222,7 @@ module.exports = {
         for (let resource of resourcesToAdd) {
           delete resource.id;
 
-          const newResourceUri = await ctx.call('ldp.resource.post', {
+          const newResourceUri = await ctx.call('ldp.container.post', {
             containerUri: disassemblyConfig.container,
             resource: {
               '@context': newData['@context'],

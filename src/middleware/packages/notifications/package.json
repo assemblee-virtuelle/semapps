@@ -1,0 +1,18 @@
+{
+  "name": "@semapps/notifications",
+  "version": "0.4.0-rc.1",
+  "description": "Notifications tools for SemApps",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "dependencies": {
+    "@semapps/ldp": "0.4.0-rc.1",
+    "cron-parser": "^4.3.0",
+    "expo-server-sdk": "^3.4.0",
+    "moleculer": "^0.14.18",
+    "moleculer-db": "^0.8.15",
+    "moleculer-mail": "^1.2.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

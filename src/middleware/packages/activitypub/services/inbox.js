@@ -1,28 +1,39 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectCurrentToId, objectIdToCurrent } = require('../utils');
+const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../utils');
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { ACTOR_TYPES } = require('../constants');
 
 const InboxService = {
   name: 'activitypub.inbox',
+  mixins: [ControlledCollectionMixin],
   settings: {
-    itemsPerPage: 10
+    path: '/inbox',
+    attachToTypes: Object.values(ACTOR_TYPES),
+    attachPredicate: 'http://www.w3.org/ns/ldp#inbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sort: { predicate: 'as:published', order: 'DESC' },
+    permissions: collectionPermissionsWithAnonRead
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
+      let { collectionUri, ...activity } = ctx.params;
 
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('A username/containerUri or collectionUri must be specified');
+      // Ensure the actor in the activity is the same as the posting actor
+      // (When posting, the webId is the one of the poster)
+      if (activity.actor !== ctx.meta.webId) {
+        ctx.meta.$statusMessage = 'Activity actor is not the same as the posting actor';
+        ctx.meta.$statusCode = 401;
       }
 
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'inbox');
-      const actorUri = collectionUri.replace('/inbox', '');
+      // We want the next operations to be done by the system
+      ctx.meta.webId = 'system';
 
-      const collectionExists = await ctx.call('activitypub.collection.exist', {
-        collectionUri: collectionUri
-      });
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
+      const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
         ctx.meta.$statusCode = 404;
         return;
@@ -30,12 +41,13 @@ const InboxService = {
 
       if (!ctx.meta.skipSignatureValidation) {
         const validDigest = await ctx.call('signature.verifyDigest', {
-          body: JSON.stringify(activity),
+          body: ctx.meta.rawBody, // Stored by parseJson middleware
           headers: ctx.meta.headers
         });
 
-        const validSignature = await ctx.call('signature.verifyHttpSignature', {
+        const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
+          method: 'POST',
           headers: ctx.meta.headers
         });
 
@@ -48,7 +60,6 @@ const InboxService = {
       // TODO check activity is valid
 
       // Save the remote activity in the local triple store
-      // TODO see if we could cache it elsewhere
       await ctx.call('triplestore.insert', {
         resource: objectIdToCurrent(activity),
         contentType: MIME_TYPES.JSON
@@ -60,38 +71,49 @@ const InboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.inbox.received', {
-        activity,
-        recipients: [actorUri]
-      });
+      ctx.emit(
+        'activitypub.inbox.received',
+        {
+          activity,
+          recipients: [actorUri]
+        },
+        { meta: { webId: null, dataset: null } }
+      );
 
       ctx.meta.$statusCode = 202;
     },
-    async list(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, page } = ctx.params;
+    async getByDates(ctx) {
+      const { collectionUri, fromDate, toDate } = ctx.params;
 
-      if (!username && !collectionUri) {
-        throw new Error('A username or collectionUri must be specified');
-      }
+      const filters = [];
+      if (fromDate) filters.push(`?published >= "${fromDate.toISOString()}"^^xsd:dateTime`);
+      if (toDate) filters.push(`?published < "${toDate.toISOString()}"^^xsd:dateTime`);
 
-      ctx.meta.$responseType = 'application/ld+json';
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'inbox'),
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        queryDepth: 3,
-        sort: { predicate: 'as:published', order: 'DESC' }
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+          SELECT DISTINCT ?activityUri 
+          WHERE {
+            <${collectionUri}> a as:Collection .
+            <${collectionUri}> as:items ?activityUri . 
+            ?activityUri as:published ?published . 
+            ${filters ? `FILTER (${filters.join(' && ')})` : ''}
+          }
+          ORDER BY ?published
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
 
-      if (collection) {
-        collection.orderedItems =
-          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
+      let activities = [];
+
+      for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
+        const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
+        activities.push(activity);
       }
+
+      return activities;
     }
   }
 };

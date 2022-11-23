@@ -1,0 +1,15 @@
+version: '3.5'
+
+services:
+  fuseki_tests:
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_tests
+    restart: always
+    volumes:
+      - ./data/fuseki_tests:/fuseki
+    ports:
+      - "3040:3030"
+    expose:
+      - "3040"
+    environment:
+      ADMIN_PASSWORD: "admin"

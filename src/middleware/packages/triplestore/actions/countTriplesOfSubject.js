@@ -13,14 +13,20 @@ module.exports = {
     dataset: {
       type: 'string',
       optional: true
+    },
+    graphName: {
+      type: 'string',
+      optional: true
     }
   },
   async handler(ctx) {
-    const { webId, dataset } = ctx.params;
+    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     const results = await ctx.call('triplestore.query', {
       query: `
         SELECT ?p ?v
+        ${ctx.params.graphName ? 'FROM <' + ctx.params.graphName + '>' : ''}
         WHERE {
           <${ctx.params.uri}> ?p ?v
         }

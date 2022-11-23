@@ -1,152 +1,200 @@
-const urlJoin = require('url-join');
-const { ACTIVITY_TYPES } = require('../constants');
+const ActivitiesHandlerMixin = require('../mixins/activities-handler');
+const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
+const { collectionPermissionsWithAnonRead } = require('../utils');
 
 const FollowService = {
   name: 'activitypub.follow',
+  mixins: [ActivitiesHandlerMixin],
   settings: {
-    baseUri: null
+    baseUri: null,
+    attachToActorTypes: null
   },
   dependencies: ['activitypub.outbox', 'activitypub.collection'],
+  async started() {
+    const { attachToActorTypes } = this.settings;
+
+    await this.broker.call('activitypub.registry.register', {
+      path: '/followers',
+      attachToTypes: attachToActorTypes,
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#followers',
+      ordered: false,
+      dereferenceItems: false,
+      permissions: collectionPermissionsWithAnonRead
+    });
+
+    await this.broker.call('activitypub.registry.register', {
+      path: '/following',
+      attachToTypes: attachToActorTypes,
+      attachPredicate: 'https://www.w3.org/ns/activitystreams#following',
+      ordered: false,
+      dereferenceItems: false,
+      permissions: collectionPermissionsWithAnonRead
+    });
+  },
   actions: {
-    async listFollowers(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri } = ctx.params;
-
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
-      }
-
-      ctx.meta.$responseType = 'application/ld+json';
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'followers'),
-        dereferenceItems: false
-      });
-
-      if (collection) {
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
-    async listFollowing(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri } = ctx.params;
-
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
-      }
-
-      ctx.meta.$responseType = 'application/ld+json';
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'following'),
-        dereferenceItems: false
-      });
-
-      if (collection) {
-        return collection;
-      } else {
-        ctx.meta.$statusCode = 404;
-      }
-    },
     async addFollower(ctx) {
       const { follower, following } = ctx.params;
 
       if (this.isLocalActor(following)) {
-        await ctx.call('activitypub.collection.attach', {
-          collectionUri: urlJoin(following, 'followers'),
-          item: follower
-        });
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+        if (actor.followers) {
+          await ctx.call('activitypub.collection.attach', {
+            collectionUri: actor.followers,
+            item: follower
+          });
+        }
       }
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
-        await ctx.call('activitypub.collection.attach', {
-          collectionUri: urlJoin(follower, 'following'),
-          item: following
-        });
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+        if (actor.following) {
+          await ctx.call('activitypub.collection.attach', {
+            collectionUri: actor.following,
+            item: following
+          });
+        }
       }
 
-      ctx.emit('activitypub.follow.added', { follower, following });
+      ctx.emit('activitypub.follow.added', { follower, following }, { meta: { webId: null, dataset: null } });
     },
     async removeFollower(ctx) {
       const { follower, following } = ctx.params;
 
       if (this.isLocalActor(following)) {
-        await ctx.call('activitypub.collection.detach', {
-          collectionUri: urlJoin(following, 'followers'),
-          item: follower
-        });
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: following });
+        if (actor.followers) {
+          await ctx.call('activitypub.collection.detach', {
+            collectionUri: actor.followers,
+            item: follower
+          });
+        }
       }
 
       // Add reverse relation
       if (this.isLocalActor(follower)) {
-        await ctx.call('activitypub.collection.detach', {
-          collectionUri: urlJoin(follower, 'following'),
-          item: following
-        });
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+        if (actor.following) {
+          await ctx.call('activitypub.collection.detach', {
+            collectionUri: actor.following,
+            item: following
+          });
+        }
       }
 
-      ctx.emit('activitypub.follow.removed', { follower, following });
+      ctx.emit('activitypub.follow.removed', { follower, following }, { meta: { webId: null, dataset: null } });
+    },
+    async isFollowing(ctx) {
+      const { follower, following } = ctx.params;
+
+      if (!this.isLocalActor(follower))
+        throw new Error('The method activitypub.follow.isFollowing currently only works with local actors');
+
+      const actor = await ctx.call('activitypub.actor.get', { actorUri: follower });
+      return await ctx.call('activitypub.collection.includes', {
+        collectionUri: actor.following,
+        itemUri: following
+      });
+    },
+    async listFollowers(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
+      });
+    },
+    async listFollowing(ctx) {
+      const { collectionUri } = ctx.params;
+
+      return await ctx.call('activitypub.collection.get', {
+        collectionUri
+      });
+    }
+  },
+  activities: {
+    follow: {
+      match: {
+        type: ACTIVITY_TYPES.FOLLOW
+      },
+      async onReceive(ctx, activity) {
+        const { '@context': context, ...activityObject } = activity;
+        const actor = await ctx.call('activitypub.actor.get', { actorUri: activity.object });
+
+        await this.actions.addFollower(
+          {
+            follower: activity.actor,
+            following: activity.object
+          },
+          { parentCtx: ctx }
+        );
+
+        // TODO don't accept Follow request if actor doesn't have followers/following collections
+        await ctx.call('activitypub.outbox.post', {
+          collectionUri: actor.outbox,
+          '@context': 'https://www.w3.org/ns/activitystreams',
+          actor: activity.object,
+          type: ACTIVITY_TYPES.ACCEPT,
+          object: activityObject,
+          to: activity.actor
+        });
+      }
+    },
+    acceptFollow: {
+      match: {
+        type: ACTIVITY_TYPES.ACCEPT,
+        object: {
+          type: ACTIVITY_TYPES.FOLLOW
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.addFollower(
+          {
+            follower: activity.object.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
+    },
+    undoFollow: {
+      match: {
+        type: ACTIVITY_TYPES.UNDO,
+        object: {
+          type: ACTIVITY_TYPES.FOLLOW
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.actor || activity.actor,
+            following: activity.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
+    },
+    undoAcceptFollow: {
+      match: {
+        type: ACTIVITY_TYPES.UNDO,
+        object: {
+          type: ACTIVITY_TYPES.ACCEPT,
+          object: {
+            type: ACTIVITY_TYPES.FOLLOW
+          }
+        }
+      },
+      async onReceive(ctx, activity) {
+        await this.actions.removeFollower(
+          {
+            follower: activity.object.object.actor || activity.actor,
+            following: activity.object.object.object
+          },
+          { parentCtx: ctx }
+        );
+      }
     }
   },
   events: {
-    async 'activitypub.inbox.received'(ctx) {
-      const { activity } = ctx.params;
-      const activityType = activity.type || activity['@type'];
-
-      switch (activityType) {
-        case ACTIVITY_TYPES.FOLLOW: {
-          if (this.isLocalActor(activity.object)) {
-            const { '@context': context, username, ...activityObject } = activity;
-            await ctx.call('activitypub.outbox.post', {
-              collectionUri: urlJoin(activity.object, 'outbox'),
-              '@context': 'https://www.w3.org/ns/activitystreams',
-              actor: activity.object,
-              type: ACTIVITY_TYPES.ACCEPT,
-              object: activityObject,
-              to: activity.actor
-            });
-            await this.actions.addFollower(
-              {
-                follower: activity.actor,
-                following: activity.object
-              },
-              { parentCtx: ctx }
-            );
-          }
-          break;
-        }
-
-        case ACTIVITY_TYPES.ACCEPT: {
-          const objectType = activity.object.type || activity.object['@type'];
-          if (objectType === ACTIVITY_TYPES.FOLLOW) {
-            const followActivity = activity.object;
-            await this.actions.addFollower(
-              {
-                follower: followActivity.actor,
-                following: followActivity.object
-              },
-              { parentCtx: ctx }
-            );
-          }
-          break;
-        }
-
-        case ACTIVITY_TYPES.UNDO:
-          const objectType = activity.object.type || activity.object['@type'];
-          if (objectType === ACTIVITY_TYPES.FOLLOW) {
-            const followActivity = activity.object;
-            await this.actions.removeFollower(
-              {
-                follower: followActivity.actor,
-                following: followActivity.object
-              },
-              { parentCtx: ctx }
-            );
-          }
-          break;
-      }
-    },
     'activitypub.follow.added'() {
       // Do nothing. We must define one event listener for EventsWatcher middleware to act correctly.
     },

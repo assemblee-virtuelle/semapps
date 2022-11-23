@@ -3,7 +3,8 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const CollectionService = {
   name: 'activitypub.collection',
   settings: {
-    context: 'https://www.w3.org/ns/activitystreams'
+    jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
+    podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
@@ -13,15 +14,20 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      return await ctx.call('triplestore.insert', {
+      const { collectionUri } = ctx.params;
+      const { ordered, summary } = {
+        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
+        ...ctx.params
+      };
+      await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
-          id: ctx.params.collectionUri,
-          type: ctx.params.ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary: ctx.params.summary
+          id: collectionUri,
+          type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
+          summary
         },
-        accept: MIME_TYPES.JSON,
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -30,15 +36,60 @@ const CollectionService = {
      * @return true if the collection exists
      */
     async exist(ctx) {
+      const { collectionUri } = ctx.params;
       return await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           ASK
           WHERE {
-            <${ctx.params.collectionUri}> a as:Collection .
+            <${collectionUri}> a as:Collection .
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+    },
+    /*
+     * Checks if the collection is empty
+     * @param collectionUri The full URI of the collection
+     * @return true if the collection is empty
+     */
+
+    async isEmpty(ctx) {
+      const { collectionUri } = ctx.params;
+      const res = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          SELECT ( Count(?follower) as ?count )
+          WHERE {
+            <${collectionUri}> as:items ?follower .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+      return Number(res[0].count.value) === 0;
+    },
+    /*
+     * Checks if an item is in a collection
+     * @param collectionUri The full URI of the collection
+     * @param itemUri The full URI of the item
+     * @return true if the collection exists
+     */
+    async includes(ctx) {
+      const { collectionUri, itemUri } = ctx.params;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.includes');
+      return await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#>
+          ASK
+          WHERE {
+            <${collectionUri}> a as:Collection .
+            <${collectionUri}> as:items <${itemUri}> .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
       });
     },
     /*
@@ -47,8 +98,9 @@ const CollectionService = {
      * @param item The resource to add to the collection
      */
     async attach(ctx) {
-      const { collectionUri, item } = ctx.params;
-      const itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.attach');
 
       // TODO also check external resources
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: itemUri });
@@ -58,8 +110,9 @@ const CollectionService = {
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
 
-      return await ctx.call('triplestore.insert', {
-        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`
+      await ctx.call('triplestore.insert', {
+        resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
+        webId: 'system'
       });
     },
     /*
@@ -68,7 +121,9 @@ const CollectionService = {
      * @param item The resource to remove from the collection
      */
     async detach(ctx) {
-      const { collectionUri, item } = ctx.params;
+      let { collectionUri, item, itemUri } = ctx.params;
+      if (!itemUri && item) itemUri = typeof item === 'object' ? item.id || item['@id'] : item;
+      if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.detach');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
@@ -77,39 +132,48 @@ const CollectionService = {
         query: `
           DELETE
           WHERE
-          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${item}> }
-        `
+          { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
+        `,
+        webId: 'system'
       });
     },
     /*
      * Returns a JSON-LD formatted collection stored in the triple store
-     * @param id The full URI of the collection
+     * @param collectionUri The full URI of the collection
      * @param dereferenceItems Should we dereference the items in the collection ?
-     * @param queryDepth Number of blank nodes we want to dereference
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { id, dereferenceItems = false, queryDepth, page, itemsPerPage, sort } = ctx.params;
+      const { collectionUri, page } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const { dereferenceItems, itemsPerPage, sort } = {
+        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
+        ...ctx.params
+      };
 
       let collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
-            <${id}> a as:Collection, ?collectionType .
-            <${id}> as:summary ?summary .
+            <${collectionUri}> a as:Collection, ?collectionType .
+            <${collectionUri}> as:summary ?summary .
           }
           WHERE {
-            <${id}> a as:Collection, ?collectionType .
-            OPTIONAL { <${id}> as:summary ?summary . }
+            <${collectionUri}> a as:Collection, ?collectionType .
+            OPTIONAL { <${collectionUri}> as:summary ?summary . }
           }
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       // No persisted collection found
-      if (!collection['@id']) return null;
+      if (!collection['@id']) {
+        ctx.meta.$statusCode = 404;
+        return null;
+      }
 
       if (this.isOrderedCollection(collection) && !sort) {
         throw new Error('A sort parameter must be provided for ordered collections');
@@ -121,32 +185,35 @@ const CollectionService = {
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           SELECT DISTINCT ?itemUri 
           WHERE {
-            <${id}> a as:Collection .
+            <${collectionUri}> a as:Collection .
             OPTIONAL { 
-              <${id}> as:items ?itemUri . 
+              <${collectionUri}> as:items ?itemUri . 
               ${sort ? `OPTIONAL { ?itemUri ${sort.predicate} ?order . }` : ''}
             }
           }
           ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
         `,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
+        webId
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
       const numPages = !itemsPerPage ? 1 : allItems ? Math.ceil(allItems.length / itemsPerPage) : 0;
+      let returnData = null;
 
       if (page && page > numPages) {
         // The collection page does not exist
-        return null;
+        ctx.meta.$statusCode = 404;
+        return;
       } else if (itemsPerPage && !page) {
         // Pagination is enabled but no page is selected, return the collection
-        return {
-          '@context': this.settings.context,
-          id,
+        returnData = {
+          '@context': this.settings.jsonContext,
+          id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
-          first: numPages > 0 ? id + '?page=1' : undefined,
-          last: numPages > 0 ? id + '?page=' + numPages : undefined,
+          first: numPages > 0 ? collectionUri + '?page=1' : undefined,
+          last: numPages > 0 ? collectionUri + '?page=' + numPages : undefined,
           totalItems: allItems ? allItems.length : 0
         };
       } else {
@@ -162,13 +229,12 @@ const CollectionService = {
 
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
-            selectedItems.push(
-              await ctx.call('ldp.resource.get', {
-                resourceUri: itemUri,
-                accept: MIME_TYPES.JSON,
-                queryDepth
-              })
-            );
+            try {
+              selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId }));
+            } catch (e) {
+              // Ignore resource if it is not found
+              console.info('Resource not found with URI: ' + itemUri);
+            }
           }
 
           // Remove the @context from all items
@@ -178,21 +244,21 @@ const CollectionService = {
         }
 
         if (itemsPerPage) {
-          return {
-            '@context': this.settings.context,
-            id: id + '?page=' + page,
+          returnData = {
+            '@context': this.settings.jsonContext,
+            id: collectionUri + '?page=' + page,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
-            partOf: id,
-            prev: page > 1 ? id + '?page=' + (parseInt(page) - 1) : undefined,
-            next: page < numPages ? id + '?page=' + (parseInt(page) + 1) : undefined,
+            partOf: collectionUri,
+            prev: page > 1 ? collectionUri + '?page=' + (parseInt(page) - 1) : undefined,
+            next: page < numPages ? collectionUri + '?page=' + (parseInt(page) + 1) : undefined,
             [itemsProp]: selectedItems,
             totalItems: allItems ? allItems.length : 0
           };
         } else {
           // No pagination, return the collection
-          return {
-            '@context': this.settings.context,
-            id: id,
+          returnData = {
+            '@context': this.settings.jsonContext,
+            id: collectionUri,
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
             [itemsProp]: selectedItems,
@@ -200,6 +266,9 @@ const CollectionService = {
           };
         }
       }
+
+      ctx.meta.$responseType = 'application/ld+json';
+      return returnData;
     },
     /*
      * Empty the collection, deleting all items it contains.
@@ -207,7 +276,7 @@ const CollectionService = {
      */
     async clear(ctx) {
       const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
-      return await ctx.call('triplestore.update', {
+      await ctx.call('triplestore.update', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
           DELETE {
@@ -218,7 +287,8 @@ const CollectionService = {
             ?container as:items ?s1 .
             ?s1 ?p1 ?o1 .
           } 
-        `
+        `,
+        webId: 'system'
       });
     },
     /*
@@ -228,7 +298,7 @@ const CollectionService = {
      */
     async remove(ctx) {
       const collectionUri = ctx.params.collectionUri.replace(/\/+$/, '');
-      return await ctx.call('triplestore.update', {
+      await ctx.call('triplestore.update', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#> 
           DELETE {
@@ -238,8 +308,44 @@ const CollectionService = {
             FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
             ?s1 ?p1 ?o1 .
           }
-        `
+        `,
+        webId: 'system'
       });
+    },
+    async getOwner(ctx) {
+      const { collectionUri, collectionKey } = ctx.params;
+
+      // Inboxes use the LDP ontology (LDN)
+      const prefix = collectionKey === 'inbox' ? 'ldp' : 'as';
+
+      const results = await ctx.call('triplestore.query', {
+        query: `
+          PREFIX as: <https://www.w3.org/ns/activitystreams#> 
+          PREFIX ldp: <http://www.w3.org/ns/ldp#>
+          SELECT ?actorUri
+          WHERE { 
+            ?actorUri ${prefix}:${collectionKey} <${collectionUri}>
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      return results.length > 0 ? results[0].actorUri.value : null;
+    }
+  },
+  hooks: {
+    before: {
+      '*'(ctx) {
+        // If we have a pod provider, guess the dataset from the container URI
+        if (this.settings.podProvider && ctx.params.collectionUri) {
+          const collectionPath = new URL(ctx.params.collectionUri).pathname;
+          const parts = collectionPath.split('/');
+          if (parts.length > 1) {
+            ctx.meta.dataset = parts[1];
+          }
+        }
+      }
     }
   },
   methods: {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Field, Form } from 'react-final-form';
 import { useTranslate, useNotify, useSafeSetState } from 'react-admin';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Button, CardActions, CircularProgress, TextField, makeStyles } from '@material-ui/core';
 import { default as useSignup } from '../hooks/useSignup';
 
@@ -32,7 +32,6 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const notify = useNotify();
   const classes = useStyles();
   const location = useLocation();
-  const history = useHistory();
   const searchParams = new URLSearchParams(location.search);
 
   const validate = values => {
@@ -53,11 +52,15 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
       .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
-            history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+            // Reload to ensure the dataServer config is reset
+            window.location.reload();
+            window.location.href = redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
-          history.push(redirectTo || '/Person/' + encodeURIComponent(webId) + '/edit');
+          // Reload to ensure the dataServer config is reset
+          window.location.reload();
+          window.location.href = redirectTo || '/';
           setLoading(false);
         }
         notify('auth.message.new_user_created', 'info');
@@ -96,6 +99,15 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
                 name="name"
                 component={Input}
                 label={translate('auth.input.name')}
+                disabled={loading}
+              />
+            </div>
+            <div className={classes.input}>
+              <Field
+                id="username"
+                name="username"
+                component={Input}
+                label={translate('auth.input.username')}
                 disabled={loading}
               />
             </div>

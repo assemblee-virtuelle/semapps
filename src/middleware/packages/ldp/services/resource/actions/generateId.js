@@ -1,8 +1,6 @@
 const createSlug = require('speakingurl');
 const ObjectID = require('bson').ObjectID;
 const urlJoin = require('url-join');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getPrefixRdf } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -21,32 +19,22 @@ module.exports = {
       slug = new ObjectID().toString();
     }
 
-    const preferredUri = urlJoin(containerUri, slug);
-
-    let resourcesStartingWithUri = await ctx.call('triplestore.query', {
-      query: `
-        ${getPrefixRdf(this.settings.ontologies)}
-        SELECT distinct ?uri
-        WHERE {
-          ?uri ?predicate ?object.
-          FILTER regex(str(?uri), "^${preferredUri}")
-        }
-      `,
-      accept: MIME_TYPES.JSON,
-      webId: 'system'
-    });
+    let preferredUri = urlJoin(containerUri, slug);
+    let resourceAlreadyExists = await ctx.call('ldp.resource.exist', { resourceUri: preferredUri, webId: 'system' });
 
     let counter = 0;
-    if (resourcesStartingWithUri.length > 0) {
-      resourcesStartingWithUri = resourcesStartingWithUri.map(r => r.uri.value);
+    if (resourceAlreadyExists) {
       // If preferredUri is already used, find another available URI
-      if (resourcesStartingWithUri.includes(preferredUri)) {
-        do {
-          counter++;
-        } while (resourcesStartingWithUri.includes(preferredUri + counter));
-      }
+      do {
+        counter++;
+        resourceAlreadyExists = await ctx.call('ldp.resource.exist', {
+          resourceUri: preferredUri + counter,
+          webId: 'system'
+        });
+      } while (resourceAlreadyExists);
+      preferredUri = preferredUri + counter;
     }
 
-    return preferredUri + (counter > 0 ? counter : '');
+    return preferredUri;
   }
 };

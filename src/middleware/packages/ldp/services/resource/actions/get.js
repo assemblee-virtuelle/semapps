@@ -1,3 +1,5 @@
+const fs = require('fs');
+const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const {
@@ -6,21 +8,41 @@ const {
   buildBlankNodesQuery,
   buildDereferenceQuery,
   getContainerFromUri,
-  getSlugFromUri
+  getSlugFromUri,
+  isMirror
 } = require('../../../utils');
-const fs = require('fs');
 
 module.exports = {
   api: async function api(ctx) {
     const { id, containerUri } = ctx.params;
-    const resourceUri = `${containerUri}/${id}`;
-    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })), ...ctx.meta.headers };
+    const resourceUri = urlJoin(containerUri, id);
+    const { accept, controlledActions, preferredView } = {
+      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
+      ...ctx.meta.headers
+    };
     try {
-      ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return await ctx.call('ldp.resource.get', {
+      if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
+        const webId = ctx.meta.webId || 'anon';
+        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+        if (resourceExist) {
+          const redirect = await this.settings.preferredViewForResource.bind(this)(resourceUri, preferredView);
+          if (redirect && redirect !== resourceUri) {
+            ctx.meta.$statusCode = 302;
+            ctx.meta.$location = redirect;
+            ctx.meta.$responseHeaders = {
+              'Content-Length': 0
+            };
+            return;
+          }
+        }
+      }
+
+      const res = await ctx.call(controlledActions.get || 'ldp.resource.get', {
         resourceUri,
         accept
       });
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
+      return res;
     } catch (e) {
       console.error(e);
       ctx.meta.$statusCode = e.code || 500;
@@ -56,15 +78,17 @@ module.exports = {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { accept, queryDepth, dereference, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: resourceUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
 
-      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId } });
+      const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
       if (resourceExist) {
         const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
+
+        const mirror = isMirror(resourceUri, this.settings.baseUrl);
 
         let result = await ctx.call('triplestore.query', {
           query: `
@@ -75,14 +99,18 @@ module.exports = {
               ${dereferenceQuery.construct}
             }
             WHERE {
+              ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${blandNodeQuery.where}
               ${dereferenceQuery.where}
+              ${mirror ? '} .' : ''}
             }
           `,
           accept,
           // Increase performance by using the 'system' bypass if ACL have already been verified
+          // TODO simply set meta.webId to "system", it will be taken into account in the triplestore.query action
+          // The problem is we need to know the real webid for the permissions, but we can remember it in the WebACL middleware
           webId: aclVerified ? 'system' : webId
         });
 
@@ -99,13 +127,15 @@ module.exports = {
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
           try {
+            const file = fs.readFileSync(result['semapps:localPath']);
             // Overwrite response type set by the api action
             ctx.meta.$responseType = result['semapps:mimeType'];
-            //Les fichiers sont immutables, on défini le cache à la valeur maximum
+            // Since files are currently immutable, we set a maximum browser cache age
+            // We do that after the file is read, otherwise the error 404 will be cached by the browser
             ctx.meta.$responseHeaders = {
               'Cache-Control': 'public, max-age=31536000'
             };
-            return fs.readFileSync(result['semapps:localPath']);
+            return file;
           } catch (e) {
             throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
           }

@@ -1,78 +1,13 @@
-const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService } = require('@semapps/ldp');
-const { WebAclService } = require('@semapps/webacl');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const ontologies = require('../ontologies');
-const express = require('express');
-const { WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
-const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const CONFIG = require('../config');
-const supertest = require('supertest');
+const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-const broker = new ServiceBroker({
-  middlewares: [WebAclMiddleware],
-  logger: false
-});
-
-let expressMocked = undefined;
+let expressMocked, broker;
 
 beforeAll(async () => {
-  broker.createService(JsonLdService);
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  broker.createService(LdpService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL,
-      ontologies,
-      containers: ['/resources']
-    }
-  });
-  broker.createService(WebAclService, {
-    settings: {
-      baseUrl: CONFIG.HOME_URL
-    }
-  });
-  broker.createService(SparqlEndpointService, {
-    settings: {
-      defaultAccept: 'application/ld+json'
-    }
-  });
-
-  const app = express();
-  const apiGateway = broker.createService({
-    mixins: [ApiGatewayService],
-    settings: {
-      server: false,
-      cors: {
-        origin: '*',
-        exposedHeaders: '*'
-      }
-    },
-    methods: {
-      authenticate(ctx, route, req, res) {
-        return Promise.resolve(null);
-      },
-      authorize(ctx, route, req, res) {
-        return Promise.resolve(ctx);
-      }
-    }
-  });
-  app.use(apiGateway.express());
-
-  await broker.start();
-
-  expressMocked = supertest(app);
+  ({ broker, expressMocked } = await initialize());
 });
 
 afterAll(async () => {
@@ -80,7 +15,7 @@ afterAll(async () => {
 });
 
 describe('middleware CRUD resource with perms', () => {
-  test('Ensure a call to ldp.resource.post fails if anonymous user, because container access denied', async () => {
+  test('Ensure a call to ldp.container.post fails if anonymous user, because container access denied', async () => {
     // this is because containers only get Read perms for anonymous users.
 
     try {
@@ -96,7 +31,7 @@ describe('middleware CRUD resource with perms', () => {
         contentType: MIME_TYPES.JSON,
         containerUri: CONFIG.HOME_URL + 'resources'
       };
-      const resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId: 'anon' } });
+      const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
       expect(e.code).toEqual(403);
     }
@@ -104,7 +39,7 @@ describe('middleware CRUD resource with perms', () => {
 
   let resourceUri;
 
-  test('Ensure a call to ldp.resource.post creates some default permissions', async () => {
+  test('Ensure a call to ldp.container.post creates some default permissions', async () => {
     try {
       const urlParamsPost = {
         resource: {
@@ -119,7 +54,7 @@ describe('middleware CRUD resource with perms', () => {
         containerUri: CONFIG.HOME_URL + 'resources'
       };
       let webId = 'http://a/user';
-      resourceUri = await broker.call('ldp.resource.post', urlParamsPost, { meta: { webId } });
+      resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
       project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 

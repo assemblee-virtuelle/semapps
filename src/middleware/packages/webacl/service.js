@@ -1,23 +1,25 @@
 const WebAclResourceService = require('./services/resource');
 const WebAclGroupService = require('./services/group');
 const WebAclCacheService = require('./services/cache');
-const { parseHeader, negotiateContentType, negotiateAccept } = require('@semapps/middlewares');
+const getRoutes = require('./routes/getRoutes');
 
 module.exports = {
   name: 'webacl',
   settings: {
     baseUrl: null,
-    graphName: '<http://semapps.org/webacl>',
+    graphName: 'http://semapps.org/webacl',
+    podProvider: false,
     superAdmins: []
   },
   dependencies: ['api'],
   async created() {
-    const { baseUrl, graphName, superAdmins } = this.schema.settings;
+    const { baseUrl, graphName, podProvider, superAdmins } = this.settings;
 
     await this.broker.createService(WebAclResourceService, {
       settings: {
         baseUrl,
-        graphName
+        graphName,
+        podProvider
       }
     });
 
@@ -25,6 +27,7 @@ module.exports = {
       settings: {
         baseUrl,
         graphName,
+        podProvider,
         superAdmins
       }
     });
@@ -35,67 +38,28 @@ module.exports = {
     }
   },
   async started() {
-    const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
-      await this.broker.call('api.addRoute', { route });
-    }
-  },
-  actions: {
-    async getApiRoutes(ctx) {
-      const middlewares = [parseHeader, negotiateContentType, negotiateAccept];
+    if (!this.settings.podProvider) {
+      // Testing if there is a secure graph. you should not start the webAcl service if you created an unsecure main dataset.
+      await this.broker.waitForServices(['triplestore', 'auth']);
 
-      return [
-        {
-          authorization: false,
-          authentication: true,
-          bodyParsers: {
-            json: false,
-            urlencoded: false,
-            text: {
-              type: ['text/turtle', 'application/ld+json']
-            }
-          },
-          onBeforeCall(ctx, route, req) {
-            ctx.meta.body = req.body;
-          },
-          aliases: {
-            'PATCH /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_addRights'],
-            'PUT /_acl/:slugParts*': [parseHeader, 'webacl.resource.api_setRights']
-          },
-          onError(req, res, err) {
-            let { type, code, message, data, name } = err;
-            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
-              'Content-Type': 'application/json'
-            });
-            res.end(JSON.stringify({ type, code, message, data, name }));
-          }
-        },
-        {
-          authorization: false,
-          authentication: true,
-          aliases: {
-            'GET /_acl/:slugParts*': [...middlewares, 'webacl.resource.api_getRights'],
-            'GET /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
-            'POST /_rights/:slugParts*': [...middlewares, 'webacl.resource.api_hasRights'],
-            'PATCH /_groups/:id': ['webacl.group.api_addMember'],
-            'POST /_groups': ['webacl.group.api_create'],
-            'GET /_groups/:id': ['webacl.group.api_getMembers'],
-            'GET /_groups': ['webacl.group.api_getGroups'],
-            'DELETE /_groups/:id': ['webacl.group.api_delete'],
-            'POST /_groups/:id': ['webacl.group.api_removeMember']
-          },
-          bodyParsers: {
-            json: true
-          },
-          onError(req, res, err) {
-            let { type, code, message, data, name } = err;
-            res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
-              'Content-Type': 'application/json'
-            });
-            res.end(JSON.stringify({ type, code, message, data, name }));
-          }
-        }
-      ];
+      let hasWebAcl = false;
+      try {
+        await this.broker.call('triplestore.query', {
+          query: `ASK WHERE { GRAPH <${this.settings.graphName}> { ?s ?p ?o } }`,
+          webId: 'anon'
+        });
+      } catch (e) {
+        if (e.code === 403) hasWebAcl = true;
+      }
+      if (!hasWebAcl) {
+        throw new Error(
+          'Error when starting the webAcl service: the main dataset is not secure. You must use the triplestore.dataset.create action with the `secure: true` param'
+        );
+      }
+    }
+
+    for (let route of getRoutes()) {
+      await this.broker.call('api.addRoute', { route });
     }
   }
 };

@@ -51,12 +51,12 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-        INSERT DATA { GRAPH ${this.settings.graphName}
+        INSERT DATA { GRAPH <${this.settings.graphName}>
           { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
         webId: 'system'
       });
 
-      ctx.emit('webacl.group.member-added', { groupUri, memberUri });
+      ctx.emit('webacl.group.member-added', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
     }
   }
 };

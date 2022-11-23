@@ -2,58 +2,116 @@
 title: Auth
 ---
 
-This service allows you to authenticate users with an OIDC or CAS server.
+This service allows you to authenticate users with an OIDC or CAS server, or with a local account.
 
 ## Features
-
-- Handle OIDC and CAS servers in a single package
+- Handle OIDC, CAS or local authentication in a single package
 - Integrate easily with Moleculer's ApiGateway
-- Handle local logout and remote logout
 
 ## Dependencies
-
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [WebIdService](webid.md)
+
+## Sub-services
+- AuthAccountService
+- AuthJWTService
+- AuthMailService
 
 ## Install
 
 ```bash
-$ npm install @semapps/auth --save
+$ yarn add @semapps/auth
 ```
 
 ## Usage
 
+### Local accounts
+
 ```js
-const { AuthService } = require('@semapps/auth');
+const { AuthLocalService } = require('@semapps/auth');
 const path = require('path');
 
 module.exports = {
-  mixins: [AuthService],
+  mixins: [AuthLocalService],
   settings: {
     baseUrl: "http://localhost:3000",
+    // Path where the JWT keypair will be saved
     jwtPath: path.resolve(__dirname, '../jwt'),
-    // To set if you want to use an OIDC server
-    oidc: {
-      issuer: "https://myissuer.com/auth/realms/master",
-      clientId: "myClientId",
-      clientSecret: "myClientSecret",
-    },
-    // To set if you want to use a CAS server
-    cas: {
-      url: "https://my-cas-server.com/cas",
-    },
+    // Usernames you don't want users to signup with
+    reservedUsernames: [],
+    // User data you want to be available in the webId
+    webIdSelection: [],
+    // If false, user account must be created manually with a foaf:email field. True by default.
+    registrationAllowed: true,
+    // Dataset where the account data will be stored (email, hashed password...)
+    accountsDataset: 'settings',
+  }
+};
+```
+
+### OIDC
+
+```js
+const { AuthOIDCService } = require('@semapps/auth');
+const path = require('path');
+
+module.exports = {
+  mixins: [AuthOIDCService],
+  settings: {
+    // See above for the descriptions
+    baseUrl: "http://localhost:3000",
+    jwtPath: path.resolve(__dirname, '../jwt'),
+    reservedUsernames: [],
+    webIdSelection: [],
+    registrationAllowed: true,
+    // OIDC-specific settings
+    issuer: "https://myissuer.com/auth/realms/master",
+    clientId: "myClientId",
+    clientSecret: "myClientSecret",
     // Return data for the creation of the webId profile (FOAF Person).
-    // Available fields: email (required), name, familyName, nick, homepage
-    selectProfileData: authData => ({
+    // Available fields: uuid, nick, name, familyName, email, homepage
+    selectSsoData: authData => ({
       email: authData.email,
       name: authData.given_name,
       familyName: authData.family_name
     }),
-    // If false, user account must be created manually with a foaf:email field. True by default.
-    registrationAllowed: true
+    // Dataset where the account data will be stored (email)
+    accountsDataset: 'settings',
   }
 };
 ```
+
+### CAS
+
+```js
+const { AuthCasService } = require('@semapps/auth');
+const path = require('path');
+
+module.exports = {
+  mixins: [AuthCasService],
+  settings: {
+    // See above for the descriptions
+    baseUrl: "http://localhost:3000",
+    jwtPath: path.resolve(__dirname, '../jwt'),
+    reservedUsernames: [],
+    webIdSelection: [],
+    registrationAllowed: true,
+    // CAS-specific settings
+    casUrl: "https://my-cas-server.com/cas",
+    // Return data for the creation of the webId profile (FOAF Person).
+    // Available fields: uuid, nick, name, familyName, email, homepage
+    selectSsoData: authData => ({
+      email: authData.email,
+      name: authData.given_name,
+      familyName: authData.family_name
+    }),
+    // Dataset where the account data will be stored (email)
+    accountsDataset: 'settings',
+  }
+};
+```
+
+## API routes protection
 
 To protect the different routes, you will need to configure the `authenticate` and `authorize` methods of the ApiGatewayService to call AuthService's respective actions.
 
@@ -126,20 +184,17 @@ A JWT token you can use in your app.
 
 Sent when a new user registers.
 
-##### Parameters
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `webId` | `String` | URI of the user |
-| `profileData` | `Object` | Data of the user's webId profile |
-| `authData` | `Object` | Data returned by the OIDC or CAS provider |
+##### Payload
+| Property      | Type     | Description     |
+|---------------|----------|-----------------|
+| `webId`       | `String` | URI of the user |
+| `profileData` | `Object` | User's data     |
 
 ### `auth.connected`
 
-Sent when an user connects.
+Sent when an user logins.
 
-##### Parameters
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `webId` | `String` | URI of the user |
-| `profileData` | `Object` | Data of the user's webId profile |
-| `authData` | `Object` | Data returned by the OIDC or CAS provider |
+##### Payload
+| Property | Type     | Description     |
+|----------|----------|-----------------|
+| `webId`  | `String` | URI of the user |

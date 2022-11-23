@@ -4,19 +4,29 @@ const path = require('path');
 const { generateKeyPair, createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
-
-const getSlugFromUri = str => str.replace(/\/$/, '').replace(/.*\//, '');
+const { Errors: E } = require('moleculer-web');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { getSlugFromUri } = require('@semapps/ldp');
 
 const SignatureService = {
   name: 'signature',
   settings: {
     actorsKeyPairsDir: null
   },
+  started() {
+    this.remoteActorPublicKeyCache = {};
+  },
+  created() {
+    if (!this.settings.actorsKeyPairsDir) {
+      throw new Error('You must set the actorsKeyPairsDir setting in the signature service');
+    } else if (!fs.existsSync(this.settings.actorsKeyPairsDir)) {
+      throw new Error(`The actorsKeyPairsDir (${this.settings.actorsKeyPairsDir}) does not exist! Please create it.`);
+    }
+  },
   actions: {
     async getActorPublicKey(ctx) {
       const { actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
-      const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
+      const { publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
       try {
         return await fs.promises.readFile(publicKeyPath, { encoding: 'utf8' });
@@ -29,15 +39,13 @@ const SignatureService = {
 
       const publicKey = await this.actions.getActorPublicKey({ actorUri }, { parentCtx: ctx });
       if (publicKey) {
-        console.log(`Key for ${actorUri} already exists, skipping...`);
+        this.logger.info(`Key for ${actorUri} already exists, skipping...`);
         return publicKey;
       }
 
-      return new Promise((resolve, reject) => {
-        const actorId = getSlugFromUri(actorUri);
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub');
+      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
+      return new Promise((resolve, reject) => {
         generateKeyPair(
           'rsa',
           {
@@ -65,33 +73,34 @@ const SignatureService = {
     },
     async deleteActorKeyPair(ctx) {
       const { actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
+      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
 
       try {
-        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
-        await fs.promises.unlink(path.join(this.settings.actorsKeyPairsDir, actorId + '.key.pub'));
+        await fs.promises.unlink(privateKeyPath);
+        await fs.promises.unlink(publicKeyPath);
       } catch (e) {
-        console.log(`Could not delete key pair for actor ${actorId}`);
+        console.log(`Could not delete key pair for actor ${actorUri}`);
       }
     },
     async generateSignatureHeaders(ctx) {
-      const { url, body, actorUri } = ctx.params;
-      const actorId = getSlugFromUri(actorUri);
+      const { url, method, body, actorUri } = ctx.params;
+      const { privateKeyPath } = await this.getKeyPaths(ctx, actorUri);
+      const privateKey = await fsPromises.readFile(privateKeyPath);
 
-      const headers = {
-        Date: new Date().toUTCString(),
-        Digest: this.buildDigest(body)
-      };
+      const headers = { Date: new Date().toUTCString() };
+      const includeHeaders = ['(request-target)', 'host', 'date'];
+      if (body) {
+        headers.Digest = this.buildDigest(body);
+        includeHeaders.push('digest');
+      }
 
       // Generate signature string
-      const requestOptions = { url, method: 'POST', headers };
-      const includeHeaders = ['(request-target)', 'host', 'date', 'digest'];
+      const requestOptions = { url, method, headers };
       const signatureString = createSignatureString({ includeHeaders, requestOptions });
 
       // Hash signature string
       const signer = createSign('sha256');
       signer.update(signatureString);
-      const privateKey = await fsPromises.readFile(path.join(this.settings.actorsKeyPairsDir, actorId + '.key'));
       const signatureHash = signer.sign(privateKey).toString('base64');
 
       headers.Signature = createAuthzHeader({
@@ -108,22 +117,69 @@ const SignatureService = {
       return headers.digest ? this.buildDigest(body) === headers.digest : true;
     },
     async verifyHttpSignature(ctx) {
-      const { url, headers } = ctx.params;
+      const { url, path, method, headers } = ctx.params;
+
+      // If there is a x-forwarded-host header, set is as host
+      // This is the default behavior for Express server but the ApiGateway doesn't use Express
+      if (headers['x-forwarded-host']) {
+        headers.host = headers['x-forwarded-host'];
+      }
 
       const parsedSignature = parseRequest({
-        url: url.replace(new URL(url).origin, ''), // URL without domain name
-        method: 'POST',
+        url: path || url.replace(new URL(url).origin, ''), // URL without domain name
+        method,
         headers
       });
 
       const keyId = parsedSignature.params.keyId;
       if (!keyId) return false;
-      const [actorUrl] = keyId.split('#');
+      const [actorUri] = keyId.split('#');
 
-      const publicKey = await this.getRemoteActorPublicKey(actorUrl);
+      const publicKey = await this.getRemoteActorPublicKey(actorUri);
       if (!publicKey) return false;
 
-      return verifySignature(parsedSignature, publicKey);
+      const isValid = verifySignature(parsedSignature, publicKey);
+      return { isValid, actorUri };
+    },
+    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
+    async authenticate(ctx) {
+      const { route, req, res } = ctx.params;
+      if (req.headers.signature) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+          { path: req.originalUrl, method: req.method, headers: req.headers },
+          { parentCtx: ctx }
+        );
+        if (isValid) {
+          ctx.meta.webId = actorUri;
+          return Promise.resolve();
+        } else {
+          ctx.meta.webId = 'anon';
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+      } else {
+        ctx.meta.webId = 'anon';
+        return Promise.resolve(null);
+      }
+    },
+    // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
+    async authorize(ctx) {
+      const { route, req, res } = ctx.params;
+      if (req.headers.signature) {
+        const { isValid, actorUri } = await this.actions.verifyHttpSignature(
+          { path: req.originalUrl, method: req.method, headers: req.headers },
+          { parentCtx: ctx }
+        );
+        if (isValid) {
+          ctx.meta.webId = actorUri;
+          return Promise.resolve(payload);
+        } else {
+          ctx.meta.webId = 'anon';
+          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
+        }
+      } else {
+        ctx.meta.webId = 'anon';
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+      }
     }
   },
   methods: {
@@ -136,14 +192,36 @@ const SignatureService = {
       );
     },
     // TODO use cache mechanisms
-    async getRemoteActorPublicKey(actorUrl) {
-      const response = await fetch(actorUrl, { headers: { Accept: 'application/json' } });
+    async getRemoteActorPublicKey(actorUri) {
+      if (this.remoteActorPublicKeyCache[actorUri]) {
+        return this.remoteActorPublicKeyCache[actorUri];
+      }
+
+      // TODO use activitypub.actor.get
+      const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
       if (!response) return false;
 
       const actor = await response.json();
       if (!actor || !actor.publicKey) return false;
 
+      this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
       return actor.publicKey.publicKeyPem;
+    },
+    async getKeyPaths(ctx, actorUri) {
+      const actorData = await ctx.call('ldp.resource.get', {
+        resourceUri: actorUri,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      if (actorData) {
+        const username = actorData.preferredUsername || getSlugFromUri(actorUri);
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key');
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key.pub');
+        return { privateKeyPath, publicKeyPath };
+      } else {
+        throw new Error('No valid actor found with URI ' + actorUri);
+      }
     }
   }
 };

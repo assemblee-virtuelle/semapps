@@ -9,12 +9,9 @@ module.exports = {
     async handler(ctx) {
       let { resourceUri } = ctx.params;
 
-      if (ctx.meta.webId !== 'system')
-        throw new MoleculerError('Access denied ! only system can do that', 403, 'ACCESS_DENIED');
-
       await ctx.call('triplestore.update', {
         query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-        WITH ${this.settings.graphName}
+        WITH <${this.settings.graphName}>
         DELETE { ?auth ?p2 ?o }
         WHERE  { ?auth ?p <${resourceUri}>.
           FILTER (?p IN (acl:accessTo, acl:default ) )
@@ -22,7 +19,7 @@ module.exports = {
         webId: 'system'
       });
 
-      ctx.emit('webacl.resource.deleted', { uri: resourceUri });
+      ctx.emit('webacl.resource.deleted', { uri: resourceUri }, { meta: { webId: null, dataset: null } });
     }
   }
 };

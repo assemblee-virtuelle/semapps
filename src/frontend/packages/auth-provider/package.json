@@ -1,6 +1,6 @@
 {
   "name": "@semapps/auth-provider",
-  "version": "0.3.11",
+  "version": "0.4.0-rc.0",
   "description": "React-Admin auth provider for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,13 +15,13 @@
   },
   "dependencies": {
     "@material-ui/lab": "^4.0.0-alpha.57",
+    "@semapps/semantic-data-provider": "0.4.0-rc.0",
     "jwt-decode": "^3.0.0",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "@semapps/archipelago-layout": "0.3.6",
     "react": "^16.13..1 || ^17.0.0",
-    "react-admin": "^3.13.1"
+    "react-admin": "^3.19.10"
   },
   "publishConfig": {
     "access": "public"

@@ -1,0 +1,37 @@
+version: '3.5'
+services:
+  fuseki:
+    build:
+      context: fuseki-docker
+      dockerfile: Dockerfile
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki
+    volumes:
+      - ./data/rdf_data:/fuseki
+    ports:
+      - "3030:3030"
+    expose:
+      - "3030"
+    environment:
+      ADMIN_PASSWORD: "admin"
+      JAVA_MX_RAM: "4G"
+
+  fuseki_compact:
+    build:
+      context: fuseki-docker
+      dockerfile: Dockerfile
+    entrypoint: /docker-compact-entrypoint.sh
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_compact
+    volumes:
+      - ./data/rdf_data:/fuseki
+
+  fuseki_migrate:
+    build:
+      context: fuseki-docker
+      dockerfile: Dockerfile
+    entrypoint: /docker-migration-entrypoint.sh
+    image: semapps/jena-fuseki-webacl
+    container_name: fuseki_migration
+    volumes:
+      - ./data/rdf_data:/fuseki

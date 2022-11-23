@@ -1,6 +1,6 @@
 {
   "name": "@semapps/activitypub-components",
-  "version": "0.3.11",
+  "version": "0.4.0-rc.0",
   "description": "React-Admin components for ActivityPub display",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -13,9 +13,19 @@
     "pre-publish": "rollup --sourcemap --config",
     "dev": "rollup --watch --sourcemap --config"
   },
+  "dependencies": {
+    "@semapps/auth-provider": "0.4.0-rc.0",
+    "@semapps/field-components": "0.4.0-rc.0",
+    "@semapps/semantic-data-provider": "0.4.0-rc.0",
+    "@tiptap/core": "^2.0.0-beta.95",
+    "@tiptap/extension-mention": "^2.0.0-beta.95",
+    "@tiptap/suggestion": "^2.0.0-beta.95",
+    "ra-richtext-tiptap": "^0.0.1",
+    "tippy.js": "^6.3.7"
+  },
   "peerDependencies": {
     "react": "^16.13.1 || ^17.0.0",
-    "react-admin": "^3.13.1"
+    "react-admin": "^3.19.10"
   },
   "publishConfig": {
     "access": "public"

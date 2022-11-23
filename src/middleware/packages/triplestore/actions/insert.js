@@ -42,13 +42,21 @@ module.exports = {
       });
     }
 
-    return await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'update'), {
-      body: graphName ? `INSERT DATA { GRAPH ${graphName} { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
-      headers: {
-        'Content-Type': 'application/sparql-update',
-        'X-SemappsUser': webId,
-        Authorization: this.Authorization
-      }
-    });
+    if (!dataset) throw new Error('No dataset defined for triplestore insert: ' + rdf);
+
+    // Handle wildcard
+    const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
+
+    for (let dataset of datasets) {
+      if (datasets.length > 1) this.logger.info(`Inserting into dataset ${dataset}...`);
+      await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
+        body: graphName ? `INSERT DATA { GRAPH <${graphName}> { ${rdf} } }` : `INSERT DATA { ${rdf} }`,
+        headers: {
+          'Content-Type': 'application/sparql-update',
+          'X-SemappsUser': webId,
+          Authorization: this.Authorization
+        }
+      });
+    }
   }
 };

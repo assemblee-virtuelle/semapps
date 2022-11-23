@@ -1,43 +1,66 @@
-const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { objectCurrentToId } = require('../utils');
+const ControlledCollectionMixin = require('../mixins/controlled-collection');
+const { collectionPermissionsWithAnonRead } = require('../utils');
+const { ACTOR_TYPES } = require('../constants');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 const OutboxService = {
   name: 'activitypub.outbox',
+  mixins: [ControlledCollectionMixin],
   settings: {
-    itemsPerPage: 10
+    path: '/outbox',
+    attachToTypes: Object.values(ACTOR_TYPES),
+    attachPredicate: 'https://www.w3.org/ns/activitystreams#outbox',
+    ordered: true,
+    itemsPerPage: 10,
+    dereferenceItems: true,
+    sort: { predicate: 'as:published', order: 'DESC' },
+    permissions: collectionPermissionsWithAnonRead
   },
-  dependencies: ['activitypub.activity', 'activitypub.object', 'activitypub.collection'],
+  dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
     async post(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, ...activity } = ctx.params;
-
-      if ((!username || !actorContainerUri) && !collectionUri) {
-        throw new Error('Outbox post: a username/containerUri or collectionUri must be specified');
-      }
-
-      collectionUri = collectionUri || urlJoin(actorContainerUri, username, 'outbox');
-      const actorUri = collectionUri.replace('/outbox', '');
+      let { collectionUri, ...activity } = ctx.params;
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
         throw new MoleculerError('Collection not found:' + collectionUri, 404, 'NOT_FOUND');
       }
 
-      // Check that logged user is posting to his own outbox
-      if (ctx.meta.webId && actorUri !== ctx.meta.webId) {
+      // Ensure logged user is posting to his own outbox
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
+      if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+      }
+
+      if (!activity['@context']) {
+        activity['@context'] = this.settings.jsonContext;
       }
 
       // Process object create, update or delete
       // and return an activity with the object ID
       activity = await ctx.call('activitypub.object.process', { activity, actorUri });
 
+      if (!activity.actor) {
+        activity.actor = actorUri;
+      }
+
       // Use the current time for the activity's publish date
       // TODO use it to order the ordered collections
       activity.published = new Date().toISOString();
 
-      activity = await ctx.call('activitypub.activity.create', activity);
+      const activitiesContainerUri = await this.broker.call('activitypub.activity.getContainerUri', {
+        webId: actorUri
+      });
+
+      const activityUri = await ctx.call('activitypub.activity.post', {
+        containerUri: activitiesContainerUri,
+        resource: activity,
+        contentType: MIME_TYPES.JSON,
+        webId: 'system'
+      });
+
+      activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
 
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
@@ -45,35 +68,19 @@ const OutboxService = {
         item: activity
       });
 
-      ctx.emit('activitypub.outbox.posted', { activity });
+      ctx.emit('activitypub.outbox.posted', { activity } /*, { meta: { webId: null, dataset: null } }*/);
 
+      // TODO identify API calls so that we only set these headers if necessary
+      // (They can enter into conflict with an usage of ctx.meta.$location)
+      ctx.meta.$responseHeaders = {
+        Location: activityUri,
+        'Content-Length': 0
+      };
+
+      ctx.meta.$statusCode = 201;
+
+      // TODO do not return activity when calling through API calls
       return activity;
-    },
-    async list(ctx) {
-      let { username, containerUri: actorContainerUri, collectionUri, page } = ctx.params;
-
-      if (!username && !collectionUri) {
-        throw new Error('A username or collectionUri must be specified');
-      }
-
-      ctx.meta.$responseType = 'application/ld+json';
-
-      const collection = await ctx.call('activitypub.collection.get', {
-        id: collectionUri || urlJoin(actorContainerUri, username, 'outbox'),
-        page,
-        itemsPerPage: this.settings.itemsPerPage,
-        dereferenceItems: true,
-        queryDepth: 3,
-        sort: { predicate: 'as:published', order: 'DESC' }
-      });
-
-      if (collection) {
-        collection.orderedItems =
-          collection.orderedItems && collection.orderedItems.map(activityJson => objectCurrentToId(activityJson));
-        return collection;
-      } else {
-        throw new MoleculerError('Collection not found', 404, 'NOT_FOUND');
-      }
     }
   }
 };

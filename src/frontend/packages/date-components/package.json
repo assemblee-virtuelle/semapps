@@ -1,6 +1,6 @@
 {
   "name": "@semapps/date-components",
-  "version": "0.3.11",
+  "version": "0.4.0-rc.0",
   "description": "React-Admin components for date display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -25,7 +25,7 @@
   },
   "peerDependencies": {
     "react": "^16.13.1 || ^17.0.0",
-    "react-admin": "^3.13.1"
+    "react-admin": "^3.19.10"
   },
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,6 @@
     "rollup": "^2.7.6",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-import-css": "^2.0.1",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",

@@ -1,4 +1,4 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
+const fetch = require('node-fetch');
 
 const WebfingerService = {
   name: 'webfinger',
@@ -6,7 +6,7 @@ const WebfingerService = {
     baseUrl: null,
     domainName: null // If not set, will be extracted from baseUrl
   },
-  dependencies: ['triplestore', 'ldp', 'api'],
+  dependencies: ['api', 'auth.account'],
   async started() {
     if (!this.settings.domainName) {
       if (!this.settings.baseUrl) throw new Error('If no domainName is defined, the baseUrl must be set');
@@ -31,43 +31,20 @@ const WebfingerService = {
       const matches = resource.match(usernameMatchRegex);
 
       if (matches) {
-        const userName = matches[1];
-        const result = await ctx.call('triplestore.query', {
-          query: `
-            PREFIX as: <https://www.w3.org/ns/activitystreams#>
-            SELECT ?userUri
-            WHERE {
-              ?userUri a ?type .
-              ?userUri as:preferredUsername "${userName}" .
-              FILTER( ?type IN (as:Application, as:Group, as:Organization, as:Person, as:Service) ) .
-            }
-          `,
-          accept: MIME_TYPES.JSON
-        });
-
-        if (result.length > 0) {
-          const userUri = result[0].userUri.value;
-
-          let actor;
-          try {
-            actor = await ctx.call('ldp.resource.get', { resourceUri: userUri });
-          } catch (e) {
-            actor = null;
-          }
-
-          if (actor) {
-            return {
-              subject: resource,
-              aliases: [userUri],
-              links: [
-                {
-                  rel: 'self',
-                  type: 'application/activity+json',
-                  href: userUri
-                }
-              ]
-            };
-          }
+        const username = matches[1];
+        const accounts = await ctx.call('auth.account.find', { query: { username } });
+        if (accounts.length > 0) {
+          return {
+            subject: resource,
+            aliases: [accounts[0].webId],
+            links: [
+              {
+                rel: 'self',
+                type: 'application/activity+json',
+                href: accounts[0].webId
+              }
+            ]
+          };
         }
       }
 
@@ -75,8 +52,10 @@ const WebfingerService = {
     },
     async getRemoteUri(ctx) {
       const { account } = ctx.params;
-      const domainName = account.split('@').pop();
-      const webfingerUrl = `https://${domainName}/.well-known/webfinger?resource=acct:${account}`;
+      const splitAccount = account.split('@');
+      const domainName = splitAccount.pop();
+      const userName = splitAccount.pop();
+      const webfingerUrl = `http://${domainName}/.well-known/webfinger?resource=acct:${userName}@${domainName}`;
 
       const response = await fetch(webfingerUrl);
 

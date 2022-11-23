@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 const { removeAgentGroupOrAgentFromAuthorizations, sanitizeSPARQL } = require('../../../utils');
 
@@ -45,12 +44,12 @@ module.exports = {
 
       // Deleting the group
       await ctx.call('triplestore.update', {
-        query: `DELETE WHERE { GRAPH ${this.settings.graphName} 
+        query: `DELETE WHERE { GRAPH <${this.settings.graphName}> 
                 { <${groupUri}> ?p ?o. } }`,
         webId: 'system'
       });
 
-      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri }, { meta: { webId: 'system' } });
+      await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
       await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
     }

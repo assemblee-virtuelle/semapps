@@ -1,57 +1,78 @@
 const { ServiceBroker } = require('moleculer');
-const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService } = require('@semapps/ldp');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
+const { CoreService } = require('@semapps/core');
+const { WebAclMiddleware } = require('@semapps/webacl');
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
+const path = require('path');
+const { getPrefixJSON } = require('@semapps/ldp');
+
+const containers = [
+  {
+    path: '/resources',
+    dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay']
+  },
+  {
+    path: '/resources2',
+    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay']
+  },
+  {
+    path: '/organizations',
+    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
+    disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
+  },
+  {
+    path: '/places'
+  },
+  {
+    path: '/themes'
+  }
+];
 
 const initialize = async () => {
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware],
-    logger: false
+    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    logger: {
+      type: 'Console',
+      options: {
+        level: 'error'
+      }
+    }
   });
 
-  await broker.createService({
-    mixins: [ApiGatewayService]
-  });
-  await broker.createService(JsonLdService);
-  await broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  await broker.createService(LdpService, {
+  await broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
       ontologies,
-      containers: [
-        {
-          path: '/resources',
-          dereference: ['pair:hasLocation', 'pair:hasTopic']
-        },
-        {
-          path: '/organizations',
-          dereference: ['pair:hasLocation'],
-          disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
-        },
-        {
-          path: '/places'
-        },
-        {
-          path: '/themes'
-        }
-      ]
+      jsonContext: getPrefixJSON(ontologies),
+      containers,
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false
     }
   });
-  await broker.createService(WebAclService, {
+
+  await broker.createService(AuthLocalService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
     }
   });
 
@@ -65,6 +86,15 @@ const initialize = async () => {
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: CONFIG.HOME_URL + 'resources',
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: CONFIG.HOME_URL + 'resources2',
     additionalRights: {
       anon: {
         write: true

@@ -4,23 +4,26 @@ title: Backup
 
 This service allows you to backup the triples in a given dataset, as well as the uploaded files.
 
+
 ## Features
 
-- Rsync Fuseki datasets backups with a remote server
-- Rsync uploaded files with a remote server
+- Backup Fuseki datasets and uploaded files
+- Choose copy method: Rsync, FTP or filesystem (copy to another directory)
 - Setup a cron to automatically launch the rsync operation
+
 
 ## Dependencies
 
-- [FusekiAdminService](fuseki-admin.md)
+- [TripleStoreService](triplestore)
+
 
 ## Install
 
 ```bash
-$ npm install @semapps/backup --save
+$ yarn add @semapps/backup
 ```
 
-You will need to have `rsync`, `sshpass` and `openssh` installed on your server.
+If you wish to use the Rsync method, you will need to have `rsync`, `sshpass` and `openssh` installed on your server.
 
 ```bash
 $ sudo apt-get install rsync sshpass openssh
@@ -31,6 +34,7 @@ You will also need to add the remote server domain as a known host, otherwise ss
 ```bash
 ssh-keyscan REMOTE_SERVER_DOMAIN_NAME >> ~/.ssh/known_hosts
 ```
+
 
 ## Usage
 
@@ -47,12 +51,14 @@ module.exports = {
         uploads: path.resolve(__dirname, '../uploads')
       }
     },
-    // Rsync
+    copyMethod: 'rsync', // Or 'ftp' or 'fs'
     remoteServer: {
-      user: 'user',
-      password: 'password',
-      host: 'remote.server.com',
-      path: '/my-backups'
+      path: '/my-backups', // Required
+      user: 'user', // Required for rsync and ftp
+      password: 'password', // Required for rsync and ftp
+      host: 'remote.server.com', // Required for rsync and ftp
+      port: null, // Required for ftp
+      
     },
     // Required only if you want to do automatic backups
     cronJob: {
@@ -63,13 +69,16 @@ module.exports = {
 };
 ```
 
+
 ## Service settings
 
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `localServer`| `[Object]`|  | Absolute path to the Fuseki backups and other directories you want to backup |
-| `remoteServer`| `[Object]`|  | Informations to connect to the remote server (see above) |
-| `cronJob`| `[Object]`|  | Informations for the automatic backups (see above) |
+| Property       | Type       | Default | Description                                                                  |
+|----------------|------------|---------|------------------------------------------------------------------------------|
+| `localServer`  | `[Object]` |         | Absolute path to the Fuseki backups and other directories you want to backup |
+| `copyMethod`   | `[String]` | "rsync" | Copy method ("rsync", "ftp" or "fs")                                         |
+| `remoteServer` | `[Object]` |         | Information to connect to the remote server (see above)                      |
+| `cronJob`      | `[Object]` |         | Information for the automatic backups (see above)                            |
+
 
 ## Actions
 
@@ -85,14 +94,14 @@ Generate a compressed backup of all the existing datasets (through [Fuseki proto
 
 ### `backupOtherDirs`
 
-Rsync the other directories defined in the settings with the remote server.
+Copy the other directories defined in the settings with the remote server.
 
-### `syncWithRemoteServer`
+### `copyToRemoteServer`
 
-Rsync the given path in the local server with the remote server.
+Copy the data in the local server to the remote server.
 
 ##### Parameters
-| Property | Type | Default | Description |
-| -------- | ---- | ------- | ----------- |
-| `path` | `String`  | **required** | Absolute path to be synchronized with the remote server |
-| `subDir` | `String`  | | Sub-directory in the remote server |
+| Property | Type | Default            | Description                                             |
+|----------| ---- |--------------------|---------------------------------------------------------|
+| `path`   | `String`  | **required**  | Absolute path to be synchronized with the remote server |
+| `subDir` | `String`  |               | Sub-directory in the remote server                      |

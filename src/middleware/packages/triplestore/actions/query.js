@@ -5,7 +5,11 @@ module.exports = {
   visibility: 'public',
   params: {
     query: {
-      type: 'string'
+      type: 'multi',
+      rules: [
+        { type: 'string' },
+        { type: 'object' }
+      ]
     },
     accept: {
       type: 'string',
@@ -21,14 +25,19 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { accept, query } = ctx.params;
+    let { accept, query } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+
+    if (!dataset) throw new Error('No dataset defined for triplestore query: ' + query);
+
+    if (typeof query === 'object')
+      query = this.generateSparqlQuery(query);
 
     const acceptNegotiatedType = negotiateType(accept);
     const acceptType = acceptNegotiatedType.mime;
 
-    const response = await this.fetch(urlJoin(this.settings.sparqlEndpoint, dataset, 'query'), {
+    const response = await this.fetch(urlJoin(this.settings.url, dataset, 'query'), {
       body: query,
       headers: {
         'Content-Type': 'application/sparql-query',

@@ -30,16 +30,20 @@ const negotiateContentType = (req, res, next) => {
 };
 
 const throw403 = msg => {
-  throw new MoleculerError('Access denied', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
+  throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
 const throw500 = msg => {
-  throw new MoleculerError('Server error', 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
+  throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
 const negotiateAccept = (req, res, next) => {
   if (!req.$ctx.meta.headers) req.$ctx.meta.headers = {};
-  if (req.headers.accept === '*/*') req.headers.accept = undefined;
+  // we keep the full list for further use
+  req.$ctx.meta.accepts = req.headers.accept;
+  if (req.headers.accept === '*/*') {
+    delete req.headers.accept;
+  }
   if (req.headers.accept !== undefined) {
     try {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
@@ -71,6 +75,16 @@ const parseSparql = async (req, res, next) => {
       (req.headers['content-type'] && req.headers['content-type'].includes('sparql')))
   ) {
     req.$ctx.meta.parser = 'sparql';
+    // TODO Store in req.$ctx.meta.rawBody
+    req.$params.body = await getRawBody(req);
+  }
+  next();
+};
+
+const parseTurtle = async (req, res, next) => {
+  if (!req.$ctx.meta.parser && req.headers['content-type'] && req.headers['content-type'].includes('turtle')) {
+    req.$ctx.meta.parser = 'turtle';
+    // TODO Store in req.$ctx.meta.rawBody
     req.$params.body = await getRawBody(req);
   }
   next();
@@ -86,19 +100,25 @@ const parseJson = async (req, res, next) => {
     // Do nothing if mime type is not found
   }
 
-  if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
-    const body = await getRawBody(req);
-    if (body) {
-      const json = JSON.parse(body);
-      req.$params = { ...json, ...req.$params };
+  try {
+    if (!req.$ctx.meta.parser && mimeType === MIME_TYPES.JSON) {
+      const body = await getRawBody(req);
+      if (body) {
+        const json = JSON.parse(body);
+        req.$params = { ...json, ...req.$params };
+        // Keep raw body in meta as we need it for digest header verification
+        req.$ctx.meta.rawBody = body;
+      }
+      req.$ctx.meta.parser = 'json';
     }
-    req.$ctx.meta.parser = 'json';
+    next();
+  } catch (e) {
+    next(e);
   }
-  next();
 };
 
 const parseFile = (req, res, next) => {
-  if (!req.$ctx.meta.parser && (req.method == 'POST' || req.method == 'PUT')) {
+  if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
       let files = [];
@@ -151,7 +171,12 @@ const parseFile = (req, res, next) => {
 };
 
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
-  req.$params.containerUri = containerUri;
+  if (containerUri.includes('/:username')) {
+    req.$params.containerUri = containerUri.replace(':username', req.$params.username).replace(/\/$/, '');
+    delete req.$params.username;
+  } else {
+    req.$params.containerUri = containerUri;
+  }
   next();
 };
 
@@ -161,6 +186,7 @@ module.exports = {
   negotiateContentType,
   negotiateAccept,
   parseJson,
+  parseTurtle,
   parseFile,
   addContainerUriMiddleware,
   throw403,

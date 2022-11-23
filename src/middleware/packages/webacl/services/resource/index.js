@@ -1,10 +1,12 @@
 const urlJoin = require('url-join');
-const getRightsAction = require('./actions/getRights');
-const setRightsAction = require('./actions/setRights');
-const addRightsAction = require('./actions/addRights');
-const hasRightsAction = require('./actions/hasRights');
-const deleteAllRightsAction = require('./actions/deleteAllRights');
-const removeRightsAction = require('./actions/removeRights');
+const addRights = require('./actions/addRights');
+const awaitReadRight = require('./actions/awaitReadRight');
+const getRights = require('./actions/getRights');
+const setRights = require('./actions/setRights');
+const hasRights = require('./actions/hasRights');
+const deleteAllRights = require('./actions/deleteAllRights');
+const refreshContainersRights = require('./actions/refreshContainersRights');
+const removeRights = require('./actions/removeRights');
 const { MoleculerError } = require('moleculer').Errors;
 const {
   getAuthorizationNode,
@@ -24,21 +26,38 @@ module.exports = {
   name: 'webacl.resource',
   settings: {
     baseUrl: null,
-    graphName: null
+    graphName: null,
+    podProvider: false
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
-    deleteAllRights: deleteAllRightsAction.action,
-    removeRights: removeRightsAction.action,
+    addRights: addRights.action,
+    awaitReadRight: awaitReadRight.action,
+    deleteAllRights: deleteAllRights.action,
+    getRights: getRights.action,
+    hasRights: hasRights.action,
+    refreshContainersRights: refreshContainersRights.action,
+    removeRights: removeRights.action,
+    setRights: setRights.action,
     // Actions accessible through the API
-    api_hasRights: hasRightsAction.api,
-    hasRights: hasRightsAction.action,
-    api_getRights: getRightsAction.api,
-    getRights: getRightsAction.action,
-    api_setRights: setRightsAction.api,
-    setRights: setRightsAction.action,
-    api_addRights: addRightsAction.api,
-    addRights: addRightsAction.action
+    api_addRights: addRights.api,
+    api_hasRights: hasRights.api,
+    api_getRights: getRights.api,
+    api_setRights: setRights.api
+  },
+  hooks: {
+    before: {
+      '*'(ctx) {
+        // If we have a pod provider, guess the dataset from the container URI
+        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
+          const containerPath = new URL(ctx.params.resourceUri).pathname;
+          const parts = containerPath.split('/');
+          if (parts.length > 2) {
+            ctx.meta.dataset = parts[2];
+          }
+        }
+      }
+    }
   },
   methods: {
     // will return true if it is a container, false otherwise
@@ -54,14 +73,10 @@ module.exports = {
         return false; // it is never a container
       }
       // it can be a container or a resource
-      const containerExist = await ctx.call(
-        'ldp.container.exist',
-        { containerUri: resourceUri },
-        { meta: { webId: 'system' } }
-      );
+      const containerExist = await ctx.call('ldp.container.exist', { containerUri: resourceUri, webId: 'system' });
       if (!containerExist) {
         // it must be a resource then!
-        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri }, { meta: { webId: 'system' } });
+        const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
         if (!resourceExist) {
           throw new MoleculerError(
             `Cannot get permissions of non-existing container or resource ${resourceUri}`,

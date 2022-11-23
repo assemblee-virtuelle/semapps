@@ -4,7 +4,9 @@ const {
   getAclUriFromResourceUri,
   convertBodyToTriples,
   filterTriplesForResource,
-  processRights
+  processRights,
+  FULL_FOAF_AGENT,
+  FULL_AGENTCLASS_URI
 } = require('../../../utils');
 const urlJoin = require('url-join');
 
@@ -140,10 +142,23 @@ module.exports = {
       });
 
       if (newRights) {
-        ctx.emit('webacl.resource.created', { uri: resourceUri });
+        ctx.emit('webacl.resource.created', { uri: resourceUri }, { meta: { webId: null, dataset: null } });
       } else {
         const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
-        ctx.emit('webacl.resource.updated', { uri: resourceUri, isContainer, defaultRightsUpdated });
+        const addPublicRead = difference.some(
+          triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
+        const addDefaultPublicRead =
+          isContainer &&
+          difference.some(
+            triple =>
+              triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+          );
+        ctx.emit(
+          'webacl.resource.updated',
+          { uri: resourceUri, isContainer, defaultRightsUpdated, addPublicRead, addDefaultPublicRead },
+          { meta: { webId: null, dataset: null } }
+        );
       }
     }
   }

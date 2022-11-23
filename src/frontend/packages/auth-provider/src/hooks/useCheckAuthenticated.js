@@ -11,7 +11,7 @@ const useCheckAuthenticated = () => {
   useEffect(() => {
     if (!loading && !identity?.id) {
       notify('ra.auth.auth_check_error', 'error');
-      redirect('/login?redirect=' + encodeURIComponent(location.pathname));
+      redirect('/login?redirect=' + encodeURIComponent(location.pathname + location.search));
     }
   }, [loading, identity, redirect, notify, location]);
 

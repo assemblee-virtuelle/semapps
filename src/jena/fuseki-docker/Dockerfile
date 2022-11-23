@@ -17,7 +17,7 @@
 #FROM alpine:3.4
 #RUN apk add --update openjdk8-jre pwgen bash wget ca-certificates && rm -rf /var/cache/apk/*
 FROM openjdk:8-jre-alpine
-RUN apk add --update pwgen bash curl ca-certificates procps && rm -rf /var/cache/apk/*
+RUN apk add --update nodejs npm pwgen bash curl ca-certificates procps && rm -rf /var/cache/apk/*
 
 MAINTAINER Niko PLP <info@parlepeuple.fr>
 
@@ -82,6 +82,7 @@ RUN chmod 755 $FUSEKI_HOME/bin/tdb2.*
 # (which we'll generate on start-up)
 
 COPY shiro.ini /jena-fuseki/
+COPY migration /jena-fuseki/migration
 COPY extra/commons-collections4-4.4.jar /jena-fuseki/extra/commons-collections4-4.4.jar
 COPY extra/jena-permissions-3.17.0.jar /jena-fuseki/extra/jena-permissions-3.17.0.jar
 COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-permissions-1.0.0.jar
@@ -89,8 +90,10 @@ COPY extra/semapps-jena-permissions-1.0.0.jar /jena-fuseki/extra/semapps-jena-pe
 #COPY configuration/testData.ttl /jena-fuseki/configuration/testData.ttl
 COPY docker-entrypoint.sh /
 COPY docker-compact-entrypoint.sh /
+COPY docker-migration-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh
 RUN chmod 755 /docker-compact-entrypoint.sh
+RUN chmod 755 /docker-migration-entrypoint.sh
 
 COPY load.sh /jena-fuseki/
 COPY tdbloader /jena-fuseki/

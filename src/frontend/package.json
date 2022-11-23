@@ -8,8 +8,8 @@
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='frontend-v'",
     "publish": "lerna publish from-package --dist-tag latest",
     "prettier": "prettier --single-quote --print-width 120 --write '**/*.js'",
-    "link-all": "lerna exec --parallel --scope @semapps/** -- npm link",
-    "unlink-all": "lerna exec --parallel --scope @semapps/** -- npm unlink"
+    "link-all": "lerna exec --parallel --scope @semapps/** -- yarn link",
+    "unlink-all": "lerna exec --parallel --scope @semapps/** -- yarn unlink"
   },
   "devDependencies": {
     "lerna": "^3.19.0",
@@ -26,5 +26,10 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-terser": "^5.3.0"
-  }
+  },
+  "workspaces": [
+    "packages/*",
+    "templates/**"
+  ],
+  "version": "0.4.0-alpha.37"
 }

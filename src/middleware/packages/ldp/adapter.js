@@ -2,7 +2,7 @@ const urlJoin = require('url-join');
 const { ServiceSchemaError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
-class TripleStoreAdapter {
+class LdpAdapter {
   constructor({ resourceService = 'ldp.resource', containerService = 'ldp.container' } = {}) {
     this.resourceService = resourceService;
     this.containerService = containerService;
@@ -23,15 +23,11 @@ class TripleStoreAdapter {
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
 
     const containerUri = this.service.schema.settings.containerUri;
-    const exists = await this.broker.call(
-      this.containerService + '.exist',
-      { containerUri },
-      { meta: { webId: 'system' } }
-    );
+    const exists = await this.broker.call(this.containerService + '.exist', { containerUri, webId: 'system' });
 
     if (!exists) {
       console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call(this.containerService + '.create', { containerUri }, { meta: { webId: 'system' } });
+      await this.broker.call(this.containerService + '.create', { containerUri });
     }
   }
 
@@ -109,7 +105,7 @@ class TripleStoreAdapter {
 
     return this.broker
       .call(this.resourceService + '.post', {
-        containerUri: this.service.schema.settings.containerUri,
+        containerUri: containerUri || this.service.schema.settings.containerUri,
         resource: {
           '@context': this.service.schema.settings.context,
           ...resource
@@ -153,7 +149,7 @@ class TripleStoreAdapter {
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
     return this.broker
-      .call(this.resourceService + '.patch', {
+      .call(this.resourceService + '.put', {
         resource: {
           '@context': this.service.schema.settings.context,
           '@id': _id,
@@ -217,4 +213,4 @@ class TripleStoreAdapter {
   }
 }
 
-module.exports = TripleStoreAdapter;
+module.exports = LdpAdapter;

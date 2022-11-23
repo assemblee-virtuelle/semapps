@@ -1,7 +1,8 @@
 {
-  "version": "0.3.11",
+  "version": "0.4.0-rc.0",
+  "npmClient": "yarn",
+  "useWorkspaces": true,
   "packages": [
-    "boilerplates/**",
     "packages/*",
     "templates/**"
   ],

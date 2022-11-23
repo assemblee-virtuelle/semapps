@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const createSlug = require('speakingurl');
 const urlJoin = require('url-join');
 const { sanitizeSPARQL } = require('../../../utils');
 
@@ -52,12 +51,12 @@ module.exports = {
 
       await ctx.call('triplestore.update', {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
-        DELETE DATA { GRAPH ${this.settings.graphName}
+        DELETE DATA { GRAPH <${this.settings.graphName}>
           { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
         webId: 'system'
       });
 
-      ctx.emit('webacl.group.member-removed', { groupUri, memberUri });
+      ctx.emit('webacl.group.member-removed', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
     }
   }
 };

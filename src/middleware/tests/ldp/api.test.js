@@ -1,9 +1,11 @@
+const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const ApiGatewayService = require('moleculer-web');
-const { JsonLdService } = require('@semapps/jsonld');
-const { LdpService } = require('@semapps/ldp');
-const { WebAclService, WebAclMiddleware } = require('@semapps/webacl');
-const { TripleStoreService } = require('@semapps/triplestore');
+const { CoreService } = require('@semapps/core');
+const { AuthLocalService } = require('@semapps/auth');
+const { WebIdService } = require('@semapps/webid');
+const { getPrefixJSON } = require('@semapps/ldp');
+const { WebAclMiddleware } = require('@semapps/webacl');
 const express = require('express');
 const supertest = require('supertest');
 const EventsWatcher = require('../middleware/EventsWatcher');
@@ -12,31 +14,54 @@ const ontologies = require('../ontologies');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
-  middlewares: [EventsWatcher, WebAclMiddleware],
-  logger: false
+  middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+  logger: {
+    type: 'Console',
+    options: {
+      level: 'error'
+    }
+  }
 });
 let expressMocked = undefined;
 
 beforeAll(async () => {
-  await broker.createService(JsonLdService);
-  broker.createService(TripleStoreService, {
-    settings: {
-      sparqlEndpoint: CONFIG.SPARQL_ENDPOINT,
-      mainDataset: CONFIG.MAIN_DATASET,
-      jenaUser: CONFIG.JENA_USER,
-      jenaPassword: CONFIG.JENA_PASSWORD
-    }
-  });
-  broker.createService(LdpService, {
+  broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
+      baseDir: path.resolve(__dirname, '..'),
+      triplestore: {
+        url: CONFIG.SPARQL_ENDPOINT,
+        user: CONFIG.JENA_USER,
+        password: CONFIG.JENA_PASSWORD,
+        mainDataset: CONFIG.MAIN_DATASET
+      },
       ontologies,
-      containers: ['resources']
+      jsonContext: getPrefixJSON(ontologies),
+      containers: [
+        {
+          path: '/resources',
+          dereference: ['pair:hasLocation']
+        }
+      ],
+      api: false,
+      activitypub: false,
+      mirror: false,
+      void: false,
+      webfinger: false
     }
   });
-  broker.createService(WebAclService, {
+
+  await broker.createService(AuthLocalService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL
+      baseUrl: CONFIG.HOME_URL,
+      jwtPath: path.resolve(__dirname, '../jwt'),
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
+  });
+
+  await broker.createService(WebIdService, {
+    settings: {
+      usersContainer: CONFIG.HOME_URL + 'users'
     }
   });
 
@@ -111,40 +136,20 @@ describe('CRUD Project', () => {
     expect(projet1['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get One project', async () => {
+  test('Get one project', async () => {
     const response = await expressMocked
       .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get Many project', async () => {
+  test('Get many project', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
 
     expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);
   }, 20000);
 
-  test('Update One Project', async () => {
-    const body = {
-      '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-      },
-      description: 'myProjectUpdated'
-    };
-
-    await expressMocked
-      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .send(body)
-      .set('content-type', 'application/ld+json');
-
-    const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
-      .set('Accept', 'application/ld+json');
-    expect(response.body['pair:description']).toBe('myProjectUpdated');
-    expect(response.body['pair:label']).toBe('myLabel');
-  }, 20000);
-
-  test('Replace One Project', async () => {
+  test('Replace one project', async () => {
     const body = {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -162,6 +167,56 @@ describe('CRUD Project', () => {
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
     expect(response.body['pair:label']).toBeUndefined();
+  }, 20000);
+
+  test('Patch one project', async () => {
+    const body = `
+      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+      INSERT DATA {
+        <${projet1['@id']}> pair:label "myLabel" .
+        <${projet1['@id']}> pair:description "myProjectPatched" .
+      };
+      DELETE DATA {
+        <${projet1['@id']}> pair:description "myProjectUpdated" .
+      };
+    `;
+
+    await expressMocked
+      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/sparql-update');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:label']).toBe('myLabel');
+    expect(response.body['pair:description']).toBe('myProjectPatched');
+  }, 20000);
+
+  test('Patch one project with blank nodes', async () => {
+    const body = `
+      PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
+      INSERT DATA {
+        <${projet1['@id']}> pair:hasLocation [
+          a pair:Place ;
+          pair:label "Paris"
+        ]
+      }
+    `;
+
+    await expressMocked
+      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .send(body)
+      .set('content-type', 'application/sparql-update');
+
+    const response = await expressMocked
+      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .set('Accept', 'application/ld+json');
+    expect(response.body['pair:hasLocation']).toMatchObject({
+      '@type': 'pair:Place',
+      'pair:label': 'Paris'
+    });
+    expect(response.body['pair:description']).toBe('myProjectPatched');
   }, 20000);
 
   test('Delete project', async () => {

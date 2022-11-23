@@ -1,6 +1,7 @@
-const { join: pathJoin } = require('path');
-const Rsync = require('rsync');
 const { CronJob } = require('cron');
+const fsCopy = require('./utils/fsCopy');
+const ftpCopy = require('./utils/ftpCopy');
+const rsyncCopy = require('./utils/rsyncCopy');
 
 const BackupService = {
   name: 'backup',
@@ -9,11 +10,13 @@ const BackupService = {
       fusekiBackupsPath: null,
       otherDirsPaths: {}
     },
+    copyMethod: 'rsync', // rsync, ftp or fs
     remoteServer: {
-      user: null,
-      password: null,
-      host: null,
-      path: null
+      path: null, // Required
+      user: null, // Required by rsync and ftp
+      password: null, // Required by rsync and ftp
+      host: null, // Required by rsync and ftp
+      port: null // Required by ftp
     },
     // Required for automated backups
     cronJob: {
@@ -21,7 +24,7 @@ const BackupService = {
       timeZone: 'Europe/Paris'
     }
   },
-  dependencies: ['fuseki-admin'],
+  dependencies: ['triplestore'],
   started() {
     const { cronJob } = this.settings;
 
@@ -38,57 +41,58 @@ const BackupService = {
       const { fusekiBackupsPath } = this.settings.localServer;
 
       if (!fusekiBackupsPath) {
-        console.log('No fusekiBackupsPath defined, skipping backup...');
+        this.logger.info('No fusekiBackupsPath defined, skipping backup...');
         return;
       }
 
       // Generate new backup of all datasets
-      const datasets = await ctx.call('fuseki-admin.listAllDatasets');
+      const datasets = await ctx.call('triplestore.dataset.list');
       for (const dataset of datasets) {
-        await ctx.call('fuseki-admin.backupDataset', { dataset });
+        this.logger.info('Backing up dataset: ' + dataset);
+        await ctx.call('triplestore.dataset.backup', { dataset });
       }
 
-      await this.actions.syncWithRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' });
+      await this.actions.copyToRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' });
     },
     async backupOtherDirs(ctx) {
       const { otherDirsPaths } = this.settings.localServer;
 
       if (!otherDirsPaths) {
-        console.log('No otherDirPaths defined, skipping backup...');
+        this.logger.info('No otherDirPaths defined, skipping backup...');
         return;
       }
 
       for (const [key, path] of Object.entries(otherDirsPaths)) {
-        await this.actions.syncWithRemoteServer({ path, subDir: key }, { parentCtx: ctx });
+        this.logger.info('Backing up directory: ' + path);
+        await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
       }
     },
-    syncWithRemoteServer(ctx) {
+    async copyToRemoteServer(ctx) {
       const { path, subDir } = ctx.params;
-      const { remoteServer } = this.settings;
+      const { copyMethod, remoteServer } = this.settings;
 
-      if (!remoteServer.host) {
-        console.log('No remove server defined, skipping remote backup...');
+      // Path is mandatory for all copy methods
+      if (!remoteServer.path) {
+        this.logger.info('No remote server config defined, skipping remote backup...');
         return;
       }
 
-      // Setup rsync to remote server
-      const rsync = new Rsync()
-        .flags('arv')
-        .set('e', `sshpass -p "${remoteServer.password}" ssh -o StrictHostKeyChecking=no`)
-        .source(path)
-        .destination(`${remoteServer.user}@${remoteServer.host}:${pathJoin(remoteServer.path, subDir)}`);
+      switch (copyMethod) {
+        case 'rsync':
+          await rsyncCopy(path, subDir, remoteServer);
+          break;
 
-      return new Promise((resolve, reject) => {
-        console.log('Rsync started with command: ' + rsync.command());
-        rsync.execute(error => {
-          if (error) {
-            reject(error);
-          } else {
-            console.log('Rsync finished !');
-            resolve();
-          }
-        });
-      });
+        case 'ftp':
+          await ftpCopy(path, subDir, remoteServer);
+          break;
+
+        case 'fs':
+          await fsCopy(path, subDir, remoteServer);
+          break;
+
+        default:
+          throw new Error('Unknow copy method: ' + copyMethod);
+      }
     }
   }
 };

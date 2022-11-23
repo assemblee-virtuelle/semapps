@@ -1,11 +1,14 @@
-const urlJoin = require('url-join');
-const { PUBLIC_URI } = require('../constants');
-const { defaultToArray } = require('../utils');
+const fetch = require('node-fetch');
+const { delay } = require('../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
   settings: {
-    baseUri: null
+    baseUri: null,
+    podProvider: false,
+    // Delay before dispatching (0 for immediate dispatch)
+    // This is useful if we want onEmit side effects to run first
+    delay: 0
   },
   dependencies: ['activitypub.collection'],
   events: {
@@ -13,31 +16,33 @@ const DispatchService = {
       const { activity } = ctx.params;
       let localRecipients = [];
 
-      if (activity.to) {
-        const recipients = await this.getAllRecipients(activity);
-        for (const recipientUri of recipients) {
-          // TODO find inbox URI from the actor's profile
-          const inboxUri = urlJoin(recipientUri, 'inbox');
-          if (this.isLocalActor(recipientUri)) {
-            // Attach activity to the inbox of the local actor
-            await this.broker.call('activitypub.collection.attach', {
-              collectionUri: inboxUri,
-              item: activity
-            });
-            localRecipients.push(recipientUri);
+      if (this.settings.delay) {
+        await delay(this.settings.delay);
+      }
+
+      const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+      for (const recipientUri of recipients) {
+        if (this.isLocalActor(recipientUri)) {
+          // If local actor, put in array to batch-send after
+          localRecipients.push(recipientUri);
+        } else {
+          // If the QueueService mixin is available, use it
+          if (this.createJob) {
+            this.createJob('remotePost', activity.actor, { recipientUri, activity });
           } else {
-            // If the QueueService mixin is available, use it
-            if (this.createJob) {
-              this.createJob('remotePost', { inboxUri, activity });
-            } else {
-              // Send directly
-              await this.remotePost(inboxUri, activity);
-            }
+            // Send directly
+            await this.remotePost(recipientUri, activity);
           }
         }
+      }
 
-        if (localRecipients.length > 0) {
-          this.broker.emit('activitypub.inbox.received', { activity, recipients: localRecipients });
+      if (localRecipients.length > 0) {
+        // If the QueueService mixin is available, use it
+        if (this.createJob) {
+          this.createJob('localPost', activity.actor, { recipients: localRecipients, activity });
+        } else {
+          // Call directly
+          await this.localPost(localRecipients, activity);
         }
       }
     },
@@ -46,69 +51,102 @@ const DispatchService = {
     }
   },
   methods: {
-    getFollowersUri(actorUri) {
-      return urlJoin(actorUri, 'followers');
-    },
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
     },
-    async getAllRecipients(activity) {
-      let output = [],
-        recipients = defaultToArray(activity.to);
-      for (const recipient of recipients) {
-        if (recipient === PUBLIC_URI || recipient === 'as:Public' || recipient === 'Public') {
-          // Public URI. No need to add to inbox.
-          // We accept all three representations https://www.w3.org/TR/activitypub/#public-addressing
-          continue;
-        } else if (activity.actor && recipient === this.getFollowersUri(activity.actor)) {
-          // Followers list. Add the list of followers.
-          // TODO improve detection of Collections
-          const collection = await this.broker.call('activitypub.collection.get', { id: recipient });
-          if (collection && collection.items) output.push(...defaultToArray(collection.items));
-        } else {
-          // Simple actor URI
-          output.push(recipient);
+    async localPost(recipients, activity) {
+      const success = [],
+        failures = [];
+
+      for (const recipientUri of recipients) {
+        try {
+          const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
+            actorUri: recipientUri,
+            predicate: 'inbox',
+            webId: 'system'
+          });
+
+          // Attach activity to the inbox of the local actor
+          await this.broker.call('activitypub.collection.attach', {
+            collectionUri: recipientInbox,
+            item: activity
+          });
+
+          success.push(recipientUri);
+        } catch (e) {
+          this.logger.warn(`Error when posting activity to local actor ${recipientUri}: ${e.message}`);
+          failures.push(recipientUri);
         }
       }
-      return output;
+
+      this.broker.emit('activitypub.inbox.received', { activity, recipients });
+
+      return { success, failures };
     },
-    async remotePost(inboxUri, activity) {
-      const body = JSON.stringify(activity);
+    async remotePost(recipientUri, activity) {
+      try {
+        const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
+          actorUri: recipientUri,
+          predicate: 'inbox',
+          webId: 'system'
+        });
 
-      const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
-        url: inboxUri,
-        body,
-        actorUri: activity.actor
-      });
+        if (!recipientInbox) return false;
 
-      // Post activity to the inbox of the remote actor
-      return await fetch(inboxUri, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...signatureHeaders
-        },
-        body
-      });
+        const body = JSON.stringify(activity);
+
+        const signatureHeaders = await this.broker.call('signature.generateSignatureHeaders', {
+          url: recipientInbox,
+          method: 'POST',
+          body,
+          actorUri: activity.actor
+        });
+
+        // Post activity to the inbox of the remote actor
+        return await fetch(recipientInbox, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...signatureHeaders
+          },
+          body
+        });
+      } catch (e) {
+        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
+        return false;
+      }
     }
   },
   queues: {
-    async remotePost(job) {
-      const response = await this.remotePost(job.data.inboxUri, job.data.activity);
+    remotePost: {
+      name: '*',
+      async process(job) {
+        const { activity, recipientUri } = job.data;
+        const response = await this.remotePost(recipientUri, activity);
 
-      if (!response.ok) {
-        job.moveToFailed({ message: 'Unable to send to remote host ' + job.data.inboxUri }, true);
-      } else {
-        job.progress(100);
-      }
-
-      return {
-        response: {
-          ok: response.ok,
-          status: response.status,
-          statusText: response.statusText
+        if (!response.ok) {
+          job.moveToFailed({ message: 'Unable to send to remote actor ' + recipientUri }, true);
+        } else {
+          job.progress(100);
         }
-      };
+
+        return { response };
+      }
+    },
+    localPost: {
+      name: '*',
+      async process(job) {
+        const { activity, recipients } = job.data;
+        const { success, failures } = await this.localPost(recipients, activity);
+
+        if (success.length === 0) {
+          job.moveToFailed({ message: 'No local recipients could be reached' }, true);
+        } else {
+          job.progress(100);
+        }
+
+        return { success, failures };
+      }
     }
   }
 };

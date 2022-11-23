@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import { LoginForm, Notification, useGetIdentity } from 'react-admin';
-import { Card, Avatar, makeStyles, createMuiTheme, ThemeProvider, Typography } from '@material-ui/core';
+import { LoginForm, Notification, useGetIdentity, useTranslate } from 'react-admin';
+import { Card, Avatar, makeStyles, createTheme, ThemeProvider, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
@@ -42,13 +42,16 @@ const LocalLoginPage = props => {
   const { theme, title, classes: classesOverride, className, ...rest } = props;
   const classes = useStyles(props);
   const location = useLocation();
-  const muiTheme = useMemo(() => createMuiTheme(theme), [theme]);
+  const translate = useTranslate();
+  const muiTheme = useMemo(() => createTheme(theme), [theme]);
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
   const redirectTo = searchParams.get('redirect');
-  const { identity } = useGetIdentity();
+  const { identity, loading } = useGetIdentity();
 
-  if (identity?.id) {
+  if (loading) {
+    return null;
+  } else if (identity?.id) {
     // Do not show login page if user is already connected
     return <Redirect to={redirectTo || '/'} />;
   } else {
@@ -69,11 +72,11 @@ const LocalLoginPage = props => {
             <div className={classes.switch}>
               {isSignup ? (
                 <Link to="/login">
-                  <Typography variant="body2">Se connecter avec un compte</Typography>
+                  <Typography variant="body2">{translate('auth.action.login')}</Typography>
                 </Link>
               ) : (
                 <Link to="/login?signup=true">
-                  <Typography variant="body2">Créer un nouveau compte</Typography>
+                  <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                 </Link>
               )}
             </div>

@@ -6,16 +6,20 @@ const {
   buildDereferenceQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
+  isMirror
 } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
     const { containerUri } = ctx.params;
-    const { accept } = { ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })), ...ctx.meta.headers };
+    const { accept, controlledActions } = {
+      ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
+      ...ctx.meta.headers
+    };
     try {
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return await ctx.call('ldp.container.get', {
+      return await ctx.call(controlledActions.list || 'ldp.container.get', {
         containerUri,
         accept
       });
@@ -45,7 +49,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       const { accept, dereference, queryDepth, jsonContext } = {
-        ...(await ctx.call('ldp.container.getOptions', { uri: containerUri })),
+        ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
         ...ctx.params
       };
       const filtersQuery = buildFiltersQuery(filters);
@@ -106,7 +110,6 @@ module.exports = {
 
               resources.push(resource);
             } catch (e) {
-              console.error('Error requesting resource: ', resourceUri);
               // Ignore a resource if it is not found
               if (e.name !== 'MoleculerError') throw e;
             }

@@ -7,35 +7,53 @@ const authProvider = ({
   localAccounts = false,
   checkUser,
   httpClient,
-  checkPermissions,
-  resources
+  checkPermissions
 }) => ({
   login: async params => {
     const url = new URL(window.location.href);
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the login method'
+      );
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth`, {
+        const { json } = await httpClient(`${serverUrl}auth/login`, {
           method: 'POST',
-          body: JSON.stringify({ email: username.trim(), password: password.trim() }),
+          body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
         localStorage.setItem('token', token);
+        // Reload to ensure the dataServer config is reset
+        window.location.reload();
       } catch (e) {
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      let redirectUrl = url.origin + '/login?login=true';
+      if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
+      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(redirectUrl);
     }
   },
   signup: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the signup method'
+      );
     if (localAccounts) {
-      const { email, password, ...profileData } = params;
+      const { username, email, password, domain, ...profileData } = params;
       try {
-        const { json } = await httpClient(`${middlewareUri}auth/signup`, {
+        const { json } = await httpClient(`${serverUrl || `https://${domain}`}auth/signup`, {
           method: 'POST',
-          body: JSON.stringify({ email: email.trim(), password: password.trim(), ...profileData }),
+          body: JSON.stringify({
+            username: username.trim(),
+            email: email.trim(),
+            password: password.trim(),
+            ...profileData
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
         const { token } = json;
@@ -45,25 +63,45 @@ const authProvider = ({
       } catch (e) {
         if (e.message === 'email.already.exists') {
           throw new Error('auth.message.user_email_exist');
+        } else if (e.message === 'username.already.exists') {
+          throw new Error('auth.message.username_exist');
+        } else if (e.message === 'username.invalid') {
+          throw new Error('auth.message.username_invalid');
         } else {
           throw new Error(e.message || 'ra.auth.sign_in_error');
         }
       }
     } else {
-      window.location.href = `${middlewareUri}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
     }
   },
   logout: async () => {
+    let serverUrl;
+    if (middlewareUri) {
+      serverUrl = middlewareUri;
+    } else {
+      // Get the server URL from the connected user's webId
+      const token = localStorage.getItem('token');
+      if (token) {
+        const { webId } = jwtDecode(token);
+        serverUrl = new URL(webId).origin + '/';
+      }
+    }
+
     localStorage.removeItem('token');
-    if (!localAccounts) {
+    if (localAccounts) {
+      // Reload to ensure the dataServer config is reset
+      window.location.reload();
+      window.location.href = '/';
+    } else if (serverUrl) {
       const url = new URL(window.location.href);
       if (!allowAnonymous) {
-        window.location.href = `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
+        window.location.href = `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
       } else {
         // Redirect to login page after disconnecting from SSO
         // The login page will remove the token, display a notification and redirect to the homepage
         window.location.href =
-          `${middlewareUri}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
+          `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
       }
     }
 
@@ -82,29 +120,32 @@ const authProvider = ({
     }
   },
   checkError: error => Promise.resolve(),
-  getPermissions: async resourceId => {
+  getPermissions: async uri => {
+    // Do not get permissions for servers other than the one used for auth
+    // as this will always fail as long as cross-servers auth is not available
+    if (!uri.startsWith(middlewareUri)) return false;
+
     if (!checkPermissions) return true;
 
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+    const aclUri = getAclUri(uri);
 
-    let { json } = await httpClient(aclUri);
+    const { json } = await httpClient(aclUri);
 
     return json['@graph'];
   },
-  addPermission: async (resourceId, agentId, predicate, mode) => {
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
+  addPermission: async (uri, agentId, predicate, mode) => {
+    if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+    if (!uri.startsWith(middlewareUri)) new Error('Cannot add permissions on servers other than the one used for auth');
 
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+    const aclUri = getAclUri(uri);
 
     let authorization = {
       '@id': '#' + mode.replace('acl:', ''),
       '@type': 'acl:Authorization',
       [predicate]: agentId,
-      'acl:accessTo': resourceUri,
+      'acl:accessTo': uri,
       'acl:mode': mode
     };
 
@@ -116,10 +157,13 @@ const authProvider = ({
       })
     });
   },
-  removePermission: async (resourceId, agentId, predicate, mode) => {
-    // If a resource name is passed, get the corresponding container, otherwise assume we have the URI
-    const resourceUri = resources[resourceId] ? resources[resourceId].containerUri : resourceId;
-    const aclUri = getAclUri(middlewareUri, resourceUri);
+  removePermission: async (uri, agentId, predicate, mode) => {
+    if (!uri || !uri.startsWith('http'))
+      throw new Error('The first parameter passed to removePermission must be an URL');
+    if (!uri.startsWith(middlewareUri))
+      throw new Error('Cannot remove permissions on servers other than the one used for auth');
+
+    const aclUri = getAclUri(uri);
 
     // Fetch current permissions
     let { json } = await httpClient(aclUri);
@@ -143,11 +187,93 @@ const authProvider = ({
       })
     });
   },
-  getIdentity: () => {
+  getIdentity: async () => {
     const token = localStorage.getItem('token');
     if (token) {
-      const payload = jwtDecode(token);
-      return { id: payload.webId, fullName: payload.name || payload['foaf:name'] };
+      const { webId } = jwtDecode(token);
+
+      const { json: webIdData } = await httpClient(webId);
+      const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
+
+      return {
+        id: webId,
+        fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'],
+        profileData,
+        webIdData
+      };
+    }
+  },
+  resetPassword: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the forgot password method'
+      );
+    const { email } = params;
+    try {
+      await httpClient(`${serverUrl}auth/reset_password`, {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim() }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      throw new Error('app.notification.reset_password_error');
+    }
+  },
+  setNewPassword: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the new password method'
+      );
+    const { email, token, password } = params;
+    try {
+      await httpClient(`${serverUrl}auth/new_password`, {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim(), token, password }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      throw new Error('app.notification.new_password_error');
+    }
+  },
+  getAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the getAccountSettings method'
+      );
+
+    try {
+      const { json } = await httpClient(`${serverUrl}auth/account`, {
+        method: 'GET'
+      });
+      return json;
+    } catch (e) {
+      throw new Error('app.notification.get_settings_error');
+    }
+  },
+  updateAccountSettings: async params => {
+    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
+    if (!serverUrl)
+      throw new Error(
+        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the updateAccountSettings method'
+      );
+
+    try {
+      const { email, currentPassword, newPassword } = params;
+
+      await httpClient(`${serverUrl}auth/account`, {
+        method: 'POST',
+        body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
+        headers: new Headers({ 'Content-Type': 'application/json' })
+      });
+    } catch (e) {
+      if (e.message === 'auth.account.invalid_password') {
+        throw new Error('app.notification.invalid_password');
+      }
+
+      throw new Error('app.notification.update_settings_error');
     }
   }
 });

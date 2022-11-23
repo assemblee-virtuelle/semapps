@@ -7,7 +7,19 @@ import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
 const external = createFilter(
-  ['react', 'react-admin', 'react-router-dom', 'react-final-form', 'react-router', 'react-redux', '@material-ui/**'],
+  [
+    'react',
+    'react-admin',
+    'react-router-dom',
+    'react-final-form',
+    'react-router',
+    'react-redux',
+    '@material-ui/**',
+    '@semapps/**',
+    'ra-richtext-tiptap',
+    '@tiptap/**',
+    'tippy.js'
+  ],
   null,
   { resolve: false }
 );

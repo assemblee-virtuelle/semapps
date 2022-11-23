@@ -4,6 +4,10 @@ title: AuthorizerBot
 
 Automatically give permissions to users, based on the record being created or updated.
 
+:::warning
+Currently this does not work with PATCH operations since the whole record is needed.
+:::
+
 ## Usage
 
 ```js

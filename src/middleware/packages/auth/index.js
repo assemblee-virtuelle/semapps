@@ -1,9 +1,9 @@
 module.exports = {
-  AuthService: require('./services/auth'),
+  AuthCASService: require('./services/auth.cas'),
+  AuthLocalService: require('./services/auth.local'),
+  AuthOIDCService: require('./services/auth.oidc'),
   AuthAccountService: require('./services/account'),
   AuthJWTService: require('./services/jwt'),
-  Connector: require('./Connector'),
-  CasConnector: require('./CasConnector'),
-  LocalConnector: require('./LocalConnector'),
-  OidcConnector: require('./OidcConnector')
+  AuthMigrationService: require('./services/migration'),
+  AuthMailService: require('./services/mail')
 };
