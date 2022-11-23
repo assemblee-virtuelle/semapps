@@ -88,7 +88,7 @@ const WebIdService = {
     async edit(ctx) {
       let { userId, ...profileData } = ctx.params;
       const webId = await this.getWebId(ctx);
-      return await ctx.call('ldp.resource.patch', {
+      return await ctx.call('ldp.resource.put', {
         resource: {
           '@context': {
             '@vocab': 'http://xmlns.com/foaf/0.1/'

@@ -84,7 +84,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `
           DELETE
-          WHERE { 
+          WHERE {
             ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
             <${resourceUri}> ?p1 ?o1 .
             ${mirror ? '}' : ''}
