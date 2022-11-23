@@ -96,7 +96,7 @@ module.exports = {
             },
             {
               label: 'Contact',
-              href: 'https://www.virtual-assembly.org/contact/'
+              href: 'https://chat.lescommuns.org/channel/Semapps_accueil'
             }
           ],
         },

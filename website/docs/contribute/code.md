@@ -61,4 +61,4 @@ yarn run publish
 
 ## Getting help
 
-Our [chatroom](https://chat.lescommuns.org/channel/semapps_dev) is the main entry point for all people who want to contribute.
+Our [dev chatroom](https://chat.lescommuns.org/channel/semapps_dev) is the main entry point for all people who want to contribute.
