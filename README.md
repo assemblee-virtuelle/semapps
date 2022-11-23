@@ -48,20 +48,18 @@ Since SemApps is just a toolbox, products can be built upon it. Here are the mai
 Here are some examples of websites made with SemApps:
 
 - [Archipel](https://archipel.assemblee-virtuelle.org/)
-- [Colibris Pays Creillois](https://payscreillois.colibris-groupeslocaux.org/)
 - [Les Chemins de la Transition](https://app.lescheminsdelatransition.org/)
 - [Passerelle Normandie](https://app.passerellenormandie.fr/)
 - [100 lieux nourriciers](https://100lieuxnourriciers.fr/)
-- [Classe dehors](https://classe-dehors.org/)
 
 > Feel free to open a PR to add your own website here.
 
 ## See the SemApps' website for more information :
 
 - [Homepage](https://semapps.org)
-- [About](https://semapps.org/docs/about)
-- [Team](https://semapps.org/docs/governance/team)
-- [Governance](https://semapps.org/docs/governance/organisation%20and%20role)
-- [Documentation](https://semapps.org/docs/guides/ldp-server)
+- [Team](https://semapps.org/docs/team)
+- [Guides](https://semapps.org/docs/guides/ldp-server)
+- [Middleware](https://semapps.org/docs/middleware)
+- [Frontend](https://semapps.org/docs/frontend)
+- [Triplestore](https://semapps.org/docs/triplestore)
 - [How to contribute](https://semapps.org/docs/contribute/code)
-- [Newsletters](https://semapps.org/blog)
