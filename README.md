@@ -14,8 +14,8 @@ We provide tools on several layers:
 
 This is where all the semantic web standards are implemented.
 
-- [LDP](https://semapps.org/docs/middleware/ldp/index)
-- [ActivityPub](https://semapps.org/docs/middleware/activitypub/index)
+- [LDP](https://semapps.org/docs/middleware/ldp)
+- [ActivityPub](https://semapps.org/docs/middleware/activitypub)
 - [WAC / WebACL](https://semapps.org/docs/middleware/webacl)
 - [Webfinger](https://semapps.org/docs/middleware/webfinger)
 - [WebId](https://semapps.org/docs/middleware/webid)
@@ -23,17 +23,23 @@ This is where all the semantic web standards are implemented.
 
 We use the [Moleculer](https://moleculer.services/) micro-service framework to help create modular backends.
 
+[More information...](https://semapps.org/docs/middleware)
+
 ### Triple store
 
 We have customized the [Jena Fuseki](https://jena.apache.org/documentation/fuseki2/) triplestore to make it compliant with the WAC (WebACL) standards.
 
 It is available as a Docker image on [Docker Hub](https://hub.docker.com/orgs/semapps/repositories)
 
+[More information...](https://semapps.org/docs/triplestore)
+
 ### Frontend
 
 We are providing many components to ease the development of web applications based on the [React-Admin](https://marmelab.com/react-admin/) framework.
 
-Our [Semantic Data Provider](src/frontend/packages/semantic-data-provider), which eases the communication with a semantic web server (through SPARQL and LDP), can be used with other view engines and frameworks.
+Our [Semantic Data Provider](https://semapps.org/docs/frontend/semantic-data-provider/), which eases the communication with a semantic web server (through SPARQL and LDP), can be used with other view engines and frameworks.
+
+[More information...](https://semapps.org/docs/frontend)
 
 ## Open-source softwares powered by SemApps
 
@@ -47,14 +53,14 @@ Since SemApps is just a toolbox, products can be built upon it. Here are the mai
 
 Here are some examples of websites made with SemApps:
 
+- [Les Chemins de la Transition](https://lescheminsdelatransition.org/)
 - [Archipel](https://archipel.assemblee-virtuelle.org/)
-- [Les Chemins de la Transition](https://app.lescheminsdelatransition.org/)
-- [Passerelle Normandie](https://app.passerellenormandie.fr/)
+- [Cercles Jardiniers du Nous](https://cercles.jardiniersdunous.org)
 - [100 lieux nourriciers](https://100lieuxnourriciers.fr/)
 
 > Feel free to open a PR to add your own website here.
 
-## See the SemApps' website for more information :
+## Visit the SemApps' website for more information
 
 - [Homepage](https://semapps.org)
 - [Team](https://semapps.org/docs/team)
