@@ -115,24 +115,12 @@ module.exports = {
         throw new Error('Unknown node type: ' + node.termType);
     }
   },
-  /*
-   * LEGACY / uses by PATCH which will be refactor / TODO remove
-   * Go through all blank nodes in the provided triples, and map them using the last part of the predicate
-   */
-  mapBlankNodesOnVars(triples) {
-    let blankNodesVars = {};
-    triples
-      .filter(triple => triple.object.termType === 'BlankNode')
-      .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
-    return blankNodesVars;
-  },
-
   buildJsonVariable(identifier, triples) {
-    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) == 0);
+    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) === 0);
     let json = {};
     let allIdentifiers = [identifier];
     for (var blankVariable of blankVariables) {
-      if (blankVariable.object.termType == 'Variable') {
+      if (blankVariable.object.termType === 'Variable') {
         const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
         json[blankVariable.predicate.value] = jsonVariable.json;
         allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
@@ -142,9 +130,8 @@ module.exports = {
     }
     return { json, allIdentifiers };
   },
-
   removeDuplicatedVariables(triples) {
-    const roots = triples.filter(n => n.object.termType == 'Variable' && n.subject.termType != 'Variable');
+    const roots = triples.filter(n => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
     const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
       let result = previousValue;
       if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
@@ -176,7 +163,6 @@ module.exports = {
     );
     return removedDuplicatedVariables;
   },
-
   triplesToString(triples) {
     return triples
       .map(
