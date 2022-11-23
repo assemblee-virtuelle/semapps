@@ -41,6 +41,13 @@ module.exports = {
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
           }
+        },
+        updated: function(data) {
+          switch (this.settings.source.humhub.type) {
+            case 'calendar':
+            case 'post':
+              return convertToIsoString(data.content.metadata.updated_at);
+          }
         }
       }
     }
