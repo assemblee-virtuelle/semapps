@@ -15,7 +15,7 @@ In this guide, you will :
 
 ### Prerequisites
 
-You need to have [NodeJS](https://nodejs.org/en/) installed on your computer (**use NodeJS version 12**).
+You need to have [NodeJS](https://nodejs.org/en/) installed on your computer (**use NodeJS version 14**).
 
 You also need [Docker](https://docs.docker.com/install/) and [Docker-compose](https://docs.docker.com/compose/install/) installed on your machine.
 
