@@ -1,5 +1,3 @@
-> If you're starting up with SemApps, we recommend you look at the [`next`](https://github.com/assemblee-virtuelle/semapps/tree/next) branch, which is more up-to-date and contains the code of the upcoming v0.4 release (currently in alpha)
-> 
 # SemApps
 
 SemApps (from *Sem*antic *App*lications) is a semantic web toolbox, allowing to create applications compliant with most major semantic web specifications: LDP, SPARQL, ActivityPub, WAC, WebID. 
