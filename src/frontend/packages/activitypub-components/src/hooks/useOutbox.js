@@ -13,7 +13,7 @@ const useOutbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'];
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || (identity?.id + '/sparql');
     }
   }, [identity]);
 

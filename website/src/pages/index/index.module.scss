@@ -1,0 +1,473 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+@import '../base.module.scss';
+
+.layoutContainer {
+
+  .wrapper {
+    max-width: 1080px;
+    margin: auto;
+    position: relative;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: 40px;
+    font-weight: bold;
+  }
+
+  h2 {
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 32px;
+  }
+
+  h3 {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  a,
+  a:active {
+    color: black;
+    text-decoration: none;
+  }
+
+  .primary {
+    color: var(--color-primary);
+  }
+
+  section {
+    padding: 96px 16px;
+  }
+
+  section.contrast {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+  }
+
+  section.hero {
+    padding-top: 0;
+    @media (max-width: 600px) {
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+
+  section.hero .heroContainer {
+    background-size: contain;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    @media (min-width: 997px) {
+      flex-direction: row;
+      height: 600px;
+    }
+  }
+
+  section.hero .heroImageContainer {
+    width: 500px;
+    max-width: 100%;
+    margin-top: 32px;
+    @media (min-width: 997px) {
+      margin-top: unset;
+      height: 450px;
+      width: 700px;
+    }
+  }
+
+  section.hero .heroImageContainer img {
+    width: 100%;
+  }
+
+  section.hero .heroTextContainer {
+    animation: fadeIn;
+    animation-duration: 2s;
+    width: 480px;
+    max-width: 100%;
+    background-color: white;
+    margin-top: -40px;
+    padding: 0 16px 16px;
+    border-radius: 4px;
+    @media (min-width: 450px) {
+      margin-top: -58px;
+      padding: 0 32px 32px;
+    }
+    @media (min-width: 997px) {
+      margin-top: 64px;
+      padding: 32px;
+      min-width: 480px;
+    }
+  }
+
+  section.hero .heroIcons {
+    margin-top: 16px;
+  }
+
+  section.hero .heroIcons img {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+
+  section.hero .heroTextContainer {
+    text-align: center;
+    @media (min-width: 997px) {
+      text-align: left;
+    }
+
+    .heroTitle {
+      font-weight: bold;
+      font-size: 50px;
+      margin-top: 24px;
+      margin-bottom: 24px;
+      color: #3AA2A5;
+      @media (min-width: 600px) {
+        margin-top: 0;
+      }
+    }
+
+    .heroSubtitle {
+      font-size: 22px;
+      line-height: 125%;
+    }
+  }
+
+  section.hero .av {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    animation: fadeInLeft;
+    animation-duration: 1.5s;
+    @media (min-width: 997px) {
+      justify-content: flex-start;
+    }
+  }
+
+  section.hero .av span {
+    opacity: .75;
+  }
+
+  section.hero .av img {
+    width: 40px;
+    margin-left: 8px;
+  }
+
+
+  section.about {
+    padding-bottom: 0;
+  }
+
+  section.about .wrapper>* {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  section.about p {
+    line-height: 150%;
+    text-align: center;
+  }
+
+  section.tools h2 {
+    margin-bottom: 32px;
+
+  }
+
+  section.tools ul {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  section.tools .toolCard {
+    margin: 32px 0 0;
+    display: flex;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    @media (min-width: 600px) {
+      width: 50%;
+      margin: 32px 0;
+    }
+    @media (min-width: 997px) {
+      width: calc(100% / 3);
+    }
+  }
+
+  section.tools .iconContainer {
+    font-size: 30px;
+    min-width: 60px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: var(--color-tertiary);
+    color: var(--color-primary);
+    @media (min-width: 600px) {
+      font-size: 50px;
+      min-width: 100px;
+      height: 100%;
+    }
+    svg {
+      width: 60%;
+      fill: var(--color-primary);
+    }
+  }
+
+  section.tools .textContainer {
+    width: 100%;
+    height: 100%;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 120%;
+  }
+
+  section.tools h3 {
+    font-size: 22px;
+    display: block;
+    position: relative;
+    padding: 4px 0;
+    color: inherit;
+    text-decoration: none;
+    margin-bottom: 16px;
+    a {
+      color: inherit;
+      &:hover {
+        color:var(--color-primary);
+      }
+    }
+  }
+
+  section.tools .borderContainer {
+    position: relative;
+    height: 2px;
+    font-size: 0px;
+    display: flex;
+
+    >* {
+      height: 2px;
+      width: 100%;
+    }
+
+    .border {
+      position: absolute;
+      top: -12px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--color-tertiary);
+    }
+  }
+
+  section.products {
+    background-color: var(--color-white);
+    color: rgba(0, 0, 0, .8);
+  }
+
+  section.products h3 {
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  section.products ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  section.products .productCard {
+    margin: 32px 0 16px;
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    border-radius: 4px;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    background-color: white;
+    width: 320px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 16px;
+    @media (min-width: 600px) {
+      margin: 32px 20px 16px;
+    }
+    &>* {
+      width: calc(100% - 32px);
+    }
+  }
+
+  section.products .separator {
+    height: 0px;
+    border-top: 1px solid rgba(0, 0, 0, .1);
+    margin: 20px;
+  }
+
+  section.products .imageContainer {
+    height: 200px;
+    margin: 16px 16px 32px;
+    overflow: hidden;
+    border-radius: 16px;
+    overflow: hidden;
+    background-color: var(--color-primary);
+    &>* {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      & img {
+        height: 90%;
+        border-radius: 16px;
+      }
+    }
+  }
+
+  section.products .productCard .textContainer div {
+    line-height: 125%;
+    text-align: justify;
+    p { 
+      margin-bottom: 8px;
+    }
+    a {
+      color: var(--color-primary);
+      text-decoration: underline;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  section.products .linksContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 0 16px 16px;
+    & a {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
+      width: 40px;
+      margin: -8px 4px 0 0;
+      border-radius: 50%;
+      &>* {
+        font-size: 24px;
+        color: rgba(0, 0, 0, 0.54);
+        cursor: pointer;
+      }
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+  }
+
+
+  section.websites {
+    .websiteCard {
+      margin-top: 32px;
+    }
+    .imageContainer {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      margin: 0;
+      border-radius: 16px;
+      @media (min-width: 600px) {
+        margin: 0 32px;
+      }
+      a {
+        border-radius: 16px;
+        overflow: hidden;
+        img {
+          width: 300px;
+          height: 157.5px;
+          object-fit: cover;
+          vertical-align: top;
+          @media (min-width: 450px) {
+            width: 450px;
+            height: 236.25px;
+          }
+          @media (min-width: 600px) {
+            width: 600px;
+            height: 315px;
+          }
+        }
+      }
+    }
+    h3 {
+      margin: 32px 0;
+      color: var(--color-white);
+      text-align: center;
+    }
+    .indicatorIcon {
+      color: var(--color-primary);
+      margin: 16px 8px 0;
+      opacity: .25;
+      &:hover {
+        color: var(--color-black);
+      }
+    }
+    .activeIndicatorIcon {
+      opacity: 1;
+      &:hover {
+        color: var(--color-primary);
+      }
+    }
+  }
+
+  section.users {
+    background-color: #f5f5f5;
+    .userLogosContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      text-align: center;
+      &>* {
+        width: 100%;
+        @media (min-width: 600px) {
+          width: unset;
+        }
+        img {
+          height: 100px;
+          margin: 25px 0;
+          @media (min-width: 600px) {
+            margin: 25px;
+          }
+          &.lg {
+            height: 125px;
+            margin: 12.5px 25px;
+          }
+          &.sm {
+            height: 75px;
+          }
+          &.xs {
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
+}

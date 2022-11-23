@@ -72,7 +72,7 @@ const ChipList = props => {
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
       {ids.map(id => {
-        if (!data[id]) return null;
+        if (!data[id] || data[id]['_error']) return null;
         const externalLink = getExternalLink(data[id]);
         if (externalLink) {
           return (

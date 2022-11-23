@@ -116,9 +116,8 @@ module.exports = {
     }
   },
   /*
+   * LEGACY / uses by PATCH which will be refactor / TODO remove
    * Go through all blank nodes in the provided triples, and map them using the last part of the predicate
-   * http://virtual-assembly.org/ontologies/pair#hasLocation -> ?hasLocation
-   * TODO: make it work with /
    */
   mapBlankNodesOnVars(triples) {
     let blankNodesVars = {};
@@ -127,6 +126,57 @@ module.exports = {
       .forEach(triple => (blankNodesVars[triple.object.value] = triple.predicate.value.split('#')[1]));
     return blankNodesVars;
   },
+
+  buildJsonVariable(identifier, triples) {
+    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) == 0);
+    let json = {};
+    let allIdentifiers = [identifier];
+    for (var blankVariable of blankVariables) {
+      if (blankVariable.object.termType == 'Variable') {
+        const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
+        json[blankVariable.predicate.value] = jsonVariable.json;
+        allIdentifiers = allIdentifiers.concat(jsonVariable.allIdentifiers);
+      } else {
+        json[blankVariable.predicate.value] = blankVariable.object.value;
+      }
+    }
+    return { json, allIdentifiers };
+  },
+
+  removeDuplicatedVariables(triples) {
+    const roots = triples.filter(n => n.object.termType == 'Variable' && n.subject.termType != 'Variable');
+    const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
+      let result = previousValue;
+      if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
+        result.push(currentValue.object.value);
+      }
+      return result;
+    }, []);
+    let rootsJson = [];
+    for (var rootIdentifier of rootsIdentifiers) {
+      const jsonVariable = this.buildJsonVariable(rootIdentifier, triples);
+      rootsJson.push({
+        rootIdentifier,
+        stringified: JSON.stringify(jsonVariable.json),
+        allIdentifiers: jsonVariable.allIdentifiers
+      });
+    }
+    let keepVariables = [];
+    let duplicatedVariables = [];
+    for (var rootJson of rootsJson) {
+      if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
+        duplicatedVariables.push(rootJson);
+      } else {
+        keepVariables.push(rootJson);
+      }
+    }
+    let allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
+    let removedDuplicatedVariables = triples.filter(
+      t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
+    );
+    return removedDuplicatedVariables;
+  },
+
   triplesToString(triples) {
     return triples
       .map(

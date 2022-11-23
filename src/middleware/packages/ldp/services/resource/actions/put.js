@@ -99,13 +99,13 @@ module.exports = {
       if (isMirror(resourceUri, this.settings.baseUrl)) {
         await ctx.call('triplestore.update', {
           query: `
-                 DELETE
-                 WHERE {
-                   GRAPH <${this.settings.mirrorGraphName}> {
-                     <${resourceUri}> ?p1 ?o1 .
-                   }
+               DELETE
+               WHERE {
+                 GRAPH <${this.settings.mirrorGraphName}> {
+                   <${resourceUri}> ?p1 ?o1 .
                  }
-               `
+               }
+             `
         });
 
         await ctx.call('triplestore.insert', {
@@ -146,15 +146,20 @@ module.exports = {
         oldTriples = this.convertBlankNodesToVars(oldTriples);
         newTriples = this.convertBlankNodesToVars(newTriples);
 
+        // same values blackNodes removing because those duplicated values blank nodes cause indiscriminate blank resultings in bug wahen trying to delete both
+        newTriples = this.removeDuplicatedVariables(newTriples);
+
         // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
         // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
         // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
-        let triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+        const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
 
         const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
-        // If the exact same data have been posted, skip
-        if (triplesToAdd.length > 0 || triplesToRemove.length > 0) {
+        if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
+          // If the exact same data have been posted, skip
+          newData = oldData;
+        } else {
           // Keep track of blank nodes to use in WHERE clause
           const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
             triple => triple.object.termType === 'Variable'

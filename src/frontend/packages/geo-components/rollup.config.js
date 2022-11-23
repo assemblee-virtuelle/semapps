@@ -10,6 +10,7 @@ const external = createFilter(
   [
     'leaflet',
     'leaflet.markercluster',
+    'leaflet-defaulticon-compatibility',
     'react',
     'react-admin',
     'react-dom',
@@ -20,7 +21,6 @@ const external = createFilter(
     '@material-ui/**',
     '@react-leaflet/**',
     'react-leaflet',
-    'react-leaflet-markercluster',
     'autosuggest-highlight',
     'lodash.throttle'
   ],
