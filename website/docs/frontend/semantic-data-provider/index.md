@@ -79,7 +79,7 @@ If it is not set, the ontologies set above will be used.
 
 If true, the `getMany` method will not fail completely if one resource is missing. 
 
-Missing resources will be returned with only their `@id`.
+Missing resources will be returned with their `id` and `_error: true`.
 
 
 ## Filters

@@ -12,8 +12,7 @@ const getManyMethod = config => async (resourceId, params) => {
           // Otherwise no references will be show if only one is missing
           // See https://github.com/marmelab/react-admin/issues/5190
           if (returnFailedResources) {
-            // Return only the ID of the resource
-            return { id };
+            return { id, _error: true };
           } else {
             // Returning nothing
           }
