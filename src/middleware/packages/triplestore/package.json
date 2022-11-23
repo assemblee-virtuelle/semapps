@@ -10,6 +10,7 @@
     "bson": "^4.0.4",
     "negotiator": "^0.6.2",
     "node-fetch": "^2.6.6",
+    "sparqljs": "^3.5.2",
     "sparqljson-parse": "^1.5.1",
     "string-template": "^1.0.0",
     "url-join": "^4.0.1"

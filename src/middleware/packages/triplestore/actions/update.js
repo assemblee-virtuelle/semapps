@@ -4,7 +4,11 @@ module.exports = {
   visibility: 'public',
   params: {
     query: {
-      type: 'string'
+      type: 'multi',
+      rules: [
+        { type: 'string' },
+        { type: 'object' }
+      ]
     },
     webId: {
       type: 'string',
@@ -16,11 +20,14 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { query } = ctx.params;
+    let { query } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error('No dataset defined for triplestore update: ' + query);
+
+    if (typeof query === 'object')
+      query = this.generateSparqlQuery(query);
 
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];

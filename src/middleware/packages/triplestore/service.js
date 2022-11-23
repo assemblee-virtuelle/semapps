@@ -1,4 +1,6 @@
 const { SparqlJsonParser } = require('sparqljson-parse');
+const SparqlGenerator = require('sparqljs').Generator;
+const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
@@ -37,6 +39,7 @@ const TripleStoreService = {
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
+    this.sparqlGenerator = new SparqlGenerator({ /* prefixes, baseIRI, factory, sparqlStar */ });
   },
   actions: {
     insert,
@@ -72,6 +75,14 @@ const TripleStoreService = {
       }
 
       return response;
+    },
+    generateSparqlQuery(query) {
+      try {
+        return this.sparqlGenerator.stringify(query);
+      } catch(e) {
+        console.error(e);
+        throw new MoleculerError(`Invalid SPARQL.js object: ${JSON.stringify(query)}`, 400, 'BAD_REQUEST');
+      }
     }
   }
 };

@@ -127,7 +127,7 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
-          await ctx.call('ldp.resource.patch', {
+          await ctx.call('ldp.resource.put', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
             webId: actorUri

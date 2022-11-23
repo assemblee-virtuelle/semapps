@@ -12,8 +12,7 @@ const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
 const RelayService = require('./services/relay');
 const ReplyService = require('./services/reply');
-const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
-const { selectActorData } = require('./utils');
+const { OBJECT_TYPES, ACTOR_TYPES } = require('./constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -21,7 +20,7 @@ const ActivityPubService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
-    selectActorData,
+    selectActorData: null,
     dispatch: {
       queueServiceUrl: null,
       delay: 0

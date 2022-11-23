@@ -6,6 +6,10 @@ Automatically add users to WebACL-compatible groups depending on matching rules.
 
 This bot will listen to users creation/update/removal and add them to the given groups depending on matching rules.
 
+:::warning
+Currently this does not work with PATCH operations since the whole record is needed.
+:::
+
 ## Usage
 
 ```js

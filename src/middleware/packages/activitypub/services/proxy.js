@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
+const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -81,13 +82,11 @@ const ProxyService = {
 
       if (this.settings.podProvider) {
         await ctx.call('ldp.resource.patch', {
-          resource: {
-            '@id': webId,
-            endpoints: {
-              proxyUrl: urlJoin(webId, 'proxy')
-            }
-          },
-          contentType: MIME_TYPES.JSON,
+          resourceUri: webId,
+          triplesToAdd: [
+            quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
+            quad(blankNode('b_0'), namedNode('https://www.w3.org/ns/activitystreams#proxyUrl'), namedNode(urlJoin(webId, 'proxy'))),
+          ],
           webId: 'system'
         });
       }

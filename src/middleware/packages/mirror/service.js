@@ -200,7 +200,17 @@ module.exports = {
   },
   events: {
     async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData, oldData } = ctx.params;
+      const { resourceUri } = ctx.params;
+      if (
+        !this.containerExcludedFromMirror(resourceUri) &&
+        (await this.checkResourcePublic(resourceUri)) &&
+        !isMirror(resourceUri, this.settings.baseUrl)
+      ) {
+        this.resourceUpdated(resourceUri);
+      }
+    },
+    async 'ldp.resource.patched'(ctx) {
+      const { resourceUri } = ctx.params;
       if (
         !this.containerExcludedFromMirror(resourceUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
