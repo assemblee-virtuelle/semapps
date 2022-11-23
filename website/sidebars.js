@@ -50,6 +50,7 @@ module.exports = {
         'middleware/ldp/container',
         'middleware/ldp/controlled-container',
         'middleware/ldp/document-tagger',
+        'middleware/ldp/image-processor',
       ],
     },
     'middleware/migration',
