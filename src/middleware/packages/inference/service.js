@@ -103,11 +103,13 @@ module.exports = {
     },
     generateInverseTriples(triples) {
       let inverseTriples = [];
-      for (const triple of triples) {
-        if (this.inverseRelations[triple.predicate.value]) {
-          inverseTriples.push(
-            triple(namedNode(triples.object.value), namedNode(this.inverseRelations[triple.predicate.value]), namedNode(triples.subject.value))
-          );
+      if (triples) {
+        for (const triple of triples) {
+          if (this.inverseRelations[triple.predicate.value]) {
+            inverseTriples.push(
+              triple(namedNode(triples.object.value), namedNode(this.inverseRelations[triple.predicate.value]), namedNode(triples.subject.value))
+            );
+          }
         }
       }
       return inverseTriples;
