@@ -4,7 +4,7 @@ import PostCommentForm from './PostCommentForm';
 import CommentsList from './CommentsList';
 import useCollection from '../../hooks/useCollection';
 
-const CommentsField = ({ source, context, helperText, userResource, mentions }) => {
+const CommentsField = ({ source, context, helperText, placeholder, userResource, mentions }) => {
   const record = useRecordContext();
   const { items: comments, loading, addItem, removeItem } = useCollection(record.replies);
   if (!userResource) throw new Error('No userResource defined for CommentsField');
@@ -14,6 +14,7 @@ const CommentsField = ({ source, context, helperText, userResource, mentions }) 
         context={context}
         helperText={helperText}
         userResource={userResource}
+        placeholder={placeholder}
         mentions={mentions}
         addItem={addItem}
         removeItem={removeItem}
@@ -26,6 +27,7 @@ const CommentsField = ({ source, context, helperText, userResource, mentions }) 
 CommentsField.defaultProps = {
   addLabel: true,
   label: 'Commentaires',
+  placeholder: 'Commencez à taper votre commentaire...',
   source: 'id', // Ensure the field is always displayed
   context: 'id'
 };

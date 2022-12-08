@@ -2143,6 +2143,11 @@
     prosemirror-state "^1.4.1"
     prosemirror-view "^1.28.2"
 
+"@tiptap/extension-placeholder@^2.0.0-beta.95":
+  version "2.0.0-beta.206"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-placeholder/-/extension-placeholder-2.0.0-beta.206.tgz#e44c5e725d538362678af679c6ef3b8fb22dc8b4"
+  integrity sha512-v31hccx0IZMpz4wXKtKkqiNDbktmyJAoaS1gADt08uPYM+3sKX0hjVqs82rmt8FhtMJqpY5+awCZFnhrP+jO+A==
+
 "@tiptap/extension-strike@^2.0.0-beta.199":
   version "2.0.0-beta.199"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-strike/-/extension-strike-2.0.0-beta.199.tgz#5fc6e067728009d92027e58a042f18449f2fa264"
