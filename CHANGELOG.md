@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **@semapps/inference**
 - InferenceService: handle cases where triples are undefined [fab3aaef](https://github.com/assemblee-virtuelle/semapps/commit/fab3aaef81089f9b132e53f5c2b33485c502154e)
 
+## [frontend-0.4.1] - 2022-12-08
+
+**@semapps/activitypub-components**
+- CommentsField: prevent page to scroll to input on load [1183b6f3](https://github.com/assemblee-virtuelle/semapps/commit/1183b6f31ccf5ce4fe68794acadab266395c22af)
+- CommentsField: add placeholder prop [abebb823](https://github.com/assemblee-virtuelle/semapps/commit/abebb82396afbfa0a655f8ba42327432370bf731)
+
 **@semapps/interop-components**
 - LexiconAutocompleteInput: fix no suggestion to add to dictionary on modal show [a3902b68](https://github.com/assemblee-virtuelle/semapps/commit/a3902b68bf19bd910199a321ec535ad81856fd9e)
 
