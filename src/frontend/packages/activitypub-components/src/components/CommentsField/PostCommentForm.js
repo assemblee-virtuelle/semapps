@@ -126,7 +126,7 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
           // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
           if (pristine) {
             const commentElement = document.getElementById('comment');
-            if (commentElement) commentElement.innerHTML = '';
+            if (commentElement && commentElement.textContent !== '') commentElement.innerHTML = '';
           }
           return (
             <form onSubmit={handleSubmit} className={classes.form}>
