@@ -24,15 +24,14 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
     async ({ lexicon }) => {
       // If we have no URI, it means we are creating a new definition
       // Delete the summary as it is "Ajouter XXX au dictionaire"
-      if (!lexicon) {
+      if ( !lexicon ) {
         notify("Merci d'entrer au moins un caractère dans le champ du formulaire", 'error');
         return
+      }else {
+        typeof lexicon === 'string' ? lexicon = {"label" : lexicon, "uri" : null} : lexicon
       }
-      if (!lexicon.label) {
-        notify("Merci d'utiliser le bouton CREER pour valider votre formulaire", 'error');
-        return
-      }
-      if (!lexicon.uri) delete lexicon.summary;
+
+      if ( !lexicon.uri ) delete lexicon.summary;
       await save(selectData(lexicon), redirect);
     },
     [selectData, save, redirect]
@@ -41,9 +40,7 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
   return (
     <Form
       onSubmit={onSubmit}
-      render={({ handleSubmit, dirtyFields }) => {
-        console.log("render handleSubmit dirtyFields=",[handleSubmit, dirtyFields])
-        return (
+      render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
             <LexiconAutocompleteInput label="Titre" source="lexicon" fetchLexicon={fetchLexicon} />
@@ -60,7 +57,7 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
             </Button>
           </Toolbar>
         </form>
-      )}}
+      )}
     />
   );
 };
