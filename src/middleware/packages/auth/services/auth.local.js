@@ -14,6 +14,7 @@ const AuthLocalService = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
+    formUrl: null,
     mail: {
       from: null,
       transport: {
@@ -70,6 +71,18 @@ const AuthLocalService = {
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
       return { token, webId: accountData.webId, newUser: false };
+    },
+    async redirectToForm(ctx) {
+      if (this.settings.formUrl) {
+        const formUrl = new URL(this.settings.formUrl);
+        for (let [key, value] of Object.entries(ctx.params)) {
+          formUrl.searchParams.set(key, value);
+        }
+        ctx.meta.$statusCode = 302;
+        ctx.meta.$location = formUrl.toString();
+      } else {
+        throw new Error('No formUrl defined in auth.local settings')
+      }
     },
     async resetPassword(ctx) {
       const { email } = ctx.params;
@@ -136,6 +149,13 @@ const AuthLocalService = {
         }
       };
 
+      const formRoute = {
+        path: '/auth',
+        aliases: {
+          'GET /': 'auth.redirectToForm'
+        }
+      };
+
       const resetPasswordRoute = {
         path: '/auth/reset_password',
         aliases: {
@@ -158,7 +178,7 @@ const AuthLocalService = {
         authorization: true
       };
 
-      const routes = [loginRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
+      const routes = [loginRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
 
       if (this.settings.registrationAllowed) {
         return [...routes, signupRoute];

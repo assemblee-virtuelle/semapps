@@ -20,6 +20,7 @@ export { default as ShowActionsWithPermissions } from './crud/show/ShowActionsWi
 export { default as PermissionsButton } from './components/PermissionsButton/PermissionsButton';
 export { default as AuthDialog } from './components/AuthDialog';
 export { default as SsoLoginPage, default as LoginPage } from './components/SsoLoginPage';
+export { default as PodLoginPage } from './components/PodLoginPage';
 export { default as LocalLoginPage } from './components/LocalLoginPage';
 export { default as LogoutButton } from './components/LogoutButton';
 export { default as ResourceWithPermissions } from './components/ResourceWithPermissions';
