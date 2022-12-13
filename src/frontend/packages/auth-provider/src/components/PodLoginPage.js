@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
 import { useNotify, useAuthProvider, Notification } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
-import { createTheme, makeStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Card, CardActions, Typography } from '@material-ui/core';
+import { Box, createTheme, List, ListItem, ListItemText, ListItemAvatar, Avatar, makeStyles, Divider } from '@material-ui/core';
+import { Card, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
+import StorageIcon from '@material-ui/icons/Storage';
 
 const useStyles = makeStyles(theme => ({
   main: {
@@ -31,25 +32,46 @@ const useStyles = makeStyles(theme => ({
   },
   lockIcon: {
     backgroundColor: theme.palette.grey['500']
+  },
+  list: {
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  listItem: {
+    paddingTop: 0,
+    paddingBottom: 0
   }
 }));
 
-const PodLoginPage = ({ theme, history, location, podProviders, text }) => {
+const PodLoginPage = ({ theme, history, location, text, customPodProviders }) => {
   const classes = useStyles();
   const notify = useNotify();
   const authProvider = useAuthProvider();
+  const [podProviders, setPodProviders] = useState(customPodProviders || []);
   const searchParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     (async () => {
-      if (searchParams.has('login')) {
-        if (searchParams.has('error')) {
-          if (searchParams.get('error') === 'registration.not-allowed') {
-            notify('auth.message.user_email_not_found', 'error');
-          } else {
-            notify('auth.message.bad_request', 'error', { error: searchParams.get('error') });
+      if (podProviders.length === 0) {
+        const results = await fetch('https://data.activitypods.org/pod-providers', {
+          headers: {
+            Accept: 'application/ld+json'
           }
-        } else if (searchParams.has('token')) {
+        });
+        if (results.ok) {
+          const json = await results.json();
+          setPodProviders(json['ldp:contains']);
+        } else {
+          notify('auth.message.pod_providers_not_loaded', 'error');
+        }
+      }
+    })();
+  }, [podProviders, setPodProviders, notify]);
+
+  useEffect(() => {
+    (async () => {
+      if (searchParams.has('login') || searchParams.has('signup')) {
+        if (searchParams.has('token')) {
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
           const response = await fetch(webId, {
@@ -66,12 +88,7 @@ const PodLoginPage = ({ theme, history, location, podProviders, text }) => {
               history.replace('/login');
             } else {
               localStorage.setItem('token', token);
-              if (searchParams.has('new') && searchParams.get('new') === 'true') {
-                notify('auth.message.new_user_created', 'info');
-                // TODO allow to attach profile to container ?
-              } else {
-                notify('auth.message.user_connected', 'info');
-              }
+              notify('auth.message.user_connected', 'info');
               history.push('/');
             }
           }
@@ -100,24 +117,34 @@ const PodLoginPage = ({ theme, history, location, podProviders, text }) => {
               {text}
             </Typography>
           )}
-          {podProviders &&
-            podProviders.map((podProvider, i) => {
-              const url = new URL('/auth', podProvider);
-              if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
-              url.searchParams.set('redirect', window.location.href);
-              return (
-                <CardActions key={i}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    type="submit"
+          <Box m={2}>
+            <List className={classes.list}>
+              {podProviders.map((podProvider, i) => {
+                const url = new URL('/auth', (podProvider['apods:domainName'].includes(':') ? 'http://' : 'https://') + podProvider['apods:domainName']);
+                if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
+                url.searchParams.set('redirect', window.location.href);
+                return (
+                  <>
+                    <Divider />
+                  <ListItem
+                    key={i}
+                    button
                     onClick={() => (window.location.href = url.toString())}
+                    className={classes.listItem}
                   >
-                    {url.host}
-                  </Button>
-                </CardActions>
-              );
-            })}
+                    <ListItemAvatar>
+                      <Avatar>
+                        <StorageIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
+                  </ListItem>
+
+                  </>
+                );
+              })}
+            </List>
+          </Box>
         </Card>
       </div>
       <Notification />
