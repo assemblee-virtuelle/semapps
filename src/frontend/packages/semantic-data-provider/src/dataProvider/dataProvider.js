@@ -11,6 +11,7 @@ import updateMethod from './methods/update';
 import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 import getServerKeyFromType from './utils/getServerKeyFromType';
+import httpClient from "./httpClient";
 
 const dataProvider = config => {
   // TODO verify all data provider config + data models
@@ -19,6 +20,9 @@ const dataProvider = config => {
 
   if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map(o => [o.prefix, o.url]));
   if (!config.returnFailedResources) config.returnFailedResources = false;
+
+  // Configure httpClient with data servers (this is needed for proxy calls)
+  config.httpClient = httpClient(config.dataServers);
 
   const fetchUserConfigPromise = fetchUserConfig(config);
   const fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
@@ -44,7 +48,8 @@ const dataProvider = config => {
     // Custom methods
     getDataModels: waitForVoidEndpoints(getDataModelsMethod(config)),
     getDataServers: waitForVoidEndpoints(getDataServersMethod(config)),
-    getLocalDataServers: getDataServersMethod(config)
+    getLocalDataServers: getDataServersMethod(config),
+    fetch: waitForVoidEndpoints(config.httpClient)
   };
 };
 

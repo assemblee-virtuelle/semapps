@@ -5,7 +5,7 @@ const fetchVoidEndpoints = async config => {
     .filter(([key, server]) => server.pod !== true)
     .map(([key, server]) =>
       config
-        .httpClient(new URL('/.well-known/void', server.baseUrl), { noToken: !server.authServer })
+        .httpClient((new URL('/.well-known/void', server.baseUrl)).toString())
         .then(result => ({ key, datasets: result.json['@graph'] }))
         .catch(e => {
           if (e.status === 404 || e.status === 401) {
