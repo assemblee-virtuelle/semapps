@@ -19,3 +19,10 @@ export const getAclContext = baseUri => ({
   'acl:mode': { '@type': '@id' },
   'acl:accessTo': { '@type': '@id' }
 });
+
+export const getAuthServerUrl = async dataProvider => {
+  const dataServers = await dataProvider.getDataServers();
+  const authServer = Object.values(dataServers).find(server => server.authServer === true);
+  if (!authServer) throw new Error('Could not find a server with authServer: true. Check your dataServers config.');
+  return authServer.baseUrl;
+};
