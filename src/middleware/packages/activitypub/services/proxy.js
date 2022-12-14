@@ -1,9 +1,18 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
+const { parseFile } = require('@semapps/middlewares');
 const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
-const { MIME_TYPES } = require('@semapps/mime-types');
+
+const stream2buffer = stream => {
+  return new Promise((resolve, reject) => {
+    const _buf = [];
+    stream.on("data", (chunk) => _buf.push(chunk));
+    stream.on("end", () => resolve(Buffer.concat(_buf)));
+    stream.on("error", (err) => reject(err));
+  });
+};
 
 const ProxyService = {
   name: 'activitypub.proxy',
@@ -15,13 +24,8 @@ const ProxyService = {
     const routeConfig = {
       authorization: true,
       authentication: false,
-      mergeParams: true,
       aliases: {
-        'POST /': 'activitypub.proxy.api_query'
-      },
-      bodyParsers: {
-        json: true,
-        urlencoded: true
+        'POST /': [parseFile, 'activitypub.proxy.api_query'] // parseFile handles multipart/form-data
       }
     };
 
@@ -33,7 +37,16 @@ const ProxyService = {
   },
   actions: {
     async api_query(ctx) {
-      const resourceUri = ctx.params.id;
+      // Handle compatibility with ActivityPub proxyUrl standard
+      const url = ctx.params.id;
+      const method = ctx.params.method || 'GET';
+      const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
+
+      // If a file is uploaded, convert it to a Buffer
+      const body = ctx.params.files && ctx.params.files.length > 0
+        ? await stream2buffer(ctx.params.files[0].readableStream)
+        : ctx.params.body;
+
       const actorUri = ctx.meta.webId;
 
       // Only user can query his own proxy URL
@@ -43,34 +56,56 @@ const ProxyService = {
       }
 
       try {
-        return await ctx.call('activitypub.proxy.query', {
-          resourceUri,
+        const response = await ctx.call('activitypub.proxy.query', {
+          url,
+          method,
+          headers,
+          body,
           actorUri
         });
+        ctx.meta.$statusCode = response.status;
+        ctx.meta.$statusMessage = response.statusText;
+        ctx.meta.$responseHeaders = response.headers;
+        return response.body;
       } catch (e) {
         console.error(e);
-        ctx.meta.$statusCode = e.code || 500;
+        ctx.meta.$statusCode = !e.code ? 500 : e.code === 'ECONNREFUSED' ? 502 : e.code;
         ctx.meta.$statusMessage = e.message;
       }
     },
     async query(ctx) {
-      const { resourceUri, actorUri } = ctx.params;
+      let { url, method, headers, body, actorUri } = ctx.params;
 
       const signatureHeaders = await ctx.call('signature.generateSignatureHeaders', {
-        url: resourceUri,
-        method: 'GET',
+        url,
+        method,
+        body,
         actorUri
       });
 
-      const response = await fetch(resourceUri, {
+      const response = await fetch(url, {
+        method,
         headers: {
-          Accept: 'application/json',
+          ...headers,
           ...signatureHeaders
-        }
+        },
+        body
       });
 
       if (response.ok) {
-        return await response.json();
+        let body = await response.text();
+        try {
+          body = JSON.parse(body);
+        } catch(e) {
+          // Do nothing if body is not JSON
+        }
+
+        return {
+          body,
+          headers: Object.fromEntries(response.headers.entries()),
+          status: response.status,
+          statusText: response.statusText
+        }
       } else {
         throw new MoleculerError(response.statusText, response.status);
       }
