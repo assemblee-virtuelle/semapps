@@ -1,6 +1,5 @@
 const urlJoin = require("url-join");
 const { Errors: E } = require('moleculer-web');
-const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const getRoute = require('./getRoute');
 
 const SparqlEndpointService = {
@@ -48,13 +47,10 @@ const SparqlEndpointService = {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       if (this.settings.podProvider) {
-        await ctx.call('ldp.resource.patch', {
-          resourceUri: webId,
-          triplesToAdd: [
-            quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
-            quad(blankNode('b_0'), namedNode('http://rdfs.org/ns/void#sparqlEndpoint'), namedNode(urlJoin(webId, 'sparql'))),
-          ],
-          webId: 'system'
+        await ctx.call('activitypub.actor.addEndpoint', {
+          actorUri: webId,
+          predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
+          endpoint: urlJoin(webId, 'sparql')
         });
       }
     }

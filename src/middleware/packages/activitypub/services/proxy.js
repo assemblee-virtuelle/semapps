@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const { parseFile } = require('@semapps/middlewares');
-const { quad, namedNode, blankNode } = require('@rdfjs/data-model');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
@@ -114,15 +113,11 @@ const ProxyService = {
   events: {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
-
       if (this.settings.podProvider) {
-        await ctx.call('ldp.resource.patch', {
-          resourceUri: webId,
-          triplesToAdd: [
-            quad(namedNode(webId), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), blankNode('b_0')),
-            quad(blankNode('b_0'), namedNode('https://www.w3.org/ns/activitystreams#proxyUrl'), namedNode(urlJoin(webId, 'proxy'))),
-          ],
-          webId: 'system'
+        await ctx.call('activitypub.actor.addEndpoint', {
+          actorUri: webId,
+          predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+          endpoint: urlJoin(webId, 'proxy')
         });
       }
     }
