@@ -1,0 +1,162 @@
+import React, { useEffect, useState } from 'react';
+import jwtDecode from 'jwt-decode';
+import { useNotify, useAuthProvider, useDataProvider } from 'react-admin';
+import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, makeStyles, Divider } from '@material-ui/core';
+import { Card, Typography } from '@material-ui/core';
+import LockIcon from '@material-ui/icons/Lock';
+import StorageIcon from '@material-ui/icons/Storage';
+
+const useStyles = makeStyles(theme => ({
+  '@global': {
+    body: {
+      backgroundColor: theme.palette.primary.main
+    }
+  },
+  text: {
+    textAlign: 'center',
+    padding: '4px 8px 8px'
+  },
+  card: {
+    minWidth: 300,
+    maxWidth: 350,
+    marginTop: '6em',
+    [theme.breakpoints.down('sm')]: {
+      margin: '1em',
+    },
+  },
+  lockIconAvatar: {
+    margin: '1em',
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  lockIcon: {
+    backgroundColor: theme.palette.grey['500']
+  },
+  list: {
+    paddingTop: 0,
+    paddingBottom: 0
+  },
+  listItem: {
+    paddingTop: 0,
+    paddingBottom: 0
+  }
+}));
+
+const PodLoginPageView = ({ theme, history, location, text, customPodProviders }) => {
+  const classes = useStyles();
+  const notify = useNotify();
+  const authProvider = useAuthProvider();
+  const dataProvider = useDataProvider();
+  const [podProviders, setPodProviders] = useState(customPodProviders || []);
+  const searchParams = new URLSearchParams(location.search);
+
+  useEffect(() => {
+    (async () => {
+      if (podProviders.length === 0) {
+        const results = await fetch('https://data.activitypods.org/pod-providers', {
+          headers: {
+            Accept: 'application/ld+json'
+          }
+        });
+        if (results.ok) {
+          const json = await results.json();
+          setPodProviders(json['ldp:contains']);
+        } else {
+          notify('auth.message.pod_providers_not_loaded', 'error');
+        }
+      }
+    })();
+  }, [podProviders, setPodProviders, notify]);
+
+  useEffect(() => {
+    (async () => {
+      if (searchParams.has('token')) {
+        const token = searchParams.get('token');
+        const { webId } = jwtDecode(token);
+        const response = await fetch(webId, {
+          headers: {
+            Accept: 'application/json'
+          }
+        });
+        if (!response.ok) {
+          notify('auth.message.unable_to_fetch_user_data', 'error');
+        } else {
+          const data = await response.json();
+          if (!authProvider.checkUser(data)) {
+            notify('auth.message.user_not_allowed_to_login', 'error');
+            history.replace('/login');
+          } else {
+            localStorage.setItem('token', token);
+            notify('auth.message.user_connected', 'info');
+            // Reload to ensure the dataServers config is reset
+            window.location.reload();
+            window.location.href = '/login?addUser=true';
+          }
+        }
+      } else if (searchParams.has('logout')) {
+        // Delete token and any other value in local storage
+        localStorage.clear();
+        notify('auth.message.user_disconnected', 'info');
+        history.push('/');
+      } else if (searchParams.has('addUser')) {
+        // TODO put this on another screen
+        const token = localStorage.getItem('token');
+        const { webId } = jwtDecode(token);
+        await dataProvider.create('Person', { id: webId });
+        notify('Utilisateur ajouté à la base de donnée', 'info');
+        history.push('/');
+      }
+    })();
+  }, [searchParams, dataProvider]);
+
+  if (searchParams.has('token') || searchParams.has('addUser') || searchParams.has('logout') ) {
+    return null;
+  }
+
+  return (
+    <Box display="flex" flexDirection="column" alignItems="center">
+      <Card className={classes.card}>
+        <div className={classes.lockIconAvatar}>
+          <Avatar className={classes.lockIcon}>
+            <LockIcon />
+          </Avatar>
+        </div>
+        {text && (
+          <Typography variant="body2" className={classes.text}>
+            {text}
+          </Typography>
+        )}
+        <Box m={2}>
+          <List className={classes.list}>
+            {podProviders.map((podProvider, i) => {
+              const url = new URL('/auth', (podProvider['apods:domainName'].includes(':') ? 'http://' : 'https://') + podProvider['apods:domainName']);
+              if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
+              url.searchParams.set('redirect', window.location.href);
+              return (
+                <>
+                  <Divider />
+                <ListItem
+                  key={i}
+                  button
+                  onClick={() => (window.location.href = url.toString())}
+                  className={classes.listItem}
+                >
+                  <ListItemAvatar>
+                    <Avatar>
+                      <StorageIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
+                </ListItem>
+
+                </>
+              );
+            })}
+          </List>
+        </Box>
+      </Card>
+    </Box>
+  );
+};
+
+export default PodLoginPageView;

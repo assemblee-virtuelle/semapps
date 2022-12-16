@@ -24,5 +24,6 @@ export const getAuthServerUrl = async dataProvider => {
   const dataServers = await dataProvider.getDataServers();
   const authServer = Object.values(dataServers).find(server => server.authServer === true);
   if (!authServer) throw new Error('Could not find a server with authServer: true. Check your dataServers config.');
-  return authServer.baseUrl;
+  // If the server is a POD, return the root URL instead of https://domain.com/user/data
+  return authServer.pod ? (new URL(authServer.baseUrl)).origin : authServer.baseUrl;
 };

@@ -1,4 +1,5 @@
 import jwtDecode from 'jwt-decode';
+import urlJoin from 'url-join';
 import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl } from './utils';
 
 const authProvider = ({
@@ -9,12 +10,11 @@ const authProvider = ({
   checkPermissions = false
 }) => ({
   login: async params => {
-    const url = new URL(window.location.href);
     const authServerUrl = await getAuthServerUrl(dataProvider);
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await dataProvider.fetch(`${authServerUrl}auth/login`, {
+        const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
           method: 'POST',
           body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
@@ -27,9 +27,9 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      let redirectUrl = url.origin + '/login?login=true';
+      let redirectUrl = (new URL(window.location.href)).origin + '/login?login=true';
       if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
-      window.location.href = `${authServerUrl}auth?redirectUrl=` + encodeURIComponent(redirectUrl);
+      window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
   },
   signup: async params => {
@@ -37,7 +37,7 @@ const authProvider = ({
     if (localAccounts) {
       const { username, email, password, domain, ...profileData } = params;
       try {
-        const { json } = await dataProvider.fetch(`${authServerUrl}auth/signup`, {
+        const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
           method: 'POST',
           body: JSON.stringify({
             username: username.trim(),
@@ -63,24 +63,26 @@ const authProvider = ({
         }
       }
     } else {
-      window.location.href = `${authServerUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      const redirectUrl = (new URL(window.location.href)).origin + '/login?login=true';
+      window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
   },
   logout: async () => {
     const authServerUrl = await getAuthServerUrl(dataProvider);
-    localStorage.removeItem('token');
+    // Delete token but also any other value in local storage
+    localStorage.clear();
     if (localAccounts) {
       // Reload to ensure the dataServer config is reset
       window.location.reload();
       window.location.href = '/';
     } else {
-      const url = new URL(window.location.href);
+      const baseUrl = (new URL(window.location.href)).origin;
       if (!allowAnonymous) {
-        window.location.href = `${authServerUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
+        window.location.href = urlJoin(authServerUrl, 'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login'));
       } else {
         // Redirect to login page after disconnecting from SSO
         // The login page will remove the token, display a notification and redirect to the homepage
-        window.location.href = `${authServerUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
+        window.location.href = urlJoin(authServerUrl, 'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login?logout=true'));
       }
     }
 
@@ -179,7 +181,7 @@ const authProvider = ({
     const { email } = params;
     const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      await dataProvider.fetch(`${authServerUrl}auth/reset_password`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/reset_password'), {
         method: 'POST',
         body: JSON.stringify({ email: email.trim() }),
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -192,7 +194,7 @@ const authProvider = ({
     const { email, token, password } = params;
     const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      await dataProvider.fetch(`${authServerUrl}auth/new_password`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/new_password'), {
         method: 'POST',
         body: JSON.stringify({ email: email.trim(), token, password }),
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -204,7 +206,7 @@ const authProvider = ({
   getAccountSettings: async params => {
     const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      const { json } = await dataProvider.fetch(`${authServerUrl}auth/account`);
+      const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'));
       return json;
     } catch (e) {
       throw new Error('app.notification.get_settings_error');
@@ -215,7 +217,7 @@ const authProvider = ({
     try {
       const { email, currentPassword, newPassword } = params;
 
-      await dataProvider.fetch(`${authServerUrl}auth/account`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'), {
         method: 'POST',
         body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
         headers: new Headers({ 'Content-Type': 'application/json' })
