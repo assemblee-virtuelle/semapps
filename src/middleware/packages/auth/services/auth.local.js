@@ -72,11 +72,17 @@ const AuthLocalService = {
 
       return { token, webId: accountData.webId, newUser: false };
     },
+    async logout(ctx) {
+      ctx.meta.$statusCode = 302;
+      ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
+    },
     async redirectToForm(ctx) {
       if (this.settings.formUrl) {
         const formUrl = new URL(this.settings.formUrl);
-        for (let [key, value] of Object.entries(ctx.params)) {
-          formUrl.searchParams.set(key, value);
+        if (ctx.params) {
+          for (let [key, value] of Object.entries(ctx.params)) {
+            formUrl.searchParams.set(key, value);
+          }
         }
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = formUrl.toString();
@@ -142,6 +148,13 @@ const AuthLocalService = {
         }
       };
 
+      const logoutRoute = {
+        path: '/auth/logout',
+        aliases: {
+          'GET /': 'auth.logout'
+        }
+      };
+
       const signupRoute = {
         path: '/auth/signup',
         aliases: {
@@ -178,7 +191,7 @@ const AuthLocalService = {
         authorization: true
       };
 
-      const routes = [loginRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
+      const routes = [loginRoute, logoutRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
 
       if (this.settings.registrationAllowed) {
         return [...routes, signupRoute];
