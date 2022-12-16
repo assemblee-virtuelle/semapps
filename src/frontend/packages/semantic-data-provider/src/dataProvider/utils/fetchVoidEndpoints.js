@@ -25,11 +25,11 @@ const fetchVoidEndpoints = async config => {
   }
 
   for (let result of results) {
+    config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
+    config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
+
     // Ignore unfetchable endpoints
     if (result.datasets) {
-      config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
-      config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
-
       for (let dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
           key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl
