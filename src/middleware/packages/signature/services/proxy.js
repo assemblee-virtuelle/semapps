@@ -14,7 +14,7 @@ const stream2buffer = stream => {
 };
 
 const ProxyService = {
-  name: 'activitypub.proxy',
+  name: 'signature.proxy',
   settings: {
     podProvider: false
   },
@@ -24,7 +24,7 @@ const ProxyService = {
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [parseFile, 'activitypub.proxy.api_query'] // parseFile handles multipart/form-data
+        'POST /': [parseFile, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
       }
     };
 
@@ -36,7 +36,6 @@ const ProxyService = {
   },
   actions: {
     async api_query(ctx) {
-      // Handle compatibility with ActivityPub proxyUrl standard
       const url = ctx.params.id;
       const method = ctx.params.method || 'GET';
       const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
@@ -55,13 +54,18 @@ const ProxyService = {
       }
 
       try {
-        const response = await ctx.call('activitypub.proxy.query', {
-          url,
-          method,
-          headers,
-          body,
-          actorUri
-        });
+        const response = await this.actions.query(
+          {
+            url,
+            method,
+            headers,
+            body,
+            actorUri
+          },
+          {
+            parentCtx: ctx
+          }
+        );
         ctx.meta.$statusCode = response.status;
         ctx.meta.$statusMessage = response.statusText;
         ctx.meta.$responseHeaders = response.headers;
@@ -114,11 +118,14 @@ const ProxyService = {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       if (this.settings.podProvider) {
-        await ctx.call('activitypub.actor.addEndpoint', {
-          actorUri: webId,
-          predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-          endpoint: urlJoin(webId, 'proxy')
-        });
+        const services = await ctx.call('$node.services');
+        if (services.filter(s => s.name === 'activitypub.actor')) {
+          await ctx.call('activitypub.actor.addEndpoint', {
+            actorUri: webId,
+            predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
+            endpoint: urlJoin(webId, 'proxy')
+          });
+        }
       }
     }
   }
