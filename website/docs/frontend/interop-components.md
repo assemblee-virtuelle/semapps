@@ -49,7 +49,7 @@ import { LexiconImportForm, fetchWikidata } from "@semapps/interop-components";
 const ThemeCreate = (props) => (
   <Create {...props}>
     <LexiconImportForm
-      fetchLexicon={fetchWikidata} // or fetchESCO
+      fetchLexicon={fetchWikidata()} // or fetchESCO()
       selectData={data => ({
         'pair:label': data.label,
         'pair:comment': data.summary,
@@ -77,7 +77,7 @@ export const ThemesInput = (props) => (
       optionText="pair:label"
       create={
         <LexiconCreateDialog
-          fetchLexicon={fetchWikidata}  // or fetchESCO
+          fetchLexicon={fetchWikidata()}  // or fetchESCO()
           selectData={data => ({
             'pair:label': data.label,
             'pair:comment': data.summary,
