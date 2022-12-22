@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useGetIdentity, useNotify, useRecordContext } from 'react-admin';
 import { RichTextInput, DefaultEditorOptions } from 'ra-richtext-tiptap';
+import Placeholder from '@tiptap/extension-placeholder';
 import { Form } from 'react-final-form';
 import { Button, Box, makeStyles, Avatar } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
@@ -43,6 +44,13 @@ const useStyles = makeStyles(theme => ({
       marginBlockStart: '0.5em',
       marginBlockEnd: '0.5em'
     },
+    '& > div > p.is-editor-empty:first-child::before': {
+      color: 'grey',
+      content: 'attr(data-placeholder)',
+      float: 'left',
+      height: 0,
+      pointerEvents: 'none'
+    },
     marginBottom: -19 // To hide helper text block
   },
   button: {
@@ -50,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const PostCommentForm = ({ context, helperText, mentions, userResource, addItem, removeItem }) => {
+const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }) => {
   const record = useRecordContext();
   const { identity } = useGetIdentity();
   const userDataModel = useDataModel(userResource);
@@ -126,7 +134,7 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
           // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
           if (pristine) {
             const commentElement = document.getElementById('comment');
-            if (commentElement) commentElement.innerHTML = '';
+            if (commentElement && commentElement.textContent !== '') commentElement.innerHTML = '';
           }
           return (
             <form onSubmit={handleSubmit} className={classes.form}>
@@ -145,6 +153,9 @@ const PostCommentForm = ({ context, helperText, mentions, userResource, addItem,
                     },
                     extensions: [
                       ...DefaultEditorOptions.extensions,
+                      placeholder
+                        ? Placeholder.configure({ placeholder })
+                        : null,
                       mentions
                         ? CustomMention.configure({
                             HTMLAttributes: {

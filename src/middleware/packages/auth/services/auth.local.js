@@ -69,7 +69,7 @@ const AuthLocalService = {
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId: accountData.webId } });
 
-      return { token, webId: accountData.webId, newUser: true };
+      return { token, webId: accountData.webId, newUser: false };
     },
     async resetPassword(ctx) {
       const { email } = ctx.params;

@@ -165,6 +165,10 @@ const CoreService = {
     }
 
     if (this.settings.triplestore !== false) {
+      // If WebACL service is disabled, don't create a secure dataset
+      // We define a constant here, because this.settings.webacl is not available inside the started method
+      const secure = this.settings.webacl !== false;
+
       this.broker.createService(TripleStoreService, {
         settings: {
           url: triplestore.url,
@@ -177,7 +181,7 @@ const CoreService = {
           if (triplestore.mainDataset) {
             await this.broker.call('triplestore.dataset.create', {
               dataset: triplestore.mainDataset,
-              secure: this.settings.webacl !== false // If WebACL service is disabled, don't create a secure dataset
+              secure
             });
           }
         }
