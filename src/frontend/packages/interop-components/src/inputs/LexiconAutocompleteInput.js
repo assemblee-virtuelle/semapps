@@ -27,7 +27,7 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1);
+const capitalizeFirstLetter = string => string && (string.charAt(0).toUpperCase() + string.slice(1));
 
 const LexiconAutocompleteInput = ({
   fetchLexicon,
@@ -88,7 +88,7 @@ const LexiconAutocompleteInput = ({
       // For some reasons, this prop has to be passed
       filterOptions={(options, params) => {
         // Suggest the creation of a new value
-        if (keyword !== '') {
+        if (keyword) {
           options.push({
             label: capitalizeFirstLetter(keyword),
             summary: `Ajouter "${capitalizeFirstLetter(keyword)}" au dictionnaire`,
