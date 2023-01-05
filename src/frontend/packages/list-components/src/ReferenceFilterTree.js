@@ -10,24 +10,35 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 
+/**
+ * @example
+ * const FilterAside = () => (
+ *   <Card>
+ *     <CardContent>
+ *       <FilterLiveSearch source="pair:label" />
+ *       <ReferenceFilter reference="Theme" source="pair:broader" label="pair:label"  />
+ *     </CardContent>
+ *   </Card>
+ * );
+ */
 
 
-function GenerateTreeItemFromNarrower(themeList, narrower, addFilter) {
+function GenerateTreeItemFromNarrower( source, label, themeList, narrower) {
   let narrowerChild = {};
   let isLastNarrower = false;
   return (
     themeList.map(function(theme) { 
-      if (theme["pair:broader"] != undefined) {
-        if (theme["pair:broader"] == narrower["id"]) {
+      if (theme != undefined) {
+        if (theme[source] == narrower["id"]) {
           themeList.map(function(t) {
-            if (t["pair:broader"] != undefined && t["pair:broader"] == theme["id"]) {
+            if (t[source] != undefined && t[source] == theme["id"]) {
               isLastNarrower = true;
               narrowerChild = t;
             }
           })
           return (
-          <CustomTreeItem key={theme["id"]} nodeId={theme["id"]} label={theme["pair:label"]} >
-            {isLastNarrower ? GenerateTreeItemFromNarrower(themeList, theme, addFilter) : null }
+          <CustomTreeItem key={theme["id"]} nodeId={theme["id"]} label={theme[label]} >
+            {isLastNarrower ? GenerateTreeItemFromNarrower(source, label, themeList, theme) : null }
           </CustomTreeItem>
           )
         }
@@ -103,14 +114,14 @@ function CustomTreeItem(props) {
   return <TreeItem ContentComponent={CustomContent} {...props} />;
 }
 
-const ReferenceFilterTree = ({ reference, limit, sort, filter }) => {
+const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) => {
   const { data } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
-  let trunkTree = [], listTheme = [], isThemeSelected = false;
+  let routeTree = [], listTheme = [], isThemeSelected = false;
 
   for (const theme in data) {
     if (data[theme]['pair:broader'] == undefined ) {
-      trunkTree.push(data[theme]);
+      routeTree.push(data[theme]);
     }
     listTheme = listTheme.concat(data[theme]);
   }
@@ -168,9 +179,9 @@ const ReferenceFilterTree = ({ reference, limit, sort, filter }) => {
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {trunkTree.map((trunk) =>
-          <CustomTreeItem nodeId={trunk["id"]} label={trunk["pair:label"]} key={trunk["id"]}>
-            {GenerateTreeItemFromNarrower(listTheme, trunk)}
+        {routeTree.map((route) =>
+          <CustomTreeItem nodeId={route["id"]} label={route[label]} key={route["id"]}>
+            {GenerateTreeItemFromNarrower(source, label, listTheme, route)}
           </CustomTreeItem>
         )}
       </TreeView>
