@@ -23,28 +23,13 @@ import Typography from '@mui/material/Typography';
  */
 
 
-function GenerateTreeItemFromNarrower( source, label, themeList, narrower) {
-  let narrowerChild = {};
-  let isLastNarrower = false;
-  return (
-    themeList.map(function(theme) { 
-      if (theme != undefined) {
-        if (theme[source] == narrower["id"]) {
-          themeList.map(function(t) {
-            if (t[source] != undefined && t[source] == theme["id"]) {
-              isLastNarrower = true;
-              narrowerChild = t;
-            }
-          })
-          return (
-          <CustomTreeItem key={theme["id"]} nodeId={theme["id"]} label={theme[label]} >
-            {isLastNarrower ? GenerateTreeItemFromNarrower(source, label, themeList, theme) : null }
-          </CustomTreeItem>
-          )
-        }
-      }
-    })
-  )
+function GenerateTreeItemFromNarrower(source, label, themeList, narrower) {
+  const themes = themeList.filter(({ [source]: themeSource }) => themeSource === narrower.id );
+  return themes.map(({ id, [label]: themeLabel }) => (
+    <CustomTreeItem key={id} nodeId={id} label={themeLabel} >
+      {GenerateTreeItemFromNarrower(source, label, themeList, { id })}
+    </CustomTreeItem>
+  ));
 }
 
 const CustomContent = React.forwardRef(function CustomContent(props, ref) {
@@ -115,22 +100,15 @@ function CustomTreeItem(props) {
 }
 
 const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) => {
-  const { data } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
+  const { data } = useGetList(reference, { page: 1, perPage: Infinity }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
-  let routeTree = [], listTheme = [], isThemeSelected = false;
-
+  let routeTree = [], listTheme = [];
+  console.log();
   for (const theme in data) {
     if (data[theme]['pair:broader'] == undefined ) {
       routeTree.push(data[theme]);
     }
     listTheme = listTheme.concat(data[theme]);
-  }
-
-  function deleteFilterTheme() {
-    const newFilterValues = Object.assign({}, filterValues);
-    delete newFilterValues.sparqlWhere;
-    setFilters(newFilterValues, null, false);
-    isThemeSelected = false
   }
 
   const handleSelect = (event, nodes) => {
@@ -159,19 +137,13 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) 
     setFilters({...filterValues, "sparqlWhere": encodedQuery })
 
   }
-  console.log(filterValues)
-  if (filterValues.sparqlWhere != undefined)
-    isThemeSelected = true
 
   return (
-    <div >
+    <div>
       <IconButton size="small" edge="start">
         <LabelIcon style={{ color: 'black',  }} />
       </IconButton>
-      Thèmes
-      {isThemeSelected ? <IconButton onClick={deleteFilterTheme} size="small">
-        <CancelIcon />
-      </IconButton> : null}
+      {reference}
       <TreeView
         multiSelect
         onNodeSelect={handleSelect}
@@ -187,11 +159,6 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) 
       </TreeView>
     </div>
   )
-};
-
-ReferenceFilterTree.defaultProps = {
-  limit: 25,
-  showCounters: true
 };
 
 export default ReferenceFilterTree;
