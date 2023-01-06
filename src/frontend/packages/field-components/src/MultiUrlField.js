@@ -1,12 +1,13 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Chip, Avatar, makeStyles } from '@material-ui/core';
-import LanguageIcon from '@material-ui/icons/Language';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import YouTubeIcon from '@material-ui/icons/YouTube';
+import { Chip, Avatar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import LanguageIcon from '@mui/icons-material/Language';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { FiGitlab } from 'react-icons/fi';
 
 const defaultdomainMapping = {

@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale } from 'react-admin';
-import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import { TextField, Typography, Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
@@ -103,7 +104,7 @@ const LocationInput = ({
       // For some reasons, this prop has to be passed
       filterOptions={x => x}
       getOptionLabel={option => selectOptionText(option, optionText)}
-      getOptionSelected={(option, value) =>
+      isOptionEqualToValue={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
       }
       // This function is called when the user selects an option

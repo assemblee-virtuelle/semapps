@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import { Button, useDataProvider, useTranslate, useRefresh, useNotify, useGetResourceLabel } from 'react-admin';
-import { Dialog, DialogTitle, TextField, DialogContent, DialogActions, makeStyles } from '@material-ui/core';
+import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Field, Form } from 'react-final-form';
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from '@mui/icons-material/Add';
 import ResultsList from './ResultsList';
 import { useDataModel } from '@semapps/semantic-data-provider';
 

@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { FieldTitle, useInput, useTranslate, useLocale, useNotify } from 'react-admin';
-import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import LanguageIcon from '@material-ui/icons/Language';
-import AddIcon from '@material-ui/icons/Add';
+import { TextField, Typography, Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
+import LanguageIcon from '@mui/icons-material/Language';
+import AddIcon from '@mui/icons-material/Add';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
@@ -101,7 +102,7 @@ const LexiconAutocompleteInput = ({
       selectOnFocus // Recommended for https://v4.mui.com/components/autocomplete/#creatable
       handleHomeEndKeys // Recommended for https://v4.mui.com/components/autocomplete/#creatable
       getOptionLabel={option => selectOptionText(option, optionText)}
-      getOptionSelected={(option, value) =>
+      isOptionEqualToValue={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
       }
       // This function is called when the user selects an option

@@ -7,7 +7,7 @@ import {
   useGetResourceLabel,
   useTranslate
 } from 'react-admin';
-import { shallowEqual, useSelector } from 'react-redux';
+// import { shallowEqual, useSelector } from 'react-redux';
 import debounce from 'lodash.debounce';
 import {
   Box,
@@ -18,12 +18,12 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Avatar,
-  makeStyles,
-  CircularProgress
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import ErrorIcon from '@material-ui/icons/Error';
+  CircularProgress,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ErrorIcon from '@mui/icons-material/Error';
 import { useDataServers, useDataModel } from '@semapps/semantic-data-provider';
 
 const useStyles = makeStyles(theme => ({
@@ -58,7 +58,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   const dataServers = useDataServers();
   const record = useRecordContext();
 
-  const resources = useSelector(getResources, shallowEqual);
+  // const resources = useSelector(getResources, shallowEqual);
   const referenceDefinition = useMemo(() => {
     return resources.find(r => r.name === reference);
   }, [resources, reference]);
@@ -121,7 +121,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
             <ListItemText className={classes.secondaryText} primary={getServerName(resource.id, dataServers)} />
             <ListItemSecondaryAction>
               <a href={linkToRecord('/' + reference, resource.id, 'show')} target="_blank" rel="noopener noreferrer">
-                <IconButton edge="end">
+                <IconButton edge="end" size="large">
                   <VisibilityIcon />
                 </IconButton>
               </a>

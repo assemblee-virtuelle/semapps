@@ -15,8 +15,7 @@ const external = createFilter(
     'react-router-dom',
     'react-final-form',
     'react-router',
-    'react-redux',
-    '@material-ui/**',
+    '@mui/**',
     '@semapps/**'
   ],
   null,

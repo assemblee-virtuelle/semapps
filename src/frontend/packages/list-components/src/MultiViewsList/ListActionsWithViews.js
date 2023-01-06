@@ -1,6 +1,6 @@
 import React from 'react';
 import { CreateButton, ExportButton, useResourceDefinition, TopToolbar } from 'react-admin';
-import { useMediaQuery } from '@material-ui/core';
+import { useMediaQuery } from '@mui/material';
 import ViewsButtons from './ViewsButtons';
 
 const ListActionsWithViews = ({
@@ -18,7 +18,7 @@ const ListActionsWithViews = ({
   total,
   ...rest
 }) => {
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   return (
     <TopToolbar>

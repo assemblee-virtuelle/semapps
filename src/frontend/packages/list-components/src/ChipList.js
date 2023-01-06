@@ -8,9 +8,10 @@ import {
   RecordContextProvider,
   Link
 } from 'react-admin';
-import { makeStyles, LinearProgress } from '@material-ui/core';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import LaunchIcon from '@material-ui/icons/Launch';
+import { LinearProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 const useStyles = makeStyles(theme => ({

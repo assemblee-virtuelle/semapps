@@ -1,6 +1,6 @@
 import React from 'react';
 import { CreateButton, ExportButton, useResourceDefinition, TopToolbar, usePermissionsOptimized } from 'react-admin';
-import { useMediaQuery } from '@material-ui/core';
+import { useMediaQuery } from '@mui/material';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
@@ -21,7 +21,7 @@ const ListActionsWithPermissions = ({
   total,
   ...rest
 }) => {
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   const createContainerUri = useCreateContainer(resource);
   const { permissions } = usePermissionsOptimized(createContainerUri);

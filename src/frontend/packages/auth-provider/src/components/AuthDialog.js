@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLogin, useTranslate } from 'react-admin';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 const AuthDialog = ({ open, onClose, title, message, redirect, ...rest }) => {
   const login = useLogin();

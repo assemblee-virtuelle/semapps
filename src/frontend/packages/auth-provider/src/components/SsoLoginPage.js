@@ -1,43 +1,45 @@
 import React, { useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
 import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification } from 'react-admin';
-import { ThemeProvider } from '@material-ui/styles';
-import { createTheme, makeStyles } from '@material-ui/core/styles';
-import { Avatar, Button, Card, CardActions, Typography } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
+import { StyledEngineProvider } from '@mui/material';
+import { adaptV4Theme } from '@mui/material/styles';
+import { styled, ThemeProvider } from '@mui/system';
+import { Avatar, Button, Card, CardActions, Typography } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
-const useStyles = makeStyles(theme => ({
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: theme.palette.grey['300']
-  },
-  text: {
-    maxWidth: 300,
-    textAlign: 'center',
-    padding: '4px 8px 8px'
-  },
-  card: {
-    minWidth: 300,
-    marginTop: '6em'
-  },
-  lockIconAvatar: {
-    margin: '1em',
-    display: 'flex',
-    justifyContent: 'center'
-  },
-  lockIcon: {
-    backgroundColor: theme.palette.grey['500']
-  }
+const StyledMain = styled('main')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  minHeight: '100vh',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  backgroundColor: theme.palette.grey['300']
+}));
+
+const StyledText = styled('main')(({ theme }) => ({
+  maxWidth: 300,
+  textAlign: 'center',
+  padding: '4px 8px 8px'
+}));
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  minWidth: 300,
+  marginTop: '6em'
+}));
+
+const LockIconAvatar = styled('div')(({ theme }) => ({
+  margin: '1em',
+  display: 'flex',
+  justifyContent: 'center'
+}));
+
+const StyledAvatar = styled(Avatar)(({ theme }) => ({
+  backgroundColor: theme.palette.grey['500']
 }));
 
 const SsoLoginPage = ({ theme, history, location, buttons, userResource, propertiesExist, text }) => {
-  const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
   const dataProvider = useDataProvider();
@@ -99,34 +101,36 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
   }, [location.search]);
 
   return (
-    <ThemeProvider theme={createTheme(theme)}>
-      <div className={classes.main}>
-        <Card className={classes.card}>
-          <div className={classes.lockIconAvatar}>
-            <Avatar className={classes.lockIcon}>
-              <LockIcon />
-            </Avatar>
-          </div>
-          {text && (
-            <Typography variant="body2" className={classes.text}>
-              {text}
-            </Typography>
-          )}
-          {buttons &&
-            buttons.map((button, i) => (
-              <CardActions key={i}>
-                {React.cloneElement(button, {
-                  fullWidth: true,
-                  variant: 'outlined',
-                  type: 'submit',
-                  onClick: () => login({}, '/login')
-                })}
-              </CardActions>
-            ))}
-        </Card>
-      </div>
-      <Notification />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={adaptV4Theme(theme)}>
+        <StyledMain>
+          <StyledCard>
+            <LockIconAvatar>
+              <StyledAvatar>
+                <LockIcon />
+              </StyledAvatar>
+            </LockIconAvatar>
+            {text && (
+              <Typography variant="body2" /*className={classes.text}*/>
+                {text}
+              </Typography>
+            )}
+            {buttons &&
+              buttons.map((button, i) => (
+                <CardActions key={i}>
+                  {React.cloneElement(button, {
+                    fullWidth: true,
+                    variant: 'outlined',
+                    type: 'submit',
+                    onClick: () => login({}, '/login')
+                  })}
+                </CardActions>
+              ))}
+          </StyledCard>
+        </StyledMain>
+        <Notification />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 

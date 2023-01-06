@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { UserMenu as RaUserMenu, MenuItemLink, useGetIdentity, useTranslate } from 'react-admin';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import EditIcon from '@material-ui/icons/Edit';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EditIcon from '@mui/icons-material/Edit';
 
 const ViewProfileMenu = forwardRef(({ onClick, label, webId }, ref) => (
   <MenuItemLink

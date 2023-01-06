@@ -2,8 +2,19 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { LoginForm, Notification, useGetIdentity, useTranslate } from 'react-admin';
-import { Card, Avatar, makeStyles, createTheme, ThemeProvider, Typography } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
+import {
+  Card,
+  Avatar,
+  StyledEngineProvider,
+  Typography,
+  adaptV4Theme,
+} from '@mui/material';
+import {
+  createTheme,
+  ThemeProvider,
+} from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
+import LockIcon from '@mui/icons-material/Lock';
 import { Link, useLocation, Redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
 
@@ -43,47 +54,52 @@ const LocalLoginPage = props => {
   const classes = useStyles(props);
   const location = useLocation();
   const translate = useTranslate();
-  const muiTheme = useMemo(() => createTheme(theme), [theme]);
+  const muiTheme = useMemo(() => createTheme(adaptV4Theme(theme)), [theme]);
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.has('signup');
   const redirectTo = searchParams.get('redirect');
   const { identity, loading } = useGetIdentity();
 
+  console.log('LocalLoginPage');
+  
   if (loading) {
     return null;
   } else if (identity?.id) {
     // Do not show login page if user is already connected
     return <Redirect to={redirectTo || '/'} />;
   } else {
+    console.log('muiTheme-localloginpage', muiTheme);
     return (
-      <ThemeProvider theme={muiTheme}>
-        <div className={classnames(classes.main, className)} {...rest}>
-          <Card className={classes.card}>
-            <div className={classes.avatar}>
-              <Avatar className={classes.icon}>
-                <LockIcon />
-              </Avatar>
-            </div>
-            {isSignup ? (
-              <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />
-            ) : (
-              <LoginForm redirectTo={redirectTo} />
-            )}
-            <div className={classes.switch}>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={muiTheme}>
+          <div className={classnames(classes.main, className)} {...rest}>
+            <Card className={classes.card}>
+              <div className={classes.avatar}>
+                <Avatar className={classes.icon}>
+                  <LockIcon />
+                </Avatar>
+              </div>
               {isSignup ? (
-                <Link to="/login">
-                  <Typography variant="body2">{translate('auth.action.login')}</Typography>
-                </Link>
+                <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />
               ) : (
-                <Link to="/login?signup=true">
-                  <Typography variant="body2">{translate('auth.action.signup')}</Typography>
-                </Link>
+                <LoginForm redirectTo={redirectTo} />
               )}
-            </div>
-          </Card>
-          <Notification />
-        </div>
-      </ThemeProvider>
+              <div className={classes.switch}>
+                {isSignup ? (
+                  <Link to="/login">
+                    <Typography variant="body2">{translate('auth.action.login')}</Typography>
+                  </Link>
+                ) : (
+                  <Link to="/login?signup=true">
+                    <Typography variant="body2">{translate('auth.action.signup')}</Typography>
+                  </Link>
+                )}
+              </div>
+            </Card>
+            <Notification />
+          </div>
+        </ThemeProvider>
+      </StyledEngineProvider>
     );
   }
 };

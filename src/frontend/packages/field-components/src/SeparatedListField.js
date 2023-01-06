@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cloneElement, Children } from 'react';
 import { linkToRecord, useListContext, Link } from 'react-admin';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@mui/material';
 
 // useful to prevent click bubbling in a datagrid with rowClick
 const stopPropagation = e => e.stopPropagation();

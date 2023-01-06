@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShowButton, EditButton, useResourceDefinition } from 'react-admin';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 const DefaultPopupContent = ({ record, basePath }) => {
   const resourceDefinition = useResourceDefinition({});

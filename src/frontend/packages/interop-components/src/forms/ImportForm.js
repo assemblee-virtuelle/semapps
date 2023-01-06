@@ -2,8 +2,9 @@ import React, { useCallback } from 'react';
 import { FormInput, TextInput, RadioButtonGroupInput } from 'react-admin';
 import { Form } from 'react-final-form';
 import createDecorator from 'final-form-calculate';
-import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import { Box, Toolbar, Button } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 import { ReferenceInput, MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
@@ -11,7 +12,7 @@ import useSync from '../hooks/useSync';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+    backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
     marginTop: theme.spacing(2)
   },
   field: {

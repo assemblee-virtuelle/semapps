@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDataProvider, useTranslate, Loading, Error } from 'react-admin';
 import {
-  makeStyles,
   Avatar,
   ListItem,
   ListItemIcon,
@@ -10,10 +9,11 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem
-} from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import CheckIcon from '@material-ui/icons/Check';
+  MenuItem,
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import EditIcon from '@mui/icons-material/Edit';
+import CheckIcon from '@mui/icons-material/Check';
 import { GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, resourceRightsLabels, containerRightsLabels } from '../../constants';
 import AgentIcon from './AgentIcon';
 
@@ -93,7 +93,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
         primary={agent.permissions && agent.permissions.map(p => translate(labels[p])).join(', ')}
       />
       <ListItemSecondaryAction>
-        <IconButton onClick={openMenu}>
+        <IconButton onClick={openMenu} size="large">
           <EditIcon />
         </IconButton>
         <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>

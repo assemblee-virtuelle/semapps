@@ -1,6 +1,6 @@
 import React from 'react';
 import { SaveButton, Toolbar } from 'react-admin';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import DeleteButtonWithPermissions from './DeleteButtonWithPermissions';
 
 const useStyles = makeStyles(() => ({

@@ -1,29 +1,35 @@
 import React, { forwardRef } from 'react';
 import { useLogout, useTranslate } from 'react-admin';
-import { MenuItem, makeStyles, ListItemIcon } from '@material-ui/core';
-import ExitIcon from '@material-ui/icons/PowerSettingsNew';
+import { MenuItem, ListItemIcon } from '@mui/material';
+import ExitIcon from '@mui/icons-material/PowerSettingsNew';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    color: theme.palette.text.secondary
-  },
-  active: {
-    color: theme.palette.text.primary
-  },
-  icon: { minWidth: theme.spacing(5) }
+
+const StyledIcon = styled('div')(({ theme }) => ({
+  minWidth: theme.spacing(5)
+}));
+
+const StyledMenuItem = styled('div')(({ theme }) => ({ 
+  color: theme.palette.text ? theme.palette.text.secondary: 'unset',
+  '&:active': {
+    color: theme.palette.text ? theme.palette.text.primary: 'unset'
+  }
 }));
 
 const LogoutButton = forwardRef((props, ref) => {
-  const classes = useStyles();
   const logout = useLogout();
   const translate = useTranslate();
   return (
-    <MenuItem onClick={() => logout()} ref={ref} className={classes.root} activeClassName={classes.active}>
-      <ListItemIcon className={classes.icon}>
-        <ExitIcon />
-      </ListItemIcon>
-      {translate('auth.action.logout')}
-    </MenuItem>
+    <StyledMenuItem>
+      <MenuItem onClick={() => logout()} ref={ref}>
+        <StyledIcon>
+          <ListItemIcon>
+            <ExitIcon />
+          </ListItemIcon>
+        </StyledIcon>
+        {translate('auth.action.logout')}
+      </MenuItem>
+    </StyledMenuItem>
   );
 });
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import { List, makeStyles } from '@material-ui/core';
+import { List } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import AgentItem from './AgentItem';
 
 const useStyles = makeStyles(theme => ({

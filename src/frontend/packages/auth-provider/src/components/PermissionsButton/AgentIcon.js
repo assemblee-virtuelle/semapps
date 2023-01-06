@@ -1,8 +1,8 @@
 import React from 'react';
-import PublicIcon from '@material-ui/icons/Public';
-import VpnLockIcon from '@material-ui/icons/VpnLock';
-import PersonIcon from '@material-ui/icons/Person';
-import GroupIcon from '@material-ui/icons/Group';
+import PublicIcon from '@mui/icons-material/Public';
+import VpnLockIcon from '@mui/icons-material/VpnLock';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
 import { CLASS_AGENT, GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT } from '../../constants';
 
 const AgentIcon = ({ agent }) => {

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useMap } from "react-leaflet";
-import { Drawer, Box, IconButton, makeStyles } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { Drawer, Box, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import CloseIcon from '@mui/icons-material/Close';
 
 const useStyles = makeStyles(() => ({
   closeButton: {
@@ -21,16 +22,16 @@ const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
     }
   }, [record, map])
 
-  return(
+  return (
     <Drawer anchor="bottom" open={!!record} onClose={onClose}>
       <Box p={1} position="relative">
-        <IconButton onClick={onClose} className={classes.closeButton}>
+        <IconButton onClick={onClose} className={classes.closeButton} size="large">
           <CloseIcon />
         </IconButton>
         {record && React.createElement(popupContent, { record, basePath })}
       </Box>
     </Drawer>
-  )
+  );
 };
 
 export default MobileDrawer;

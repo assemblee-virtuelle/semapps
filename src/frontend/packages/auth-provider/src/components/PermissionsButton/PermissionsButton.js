@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'react-admin';
-import ShareIcon from '@material-ui/icons/Share';
+import ShareIcon from '@mui/icons-material/Share';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsDialog from './PermissionsDialog';
 

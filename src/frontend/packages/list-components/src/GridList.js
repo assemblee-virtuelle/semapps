@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useListContext, linkToRecord, Link, RecordContextProvider } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -11,7 +11,7 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
+const ImageList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
   const { ids, data, basePath } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
   return (
@@ -63,11 +63,11 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
   );
 };
 
-GridList.defaultProps = {
+ImageList.defaultProps = {
   xs: 6,
   spacing: 3,
   linkType: 'edit',
   externalLinks: false
 };
 
-export default GridList;
+export default ImageList;

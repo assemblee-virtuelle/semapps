@@ -2,7 +2,9 @@ import React, { useMemo, useState } from 'react';
 import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
 import { useInput, InputHelperText, Labeled, required } from 'react-admin';
-import { FormControl, FormHelperText, makeStyles } from '@material-ui/core';
+import { FormControl, FormHelperText } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   validationError: {

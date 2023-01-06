@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { useInput, useTranslate, FieldTitle, InputHelperText } from 'react-admin';
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@mui/material';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 import { dateTimeFormatter, dateTimeParser } from './utils';
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const sanitizeRestProps = ({
   allowEmpty,
@@ -97,7 +97,7 @@ const Picker = ({
         }}
         InputProps={{
           endAdornment: allowClear ? (
-            <IconButton onClick={handleClear}>
+            <IconButton onClick={handleClear} size="large">
               <ClearIcon />
             </IconButton>
           ) : (

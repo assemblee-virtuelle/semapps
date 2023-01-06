@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import ChangeView from './ChangeView';
 
 const MapField = ({ record, latitude, longitude, address, height, addLabel, typographyProps, ...rest }) => {

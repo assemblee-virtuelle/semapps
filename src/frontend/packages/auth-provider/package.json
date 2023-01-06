@@ -14,14 +14,19 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@emotion/css": "^11.10.5",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.3",
+    "@mui/styles": "^5.11.2",
     "@semapps/semantic-data-provider": "0.4.1",
     "jwt-decode": "^3.0.0",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "react": "^16.13..1 || ^17.0.0",
-    "react-admin": "^3.19.10"
+    "react": "^18.2.0",
+    "react-admin": "^4.6.2"
   },
   "publishConfig": {
     "access": "public"

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useListContext } from 'react-admin';
 import { useLocation } from 'react-router';
-import { useMediaQuery, Box, makeStyles } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { useMediaQuery, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import CircularProgress from '@mui/material/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import MarkerClusterGroup from './MarkerClusterGroup';
@@ -39,7 +40,7 @@ const MapList = ({
   ...otherProps
 }) => {
   const { ids, data, basePath, loading } = useListContext();
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 

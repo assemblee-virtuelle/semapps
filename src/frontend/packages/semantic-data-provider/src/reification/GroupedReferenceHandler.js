@@ -17,8 +17,8 @@ import { default as FilterHandler } from './FilterHandler';
  *   addLabel={false}
  * >
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  * </GroupedReferenceHandler>
  *
@@ -32,8 +32,8 @@ import { default as FilterHandler } from './FilterHandler';
  * >
  *   <Label>
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  * </GroupedReferenceHandler>
  *
@@ -58,8 +58,8 @@ import { default as FilterHandler } from './FilterHandler';
  *  <ConditionalSourceDefinedHandler>
  *   <Label>
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  *  </ConditionalSourceDefinedHandler>
  * </GroupedReferenceHandler>

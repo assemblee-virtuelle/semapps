@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Form } from 'react-final-form';
 import { useCreate, useCreateSuggestionContext, useResourceContext } from 'react-admin';
-import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
 const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {

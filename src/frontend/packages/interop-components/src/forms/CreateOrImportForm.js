@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SimpleForm } from 'react-admin';
-import { Box, Tab, Tabs, Divider, makeStyles, useMediaQuery } from '@material-ui/core';
+import { Box, Tab, Tabs, Divider, useMediaQuery } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ImportForm from './ImportForm';
 
 const useStyles = makeStyles(theme => ({
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
 
 const CreateOrImportForm = ({ stripProperties, ...rest }) => {
   const [tab, setTab] = useState(0);
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const classes = useStyles();
   return (
     <>

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Field, Form } from 'react-final-form';
 import { useTranslate, useNotify, useSafeSetState } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { Button, CardActions, CircularProgress, TextField, makeStyles } from '@material-ui/core';
+import { Button, CardActions, CircularProgress, TextField } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { default as useSignup } from '../hooks/useSignup';
 
 const useStyles = makeStyles(theme => ({

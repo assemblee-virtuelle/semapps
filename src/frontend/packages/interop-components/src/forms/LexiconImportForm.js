@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
 import { required } from 'react-admin';
 import { Form } from 'react-final-form';
-import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
+import { Box, Toolbar, Button } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import SaveIcon from '@mui/icons-material/Save';
 import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+    backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
     marginTop: theme.spacing(2)
   },
   field: {

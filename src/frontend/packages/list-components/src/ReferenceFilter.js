@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { FilterList, FilterListItem, useGetList, getResources, useResourceContext, useListContext } from 'react-admin';
-import { shallowEqual, useSelector } from 'react-redux';
+// import { shallowEqual, useSelector } from 'react-redux';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
 /**
@@ -29,7 +29,7 @@ const ReferenceFilterCounter = ({ source, id }) => {
 
 const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
   const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
-  const resources = useSelector(getResources, shallowEqual);
+  // const resources = useSelector(getResources, shallowEqual);
   const currentResource = resources.filter(r => r?.name === reference)[0];
   const resourceContext = useResourceContext();
   const resourceContextDataModel = useDataModel(resourceContext);
