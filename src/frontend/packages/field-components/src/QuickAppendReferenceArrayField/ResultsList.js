@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  getResources,
   useDataProvider,
   useRecordContext,
   linkToRecord,
   useGetResourceLabel,
   useTranslate
 } from 'react-admin';
-// import { shallowEqual, useSelector } from 'react-redux';
 import debounce from 'lodash.debounce';
 import {
   Box,
@@ -58,10 +56,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   const dataServers = useDataServers();
   const record = useRecordContext();
 
-  // const resources = useSelector(getResources, shallowEqual);
-  const referenceDefinition = useMemo(() => {
-    return resources.find(r => r.name === reference);
-  }, [resources, reference]);
+  const referenceDefinition = useResourceDefinition({resource: reference});
   const getResourceLabel = useGetResourceLabel();
   const dataModel = useDataModel(reference);
 
