@@ -90,20 +90,13 @@ const PodLoginPageView = ({ theme, history, location, text, customPodProviders }
             notify('auth.message.user_connected', 'info');
             // Reload to ensure the dataServers config is reset
             window.location.reload();
-            window.location.href = '/login?addUser=true';
+            window.location.href = '/?addUser=true';
           }
         }
       } else if (searchParams.has('logout')) {
         // Delete token and any other value in local storage
         localStorage.clear();
         notify('auth.message.user_disconnected', 'info');
-        history.push('/');
-      } else if (searchParams.has('addUser')) {
-        // TODO put this on another screen
-        const token = localStorage.getItem('token');
-        const { webId } = jwtDecode(token);
-        await dataProvider.create('Person', { id: webId });
-        notify('Utilisateur ajouté à la base de donnée', 'info');
         history.push('/');
       }
     })();
