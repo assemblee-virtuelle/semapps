@@ -359,6 +359,7 @@ module.exports = {
     await this.broker.call('api.addRoute', {
       route: {
         path: '/.well-known/void',
+        name: 'void-endpoint',
         bodyParsers: false,
         authorization: false,
         authentication: true,

@@ -142,6 +142,7 @@ const AuthLocalService = {
     getApiRoutes() {
       const loginRoute = {
         path: '/auth/login',
+        name: 'auth-login',
         use: [this.passport.initialize()],
         aliases: {
           'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
@@ -157,6 +158,7 @@ const AuthLocalService = {
 
       const signupRoute = {
         path: '/auth/signup',
+        name: 'auth-signup',
         aliases: {
           'POST /': 'auth.signup'
         }
@@ -171,12 +173,14 @@ const AuthLocalService = {
 
       const resetPasswordRoute = {
         path: '/auth/reset_password',
+        name: 'auth-reset-password',
         aliases: {
           'POST /': 'auth.resetPassword'
         }
       };
       const setNewPasswordRoute = {
         path: '/auth/new_password',
+        name: 'auth-new-password',
         aliases: {
           'POST /': 'auth.setNewPassword'
         }
@@ -184,6 +188,7 @@ const AuthLocalService = {
 
       const accountSettingsRoute = {
         path: '/auth/account',
+        name: 'auth-account',
         aliases: {
           'GET /': 'auth.account.findSettingsByWebId',
           'POST /': 'auth.account.updateAccountSettings'

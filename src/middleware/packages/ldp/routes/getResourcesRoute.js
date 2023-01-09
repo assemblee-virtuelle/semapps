@@ -38,6 +38,7 @@ function getResourcesRoute(containerUri, readOnly = false) {
   }
 
   return {
+    name: 'resources' + containerPath.replaceAll('/', '-'),
     path: containerPath,
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)

@@ -41,6 +41,7 @@ module.exports = {
       this.broker.call('api.addRoute', {
         route: {
           path: contextFile.path,
+          name: 'context' + contextFile.path.replaceAll('/', '-'),
           bodyParsers: {
             json: true
           },
