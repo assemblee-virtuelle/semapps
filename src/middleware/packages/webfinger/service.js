@@ -16,6 +16,7 @@ const WebfingerService = {
     await this.broker.call('api.addRoute', {
       route: {
         path: '/.well-known',
+        name: 'webfinger-endpoint',
         bodyParsers: { json: true },
         aliases: {
           'GET /webfinger': 'webfinger.get'

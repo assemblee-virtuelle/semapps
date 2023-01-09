@@ -25,6 +25,7 @@ const ExpoPushService = {
         bodyParsers: { json: true },
         authorization: false,
         authentication: true,
+        name: 'push',
         aliases: {
           [`POST push/devices`]: 'push.device.subscribe',
           [`GET push/devices`]: 'push.device.find',

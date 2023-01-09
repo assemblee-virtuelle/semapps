@@ -16,6 +16,7 @@ const ProxyService = {
       authorization: true,
       authentication: false,
       mergeParams: true,
+      name: 'proxy-endpoint',
       aliases: {
         'POST /': 'activitypub.proxy.api_query'
       },

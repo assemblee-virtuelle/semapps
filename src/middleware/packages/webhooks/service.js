@@ -20,9 +20,9 @@ const WebhooksService = {
       }
     });
     const routes = await this.actions.getApiRoutes();
-    for (let element of routes) {
+    for (let route of routes) {
       await this.broker.call('api.addRoute', {
-        route: element
+        route
       });
     }
   },
@@ -67,20 +67,24 @@ const WebhooksService = {
       return [
         // Unsecured routes
         {
+          path: '/webhooks',
+          name: 'webhooks-process',
           bodyParsers: { json: true },
           authorization: false,
           authentication: true,
           aliases: {
-            'POST webhooks/:hash': 'webhooks.process'
+            'POST /:hash': 'webhooks.process'
           }
         },
         // Secured routes
         {
+          path: '/webhooks',
+          name: 'webhooks-generate',
           bodyParsers: { json: true },
           authorization: true,
           authentication: false,
           aliases: {
-            'POST webhooks': 'webhooks.generate'
+            'POST /': 'webhooks.generate'
           }
         }
       ];
