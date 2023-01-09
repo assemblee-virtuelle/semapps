@@ -151,6 +151,7 @@ const AuthLocalService = {
 
       const logoutRoute = {
         path: '/auth/logout',
+        name: 'auth-logout',
         aliases: {
           'GET /': 'auth.logout'
         }
@@ -166,6 +167,7 @@ const AuthLocalService = {
 
       const formRoute = {
         path: '/auth',
+        name: 'auth',
         aliases: {
           'GET /': 'auth.redirectToForm'
         }

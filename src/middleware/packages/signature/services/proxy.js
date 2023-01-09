@@ -21,6 +21,7 @@ const ProxyService = {
   dependencies: ['api'],
   async started() {
     const routeConfig = {
+      name: 'proxy-endpoint',
       authorization: true,
       authentication: false,
       aliases: {
