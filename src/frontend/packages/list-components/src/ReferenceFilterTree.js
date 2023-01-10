@@ -108,7 +108,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) 
   let routeTree = [], listTheme = [];
   console.log();
   for (const theme in data) {
-    if (data[theme]['pair:broader'] == undefined ) {
+    if (data[theme]['pair:broader'] === undefined ) {
       routeTree.push(data[theme]);
     }
     listTheme = listTheme.concat(data[theme]);
