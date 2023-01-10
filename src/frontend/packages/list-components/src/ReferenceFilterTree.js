@@ -2,7 +2,6 @@ import React from 'react';
 import { useGetList } from 'react-admin';
 import {TreeItem, TreeView, useTreeItem} from '@mui/lab';
 import { useListFilterContext } from 'ra-core';
-import CancelIcon from '@mui/icons-material/Cancel';
 import LabelIcon from '@mui/icons-material/Label';
 import { IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
