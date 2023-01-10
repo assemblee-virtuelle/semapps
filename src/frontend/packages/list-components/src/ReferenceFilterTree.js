@@ -22,14 +22,17 @@ import Typography from '@mui/material/Typography';
  * );
  */
 
-
-function GenerateTreeItemFromNarrower(source, label, themeList, narrower) {
-  const themes = themeList.filter(({ [source]: themeSource }) => themeSource === narrower.id );
-  return themes.map(({ id, [label]: themeLabel }) => (
-    <CustomTreeItem key={id} nodeId={id} label={themeLabel} >
-      {GenerateTreeItemFromNarrower(source, label, themeList, { id })}
-    </CustomTreeItem>
-  ));
+function GenerateTreeItem(source, label, listTheme, routeTree, parentId) {
+  // If !parentId it's a trunkItem
+  const isParentLevel = !parentId;
+  const listToUse = isParentLevel ? routeTree : listTheme.filter(({ [source]: themeSource }) => themeSource === parentId);
+  return (
+    listToUse.map((route) =>
+      <CustomTreeItem nodeId={route["id"]} label={route[label]} key={route["id"]}>
+        {GenerateTreeItem(source, label, listTheme, [], route["id"])}
+      </CustomTreeItem>
+    )
+  )
 }
 
 const CustomContent = React.forwardRef(function CustomContent(props, ref) {
@@ -151,11 +154,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) 
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {routeTree.map((route) =>
-          <CustomTreeItem nodeId={route["id"]} label={route[label]} key={route["id"]}>
-            {GenerateTreeItemFromNarrower(source, label, listTheme, route)}
-          </CustomTreeItem>
-        )}
+        {GenerateTreeItem(source, label, listTheme, routeTree)}
       </TreeView>
     </div>
   )
