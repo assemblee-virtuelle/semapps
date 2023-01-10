@@ -43,7 +43,7 @@ const ActorService = {
       const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
       // If the URL is not in the same domain as the actor, it is most likely not a profile
       if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
-        return await ctx.call('activitypub.object.get', { objectUrl: actor.url });
+        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
       }
     },
     async appendActorData(ctx) {
