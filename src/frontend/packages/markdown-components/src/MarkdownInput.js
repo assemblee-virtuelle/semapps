@@ -3,12 +3,11 @@ import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
 import { useInput, InputHelperText, Labeled, required } from 'react-admin';
 import { FormControl, FormHelperText } from '@mui/material';
-
 import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   validationError: {
-    '& .MuiFormLabel-root': {
+    '& label': {
       color: theme.palette.error.main
     },
     '& .mde-text': {
@@ -17,6 +16,9 @@ const useStyles = makeStyles(theme => ({
       outlineColor: theme.palette.error.main,
       outlineStyle: 'auto',
       outlineWidth: 1
+    },
+    '& p.MuiFormHelperText-root': {
+      color: theme.palette.error.main
     }
   }
 }));
@@ -31,11 +33,11 @@ const MarkdownInput = props => {
   const [tab, setTab] = useState('write');
   const {
     input: { value, onChange },
-    meta: { error, touched }
+    meta: { modified, invalid, error, touched }
   } = useInput(props);
 
   return (
-    <FormControl fullWidth className={`ra-input-mde ${!!error ? classes.validationError : ''}`}>
+    <FormControl fullWidth className={`ra-input-mde ${modified && invalid ? classes.validationError : ''}`}>
       <Labeled {...props} isRequired={isRequired}>
         <ReactMde
           value={value}
@@ -46,8 +48,8 @@ const MarkdownInput = props => {
           {...props}
         />
       </Labeled>
-      <FormHelperText error={!!error} margin="dense" variant="outlined">
-        <InputHelperText error={error} helperText={props.helperText} touched={error || touched} />
+      <FormHelperText error={modified && invalid} margin="dense" variant="outlined">
+        <InputHelperText error={modified && invalid && error} helperText={props.helperText} touched={error || touched} />
       </FormHelperText>
     </FormControl>
   );
