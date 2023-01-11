@@ -76,7 +76,16 @@ module.exports = {
     // Return true if you want the notification to be sent by email
     async filterNotification(notification) {
       return true;
-    }
+    },
+    // Method called to format the actionLink prop of each notification
+    // Overwrite it if you have custom needs
+    async formatLink(link, recipientUri) {
+      if (link && !link.startsWith('http')) {
+        return urlJoin(this.settings.defaultFrontUrl, link);
+      } else {
+        return link;
+      }
+    },
   }
 };
 ```
