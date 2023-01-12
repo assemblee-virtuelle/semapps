@@ -45,7 +45,7 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     // Needed when filter item is active and its last relation is removed
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    if (! params.filter) {
+    if (! params.filter && ! isLoading) {
       setFilters({});
     }
   }, []);
@@ -61,7 +61,7 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     Object.values(resourceContextContainers).forEach(value => {
       value.forEach(containerUrl => {
         [].concat(itemData[inverseSource]).forEach(inverseSourceData => {
-          if (inverseSourceData.startsWith(containerUrl)) {
+          if (inverseSourceData?.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
         })
