@@ -101,7 +101,7 @@ function CustomTreeItem(props) {
   return <TreeItem ContentComponent={CustomContent} {...props} />;
 }
 
-const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) => {
+const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, icon }) => {
   const { data } = useGetList(reference, { page: 1, perPage: Infinity }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
   let routeTree = [], listTheme = [];
@@ -142,9 +142,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter }) 
 
   return (
     <div>
-      <IconButton size="small" edge="start">
-        <LabelIcon style={{ color: 'black',  }} />
-      </IconButton>
+      {!icon ? icon = <IconButton size="small" edge="start"> <LabelIcon style={{ color: 'black',  }} /> </IconButton> : icon}
       {reference}
       <TreeView
         multiSelect
