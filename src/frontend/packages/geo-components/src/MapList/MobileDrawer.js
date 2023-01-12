@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useMap } from "react-leaflet";
 import { Drawer, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import CloseIcon from '@mui/icons-material/Close';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const useStyles = makeStyles(() => ({
   closeButton: {
@@ -26,7 +26,7 @@ const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
     <Drawer anchor="bottom" open={!!record} onClose={onClose}>
       <Box p={1} position="relative">
         <IconButton onClick={onClose} className={classes.closeButton} size="large">
-          <CloseIcon />
+          <ClearIcon />
         </IconButton>
         {record && React.createElement(popupContent, { record, basePath })}
       </Box>
