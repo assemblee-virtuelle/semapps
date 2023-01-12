@@ -22,7 +22,9 @@
     "@mui/styles": "^5.11.2",
     "@semapps/semantic-data-provider": "0.4.1",
     "classnames": "^2.3.2",
+    "final-form": "^4.20.8",
     "jwt-decode": "^3.0.0",
+    "react-final-form": "^6.5.9",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
