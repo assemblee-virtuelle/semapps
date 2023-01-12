@@ -17,17 +17,19 @@ import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
 const ReferenceFilterCounter = ({ source, id }) => {
   const resourceContext = useResourceContext();
-  const { data } = useGetList(resourceContext);
+  const { data, isLoading } = useGetList(resourceContext);
   return (
     <>
       &nbsp;
-      <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
+      { ! isLoading &&
+        <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
+      }
     </>
   );
 };
 
 const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
-  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
+  const { data, isLoading } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
   const currentResource = useResourceDefinition({resource: reference});
   const resourceContext = useResourceContext();
   const resourceContextDataModel = useDataModel(resourceContext);
@@ -48,17 +50,17 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     }
   }, []);
   
-  const itemIsUsed = (id) => {
+  const itemIsUsed = (itemData) => {
     if (!inverseSource) {
       return true;
     }
-    if (!resourceContextContainers || !data || !data[id][inverseSource]) {
+    if (!resourceContextContainers || !itemData) {
       return false;
     }
-    let itemIsUsed = false;    
+    let itemIsUsed = false;
     Object.values(resourceContextContainers).forEach(value => {
       value.forEach(containerUrl => {
-        [].concat(data[id][inverseSource]).forEach(inverseSourceData => {
+        [].concat(itemData[inverseSource]).forEach(inverseSourceData => {
           if (inverseSourceData.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
@@ -69,19 +71,22 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
   }
   
   return (
-    <FilterList label={label || currentResource.options.label} icon={icon || React.createElement(currentResource.icon)}>
-      {ids
-        .filter(id => itemIsUsed(id))
-        .map(id => (
+    <FilterList
+      label={label || currentResource?.options?.label || ''}
+      icon={icon || currentResource?.icon ? React.createElement(currentResource.icon) : undefined}
+    >
+      {data && data
+        .filter(itemData => itemIsUsed(itemData))
+        .map(itemData => (
           <FilterListItem
-            key={id}
+            key={itemData.id}
             label={
               <span className="filter-label">
-                {data[id]['pair:label']}
-                {showCounters && <ReferenceFilterCounter source={source} id={id} />}
+                {itemData['pair:label']}
+                {showCounters && <ReferenceFilterCounter source={source} id={itemData.id} />}
               </span>
             }
-            value={{ [source]: id }}
+            value={{ [source]: itemData.id }}
           />
         ))}
     </FilterList>
