@@ -1,17 +1,17 @@
 import React, { useMemo, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useListContext, linkToRecord } from 'react-admin';
 
 const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const { ids, data, basePath } = useListContext();
 
-  let query = new URLSearchParams(history.location.search);
+  let query = new URLSearchParams(navigate.location.search);
 
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
     jsEvent.preventDefault();
-    history.push(event.url);
+    navigate.push(event.url);
   }, []);
 
   // Change the query string when month change
@@ -19,7 +19,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
     ({ view }) => {
       query.set('month', view.currentStart.getMonth() + 1);
       query.set('year', view.currentStart.getFullYear());
-      history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
+      navigate.replace({ pathname: navigate.location.pathname, search: '?' + query.toString() });
     },
     [query]
   );
