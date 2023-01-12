@@ -15,7 +15,7 @@ import {
 } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 import LockIcon from '@mui/icons-material/Lock';
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import { Link, useLocation, redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
 
 const useStyles = makeStyles(theme => ({
@@ -66,7 +66,7 @@ const LocalLoginPage = props => {
     return null;
   } else if (identity?.id) {
     // Do not show login page if user is already connected
-    return <Redirect to={redirectTo || '/'} />;
+    return redirect(redirectTo || '/');
   } else {
     console.log('muiTheme-localloginpage', muiTheme);
     return (
