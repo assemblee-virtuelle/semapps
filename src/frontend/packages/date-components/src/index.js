@@ -1,20 +1,17 @@
 import React from 'react';
-import {
-  DatePicker,
-  TimePicker,
-  DateTimePicker,
-  KeyboardDatePicker,
-  KeyboardDateTimePicker,
-  KeyboardTimePicker
-} from '@material-ui/pickers';
 import Picker from './Picker';
+import { 
+  DatePicker,
+  DateTimePicker,
+  TimePicker
+ } from '@mui/lab';
 
 const DateInput = props => <Picker PickerComponent={DatePicker} {...props} />;
 const TimeInput = props => <Picker PickerComponent={TimePicker} {...props} />;
 const DateTimeInput = props => <Picker PickerComponent={DateTimePicker} {...props} />;
-const KeyboardDateInput = props => <Picker PickerComponent={KeyboardDatePicker} {...props} />;
-const KeyboardDateTimeInput = props => <Picker PickerComponent={KeyboardDateTimePicker} {...props} />;
-const KeyboardTimeInput = props => <Picker PickerComponent={KeyboardTimePicker} {...props} />;
+const KeyboardDateInput = props => <Picker PickerComponent={DatePicker} {...props} />;
+const KeyboardDateTimeInput = props => <Picker PickerComponent={DateTimePicker} {...props} />;
+const KeyboardTimeInput = props => <Picker PickerComponent={TimePicker} {...props} />;
 
 export { DateInput, TimeInput, DateTimeInput, KeyboardDateInput, KeyboardDateTimeInput, KeyboardTimeInput };
 

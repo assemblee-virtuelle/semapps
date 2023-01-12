@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useInput, useTranslate, FieldTitle, InputHelperText } from 'react-admin';
 import { IconButton } from '@mui/material';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateFnsUtils from '@date-io/date-fns';
 import { dateTimeFormatter, dateTimeParser } from './utils';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -89,7 +89,7 @@ const Picker = ({
   }, []);
 
   return (
-    <MuiPickersUtilsProvider utils={utils || DateFnsUtils} locale={locale}>
+    <LocalizationProvider utils={utils || DateFnsUtils} locale={locale}>
       <PickerComponent
         id={id}
         InputLabelProps={{
@@ -126,7 +126,7 @@ const Picker = ({
           )
         }
       />
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 };
 
