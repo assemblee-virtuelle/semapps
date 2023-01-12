@@ -2,6 +2,7 @@ import React from 'react';
 import { CreateButton, ExportButton, useResourceDefinition, TopToolbar } from 'react-admin';
 import { useMediaQuery } from '@mui/material';
 import ViewsButtons from './ViewsButtons';
+import { useTheme } from 'react-admin';
 
 const ListActionsWithViews = ({
   bulkActions,
@@ -18,7 +19,8 @@ const ListActionsWithViews = ({
   total,
   ...rest
 }) => {
-  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const [theme] = useTheme();
+  const xs = useMediaQuery(() => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   return (
     <TopToolbar>

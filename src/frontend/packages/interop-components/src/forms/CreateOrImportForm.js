@@ -3,6 +3,7 @@ import { SimpleForm } from 'react-admin';
 import { Box, Tab, Tabs, Divider, useMediaQuery } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ImportForm from './ImportForm';
+import { useTheme } from 'react-admin';
 
 const useStyles = makeStyles(theme => ({
   tab: {
@@ -13,7 +14,8 @@ const useStyles = makeStyles(theme => ({
 
 const CreateOrImportForm = ({ stripProperties, ...rest }) => {
   const [tab, setTab] = useState(0);
-  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
+  const { theme } = useTheme();
+  const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
   const classes = useStyles();
   return (
     <>

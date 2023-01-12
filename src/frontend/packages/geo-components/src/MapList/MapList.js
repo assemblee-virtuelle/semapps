@@ -10,6 +10,7 @@ import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 import MobileDrawer from "./MobileDrawer";
+import { useTheme } from 'react-admin';
 
 const useStyles = makeStyles(() => ({
   isLoading: {
@@ -40,7 +41,8 @@ const MapList = ({
   ...otherProps
 }) => {
   const { ids, data, basePath, isLoading } = useListContext();
-  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
+  const { theme } = useTheme();
+  const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 

@@ -4,6 +4,7 @@ import { useMediaQuery } from '@mui/material';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
+import { useTheme } from 'react-admin';
 
 // Do not show Export and Refresh buttons on mobile
 const ListActionsWithPermissions = ({
@@ -21,7 +22,8 @@ const ListActionsWithPermissions = ({
   total,
   ...rest
 }) => {
-  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const { theme } = useTheme();
+  const xs = useMediaQuery(() => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   const createContainerUri = useCreateContainer(resource);
   const { permissions } = usePermissionsOptimized(createContainerUri);
