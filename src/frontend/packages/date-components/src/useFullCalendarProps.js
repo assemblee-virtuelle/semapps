@@ -11,7 +11,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
     jsEvent.preventDefault();
-    navigate.push(event.url);
+    navigate(event.url);
   }, []);
 
   // Change the query string when month change
