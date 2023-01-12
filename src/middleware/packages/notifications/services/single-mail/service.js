@@ -8,6 +8,7 @@ const SingleMailNotificationsService = {
   settings: {
     defaultLocale: 'en',
     defaultFrontUrl: null,
+    color: '#E2003B',
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
@@ -31,6 +32,7 @@ const SingleMailNotificationsService = {
             locale,
             data: {
               ...notification,
+              color: this.settings.color,
               descriptionWithBr: notification.description
                 ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
                 : undefined
