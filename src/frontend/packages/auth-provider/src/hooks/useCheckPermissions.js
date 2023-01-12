@@ -3,17 +3,17 @@ import { usePermissionsOptimized, useRedirect, useNotify, useGetIdentity } from 
 import { rights, forbiddenErrors } from '../constants';
 
 const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
-  const { identity, loading } = useGetIdentity();
+  const { identity, isLoading } = useGetIdentity();
   const { permissions } = usePermissionsOptimized(uri);
   const notify = useNotify();
   const redirect = useRedirect();
 
   useEffect(() => {
-    if (!loading && identity && permissions && !permissions.some(p => rights[mode].includes(p['acl:mode']))) {
+    if (!isLoading && identity && permissions && !permissions.some(p => rights[mode].includes(p['acl:mode']))) {
       notify(forbiddenErrors[mode], 'error');
       redirect(redirectUrl);
     }
-  }, [permissions, identity, redirect, notify, loading]);
+  }, [permissions, identity, redirect, notify, isLoading]);
 
   return permissions;
 };

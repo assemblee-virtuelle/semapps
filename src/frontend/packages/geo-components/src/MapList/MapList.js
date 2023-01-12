@@ -12,7 +12,7 @@ import QueryStringUpdater from './QueryStringUpdater';
 import MobileDrawer from "./MobileDrawer";
 
 const useStyles = makeStyles(() => ({
-  loading: {
+  isLoading: {
     zIndex: 1000,
     position: 'absolute',
     top: 0,
@@ -39,7 +39,7 @@ const MapList = ({
   connectMarkers,
   ...otherProps
 }) => {
-  const { ids, data, basePath, loading } = useListContext();
+  const { ids, data, basePath, isLoading } = useListContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
@@ -112,8 +112,8 @@ const MapList = ({
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {loading && (
-        <Box alignItems="center" className={classes.loading}>
+      {isLoading && (
+        <Box alignItems="center" className={classes.isLoading}>
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
