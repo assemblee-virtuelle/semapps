@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQueryWithStore } from 'react-admin';
+import { useGetList } from 'react-admin';
 import { default as FilterHandler } from './FilterHandler';
 
 /*
@@ -74,8 +74,7 @@ const GroupedReferenceHandler = ({
   filterProperty,
   ...otherProps
 }) => {
-  const { data } = useQueryWithStore({
-    type: 'getList',
+  const { data } = useGetList({
     resource: groupReference,
     payload: {}
   });
