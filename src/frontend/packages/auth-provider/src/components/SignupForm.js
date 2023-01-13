@@ -85,23 +85,10 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
     <Form
       onSubmit={submit}
       validate={validate}
-      initialValues={{
-        name: searchParams.get('name'),
-        email: searchParams.get('email')
-      }}
+      initialValues={{ email: searchParams.get('email') }}
       render={({ handleSubmit }) => (
         <form onSubmit={handleSubmit} noValidate>
           <div className={classes.form}>
-            <div className={classes.input}>
-              <Field
-                autoFocus
-                id="name"
-                name="name"
-                component={Input}
-                label={translate('auth.input.name')}
-                disabled={loading}
-              />
-            </div>
             <div className={classes.input}>
               <Field
                 id="username"

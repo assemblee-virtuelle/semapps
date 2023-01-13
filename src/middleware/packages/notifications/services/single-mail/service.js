@@ -8,6 +8,7 @@ const SingleMailNotificationsService = {
   settings: {
     defaultLocale: 'en',
     defaultFrontUrl: null,
+    color: '#E2003B',
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
@@ -21,18 +22,17 @@ const SingleMailNotificationsService = {
       for (let recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
         const locale = account.preferredLocale || this.settings.defaultLocale;
-        const frontUrl = account.preferredFrontUrl || this.settings.defaultFrontUrl;
-
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
         if (notification && (await this.filterNotification(notification))) {
-          if (notification.actionLink) notification.actionLink = urlJoin(frontUrl, notification.actionLink);
+          if (notification.actionLink) notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
           await this.queueMail(ctx, notification.key, {
             to: account.email,
             locale,
             data: {
               ...notification,
+              color: this.settings.color,
               descriptionWithBr: notification.description
                 ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
                 : undefined
@@ -47,6 +47,15 @@ const SingleMailNotificationsService = {
     // Return true if you want the notification to be sent by email
     async filterNotification(notification) {
       return true;
+    },
+    // Method called to format "actionLink" returned for each notification
+    // You can overwrite it to adapt it to your needs
+    async formatLink(link, recipientUri) {
+      if (link && !link.startsWith('http')) {
+        return urlJoin(this.settings.defaultFrontUrl, link);
+      } else {
+        return link;
+      }
     },
     async queueMail(ctx, key, payload) {
       payload.template = 'single-mail';

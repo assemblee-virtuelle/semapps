@@ -3,20 +3,20 @@ import { UserMenu as RaUserMenu, MenuItemLink, useGetIdentity, useTranslate } fr
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import EditIcon from '@material-ui/icons/Edit';
 
-const ViewProfileMenu = forwardRef(({ onClick, label, webId }, ref) => (
+const ViewProfileMenu = forwardRef(({ onClick, profileResource, label, webId }, ref) => (
   <MenuItemLink
     ref={ref}
-    to={`/Person/${encodeURIComponent(webId)}/show`}
+    to={`/${profileResource}/${encodeURIComponent(webId)}/show`}
     primaryText={label}
     leftIcon={<AccountCircleIcon />}
     onClick={onClick}
   />
 ));
 
-const EditProfileMenu = forwardRef(({ onClick, label, webId }, ref) => (
+const EditProfileMenu = forwardRef(({ onClick, profileResource, label, webId }, ref) => (
   <MenuItemLink
     ref={ref}
-    to={`/Person/${encodeURIComponent(webId)}`}
+    to={`/${profileResource}/${encodeURIComponent(webId)}`}
     primaryText={label}
     leftIcon={<EditIcon />}
     onClick={onClick}
@@ -31,15 +31,25 @@ const SignupMenu = forwardRef(({ onClick, label }, ref) => (
   <MenuItemLink ref={ref} to="/login?signup=true" primaryText={label} onClick={onClick} />
 ));
 
-const UserMenu = ({ logout, ...otherProps }) => {
+const UserMenu = ({ logout, profileResource, ...otherProps }) => {
   const { identity } = useGetIdentity();
   const translate = useTranslate();
   return (
     <RaUserMenu {...otherProps}>
       {identity && identity.id !== ''
         ? [
-            <ViewProfileMenu webId={identity.id} label={translate('auth.action.view_my_profile')} key="view" />,
-            <EditProfileMenu webId={identity.id} label={translate('auth.action.edit_my_profile')} key="edit" />,
+            <ViewProfileMenu
+              webId={identity?.profileData?.id || identity.id}
+              label={translate('auth.action.view_my_profile')}
+              profileResource={profileResource}
+              key="view"
+            />,
+            <EditProfileMenu
+              webId={identity?.profileData?.id || identity.id}
+              label={translate('auth.action.edit_my_profile')}
+              profileResource={profileResource}
+              key="edit"
+            />,
             React.cloneElement(logout, { key: 'logout' })
           ]
         : [
@@ -48,6 +58,10 @@ const UserMenu = ({ logout, ...otherProps }) => {
           ]}
     </RaUserMenu>
   );
+};
+
+UserMenu.defaultProps = {
+  profileResource: 'Person'
 };
 
 export default UserMenu;

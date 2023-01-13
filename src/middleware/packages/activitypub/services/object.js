@@ -31,10 +31,13 @@ const ObjectService = {
           // TODO only do this for distant objects
           // If the object was not found in cache, try to query it distantly
           if (actorUri && actorUri !== 'system' && actorUri !== 'anon') {
-            return await ctx.call('activitypub.proxy.query', {
-              resourceUri: objectUri,
-              actorUri
-            });
+            const services = await ctx.call('$node.services');
+            if (services.filter(s => s.name === 'signature.proxy')) {
+              return await ctx.call('signature.proxy.query', {
+                resourceUri: objectUri,
+                actorUri
+              });
+            }
             // TODO put results in cache ?
           } else {
             const response = await fetch(objectUri, {

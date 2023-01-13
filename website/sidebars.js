@@ -17,7 +17,18 @@ module.exports = {
     },
     'middleware/auth',
     'middleware/backup',
-    'middleware/signature',
+    {
+      type: 'category',
+      label: 'HTTP & LD Signature',
+      link: {
+        type: 'doc',
+        id: 'middleware/signature/index'
+      },
+      items: [
+        'middleware/signature/keypair',
+        'middleware/signature/proxy',
+      ],
+    },
     {
       type: 'category',
       label: 'Importer',

@@ -122,15 +122,9 @@ const parseFile = (req, res, next) => {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
       let files = [];
-      let fields = [];
       busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         const readableStream = new streams.ReadableStream();
-        file.on('data', data => {
-          readableStream.push(data);
-        });
-        file.on('end', () => {
-          console.log('File [' + fieldname + '] Finished');
-        });
+        file.on('data', data => readableStream.push(data));
         files.push({
           fieldname,
           readableStream,
@@ -139,29 +133,22 @@ const parseFile = (req, res, next) => {
           mimetype
         });
       });
-      busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
-        console.log('Field [' + fieldname + ']: value: ' + inspect(val));
-        fields.push({
-          key: fieldname,
-          value: inspect(val)
-        });
+      busboy.on('field', (fieldname, val) => {
+        req.$params[fieldname] = val;
       });
       busboy.on('finish', () => {
-        console.log('Done parsing form!');
-        req.$params.files = files;
-        req.$params.multipartFields = fields;
+        req.$params.files = files.length > 0 ? files : undefined;
         next();
       });
       req.$ctx.meta.parser = 'file';
       req.pipe(busboy);
     } else {
-      const files = [
+      req.$params.files = [
         {
           readableStream: req,
           mimetype: req.headers['content-type']
         }
       ];
-      req.$params.files = files;
       req.$ctx.meta.parser = 'file';
       next();
     }

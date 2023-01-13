@@ -39,8 +39,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
 
         httpClient(dataServers[serverKey].sparqlEndpoint, {
           method: 'POST',
-          body: sparqlQuery,
-          noToken: dataServers[serverKey].authServer !== true
+          body: sparqlQuery
         })
           .then(({ json }) => {
             // By default, embed only the blank nodes we explicitly asked to dereference

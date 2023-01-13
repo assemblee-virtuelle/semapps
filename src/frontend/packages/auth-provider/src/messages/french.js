@@ -56,7 +56,8 @@ const frenchMessages = {
       user_disconnected: 'Vous êtes maintenant déconnecté',
       bad_request: "Requête erronée (Message d'erreur renvoyé par le serveur: %{error})",
       account_settings_updated: 'Les paramètres de votre compte ont été mis à jour avec succès',
-      login_to_continue: 'Veuillez vous connecter pour continuer'
+      login_to_continue: 'Veuillez vous connecter pour continuer',
+      choose_pod_provider: "Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les données de l'application seront enregistrées sur votre POD."
     }
   }
 };
