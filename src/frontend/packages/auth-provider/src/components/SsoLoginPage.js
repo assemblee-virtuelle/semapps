@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import jwtDecode from 'jwt-decode';
-import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification } from 'react-admin';
+import { useLogin, useNotify, useDataProvider, useAuthProvider, Notification, useTheme } from 'react-admin';
 import { StyledEngineProvider } from '@mui/material';
-import { adaptV4Theme } from '@mui/material/styles';
 import { styled, ThemeProvider } from '@mui/system';
 import { Avatar, Button, Card, CardActions, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -39,14 +39,19 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   backgroundColor: theme.palette.grey['500']
 }));
 
-const SsoLoginPage = ({ theme, history, location, buttons, userResource, propertiesExist, text }) => {
+const SsoLoginPage = ({ buttons, userResource, propertiesExist, text }) => {
+
   const notify = useNotify();
   const login = useLogin();
   const dataProvider = useDataProvider();
   const authProvider = useAuthProvider();
+  const [theme] = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     (async () => {
+
       const searchParams = new URLSearchParams(location.search);
 
       if (searchParams.has('login')) {
@@ -75,18 +80,18 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
 
           if (!authProvider.checkUser(userData)) {
             notify('auth.message.user_not_allowed_to_login', 'error');
-            history.replace('/login');
+            navigate.replace('/login');
           } else {
             localStorage.setItem('token', token);
             if (searchParams.has('redirect')) {
               notify('auth.message.user_connected', 'info');
-              history.push(searchParams.get('redirect'));
+              navigate(searchParams.get('redirect'));
             } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
               notify('auth.message.new_user_created', 'info');
-              history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
+              navigate('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
             } else {
               notify('auth.message.user_connected', 'info');
-              history.push('/');
+              navigate('/');
             }
           }
         }
@@ -95,14 +100,14 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
       if (searchParams.has('logout')) {
         localStorage.removeItem('token');
         notify('auth.message.user_disconnected', 'info');
-        history.push('/');
+        navigate('/');
       }
     })();
   }, [location.search]);
 
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={adaptV4Theme(theme)}>
+      <ThemeProvider theme={theme}>
         <StyledMain>
           <StyledCard>
             <LockIconAvatar>
