@@ -5,10 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [middleware-0.4.1] - 2023-01-13
+
+- Use named routes for moleculer-web [#1099](https://github.com/assemblee-virtuelle/semapps/pull/1099)
 
 **@semapps/core**
 - Fix bug created datasets are always secure [d181bfbc](https://github.com/assemblee-virtuelle/semapps/commit/d181bfbc0a6a94c666cc96f4cc1a78e15f111372)
+
+**@semapps/activitypub**
+- Fix activitypub.actor.getProfile action [41fa295f](https://github.com/assemblee-virtuelle/semapps/commit/41fa295f9613f9e54b681aacf5f10aabc8a8b6a2)
+
+**@semapps/auth**
+- Fix auth.local.login action: return newUser false [6603dc86](https://github.com/assemblee-virtuelle/semapps/commit/6603dc865d70e62c57800d120a8c0de1f2e16a84)
 
 **@semapps/ldp**
 - ldp.resource.upload: fix files type [caddbf43](https://github.com/assemblee-virtuelle/semapps/commit/caddbf43a4a93b5d88a9465dc0fd548467d3acfb)
