@@ -13,6 +13,7 @@ const MultiServerAutocompleteArrayInput = ({ optionText, ...rest }) => {
     <AutocompleteArrayInput
       matchSuggestion={matchSuggestion}
       optionText={<OptionRenderer optionText={optionText} dataServers={dataServers} />}
+      inputText={choice => choice[optionText]}
       {...rest}
     />
   );
