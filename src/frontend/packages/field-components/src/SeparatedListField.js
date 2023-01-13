@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cloneElement, Children } from 'react';
-import { linkToRecord, useListContext, Link } from 'react-admin';
+import { linkToRecord, useListContext, useResourceContext, Link } from 'react-admin';
 import { LinearProgress } from '@mui/material';
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -13,49 +13,49 @@ const handleClick = () => {};
 
 const SeparatedListField = props => {
   let { classes: classesOverride, className, children, link = 'edit', linkType, separator = ',\u00A0' } = props;
-  const { ids, data, loaded, resource, basePath } = useListContext(props);
-
+  const { data, isLoading, resource } = useListContext(props);
+  const basePath = '/' + useResourceContext(resource);
+  
   if (linkType !== undefined) {
     console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
     link = linkType;
   }
 
-  if (loaded === false) {
+  if (isLoading === true) {
     return <LinearProgress />;
   }
-
+  
   return (
     <React.Fragment>
-      {ids.map((id, i) => {
-        if (!data[id]) return null;
+      {data.map((dataItem, i) => {
+        if (!dataItem.id) return null;
         const resourceLinkPath =
-          link !== false && (typeof link === 'function' ? link(data[id]) : linkToRecord(basePath, id, link));
-
+          link !== false && (typeof link === 'function' ? link(dataItem.id) : linkToRecord(basePath, dataItem.id, link));
         if (resourceLinkPath) {
           return (
-            <span key={id}>
+            <span key={dataItem.id}>
               <Link to={resourceLinkPath} onClick={stopPropagation}>
                 {cloneElement(Children.only(children), {
-                  record: data[id],
+                  //record: dataItem.id,
                   resource,
                   basePath,
                   // Workaround to force ChipField to be clickable
                   onClick: handleClick
                 })}
               </Link>
-              {i < ids.length - 1 && separator}
+              {i < data.length - 1 && separator}
             </span>
           );
         }
 
         return (
-          <span key={id}>
+          <span key={dataItem.id}>
             {cloneElement(Children.only(children), {
-              record: data[id],
+              //record: dataItem.id,
               resource,
               basePath
             })}
-            {i < ids.length - 1 && separator}
+            {i < data.length - 1 && separator}
           </span>
         );
       })}
