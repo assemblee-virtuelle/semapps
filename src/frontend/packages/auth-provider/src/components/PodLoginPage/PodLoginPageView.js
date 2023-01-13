@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
-import { useNotify, useAuthProvider, useDataProvider } from 'react-admin';
+import { useNotify, useAuthProvider, useDataProvider, useLocale, useTranslate } from 'react-admin';
 import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, makeStyles, Divider } from '@material-ui/core';
 import { Card, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
@@ -37,14 +37,16 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: 0
   },
   listItem: {
-    paddingTop: 0,
-    paddingBottom: 0
+    paddingTop: 5,
+    paddingBottom: 5
   }
 }));
 
-const PodLoginPageView = ({ theme, history, location, text, customPodProviders }) => {
+const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
   const classes = useStyles();
   const notify = useNotify();
+  const locale = useLocale();
+  const translate = useTranslate();
   const authProvider = useAuthProvider();
   const dataProvider = useDataProvider();
   const [podProviders, setPodProviders] = useState(customPodProviders || []);
@@ -60,13 +62,19 @@ const PodLoginPageView = ({ theme, history, location, text, customPodProviders }
         });
         if (results.ok) {
           const json = await results.json();
-          setPodProviders(json['ldp:contains']);
+          // Filter POD providers by available locales
+          const podProviders = json['ldp:contains'].filter(provider =>
+            Array.isArray(provider['apods:locales'])
+              ? provider['apods:locales'].includes(locale)
+              : provider['apods:locales'] === locale
+          );
+          setPodProviders(podProviders);
         } else {
           notify('auth.message.pod_providers_not_loaded', 'error');
         }
       }
     })();
-  }, [podProviders, setPodProviders, notify]);
+  }, [podProviders, setPodProviders, notify, locale]);
 
   useEffect(() => {
     (async () => {
@@ -114,11 +122,11 @@ const PodLoginPageView = ({ theme, history, location, text, customPodProviders }
             <LockIcon />
           </Avatar>
         </div>
-        {text && (
+        <Box pl={2} pr={2}>
           <Typography variant="body2" className={classes.text}>
-            {text}
+            {text || translate('auth.message.choose_pod_provider')}
           </Typography>
-        )}
+        </Box>
         <Box m={2}>
           <List className={classes.list}>
             {podProviders.map((podProvider, i) => {
@@ -126,23 +134,22 @@ const PodLoginPageView = ({ theme, history, location, text, customPodProviders }
               if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
               url.searchParams.set('redirect', window.location.href);
               return (
-                <>
+                <React.Fragment key={i}>
                   <Divider />
-                <ListItem
-                  key={i}
-                  button
-                  onClick={() => (window.location.href = url.toString())}
-                  className={classes.listItem}
-                >
-                  <ListItemAvatar>
-                    <Avatar>
-                      <StorageIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
-                </ListItem>
-
-                </>
+                  <ListItem
+                    key={i}
+                    button
+                    onClick={() => (window.location.href = url.toString())}
+                    className={classes.listItem}
+                  >
+                    <ListItemAvatar>
+                      <Avatar>
+                        <StorageIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
+                  </ListItem>
+                </React.Fragment>
               );
             })}
           </List>
