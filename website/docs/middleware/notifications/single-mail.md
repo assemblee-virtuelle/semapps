@@ -62,6 +62,7 @@ module.exports = {
   settings: {
     defaultLocale: 'en',
     defaultFrontUrl: 'https://mydomain.com', // Base URL for the action links
+    color: '#E2003B', // Color of the mail buttons
     // The following settings are from the moleculer-mail mixin used to send emails
     // See https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: `"My service" <myservice@mydomain.com>`,
