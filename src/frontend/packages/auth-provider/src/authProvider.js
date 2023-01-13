@@ -121,6 +121,9 @@ const authProvider = ({
   },
   checkError: error => Promise.resolve(),
   getPermissions: async uri => {
+
+    if (typeof uri !== 'string') return false;
+    
     // Do not get permissions for servers other than the one used for auth
     // as this will always fail as long as cross-servers auth is not available
     if (!uri.startsWith(middlewareUri)) return false;
