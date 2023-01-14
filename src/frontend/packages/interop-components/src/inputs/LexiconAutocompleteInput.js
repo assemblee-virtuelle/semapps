@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, useInput, useTranslate, useLocale, useNotify } from 'react-admin';
+import { FieldTitle, useInput, useTranslate, useLocale, useNotify, useTheme } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -9,12 +9,12 @@ import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   icon: {
     color: theme.palette.text.secondary,
     marginRight: theme.spacing(2)
   }
-}));
+})});
 
 const selectOptionText = (option, optionText) => {
   if (typeof option === 'string') {

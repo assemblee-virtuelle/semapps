@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { SimpleForm } from 'react-admin';
+import { SimpleForm, useTheme } from 'react-admin';
 import { Box, Tab, Tabs, Divider, useMediaQuery } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ImportForm from './ImportForm';
-import { useTheme } from 'react-admin';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   tab: {
     maxWidth: 'unset',
     padding: '6px 24px'
   }
-}));
+})});
 
 const CreateOrImportForm = ({ stripProperties, ...rest }) => {
   const [tab, setTab] = useState(0);

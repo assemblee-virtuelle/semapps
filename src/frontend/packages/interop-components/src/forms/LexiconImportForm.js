@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
-import { required } from 'react-admin';
+import { required, useTheme } from 'react-admin';
 import { Form } from 'react-final-form';
 import { Box, Toolbar, Button } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import SaveIcon from '@mui/icons-material/Save';
 import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   toolbar: {
     backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
     marginTop: theme.spacing(2)
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 23,
     minWidth: theme.spacing(20)
   }
-}));
+})});
 
 const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save, saving, ...rest }) => {
   const classes = useStyles();

@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
-import { useInput, InputHelperText, Labeled, required } from 'react-admin';
+import { useInput, InputHelperText, Labeled, required, useTheme } from 'react-admin';
 import { FormControl, FormHelperText } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   validationError: {
     '& label': {
       color: theme.palette.error.main
@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.error.main
     }
   }
-}));
+})});
 
 const MarkdownInput = props => {
   const classes = useStyles();

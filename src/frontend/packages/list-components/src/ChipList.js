@@ -6,7 +6,8 @@ import {
   sanitizeListRestProps,
   linkToRecord,
   RecordContextProvider,
-  Link
+  Link,
+  useTheme
 } from 'react-admin';
 import { LinearProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -14,7 +15,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   root: {
     display: 'flex',
     flexWrap: 'wrap'
@@ -38,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 6,
     marginLeft: -10
   }
-}));
+})});
 
 const stopPropagation = e => e.stopPropagation();
 

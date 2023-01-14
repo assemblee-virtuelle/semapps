@@ -8,6 +8,7 @@ import {
   StyledEngineProvider,
   Typography,
   adaptV4Theme,
+  useTheme
 } from '@mui/material';
 import {
   createTheme,
@@ -18,7 +19,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import { Link, useLocation, redirect } from 'react-router-dom';
 import SignupForm from './SignupForm';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   main: {
     display: 'flex',
     flexDirection: 'column',
@@ -47,7 +48,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center'
   }
-}));
+})});
 
 const LocalLoginPage = props => {
   const { theme, title, classes: classesOverride, className, ...rest } = props;

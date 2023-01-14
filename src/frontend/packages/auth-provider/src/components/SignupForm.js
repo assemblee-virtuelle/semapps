@@ -1,13 +1,13 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Field, Form } from 'react-final-form';
-import { useTranslate, useNotify, useSafeSetState } from 'react-admin';
+import { useTranslate, useNotify, useSafeSetState, useTheme } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 import { Button, CardActions, CircularProgress, TextField } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { default as useSignup } from '../hooks/useSignup';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   form: {
     padding: '0 1em 1em 1em'
   },
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   icon: {
     marginRight: theme.spacing(1)
   }
-}));
+})});
 
 const Input = ({ meta: { touched, error }, input: inputProps, ...props }) => (
   <TextField error={!!(touched && error)} helperText={touched && error} {...inputProps} {...props} fullWidth />
