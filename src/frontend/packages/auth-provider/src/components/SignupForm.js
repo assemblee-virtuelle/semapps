@@ -64,7 +64,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           window.location.href = redirectTo || '/';
           setLoading(false);
         }
-        notify('auth.message.new_user_created', 'info');
+        notify('auth.message.new_user_created', {type: 'info'});
       })
       .catch(error => {
         setLoading(false);
@@ -74,8 +74,8 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
             : typeof error === 'undefined' || !error.message
             ? 'ra.auth.sign_in_error'
             : error.message,
-          'warning',
-          {
+          { 
+            type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
           }
         );

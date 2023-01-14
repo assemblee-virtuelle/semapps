@@ -57,9 +57,9 @@ const SsoLoginPage = ({ buttons, userResource, propertiesExist, text }) => {
       if (searchParams.has('login')) {
         if (searchParams.has('error')) {
           if (searchParams.get('error') === 'registration.not-allowed') {
-            notify('auth.message.user_email_not_found', 'error');
+            notify('auth.message.user_email_not_found', {type: 'error'});
           } else {
-            notify('auth.message.bad_request', 'error', { error: searchParams.get('error') });
+            notify('auth.message.bad_request', { type: 'error', error: searchParams.get('error') });
           }
         } else if (searchParams.has('token')) {
           const token = searchParams.get('token');
@@ -79,18 +79,18 @@ const SsoLoginPage = ({ buttons, userResource, propertiesExist, text }) => {
           }
 
           if (!authProvider.checkUser(userData)) {
-            notify('auth.message.user_not_allowed_to_login', 'error');
+            notify('auth.message.user_not_allowed_to_login', {type: 'error'});
             navigate.replace('/login');
           } else {
             localStorage.setItem('token', token);
             if (searchParams.has('redirect')) {
-              notify('auth.message.user_connected', 'info');
+              notify('auth.message.user_connected', {type: 'info'});
               navigate(searchParams.get('redirect'));
             } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
-              notify('auth.message.new_user_created', 'info');
+              notify('auth.message.new_user_created', {type: 'info'});
               navigate('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
             } else {
-              notify('auth.message.user_connected', 'info');
+              notify('auth.message.user_connected', {type: 'info'});
               navigate('/');
             }
           }
@@ -99,7 +99,7 @@ const SsoLoginPage = ({ buttons, userResource, propertiesExist, text }) => {
 
       if (searchParams.has('logout')) {
         localStorage.removeItem('token');
-        notify('auth.message.user_disconnected', 'info');
+        notify('auth.message.user_disconnected', {type: 'info'});
         navigate('/');
       }
     })();

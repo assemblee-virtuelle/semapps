@@ -61,7 +61,7 @@ const LexiconAutocompleteInput = ({
       throttle((keyword, callback) => {
         fetchLexicon({ keyword, locale })
           .then(data => callback(data))
-          .catch(e => notify(e.message, 'error'));
+          .catch(e => notify(e.message, {type: 'error'}));
       }, 200),
     [locale, fetchLexicon, notify]
   );

@@ -10,7 +10,7 @@ const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
 
   useEffect(() => {
     if (!isLoading && identity && permissions && !permissions.some(p => rights[mode].includes(p['acl:mode']))) {
-      notify(forbiddenErrors[mode], 'error');
+      notify(forbiddenErrors[mode], {type: 'error'});
       redirect(redirectUrl);
     }
   }, [permissions, identity, redirect, notify, isLoading]);

@@ -89,7 +89,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
       });
 
       if (document.body.innerHTML === 'undefined') {
-        notify('Votre commentaire est vide', 'error');
+        notify('Votre commentaire est vide', {type: 'error'});
       } else {
         const tempId = Date.now();
 
@@ -106,10 +106,10 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           reset();
           setExpanded(false);
           await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
-          notify('Commentaire posté avec succès', 'success');
+          notify('Commentaire posté avec succès', {type: 'success'});
         } catch (e) {
           removeItem(tempId);
-          notify(e.message, 'error');
+          notify(e.message, {type: 'error'});
         }
       }
     },

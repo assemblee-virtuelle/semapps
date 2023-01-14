@@ -76,7 +76,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
 
       await appendLink(data.id);
 
-      notify(`La resource "${values.title}" a été créée`, 'success');
+      notify(`La resource "${values.title}" a été créée`, {type: 'success'});
     },
     [dataProvider, dataModel, appendLink, reference, notify]
   );
