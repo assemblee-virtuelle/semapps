@@ -32,12 +32,12 @@ const MarkdownInput = props => {
   );
   const [tab, setTab] = useState('write');
   const {
-    input: { value, onChange },
-    meta: { modified, invalid, error, isTouched }
+    field: { value, onChange },
+    fieldState: { isDirty, invalid, error, isTouched }
   } = useInput(props);
 
   return (
-    <FormControl fullWidth className={`ra-input-mde ${modified && invalid ? classes.validationError : ''}`}>
+    <FormControl fullWidth className={`ra-input-mde ${isDirty && invalid ? classes.validationError : ''}`}>
       <Labeled {...props} isRequired={isRequired}>
         <ReactMde
           value={value}
@@ -48,8 +48,8 @@ const MarkdownInput = props => {
           {...props}
         />
       </Labeled>
-      <FormHelperText error={modified && invalid} margin="dense" variant="outlined">
-        <InputHelperText error={modified && invalid && error} helperText={props.helperText} touched={error || isTouched} />
+      <FormHelperText error={isDirty && invalid} margin="dense" variant="outlined">
+        <InputHelperText error={isDirty && invalid && error} helperText={props.helperText} touched={error || isTouched} />
       </FormHelperText>
     </FormControl>
   );
