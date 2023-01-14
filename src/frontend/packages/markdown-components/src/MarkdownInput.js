@@ -33,7 +33,7 @@ const MarkdownInput = props => {
   const [tab, setTab] = useState('write');
   const {
     input: { value, onChange },
-    meta: { modified, invalid, error, touched }
+    meta: { modified, invalid, error, isTouched }
   } = useInput(props);
 
   return (
@@ -49,7 +49,7 @@ const MarkdownInput = props => {
         />
       </Labeled>
       <FormHelperText error={modified && invalid} margin="dense" variant="outlined">
-        <InputHelperText error={modified && invalid && error} helperText={props.helperText} touched={error || touched} />
+        <InputHelperText error={modified && invalid && error} helperText={props.helperText} touched={error || isTouched} />
       </FormHelperText>
     </FormControl>
   );

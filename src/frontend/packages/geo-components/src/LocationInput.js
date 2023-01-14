@@ -55,7 +55,7 @@ const LocationInput = ({
   const {
     input: { value, onChange, onBlur, onFocus },
     isRequired,
-    meta: { error, submitError, touched }
+    meta: { error, submitError, isTouched }
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -144,8 +144,8 @@ const LocationInput = ({
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(touched && (error || submitError))}
-            helperText={<InputHelperText touched={touched} error={error || submitError} helperText={helperText} />}
+            error={!!(isTouched && (error || submitError))}
+            helperText={<InputHelperText touched={isTouched} error={error || submitError} helperText={helperText} />}
             {...rest}
           />
         );

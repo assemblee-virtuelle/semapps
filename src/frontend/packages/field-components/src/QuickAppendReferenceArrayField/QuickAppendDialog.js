@@ -26,8 +26,8 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Input = ({ meta: { touched, error }, input: inputProps, ...props }) => (
-  <TextField error={!!(touched && error)} helperText={touched && error} {...inputProps} {...props} fullWidth />
+const Input = ({ meta: { isTouched, error }, input: inputProps, ...props }) => (
+  <TextField error={!!(isTouched && error)} helperText={isTouched && error} {...inputProps} {...props} fullWidth />
 );
 
 const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, reference }) => {

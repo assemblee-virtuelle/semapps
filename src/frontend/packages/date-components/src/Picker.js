@@ -63,7 +63,7 @@ const Picker = ({
     id,
     input,
     isRequired,
-    meta: { error, touched }
+    meta: { error, isTouched }
   } = useInput({
     format,
     onBlur,
@@ -108,8 +108,8 @@ const Picker = ({
         variant={pickerVariant}
         inputVariant={variant}
         margin={margin}
-        error={!!(touched && error)}
-        helperText={<InputHelperText touched={touched} error={error} helperText={helperText} />}
+        error={!!(isTouched && error)}
+        helperText={<InputHelperText touched={isTouched} error={error} helperText={helperText} />}
         clearLabel={translate('ra.action.clear_input_value')}
         cancelLabel={translate('ra.action.cancel')}
         {...options}
@@ -132,7 +132,7 @@ const Picker = ({
 
 Picker.defaultProps = {
   isRequired: false,
-  meta: { touched: false, error: false },
+  meta: { isTouched: false, error: false },
   options: {},
   providerOptions: {
     utils: DateFnsUtils,

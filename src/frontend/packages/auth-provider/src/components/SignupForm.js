@@ -22,8 +22,8 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   }
 })});
 
-const Input = ({ meta: { touched, error }, input: inputProps, ...props }) => (
-  <TextField error={!!(touched && error)} helperText={touched && error} {...inputProps} {...props} fullWidth />
+const Input = ({ meta: { isTouched, error }, input: inputProps, ...props }) => (
+  <TextField error={!!(isTouched && error)} helperText={isTouched && error} {...inputProps} {...props} fullWidth />
 );
 
 const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
