@@ -7,7 +7,7 @@ import { useTheme } from 'react-admin';
 const ListActionsWithViews = ({
   bulkActions,
   basePath,
-  currentSort,
+  sort,
   displayedFilters,
   exporter,
   filters,
@@ -38,7 +38,7 @@ const ListActionsWithViews = ({
         <ExportButton
           disabled={total === 0}
           resource={resource}
-          sort={currentSort}
+          sort={sort}
           filter={filterValues}
           exporter={exporter}
         />

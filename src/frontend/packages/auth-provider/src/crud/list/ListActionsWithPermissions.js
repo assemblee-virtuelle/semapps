@@ -10,7 +10,7 @@ import { useTheme } from 'react-admin';
 const ListActionsWithPermissions = ({
   bulkActions,
   basePath,
-  currentSort,
+  sort,
   displayedFilters,
   exporter,
   filters,
@@ -47,7 +47,7 @@ const ListActionsWithPermissions = ({
         <ExportButton
           disabled={total === 0}
           resource={resource}
-          sort={currentSort}
+          sort={sort}
           filter={filterValues}
           exporter={exporter}
         />
