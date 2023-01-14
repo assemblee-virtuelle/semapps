@@ -41,7 +41,7 @@ const MapList = ({
   ...otherProps
 }) => {
   const { ids, data, basePath, isLoading } = useListContext();
-  const { theme } = useTheme();
+  const [theme] = useTheme();
   const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();

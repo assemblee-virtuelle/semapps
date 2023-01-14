@@ -22,7 +22,7 @@ const ListActionsWithPermissions = ({
   total,
   ...rest
 }) => {
-  const { theme } = useTheme();
+  const [theme] = useTheme();
   const xs = useMediaQuery(() => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   const createContainerUri = useCreateContainer(resource);

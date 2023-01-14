@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
 
 const CreateOrImportForm = ({ stripProperties, ...rest }) => {
   const [tab, setTab] = useState(0);
-  const { theme } = useTheme();
+  const [theme] = useTheme();
   const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
   const classes = useStyles();
   return (
