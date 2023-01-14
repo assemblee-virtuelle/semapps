@@ -59,14 +59,14 @@ const ChipList = props => {
     externalLinks = false,
     ...rest
   } = props;
-  const { ids, data, loaded, basePath } = useListContext(props);
+  const { ids, data, isLoading, basePath } = useListContext(props);
   const resource = useResourceContext(props);
   const getExternalLink = useGetExternalLink(externalLinks);
 
   const classes = useStyles(props);
   const Component = component;
 
-  if (loaded === false) {
+  if (isLoading === true) {
     return <LinearProgress />;
   }
 
