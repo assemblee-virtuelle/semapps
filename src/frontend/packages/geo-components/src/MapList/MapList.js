@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useListContext } from 'react-admin';
-import { useLocation } from 'react-router';
+import { useLocation } from 'react-router-dom';
 import { useMediaQuery, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -40,29 +40,31 @@ const MapList = ({
   connectMarkers,
   ...otherProps
 }) => {
-  const { ids, data, basePath, isLoading } = useListContext();
+  const { data, isLoading } = useListContext();
   const [theme] = useTheme();
   const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 
   // Get the zoom and center from query string, if available
-  const query = new URLSearchParams(useLocation().search);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
   center = query.has('lat') && query.has('lng') ? [query.get('lat'), query.get('lng')] : center;
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
 
   let previousRecord;
 
-  const records = ids
-    .filter(id => data[id])
-    .map(id => ({
-      ...data[id],
-      latitude: latitude && latitude(data[id]),
-      longitude: longitude && longitude(data[id]),
-      label: label && label(data[id]),
-      description: description && description(data[id])
-    }))
-    .filter(record => record.latitude && record.longitude);
+  const records = isLoading
+    ? []
+    : data
+      .map(record => ({
+        ...record,
+        latitude: latitude && latitude(record),
+        longitude: longitude && longitude(record),
+        label: label && label(record),
+        description: description && description(record)
+      }))
+      .filter(record => record.latitude && record.longitude);
 
   const bounds =
     boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
@@ -83,7 +85,7 @@ const MapList = ({
               : undefined
           }
         >
-          {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
+          {!xs && <Popup>{React.createElement(popupContent, { record /*, basePath*/ })}</Popup>}
         </Marker>
         {connectMarkers && previousRecord && (
           <Polyline
@@ -123,7 +125,7 @@ const MapList = ({
       <QueryStringUpdater />
       <MobileDrawer
         record={drawerRecord}
-        basePath={basePath}
+        /*basePath={basePath}*/
         popupContent={popupContent}
         onClose={() => setDrawerRecord(null)}
       />
