@@ -54,7 +54,7 @@ const defaultdomainMapping = {
     contrastText: 'white'
   }
 };
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
+const useStyles = makeStyles(() => ({
   link: {
     textDecoration: 'unset',
     '& :hover': {
@@ -64,12 +64,13 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   chip: {
     paddingLeft: 5,
     paddingRight: 5,
-    marginRight: 5
+    marginRight: 5,
+    marginBottom: 5
   },
   label: {
     marginTop: -1
   }
-})});
+}));
 
 const MultiUrlField = ({ source, domainMapping, ...rest }) => {
   const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
