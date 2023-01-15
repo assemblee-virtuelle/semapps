@@ -1,11 +1,11 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
 import { useMapEvents } from 'react-leaflet';
+import { useLocation } from 'react-router-dom';
 
 // Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
 const QueryStringUpdater = () => {
-  const navigate = useNavigate();
-  const query = new URLSearchParams(navigate.location.search);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
 
   useMapEvents({
     moveend: test => {
