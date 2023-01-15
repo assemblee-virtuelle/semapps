@@ -53,9 +53,9 @@ const LocationInput = ({
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    input: { value, onChange, onBlur, onFocus },
+    field: { value, onChange, onBlur /*, onFocus*/ },
     isRequired,
-    meta: { error, submitError, isTouched }
+    fieldState: { error, /*submitError,*/ isTouched }
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -144,8 +144,8 @@ const LocationInput = ({
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(isTouched && (error || submitError))}
-            helperText={<InputHelperText touched={isTouched} error={error || submitError} helperText={helperText} />}
+            error={!!(isTouched && (error /*|| submitError*/))}
+            helperText={<InputHelperText touched={isTouched} error={error /*|| submitError*/} helperText={helperText} />}
             {...rest}
           />
         );
