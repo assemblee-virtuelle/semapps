@@ -3,28 +3,30 @@ import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
 import { useInput, InputHelperText, Labeled, required, useTheme } from 'react-admin';
 import { FormControl, FormHelperText } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
-  validationError: {
-    '& label': {
-      color: theme.palette.error.main
-    },
-    '& .mde-text': {
-      outline: '-webkit-focus-ring-color auto 1px',
-      outlineOffset: 0,
-      outlineColor: theme.palette.error.main,
-      outlineStyle: 'auto',
-      outlineWidth: 1
-    },
-    '& p.MuiFormHelperText-root': {
-      color: theme.palette.error.main
+const StyledFormControl = styled(FormControl)(() => {
+  const [theme] = useTheme();  
+  return ({
+    color: 'blue',
+    '&.validationError': {
+      '& p': {
+        color: theme.palette.error.main
+      },
+      '& .mde-text': {
+        outline: '-webkit-focus-ring-color auto 1px',
+        outlineOffset: 0,
+        outlineColor: theme.palette.error.main,
+        outlineStyle: 'auto',
+        outlineWidth: 1
+      },
+      '& p.MuiFormHelperText-root': {
+        color: theme.palette.error.main
+      }
     }
-  }
 })});
 
 const MarkdownInput = props => {
-  const classes = useStyles();
   const { validate } = props;
   const isRequired = useMemo(
     () => !!validate && !![].concat(validate).find(v => v.toString() === required().toString()),
@@ -37,7 +39,7 @@ const MarkdownInput = props => {
   } = useInput(props);
 
   return (
-    <FormControl fullWidth className={`ra-input-mde ${isDirty && invalid ? classes.validationError : ''}`}>
+    <StyledFormControl fullWidth className={`ra-input-mde ${ invalid ? 'validationError' : ''}`}>
       <Labeled {...props} isRequired={isRequired}>
         <ReactMde
           value={value}
@@ -51,7 +53,7 @@ const MarkdownInput = props => {
       <FormHelperText error={isDirty && invalid} margin="dense" variant="outlined">
         <InputHelperText error={isDirty && invalid && error} helperText={props.helperText} touched={error || isTouched} />
       </FormHelperText>
-    </FormControl>
+    </StyledFormControl>
   );
 };
 
