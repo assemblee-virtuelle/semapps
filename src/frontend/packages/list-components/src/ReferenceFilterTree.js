@@ -96,16 +96,15 @@ const CustomContent = React.forwardRef(function CustomContent(props, ref) {
   );
 });
 
-
 function CustomTreeItem(props) {
   return <TreeItem ContentComponent={CustomContent} {...props} />;
 }
 
-const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, icon }) => {
+const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, icon, predicate }) => {
   const { data } = useGetList(reference, { page: 1, perPage: Infinity }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
+
   let routeTree = [], listTheme = [];
-  console.log();
   for (const theme in data) {
     if (data[theme]['pair:broader'] === undefined ) {
       routeTree.push(data[theme]);
@@ -124,7 +123,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
           },
           predicate: {
             termType: 'NamedNode',
-            value: "http://virtual-assembly.org/ontologies/pair#hasTopic",
+            value: predicate,
           },
           object: {
             termType: 'NamedNode',
@@ -134,10 +133,8 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
       }),
     }
 
-    const query = JSON.stringify(sparqlWhere);
-    const encodedQuery = encodeURIComponent(query);
+    const encodedQuery = encodeURIComponent(JSON.stringify(sparqlWhere));
     setFilters({...filterValues, "sparqlWhere": encodedQuery })
-
   }
 
   return (
