@@ -21,14 +21,14 @@ import Typography from '@mui/material/Typography';
  * );
  */
 
-function GenerateTreeItem(source, label, listTheme, routeTree, parentId) {
+function GenerateTreeItem(source, label, listRoot, routeTree, parentId) {
   // If !parentId it's a trunkItem
   const isParentLevel = !parentId;
-  const listToUse = isParentLevel ? routeTree : listTheme.filter(({ [source]: themeSource }) => themeSource === parentId);
+  const listToUse = isParentLevel ? routeTree : listRoot.filter(({ [source]: itemSource }) => itemSource === parentId);
   return (
     listToUse.map((route) =>
       <CustomTreeItem nodeId={route["id"]} label={route[label]} key={route["id"]}>
-        {GenerateTreeItem(source, label, listTheme, [], route["id"])}
+        {GenerateTreeItem(source, label, listRoot, [], route["id"])}
       </CustomTreeItem>
     )
   )
@@ -104,13 +104,14 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
   const { data } = useGetList(reference, { page: 1, perPage: Infinity }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
 
-  let routeTree = [], listTheme = [];
-  for (const theme in data) {
-    if (data[theme]['pair:broader'] === undefined ) {
-      routeTree.push(data[theme]);
+  let routeTree = [], listRoot = [];
+  for (const item in data) {
+    if (data[item][source] === undefined ) {
+      routeTree.push(data[item]);
     }
-    listTheme = listTheme.concat(data[theme]);
+    listRoot = listRoot.concat(data[item]);
   }
+  // listRoot = data.filter(i=>i[predicate]===undefined)
 
   const handleSelect = (event, nodes) => {
     const sparqlWhere = {
@@ -148,7 +149,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {GenerateTreeItem(source, label, listTheme, routeTree)}
+        {GenerateTreeItem(source, label, listRoot, routeTree)}
       </TreeView>
     </div>
   )
