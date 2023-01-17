@@ -15,20 +15,26 @@ import Typography from '@mui/material/Typography';
  *   <Card>
  *     <CardContent>
  *       <FilterLiveSearch source="pair:label" />
- *       <ReferenceFilter reference="Theme" source="pair:broader" label="pair:label"  />
+ *       <ReferenceFilterTree
+ *         reference="Theme"
+ *         source="pair:broader"
+ *         label="pair:label"
+ *         icon={icon}
+ *         predicate={"http://virtual-assembly.org/ontologies/pair#hasTopic"}
+ *       />
  *     </CardContent>
  *   </Card>
  * );
  */
 
-function GenerateTreeItem(source, label, listRoot, routeTree, parentId) {
+function GenerateTreeItem(source, label, allItems, routeTree, parentId) {
   // If !parentId it's a trunkItem
   const isParentLevel = !parentId;
-  const listToUse = isParentLevel ? routeTree : listRoot.filter(({ [source]: itemSource }) => itemSource === parentId);
+  const listToUse = isParentLevel ? routeTree : allItems.filter(({ [source]: itemSource }) => itemSource === parentId);
   return (
     listToUse.map((route) =>
       <CustomTreeItem nodeId={route["id"]} label={route[label]} key={route["id"]}>
-        {GenerateTreeItem(source, label, listRoot, [], route["id"])}
+        {GenerateTreeItem(source, label, allItems, [], route["id"])}
       </CustomTreeItem>
     )
   )
@@ -104,14 +110,13 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
   const { data } = useGetList(reference, { page: 1, perPage: Infinity }, sort, filter);
   const { filterValues, setFilters } = useListFilterContext();
 
-  let routeTree = [], listRoot = [];
+  let routeTree = [], allItems = [];
   for (const item in data) {
     if (data[item][source] === undefined ) {
       routeTree.push(data[item]);
     }
-    listRoot = listRoot.concat(data[item]);
+    allItems = allItems.concat(data[item]);
   }
-  // listRoot = data.filter(i=>i[predicate]===undefined)
 
   const handleSelect = (event, nodes) => {
     const sparqlWhere = {
@@ -149,7 +154,7 @@ const ReferenceFilterTree = ({ reference, source, label, limit, sort, filter, ic
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
       >
-        {GenerateTreeItem(source, label, listRoot, routeTree)}
+        {GenerateTreeItem(source, label, allItems, routeTree)}
       </TreeView>
     </div>
   )
