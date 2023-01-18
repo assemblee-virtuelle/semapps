@@ -1,25 +1,19 @@
 import React, { useCallback } from 'react';
-import { FormInput, TextInput, RadioButtonGroupInput } from 'react-admin';
+import { /*FormInput,*/ TextInput, RadioButtonGroupInput, useTheme } from 'react-admin';
 import { Form } from 'react-final-form';
 import createDecorator from 'final-form-calculate';
 import { Box, Toolbar, Button } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 import { ReferenceInput, MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
 import useSync from '../hooks/useSync';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(theme => ({
-  toolbar: {
-    backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-    marginTop: theme.spacing(2)
-  },
-  field: {
-    marginBottom: 23,
-    minWidth: theme.spacing(20)
-  }
-}));
+const StyledToolbar = styled(Toolbar)(() => { const [theme] = useTheme(); return ({
+  backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+  marginTop: theme.spacing(2)
+})});
 
 const decorator = createDecorator(
   {
@@ -43,7 +37,6 @@ const decorator = createDecorator(
 );
 
 const ImportForm = ({ basePath, record, resource, stripProperties }) => {
-  const classes = useStyles();
   const containers = useContainers(resource, '@remote');
   const dataModel = useDataModel(resource);
   const fork = useFork(resource);
@@ -70,6 +63,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
       render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
+          {/*
             {containers && Object.keys(containers).length > 0 && (
               <FormInput
                 input={
@@ -120,8 +114,9 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
               variant="filled"
               margin="dense"
             />
+          */}
           </Box>
-          <Toolbar className={classes.toolbar}>
+          <StyledToolbar>
             <Button
               type="submit"
               startIcon={<SaveAltIcon />}
@@ -131,7 +126,7 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
             >
               Importer
             </Button>
-          </Toolbar>
+          </StyledToolbar>
         </form>
       )}
     />
