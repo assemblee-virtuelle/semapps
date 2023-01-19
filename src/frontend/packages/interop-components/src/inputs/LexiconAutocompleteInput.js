@@ -1,19 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { FieldTitle, useInput, useTranslate, useLocale, useNotify, useTheme } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import LanguageIcon from '@mui/icons-material/Language';
 import AddIcon from '@mui/icons-material/Add';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
-  icon: {
-    color: theme.palette.text.secondary,
-    marginRight: theme.spacing(2)
-  }
+const StyledLanguageIcon = styled(LanguageIcon)(() => { const [theme] = useTheme(); return ({
+  color: theme.palette.text.secondary,
+  marginRight: theme.spacing(2)
 })});
 
 const selectOptionText = (option, optionText) => {
@@ -41,7 +39,6 @@ const LexiconAutocompleteInput = ({
   helperText,
   ...rest
 }) => {
-  const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
   const notify = useNotify();
@@ -155,7 +152,7 @@ const LexiconAutocompleteInput = ({
 
         return (
           <Grid container alignItems="center">
-            <Grid item>{React.createElement(option.icon || LanguageIcon, { className: classes.icon })}</Grid>
+            <Grid item>{React.createElement(option.icon || StyledLanguageIcon)}</Grid>
             <Grid item xs>
               {typeof parts === 'string'
                 ? parts
