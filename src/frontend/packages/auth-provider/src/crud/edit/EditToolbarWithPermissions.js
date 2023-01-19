@@ -16,7 +16,7 @@ const EditToolbarWithPermissions = props => {
   return (
     <Toolbar {...props} className={classes.toolbar}>
       <SaveButton />
-      <DeleteButtonWithPermissions mutationMode="undoable" />}
+      <DeleteButtonWithPermissions mutationMode="undoable" />
     </Toolbar>
   );
 };
