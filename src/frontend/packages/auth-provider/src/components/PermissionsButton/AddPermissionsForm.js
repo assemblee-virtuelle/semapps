@@ -23,7 +23,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
 
-  const { ids, data } = useGetList(
+  const { data } = useGetList(
     'Person',
     { page: 1, perPage: 100 },
     { field: 'pair:label', order: 'ASC' },
@@ -32,8 +32,8 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
   );
 
   useEffect(() => {
-    setOptions(ids.length > 0 ? Object.values(data) : []);
-  }, [ids, data]);
+    setOptions(data?.length > 0 ? Object.values(data) : []);
+  }, [data]);
 
   return (
     <Autocomplete
