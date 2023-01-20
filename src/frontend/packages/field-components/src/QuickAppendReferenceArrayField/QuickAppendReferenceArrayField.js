@@ -42,8 +42,4 @@ const QuickAppendReferenceArrayField = ({ record, reference, source, resource, .
   );
 };
 
-QuickAppendReferenceArrayField.defaultProps = {
-  addLabel: true
-};
-
 export default QuickAppendReferenceArrayField;

@@ -10,8 +10,4 @@ const ReferenceField = ({ record, source, ...otherProps }) => {
   return <RaReferenceField record={record} source={source} {...otherProps} />;
 };
 
-ReferenceField.defaultProps = {
-  addLabel: true
-};
-
 export default ReferenceField;

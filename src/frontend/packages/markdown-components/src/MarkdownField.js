@@ -29,8 +29,7 @@ const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest
   ) : null;
 
 MarkdownField.defaultProps = {
-  LabelComponent: 'h2',
-  addLabel: true
+  LabelComponent: 'h2'
 };
 
 export default MarkdownField;

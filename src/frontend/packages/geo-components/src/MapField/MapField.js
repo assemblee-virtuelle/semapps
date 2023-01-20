@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { Box, Typography } from '@mui/material';
 import ChangeView from './ChangeView';
 
-const MapField = ({ record, latitude, longitude, address, height, addLabel, typographyProps, ...rest }) => {
+const MapField = ({ record, latitude, longitude, address, height, typographyProps, ...rest }) => {
   // Do not display the component if it has no latitude or longitude
   const position = [latitude(record), longitude(record)];
   if (!position[0] || !position[1]) return null;
@@ -29,8 +29,7 @@ const MapField = ({ record, latitude, longitude, address, height, addLabel, typo
 
 MapField.defaultProps = {
   height: 400,
-  zoom: 11,
-  addLabel: true
+  zoom: 11
 };
 
 export default MapField;

@@ -102,8 +102,4 @@ const MultiUrlField = ({ source, domainMapping, ...rest }) => {
   });
 };
 
-MultiUrlField.defaultProps = {
-  addLabel: true
-};
-
 export default MultiUrlField;

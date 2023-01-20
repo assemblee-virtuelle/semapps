@@ -25,7 +25,6 @@ const CommentsField = ({ source, context, helperText, placeholder, userResource,
 };
 
 CommentsField.defaultProps = {
-  addLabel: true,
   label: 'Commentaires',
   placeholder: 'Commencez à taper votre commentaire...',
   source: 'id', // Ensure the field is always displayed

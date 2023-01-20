@@ -11,8 +11,4 @@ const ReferenceArrayField = ({ record, source, ...otherProps }) => {
   return <RaReferenceArrayField record={record} source={source} {...otherProps} />;
 };
 
-ReferenceArrayField.defaultProps = {
-  addLabel: true
-};
-
 export default ReferenceArrayField;
