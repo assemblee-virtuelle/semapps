@@ -1,18 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale, useTheme } from 'react-admin';
+import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale, useRecordContext, useResourceContext, useTheme } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
-  icon: {
-    color: theme.palette.text.secondary,
-    marginRight: theme.spacing(2)
-  }
+const StyledLocationOnIcon = styled(LocationOnIcon)(() => { const [theme] = useTheme(); return ({
+  color: theme.palette.text.secondary,
+  marginRight: theme.spacing(2)
 })});
 
 const selectOptionText = (option, optionText) => {
@@ -27,11 +25,8 @@ const selectOptionText = (option, optionText) => {
 
 const LocationInput = ({
   mapboxConfig,
-  record,
-  resource,
   source,
   label,
-  basePath,
   parse,
   optionText,
   helperText,
@@ -44,7 +39,8 @@ const LocationInput = ({
     throw new Error('@semapps/geo-components : No access token in mapbox configuration');
   }
 
-  const classes = useStyles();
+  const record = useRecordContext();
+  const resource = useResourceContext();
   const locale = useLocale();
   const translate = useTranslate();
 
@@ -130,13 +126,13 @@ const LocationInput = ({
                 if (params.inputProps.onBlur) {
                   params.inputProps.onBlur(e);
                 }
-              },
+              }/*,
               onFocus: e => {
                 onFocus(e);
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
-              }
+              }*/
             }}
             label={
               label !== '' &&
@@ -150,30 +146,33 @@ const LocationInput = ({
           />
         );
       }}
-      renderOption={option => {
+      renderOption={(props, option, state) => {
         const matches = highlightMatch(option.text, keyword);
         const parts = highlightParse(option.text, matches);
 
         return (
-          <Grid container alignItems="center">
-            <Grid item>
-              <LocationOnIcon className={classes.icon} />
+          <li {...props}>
+            <Grid container alignItems="center">
+              <Grid item>
+                <StyledLocationOnIcon />
+              </Grid>
+              <Grid item xs>
+                {typeof parts === 'string'
+                  ? parts
+                  : parts.map((part, index) => (
+                      <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                        {part.text}
+                      </span>
+                    ))}
+                <Typography variant="body2" color="textSecondary">
+                  {option.place_name}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs>
-              {typeof parts === 'string'
-                ? parts
-                : parts.map((part, index) => (
-                    <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
-                      {part.text}
-                    </span>
-                  ))}
-              <Typography variant="body2" color="textSecondary">
-                {option.place_name}
-              </Typography>
-            </Grid>
-          </Grid>
+          </li>
         );
       }}
+      {...rest}
     />
   );
 };
