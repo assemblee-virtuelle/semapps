@@ -2,7 +2,7 @@ import React from 'react';
 import { ShowButton, EditButton, useResourceDefinition } from 'react-admin';
 import { Typography } from '@mui/material';
 
-const DefaultPopupContent = ({ record, basePath }) => {
+const DefaultPopupContent = ({ record }) => {
   const resourceDefinition = useResourceDefinition({});
   return (
     <>
@@ -12,8 +12,8 @@ const DefaultPopupContent = ({ record, basePath }) => {
           {record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}
         </Typography>
       )}
-      {resourceDefinition.hasShow && <ShowButton basePath={basePath} record={record} />}
-      {resourceDefinition.hasEdit && <EditButton basePath={basePath} record={record} />}
+        {resourceDefinition.hasShow && <ShowButton record={record} />}
+        {resourceDefinition.hasEdit && <EditButton record={record} />}
     </>
   );
 };
