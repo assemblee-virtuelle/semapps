@@ -1,10 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './team/team.module.scss';
-import { AnimationOnScroll } from 'react-animation-on-scroll';
 import "animate.css/animate.min.css";
 import Member from './team/Member';
 import Subtitle from './team/Subtitle';
@@ -38,10 +36,8 @@ function Home() {
                   image='/img/srosset.jpg' 
                   description='Web maker since 1995. Want to build a web that has a real & positive impact on society.'
                   roles={[
+                    'Code architect',
                     'Facilitation',
-                    'Communication',
-                    'DevX',
-                    'Code quality',
                     'Virtual Assembly coordination'
                   ]}
                   linkedIn='https://www.linkedin.com/in/sebastien-rosset-reconnexion/'
@@ -54,10 +50,7 @@ function Home() {
                   label='Simon Louvet' 
                   image='/img/simon-louvet.jpg' 
                   description='Technical Director at Data Players'
-                  roles={[
-                    'Development',
-                    'Economic sustainability'
-                  ]}
+                  roles={[]}
                   linkedIn='https://www.linkedin.com/in/simon-louvet-a9842018/'
                   twitter=''
                   github='https://github.com/simonLouvet'
@@ -76,25 +69,13 @@ function Home() {
               </li>
               <li className={styles.memberCard}>
                 <Member 
-                  label='Pierre Bouvier-Muller' 
-                  image='/img/pierre-bouvier-muller.png' 
-                  description='Mediation & Digital Responsibility'
-                  roles={[
-                    'Mediation'
-                  ]}
-                  linkedIn='https://www.linkedin.com/in/bouviermullerp/'
-                  twitter=''
-                  github='https://github.com/bouviermullerp'
-                />
-              </li>
-              <li className={styles.memberCard}>
-                <Member 
                   label='Guillaume Rouyer' 
                   image='/img/guillaume-rouyer.jpg' 
-                  description='Co-founder of <a href="https://virtual-assembly.org/">Virtual Assembly</a> / <a href="https://lescheminsdelatransition.org/">Transition Pathways]</a>, PhD student at Ademe / UTT / Data Players'
+                  description='Co-founder of <a href="https://virtual-assembly.org/">Virtual Assembly</a>, PhD student at ADEME / UTT / Data Players'
                   roles={[
-                    'Product manager',
-                    'Economic sustainability'
+                    'Products',
+                    'Economic sustainability',
+                    'Communication',
                   ]}
                   linkedIn='https://www.linkedin.com/in/guillaume-rouyer-paris/'
                   twitter=''
@@ -105,11 +86,10 @@ function Home() {
                 <Member 
                   label='Yannick Duthé' 
                   image='/img/yannick-duthe.png' 
-                  description='Dev JS, React, D3, <a href="https://flod.io">https://flod.io</a> project owner (based on SemApps)'
+                  description='JS/React/D3 developer, <a href="https://flod.io">Flod.io</a> project owner'
                   roles={[
-                    'Onboarding',
-                    'Information',
-                    'gardening'
+                    'Information gardening',
+                    'Onboarding'
                   ]}
                   linkedIn='https://www.linkedin.com/in/yannick-duthe-569a741b/'
                   twitter=''
@@ -121,9 +101,7 @@ function Home() {
                   label='Bastien Siguier' 
                   image='/img/bastien-siguier.jfif' 
                   description='Dev Ops, Designer / Software Developer and business relations'
-                  roles={[
-                    'Instances hosting'
-                  ]}
+                  roles={[]}
                   linkedIn='https://www.linkedin.com/in/bastien-siguier/'
                   twitter=''
                   github='https://github.com/BastienSig'
@@ -134,26 +112,45 @@ function Home() {
                   label='Vincent Farcy' 
                   image='/img/vincent-farcy.png' 
                   description='Freelance developer on meaningful projects'
-                  roles={[
-                    'Web development'
-                  ]}
+                  roles={[]}
                   linkedIn='https://www.linkedin.com/in/vincentfarcy/'
                   twitter=''
                   github='https://github.com/VincentFarcy'
                 />
               </li>
+              <li className={styles.memberCard}>
+                <Member
+                  label='Maxime Lecoq'
+                  image='/img/maxime_lecoq.jpeg'
+                  description='Freelance free software engineer'
+                  roles={[
+                    'Technical partnership'
+                  ]}
+                  linkedIn=''
+                  twitter=''
+                  github='https://github.com/lecoqlibre'
+                />
+              </li>
             </ul>
-            <Subtitle label='Technical advisors' />
+            <Subtitle label='Advisors' />
             <ul>
+              <li className={styles.memberCard}>
+                <Member
+                  label='Pierre Bouvier-Muller'
+                  image='/img/pierre-bouvier-muller.png'
+                  description='Mediation & Digital Responsibility'
+                  roles={[]}
+                  linkedIn='https://www.linkedin.com/in/bouviermullerp/'
+                  twitter=''
+                  github='https://github.com/bouviermullerp'
+                />
+              </li>
               <li className={styles.memberCard}>
                 <Member 
                   label='Thomas Francart' 
                   image='/img/Thomas-Francart.jpg' 
                   description='Knowledge Graph and Semantic Web senior consultant'
-                  roles={[
-                    'Development',
-                    'Economic sustainability'
-                  ]}
+                  roles={[]}
                   linkedIn='https://www.linkedin.com/in/thomasfrancart/'
                   twitter=''
                   github='https://github.com/tfrancart'
