@@ -1,5 +1,6 @@
-const MailService = require('moleculer-mail');
 const path = require('path');
+const urlJoin = require('url-join');
+const MailService = require('moleculer-mail');
 
 module.exports = {
   name: 'auth.mail',
@@ -24,8 +25,7 @@ module.exports = {
           locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
           data: {
             account,
-            token,
-            frontUrl: account.preferredFrontUrl || this.settings.defaults.frontUrl
+            resetUrl: urlJoin(this.settings.defaults.frontUrl, 'login') + '?new_password=true&token=' + token
           }
         },
         {
