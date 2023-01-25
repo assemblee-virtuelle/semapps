@@ -3,13 +3,13 @@ import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 const capitalize = s => (s && s[0].toUpperCase() + s.slice(1)) || '';
 
-const fetchESCO = (apiUrl = 'https://ec.europa.eu/esco/api') => async ({ keyword, locale }) => {
+const fetchESCO = (apiUrl = 'https://ec.europa.eu/esco/api', type = 'skill') => async ({ keyword, locale }) => {
   const response = await fetch(
     urlJoin(
       apiUrl,
       `suggest2?text=${encodeURIComponent(
         keyword
-      )}&language=${locale}&type=skill&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`
+      )}&language=${locale}&type=${type}&isInScheme=&facet=&offset=&limit=&full=&selectedVersion=&viewObsolete=`
     )
   );
   if (response.ok) {
