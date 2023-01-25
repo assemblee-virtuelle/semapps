@@ -2,6 +2,8 @@ const urlJoin = require('url-join');
 const path = require('path');
 const MailService = require('moleculer-mail');
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 const SingleMailNotificationsService = {
   name: 'notifications.single-mail',
   mixins: [MailService],
@@ -9,6 +11,7 @@ const SingleMailNotificationsService = {
     defaultLocale: 'en',
     defaultFrontUrl: null,
     color: '#E2003B',
+    delay: 0,
     // See moleculer-mail doc https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
@@ -18,6 +21,10 @@ const SingleMailNotificationsService = {
   events: {
     async 'activitypub.inbox.received'(ctx) {
       const { activity, recipients } = ctx.params;
+
+      if (this.settings.delay) {
+        await delay(this.settings.delay);
+      }
 
       for (let recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
