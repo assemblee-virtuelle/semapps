@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [middleware-0.4.2] - 2023-01-30
+
+**@semapps/signature**
+- Move proxy service to signature package, split keypair service [ab62eebc3](https://github.com/assemblee-virtuelle/semapps/commit/ab62eebc3807f21218384b24e5b743be33471247) (*:warning: Breaking changes*)
+- Handle non-GET methods on proxy endpoint through multipart/form-data [81793af4](https://github.com/assemblee-virtuelle/semapps/commit/81793af42b96a2e42d868d8a4e33f7dc35ab8eec)
+
+**@semapps/notifications**
+- Add formatLink method to single-mail notifications [a5dda0e2](https://github.com/assemblee-virtuelle/semapps/commit/a5dda0e2f6a6121d1ec422a244aaa6d6e3d0e658)
+- Allow to add delay before processing notifications [42a82ebf](https://github.com/assemblee-virtuelle/semapps/commit/42a82ebf7c363ff448a815103517b317985f85b9)
+
+**@semapps/auth**
+- Local login: allow to redirect /auth to a given frontend URL (formUrl) [22e5f1cc](https://github.com/assemblee-virtuelle/semapps/commit/22e5f1ccc5d34f669ac5a869a2e438057120916f) 
+- Fix reset password mails if frontendUrl has a trailing slash [4b16b950](https://github.com/assemblee-virtuelle/semapps/commit/4b16b9502467c88c7ad3977e0174945666dab3f8)
+
+**@semapps/webacl**
+- Fix getAclUriFromResourceUri if ending slash is missing from baseUrl [923de06f](https://github.com/assemblee-virtuelle/semapps/commit/923de06f2b4045fa3e66903942b09586365f6b89)
+
 ## [frontend-0.4.2] - 2023-01-30
 
 **@semapps/semantic-data-provider**
