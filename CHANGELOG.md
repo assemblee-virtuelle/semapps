@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [frontend-0.4.2] - 2023-01-30
+
+**@semapps/semantic-data-provider**
+- Pod login & proxy authentication [#1091](https://github.com/assemblee-virtuelle/semapps/pull/1091) (*:warning: Breaking changes*)
+- Convert sparqlwhere parameter to object if it is a string [#1104](https://github.com/assemblee-virtuelle/semapps/pull/1104)
+
+**@semapps/auth-provider**
+- Don't throw error if permissions cannot be fetched [54500de0](https://github.com/assemblee-virtuelle/semapps/commit/54500de024b4e0e9ef0ec357282086a6bebefb65)
+
+**@semapps/interop-components**
+- Control lexiconImportForm to avoid creating empty items [#1090](https://github.com/assemblee-virtuelle/semapps/pull/1090)
+- fetchESCO: allow to choose a type of classification ](https://github.com/assemblee-virtuelle/semapps/commit/29784572924524579540eacf87741e3be952d370)
+
 ## [middleware-0.4.1] - 2023-01-13
 
 - Use named routes for moleculer-web [#1099](https://github.com/assemblee-virtuelle/semapps/pull/1099)
