@@ -1,3 +1,4 @@
 module.exports = {
-  SignatureService: require('./service')
+  SignatureService: require('./service'),
+  ProxyService: require('./services/proxy')
 };

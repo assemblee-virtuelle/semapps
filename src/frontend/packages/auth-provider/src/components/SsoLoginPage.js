@@ -91,7 +91,8 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
       }
 
       if (searchParams.has('logout')) {
-        localStorage.removeItem('token');
+        // Delete token and any other value in local storage
+        localStorage.clear();
         notify('auth.message.user_disconnected', 'info');
         history.push('/');
       }

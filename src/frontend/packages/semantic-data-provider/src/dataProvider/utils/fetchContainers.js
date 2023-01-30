@@ -7,7 +7,7 @@ export const isType = (type, resource) => {
 };
 
 const fetchContainers = async (containers, resourceId, params, config) => {
-  const { dataServers, httpClient, jsonContext } = config;
+  const { httpClient, jsonContext } = config;
 
   // Transform in an containerUri:serverKey object
   const containersServers = Object.keys(containers).reduce(
@@ -19,9 +19,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
   );
 
   const fetchPromises = Object.keys(containersServers).map(containerUri =>
-    httpClient(containerUri, {
-      noToken: !containersServers[containerUri] || dataServers[containersServers[containerUri]].authServer !== true
-    })
+    httpClient(containerUri)
       .then(({ json }) => {
         // If container's context is different, compact it to have an uniform result
         // TODO deep compare if the context is an object
