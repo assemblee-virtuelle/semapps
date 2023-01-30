@@ -108,9 +108,13 @@ const authProvider = ({
 
     const aclUri = getAclUri(uri);
 
-    const { json } = await dataProvider.fetch(aclUri);
-
-    return json['@graph'];
+    try {
+      const { json } = await dataProvider.fetch(aclUri);
+      return json['@graph'];
+    } catch(e) {
+      console.warn(`Could not fetch ACL URI ${uri}`);
+      return [];
+    }
   },
   addPermission: async (uri, agentId, predicate, mode) => {
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
