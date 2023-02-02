@@ -28,8 +28,9 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           getBlankNodesFromDataServers(containers[serverKey], dataServers);
 
         const predicates = params.filter?._predicates || dataModel.list?.predicates;
-        //When the sparql request come from URI, it's a string who must must be decode.
-        if (params.filter.sparqlWhere && (typeof params.filter.sparqlWhere === 'string' || params.filter.sparqlWhere instanceof String)) {
+
+        // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
+        if (params.filter?.sparqlWhere && (typeof params.filter.sparqlWhere === 'string' || params.filter.sparqlWhere instanceof String)) {
           params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
         }
         const sparqlQuery = buildSparqlQuery({
