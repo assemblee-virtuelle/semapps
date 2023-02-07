@@ -129,8 +129,7 @@ Array of URIs
 | Property       | Type     | Default             | Description                                                                     |
 |----------------|----------|---------------------|---------------------------------------------------------------------------------|
 | `containerUri` | `String` | **required**        | URI of container to which the resource will be attached or detached             |
-| `update`       | `String` | **required**        | SPARQL UPDATE string with INSERT DATA and/or DELETE DATA statements (see below) |
-| `contentType`  | `String` |                     | Must be `application/sparql-update`                                             |
+| `sparqlUpdate` | `String` | **required**        | SPARQL UPDATE string with INSERT DATA and/or DELETE DATA statements (see below) |
 | `webId`        | `string` | Logged user's webId | User doing the action                                                           |
 
 The format of the `update` string is as follow:
