@@ -5,6 +5,7 @@ const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const generateIdAction = require('./actions/generateId');
+const getContainersAction = require('./actions/getContainers');
 const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
@@ -25,6 +26,7 @@ module.exports = {
   actions: {
     exist: existAction,
     generateId: generateIdAction,
+    getContainers: getContainersAction,
     create: createAction,
     upload: uploadAction,
     // Actions accessible through the API
