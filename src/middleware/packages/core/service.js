@@ -47,8 +47,8 @@ const CoreService = {
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
 
-    // relay service will automatically start if we want mirror and activitypub services
-    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
+    // relay service will automatically start if we want to mirror other servers or allow other servers to mirror us
+    if (this.settings.mirror !== false && (this.settings.mirror.acceptFollowers || (this.settings.mirror.serversToFollow && this.settings.mirror.serversToFollow.length > 0)) ) {
       this.settings.activitypub.relay = this.settings.activitypub.relay || {};
     }
 
@@ -137,10 +137,11 @@ const CoreService = {
       });
     }
 
-    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
+    if (this.settings.mirror !== false) {
       this.broker.createService(MirrorService, {
         settings: {
           baseUrl,
+          ontologies: ontologies || defaultOntologies,
           ...this.settings.mirror
         }
       });

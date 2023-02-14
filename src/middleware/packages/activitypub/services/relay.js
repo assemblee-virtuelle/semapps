@@ -266,9 +266,9 @@ const RelayService = {
       if (activity.type === ACTIVITY_TYPES.OFFER) {
         if (
           activity.object &&
-          (activity.object.type == ACTIVITY_TYPES.ADD || activity.object.type == ACTIVITY_TYPES.REMOVE)
+          (activity.object.type === ACTIVITY_TYPES.ADD || activity.object.type === ACTIVITY_TYPES.REMOVE)
         ) {
-          if (activity.object.object.type == OBJECT_TYPES.RELATIONSHIP) {
+          if (activity.object.object.type === OBJECT_TYPES.RELATIONSHIP) {
             if (!this.hasInferenceService) {
               const services = await this.broker.call('$node.services');
               // check that an inference service is running
@@ -292,14 +292,14 @@ const RelayService = {
                   subject: triple.subject,
                   predicate: triple.relationship,
                   object: triple.object,
-                  add: activity.object.type == ACTIVITY_TYPES.ADD
+                  add: activity.object.type === ACTIVITY_TYPES.ADD
                 });
               }
             }
           }
         }
       } else if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-        if (!(await ctx.call('mirror.checkValidRemoteRelay', { actor: activity.actor }))) return;
+        if (!(await ctx.call('mirror.server.validRemoteRelay', { actor: activity.actor }))) return;
         switch (activity.object.type) {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
@@ -325,7 +325,7 @@ const RelayService = {
           }
           case ACTIVITY_TYPES.ADD: {
             const relation = activity.object.object;
-            if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
+            if (relation.type !== OBJECT_TYPES.RELATIONSHIP) break;
             let triple = this.prepareTriple(expanded_activity);
             if (triple)
               await ctx.call(
@@ -337,7 +337,7 @@ const RelayService = {
           }
           case ACTIVITY_TYPES.REMOVE: {
             const relation = activity.object.object;
-            if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
+            if (relation.type !== OBJECT_TYPES.RELATIONSHIP) break;
             let triple = this.prepareTriple(expanded_activity);
             if (triple)
               await ctx.call(

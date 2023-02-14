@@ -5,7 +5,6 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const {
   getPrefixRdf,
   getPrefixJSON,
-  buildBlankNodesQuery,
   buildDereferenceQuery,
   getContainerFromUri,
   getSlugFromUri,
@@ -55,7 +54,6 @@ module.exports = {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       accept: { type: 'string', optional: true },
-      queryDepth: { type: 'number', optional: true },
       dereference: { type: 'array', optional: true },
       jsonContext: {
         type: 'multi',
@@ -72,12 +70,17 @@ module.exports = {
         const containerSlug = getSlugFromUri(containerUri);
         return containerSlug !== 'files';
       },
-      keys: ['resourceUri', 'accept', 'queryDepth', 'dereference', 'jsonContext', 'forceSemantic']
+      keys: ['resourceUri', 'accept', 'dereference', 'jsonContext', 'forceSemantic']
     },
     async handler(ctx) {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-      const { accept, queryDepth, dereference, jsonContext } = {
+
+      if (isMirror(resourceUri, this.settings.baseUrl)) {
+        return await ctx.call('mirror.resource.get', ctx.params);
+      }
+
+      const { accept, dereference, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
         ...ctx.params
       };
@@ -85,7 +88,6 @@ module.exports = {
       const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
       if (resourceExist) {
-        const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
 
         const mirror = isMirror(resourceUri, this.settings.baseUrl);
@@ -95,14 +97,12 @@ module.exports = {
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
               ?s1 ?p1 ?o1 .
-              ${blandNodeQuery.construct}
               ${dereferenceQuery.construct}
             }
             WHERE {
               ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
-              ${blandNodeQuery.where}
               ${dereferenceQuery.where}
               ${mirror ? '} .' : ''}
             }

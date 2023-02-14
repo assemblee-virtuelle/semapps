@@ -50,7 +50,6 @@ module.exports = {
       let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1,
         forceSemantic: true,
         webId
       });
@@ -58,28 +57,6 @@ module.exports = {
       if (disassembly) {
         await this.deleteDisassembly(ctx, disassembly, oldData);
       }
-
-      // TODO see why blank node deletion does not work (permission error)
-      // TODO when fixed, remove the call to triplestore.deleteOrphanBlankNodes below
-      // const blandNodeQuery = buildBlankNodesQuery(3);
-      //
-      // // The resource must be deleted after the blank node, otherwise the permissions will fail
-      // const query =  `
-      //   DELETE {
-      //     ${blandNodeQuery.construct}
-      //     <${resourceUri}> ?p1 ?dataProp1 .
-      //   }
-      //   WHERE {
-      //     {
-      //       ${blandNodeQuery.where}
-      //       <${resourceUri}> ?p1 ?o1 .
-      //     }
-      //     UNION
-      //     {
-      //       <${resourceUri}> ?p1 ?dataProp1 .
-      //     }
-      //   }
-      // `;
 
       await ctx.call('triplestore.update', {
         query: `

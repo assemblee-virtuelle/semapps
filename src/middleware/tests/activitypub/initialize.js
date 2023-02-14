@@ -36,7 +36,6 @@ const initialize = async (port, mainDataset, accountsDataset) => {
         mainDataset
       },
       containers,
-      mirror: false,
       void: false,
       api: {
         port
