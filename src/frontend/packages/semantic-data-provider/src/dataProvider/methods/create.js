@@ -1,7 +1,8 @@
 import urlJoin from 'url-join';
 import getOne from './getOne';
-import uploadAllFiles from '../utils/uploadAllFiles';
+import uploadAllFiles, { getSlugWithExtension, isFile } from '../utils/uploadAllFiles';
 import findContainersWithTypes from '../utils/findContainersWithTypes';
+import { defaultToArray } from "@semapps/auth-provider/src/utils";
 
 const createMethod = config => async (resourceId, params) => {
   const { dataServers, resources, httpClient, jsonContext } = config;
@@ -33,30 +34,56 @@ const createMethod = config => async (resourceId, params) => {
   }
 
   if (params.data) {
-    if (dataModel.fieldsMapping?.title) {
-      if (Array.isArray(dataModel.fieldsMapping.title)) {
-        headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
-      } else {
-        headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
+    if (defaultToArray(dataModel.types).includes('semapps:File')) {
+      const keys = Object.keys(params.data);
+      if (keys.length !== 1 && !isFile(params.data[keys[0]])) {
+        throw new Error('For ressources of types semapps:File, you must provide a single file value');
       }
+
+      const { rawFile } = params.data[keys[0]];
+
+      // We must sluggify the file name, because we can't use non-ASCII characters in the header
+      // However we keep the extension apart (if it exists) so that it is not replaced with a -
+      // TODO let the middleware guess the extension based on the content type
+      headers.set('Slug', getSlugWithExtension(rawFile.name));
+      headers.set('Content-Type', rawFile.type);
+
+      const response = await httpClient(containerUri, {
+        method: 'POST',
+        headers,
+        body: rawFile
+      });
+
+      // TODO fetch file info when it will be possible ?
+      // https://github.com/assemblee-virtuelle/semapps/issues/1107
+      const fileUri = response.headers.get('Location');
+      return { data: { id: fileUri } };
+    } else {
+      if (dataModel.fieldsMapping?.title) {
+        if (Array.isArray(dataModel.fieldsMapping.title)) {
+          headers.set('Slug', dataModel.fieldsMapping.title.map(f => params.data[f]).join(' '));
+        } else {
+          headers.set('Slug', params.data[dataModel.fieldsMapping.title]);
+        }
+      }
+
+      // Upload files, if there are any
+      params.data = await uploadAllFiles(params.data, config);
+
+      const response = await httpClient(containerUri, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          '@context': jsonContext,
+          '@type': dataModel.types,
+          ...params.data
+        })
+      });
+
+      // Retrieve newly-created resource
+      const resourceUri = response.headers.get('Location');
+      return await getOne(config)(resourceId, { id: resourceUri });
     }
-
-    // Upload files, if there are any
-    params.data = await uploadAllFiles(params.data, config);
-
-    const { headers: responseHeaders } = await httpClient(containerUri, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        '@context': jsonContext,
-        '@type': dataModel.types,
-        ...params.data
-      })
-    });
-
-    // Retrieve newly-created resource
-    const resourceUri = responseHeaders.get('Location');
-    return await getOne(config)(resourceId, { id: resourceUri });
   } else if (params.id) {
     headers.set('Content-Type', 'application/sparql-update');
 
