@@ -70,23 +70,40 @@ module.exports = {
                   // we need to import the remote resource
                   this.logger.info('IMPORTING ' + insUri);
                   try {
-                    let newResource = await fetch(insUri, { headers: { Accept: MIME_TYPES.TURTLE } });
-                    newResource = await newResource.text();
+                    const response = await fetch(insUri, { headers: { Accept: MIME_TYPES.JSON } });
+                    const resource = await response.json();
 
-                    const prefixes = [...newResource.matchAll(regexPrefix)];
+                    // TODO if JSON is not available, try Turtle
 
-                    let turtleToSparql = '';
-                    for (const pref of prefixes) {
-                      turtleToSparql += 'PREFIX ' + pref[1] + '\n';
-                    }
-                    turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
-                    turtleToSparql += newResource.replace(regexPrefix, '');
-                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
-                      new URL(insUri).origin
-                    }> .`;
-                    turtleToSparql += '} }';
+                    await ctx.call('triplestore.insert', {
+                      resource,
+                      contentType: MIME_TYPES.JSON,
+                      webId,
+                      graphName: this.settings.mirrorGraphName
+                    });
 
-                    await ctx.call('triplestore.update', { query: turtleToSparql });
+                    // try {
+                    //   newResource = JSON.parse(newResource);
+                    //   newResource = await ctx.call('jsonld.toRDF', { input: newResource });
+                    //   console.log('new resource', newResource)
+                    // } catch(e) {
+                    //   // Ignore if this is not a JSON
+                    // }
+                    //
+                    // const prefixes = [...newResource.matchAll(regexPrefix)];
+                    //
+                    // let turtleToSparql = '';
+                    // for (const pref of prefixes) {
+                    //   turtleToSparql += 'PREFIX ' + pref[1] + '\n';
+                    // }
+                    // turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
+                    // turtleToSparql += newResource.replace(regexPrefix, '');
+                    // turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
+                    //   new URL(insUri).origin
+                    // }> .`;
+                    // turtleToSparql += '} }';
+                    //
+                    // await ctx.call('triplestore.update', { query: turtleToSparql });
 
                     // now if the import went well, we can retry the attach
                     await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });

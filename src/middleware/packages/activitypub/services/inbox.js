@@ -62,7 +62,16 @@ const InboxService = {
       // Save the remote activity in the local triple store
       await ctx.call('triplestore.insert', {
         resource: objectIdToCurrent(activity),
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
+        graphName: 'http://semapps.org/mirror'
+      });
+
+      const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri');
+
+      // Attach the activity to the activities container, in order to use the container options
+      await ctx.call('ldp.container.attach', {
+        containerUri: activitiesContainerUri,
+        resourceUri: activity.id
       });
 
       // Attach the activity to the inbox

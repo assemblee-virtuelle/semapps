@@ -1,3 +1,4 @@
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
 const { isMirror } = require('../../../utils');
 
@@ -25,7 +26,6 @@ module.exports = {
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
-        //throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
         throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
       }
     }

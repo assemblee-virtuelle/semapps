@@ -84,7 +84,11 @@ const ActivityPubService = {
       }
     });
 
-    this.broker.createService(InboxService);
+    this.broker.createService(InboxService, {
+      settings: {
+        baseUri
+      }
+    });
 
     this.broker.createService(LikeService, {
       settings: {

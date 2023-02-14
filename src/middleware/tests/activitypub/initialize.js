@@ -9,9 +9,11 @@ const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 
-const initialize = async () => {
+const initialize = async (port, mainDataset, accountsDataset) => {
+  const baseUrl = `http://localhost:${port}/`;
+
   const broker = new ServiceBroker({
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl: CONFIG.HOME_URL })],
+    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {
@@ -25,44 +27,48 @@ const initialize = async () => {
 
   await broker.createService(CoreService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
+      baseUrl,
       baseDir: path.resolve(__dirname, '..'),
       triplestore: {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset
       },
       containers,
       mirror: false,
-      void: false
+      void: false,
+      api: {
+        port
+      }
     }
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
-      baseUrl: CONFIG.HOME_URL,
-      jwtPath: path.resolve(__dirname, './jwt')
+      baseUrl,
+      jwtPath: path.resolve(__dirname, './jwt'),
+      accountsDataset
     }
   });
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'actors/'
+      usersContainer: baseUrl + 'actors/'
     }
   });
 
   // Drop all existing triples, then restart broker so that default containers are recreated
   await broker.start();
   await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.call('triplestore.dropAll', { dataset: 'settings', webId: 'system' });
+  await broker.call('triplestore.dropAll', { dataset: accountsDataset, webId: 'system' });
   await broker.stop();
   await broker.start();
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'objects',
+    resourceUri: baseUrl + 'objects',
     additionalRights: {
       anon: {
         write: true
@@ -71,7 +77,7 @@ const initialize = async () => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'actors',
+    resourceUri: baseUrl + 'actors',
     additionalRights: {
       anon: {
         write: true
@@ -80,7 +86,7 @@ const initialize = async () => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'activities',
+    resourceUri: baseUrl + 'activities',
     additionalRights: {
       anon: {
         write: true
