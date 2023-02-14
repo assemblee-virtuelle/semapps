@@ -58,6 +58,8 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
 
+          localStorage.setItem('token', token);
+
           let userData;
           ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
 
@@ -72,10 +74,10 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
           }
 
           if (!authProvider.checkUser(userData)) {
+            localStorage.removeItem('token');
             notify('auth.message.user_not_allowed_to_login', 'error');
             history.replace('/login');
           } else {
-            localStorage.setItem('token', token);
             if (searchParams.has('redirect')) {
               notify('auth.message.user_connected', 'info');
               history.push(searchParams.get('redirect'));
