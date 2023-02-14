@@ -1,8 +1,9 @@
 import React from 'react';
 import Markdown from 'markdown-to-jsx';
+import get from 'lodash/get';
 
 const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest }) =>
-  record && record[source] ? (
+  record && get(record, source) ? (
     <Markdown
       options={{
         createElement(type, props, children) {
@@ -24,7 +25,7 @@ const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest
         ...rest
       }}
     >
-      {record[source]}
+      {get(record, source)}
     </Markdown>
   ) : null;
 
