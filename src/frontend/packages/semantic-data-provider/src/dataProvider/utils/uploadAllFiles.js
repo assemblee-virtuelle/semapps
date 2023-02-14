@@ -24,8 +24,6 @@ const uploadFile = async (rawFile, config) => {
   const uploadsContainerUri = getUploadsContainerUri(config);
   if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
 
-  console.log('upload raw file', typeof rawFile, rawFile)
-
   const response = await config.httpClient(uploadsContainerUri, {
     method: 'POST',
     body: rawFile,
