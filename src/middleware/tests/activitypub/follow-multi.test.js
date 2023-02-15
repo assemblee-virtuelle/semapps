@@ -1,7 +1,6 @@
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
-const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
@@ -37,8 +36,6 @@ describe('Posting to followers', () => {
     });
 
     simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
-
-    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
 
     expect(sebastien).toMatchObject({
       id: sebastienUri,

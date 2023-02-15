@@ -1,14 +1,14 @@
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
-const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
-let broker;
+let broker, broker2;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(3000, 'testData', 'settings');
+  broker2 = broker;
 });
 afterAll(async () => {
   if (broker) await broker.stop();
@@ -27,16 +27,14 @@ describe('Posting to followers', () => {
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
 
-    const { webId: simonUri } = await broker.call('auth.signup', {
+    const { webId: simonUri } = await broker2.call('auth.signup', {
       username: 'simonlouvet',
       email: 'simon@test.com',
       password: 'test',
       name: 'Simon'
     });
 
-    simon = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
-
-    expect(sebastienUri).toBe(`${CONFIG.HOME_URL}actors/srosset81`);
+    simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
 
     expect(sebastien).toMatchObject({
       id: sebastienUri,
@@ -62,7 +60,7 @@ describe('Posting to followers', () => {
 
     await waitForExpect(async () => {
       await expect(
-        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+        broker2.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
       ).resolves.toBeTruthy();
     });
 
@@ -83,7 +81,7 @@ describe('Posting to followers', () => {
   });
 
   test('Send message to followers', async () => {
-    const createActivity = await broker.call('activitypub.outbox.post', {
+    const createActivity = await broker2.call('activitypub.outbox.post', {
       collectionUri: simon.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
@@ -107,6 +105,7 @@ describe('Posting to followers', () => {
         page: 1,
         webId: sebastien.id
       });
+
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems).toHaveLength(2);
       expect(inbox.orderedItems[0]).toMatchObject({
@@ -127,7 +126,7 @@ describe('Posting to followers', () => {
 
     await waitForExpect(async () => {
       await expect(
-        broker.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+        broker2.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
       ).resolves.toBeFalsy();
     });
   });

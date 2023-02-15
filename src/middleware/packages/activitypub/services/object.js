@@ -2,7 +2,6 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 const { delay } = require('../utils');
-const fetch = require('node-fetch');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -18,10 +17,11 @@ const ObjectService = {
       // If the object is already dereferenced, return it
       if (typeof objectUri !== 'string') return objectUri;
 
-      return await ctx.call('mirror.resource.get', {
+      return await ctx.call('ldp.resource.get', {
         resourceUri: objectUri,
         webId: actorUri,
-        ...rest
+        ...rest,
+        accept: MIME_TYPES.JSON
       });
     },
     async awaitCreateComplete(ctx) {

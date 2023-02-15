@@ -232,8 +232,12 @@ const CollectionService = {
             try {
               selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId, jsonContext: this.settings.jsonContext }));
             } catch (e) {
-              // Ignore resource if it is not found
-              console.info('Resource not found with URI: ' + itemUri);
+              if (e.code === 404) {
+                // Ignore resource if it is not found
+                this.logger.warn('Resource not found with URI: ' + itemUri);
+              } else {
+                throw e;
+              }
             }
           }
 
