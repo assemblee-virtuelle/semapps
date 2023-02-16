@@ -7,8 +7,8 @@ module.exports = {
   name: 'mirror',
   settings: {
     baseUrl: null,
-    graphName: null,
-    serversToFollow: []
+    graphName: 'http://semapps.org/mirror',
+    servers: []
   },
   dependencies: [
     'triplestore',
@@ -37,8 +37,8 @@ module.exports = {
     // STARTING TO MIRROR ALL THE SERVERS
 
     this.mirroredServers = [];
-    if (this.settings.serversToFollow.length > 0) {
-      for (let server of this.settings.serversToFollow) {
+    if (this.settings.servers.length > 0) {
+      for (let server of this.settings.servers) {
         try {
           // we do not await because we don't want to bloc the startup of the services.
           const promise = this.actions.mirror({ serverUrl: server });
