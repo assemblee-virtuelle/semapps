@@ -77,7 +77,7 @@ module.exports = {
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (isMirror(resourceUri, this.settings.baseUrl)) {
-        return await ctx.call('mirror.resource.get', ctx.params);
+        return await ctx.call('ldp.remote.get', ctx.params);
       }
 
       const { accept, dereference, jsonContext } = {

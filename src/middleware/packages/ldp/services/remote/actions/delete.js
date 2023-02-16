@@ -22,7 +22,7 @@ module.exports = {
       query: `
         DELETE
         WHERE { 
-          GRAPH <${this.settings.graphName}> { 
+          GRAPH <${this.settings.mirrorGraphName}> { 
             <${resourceUri}> ?p1 ?o1 .
           }
         }
@@ -42,7 +42,7 @@ module.exports = {
     }
 
     ctx.call('triplestore.deleteOrphanBlankNodes', {
-      graphName: this.settings.graphName
+      graphName: this.settings.mirrorGraphName
     });
   }
 };

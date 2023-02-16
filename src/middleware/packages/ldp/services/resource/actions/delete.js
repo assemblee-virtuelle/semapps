@@ -36,7 +36,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       if (isMirror(resourceUri, this.settings.baseUrl)) {
-        return await ctx.call('mirror.resource.delete', { resourceUri, webId })
+        return await ctx.call('ldp.remote.delete', { resourceUri, webId })
       }
 
       const { disassembly } = {

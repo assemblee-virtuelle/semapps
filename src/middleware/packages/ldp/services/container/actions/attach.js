@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
 const { isMirror } = require('../../../utils');
 

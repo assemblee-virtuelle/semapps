@@ -31,7 +31,7 @@ module.exports = {
             ${dereferenceQuery.construct}
           }
           WHERE {
-            GRAPH <${this.settings.graphName}> {
+            GRAPH <${this.settings.mirrorGraphName}> {
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${dereferenceQuery.where}

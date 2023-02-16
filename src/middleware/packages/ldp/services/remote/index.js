@@ -8,13 +8,13 @@ const getStoredAction = require('./actions/getStored');
 const storeAction = require('./actions/store');
 
 module.exports = {
-  name: 'mirror.resource',
+  name: 'ldp.remote',
   mixins: [Schedule],
   settings: {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    graphName: null,
+    mirrorGraphName: null,
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -38,7 +38,7 @@ module.exports = {
           query: `
             SELECT DISTINCT ?s 
             WHERE { 
-              GRAPH <${this.settings.graphName}> { 
+              GRAPH <${this.settings.mirrorGraphName}> { 
                 ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
               }
             }

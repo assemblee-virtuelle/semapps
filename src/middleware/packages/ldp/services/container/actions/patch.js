@@ -70,7 +70,7 @@ module.exports = {
                   // we need to import the remote resource
                   this.logger.info('IMPORTING ' + insUri);
                   try {
-                    await ctx.call('mirror.resource.store', {
+                    await ctx.call('ldp.remote.store', {
                       resourceUri: insUri,
                       keepInSync: true,
                       webId
@@ -96,7 +96,7 @@ module.exports = {
                 // If the mirrored resource is not attached to any container anymore, it must be deleted.
                 const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: delUri });
                 if (containers.length === 0 && isMirror(delUri, this.settings.baseUrl)) {
-                  await ctx.call('mirror.resource.delete', {
+                  await ctx.call('ldp.remote.delete', {
                     resourceUri: delUri
                   })
 

@@ -299,7 +299,7 @@ const RelayService = {
           }
         }
       } else if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-        if (!(await ctx.call('mirror.server.validRemoteRelay', { actor: activity.actor }))) return;
+        if (!(await ctx.call('mirror.validRemoteRelay', { actor: activity.actor }))) return;
         switch (activity.object.type) {
           case ACTIVITY_TYPES.CREATE: {
             let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
