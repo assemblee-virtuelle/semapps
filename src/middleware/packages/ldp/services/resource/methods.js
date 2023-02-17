@@ -1,4 +1,5 @@
 const fs = require('fs');
+const urlJoin = require("url-join");
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('@rdfjs/data-model');
@@ -230,5 +231,11 @@ module.exports = {
         }
       }
     }
+  },
+  isRemoteUri(uri) {
+    return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
+  },
+  async getGraph() {
+
   }
 };

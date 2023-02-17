@@ -7,8 +7,7 @@ const {
   getPrefixJSON,
   buildDereferenceQuery,
   getContainerFromUri,
-  getSlugFromUri,
-  isMirror
+  getSlugFromUri
 } = require('../../../utils');
 
 module.exports = {
@@ -76,7 +75,7 @@ module.exports = {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-      if (isMirror(resourceUri, this.settings.baseUrl)) {
+      if (this.isRemoteUri(resourceUri)) {
         return await ctx.call('ldp.remote.get', ctx.params);
       }
 

@@ -48,6 +48,15 @@ module.exports = {
       hooks: this.schema.hooksResource || {}
     });
 
+    await this.broker.createService(LdpRemoteService, {
+      settings: {
+        baseUrl,
+        ontologies,
+        podProvider,
+        mirrorGraphName
+      }
+    });
+
     await this.broker.createService(LdpRegistryService, {
       settings: {
         baseUrl,

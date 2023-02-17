@@ -6,10 +6,11 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     keepInSync: { type: 'boolean', default: false },
+    mirrorGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let { resourceUri, keepInSync, webId } = ctx.params;
+    let { resourceUri, keepInSync, mirrorGraph, webId } = ctx.params;
 
     if (!this.isRemoteUri(resourceUri)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
@@ -33,6 +34,7 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
+      graphName: mirrorGraph ? this.settings.mirrorGraphName : undefined,
       webId: 'system',
       dataset
     });
@@ -43,6 +45,7 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource,
+      graphName: mirrorGraph ? this.settings.mirrorGraphName : undefined,
       contentType: MIME_TYPES.JSON,
       webId: 'system',
       dataset
