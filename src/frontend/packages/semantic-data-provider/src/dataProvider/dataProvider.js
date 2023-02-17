@@ -11,7 +11,7 @@ import updateMethod from './methods/update';
 import fetchUserConfig from './utils/fetchUserConfig';
 import fetchVoidEndpoints from './utils/fetchVoidEndpoints';
 import getServerKeyFromType from './utils/getServerKeyFromType';
-import httpClient from "./httpClient";
+import httpClient from './httpClient';
 
 const dataProvider = config => {
   // TODO verify all data provider config + data models

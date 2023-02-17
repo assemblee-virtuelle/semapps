@@ -26,7 +26,7 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
 
       // If the user doesn't select any option, use the text as the label
       if (typeof lexicon === 'string') {
-        lexicon = { label : lexicon };
+        lexicon = { label: lexicon };
       }
 
       await save(selectData(lexicon), redirect);
@@ -40,7 +40,12 @@ const LexiconImportForm = ({ resource, fetchLexicon, selectData, redirect, save,
       render={({ handleSubmit, dirtyFields }) => (
         <form onSubmit={handleSubmit}>
           <Box m="1em">
-            <LexiconAutocompleteInput label="Titre" source="lexicon" fetchLexicon={fetchLexicon} validate={required()} />
+            <LexiconAutocompleteInput
+              label="Titre"
+              source="lexicon"
+              fetchLexicon={fetchLexicon}
+              validate={required()}
+            />
           </Box>
           <Toolbar className={classes.toolbar}>
             <Button

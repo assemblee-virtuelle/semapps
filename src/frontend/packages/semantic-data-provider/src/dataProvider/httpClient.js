@@ -1,6 +1,6 @@
 import { fetchUtils } from 'react-admin';
-import getServerKeyFromUri from "./utils/getServerKeyFromUri";
-import getServerKeyFromType from "./utils/getServerKeyFromType";
+import getServerKeyFromUri from './utils/getServerKeyFromUri';
+import getServerKeyFromType from './utils/getServerKeyFromType';
 
 /*
  * HTTP client used by all calls in data provider and auth provider
@@ -9,7 +9,8 @@ import getServerKeyFromType from "./utils/getServerKeyFromType";
 const httpClient = dataServers => (url, options = {}) => {
   const authServerKey = getServerKeyFromType('authServer', dataServers);
   const serverKey = getServerKeyFromUri(url, dataServers);
-  const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+  const useProxy =
+    serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
 
   if (!options.headers) options.headers = new Headers();
 
@@ -31,7 +32,7 @@ const httpClient = dataServers => (url, options = {}) => {
   }
 
   if (useProxy) {
-    const formData  = new FormData();
+    const formData = new FormData();
 
     formData.append('id', url);
     formData.append('method', options.method || 'GET');
