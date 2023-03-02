@@ -52,6 +52,18 @@ module.exports = {
       }
       return ctx.call('ldp.container.get', ctx.params);
     },
+    async attach(ctx) {
+      if (!ctx.params.containerUri) {
+        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      }
+      return ctx.call('ldp.container.attach', ctx.params);
+    },
+    async detach(ctx) {
+      if (!ctx.params.containerUri) {
+        ctx.params.containerUri = await this.actions.getContainerUri({ webId: ctx.params.webId }, { parentCtx: ctx });
+      }
+      return ctx.call('ldp.container.detach', ctx.params);
+    },
     get(ctx) {
       return ctx.call('ldp.resource.get', ctx.params);
     },

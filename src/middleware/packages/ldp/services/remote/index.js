@@ -3,6 +3,7 @@ const Schedule = require('moleculer-schedule');
 const { MIME_TYPES } = require("@semapps/mime-types");
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
+const getGraphAction = require('./actions/getGraph');
 const getNetworkAction = require('./actions/getNetwork');
 const getStoredAction = require('./actions/getStored');
 const storeAction = require('./actions/store');
@@ -20,6 +21,7 @@ module.exports = {
   actions: {
     delete: deleteAction,
     get: getAction,
+    getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
     store: storeAction

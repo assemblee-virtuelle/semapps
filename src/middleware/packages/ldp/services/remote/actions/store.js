@@ -4,29 +4,40 @@ const { MIME_TYPES } = require("@semapps/mime-types");
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: { type: 'string' },
+    resourceUri: { type: 'string', optional: true },
+    resource: { type: 'object', optional: true },
     keepInSync: { type: 'boolean', default: false },
     mirrorGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let { resourceUri, keepInSync, mirrorGraph, webId } = ctx.params;
+    let { resourceUri, resource, keepInSync, mirrorGraph, webId } = ctx.params;
+
+    if (!resource && !resourceUri) {
+      throw new Error('You must provide the resourceUri or resource param')
+    }
+
+    if (!resource) {
+      resource = await this.actions.getNetwork({ resourceUri, webId }, { parentCtx: ctx });
+    }
+
+    if (!resourceUri) {
+      resourceUri = resource.id || resource['@id'];
+    }
 
     if (!this.isRemoteUri(resourceUri)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
     }
-
-    const resource = await this.actions.fetch({ resourceUri, webId }, { parentCtx: ctx });
 
     let containerUri, dataset;
     const container = await ctx.call('ldp.registry.getByType', { type: resource.type || resource['@type'] });
 
     if (this.settings.podProvider) {
       const account = await ctx.call('auth.account.findByWebId', { webId });
-      containerUri = urlJoin(this.settings.baseUri, container.fullPath.replace(':username', account.username));
+      containerUri = urlJoin(this.settings.baseUrl, container.fullPath.replace(':username', account.username));
       dataset = account.username;
     } else {
-      containerUri = urlJoin(this.settings.baseUri, container.path);
+      containerUri = urlJoin(this.settings.baseUrl, container.path);
     }
 
     // Delete the existing cached resource (if it exists)

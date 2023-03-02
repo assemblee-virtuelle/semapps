@@ -18,13 +18,15 @@ module.exports = {
       dataset = account.username;
     }
 
+    const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
+
     await ctx.call('triplestore.update', {
       query: `
         DELETE
         WHERE { 
-          GRAPH <${this.settings.mirrorGraphName}> { 
+          ${graphName ? `GRAPH <${graphName}> {` : ''}
             <${resourceUri}> ?p1 ?o1 .
-          }
+          ${graphName ? '}' : ''}
         }
       `,
       webId: 'system',

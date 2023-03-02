@@ -18,9 +18,10 @@ module.exports = {
       ...ctx.params
     };
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
 
-    if (resourceExist) {
+    // If resource exists
+    if (graphName !== false) {
       const dereferenceQuery = buildDereferenceQuery(dereference);
 
       let result = await ctx.call('triplestore.query', {
@@ -31,15 +32,15 @@ module.exports = {
             ${dereferenceQuery.construct}
           }
           WHERE {
-            GRAPH <${this.settings.mirrorGraphName}> {
+            ${graphName ? `GRAPH <${graphName}> {` : ''}
               BIND(<${resourceUri}> AS ?s1) .
               ?s1 ?p1 ?o1 .
               ${dereferenceQuery.where}
-            }
+            ${graphName ? '}' : ''}
           }
         `,
         accept,
-        // webId
+        webId
       });
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results

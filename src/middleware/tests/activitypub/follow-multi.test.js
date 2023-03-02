@@ -109,7 +109,7 @@ describe('Posting to followers', () => {
 
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems).toHaveLength(2);
-      expect(inbox.orderedItems[1]).toMatchObject({
+      expect(inbox.orderedItems[0]).toMatchObject({
         id: createActivity.id
       });
     });

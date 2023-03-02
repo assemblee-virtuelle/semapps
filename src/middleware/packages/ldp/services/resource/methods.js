@@ -234,8 +234,5 @@ module.exports = {
   },
   isRemoteUri(uri) {
     return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
-  },
-  async getGraph() {
-
   }
 };

@@ -31,7 +31,8 @@ const InboxService = {
       // We want the next operations to be done by the system
       ctx.meta.webId = 'system';
 
-      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
+      // Remember inbox owner (used by WebACL middleware)
+      ctx.meta.owner = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
@@ -60,22 +61,17 @@ const InboxService = {
       // TODO check activity is valid
 
       // Save the remote activity in the local triple store
-      await ctx.call('triplestore.insert', {
+      await ctx.call('ldp.remote.store', {
         resource: objectIdToCurrent(activity),
-        contentType: MIME_TYPES.JSON,
-        graphName: 'http://semapps.org/mirror'
+        mirrorGraph: false, // Store in default graph as activity may not be public
+        keepInSync: false // Activities are immutable
       });
-
-      const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri');
 
       // Attach the activity to the activities container, in order to use the container options
-      await ctx.call('ldp.container.attach', {
-        containerUri: activitiesContainerUri,
-        resourceUri: activity.id
-      });
+      await ctx.call('activitypub.activity.attach', { resourceUri: activity.id });
 
       // Attach the activity to the inbox
-      ctx.call('activitypub.collection.attach', {
+      await ctx.call('activitypub.collection.attach', {
         collectionUri,
         item: activity
       });
@@ -84,7 +80,7 @@ const InboxService = {
         'activitypub.inbox.received',
         {
           activity,
-          recipients: [actorUri]
+          recipients: [ctx.meta.owner]
         },
         { meta: { webId: null, dataset: null } }
       );

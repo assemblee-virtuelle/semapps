@@ -18,7 +18,6 @@ module.exports = {
     }
 
     if (webId && await this.proxyAvailable()) {
-      console.log('signature query', resourceUri, headers, webId);
       return await ctx.call('signature.proxy.query', {
         resourceUri,
         headers,
