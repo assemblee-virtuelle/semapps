@@ -64,7 +64,7 @@ module.exports = {
     if (partitions) {
       for (const p of defaultToArray(partitions)) {
         // we skip empty containers and doNotMirror containers
-        if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
+        if (p['semapps:doNotMirror']) continue;
 
         const rep = await fetch(p['void:uriSpace'], {
           method: 'GET',

@@ -1,4 +1,3 @@
-const urlJoin = require("url-join");
 const { MIME_TYPES } = require("@semapps/mime-types");
 
 module.exports = {
@@ -33,26 +32,14 @@ module.exports = {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
     }
 
-    let containerUri, dataset;
-    const container = await ctx.call('ldp.registry.getByType', { type: resource.type || resource['@type'] });
-
+    let dataset;
     if (this.settings.podProvider) {
       const account = await ctx.call('auth.account.findByWebId', { webId });
-      containerUri = urlJoin(this.settings.baseUrl, container.fullPath.replace(':username', account.username));
       dataset = account.username;
-    } else {
-      containerUri = urlJoin(this.settings.baseUrl, container.path);
     }
 
     // Delete the existing cached resource (if it exists)
     await this.actions.delete({ resourceUri, webId }, { parentCtx: ctx });
-
-    await ctx.call('triplestore.insert', {
-      resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      graphName: mirrorGraph ? this.settings.mirrorGraphName : undefined,
-      webId: 'system',
-      dataset
-    });
 
     if (keepInSync) {
       resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;

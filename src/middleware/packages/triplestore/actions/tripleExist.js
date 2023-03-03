@@ -28,8 +28,14 @@ module.exports = {
       query: {
         type: "query",
         queryType: "ASK",
-        from: graphName ? { named: [{ termType: "NamedNode", value: graphName }] } : undefined,
-        where: [{ type: "bgp", triples: [triple] }],
+        where: [graphName
+          ? {
+              type: 'graph',
+              name: { termType: "NamedNode", value: graphName },
+              patterns: [{ type: "bgp", triples: [triple] }],
+            }
+          : { type: "bgp", triples: [triple] }
+        ],
       },
       accept: MIME_TYPES.JSON,
       webId,

@@ -38,18 +38,13 @@ module.exports = {
 
     this.mirroredServers = [];
     if (this.settings.servers.length > 0) {
-      for (let server of this.settings.servers) {
-        try {
-          // we do not await because we don't want to bloc the startup of the services.
-          const promise = this.actions.mirror({ serverUrl: server });
-          promise
-            .then(actorUri => {
-              this.mirroredServers.push(actorUri);
-            })
-            .catch(e => this.logger.error('Mirroring failed for ' + server + ' : ' + e.message));
-        } catch (e) {
-          this.logger.error('Mirroring failed for ' + server + ' : ' + e.message);
-        }
+      for (let serverUrl of this.settings.servers) {
+        // Do not await because we don't want to block the startup of the services.
+        this.actions.mirror({ serverUrl })
+          .then(actorUri => this.mirroredServers.push(actorUri))
+          .catch(e => {
+            this.logger.error('Mirroring failed for ' + serverUrl + ' : ' + e.message)
+          });
       }
     }
   },

@@ -2,9 +2,7 @@ const urlJoin = require('url-join');
 const fetch = require('node-fetch');
 const { ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
-
-const { getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
-
+const { isMirror } = require('@semapps/ldp/utils');
 const { defaultToArray } = require('@semapps/activitypub/utils');
 
 const RelayService = {
@@ -27,7 +25,6 @@ const RelayService = {
     'ldp.container',
     'ldp.registry'
   ],
-
   async started() {
     const containers = await this.broker.call('ldp.registry.list');
 
@@ -62,14 +59,15 @@ const RelayService = {
 
     this.logger.info('actorExist ' + actorExist);
 
-    const uri = urlJoin(this.settings.baseUri, actorContainer, actorSettings.username);
+    const containerUri = urlJoin(this.settings.baseUri, actorContainer);
+    const uri = urlJoin(containerUri, actorSettings.username);
     this.relayActorUri = uri;
 
     // creating the local actor 'relay'
     if (!actorExist) {
       this.logger.info(`ActorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
-      await this.broker.call(
+      const account = await this.broker.call(
         'auth.account.create',
         {
           username: actorSettings.username,
@@ -78,18 +76,30 @@ const RelayService = {
         { meta: { isSystemCall: true } }
       );
 
-      await this.broker.call('ldp.container.post', {
-        containerUri: getContainerFromUri(uri),
-        slug: actorSettings.username,
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: ACTOR_TYPES.APPLICATION,
-          preferredUsername: actorSettings.username,
-          name: actorSettings.name
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      try {
+        // Wait until relay container has been created (needed for integration tests)
+        let containerExist;
+        do {
+          containerExist = await this.broker.call('ldp.container.exist', { containerUri });
+        } while (!containerExist);
+
+        await this.broker.call('ldp.container.post', {
+          containerUri,
+          slug: actorSettings.username,
+          resource: {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            type: ACTOR_TYPES.APPLICATION,
+            preferredUsername: actorSettings.username,
+            name: actorSettings.name
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      } catch(e) {
+        // Delete account if resource creation failed, or it may cause problems when retrying
+        await this.broker.call('auth.account.remove', { id: account['@id'] });
+        throw e;
+      }
     }
 
     // wait until the outbox and followers collection are created, and keep their uri, for later use
@@ -110,15 +120,15 @@ const RelayService = {
         activity: { type: 'object', optional: false }
       },
       async handler(ctx) {
-        if (!this.hasFollowers) return;
-        const activity = await this.broker.call('activitypub.outbox.post', {
-          collectionUri: this.relayOutboxUri,
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          actor: this.relayActorUri,
-          ...ctx.params.activity,
-          to: await this.getFollowers()
-        });
-        return activity;
+        if (this.hasFollowers) {
+          return await this.broker.call('activitypub.outbox.post', {
+            collectionUri: this.relayOutboxUri,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: this.relayActorUri,
+            ...ctx.params.activity,
+            to: await this.getFollowers()
+          });
+        }
       }
     },
     follow: {
@@ -127,7 +137,7 @@ const RelayService = {
         remoteRelayActorUri: { type: 'string', optional: false }
       },
       async handler(ctx) {
-        const followActivity = await ctx.call('activitypub.outbox.post', {
+        return await ctx.call('activitypub.outbox.post', {
           collectionUri: this.relayOutboxUri,
           '@context': 'https://www.w3.org/ns/activitystreams',
           actor: this.relayActorUri,
@@ -135,7 +145,6 @@ const RelayService = {
           object: ctx.params.remoteRelayActorUri,
           to: [ctx.params.remoteRelayActorUri]
         });
-        return followActivity;
       }
     },
     isFollowing: {
@@ -144,11 +153,10 @@ const RelayService = {
         remoteRelayActorUri: { type: 'string', optional: false }
       },
       async handler(ctx) {
-        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
+        return await ctx.call('activitypub.follow.isFollowing', {
           follower: this.relayActorUri,
           following: ctx.params.remoteRelayActorUri
         });
-        return alreadyFollowing;
       }
     },
     offerInference: {
@@ -302,9 +310,11 @@ const RelayService = {
         if (!(await ctx.call('mirror.validRemoteRelay', { actor: activity.actor }))) return;
         switch (activity.object.type) {
           case ACTIVITY_TYPES.CREATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
+            await ctx.call('ldp.remote.store', {
+              resourceUri: activity.object.object,
+              mirrorGraph: true
+            });
+
             if (activity.object.target)
               await ctx.call(
                 'ldp.container.attach',

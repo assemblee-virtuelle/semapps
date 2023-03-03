@@ -97,10 +97,7 @@ module.exports = {
                 // If the mirrored resource is not attached to any container anymore, it must be deleted.
                 const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: delUri });
                 if (containers.length === 0 && isMirror(delUri, this.settings.baseUrl)) {
-                  await ctx.call('ldp.remote.delete', {
-                    resourceUri: delUri,
-                    mirrorGraph: true,
-                  })
+                  await ctx.call('ldp.remote.delete', { resourceUri: delUri });
 
                   // TODO see if this cannot be set in the ldp.remote service
                   ctx.emit(

@@ -19,7 +19,6 @@ module.exports = {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
         graphName: this.settings.mirrorGraphName,
-        webId: 'system',
       });
 
       if (exist) {

@@ -32,7 +32,7 @@ module.exports = {
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.filter(s => s.name === 'signature.proxy');
+      return services.some(s => s.name === 'signature.proxy');
     },
     async updateSingleMirroredResources() {
       if (!this.settings.podProvider) {
