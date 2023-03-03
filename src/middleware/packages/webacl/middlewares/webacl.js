@@ -9,6 +9,7 @@ const modifyActions = [
   'activitypub.activity.create',
   'activitypub.activity.attach',
   'webid.create',
+  'ldp.remote.store',
   'ldp.resource.delete'
 ];
 
@@ -221,6 +222,25 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await addRightsToNewUser(ctx, actionReturnValue);
             break;
 
+          case 'ldp.remote.store': {
+            const webId = ctx.params.webId || ctx.meta.webId;
+            const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
+            // When a remote resource is stored in the default graph, give read permission to the logged user
+            if (!ctx.params.mirrorGraph && webId && webId !== 'system' && webId !== 'anon') {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri,
+                additionalRights: {
+                  user: {
+                    uri: webId,
+                    read: true
+                  }
+                },
+                webId: 'system'
+              });
+            }
+            break;
+          }
+
           case 'activitypub.activity.create':
           case 'activitypub.activity.attach':
             const activity = await ctx.call('activitypub.activity.get', {
@@ -229,9 +249,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             });
 
             let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
-
-            // If user is not in recipients, give him read permissions anyway
-            if (!recipients.some(r => r === ctx.meta.owner)) recipients.push(ctx.meta.owner);
 
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once

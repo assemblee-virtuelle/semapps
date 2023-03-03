@@ -27,12 +27,9 @@ const OutboxService = {
         throw new MoleculerError('Collection not found:' + collectionUri, 404, 'NOT_FOUND');
       }
 
-      // Remember outbox owner (used by WebACL middleware)
-      ctx.meta.owner = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
-
       // Ensure logged user is posting to his own outbox
-
-      if (ctx.meta.webId && ctx.meta.webId !== 'system' && ctx.meta.owner !== ctx.meta.webId) {
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
+      if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
       }
 
@@ -42,10 +39,10 @@ const OutboxService = {
 
       // Process object create, update or delete
       // and return an activity with the object ID
-      activity = await ctx.call('activitypub.object.process', { activity, actorUri: ctx.meta.owner });
+      activity = await ctx.call('activitypub.object.process', { activity, actorUri });
 
       if (!activity.actor) {
-        activity.actor = ctx.meta.owner;
+        activity.actor = actorUri;
       }
 
       // Use the current time for the activity's publish date
@@ -53,7 +50,7 @@ const OutboxService = {
       activity.published = new Date().toISOString();
 
       const activitiesContainerUri = await this.broker.call('activitypub.activity.getContainerUri', {
-        webId: ctx.meta.owner
+        webId: actorUri
       });
 
       const activityUri = await ctx.call('activitypub.activity.post', {

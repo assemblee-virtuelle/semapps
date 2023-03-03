@@ -32,7 +32,7 @@ const InboxService = {
       ctx.meta.webId = 'system';
 
       // Remember inbox owner (used by WebACL middleware)
-      ctx.meta.owner = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
+      const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'inbox' });
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
@@ -64,7 +64,8 @@ const InboxService = {
       await ctx.call('ldp.remote.store', {
         resource: objectIdToCurrent(activity),
         mirrorGraph: false, // Store in default graph as activity may not be public
-        keepInSync: false // Activities are immutable
+        keepInSync: false, // Activities are immutable
+        webId: actorUri
       });
 
       // Attach the activity to the activities container, in order to use the container options
@@ -80,7 +81,7 @@ const InboxService = {
         'activitypub.inbox.received',
         {
           activity,
-          recipients: [ctx.meta.owner]
+          recipients: [actorUri]
         },
         { meta: { webId: null, dataset: null } }
       );

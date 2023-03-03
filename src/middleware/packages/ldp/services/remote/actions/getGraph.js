@@ -3,16 +3,14 @@ const { triple, namedNode, variable } = require('@rdfjs/data-model');
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    resourceUri: { type: 'string' }
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     let exist = await ctx.call('triplestore.tripleExist', {
       triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-      webId
+      webId: 'system'
     });
 
     if (exist) {
@@ -20,8 +18,8 @@ module.exports = {
     } else {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-        webId,
-        graphName: this.settings.mirrorGraphName
+        graphName: this.settings.mirrorGraphName,
+        webId: 'system',
       });
 
       if (exist) {

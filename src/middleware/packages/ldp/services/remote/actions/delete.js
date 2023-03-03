@@ -18,7 +18,7 @@ module.exports = {
       dataset = account.username;
     }
 
-    const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
+    const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
 
     await ctx.call('triplestore.update', {
       query: `

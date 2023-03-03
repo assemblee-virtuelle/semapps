@@ -14,7 +14,11 @@ module.exports = {
     let { resourceUri, resource, keepInSync, mirrorGraph, webId } = ctx.params;
 
     if (!resource && !resourceUri) {
-      throw new Error('You must provide the resourceUri or resource param')
+      throw new Error('You must provide the resourceUri or resource param');
+    }
+
+    if (keepInSync && !mirrorGraph) {
+      throw new Error('To be kept in sync, a remote resource must stored in the mirror graph');
     }
 
     if (!resource) {
