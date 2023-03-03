@@ -27,7 +27,7 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      let redirectUrl = (new URL(window.location.href)).origin + '/login?login=true';
+      let redirectUrl = new URL(window.location.href).origin + '/login?login=true';
       if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
       window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
@@ -63,7 +63,7 @@ const authProvider = ({
         }
       }
     } else {
-      const redirectUrl = (new URL(window.location.href)).origin + '/login?login=true';
+      const redirectUrl = new URL(window.location.href).origin + '/login?login=true';
       window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
   },
@@ -76,13 +76,19 @@ const authProvider = ({
       window.location.reload();
       window.location.href = '/';
     } else {
-      const baseUrl = (new URL(window.location.href)).origin;
+      const baseUrl = new URL(window.location.href).origin;
       if (!allowAnonymous) {
-        window.location.href = urlJoin(authServerUrl, 'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login'));
+        window.location.href = urlJoin(
+          authServerUrl,
+          'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login')
+        );
       } else {
         // Redirect to login page after disconnecting from SSO
         // The login page will remove the token, display a notification and redirect to the homepage
-        window.location.href = urlJoin(authServerUrl, 'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login?logout=true'));
+        window.location.href = urlJoin(
+          authServerUrl,
+          'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login?logout=true')
+        );
       }
     }
 
@@ -111,7 +117,7 @@ const authProvider = ({
     try {
       const { json } = await dataProvider.fetch(aclUri);
       return json['@graph'];
-    } catch(e) {
+    } catch (e) {
       console.warn(`Could not fetch ACL URI ${uri}`);
       return [];
     }

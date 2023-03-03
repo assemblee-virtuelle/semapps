@@ -47,7 +47,7 @@ const dataModel = {
 | `list.forceArray`             | `Array`             |              | Predicates listed will be turned to arrays if they are simple strings. Used by for reified relationship. To be deprecated.                |
 | `list.predicates`             | `Array`             |              | Will only fetch the given predicates (and the `@type`). [Benchmark](https://github.com/assemblee-virtuelle/semapps/pull/1026)             |
 | `list.filter`                 | `Object`            |              | React-Admin permanent filter applied to all requests. [Docs](https://marmelab.com/react-admin/doc/3.19/List.html#filter-permanent-filter) |
-| `list.fetchContainers`        | `Boolean`           | false        | If true, the data provider will fetch the LDP containers instead of doing a SPARQL request.                                               |
+| `list.fetchContainer`         | `Boolean`           | false        | If true, the data provider will fetch the LDP containers instead of doing a SPARQL request.                                               |
 | `list.explicitEmbedOnFraming` | `Boolean`           | true         | If false, improve performances by not including the `@embed` rule in post-request JSON-LD framing                                         |
 | `create.server`               | `String`            | "@default"   | The server where to create new resources.                                                                                                 |
 | `create.container`            | `String`            |              | URL of the container where to create new resources. If specified, will bypass the `create.server` config.                                 |

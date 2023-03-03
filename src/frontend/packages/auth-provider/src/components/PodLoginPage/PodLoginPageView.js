@@ -21,8 +21,8 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 350,
     marginTop: '6em',
     [theme.breakpoints.down('sm')]: {
-      margin: '1em',
-    },
+      margin: '1em'
+    }
   },
   lockIconAvatar: {
     margin: '1em',
@@ -110,7 +110,7 @@ const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
     })();
   }, [searchParams, dataProvider]);
 
-  if (searchParams.has('token') || searchParams.has('addUser') || searchParams.has('logout') ) {
+  if (searchParams.has('token') || searchParams.has('addUser') || searchParams.has('logout')) {
     return null;
   }
 
@@ -130,7 +130,11 @@ const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
         <Box m={2}>
           <List className={classes.list}>
             {podProviders.map((podProvider, i) => {
-              const url = new URL('/auth', (podProvider['apods:domainName'].includes(':') ? 'http://' : 'https://') + podProvider['apods:domainName']);
+              const url = new URL(
+                '/auth',
+                (podProvider['apods:domainName'].includes(':') ? 'http://' : 'https://') +
+                  podProvider['apods:domainName']
+              );
               if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
               url.searchParams.set('redirect', window.location.href);
               return (

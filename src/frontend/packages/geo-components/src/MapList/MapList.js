@@ -8,7 +8,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
-import MobileDrawer from "./MobileDrawer";
+import MobileDrawer from './MobileDrawer';
 
 const useStyles = makeStyles(() => ({
   loading: {

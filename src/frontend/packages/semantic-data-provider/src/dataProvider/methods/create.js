@@ -66,7 +66,7 @@ const createMethod = config => async (resourceId, params) => {
       body: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { <${containerUri}> ldp:contains <${params.id}>. };
-      `,
+      `
     });
 
     // Create must return the new data, so get them from the remote URI

@@ -27,7 +27,7 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const capitalizeFirstLetter = string => string && (string.charAt(0).toUpperCase() + string.slice(1));
+const capitalizeFirstLetter = string => string && string.charAt(0).toUpperCase() + string.slice(1);
 
 const LexiconAutocompleteInput = ({
   fetchLexicon,

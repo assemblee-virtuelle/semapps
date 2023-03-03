@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useMap } from "react-leaflet";
+import { useMap } from 'react-leaflet';
 import { Drawer, Box, IconButton, makeStyles } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -19,9 +19,9 @@ const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
     if (record) {
       map.setView([record.latitude, record.longitude]);
     }
-  }, [record, map])
+  }, [record, map]);
 
-  return(
+  return (
     <Drawer anchor="bottom" open={!!record} onClose={onClose}>
       <Box p={1} position="relative">
         <IconButton onClick={onClose} className={classes.closeButton}>
@@ -30,7 +30,7 @@ const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
         {record && React.createElement(popupContent, { record, basePath })}
       </Box>
     </Drawer>
-  )
+  );
 };
 
 export default MobileDrawer;

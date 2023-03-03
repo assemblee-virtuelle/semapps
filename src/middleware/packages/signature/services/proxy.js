@@ -104,6 +104,10 @@ const ProxyService = {
           // Do nothing if body is not JSON
         }
 
+        // Remove headers that we don't want to be transfered
+        response.headers.delete('content-length');
+        response.headers.delete('connection');
+
         return {
           body,
           headers: Object.fromEntries(response.headers.entries()),

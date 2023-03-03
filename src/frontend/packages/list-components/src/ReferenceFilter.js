@@ -22,7 +22,9 @@ const ReferenceFilterCounter = ({ source, id }) => {
   return (
     <>
       &nbsp;
-      <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
+      <span className="filter-count">
+        {'(' + Object.values(data).filter(d => [].concat(d[source]).includes(id)).length + ')'}
+      </span>
     </>
   );
 };
@@ -34,42 +36,37 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
   const resourceContext = useResourceContext();
   const resourceContextDataModel = useDataModel(resourceContext);
   const resourceContextContainers = useContainers(resourceContext);
-  
-  const {
-    displayedFilters,
-    filterValues,
-    setFilters,
-    hideFilter
-  } = useListContext();
+
+  const { displayedFilters, filterValues, setFilters, hideFilter } = useListContext();
   useEffect(() => {
     // Needed when filter item is active and its last relation is removed
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    if (! params.filter) {
+    if (!params.filter) {
       setFilters({});
     }
   }, []);
-  
-  const itemIsUsed = (id) => {
+
+  const itemIsUsed = id => {
     if (!inverseSource) {
       return true;
     }
     if (!resourceContextContainers || !data || !data[id][inverseSource]) {
       return false;
     }
-    let itemIsUsed = false;    
+    let itemIsUsed = false;
     Object.values(resourceContextContainers).forEach(value => {
       value.forEach(containerUrl => {
         [].concat(data[id][inverseSource]).forEach(inverseSourceData => {
           if (inverseSourceData.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
-        })
-      })
+        });
+      });
     });
     return itemIsUsed;
-  }
-  
+  };
+
   return (
     <FilterList label={label || currentResource.options.label} icon={icon || React.createElement(currentResource.icon)}>
       {ids
