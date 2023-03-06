@@ -1,4 +1,5 @@
 const fetch = require("node-fetch");
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require("@semapps/mime-types");
 
 module.exports = {
@@ -32,7 +33,7 @@ module.exports = {
           return await response.text();
         }
       } else {
-        throw new Error(`Unable to fetch remote object: ${resourceUri}`);
+        throw new MoleculerError(response.statusText, response.status);
       }
     }
   }

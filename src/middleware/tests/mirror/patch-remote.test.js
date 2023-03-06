@@ -7,44 +7,19 @@ jest.setTimeout(50000);
 
 let server1, server2;
 
-const relay1 = 'http://localhost:3001/applications/relay';
-const relay2 = 'http://localhost:3002/applications/relay';
-
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');
-
-  // Wait for Relay actor creation, or server2 won't be able to mirror server1
-  await server1.call('activitypub.actor.awaitCreateComplete', {
-    actorUri: relay1
-  });
-
-  server2 = await initialize(3002, 'testData2', 'settings2', 'http://localhost:3001');
+  server2 = await initialize(3002, 'testData2', 'settings2');
 });
 afterAll(async () => {
   if (server1) await server1.stop();
   if (server2) await server2.stop();
 });
 
-describe('Server2 mirror server1', () => {
+describe('Server2 imports a single resource from server1', () => {
   let resourceUri;
 
-  test('Server2 follow server1', async () => {
-    await waitForExpect(async () => {
-      await expect(
-        server1.call('activitypub.collection.includes', { collectionUri: urlJoin(relay1, 'followers'), itemUri: relay2 })
-      ).resolves.toBeTruthy();
-    });
-  });
-
-  test('Server1 resources container is mirrored on server2', async () => {
-    await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.container.exist', { containerUri: 'http://localhost:3001/resources' })
-      ).resolves.toBeTruthy();
-    });
-  });
-
-  test('Resource posted on server1 is mirrored on server2', async () => {
+  test('Resource is posted on server1', async () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
@@ -59,7 +34,23 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
+        server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
+      ).resolves.toBeTruthy();
+    });
+  });
+
+  test('Resource is imported on server2', async () => {
+    await server2.call('ldp.container.patch', {
+      containerUri: 'http://localhost:3002/resources',
+      sparqlUpdate: `
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
+      `
+    });
+
+    await waitForExpect(async () => {
+      await expect(
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
@@ -87,6 +78,9 @@ describe('Server2 mirror server1', () => {
       contentType: MIME_TYPES.JSON
     });
 
+    // Force call of updateSingleMirroredResources
+    await server2.call('ldp.remote.runCron');
+
     await waitForExpect(async () => {
       await expect(
         server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
@@ -101,11 +95,8 @@ describe('Server2 mirror server1', () => {
   test('Resource deleted on server1 is deleted on server2', async () => {
     await server1.call('ldp.resource.delete', { resourceUri });
 
-    await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
-      ).resolves.toBeFalsy();
-    });
+    // Force call of updateSingleMirroredResources
+    await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
       await expect(

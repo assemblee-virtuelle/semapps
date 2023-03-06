@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -16,10 +15,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
-    const mirror = isMirror(containerUri, this.settings.baseUrl);
-
-    if (mirror && !ctx.meta.forceMirror)
-      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+    const isRemoteContainer = this.isRemoteUri(containerUri);
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
@@ -36,10 +32,10 @@ module.exports = {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
       dataset,
-      graphName: mirror ? this.settings.mirrorGraphName : undefined
+      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 
-    if (!mirror)
+    if (!isRemoteContainer)
       ctx.emit(
         'ldp.container.attached',
         {

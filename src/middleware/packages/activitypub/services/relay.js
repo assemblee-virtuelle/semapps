@@ -318,19 +318,19 @@ const RelayService = {
             if (activity.object.target)
               await ctx.call(
                 'ldp.container.attach',
-                { containerUri: activity.object.target, resourceUri: activity.object.object },
-                { meta: { forceMirror: true } }
+                { containerUri: activity.object.target, resourceUri: activity.object.object }
               );
             break;
           }
           case ACTIVITY_TYPES.UPDATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.put', { resource: newResource, contentType: MIME_TYPES.JSON });
+            await ctx.call('ldp.remote.store', {
+              resourceUri: activity.object.object,
+              mirrorGraph: true
+            });
             break;
           }
           case ACTIVITY_TYPES.DELETE: {
-            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
+            await ctx.call('ldp.remote.delete', { resourceUri: activity.object.object });
             break;
           }
           case ACTIVITY_TYPES.ADD: {
@@ -340,8 +340,7 @@ const RelayService = {
             if (triple)
               await ctx.call(
                 'ldp.container.attach',
-                { containerUri: triple.subject, resourceUri: triple.object },
-                { meta: { forceMirror: true } }
+                { containerUri: triple.subject, resourceUri: triple.object }
               );
             break;
           }
@@ -352,8 +351,7 @@ const RelayService = {
             if (triple)
               await ctx.call(
                 'ldp.container.detach',
-                { containerUri: triple.subject, resourceUri: triple.object },
-                { meta: { forceMirror: true } }
+                { containerUri: triple.subject, resourceUri: triple.object }
               );
             break;
           }

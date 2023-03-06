@@ -24,7 +24,8 @@ module.exports = {
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
-    store: storeAction
+    store: storeAction,
+    runCron() { this.updateSingleMirroredResources() } // Used by tests
   },
   methods: {
     isRemoteUri(resourceUri) {
@@ -49,22 +50,19 @@ module.exports = {
 
         for (const resourceUri of singles.map(node => node.s.value)) {
           try {
-            const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON }});
-
-            if (response.status === 403 || response.status === 404 || response.status === 401) {
+            await this.actions.store({
+              resourceUri,
+              keepInSync: true,
+              mirrorGraph: true,
+            })
+          } catch (e) {
+            if (e.code === 403 || e.code === 404 || e.code === 401) {
               await this.actions.delete({ resourceUri });
             } else {
-              await this.actions.store()
-              // update the local cache
-              let resource = await response.json();
-              resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
-
-              await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
+              // Connection errors are not counted as errors that indicate the resource is gone.
+              // Those error just indicate that the remote server is not responding. Can be temporary.
+              this.logger.warn('Failed to update single mirrored resource: ' + resourceUri);
             }
-          } catch (e) {
-            // connection errors are not counted as errors that indicate the resource is gone.
-            // those error just indicate that the remote server is not responding. can be temporary.
-            this.logger.warn('Failed to update single mirrored resource: ' + resourceUri);
           }
         }
       }

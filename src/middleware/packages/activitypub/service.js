@@ -1,5 +1,4 @@
 const QueueService = require('moleculer-bull');
-const { getSlugFromUri } = require('@semapps/ldp');
 const ActorService = require('./services/actor');
 const ActivityService = require('./services/activity');
 const CollectionService = require('./services/collection');

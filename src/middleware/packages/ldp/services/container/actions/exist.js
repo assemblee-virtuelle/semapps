@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -12,17 +11,17 @@ module.exports = {
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
 
-    const mirror = isMirror(containerUri, this.settings.baseUrl);
+    const isRemoteContainer = this.isRemoteUri(containerUri);
 
     return await ctx.call('triplestore.query', {
       query: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
-          ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
           ?container a ldp:Container .
           FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
-          ${mirror ? '}' : ''}
+          ${isRemoteContainer ? '}' : ''}
         }
       `,
       accept: MIME_TYPES.JSON,

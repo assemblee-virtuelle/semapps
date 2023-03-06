@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror, regexPrefix } = require('../../../utils');
+const { isMirror } = require('../../../utils');
 const SparqlParser = require('sparqljs').Parser;
 const parser = new SparqlParser();
 

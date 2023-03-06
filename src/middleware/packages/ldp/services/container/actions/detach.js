@@ -1,6 +1,4 @@
-const { isMirror } = require('../../../utils');
 const urlJoin = require('url-join');
-const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
   visibility: 'public',
@@ -17,16 +15,14 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
 
-    const mirror = isMirror(containerUri, this.settings.baseUrl);
-    if (mirror && !ctx.meta.forceMirror)
-      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+    const isRemoteContainer = this.isRemoteUri(containerUri);
 
     if (new URL(containerUri).pathname === '/') {
-      if (mirror) return; // indeed, we never have the root container on a mirror.
+      if (isRemoteContainer) return; // indeed, we never have the root container on a mirror.
       containerUri = urlJoin(containerUri, '/');
     }
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
-    if (!containerExists && mirror) return;
+    if (!containerExists && isRemoteContainer) return;
     if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
 
     await ctx.call('triplestore.update', {
@@ -34,16 +30,16 @@ module.exports = {
         DELETE
         WHERE
         { 
-          ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
-          ${mirror ? '}' : ''}
+          ${isRemoteContainer ? '}' : ''}
         }
       `,
       webId,
       dataset
     });
 
-    if (!mirror)
+    if (!isRemoteContainer)
       ctx.emit(
         'ldp.container.detached',
         {
