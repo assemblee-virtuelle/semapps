@@ -1,6 +1,5 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { isMirror } = require('../../../utils');
 const SparqlParser = require('sparqljs').Parser;
 
 const parser = new SparqlParser();
@@ -74,8 +73,8 @@ module.exports = {
       let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (isMirror(resourceUri, this.settings.baseUrl))
-        throw new MoleculerError('Mirrored resources cannot be patched', 403, 'FORBIDDEN');
+      if (this.isRemoteUri(resourceUri))
+        throw new MoleculerError('Remote resources cannot be patched', 403, 'FORBIDDEN');
 
       if (sparqlUpdate) {
         let parsedQuery;
@@ -129,7 +128,7 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: sparqlUpdate,
         webId
-      })
+      });
 
       const returnValues = {
         resourceUri,

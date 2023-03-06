@@ -43,7 +43,7 @@ module.exports = {
       );
     }
 
-    ctx.call('triplestore.deleteOrphanBlankNodes', {
+    await ctx.call('triplestore.deleteOrphanBlankNodes', {
       graphName: this.settings.mirrorGraphName
     });
   }

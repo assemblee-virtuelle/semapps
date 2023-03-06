@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror } = require('../../../utils');
 
 module.exports = {
   api: async function api(ctx) {
@@ -35,7 +34,7 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (isMirror(resourceUri, this.settings.baseUrl)) {
+      if (this.isRemoteUri(resourceUri)) {
         return await ctx.call('ldp.remote.delete', { resourceUri, webId })
       }
 

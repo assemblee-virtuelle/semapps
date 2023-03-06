@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -21,10 +20,10 @@ module.exports = {
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-
     const resourceUri = resource.id || resource['@id'];
 
-    const mirror = isMirror(resourceUri, this.settings.baseUrl);
+    if (this.isRemoteUri(resourceUri))
+      throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -94,9 +93,7 @@ module.exports = {
       webId
     };
 
-    if (!mirror) {
-      ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
-    }
+    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
 
     return returnValues;
   }

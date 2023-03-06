@@ -3,7 +3,8 @@ const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { ACTOR_TYPES } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
-const { CoreService } = require('@semapps/core');
+const { CoreService, defaultOntologies } = require('@semapps/core');
+const { InferenceService } = require('@semapps/inference');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
@@ -70,9 +71,16 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     }
   });
 
-  broker.createService(WebIdService, {
+  await broker.createService(WebIdService, {
     settings: {
       usersContainer: baseUrl + 'actors/'
+    }
+  });
+
+  await broker.createService(InferenceService, {
+    settings: {
+      baseUrl,
+      ontologies: defaultOntologies
     }
   });
 
