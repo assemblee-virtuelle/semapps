@@ -76,6 +76,7 @@ describe('An inference is added between server1 et server2', () => {
   });
 
   test('An remote relationship is removed through put', async () => {
+    // Do not includes the new pair:inspiredBy property = remove it
     await server2.call('ldp.resource.put', {
       resource: {
         '@context': {
