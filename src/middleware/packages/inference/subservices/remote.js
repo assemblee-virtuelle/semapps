@@ -10,8 +10,8 @@ module.exports = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUrl: null,
-    acceptRemoteInference: true,
-    offerRemoteInference: true
+    acceptFromRemoteServers: true,
+    offerToRemoteServers: true
   },
   dependencies: ['activitypub.relay'],
   async started() {
@@ -27,55 +27,57 @@ module.exports = {
         add: { type: 'boolean', optional: false }
       },
       async handler(ctx) {
-        const serverDomainName = new URL(ctx.params.subject).host;
-        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
+        if (this.settings.offerToRemoteServers) {
+          const serverDomainName = new URL(ctx.params.subject).host;
+          const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
 
-        if (remoteRelayActorUri) {
-          await ctx.call('activitypub.outbox.post', {
-            collectionUri: this.relayActor.outbox,
-            '@context': 'https://www.w3.org/ns/activitystreams',
-            actor: this.relayActor.id,
-            type: ACTIVITY_TYPES.OFFER,
-            object: {
-              type: ctx.params.add ? ACTIVITY_TYPES.ADD : ACTIVITY_TYPES.REMOVE,
+          if (remoteRelayActorUri) {
+            await ctx.call('activitypub.outbox.post', {
+              collectionUri: this.relayActor.outbox,
+              '@context': 'https://www.w3.org/ns/activitystreams',
+              actor: this.relayActor.id,
+              type: ACTIVITY_TYPES.OFFER,
               object: {
-                type: OBJECT_TYPES.RELATIONSHIP,
-                subject: ctx.params.subject,
-                relationship: ctx.params.predicate,
-                object: ctx.params.object
-              }
-            },
-            to: [remoteRelayActorUri]
-          });
-        } else {
-          // no relay actor on the other side, let's try a PUT instead
-          try {
-            const response = await fetch(ctx.params.subject, {
-              method: 'GET',
-              headers: {
-                Accept: 'application/ld+json'
-              }
+                type: ctx.params.add ? ACTIVITY_TYPES.ADD : ACTIVITY_TYPES.REMOVE,
+                object: {
+                  type: OBJECT_TYPES.RELATIONSHIP,
+                  subject: ctx.params.subject,
+                  relationship: ctx.params.predicate,
+                  object: ctx.params.object
+                }
+              },
+              to: [remoteRelayActorUri]
             });
-            if (response.ok) {
-              let json = await response.json();
-
-              if (ctx.params.add) {
-                json[ctx.params.predicate] = { id: ctx.params.object };
-              } else {
-                let expanded_resource = await ctx.call('jsonld.expand', { input: json });
-                delete expanded_resource[0]?.[ctx.params.predicate];
-                json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
-              }
-              await fetch(ctx.params.subject, {
-                method: 'PUT',
+          } else {
+            // no relay actor on the other side, let's try a PUT instead
+            try {
+              const response = await fetch(ctx.params.subject, {
+                method: 'GET',
                 headers: {
-                  'Content-Type': 'application/ld+json'
-                },
-                body: JSON.stringify(json)
+                  Accept: 'application/ld+json'
+                }
               });
+              if (response.ok) {
+                let json = await response.json();
+
+                if (ctx.params.add) {
+                  json[ctx.params.predicate] = { id: ctx.params.object };
+                } else {
+                  let expanded_resource = await ctx.call('jsonld.expand', { input: json });
+                  delete expanded_resource[0]?.[ctx.params.predicate];
+                  json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
+                }
+                await fetch(ctx.params.subject, {
+                  method: 'PUT',
+                  headers: {
+                    'Content-Type': 'application/ld+json'
+                  },
+                  body: JSON.stringify(json)
+                });
+              }
+            } catch (e) {
+              this.logger.warn(`Error while connecting to remove server for offering inverse relationship: ${e.message}`);
             }
-          } catch (e) {
-            this.logger.warn(`Error while connecting to remove server for offering inverse relationship: ${e.message}`);
           }
         }
       }
@@ -112,7 +114,7 @@ module.exports = {
         );
       },
       async onReceive(ctx, activity, recipients) {
-        if (recipients.includes(this.relayActor.id)) {
+        if (this.settings.acceptFromRemoteServers && recipients.includes(this.relayActor.id)) {
           let relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (this.isRemoteUri(relationship.subject)) {
@@ -131,6 +133,7 @@ module.exports = {
               resourceUri: relationship.subject,
               triplesToAdd: activity.object.type === ACTIVITY_TYPES.ADD ? triples : [],
               triplesToRemove: activity.object.type === ACTIVITY_TYPES.REMOVE ? triples : [],
+              webId: 'system'
             });
 
             if (this.broker.cacher) {

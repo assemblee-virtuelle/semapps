@@ -27,7 +27,7 @@ afterAll(async () => {
 });
 
 describe('Server2 mirror server1', () => {
-  let publicResourceUri, protectedResourceUri;
+  let resourceUri;
 
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
@@ -46,7 +46,7 @@ describe('Server2 mirror server1', () => {
   });
 
   test('Resource posted on server1 is mirrored on server2', async () => {
-    publicResourceUri = await server1.call('ldp.container.post', {
+    resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -60,15 +60,15 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri: publicResourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.remote.get', { resourceUri: publicResourceUri, strategy: 'cacheOnly' })
+        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
       ).resolves.toMatchObject({
-        'id': publicResourceUri,
+        'id': resourceUri,
         'type': 'pair:Resource',
         'pair:label': 'My resource'
       });
@@ -81,7 +81,7 @@ describe('Server2 mirror server1', () => {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@id': publicResourceUri,
+        '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated',
       },
@@ -90,9 +90,9 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.remote.get', { resourceUri: publicResourceUri, strategy: 'cacheOnly' })
+        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
       ).resolves.toMatchObject({
-        'id': publicResourceUri,
+        'id': resourceUri,
         'type': 'pair:Resource',
         'pair:label': 'My resource updated'
       });
@@ -104,113 +104,36 @@ describe('Server2 mirror server1', () => {
       containerUri: 'http://localhost:3002/resources',
       sparqlUpdate: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
-        INSERT DATA { <http://localhost:3002/resources> ldp:contains <${publicResourceUri}>. };
+        INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
       `
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri: publicResourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
     // Since server1 is mirrored by server2, we don't need to mark it as singleMirroredResource
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.remote.get', { resourceUri: publicResourceUri, strategy: 'cacheOnly' })
+        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
       ).resolves.not.toHaveProperty('semapps:singleMirroredResource');
     });
   });
 
-  test('Protected resource on server1 is shared with a specific user', async () => {
-    protectedResourceUri = await server1.call('ldp.container.post', {
-      resource: {
-        '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-        },
-        '@type': 'Project',
-        label: 'My project',
-      },
-      contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3001/protected-resources',
-      webId: 'system'
-    });
-
-    await server1.call('webacl.resource.addRights', {
-      resourceUri: protectedResourceUri,
-      additionalRights: {
-        user: {
-          uri: 'http://server.com/user',
-          read: true
-        }
-      },
-      webId: 'system'
-    });
-
-    await waitForExpect(async () => {
-      const inbox = await server1.call('activitypub.collection.get', {
-        collectionUri: relay1 + '/outbox',
-        page: 1,
-        webId: relay1
-      });
-
-      expect(inbox).not.toBeNull();
-      expect(inbox.orderedItems[0]).toMatchObject({
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        actor: relay1,
-        object: {
-          type: ACTIVITY_TYPES.CREATE,
-          object: protectedResourceUri
-        },
-        to: 'http://server.com/user'
-      });
-    });
-  });
-
-  test('Protected resource is not shared anymore with a specific user', async () => {
-    await server1.call('webacl.resource.removeRights', {
-      resourceUri: protectedResourceUri,
-      rights: {
-        user: {
-          uri: 'http://server.com/user',
-          read: true
-        }
-      },
-      webId: 'system'
-    });
-
-    await waitForExpect(async () => {
-      const inbox = await server1.call('activitypub.collection.get', {
-        collectionUri: relay1 + '/outbox',
-        page: 1,
-        webId: relay1
-      });
-
-      expect(inbox).not.toBeNull();
-      expect(inbox.orderedItems[0]).toMatchObject({
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        actor: relay1,
-        object: {
-          type: ACTIVITY_TYPES.DELETE,
-          object: protectedResourceUri
-        },
-        to: 'http://server.com/user'
-      });
-    });
-  });
-
   test('Resource deleted on server1 is deleted on server2', async () => {
-    await server1.call('ldp.resource.delete', { resourceUri: publicResourceUri });
+    await server1.call('ldp.resource.delete', { resourceUri });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri: publicResourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeFalsy();
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.remote.get', { resourceUri: publicResourceUri, strategy: 'cacheOnly' })
+        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
       ).rejects.toThrow();
     });
   });

@@ -8,19 +8,19 @@ module.exports = {
   name: 'inference',
   settings: {
     baseUrl: null,
-    acceptRemoteInference: true,
-    offerRemoteInference: true,
+    acceptFromRemoteServers: true,
+    offerToRemoteServers: true,
     ontologies: []
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
-    const { baseUrl, acceptRemoteInference, offerRemoteInference } = this.settings;
-    if (acceptRemoteInference || offerRemoteInference) {
+    const { baseUrl, acceptFromRemoteServers, offerToRemoteServers } = this.settings;
+    if (acceptFromRemoteServers || offerToRemoteServers) {
       this.broker.createService(RemoteService, {
         settings: {
           baseUrl,
-          acceptRemoteInference,
-          offerRemoteInference
+          acceptFromRemoteServers,
+          offerToRemoteServers
         }
       });
     }
@@ -158,7 +158,7 @@ module.exports = {
       }
 
       // remote data
-      if (this.settings.offerRemoteServers) {
+      if (this.settings.offerToRemoteServers) {
         for (let triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
@@ -183,7 +183,7 @@ module.exports = {
       }
 
       // remote data
-      if (this.settings.offerRemoteServers) {
+      if (this.settings.offerToRemoteServers) {
         for (let triple of removeRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
@@ -233,7 +233,7 @@ module.exports = {
       // Dealing with remotes
 
       // remote relationships are sent to relay actor of remote server
-      if (this.settings.offerRemoteServers) {
+      if (this.settings.offerToRemoteServers) {
         for (let triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
@@ -285,7 +285,7 @@ module.exports = {
       // Dealing with remotes
 
       // remote relationships are sent to relay actor of remote server
-      if (this.settings.offerRemoteServers) {
+      if (this.settings.offerToRemoteServers) {
         for (let triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,

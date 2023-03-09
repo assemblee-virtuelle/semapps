@@ -23,6 +23,12 @@ const containers = [
     newResourcesPermissions: {}
   },
   {
+    path: '/actors',
+    acceptedTypes: [ACTOR_TYPES.PERSON],
+    excludeFromMirror: true,
+    dereference: ['sec:publicKey', 'as:endpoints']
+  },
+  {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true,
