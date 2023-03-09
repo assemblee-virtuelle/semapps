@@ -3,8 +3,9 @@ title: Mirror
 ---
 
 This service enables your server to become a mirror of one or more other SemApps servers, and/or to offer the option to other SemApps servers to mirror you.
-
 Only public data can be mirrored. If your server is using the [WebAclService](webacl), then the anonymous `acl:Read` permission should be set for the data to be mirrored.
+
+It can also be used to share resources to selected resources.
 
 ## Dependencies
 
@@ -12,6 +13,10 @@ Only public data can be mirrored. If your server is using the [WebAclService](we
 - [LdpService](ldp)
 - [WebfingerService](webfinger)
 - [VoidService](void)
+
+## Sub-services
+
+- ListenerService
 
 ## Install
 
@@ -39,9 +44,34 @@ module.exports = {
   mixins: [MirrorService],
   settings: {
     baseUrl: 'http://localhost:3000/',
-    servers: ['https://otherserver.com'], // Optional. Other servers you want to mirror
-    acceptFollowers: true // Default value
+    podProvider: false,
+    servers: ['https://otherserver.com'] // Optional. Other servers you want to mirror
   }
+};
+```
+
+Additionally, if you want other servers to mirror you, you must setup the `WatcherMiddleware` on Moleculer config. This
+middleware will:
+
+- Watch for changes to the LDP servers (create, patch, put, delete...)
+- Generate corresponding ActivityPub activities (Create, Update, Delete)
+- Send them through the instance (Relay) actor or, in POD provider config, through the Pod actor.
+- Send them to:
+  - All actors who have read permissions on the resource
+  - Emitter followers and [as:Public](https://www.w3.org/TR/activitypub/#public-addressing)
+
+If a public data becomes private, it is considered as being deleted. If a private data becomes public, it is considered 
+as a new resource.
+
+```js
+const { WatcherMiddleware } = require('@semapps/mirror');
+module.exports = {
+  middlewares: [
+    CacherMiddleware({ ... }),
+    WebAclMiddleware({ baseUrl: CONFIG.HOME_URL, podProvider: true }),
+    WatcherMiddleware({ podProvider: false })
+  ],
+  ...
 };
 ```
 

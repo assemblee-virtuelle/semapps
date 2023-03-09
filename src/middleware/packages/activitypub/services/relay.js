@@ -7,7 +7,6 @@ const RelayService = {
   name: 'activitypub.relay',
   settings: {
     baseUri: null,
-    acceptFollowers: true,
     actor: {
       username: 'relay',
       name: 'Relay actor for instance'

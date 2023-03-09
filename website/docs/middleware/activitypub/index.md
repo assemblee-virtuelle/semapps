@@ -8,11 +8,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 
 - Store activities, actors and objects in the triple store
 - Allow to create actors when new [WebIDs](../webid.md) are created
-- Currently supported activities:
-  - `Create`
-  - `Update`
-  - `Delete`
-  - `Follow`
+- Side effects are supported for `Create`, `Update`, `Delete`, `Follow`, `Like`
 
 ## Dependencies
 
@@ -30,6 +26,7 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - LikeService
 - ObjectService
 - OutboxService
+- RelayService
 - ReplyService
 - RegistryService
 
