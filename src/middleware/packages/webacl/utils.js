@@ -124,6 +124,10 @@ function getUserAgentSearchParam(user, groups) {
     return {
       foafAgent: true
     };
+  } if (user === 'system') {
+    return {
+      system: true
+    };
   } else {
     return {
       foafAgent: true,

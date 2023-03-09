@@ -93,7 +93,7 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
 }
 
 async function filterAcls(hasControl, uaSearchParam, acls) {
-  if (hasControl) return acls;
+  if (hasControl || uaSearchParam.system) return acls;
 
   let filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
@@ -111,7 +111,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
   let hasControl = checkAgentPresent(controls, uaSearchParam);
   let groups;
 
-  if (!hasControl && user !== 'anon') {
+  if (!hasControl && user !== 'anon' && user !== 'system') {
     // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
     uaSearchParam.groups = groups;
@@ -200,19 +200,20 @@ module.exports = {
     params: {
       resourceUri: { type: 'string' },
       accept: { type: 'string', optional: true },
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
+      skipResourceCheck: { type: 'boolean', default: false }
     },
     cache: {
       keys: ['resourceUri', 'accept', 'webId', '#webId']
     },
     async handler(ctx) {
-      let { resourceUri, webId, accept } = ctx.params;
+      let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-      const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
+      const isContainer = !skipResourceCheck && await this.checkResourceOrContainerExists(ctx, resourceUri);
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
     }

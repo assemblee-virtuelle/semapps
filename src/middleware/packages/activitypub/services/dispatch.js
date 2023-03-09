@@ -84,6 +84,9 @@ const DispatchService = {
       return { success, failures };
     },
     async remotePost(recipientUri, activity) {
+      // During tests, do not do post to remote servers
+      if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
+
       try {
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,

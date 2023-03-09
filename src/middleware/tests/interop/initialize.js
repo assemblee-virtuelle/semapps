@@ -5,16 +5,22 @@ const { ACTOR_TYPES } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService, defaultOntologies } = require('@semapps/core');
 const { InferenceService } = require('@semapps/inference');
+const { WatcherMiddleware } = require("@semapps/mirror");
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
-const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const { clearDataset } = require("../utils");
 
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource']
+    acceptedTypes: ['pair:Resource'],
+  },
+  {
+    path: '/protected-resources',
+    acceptedTypes: ['pair:Resource'],
+    permissions: {},
+    newResourcesPermissions: {}
   },
   {
     path: '/applications',
@@ -36,11 +42,11 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   const broker = new ServiceBroker({
     nodeID: 'server' + port,
-    middlewares: [EventsWatcher, WebAclMiddleware({ baseUrl })],
+    middlewares: [WebAclMiddleware({ baseUrl }), WatcherMiddleware({ })],
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -80,6 +86,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   await broker.createService(InferenceService, {
     settings: {
       baseUrl,
+      offerRemoteServers: true,
       ontologies: defaultOntologies
     }
   });

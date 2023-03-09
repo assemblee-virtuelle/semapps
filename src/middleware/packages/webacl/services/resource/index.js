@@ -4,6 +4,8 @@ const awaitReadRight = require('./actions/awaitReadRight');
 const getRights = require('./actions/getRights');
 const setRights = require('./actions/setRights');
 const hasRights = require('./actions/hasRights');
+const isPublic = require('./actions/isPublic');
+const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
 const deleteAllRights = require('./actions/deleteAllRights');
 const refreshContainersRights = require('./actions/refreshContainersRights');
 const removeRights = require('./actions/removeRights');
@@ -36,6 +38,8 @@ module.exports = {
     deleteAllRights: deleteAllRights.action,
     getRights: getRights.action,
     hasRights: hasRights.action,
+    isPublic: isPublic.action,
+    getUsersWithReadRights: getUsersWithReadRights.action,
     refreshContainersRights: refreshContainersRights.action,
     removeRights: removeRights.action,
     setRights: setRights.action,

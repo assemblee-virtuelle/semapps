@@ -118,9 +118,7 @@ module.exports = {
 
     this.logger.info('Following remote relay actor ' + remoteRelayActorUri);
 
-    const activity = await ctx.call('activitypub.relay.follow', {
-      remoteRelayActorUri
-    });
+    await ctx.call('activitypub.relay.follow', { remoteRelayActorUri });
 
     return remoteRelayActorUri;
   }

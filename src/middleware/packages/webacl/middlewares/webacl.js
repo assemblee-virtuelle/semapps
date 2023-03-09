@@ -250,6 +250,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
             let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
+            // When a new activity is created, ensure the emitter has read rights also
+            if (action.name === 'activitypub.activity.create') {
+              if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
+            }
+
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once
             // https://github.com/assemblee-virtuelle/semapps/issues/908

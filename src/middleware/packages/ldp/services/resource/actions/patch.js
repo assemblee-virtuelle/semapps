@@ -76,6 +76,9 @@ module.exports = {
       if (this.isRemoteUri(resourceUri))
         throw new MoleculerError('Remote resources cannot be patched', 403, 'FORBIDDEN');
 
+      // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
+      // if (!resourceExist) throw new MoleculerError('Resource not found', 404, 'FORBIDDEN');
+
       if (sparqlUpdate) {
         let parsedQuery;
 

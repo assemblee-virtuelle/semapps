@@ -20,8 +20,9 @@ module.exports = {
 
     const graphName = await this.actions.getGraph({ resourceUri }, { parentCtx: ctx });
 
-    await ctx.call('triplestore.update', {
-      query: `
+    if (graphName !== false) {
+      await ctx.call('triplestore.update', {
+        query: `
         DELETE
         WHERE { 
           ${graphName ? `GRAPH <${graphName}> {` : ''}
@@ -29,23 +30,30 @@ module.exports = {
           ${graphName ? '}' : ''}
         }
       `,
-      webId: 'system',
-      dataset
-    });
+        webId: 'system',
+        dataset
+      });
 
-    // Detach from all containers with the mirrored resource
-    const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-    for (let containerUri of containers) {
-      await ctx.call(
-        'ldp.container.detach',
-        { containerUri, resourceUri, webId: 'system' },
-        { meta: { forceMirror: true } }
+      // Detach from all containers with the mirrored resource
+      const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+      for (let containerUri of containers) {
+        await ctx.call(
+          'ldp.container.detach',
+          { containerUri, resourceUri, webId: 'system' },
+          { meta: { forceMirror: true } }
+        );
+      }
+
+      await ctx.call('triplestore.deleteOrphanBlankNodes', {
+        graphName
+      });
+
+      ctx.emit(
+        'ldp.remote.deleted',
+        { resourceUri },
+        { meta: { webId: null, dataset: null, isMirror: true } }
       );
     }
-
-    await ctx.call('triplestore.deleteOrphanBlankNodes', {
-      graphName: this.settings.mirrorGraphName
-    });
   }
 };
 
