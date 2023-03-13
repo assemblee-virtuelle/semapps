@@ -2,7 +2,7 @@ const frenchMessages = {
   auth: {
     dialog: {
       container_permissions: 'Permissions sur le container',
-      resource_permissions: 'Permissions sur la resource',
+      resource_permissions: 'Permissions sur la ressource',
       login_required: 'Connexion requise'
     },
     action: {
