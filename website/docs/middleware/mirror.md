@@ -68,8 +68,8 @@ const { WatcherMiddleware } = require('@semapps/mirror');
 module.exports = {
   middlewares: [
     CacherMiddleware({ ... }),
-    WebAclMiddleware({ baseUrl: CONFIG.HOME_URL, podProvider: true }),
-    WatcherMiddleware({ podProvider: false })
+    WebAclMiddleware({ baseUrl: CONFIG.HOME_URL }),
+    WatcherMiddleware()
   ],
   ...
 };

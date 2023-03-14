@@ -1,8 +1,9 @@
-const { ActivitiesHandlerMixin, ACTIVITY_TYPES, OBJECT_TYPES } = require("@semapps/activitypub");
-const {defaultToArray} = require("@semapps/ldp/utils");
+const { defaultToArray } = require("@semapps/ldp");
+const ActivitiesHandlerMixin = require("../mixins/activities-handler");
+const { ACTIVITY_TYPES, OBJECT_TYPES } = require("../constants");
 
-const MirrorListenerService = {
-  name: 'mirror.listener',
+const SynchronizerService = {
+  name: 'synchronizer',
   mixins: [ActivitiesHandlerMixin],
   settings: {
     podProvider: false
@@ -171,4 +172,4 @@ const MirrorListenerService = {
   }
 };
 
-module.exports = MirrorListenerService;
+module.exports = SynchronizerService;

@@ -232,7 +232,8 @@ module.exports = {
       }
     }
   },
-  isRemoteUri(uri) {
-    return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
+  isRemoteUri(uri, webId) {
+    return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+      || (this.settings.podProvider && webId && !uri.startsWith(webId));
   }
 };

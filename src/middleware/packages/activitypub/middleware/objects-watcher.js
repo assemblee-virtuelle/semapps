@@ -1,6 +1,4 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
 const { PUBLIC_URI, ACTIVITY_TYPES } = require("@semapps/activitypub/constants");
-const { defaultToArray } = require("@semapps/ldp");
 
 const handledActions = [
   'ldp.container.post',
@@ -12,8 +10,9 @@ const handledActions = [
   'webacl.resource.deleteAllRights'
 ];
 
-const WatcherMiddleware = ({ podProvider = false }) => {
-  let relayActor, excludedContainers = [], initialized = false;
+const ObjectsWatcherMiddleware = (config = {}) => {
+  const { podProvider = false } = config;
+  let relayActor, watchedContainers = [], initialized = false;
 
   const getActor = async (ctx, resourceUri) => {
     if (podProvider) {
@@ -37,14 +36,11 @@ const WatcherMiddleware = ({ podProvider = false }) => {
     }
   };
 
-  const inExcludedContainer = (resourceUri) => {
-    const path = new URL(resourceUri).pathname;
-    return excludedContainers.some(c => path.startsWith(c));
+  const isWatched = (containersUris) => {
+    return containersUris.some(uri => watchedContainers.some(container => container.pathRegex.test(new URL(uri).pathname)));
   };
 
   const announce = async (ctx, resourceUri, recipients, activity) => {
-    if (inExcludedContainer(resourceUri)) return;
-
     const actor = await getActor(ctx, resourceUri);
 
     if (recipients.length > 0) {
@@ -60,7 +56,7 @@ const WatcherMiddleware = ({ podProvider = false }) => {
   }
 
   return ({
-    name: 'WatcherMiddleware',
+    name: 'ObjectsWatcherMiddleware',
     async started(broker) {
       if (!podProvider) {
         await broker.waitForServices('activitypub.relay');
@@ -68,7 +64,7 @@ const WatcherMiddleware = ({ podProvider = false }) => {
       }
 
       const containers = await broker.call('ldp.registry.list');
-      excludedContainers = Object.values(containers).filter(c => c.excludeFromMirror).map(c => c.path);
+      watchedContainers = Object.values(containers).filter(c => !c.excludeFromMirror);
 
       initialized = true;
     },
@@ -79,8 +75,38 @@ const WatcherMiddleware = ({ podProvider = false }) => {
           // Otherwise, the creation of the relay actor calls the middleware before it started
           if (!initialized) return await next(ctx);
 
-          const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-          let actionReturnValue, oldContainers, oldRecipients;
+          let actionReturnValue, resourceUri, containerUri, oldContainers, oldRecipients;
+
+          switch (action.name) {
+            case 'ldp.container.post':
+              containerUri = ctx.params.containerUri;
+              break;
+
+            case 'ldp.resource.put':
+              resourceUri = ctx.params.resource.id || ctx.params.resource['@id'];
+              break;
+
+            case 'ldp.resource.delete':
+              resourceUri = ctx.params.resourceUri;
+              break;
+
+            case 'webacl.resource.addRights':
+            case 'webacl.resource.setRights':
+            case 'webacl.resource.removeRights':
+            case 'webacl.resource.deleteAllRights':
+              // If we are modifying rights of an ACL group, ignore
+              if ((new URL(ctx.params.resourceUri)).pathname.startsWith('/_groups/')) return await next(ctx);
+              const containerExist = await ctx.call('ldp.container.exist', { containerUri: ctx.params.resourceUri, webId: 'system' });
+              if (containerExist) {
+                containerUri = ctx.params.resourceUri;
+              } else {
+                resourceUri = ctx.params.resourceUri;
+              }
+              break;
+          }
+
+          const containers = containerUri ? [containerUri] : await ctx.call('ldp.resource.getContainers', { resourceUri });
+          if (!isWatched(containers)) return await next(ctx);
 
           /*
            * BEFORE HOOKS
@@ -108,6 +134,7 @@ const WatcherMiddleware = ({ podProvider = false }) => {
               if (containerExist || resourceExist) {
                 oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               }
+              break;
           }
 
           /*
@@ -245,7 +272,7 @@ const WatcherMiddleware = ({ podProvider = false }) => {
       if (event.name === 'ldp.registry.registered') {
         return async (ctx) => {
           const { container } = ctx.params;
-          if (container.excludeFromMirror) excludedContainers.push(container.path);
+          if (!container.excludeFromMirror) watchedContainers.push(container);
           return next(ctx);
         };
       } else {
@@ -255,4 +282,4 @@ const WatcherMiddleware = ({ podProvider = false }) => {
   });
 }
 
-module.exports = WatcherMiddleware;
+module.exports = ObjectsWatcherMiddleware;

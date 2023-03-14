@@ -5,15 +5,13 @@ module.exports = {
   params: {
     containerUri: { type: 'string' },
     resourceUri: { type: 'string' },
-    webId: {
-      type: 'string',
-      optional: true
-    }
+    webId: { type: 'string', optional: true },
+    dataset: { type: 'string', optional: true }
   },
   async handler(ctx) {
     let { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls before
+    const dataset = ctx.params.dataset || ctx.meta.dataset;
 
     const isRemoteContainer = this.isRemoteUri(containerUri);
 

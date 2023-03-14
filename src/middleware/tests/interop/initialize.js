@@ -1,11 +1,11 @@
 const fse = require('fs-extra');
 const path = require('path');
 const { ServiceBroker } = require('moleculer');
-const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { ACTOR_TYPES, SynchronizerService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService, defaultOntologies } = require('@semapps/core');
 const { InferenceService } = require('@semapps/inference');
-const { WatcherMiddleware } = require("@semapps/mirror");
+const { ObjectsWatcherMiddleware } = require("@semapps/activitypub");
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
@@ -48,7 +48,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   const broker = new ServiceBroker({
     nodeID: 'server' + port,
-    middlewares: [WebAclMiddleware({ baseUrl }), WatcherMiddleware({ })],
+    middlewares: [WebAclMiddleware({ baseUrl }), ObjectsWatcherMiddleware()],
     logger: {
       type: 'Console',
       options: {
@@ -96,6 +96,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       ontologies: defaultOntologies
     }
   });
+
+  await broker.createService(SynchronizerService);
 
   await broker.start();
 

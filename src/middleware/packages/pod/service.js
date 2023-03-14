@@ -13,6 +13,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
+      excludeFromMirror: true,
       dereference: ['sec:publicKey', 'as:endpoints']
       // newResourcesPermissions: {}
     });
@@ -20,6 +21,7 @@ module.exports = {
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
       path: '/',
+      excludeFromMirror: true,
       permissions: {},
       newResourcesPermissions: {}
     });

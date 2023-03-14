@@ -15,6 +15,9 @@ module.exports = {
   RelayService: require('./services/relay'),
   // Other services
   ActivityMappingService: require('./services/activity-mapping'),
+  SynchronizerService: require('./services/synchronizer'),
+  // Middlewares
+  ObjectsWatcherMiddleware: require('./middleware/objects-watcher'),
   // Mixins
   BotService: require('./mixins/bot'),
   ControlledCollectionMixin: require('./mixins/controlled-collection'),

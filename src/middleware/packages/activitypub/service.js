@@ -104,7 +104,7 @@ const ActivityPubService = {
       }
     });
 
-    if (relay === true || typeof relay === 'object') {
+    if (!podProvider && (relay === true || typeof relay === 'object')) {
       if (relay === true) relay = {};
       this.broker.createService(RelayService, {
         settings: {
