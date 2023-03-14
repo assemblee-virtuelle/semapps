@@ -49,20 +49,6 @@ module.exports = {
     api_getRights: getRights.api,
     api_setRights: setRights.api
   },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
-          const containerPath = new URL(ctx.params.resourceUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 2) {
-            ctx.meta.dataset = parts[2];
-          }
-        }
-      }
-    }
-  },
   methods: {
     // will return true if it is a container, false otherwise
     async checkResourceOrContainerExists(ctx, resourceUri) {

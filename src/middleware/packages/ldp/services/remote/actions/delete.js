@@ -7,7 +7,7 @@ module.exports = {
   async handler(ctx) {
     const { resourceUri, webId } = ctx.params;
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
+    if (!this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
     }
 

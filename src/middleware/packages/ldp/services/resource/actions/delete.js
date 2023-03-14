@@ -34,7 +34,7 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (this.isRemoteUri(resourceUri)) {
+      if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
         return await ctx.call('ldp.remote.delete', { resourceUri, webId })
       }
 
@@ -84,7 +84,7 @@ module.exports = {
 
       ctx.call('triplestore.deleteOrphanBlankNodes');
 
-      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null } });
+      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
 
       return returnValues;
     }

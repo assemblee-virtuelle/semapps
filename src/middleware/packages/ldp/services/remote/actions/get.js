@@ -13,38 +13,38 @@ module.exports = {
     const { resourceUri, strategy, accept, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    if (!this.isRemoteUri(resourceUri)) {
+    if (!this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
     }
 
     switch(strategy) {
       case 'cacheFirst':
-        try {
-          return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-        } catch (e) {
-          if (e.code === 404) {
-            return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-          } else {
-            throw e;
-          }
-        }
+        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+            } else {
+              throw e;
+            }
+          });
 
       case 'networkFirst':
         try {
-          return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+          const resource = await this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+          return resource;
         } catch (e) {
           if (e.code === 404) {
-            return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+            return await this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
           } else {
             throw e;
           }
         }
 
       case 'cacheOnly':
-        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+        return await this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
 
       case 'networkOnly':
-        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+        return await this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
 
       case 'staleWhileRevalidate':
         throw new Error(`Strategy staleWhileRevalidate not implemented yet`);

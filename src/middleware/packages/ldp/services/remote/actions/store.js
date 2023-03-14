@@ -28,7 +28,7 @@ module.exports = {
       resourceUri = resource.id || resource['@id'];
     }
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
+    if (!this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri + webId)
     }
 

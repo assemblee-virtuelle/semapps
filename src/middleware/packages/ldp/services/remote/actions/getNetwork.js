@@ -14,11 +14,11 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const headers = new Headers({ accept });
 
-    if (!this.isRemoteUri(resourceUri, webId)) {
+    if (!this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri + webId)
     }
 
-    if (webId && (await this.proxyAvailable())) {
+    if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {
       const { body } = await ctx.call('signature.proxy.query', {
         url: resourceUri,
         method: 'GET',

@@ -37,23 +37,5 @@ module.exports = {
     put: putAction.action,
     api_head: headAction.api
   },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        if (this.settings.podProvider) {
-          // If we have a pod provider, guess the dataset from the URI
-          const uri =
-            ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
-          if (uri && uri.startsWith(this.settings.baseUrl)) {
-            const containerPath = new URL(uri).pathname;
-            const parts = containerPath.split('/');
-            if (parts.length > 1) {
-              ctx.meta.dataset = parts[1];
-            }
-          }
-        }
-      }
-    }
-  },
   methods
 };

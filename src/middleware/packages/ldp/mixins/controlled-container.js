@@ -81,19 +81,18 @@ module.exports = {
     },
     getContainerUri(ctx) {
       return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params.webId || ctx.meta.webId });
-    }
-  },
-  methods: {
-    async waitForContainerCreation(containerUri) {
+    },
+    async waitForContainerCreation(ctx) {
+      const { containerUri } = ctx.params;
       let containerExist, containerAttached;
 
       do {
         if (containerExist === false) await delay(1000);
-        containerExist = await this.broker.call('ldp.container.exist', { containerUri, webId: 'system' });
+        containerExist = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       } while (!containerExist);
 
       const parentContainerUri = getContainerFromUri(containerUri);
-      const parentContainerExist = await this.broker.call('ldp.container.exist', {
+      const parentContainerExist = await ctx.call('ldp.container.exist', {
         containerUri: parentContainerUri,
         webId: 'system'
       });
@@ -103,7 +102,7 @@ module.exports = {
       if (parentContainerExist) {
         do {
           if (containerAttached === false) await delay(1000);
-          containerAttached = await this.broker.call('ldp.container.includes', {
+          containerAttached = await ctx.call('ldp.container.includes', {
             containerUri: parentContainerUri,
             resourceUri: containerUri,
             webId: 'system'

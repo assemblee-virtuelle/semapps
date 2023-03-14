@@ -11,7 +11,7 @@ module.exports = {
     // Matches container with or without trailing slash
     const containerUri = ctx.params.containerUri.replace(/\/+$/, '');
 
-    const isRemoteContainer = this.isRemoteUri(containerUri);
+    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
 
     return await ctx.call('triplestore.query', {
       query: `

@@ -42,22 +42,9 @@ module.exports = {
     api_patch: patchAction.api
   },
   methods: {
-    isRemoteUri(uri) {
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
-    }
-  },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        if (this.settings.podProvider && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
-          // If we have a pod provider, guess the dataset from the container URI
-          const containerPath = new URL(ctx.params.containerUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
-        }
-      }
+    isRemoteUri(uri, dataset) {
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
     }
   }
 };

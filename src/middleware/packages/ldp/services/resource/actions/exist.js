@@ -16,7 +16,7 @@ module.exports = {
     });
 
     // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
-    if (!exist && this.isRemoteUri(resourceUri)) {
+    if (!exist && this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
         webId,

@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { delay } = require('../utils');
+const { delay, getSlugFromUri} = require('../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
@@ -60,17 +60,19 @@ const DispatchService = {
 
       for (const recipientUri of recipients) {
         try {
+          const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+
           const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
             actorUri: recipientUri,
             predicate: 'inbox',
             webId: 'system'
-          });
+          }, { meta: { dataset } });
 
           // Attach activity to the inbox of the local actor
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipientInbox,
             item: activity
-          });
+          }, { meta: { dataset } });
 
           success.push(recipientUri);
         } catch (e) {

@@ -15,17 +15,17 @@ const SynchronizerService = {
     }
   },
   methods: {
-    async isValid(activity, recipient) {
+    async isValid(activity, recipientUri) {
       if (this.settings.podProvider) {
         // TODO Check that emitter is in contacts ?
         return true;
       } else {
         // Check that the recipient is the relay actor
-        if (recipient !== this.relayActor.id) return false;
+        if (recipientUri !== this.relayActor.id) return false;
 
         // Check that the activity emitter is being followed by the relay actor
         return await this.broker.call('activitypub.follow.isFollowing', {
-          follower: recipient,
+          follower: recipientUri,
           following: activity.actor
         });
       }
@@ -39,24 +39,22 @@ const SynchronizerService = {
           type: ACTIVITY_TYPES.CREATE
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            for (let resourceUri of defaultToArray(activity.object.object)) {
-              await ctx.call('ldp.remote.store', {
-                resourceUri,
-                mirrorGraph: !this.settings.podProvider,
-                webId: recipient
-              });
+      async onReceive(ctx, activity, recipientUri) {
+        if (await this.isValid(activity, recipientUri)) {
+          for (let resourceUri of defaultToArray(activity.object.object)) {
+            await ctx.call('ldp.remote.store', {
+              resourceUri,
+              mirrorGraph: !this.settings.podProvider,
+              webId: recipientUri
+            });
 
-              if (activity.object.target) {
-                for (let containerUri of defaultToArray(activity.object.target)) {
-                  await ctx.call('ldp.container.attach', {
-                    containerUri,
-                    resourceUri,
-                    webId: recipient
-                  });
-                }
+            if (activity.object.target) {
+              for (let containerUri of defaultToArray(activity.object.target)) {
+                await ctx.call('ldp.container.attach', {
+                  containerUri,
+                  resourceUri,
+                  webId: recipientUri
+                });
               }
             }
           }
@@ -70,16 +68,14 @@ const SynchronizerService = {
           type: ACTIVITY_TYPES.UPDATE
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            for (let resourceUri of defaultToArray(activity.object.object)) {
-              await ctx.call('ldp.remote.store', {
-                resourceUri,
-                mirrorGraph: !this.settings.podProvider,
-                webId: recipient
-              });
-            }
+      async onReceive(ctx, activity, recipientUri) {
+        if (await this.isValid(activity, recipientUri)) {
+          for (let resourceUri of defaultToArray(activity.object.object)) {
+            await ctx.call('ldp.remote.store', {
+              resourceUri,
+              mirrorGraph: !this.settings.podProvider,
+              webId: recipientUri
+            });
           }
         }
       }
@@ -91,22 +87,20 @@ const SynchronizerService = {
           type: ACTIVITY_TYPES.DELETE
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            for (let resourceUri of defaultToArray(activity.object.object)) {
-              await ctx.call('ldp.remote.delete', {
-                resourceUri,
-                webId: recipient
-              });
-              if (activity.object.target) {
-                for (let containerUri of defaultToArray(activity.object.target)) {
-                  await ctx.call('ldp.container.detach', {
-                    containerUri,
-                    resourceUri,
-                    webId: recipient
-                  });
-                }
+      async onReceive(ctx, activity, recipientUri) {
+        if (await this.isValid(activity, recipientUri)) {
+          for (let resourceUri of defaultToArray(activity.object.object)) {
+            await ctx.call('ldp.remote.delete', {
+              resourceUri,
+              webId: recipientUri
+            });
+            if (activity.object.target) {
+              for (let containerUri of defaultToArray(activity.object.target)) {
+                await ctx.call('ldp.container.detach', {
+                  containerUri,
+                  resourceUri,
+                  webId: recipientUri
+                });
               }
             }
           }
@@ -123,20 +117,18 @@ const SynchronizerService = {
           }
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
-              predicate: activity.object.object.relationship,
-              context: activity['@context']
+      async onReceive(ctx, activity, recipientUri) {
+        if (await this.isValid(activity, recipientUri)) {
+          const predicate = await ctx.call('jsonld.expandPredicate', {
+            predicate: activity.object.object.relationship,
+            context: activity['@context']
+          });
+          if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+            await ctx.call('ldp.container.attach', {
+              containerUri: activity.object.object.subject,
+              resourceUri: activity.object.object.object,
+              webId: recipientUri
             });
-            if (predicate === 'http://www.w3.org/ns/ldp#contains') {
-              await ctx.call('ldp.container.attach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
-                webId: recipient
-              });
-            }
           }
         }
       }
@@ -151,20 +143,18 @@ const SynchronizerService = {
           }
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
-              predicate: activity.object.object.relationship,
-              context: activity['@context']
+      async onReceive(ctx, activity, recipientUri) {
+        if (await this.isValid(activity, recipientUri)) {
+          const predicate = await ctx.call('jsonld.expandPredicate', {
+            predicate: activity.object.object.relationship,
+            context: activity['@context']
+          });
+          if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+            await ctx.call('ldp.container.detach', {
+              containerUri: activity.object.object.subject,
+              resourceUri: activity.object.object.object,
+              webId: recipientUri
             });
-            if (predicate === 'http://www.w3.org/ns/ldp#contains') {
-              await ctx.call('ldp.container.detach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
-                webId: recipient
-              });
-            }
           }
         }
       }

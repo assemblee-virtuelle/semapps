@@ -98,7 +98,7 @@ const SignatureService = {
       const actorData = await ctx.call('ldp.resource.get', {
         resourceUri: actorUri,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: actorUri
       });
 
       if (actorData) {

@@ -2,7 +2,6 @@ const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
 const getContainerRoute = require('../../../routes/getContainerRoute');
-const getResourcesRoute = require('../../../routes/getResourcesRoute');
 
 module.exports = {
   visibility: 'public',
@@ -20,21 +19,19 @@ module.exports = {
     readOnly: { type: 'boolean', optional: true }
   },
   async handler(ctx) {
-    let { path, fullPath, name, podsContainer, ...options } = ctx.params;
+    let { path, fullPath, name, ...options } = ctx.params;
     if (!fullPath) fullPath = path;
     if (!name) name = path;
 
     // Ignore undefined options
     Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
 
-    if (this.settings.podProvider && podsContainer === true) {
-      name = 'actors';
-      await this.broker.call('api.addRoute', { route: getResourcesRoute(this.settings.baseUrl, options.readOnly) });
-    } else if (this.settings.podProvider) {
+    if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
       for (let account of accounts) {
         if (!account.podUri) throw new Error('The podUri is not defined for account ' + account.username);
+        ctx.meta.dataset = account.username;
         const containerUri = urlJoin(account.podUri, path);
         await this.createAndAttachContainer(ctx, containerUri, path);
       }

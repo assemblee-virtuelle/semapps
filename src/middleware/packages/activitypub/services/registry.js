@@ -44,7 +44,7 @@ const RegistryService = {
         // Go through each container
         for (let container of Object.values(containers)) {
           // Add a corresponding API route
-          await this.actions.addApiRoute({ collection: ctx.params, container });
+          await this.actions.addApiRoute({ collection: ctx.params, container }, { parentCtx: ctx });
         }
       }
     },
@@ -129,7 +129,7 @@ const RegistryService = {
                 objectUri: resourceUri,
                 collection,
                 webId: 'system'
-              });
+              }, { parentCtx: ctx });
             }
           }
         }
@@ -187,9 +187,9 @@ const RegistryService = {
       for (let collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
           // If the resource is an actor, use the resource URI as the webId
-          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
         } else {
-          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
         }
       }
     },
@@ -201,9 +201,9 @@ const RegistryService = {
         for (let collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
           } else {
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
           }
         }
       }
@@ -216,9 +216,9 @@ const RegistryService = {
           for (let collection of collections) {
             if (this.isActor(triple.object.value)) {
               // If the resource is an actor, use the resource URI as the webId
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri });
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
             } else {
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId });
+              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
             }
           }
         }
@@ -228,7 +228,7 @@ const RegistryService = {
       const { oldData } = ctx.params;
       const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
-        await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection });
+        await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection }, { parentCtx: ctx });
       }
     },
     async 'ldp.registry.registered'(ctx) {
@@ -243,7 +243,7 @@ const RegistryService = {
 
       // Go through each collection and add a corresponding API route
       for (let collection of collections) {
-        await this.actions.addApiRoute({ collection, container });
+        await this.actions.addApiRoute({ collection, container }, { parentCtx: ctx });
       }
     }
   }

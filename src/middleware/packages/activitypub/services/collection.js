@@ -338,20 +338,6 @@ const CollectionService = {
       return results.length > 0 ? results[0].actorUri.value : null;
     }
   },
-  hooks: {
-    before: {
-      '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
-        if (this.settings.podProvider && ctx.params.collectionUri) {
-          const collectionPath = new URL(ctx.params.collectionUri).pathname;
-          const parts = collectionPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
-        }
-      }
-    }
-  },
   methods: {
     isOrderedCollection(collection) {
       return (

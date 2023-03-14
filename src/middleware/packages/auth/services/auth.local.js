@@ -49,13 +49,15 @@ const AuthLocalService = {
         ...this.pickAccountData(rest)
       });
 
+      ctx.meta.dataset = username;
+
       const profileData = { nick: username, email, ...rest };
       const webId = await ctx.call('webid.create', this.pickWebIdData(profileData));
 
       // Link the webId with the account
       accountData = await ctx.call('auth.account.attachWebId', { accountUri: accountData['@id'], webId });
 
-      ctx.emit('auth.registered', { webId, profileData, accountData }, { meta: { webId: null, dataset: null } });
+      ctx.emit('auth.registered', { webId, profileData, accountData });
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 

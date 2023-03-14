@@ -96,6 +96,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             case 'webacl.resource.deleteAllRights':
               // If we are modifying rights of an ACL group, ignore
               if ((new URL(ctx.params.resourceUri)).pathname.startsWith('/_groups/')) return await next(ctx);
+              if (!ctx.meta.dataset) throw new Error("No dataset defined" + ctx.params.resourceUri + action.name);
               const containerExist = await ctx.call('ldp.container.exist', { containerUri: ctx.params.resourceUri, webId: 'system' });
               if (containerExist) {
                 containerUri = ctx.params.resourceUri;

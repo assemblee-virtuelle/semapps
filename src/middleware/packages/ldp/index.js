@@ -11,6 +11,5 @@ module.exports = {
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   LdpAdapter: require('./adapter'),
   getContainerRoute: require('./routes/getContainerRoute'),
-  getResourcesRoute: require('./routes/getResourcesRoute'),
   ...utils
 };

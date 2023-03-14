@@ -1,6 +1,5 @@
 const urlJoin = require("url-join");
 const Schedule = require('moleculer-schedule');
-const { MIME_TYPES } = require("@semapps/mime-types");
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
 const getGraphAction = require('./actions/getGraph');
@@ -28,9 +27,9 @@ module.exports = {
     runCron() { this.updateSingleMirroredResources() } // Used by tests
   },
   methods: {
-    isRemoteUri(uri, webId) {
+    isRemoteUri(uri, dataset) {
       return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
-        || (this.settings.podProvider && webId && !uri.startsWith(webId));
+        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');

@@ -17,6 +17,8 @@ const ObjectService = {
       // If the object is already dereferenced, return it
       if (typeof objectUri !== 'string') return objectUri;
 
+      console.log('dataset before get ' + objectUri + ' : ' + ctx.meta.dataset);
+
       return await ctx.call('ldp.resource.get', {
         resourceUri: objectUri,
         webId: actorUri,

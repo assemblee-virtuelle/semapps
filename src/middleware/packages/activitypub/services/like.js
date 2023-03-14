@@ -84,8 +84,9 @@ const LikeService = {
   },
   activities: {
     likeObject: {
-      match(activity) {
+      match(ctx, activity) {
         return this.matchActivity(
+          ctx,
           {
             type: ACTIVITY_TYPES.LIKE,
             object: {
@@ -100,8 +101,9 @@ const LikeService = {
       }
     },
     unlikeObject: {
-      match(activity) {
+      match(ctx, activity) {
         return this.matchActivity(
+          ctx,
           {
             type: ACTIVITY_TYPES.UNDO,
             object: {

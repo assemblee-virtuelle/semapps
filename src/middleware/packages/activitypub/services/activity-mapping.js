@@ -41,7 +41,7 @@ const ActivityMappingService = {
       }
 
       for (const mapper of this.mappers) {
-        const dereferencedActivity = await this.matchActivity(mapper.match, activity);
+        const dereferencedActivity = await this.matchActivity(ctx, mapper.match, activity);
 
         // If we have a match...
         if (dereferencedActivity) {
@@ -91,8 +91,8 @@ const ActivityMappingService = {
     }
   },
   methods: {
-    matchActivity(pattern, activityOrObject) {
-      return matchActivity(this.broker, pattern, activityOrObject);
+    matchActivity(ctx, pattern, activityOrObject) {
+      return matchActivity(ctx, pattern, activityOrObject);
     },
     prioritizeMappers() {
       this.mappers.sort((a, b) => b.priority - a.priority);
