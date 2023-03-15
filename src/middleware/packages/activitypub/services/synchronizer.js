@@ -6,7 +6,8 @@ const SynchronizerService = {
   name: 'synchronizer',
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    podProvider: false
+    podProvider: false,
+    synchronizeContainers: true
   },
   async started() {
     if (!this.settings.podProvider) {
@@ -99,7 +100,7 @@ const SynchronizerService = {
                 resourceUri,
                 webId: recipient
               });
-              if (activity.object.target) {
+              if (activity.object.target && this.settings.synchronizeContainers) {
                 for (let containerUri of defaultToArray(activity.object.target)) {
                   await ctx.call('ldp.container.detach', {
                     containerUri,
@@ -124,18 +125,20 @@ const SynchronizerService = {
         }
       },
       async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
-              predicate: activity.object.object.relationship,
-              context: activity['@context']
-            });
-            if (predicate === 'http://www.w3.org/ns/ldp#contains') {
-              await ctx.call('ldp.container.attach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
-                webId: recipient
+        if (this.settings.synchronizeContainers) {
+          for (let recipient of recipients) {
+            if (await this.isValid(activity, recipient)) {
+              const predicate = await ctx.call('jsonld.expandPredicate', {
+                predicate: activity.object.object.relationship,
+                context: activity['@context']
               });
+              if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+                await ctx.call('ldp.container.attach', {
+                  containerUri: activity.object.object.subject,
+                  resourceUri: activity.object.object.object,
+                  webId: recipient
+                });
+              }
             }
           }
         }
@@ -152,18 +155,20 @@ const SynchronizerService = {
         }
       },
       async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
-            const predicate = await ctx.call('jsonld.expandPredicate', {
-              predicate: activity.object.object.relationship,
-              context: activity['@context']
-            });
-            if (predicate === 'http://www.w3.org/ns/ldp#contains') {
-              await ctx.call('ldp.container.detach', {
-                containerUri: activity.object.object.subject,
-                resourceUri: activity.object.object.object,
-                webId: recipient
+        if (this.settings.synchronizeContainers) {
+          for (let recipient of recipients) {
+            if (await this.isValid(activity, recipient)) {
+              const predicate = await ctx.call('jsonld.expandPredicate', {
+                predicate: activity.object.object.relationship,
+                context: activity['@context']
               });
+              if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+                await ctx.call('ldp.container.detach', {
+                  containerUri: activity.object.object.subject,
+                  resourceUri: activity.object.object.object,
+                  webId: recipient
+                });
+              }
             }
           }
         }

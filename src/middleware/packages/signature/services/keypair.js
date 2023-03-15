@@ -74,7 +74,7 @@ const SignatureService = {
       const actor = await ctx.call('ldp.resource.get', {
         resourceUri: actorUri,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: actorUri
       });
 
       // Ensure a public key is not already attached

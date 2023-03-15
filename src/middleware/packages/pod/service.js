@@ -62,7 +62,7 @@ module.exports = {
       const { podUri } = accountData;
 
       // Give full rights to user on his pod
-      await this.broker.call('webacl.resource.addRights', {
+      await ctx.call('webacl.resource.addRights', {
         resourceUri: podUri,
         additionalRights: {
           user: {
@@ -85,7 +85,7 @@ module.exports = {
 
       // TODO Does not work, this is done in the webacl middleware. Good ?
       // Give public right to the webId
-      // await this.broker.call('webacl.resource.addRights', {
+      // await ctx.call('webacl.resource.addRights', {
       //   resourceUri: webId,
       //   additionalRights: {
       //     anon: {

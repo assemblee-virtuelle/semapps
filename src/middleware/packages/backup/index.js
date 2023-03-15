@@ -52,7 +52,7 @@ const BackupService = {
         await ctx.call('triplestore.dataset.backup', { dataset });
       }
 
-      await this.actions.copyToRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' });
+      await this.actions.copyToRemoteServer({ path: fusekiBackupsPath, subDir: 'datasets' }, { parentCtx: ctx });
     },
     async backupOtherDirs(ctx) {
       const { otherDirsPaths } = this.settings.localServer;

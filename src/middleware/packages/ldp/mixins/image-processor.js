@@ -86,9 +86,10 @@ module.exports = {
   hooks: {
     after: {
       async create(ctx, res) {
-        await this.actions.processImage({
-          resourceUri: res.resourceUri
-        });
+        await this.actions.processImage(
+          { resourceUri: res.resourceUri },
+          { parentCtx: ctx }
+        );
         return res;
       }
     }

@@ -19,26 +19,24 @@ module.exports = {
 
     switch(strategy) {
       case 'cacheFirst':
-        try {
-          return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-        } catch (e) {
-          if (e.code === 404) {
-            return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-          } else {
-            throw e;
-          }
-        }
+        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+            } else {
+              throw e;
+            }
+          });
 
       case 'networkFirst':
-        try {
-          return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-        } catch (e) {
-          if (e.code === 404) {
-            return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-          } else {
-            throw e;
-          }
-        }
+        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+            } else {
+              throw e;
+            }
+          });
 
       case 'cacheOnly':
         return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });

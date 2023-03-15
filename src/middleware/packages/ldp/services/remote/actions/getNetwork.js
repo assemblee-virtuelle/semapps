@@ -18,7 +18,7 @@ module.exports = {
       throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri + webId)
     }
 
-    if (webId && (await this.proxyAvailable())) {
+    if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {
       const { body } = await ctx.call('signature.proxy.query', {
         url: resourceUri,
         method: 'GET',
