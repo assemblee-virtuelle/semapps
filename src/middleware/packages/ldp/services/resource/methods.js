@@ -234,6 +234,6 @@ module.exports = {
   },
   isRemoteUri(uri, webId) {
     return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
-      || (this.settings.podProvider && webId && !uri.startsWith(webId));
+      || (this.settings.podProvider && webId && webId !== 'anon' && webId !== 'system' && !urlJoin(uri, '/').startsWith(webId + '/'));
   }
 };

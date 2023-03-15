@@ -15,7 +15,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
-    const isRemoteContainer = this.isRemoteUri(containerUri);
+    const isRemoteContainer = this.isRemoteUri(containerUri, webId);
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {

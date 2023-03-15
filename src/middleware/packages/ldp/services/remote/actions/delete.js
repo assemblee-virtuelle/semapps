@@ -8,7 +8,7 @@ module.exports = {
     const { resourceUri, webId } = ctx.params;
 
     if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     let dataset;

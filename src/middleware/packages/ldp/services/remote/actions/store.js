@@ -29,7 +29,7 @@ module.exports = {
     }
 
     if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri + webId)
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     let dataset;

@@ -15,7 +15,7 @@ module.exports = {
     const headers = new Headers({ accept });
 
     if (!this.isRemoteUri(resourceUri, webId)) {
-      throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri + webId)
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     if (webId && webId !== 'system' && webId !== 'anon' && (await this.proxyAvailable())) {

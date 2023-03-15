@@ -42,8 +42,9 @@ module.exports = {
     api_patch: patchAction.api
   },
   methods: {
-    isRemoteUri(uri) {
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
+    isRemoteUri(uri, webId) {
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+        || (this.settings.podProvider && webId && webId !== 'anon' && webId !== 'system' && !urlJoin(uri, '/').startsWith(webId + '/'));
     }
   },
   hooks: {

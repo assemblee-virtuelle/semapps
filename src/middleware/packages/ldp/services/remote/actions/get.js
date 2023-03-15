@@ -13,8 +13,8 @@ module.exports = {
     const { resourceUri, strategy, accept, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    if (!this.isRemoteUri(resourceUri)) {
-      throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
+    if (!this.isRemoteUri(resourceUri, webId)) {
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     switch(strategy) {

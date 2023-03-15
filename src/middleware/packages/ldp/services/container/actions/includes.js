@@ -13,7 +13,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.meta.dataset;
 
-    const isRemoteContainer = this.isRemoteUri(containerUri);
+    const isRemoteContainer = this.isRemoteUri(containerUri, webId);
 
     return await ctx.call('triplestore.query', {
       query: `

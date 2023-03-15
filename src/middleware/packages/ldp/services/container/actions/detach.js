@@ -13,7 +13,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset;
 
-    const isRemoteContainer = this.isRemoteUri(containerUri);
+    const isRemoteContainer = this.isRemoteUri(containerUri, webId);
 
     if (new URL(containerUri).pathname === '/') {
       if (isRemoteContainer) return; // indeed, we never have the root container on a mirror.
