@@ -19,7 +19,8 @@ const {
   FULL_DEFAULT_URI,
   FULL_MODE_URI,
   FULL_TYPE_URI,
-  ACL_NS
+  ACL_NS,
+  getDatasetFromUri
 } = require('../../utils');
 
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
@@ -52,13 +53,8 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
-          const containerPath = new URL(ctx.params.resourceUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 2) {
-            ctx.meta.dataset = parts[2];
-          }
+          ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
       }
     }

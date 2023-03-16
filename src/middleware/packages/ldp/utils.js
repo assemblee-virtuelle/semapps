@@ -143,9 +143,16 @@ const useFullURI = (prefixedUri, ontologies) => {
   return prefixedUri.replace(ontology.prefix + ':', ontology.url);
 };
 
-const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+
+// Transforms "http://localhost:3000/dataset/data" to "dataset"
+const getDatasetFromUri = uri => {
+  const path = new URL(uri).pathname;
+  const parts = path.split('/');
+  if (parts.length > 1) return parts[1];
+};
 
 const hasType = (resource, type) => {
   const resourceType = resource.type || resource['@type'];
@@ -167,6 +174,7 @@ module.exports = {
   useFullURI,
   getSlugFromUri,
   getContainerFromUri,
+  getDatasetFromUri,
   hasType,
   isContainer,
   defaultToArray,

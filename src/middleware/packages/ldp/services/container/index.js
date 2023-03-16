@@ -12,6 +12,7 @@ const headAction = require('./actions/head');
 const includesAction = require('./actions/includes');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
+const { getDatasetFromUri } = require("../../utils");
 
 module.exports = {
   name: 'ldp.container',
@@ -51,12 +52,7 @@ module.exports = {
     before: {
       '*'(ctx) {
         if (this.settings.podProvider && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
-          // If we have a pod provider, guess the dataset from the container URI
-          const containerPath = new URL(ctx.params.containerUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
+          ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
       }
     }

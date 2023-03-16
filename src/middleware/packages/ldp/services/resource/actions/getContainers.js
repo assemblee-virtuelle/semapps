@@ -4,12 +4,10 @@ const { getContainerFromUri } = require("../../../utils");
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: 'string',
-    dataset: { type: 'string', optional: true }
+    resourceUri: 'string'
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
-    const dataset = ctx.params.dataset || ctx.meta.dataset;
 
     // In the POD provider config, the root container with actors is not a real LDP container
     // Because we have chosen not to use a common dataset for this kind of data
@@ -28,7 +26,6 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      dataset,
       webId: 'system'
     });
 

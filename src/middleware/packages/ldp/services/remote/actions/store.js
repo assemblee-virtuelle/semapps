@@ -52,6 +52,8 @@ module.exports = {
       webId: 'system',
       dataset
     });
+
+    return resource;
   }
 };
 

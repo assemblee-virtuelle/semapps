@@ -7,7 +7,9 @@ const SynchronizerService = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     podProvider: false,
-    synchronizeContainers: true
+    mirrorGraph: true,
+    synchronizeContainers: true,
+    attachToLocalContainers: false
   },
   async started() {
     if (!this.settings.podProvider) {
@@ -41,22 +43,38 @@ const SynchronizerService = {
         }
       },
       async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
+        for (let recipientUri of recipients) {
+          if (await this.isValid(activity, recipientUri)) {
             for (let resourceUri of defaultToArray(activity.object.object)) {
-              await ctx.call('ldp.remote.store', {
+              const object = await ctx.call('ldp.remote.store', {
                 resourceUri,
-                mirrorGraph: !this.settings.podProvider,
-                webId: recipient
+                mirrorGraph: this.settings.mirrorGraph,
+                webId: recipientUri
               });
 
-              if (activity.object.target) {
+              if (activity.object.target && this.settings.synchronizeContainers) {
                 for (let containerUri of defaultToArray(activity.object.target)) {
                   await ctx.call('ldp.container.attach', {
                     containerUri,
                     resourceUri,
-                    webId: recipient
+                    webId: recipientUri
                   });
+                }
+              }
+
+              if (this.settings.attachToLocalContainers) {
+                const resourceUri = object['@id'] || object.id;
+                const type = object['@type'] || object.type;
+                const container = await ctx.call('ldp.registry.getByType', { type });
+                if (container) {
+                  try {
+                    const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: recipientUri });
+                    await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
+                  } catch(e) {
+                    this.logger.warn(`Error when attaching remote resource ${resourceUri} to local container: ${e.message}`);
+                  }
+                } else {
+                  this.logger.warn(`Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`);
                 }
               }
             }
@@ -77,7 +95,7 @@ const SynchronizerService = {
             for (let resourceUri of defaultToArray(activity.object.object)) {
               await ctx.call('ldp.remote.store', {
                 resourceUri,
-                mirrorGraph: !this.settings.podProvider,
+                mirrorGraph: this.settings.mirrorGraph,
                 webId: recipient
               });
             }
@@ -93,19 +111,21 @@ const SynchronizerService = {
         }
       },
       async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (await this.isValid(activity, recipient)) {
+        for (let recipientUri of recipients) {
+          if (await this.isValid(activity, recipientUri)) {
             for (let resourceUri of defaultToArray(activity.object.object)) {
+              // If the remote resource is attached to a local container, it will be automatically detached
               await ctx.call('ldp.remote.delete', {
                 resourceUri,
-                webId: recipient
+                webId: recipientUri
               });
+
               if (activity.object.target && this.settings.synchronizeContainers) {
                 for (let containerUri of defaultToArray(activity.object.target)) {
                   await ctx.call('ldp.container.detach', {
                     containerUri,
                     resourceUri,
-                    webId: recipient
+                    webId: recipientUri
                   });
                 }
               }

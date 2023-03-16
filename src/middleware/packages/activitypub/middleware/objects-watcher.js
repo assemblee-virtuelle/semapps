@@ -37,7 +37,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
   };
 
   const isWatched = (containersUris) => {
-    return containersUris.some(uri => watchedContainers.some(container => container.pathRegex.test(new URL(uri).pathname)));
+    return containersUris.some(uri => watchedContainers.some(container => container.pathRegex.test((new URL(uri)).pathname)));
   };
 
   const announce = async (ctx, resourceUri, recipients, activity) => {
@@ -118,7 +118,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               break;
 
             case 'webacl.resource.addRights':
-              if (ctx.params.additionalRights) {
+              if (ctx.params.additionalRights || ctx.params.addedRights) {
                 oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               }
               break;
@@ -182,7 +182,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             }
 
             case 'webacl.resource.addRights': {
-              if (ctx.params.additionalRights) {
+              if (ctx.params.additionalRights || ctx.params.addedRights) {
                 const newRecipients = await getRecipients(ctx, ctx.params.resourceUri);
                 const recipientsAdded = newRecipients.filter(u => !oldRecipients.includes(u));
                 if (recipientsAdded.length > 0) {

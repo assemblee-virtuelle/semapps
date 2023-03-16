@@ -10,8 +10,11 @@ module.exports = {
     strategy: { type: 'enum', values: ['cacheFirst', 'networkFirst', 'cacheOnly', 'networkOnly', 'staleWhileRevalidate'], default: 'cacheFirst' }
   },
   async handler(ctx) {
-    const { resourceUri, strategy, accept, ...rest } = ctx.params;
+    const { resourceUri, accept, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+    // Without webId, we have no way to know which dataset to look in, so get from network
+    const strategy = (this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system')) ? 'networkOnly' : ctx.params.strategy;
 
     if (!this.isRemoteUri(resourceUri, webId)) {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
