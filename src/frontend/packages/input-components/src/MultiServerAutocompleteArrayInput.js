@@ -5,17 +5,22 @@ import OptionRenderer from './OptionRenderer';
 
 const MultiServerAutocompleteArrayInput = ({ optionText, ...rest }) => {
   const dataServers = useDataServers();
-  const [suggestion, setSuggestion] = useState("");
+  const [keyword, setKeyword] = useState("");
   const matchSuggestion = useCallback(
     (filterValue, choice) => {
-      setSuggestion(filterValue)
+      setKeyword(filterValue)
       return ( choice[optionText].toLowerCase().match(filterValue.toLowerCase()) )
     }, [optionText]
   );
   return (
     <AutocompleteArrayInput
       matchSuggestion={matchSuggestion}
-      optionText={<OptionRenderer optionText={optionText} dataServers={dataServers} suggestion={suggestion} />}
+      optionText={<OptionRenderer 
+        optionText={optionText} 
+        dataServers={dataServers} 
+        keyword={keyword}
+        {...rest}
+        />}
       {...rest}
     />
   );
