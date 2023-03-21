@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getContainerFromUri, isRemoteUri } = require('../utils');
+const { getContainerFromUri, isRemoteUri, getSlugFromUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
@@ -227,16 +227,21 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
             // When a remote resource is stored in the default graph, give read permission to the logged user
             if (!ctx.params.mirrorGraph && webId && webId !== 'system' && webId !== 'anon') {
-              await ctx.call('webacl.resource.addRights', {
-                resourceUri,
-                additionalRights: {
-                  user: {
-                    uri: webId,
-                    read: true
-                  }
+              const dataset = podProvider ? getSlugFromUri(webId) : undefined;
+              await ctx.call(
+                'webacl.resource.addRights',
+                {
+                  resourceUri,
+                  additionalRights: {
+                    user: {
+                      uri: webId,
+                      read: true
+                    }
+                  },
+                  webId: 'system'
                 },
-                webId: 'system'
-              });
+                { meta: { dataset }}
+              );
             }
             break;
           }
@@ -245,10 +250,15 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'activitypub.activity.attach':
             const activity = await ctx.call('activitypub.activity.get', {
               resourceUri: actionReturnValue.resourceUri,
-              webId: 'system'
+              webId: ctx.params.webId || 'system'
             });
 
             let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+
+            // When a new activity is created, ensure the emitter has read rights also
+            if (action.name === 'activitypub.activity.create') {
+              if (!recipients.includes(activity.actor)) recipients.push(activity.actor);
+            }
 
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once

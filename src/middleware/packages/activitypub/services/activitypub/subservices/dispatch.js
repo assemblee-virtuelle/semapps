@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { delay } = require('../utils');
+const { delay, objectIdToCurrent } = require('../../../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
@@ -66,11 +66,21 @@ const DispatchService = {
             webId: 'system'
           });
 
-          // Attach activity to the inbox of the local actor
+          // Attach activity to the inbox of the recipient
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipientInbox,
             item: activity
           });
+
+          if (this.settings.podProvider) {
+            // Store the activity in the dataset of the recipient
+            await this.broker.call('ldp.remote.store', {
+              resource: objectIdToCurrent(activity),
+              mirrorGraph: false, // Store in default graph as activity may not be public
+              keepInSync: false, // Activities are immutable
+              webId: recipientUri
+            });
+          }
 
           success.push(recipientUri);
         } catch (e) {
@@ -84,6 +94,9 @@ const DispatchService = {
       return { success, failures };
     },
     async remotePost(recipientUri, activity) {
+      // During tests, do not do post to remote servers
+      if (process.env.NODE_ENV === 'test' && !recipientUri.startsWith('http://localhost')) return;
+
       try {
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,

@@ -66,7 +66,7 @@ module.exports = {
 
       const resourceUri = resource.id || resource['@id'];
 
-      if (this.isRemoteUri(resourceUri))
+      if (this.isRemoteUri(resourceUri, webId))
         throw new MoleculerError('Remote resources cannot be modified', 403, 'FORBIDDEN');
 
       const { disassembly, jsonContext } = {

@@ -13,6 +13,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
+      excludeFromMirror: true,
       dereference: ['sec:publicKey', 'as:endpoints']
       // newResourcesPermissions: {}
     });
@@ -20,6 +21,7 @@ module.exports = {
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
       path: '/',
+      excludeFromMirror: true,
       permissions: {},
       newResourcesPermissions: {}
     });
@@ -60,7 +62,7 @@ module.exports = {
       const { podUri } = accountData;
 
       // Give full rights to user on his pod
-      await this.broker.call('webacl.resource.addRights', {
+      await ctx.call('webacl.resource.addRights', {
         resourceUri: podUri,
         additionalRights: {
           user: {
@@ -83,7 +85,7 @@ module.exports = {
 
       // TODO Does not work, this is done in the webacl middleware. Good ?
       // Give public right to the webId
-      // await this.broker.call('webacl.resource.addRights', {
+      // await ctx.call('webacl.resource.addRights', {
       //   resourceUri: webId,
       //   additionalRights: {
       //     anon: {

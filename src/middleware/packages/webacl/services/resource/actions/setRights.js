@@ -128,19 +128,23 @@ module.exports = {
           triple =>
             triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
         );
+
+      const returnValues = {
+        uri: resourceUri,
+        created: false,
+        isContainer,
+        defaultRightsUpdated,
+        addPublicRead,
+        removePublicRead,
+        addDefaultPublicRead,
+        removeDefaultPublicRead
+      };
       ctx.emit(
         'webacl.resource.updated',
-        {
-          uri: resourceUri,
-          isContainer,
-          defaultRightsUpdated,
-          addPublicRead,
-          removePublicRead,
-          addDefaultPublicRead,
-          removeDefaultPublicRead
-        },
+        returnValues,
         { meta: { webId: null, dataset: null } }
       );
+      return returnValues;
     }
   }
 };

@@ -6,9 +6,11 @@ const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const generateIdAction = require('./actions/generateId');
 const getContainersAction = require('./actions/getContainers');
+const getTypeAction = require('./actions/getTypes');
 const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
+const {getDatasetFromUri} = require("../../utils");
 
 module.exports = {
   name: 'ldp.resource',
@@ -24,6 +26,7 @@ module.exports = {
     exist: existAction,
     generateId: generateIdAction,
     getContainers: getContainersAction,
+    getType: getTypeAction,
     create: createAction,
     upload: uploadAction,
     // Actions accessible through the API
@@ -42,14 +45,9 @@ module.exports = {
       '*'(ctx) {
         if (this.settings.podProvider) {
           // If we have a pod provider, guess the dataset from the URI
-          const uri =
-            ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          const uri = ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
           if (uri && uri.startsWith(this.settings.baseUrl)) {
-            const containerPath = new URL(uri).pathname;
-            const parts = containerPath.split('/');
-            if (parts.length > 1) {
-              ctx.meta.dataset = parts[1];
-            }
+            ctx.meta.dataset = getDatasetFromUri(uri);
           }
         }
       }

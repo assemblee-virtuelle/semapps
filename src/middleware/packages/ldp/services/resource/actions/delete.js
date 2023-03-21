@@ -34,7 +34,7 @@ module.exports = {
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (this.isRemoteUri(resourceUri)) {
+      if (this.isRemoteUri(resourceUri, webId)) {
         return await ctx.call('ldp.remote.delete', { resourceUri, webId })
       }
 

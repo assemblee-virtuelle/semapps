@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const fetch = require('node-fetch');
 const { generateKeyPair } = require('crypto');
 const { namedNode, blankNode, literal, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -73,7 +74,7 @@ const SignatureService = {
       const actor = await ctx.call('ldp.resource.get', {
         resourceUri: actorUri,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: actorUri
       });
 
       // Ensure a public key is not already attached

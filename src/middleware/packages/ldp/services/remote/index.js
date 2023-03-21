@@ -28,8 +28,9 @@ module.exports = {
     runCron() { this.updateSingleMirroredResources() } // Used by tests
   },
   methods: {
-    isRemoteUri(resourceUri) {
-      return !urlJoin(resourceUri, '/').startsWith(this.settings.baseUrl);
+    isRemoteUri(uri, webId) {
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+        || (this.settings.podProvider && webId && webId !== 'anon' && webId !== 'system' && !urlJoin(uri, '/').startsWith(webId + '/'));
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');

@@ -1,7 +1,7 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../utils');
-const ControlledCollectionMixin = require('../mixins/controlled-collection');
-const { ACTOR_TYPES } = require('../constants');
+const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../../utils');
+const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
+const { ACTOR_TYPES } = require('../../../constants');
 
 const InboxService = {
   name: 'activitypub.inbox',
@@ -69,7 +69,7 @@ const InboxService = {
       });
 
       // Attach the activity to the activities container, in order to use the container options
-      await ctx.call('activitypub.activity.attach', { resourceUri: activity.id });
+      await ctx.call('activitypub.activity.attach', { resourceUri: activity.id, webId: actorUri });
 
       // Attach the activity to the inbox
       await ctx.call('activitypub.collection.attach', {

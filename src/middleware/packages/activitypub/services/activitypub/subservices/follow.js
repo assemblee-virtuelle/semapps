@@ -1,6 +1,6 @@
-const ActivitiesHandlerMixin = require('../mixins/activities-handler');
-const { ACTIVITY_TYPES } = require('../constants');
-const { collectionPermissionsWithAnonRead } = require('../utils');
+const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
+const { ACTIVITY_TYPES } = require('../../../constants');
+const { collectionPermissionsWithAnonRead } = require('../../../utils');
 
 const FollowService = {
   name: 'activitypub.follow',

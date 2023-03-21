@@ -12,6 +12,13 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
+// Transforms "http://localhost:3000/dataset/data" to "dataset"
+const getDatasetFromUri = uri => {
+  const path = new URL(uri).pathname;
+  const parts = path.split('/');
+  if (parts.length > 1) return parts[1];
+};
+
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
@@ -123,6 +130,10 @@ function getUserAgentSearchParam(user, groups) {
   if (user === 'anon') {
     return {
       foafAgent: true
+    };
+  } if (user === 'system') {
+    return {
+      system: true
     };
   } else {
     return {
@@ -286,6 +297,7 @@ const isRemoteUri = (resourceUri, baseUrl) => {
 module.exports = {
   getSlugFromUri,
   getContainerFromUri,
+  getDatasetFromUri,
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,

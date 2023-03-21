@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { ACTIVITY_TYPES } = require("@semapps/activitypub");
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);

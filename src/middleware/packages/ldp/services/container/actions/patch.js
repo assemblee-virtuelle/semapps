@@ -97,13 +97,6 @@ module.exports = {
                 const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: delUri });
                 if (containers.length === 0 && isMirror(delUri, this.settings.baseUrl)) {
                   await ctx.call('ldp.remote.delete', { resourceUri: delUri });
-
-                  // TODO see if this cannot be set in the ldp.remote service
-                  ctx.emit(
-                    'ldp.resource.deletedSingleMirror',
-                    { resourceUri: delUri },
-                    { meta: { webId: null, dataset: null, isMirror: true } }
-                  );
                 }
               } catch (e) {
                 // Fail silently

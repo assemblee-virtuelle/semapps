@@ -1,7 +1,6 @@
-const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
-const { delay } = require('../utils');
+const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
+const { delay } = require('../../../utils');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -64,7 +63,6 @@ const ObjectService = {
           // If the object passed is an URI, this is an announcement and there is nothing to process
           if (typeof activity.object === 'string') break;
 
-          let containerUri;
           const container = await ctx.call('ldp.registry.getByType', {
             type: activity.object.type || activity.object['@type']
           });
@@ -75,12 +73,7 @@ const ObjectService = {
                 activity.object['@type']}", no matching containers were found!`
             );
 
-          if (this.settings.podProvider) {
-            const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-            containerUri = urlJoin(account.podUri, container.path);
-          } else {
-            containerUri = urlJoin(this.settings.baseUri, container.path);
-          }
+          const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
 
           objectUri = await ctx.call('ldp.container.post', {
             containerUri,

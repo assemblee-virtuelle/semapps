@@ -1,8 +1,8 @@
 const { ControlledContainerMixin } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { Errors: E } = require('moleculer-web');
-const { objectCurrentToId, objectIdToCurrent, defaultToArray } = require('../utils');
-const { PUBLIC_URI, ACTIVITY_TYPES } = require('../constants');
+const { objectCurrentToId, objectIdToCurrent, defaultToArray } = require('../../../utils');
+const { PUBLIC_URI, ACTIVITY_TYPES } = require('../../../constants');
 
 const ActivityService = {
   name: 'activitypub.activity',

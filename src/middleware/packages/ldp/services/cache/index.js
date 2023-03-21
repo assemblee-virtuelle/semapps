@@ -10,9 +10,9 @@ module.exports = {
       for (let containerUri of containersUris) {
         try {
           await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
-          console.log('Generated cache for container ' + containerUri);
+          this.logger.info('Generated cache for container ' + containerUri);
         } catch (e) {
-          console.log('Error when generating cache for container ' + containerUri);
+          this.logger.warn('Error when generating cache for container ' + containerUri);
           console.error(e);
         }
       }

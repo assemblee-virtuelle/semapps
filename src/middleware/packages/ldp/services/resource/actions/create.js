@@ -22,7 +22,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 
-    if (this.isRemoteUri(resourceUri))
+    if (this.isRemoteUri(resourceUri, webId))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {

@@ -1,6 +1,6 @@
 const { MIME_TYPES } = require("@semapps/mime-types");
-const { buildDereferenceQuery, getPrefixRdf, getPrefixJSON } = require("@semapps/ldp/utils");
 const { MoleculerError } = require('moleculer').Errors;
+const { buildDereferenceQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require("../../../utils");
 
 module.exports = {
   visibility: 'public',
@@ -22,6 +22,13 @@ module.exports = {
 
     // If resource exists
     if (graphName !== false) {
+      // TODO Get options from type if it exists or return default options
+      // const types = await ctx.call('ldp.resource.getTypes', { resourceUri }, { meta: { dataset: getDatasetFromUri(resourceUri) }});
+      // const containerOptions = await ctx.call('ldp.registry.getByType', { type: types });
+      // const { dereference, jsonContext } = containerOptions
+      //   ? { ...this.settings.defaultOptions, ...containerOptions }
+      //   : this.settings.defaultOptions;
+
       const dereferenceQuery = buildDereferenceQuery(dereference);
 
       let result = await ctx.call('triplestore.query', {

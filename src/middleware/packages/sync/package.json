@@ -1,7 +1,7 @@
 {
-  "name": "@semapps/mirror",
+  "name": "@semapps/sync",
   "version": "0.4.4",
-  "description": "Mirror module for SemApps",
+  "description": "Synchronization tools for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {

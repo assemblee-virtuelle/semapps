@@ -10,35 +10,36 @@ module.exports = {
     strategy: { type: 'enum', values: ['cacheFirst', 'networkFirst', 'cacheOnly', 'networkOnly', 'staleWhileRevalidate'], default: 'cacheFirst' }
   },
   async handler(ctx) {
-    const { resourceUri, strategy, accept, ...rest } = ctx.params;
+    const { resourceUri, accept, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    if (!this.isRemoteUri(resourceUri)) {
-      throw new Error('The resourceUri param must be remote. Provided: ' + resourceUri)
+    // Without webId, we have no way to know which dataset to look in, so get from network
+    const strategy = (this.settings.podProvider && (!webId || webId === 'anon' || webId === 'system')) ? 'networkOnly' : ctx.params.strategy;
+
+    if (!this.isRemoteUri(resourceUri, webId)) {
+      throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
     switch(strategy) {
       case 'cacheFirst':
-        try {
-          return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-        } catch (e) {
-          if (e.code === 404) {
-            return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-          } else {
-            throw e;
-          }
-        }
+        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+            } else {
+              throw e;
+            }
+          });
 
       case 'networkFirst':
-        try {
-          return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-        } catch (e) {
-          if (e.code === 404) {
-            return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-          } else {
-            throw e;
-          }
-        }
+        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+            } else {
+              throw e;
+            }
+          });
 
       case 'cacheOnly':
         return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
