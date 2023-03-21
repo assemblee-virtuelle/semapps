@@ -1,10 +1,6 @@
 /data
-activitypub/actors/*.key
-activitypub/actors/*.key.pub
-activitypub/jwt/*.key
-activitypub/jwt/*.key.pub
 
-actors/*.key
-actors/*.key.pub
-jwt/*.key
-jwt/*.key.pub
+*/actors/*.key
+*/actors/*.key.pub
+*/jwt/*.key
+*/jwt/*.key.pub

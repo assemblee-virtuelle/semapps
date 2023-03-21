@@ -2,7 +2,6 @@ const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
 const { delay } = require('../utils');
-const fetch = require('node-fetch');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -18,45 +17,12 @@ const ObjectService = {
       // If the object is already dereferenced, return it
       if (typeof objectUri !== 'string') return objectUri;
 
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: objectUri });
-      try {
-        return await ctx.call(controlledActions && controlledActions.get ? controlledActions.get : 'ldp.resource.get', {
-          resourceUri: objectUri,
-          accept: MIME_TYPES.JSON,
-          webId: actorUri,
-          ...rest
-        });
-      } catch (e) {
-        if (e.code === 404) {
-          // TODO only do this for distant objects
-          // If the object was not found in cache, try to query it distantly
-          if (actorUri && actorUri !== 'system' && actorUri !== 'anon') {
-            const services = await ctx.call('$node.services');
-            if (services.filter(s => s.name === 'signature.proxy')) {
-              return await ctx.call('signature.proxy.query', {
-                resourceUri: objectUri,
-                actorUri
-              });
-            }
-            // TODO put results in cache ?
-          } else {
-            const response = await fetch(objectUri, {
-              headers: {
-                Accept: 'application/json'
-              }
-            });
-
-            if (response.ok) {
-              return await response.json();
-            } else {
-              throw new Error(`Unable to fetch remote object: ${objectUri}`);
-            }
-          }
-        } else {
-          // Rethrow error if not 404
-          throw e;
-        }
-      }
+      return await ctx.call('ldp.resource.get', {
+        resourceUri: objectUri,
+        webId: actorUri,
+        ...rest,
+        accept: MIME_TYPES.JSON
+      });
     },
     async awaitCreateComplete(ctx) {
       let { objectUri, predicates } = ctx.params;
@@ -163,68 +129,6 @@ const ObjectService = {
 
       return activity;
     },
-    async cacheRemote(ctx) {
-      let { objectUri, actorUri } = ctx.params;
-
-      if (typeof objectUri === 'object') {
-        objectUri = objectUri.id || objectUri['@id'];
-      }
-
-      const object = await ctx.call('activitypub.object.get', {
-        objectUri,
-        actorUri
-      });
-
-      let containerUri, dataset;
-      const container = await ctx.call('ldp.registry.getByType', { type: object.type || object['@type'] });
-
-      if (this.settings.podProvider) {
-        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        containerUri = urlJoin(this.settings.baseUri, container.fullPath.replace(':username', account.username));
-        dataset = account.username;
-      } else {
-        containerUri = urlJoin(this.settings.baseUri, container.path);
-      }
-
-      // Delete the existing cached resource (if it exists)
-      await this.actions.deleteFromCache({ objectUri, actorUri }, { parentCtx: ctx });
-
-      await ctx.call('triplestore.insert', {
-        resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${objectUri}>`,
-        webId: 'system',
-        dataset
-      });
-
-      await ctx.call('triplestore.insert', {
-        resource: object,
-        contentType: MIME_TYPES.JSON,
-        webId: 'system',
-        dataset
-      });
-    },
-    async deleteFromCache(ctx) {
-      const { objectUri, actorUri } = ctx.params;
-
-      let dataset;
-      if (this.settings.podProvider) {
-        const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
-        dataset = account.username;
-      }
-
-      // TODO also delete the associated blank nodes
-      await ctx.call('triplestore.update', {
-        query: `
-          PREFIX ldp: <http://www.w3.org/ns/ldp#>
-          DELETE
-          WHERE { 
-            ?container ldp:contains <${objectUri}> .
-            <${objectUri}> ?p1 ?o1 .
-          }
-        `,
-        webId: 'system',
-        dataset
-      });
-    }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
     // async create(ctx) {
     //   // If there is already a tombstone in the desired URI,

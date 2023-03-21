@@ -57,7 +57,7 @@ const OutboxService = {
         containerUri: activitiesContainerUri,
         resource: activity,
         contentType: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system' // Post as system since there is no write permission to the activities container
       });
 
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });

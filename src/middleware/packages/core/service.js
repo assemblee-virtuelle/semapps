@@ -141,6 +141,7 @@ const CoreService = {
       this.broker.createService(MirrorService, {
         settings: {
           baseUrl,
+          ontologies: ontologies || defaultOntologies,
           ...this.settings.mirror
         }
       });

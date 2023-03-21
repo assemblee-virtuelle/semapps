@@ -1,7 +1,8 @@
 const LdpContainerService = require('./services/container');
-const LdpResourceService = require('./services/resource');
 const LdpCacheService = require('./services/cache');
 const LdpRegistryService = require('./services/registry');
+const LdpRemoteService = require('./services/remote');
+const LdpResourceService = require('./services/resource');
 
 module.exports = {
   name: 'ldp',
@@ -45,6 +46,15 @@ module.exports = {
         preferredViewForResource
       },
       hooks: this.schema.hooksResource || {}
+    });
+
+    await this.broker.createService(LdpRemoteService, {
+      settings: {
+        baseUrl,
+        ontologies,
+        podProvider,
+        mirrorGraphName
+      }
     });
 
     await this.broker.createService(LdpRegistryService, {

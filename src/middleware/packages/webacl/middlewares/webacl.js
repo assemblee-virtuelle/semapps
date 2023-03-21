@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getContainerFromUri, isMirror } = require('../utils');
+const { getContainerFromUri, isRemoteUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
@@ -7,7 +7,9 @@ const modifyActions = [
   'ldp.container.create',
   'activitypub.collection.create',
   'activitypub.activity.create',
+  'activitypub.activity.attach',
   'webid.create',
+  'ldp.remote.store',
   'ldp.resource.delete'
 ];
 
@@ -106,7 +108,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
 
         // Bypass if mirrored resource as WebACL are not activated in mirror graph
-        if (isMirror(resourceUri, baseUrl)) {
+        if (isRemoteUri(resourceUri, baseUrl) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
           return bypass();
         }
 
@@ -143,10 +145,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.create':
+            const resourceUri = ctx.params.resource['@id'] || ctx.params.resource.id;
             // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
-            if (isMirror(ctx.params.resource['@id'] || ctx.params.resource.id, baseUrl)) return next(ctx);
+            if (isRemoteUri(resourceUri, baseUrl) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') return next(ctx);
             // We must add the permissions before inserting the resource
-            await addRightsToNewResource(ctx, ctx.params.resource['@id'] || ctx.params.resource.id, webId);
+            await addRightsToNewResource(ctx, resourceUri, webId);
             break;
 
           case 'activitypub.collection.create':
@@ -219,12 +222,33 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await addRightsToNewUser(ctx, actionReturnValue);
             break;
 
+          case 'ldp.remote.store': {
+            const webId = ctx.params.webId || ctx.meta.webId;
+            const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
+            // When a remote resource is stored in the default graph, give read permission to the logged user
+            if (!ctx.params.mirrorGraph && webId && webId !== 'system' && webId !== 'anon') {
+              await ctx.call('webacl.resource.addRights', {
+                resourceUri,
+                additionalRights: {
+                  user: {
+                    uri: webId,
+                    read: true
+                  }
+                },
+                webId: 'system'
+              });
+            }
+            break;
+          }
+
           case 'activitypub.activity.create':
+          case 'activitypub.activity.attach':
             const activity = await ctx.call('activitypub.activity.get', {
               resourceUri: actionReturnValue.resourceUri,
               webId: 'system'
             });
-            const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+
+            let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once

@@ -5,15 +5,13 @@ const putAction = require('./actions/put');
 const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const generateIdAction = require('./actions/generateId');
+const getContainersAction = require('./actions/getContainers');
 const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
 
-const Schedule = require('moleculer-schedule');
-
 module.exports = {
   name: 'ldp.resource',
-  mixins: [Schedule],
   settings: {
     baseUrl: null,
     ontologies: [],
@@ -25,6 +23,7 @@ module.exports = {
   actions: {
     exist: existAction,
     generateId: generateIdAction,
+    getContainers: getContainersAction,
     create: createAction,
     upload: uploadAction,
     // Actions accessible through the API
@@ -56,11 +55,5 @@ module.exports = {
       }
     }
   },
-  methods,
-  jobs: [
-    {
-      rule: '0 * * * *',
-      handler: 'updateSingleMirroredResources'
-    }
-  ]
+  methods
 };

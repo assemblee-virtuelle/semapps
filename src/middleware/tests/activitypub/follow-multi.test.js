@@ -8,10 +8,11 @@ let broker, broker2;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
-  broker2 = broker;
+  broker2 = await initialize(3001, 'testData2', 'settings2');
 });
 afterAll(async () => {
   if (broker) await broker.stop();
+  if (broker2) await broker2.stop();
 });
 
 describe('Posting to followers', () => {

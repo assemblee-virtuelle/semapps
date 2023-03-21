@@ -1,3 +1,4 @@
+const urlJoin = require("url-join");
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
@@ -39,6 +40,11 @@ module.exports = {
     api_post: postAction.api,
     api_head: headAction.api,
     api_patch: patchAction.api
+  },
+  methods: {
+    isRemoteUri(uri) {
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl);
+    }
   },
   hooks: {
     before: {

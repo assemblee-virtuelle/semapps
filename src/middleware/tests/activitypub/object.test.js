@@ -9,7 +9,7 @@ jest.setTimeout(50000);
 let broker;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(3000, 'testData', 'settings');
 });
 afterAll(async () => {
   if (broker) await broker.stop();

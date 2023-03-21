@@ -1,5 +1,5 @@
 const ActivitiesHandlerMixin = require('../mixins/activities-handler');
-const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
+const { ACTIVITY_TYPES } = require('../constants');
 const { collectionPermissionsWithAnonRead } = require('../utils');
 
 const FollowService = {

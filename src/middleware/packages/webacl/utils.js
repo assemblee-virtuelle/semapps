@@ -158,7 +158,9 @@ async function aclGroupExists(groupUri, ctx, graphName) {
 }
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
+  return resourceUri.startsWith(baseUrl)
+    ? urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'))
+    : resourceUri;
 }
 
 function filterAndConvertTriple(quad, property) {
@@ -277,7 +279,7 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
-const isMirror = (resourceUri, baseUrl) => {
+const isRemoteUri = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
@@ -308,5 +310,5 @@ module.exports = {
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
   FULL_ACL_ANYAGENT,
-  isMirror
+  isRemoteUri
 };

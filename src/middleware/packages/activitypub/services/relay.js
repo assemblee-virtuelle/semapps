@@ -1,14 +1,13 @@
 const urlJoin = require('url-join');
 const fetch = require('node-fetch');
-const { ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
-
-const { getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
-
-const { defaultToArray } = require('@semapps/activitypub/utils');
+const { defaultToArray } = require('../utils');
+const { ACTIVITY_TYPES, ACTOR_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('../constants');
+const ActivitiesHandlerMixin = require("../mixins/activities-handler");
 
 const RelayService = {
   name: 'activitypub.relay',
+  mixins: [ActivitiesHandlerMixin],
   settings: {
     baseUri: null,
     acceptFollowers: true,
@@ -27,7 +26,6 @@ const RelayService = {
     'ldp.container',
     'ldp.registry'
   ],
-
   async started() {
     const containers = await this.broker.call('ldp.registry.list');
 
@@ -44,32 +42,19 @@ const RelayService = {
       throw new Error(errorMsg);
     }
 
-    const services = await this.broker.call('$node.services');
-
-    if (services.map(s => s.name).filter(s => s.startsWith('webacl')).length) {
-      this.hasWebacl = true;
-      await this.broker.waitForServices(['webacl']);
-    }
-
-    // check that an inference service is running
-    if (services.map(s => s.name).filter(s => s.startsWith('inference')).length) {
-      this.hasInferenceService = true;
-    }
-
     const actorSettings = this.settings.actor;
-
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
-
     this.logger.info('actorExist ' + actorExist);
 
-    const uri = urlJoin(this.settings.baseUri, actorContainer, actorSettings.username);
+    const containerUri = urlJoin(this.settings.baseUri, actorContainer);
+    const uri = urlJoin(containerUri, actorSettings.username);
     this.relayActorUri = uri;
 
     // creating the local actor 'relay'
     if (!actorExist) {
       this.logger.info(`ActorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
-      await this.broker.call(
+      const account = await this.broker.call(
         'auth.account.create',
         {
           username: actorSettings.username,
@@ -78,18 +63,30 @@ const RelayService = {
         { meta: { isSystemCall: true } }
       );
 
-      await this.broker.call('ldp.container.post', {
-        containerUri: getContainerFromUri(uri),
-        slug: actorSettings.username,
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: ACTOR_TYPES.APPLICATION,
-          preferredUsername: actorSettings.username,
-          name: actorSettings.name
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      try {
+        // Wait until relay container has been created (needed for integration tests)
+        let containerExist;
+        do {
+          containerExist = await this.broker.call('ldp.container.exist', { containerUri });
+        } while (!containerExist);
+
+        await this.broker.call('ldp.container.post', {
+          containerUri,
+          slug: actorSettings.username,
+          resource: {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            type: ACTOR_TYPES.APPLICATION,
+            preferredUsername: actorSettings.username,
+            name: actorSettings.name
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      } catch(e) {
+        // Delete account if resource creation failed, or it may cause problems when retrying
+        await this.broker.call('auth.account.remove', { id: account['@id'] });
+        throw e;
+      }
     }
 
     // wait until the outbox and followers collection are created, and keep their uri, for later use
@@ -110,15 +107,15 @@ const RelayService = {
         activity: { type: 'object', optional: false }
       },
       async handler(ctx) {
-        if (!this.hasFollowers) return;
-        const activity = await this.broker.call('activitypub.outbox.post', {
-          collectionUri: this.relayOutboxUri,
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          actor: this.relayActorUri,
-          ...ctx.params.activity,
-          to: await this.getFollowers()
-        });
-        return activity;
+        if (this.hasFollowers) {
+          return await this.broker.call('activitypub.outbox.post', {
+            collectionUri: this.relayOutboxUri,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: this.relayActorUri,
+            ...ctx.params.activity,
+            to: await this.getFollowers()
+          });
+        }
       }
     },
     follow: {
@@ -127,7 +124,7 @@ const RelayService = {
         remoteRelayActorUri: { type: 'string', optional: false }
       },
       async handler(ctx) {
-        const followActivity = await ctx.call('activitypub.outbox.post', {
+        return await ctx.call('activitypub.outbox.post', {
           collectionUri: this.relayOutboxUri,
           '@context': 'https://www.w3.org/ns/activitystreams',
           actor: this.relayActorUri,
@@ -135,7 +132,6 @@ const RelayService = {
           object: ctx.params.remoteRelayActorUri,
           to: [ctx.params.remoteRelayActorUri]
         });
-        return followActivity;
       }
     },
     isFollowing: {
@@ -144,11 +140,10 @@ const RelayService = {
         remoteRelayActorUri: { type: 'string', optional: false }
       },
       async handler(ctx) {
-        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
+        return await ctx.call('activitypub.follow.isFollowing', {
           follower: this.relayActorUri,
           following: ctx.params.remoteRelayActorUri
         });
-        return alreadyFollowing;
       }
     },
     offerInference: {
@@ -220,13 +215,6 @@ const RelayService = {
     }
   },
   events: {
-    async 'activitypub.inbox.received'(ctx) {
-      if (this.inboxReceived) {
-        if (ctx.params.recipients.includes(this.relayActorUri)) {
-          await this.inboxReceived(ctx);
-        }
-      }
-    },
     'activitypub.follow.added'(ctx) {
       if (ctx.params.following === this.relayActorUri && this.settings.acceptFollowers) {
         this.hasFollowers = true;
@@ -239,6 +227,13 @@ const RelayService = {
     }
   },
   methods: {
+    async hasInferenceService() {
+      const services = await this.broker.call('$node.services');
+      return services.some(s => s.name === 'inference');
+    },
+    isRemoteUri(uri) {
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUri);
+    },
     async checkHasFollowers() {
       const res = await this.broker.call('activitypub.collection.isEmpty', {
         collectionUri: this.relayFollowersUri
@@ -248,105 +243,146 @@ const RelayService = {
     async getFollowers() {
       return [this.relayFollowersUri, PUBLIC_URI];
     },
-    prepareTriple(expanded_activity) {
-      let triple =
-        expanded_activity[0]['https://www.w3.org/ns/activitystreams#object']?.[0]?.[
-          'https://www.w3.org/ns/activitystreams#object'
-        ]?.[0];
-      if (triple) {
-        triple.subject = triple['https://www.w3.org/ns/activitystreams#subject']?.[0]?.['@id'];
-        triple.object = triple['https://www.w3.org/ns/activitystreams#object']?.[0]?.['@id'];
-        triple.relationship = triple['https://www.w3.org/ns/activitystreams#relationship']?.[0]?.['@id'];
-      }
-      return triple;
-    },
-    async inboxReceived(ctx) {
-      const { activity } = ctx.params;
-      let expanded_activity = await ctx.call('jsonld.expand', { input: activity });
-      if (activity.type === ACTIVITY_TYPES.OFFER) {
-        if (
-          activity.object &&
-          (activity.object.type == ACTIVITY_TYPES.ADD || activity.object.type == ACTIVITY_TYPES.REMOVE)
-        ) {
-          if (activity.object.object.type == OBJECT_TYPES.RELATIONSHIP) {
-            if (!this.hasInferenceService) {
-              const services = await this.broker.call('$node.services');
-              // check that an inference service is running
-              if (services.map(s => s.name).filter(s => s.startsWith('inference')).length) {
-                this.hasInferenceService = true;
-              } else {
-                this.logger.warn(
-                  'received OFFER for inverse relationship but inference service is not running. aborting'
-                );
-                return;
-              }
-            }
-            let triple = this.prepareTriple(expanded_activity);
-            if (triple) {
-              if (isMirror(triple.subject, this.settings.baseUri)) {
-                this.logger.warn('Attempt at offering an inverse relationship on a mirrored resource. aborting');
-                return;
-              }
-              if (triple.subject && triple.relationship && triple.object) {
-                await ctx.call('inference.addFromRemote', {
-                  subject: triple.subject,
-                  predicate: triple.relationship,
-                  object: triple.object,
-                  add: activity.object.type == ACTIVITY_TYPES.ADD
-                });
-              }
-            }
+  },
+  activities: {
+    announceCreate: {
+      match: {
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.CREATE
+        }
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await ctx.call('mirror.validRemoteRelay', { actor: activity.actor })) {
+          await ctx.call('ldp.remote.store', {
+            resourceUri: activity.object.object,
+            mirrorGraph: true
+          });
+          if (activity.object.target) {
+            await ctx.call(
+              'ldp.container.attach',
+              { containerUri: activity.object.target, resourceUri: activity.object.object }
+            );
           }
         }
-      } else if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-        if (!(await ctx.call('mirror.checkValidRemoteRelay', { actor: activity.actor }))) return;
-        switch (activity.object.type) {
-          case ACTIVITY_TYPES.CREATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
-            if (activity.object.target)
-              await ctx.call(
-                'ldp.container.attach',
-                { containerUri: activity.object.target, resourceUri: activity.object.object },
-                { meta: { forceMirror: true } }
-              );
-            break;
+      }
+    },
+    announceUpdate: {
+      match: {
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.UPDATE
+        }
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await ctx.call('mirror.validRemoteRelay', { actor: activity.actor })) {
+          await ctx.call('ldp.remote.store', {
+            resourceUri: activity.object.object,
+            mirrorGraph: true
+          });
+        }
+      }
+    },
+    announceDelete: {
+      match: {
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.DELETE
+        }
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await ctx.call('mirror.validRemoteRelay', { actor: activity.actor })) {
+          await ctx.call('ldp.remote.delete', { resourceUri: activity.object.object });
+        }
+      }
+    },
+    announceAddToContainer: {
+      match: {
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.ADD,
+          object: {
+            type: OBJECT_TYPES.RELATIONSHIP
           }
-          case ACTIVITY_TYPES.UPDATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.put', { resource: newResource, contentType: MIME_TYPES.JSON });
-            break;
+        }
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await ctx.call('mirror.validRemoteRelay', { actor: activity.actor })) {
+          const predicate = await ctx.call('jsonld.expandPredicate', { predicate: activity.object.object.relationship, context: activity['@context'] });
+          if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+            await ctx.call(
+              'ldp.container.attach',
+              { containerUri: activity.object.object.subject, resourceUri: activity.object.object.object }
+            );
           }
-          case ACTIVITY_TYPES.DELETE: {
-            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
-            break;
+        }
+      }
+    },
+    announceRemoveFromContainer: {
+      match: {
+        type: ACTIVITY_TYPES.ANNOUNCE,
+        object: {
+          type: ACTIVITY_TYPES.REMOVE,
+          object: {
+            type: OBJECT_TYPES.RELATIONSHIP
           }
-          case ACTIVITY_TYPES.ADD: {
-            const relation = activity.object.object;
-            if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
-            let triple = this.prepareTriple(expanded_activity);
-            if (triple)
-              await ctx.call(
-                'ldp.container.attach',
-                { containerUri: triple.subject, resourceUri: triple.object },
-                { meta: { forceMirror: true } }
-              );
-            break;
+        }
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await ctx.call('mirror.validRemoteRelay', { actor: activity.actor })) {
+          const predicate = await ctx.call('jsonld.expandPredicate', { predicate: activity.object.object.relationship, context: activity['@context'] });
+          if (predicate === 'http://www.w3.org/ns/ldp#contains') {
+            await ctx.call(
+              'ldp.container.detach',
+              {containerUri: activity.object.object.subject, resourceUri: activity.object.object.object}
+            );
           }
-          case ACTIVITY_TYPES.REMOVE: {
-            const relation = activity.object.object;
-            if (relation.type != OBJECT_TYPES.RELATIONSHIP) break;
-            let triple = this.prepareTriple(expanded_activity);
-            if (triple)
-              await ctx.call(
-                'ldp.container.detach',
-                { containerUri: triple.subject, resourceUri: triple.object },
-                { meta: { forceMirror: true } }
-              );
-            break;
+        }
+      }
+    },
+    offerInference: {
+      async match(activity) {
+        return (
+          await this.matchActivity({
+            type: ACTIVITY_TYPES.OFFER,
+            object: {
+              type: ACTIVITY_TYPES.ADD,
+              object: {
+                type: OBJECT_TYPES.RELATIONSHIP
+              }
+            }
+          }, activity)
+        ) || (
+          await this.matchActivity({
+            type: ACTIVITY_TYPES.OFFER,
+            object: {
+              type: ACTIVITY_TYPES.REMOVE,
+              object: {
+                type: OBJECT_TYPES.RELATIONSHIP
+              }
+            }
+          }, activity)
+        );
+      },
+      async onReceive(ctx, activity, recipients) {
+        if (recipients.includes(this.relayActorUri) && await this.hasInferenceService()) {
+          let relationship = activity.object.object;
+          // Remove prefix from predicate if it exists
+          relationship.relationship = await ctx.call('jsonld.expandPredicate', { predicate: relationship.relationship, context: activity['@context'] });
+          if (this.isRemoteUri(relationship.subject)) {
+            this.logger.warn('Attempt at offering an inverse relationship on a mirrored resource. Aborting...');
+            return;
           }
+          if (relationship.subject && relationship.relationship && relationship.object) {
+            await ctx.call('inference.addFromRemote', {
+              subject: relationship.subject,
+              predicate: relationship.relationship,
+              object: relationship.object,
+              add: activity.object.type === ACTIVITY_TYPES.ADD
+            });
+          }
+        } else {
+          this.logger.warn('Received offer for inverse relationship but inference service is not running. Aborting...');
         }
       }
     }
