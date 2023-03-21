@@ -8,13 +8,13 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "0.4.4",
-    "@semapps/auth": "0.4.4",
-    "@semapps/core": "0.4.4",
-    "@semapps/ldp": "0.4.4",
-    "@semapps/middlewares": "0.4.4",
-    "@semapps/mime-types": "0.4.4",
-    "@semapps/webid": "0.4.4",
+    "@semapps/activitypub": "0.5.0-alpha.0",
+    "@semapps/auth": "0.5.0-alpha.0",
+    "@semapps/core": "0.5.0-alpha.0",
+    "@semapps/ldp": "0.5.0-alpha.0",
+    "@semapps/middlewares": "0.5.0-alpha.0",
+    "@semapps/mime-types": "0.5.0-alpha.0",
+    "@semapps/webid": "0.5.0-alpha.0",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
@@ -29,5 +29,5 @@
     "jest": "^24.9.0",
     "supertest": "^4.0.2"
   },
-  "version": "0.4.4"
+  "version": "0.5.0-alpha.0"
 }
