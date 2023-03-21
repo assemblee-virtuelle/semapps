@@ -12,6 +12,9 @@ module.exports = {
     resourceUpdated(resourceUri, newData, oldData) {
       // This method can be implemented
     },
+    resourcePatched(resourceUri, triplesAdded, triplesRemoved) {
+      // This method can be implemented
+    },
     resourceDeleted(resourceUri, oldData) {
       // This method can be implemented
     },
@@ -30,6 +33,12 @@ module.exports = {
       const { resourceUri, newData, oldData } = ctx.params;
       if (this.isMatching(resourceUri)) {
         this.resourceUpdated(resourceUri, newData, oldData);
+      }
+    },
+    async 'ldp.resource.patched'(ctx) {
+      const { resourceUri, triplesAdded, triplesRemoved } = ctx.params;
+      if (this.isMatching(resourceUri)) {
+        this.resourcePatched(resourceUri, triplesAdded, triplesRemoved);
       }
     },
     async 'ldp.resource.deleted'(ctx) {

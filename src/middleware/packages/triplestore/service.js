@@ -1,4 +1,6 @@
 const { SparqlJsonParser } = require('sparqljson-parse');
+const SparqlGenerator = require('sparqljs').Generator;
+const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
 const { throw403, throw500 } = require('@semapps/middlewares');
 const countTriplesOfSubject = require('./actions/countTriplesOfSubject');
@@ -7,18 +9,37 @@ const dropAll = require('./actions/dropAll');
 const insert = require('./actions/insert');
 const query = require('./actions/query');
 const update = require('./actions/update');
+const DatasetService = require('./subservices/dataset');
 
 const TripleStoreService = {
   name: 'triplestore',
   settings: {
-    sparqlEndpoint: null,
-    mainDataset: null, // Default dataset
-    jenaUser: null,
-    jenaPassword: null
+    url: null,
+    user: null,
+    password: null,
+    mainDataset: null,
+    // Sub-services customization
+    dataset: {}
   },
   dependencies: ['jsonld'],
+  async created() {
+    const { url, user, password, dataset } = this.settings;
+    this.subservices = {};
+
+    if (dataset !== false) {
+      this.subservices.dataset = this.broker.createService(DatasetService, {
+        settings: {
+          url,
+          user,
+          password,
+          ...dataset
+        }
+      });
+    }
+  },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
+    this.sparqlGenerator = new SparqlGenerator({ /* prefixes, baseIRI, factory, sparqlStar */ });
   },
   actions: {
     insert,
@@ -35,8 +56,7 @@ const TripleStoreService = {
         body,
         headers: {
           ...headers,
-          Authorization:
-            'Basic ' + Buffer.from(this.settings.jenaUser + ':' + this.settings.jenaPassword).toString('base64')
+          Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
         }
       });
 
@@ -55,6 +75,14 @@ const TripleStoreService = {
       }
 
       return response;
+    },
+    generateSparqlQuery(query) {
+      try {
+        return this.sparqlGenerator.stringify(query);
+      } catch(e) {
+        console.error(e);
+        throw new MoleculerError(`Invalid SPARQL.js object: ${JSON.stringify(query)}`, 400, 'BAD_REQUEST');
+      }
     }
   }
 };

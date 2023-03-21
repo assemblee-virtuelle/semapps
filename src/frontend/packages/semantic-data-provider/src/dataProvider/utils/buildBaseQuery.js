@@ -1,6 +1,8 @@
 import { namedNode, triple, variable } from '@rdfjs/data-model';
 import resolvePrefix from './resolvePrefix';
 
+const defaultToArray = value => (!value ? [] : Array.isArray(value) ? value : [value]);
+
 // We need to always include the type or React-Admin will not work properly
 const typeQuery = triple(
   variable('s1'),
@@ -11,7 +13,7 @@ const typeQuery = triple(
 const buildBaseQuery = (predicates, ontologies) => {
   let baseTriples;
   if (predicates) {
-    baseTriples = predicates.map((predicate, i) =>
+    baseTriples = defaultToArray(predicates).map((predicate, i) =>
       triple(variable('s1'), namedNode(resolvePrefix(predicate, ontologies)), variable('o' + (i + 1)))
     );
     return {

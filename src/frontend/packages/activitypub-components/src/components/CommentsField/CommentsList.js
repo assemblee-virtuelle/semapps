@@ -1,8 +1,8 @@
 import React from 'react';
 import { TextField, RichTextField, DateField } from 'react-admin';
 import { Box, Typography, CircularProgress, makeStyles } from '@material-ui/core';
-import { ReferenceField, useDataModel } from '@semapps/semantic-data-provider';
-import { AvatarWithLabelField } from '@semapps/field-components';
+import { useDataModel } from '@semapps/semantic-data-provider';
+import { AvatarWithLabelField, ReferenceField } from '@semapps/field-components';
 
 const useStyles = makeStyles(() => ({
   container: {
@@ -60,13 +60,13 @@ const CommentsList = ({ comments, userResource, loading }) => {
           .map(comment => (
             <Box className={classes.container}>
               <Box className={classes.avatar}>
-                <ReferenceField record={comment} reference="Person" source="attributedTo" linkType={false}>
+                <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
                   <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
                 </ReferenceField>
               </Box>
               <Box className={classes.text}>
                 <Typography variant="body2">
-                  <ReferenceField record={comment} reference="Person" source="attributedTo">
+                  <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
                     <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
                   </ReferenceField>
                   &nbsp;•&nbsp;

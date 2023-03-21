@@ -43,7 +43,7 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        if (this.settings.podProvider && ctx.params.containerUri) {
+        if (this.settings.podProvider && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
           // If we have a pod provider, guess the dataset from the container URI
           const containerPath = new URL(ctx.params.containerUri).pathname;
           const parts = containerPath.split('/');

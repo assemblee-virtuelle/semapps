@@ -30,7 +30,7 @@ module.exports = {
     return {
       '@context': { '@vocab': 'http://semapps.org/ns/core#' },
       '@id': resourceUri,
-      '@type': 'semapps:File',
+      '@type': 'File',
       encoding: file.encoding,
       mimeType: file.mimetype,
       localPath,

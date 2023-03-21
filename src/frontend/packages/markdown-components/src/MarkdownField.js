@@ -1,16 +1,16 @@
 import React from 'react';
-import { LargeLabel } from '@semapps/archipelago-layout';
 import Markdown from 'markdown-to-jsx';
+import get from 'lodash/get';
 
-const MarkdownField = ({ source, record, overrides = {}, ...rest }) =>
-  record && record[source] ? (
+const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest }) =>
+  record && get(record, source) ? (
     <Markdown
       options={{
         createElement(type, props, children) {
           if (props.label) {
             return (
               <>
-                <LargeLabel>{props.label}</LargeLabel>
+                <LabelComponent>{props.label}</LabelComponent>
                 {React.createElement(type, props, children)}
               </>
             );
@@ -19,17 +19,18 @@ const MarkdownField = ({ source, record, overrides = {}, ...rest }) =>
           }
         },
         overrides: {
-          h1: LargeLabel,
+          h1: LabelComponent,
           ...overrides
         },
         ...rest
       }}
     >
-      {record[source]}
+      {get(record, source)}
     </Markdown>
   ) : null;
 
 MarkdownField.defaultProps = {
+  LabelComponent: 'h2',
   addLabel: true
 };
 

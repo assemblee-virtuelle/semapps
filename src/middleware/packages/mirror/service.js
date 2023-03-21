@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
 const fetch = require('node-fetch');
-const { ACTOR_TYPES, ACTIVITY_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
+const { ACTOR_TYPES, ACTIVITY_TYPES, OBJECT_TYPES, PUBLIC_URI } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const { createFragmentURL, getContainerFromUri, isMirror } = require('@semapps/ldp/utils');
@@ -15,18 +15,13 @@ module.exports = {
   settings: {
     baseUrl: null,
     graphName: 'http://semapps.org/mirror',
-    servers: [],
-    acceptFollowers: true,
-    actor: {
-      username: 'relay',
-      name: 'Relay actor for Mirror service'
-    }
+    servers: []
   },
   dependencies: [
     'triplestore',
     'webfinger',
     'activitypub',
-    'activitypub.follow',
+    'activitypub.relay',
     'void',
     'auth.account',
     'ldp.container',
@@ -36,77 +31,17 @@ module.exports = {
   async started() {
     this.excludedContainers = {};
 
-    // Ensure services have been started
-    // await this.broker.waitForServices(['ldp.container', 'ldp.registry', 'auth.account', 'activitypub.follow']);
-
     const containers = await this.broker.call('ldp.registry.list');
 
-    let actorContainer;
     Object.values(containers).forEach(c => {
       if (c.excludeFromMirror) this.excludedContainers[c.path] = true;
-      // we take the first container that accepts the type 'Application'
-      if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application'))
-        actorContainer = c.path;
     });
 
-    if (!actorContainer) {
-      const errorMsg =
-        "MirrorService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file";
-      throw new Error(errorMsg);
-    }
-
     const services = await this.broker.call('$node.services');
-
     if (services.map(s => s.name).filter(s => s.startsWith('webacl')).length) {
       this.hasWebacl = true;
       await this.broker.waitForServices(['webacl']);
     }
-
-    const actorSettings = this.settings.actor;
-
-    const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
-
-    this.logger.info('actorExist ' + actorExist);
-
-    const uri = urlJoin(this.settings.baseUrl, actorContainer, actorSettings.username);
-    this.relayActorUri = uri;
-
-    // creating the local actor 'relay'
-    if (!actorExist) {
-      this.logger.info(`MirrorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
-
-      await this.broker.call(
-        'auth.account.create',
-        {
-          username: actorSettings.username,
-          webId: uri
-        },
-        { meta: { isSystemCall: true } }
-      );
-
-      await this.broker.call('ldp.container.post', {
-        containerUri: getContainerFromUri(uri),
-        slug: actorSettings.username,
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: ACTOR_TYPES.APPLICATION,
-          preferredUsername: actorSettings.username,
-          name: actorSettings.name
-        },
-        contentType: MIME_TYPES.JSON,
-        webId: 'system'
-      });
-    }
-
-    // wait until the outbox and followers collection are created, and keep their uri, for later use
-    const actor = await this.broker.call('activitypub.actor.awaitCreateComplete', {
-      actorUri: uri
-    });
-    this.relayOutboxUri = actor.outbox;
-    this.relayFollowersUri = actor.followers;
-
-    // check if has followers (initialize value)
-    if (this.settings.acceptFollowers) this.hasFollowers = await this.checkHasFollowers();
 
     // STARTING TO MIRROR ALL THE SERVERS
 
@@ -128,6 +63,20 @@ module.exports = {
     }
   },
   actions: {
+    checkValidRemoteRelay: {
+      visibility: 'public',
+      params: {
+        actor: { type: 'string', optional: false }
+      },
+      async handler(ctx) {
+        // check that the sending actor is in our list of mirroredServers (security: if not it is some spamming or malicious attempt)
+        if (!this.mirroredServers.includes(ctx.params.actor)) {
+          this.logger.warn('SECURITY ALERT : received announce from actor we are not following : ' + ctx.params.actor);
+          return false;
+        }
+        return true;
+      }
+    },
     mirror: {
       visibility: 'public',
       params: {
@@ -141,9 +90,8 @@ module.exports = {
         const serverDomainName = new URL(serverUrl).host;
         const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
 
-        const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
-          follower: this.relayActorUri,
-          following: remoteRelayActorUri
+        const alreadyFollowing = await ctx.call('activitypub.relay.isFollowing', {
+          remoteRelayActorUri
         });
 
         if (alreadyFollowing) {
@@ -151,7 +99,7 @@ module.exports = {
           return remoteRelayActorUri;
         }
 
-        // if not, we will now mirror and then follow the relay actor
+        // if not, we will now mirror and then follow the remote relay actor
 
         this.logger.info('Mirroring ' + serverUrl);
 
@@ -167,24 +115,28 @@ module.exports = {
         if (!response.ok) throw new MoleculerError('No VOID endpoint on the server ' + serverUrl, 404, 'NOT_FOUND');
 
         const json = await response.json();
-        const firstServer = json['@graph'][0];
-        if (!firstServer || firstServer['@id'] !== createFragmentURL('', serverUrl))
+        let mapServers = {};
+        for (let s of json['@graph']) {
+          mapServers[s['@id']] = s;
+        }
+        const server = mapServers[createFragmentURL('', serverUrl)];
+        if (!server)
           throw new MoleculerError(
             'The VOID answer does not contain valid information for ' + serverUrl,
             400,
             'INVALID'
           );
 
-        // We mirror only the first server, meaning, not the mirrored data of the remote server.
+        // We mirror only the relevant server, meaning, not the mirrored data of the remote server.
         // If A mirrors B, and B also contains a mirror of C, then when A mirrors B,
         // A will only mirror what is proper to B, not the mirrored data of C
 
-        const partitions = firstServer['void:classPartition'];
+        const partitions = server['void:classPartition'];
 
         if (partitions) {
           for (const p of defaultToArray(partitions)) {
-            // we skip empty containers
-            if (p['void:entities'] === '0') continue;
+            // we skip empty containers and doNotMirror containers
+            if (p['void:entities'] === '0' || p['semapps:doNotMirror']) continue;
 
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
@@ -238,13 +190,8 @@ module.exports = {
 
         this.logger.info('Following remote relay actor ' + remoteRelayActorUri);
 
-        const followActivity = await ctx.call('activitypub.outbox.post', {
-          collectionUri: this.relayOutboxUri,
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          actor: this.relayActorUri,
-          type: ACTIVITY_TYPES.FOLLOW,
-          object: remoteRelayActorUri,
-          to: [remoteRelayActorUri]
+        const activity = await ctx.call('activitypub.relay.follow', {
+          remoteRelayActorUri
         });
 
         return remoteRelayActorUri;
@@ -252,38 +199,9 @@ module.exports = {
     }
   },
   events: {
-    async 'activitypub.inbox.received'(ctx) {
-      if (this.inboxReceived) {
-        if (ctx.params.recipients.includes(this.relayActorUri)) {
-          await this.inboxReceived(ctx);
-        }
-      }
-    },
-    'activitypub.follow.added'(ctx) {
-      if (ctx.params.following === this.relayActorUri && this.settings.acceptFollowers) {
-        this.hasFollowers = true;
-      }
-    },
-    async 'activitypub.follow.removed'(ctx) {
-      if (ctx.params.following === this.relayActorUri && this.settings.acceptFollowers) {
-        this.hasFollowers = await this.checkHasFollowers();
-      }
-    },
-    async 'ldp.resource.created'(ctx) {
-      const { resourceUri, newData } = ctx.params;
-      if (
-        this.hasFollowers &&
-        !this.containerExcludedFromMirror(resourceUri) &&
-        (await this.checkResourcePublic(resourceUri)) &&
-        !isMirror(resourceUri, this.settings.baseUrl)
-      ) {
-        this.resourceCreated(resourceUri);
-      }
-    },
     async 'ldp.resource.updated'(ctx) {
-      const { resourceUri, newData, oldData } = ctx.params;
+      const { resourceUri } = ctx.params;
       if (
-        this.hasFollowers &&
         !this.containerExcludedFromMirror(resourceUri) &&
         (await this.checkResourcePublic(resourceUri)) &&
         !isMirror(resourceUri, this.settings.baseUrl)
@@ -291,32 +209,54 @@ module.exports = {
         this.resourceUpdated(resourceUri);
       }
     },
-    async 'ldp.container.patched'(ctx) {
-      const { containerUri } = ctx.params;
+    async 'ldp.resource.patched'(ctx) {
+      const { resourceUri } = ctx.params;
       if (
-        this.hasFollowers &&
+        !this.containerExcludedFromMirror(resourceUri) &&
+        (await this.checkResourcePublic(resourceUri)) &&
+        !isMirror(resourceUri, this.settings.baseUrl)
+      ) {
+        this.resourceUpdated(resourceUri);
+      }
+    },
+    async 'ldp.container.attached'(ctx) {
+      const { containerUri, resourceUri, fromContainerPost } = ctx.params;
+      if (fromContainerPost) {
+        // we use the attached to container event to detect the creation of a new resource
+        if (
+          !this.containerExcludedFromMirror(containerUri) &&
+          (await this.checkResourcePublic(resourceUri)) &&
+          !isMirror(resourceUri, this.settings.baseUrl)
+        ) {
+          this.resourceCreated(containerUri, resourceUri);
+        }
+      } else if (
         !this.containerExcludedFromMirror(containerUri) &&
         (await this.checkResourcePublic(containerUri)) &&
         !isMirror(containerUri, this.settings.baseUrl)
       ) {
-        this.resourceUpdated(containerUri);
+        this.resourceContainerUpdated(containerUri, resourceUri, true);
+      }
+    },
+    async 'ldp.container.detached'(ctx) {
+      const { containerUri, resourceUri } = ctx.params;
+      if (
+        !this.containerExcludedFromMirror(containerUri) &&
+        (await this.checkResourcePublic(containerUri)) &&
+        !isMirror(containerUri, this.settings.baseUrl)
+      ) {
+        this.resourceContainerUpdated(containerUri, resourceUri, false);
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri } = ctx.params;
-      if (
-        this.hasFollowers &&
-        !this.containerExcludedFromMirror(resourceUri) &&
-        !isMirror(resourceUri, this.settings.baseUrl)
-      ) {
+      if (!this.containerExcludedFromMirror(resourceUri) && !isMirror(resourceUri, this.settings.baseUrl)) {
         this.resourceDeleted(resourceUri);
       }
     },
     async 'ldp.resource.deletedSingleMirror'(ctx) {
       const { resourceUri } = ctx.params;
-      if (this.hasFollowers) {
-        this.resourceDeleted(resourceUri);
-      }
+      this.resourceDeleted(resourceUri);
     },
     async 'webacl.resource.created'(ctx) {
       // We don't need to do anything because the resource is not created yet.
@@ -331,7 +271,7 @@ module.exports = {
         removeDefaultPublicRead
       } = ctx.params;
 
-      if (this.hasWebacl && this.hasFollowers && !this.containerExcludedFromMirror(uri)) {
+      if (this.hasWebacl && !this.containerExcludedFromMirror(uri)) {
         if (addPublicRead) {
           // we do not send an activity for empty containers
           if (isContainer && (await ctx.call('ldp.container.isEmpty', { containerUri: uri }))) return;
@@ -386,54 +326,55 @@ module.exports = {
       }
       return false;
     },
-    async resourceCreated(resourceUri) {
-      // each time a resource is created, it is also attached to a container,
-      // which triggers an update activity on that container to be sent to all followers.
-      // for the sake of non redundancy, we therefor do nothing when a create happens.
-      // the container update will retrieve the new resource anyway
-      // const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
-      //   collectionUri: this.relayOutboxUri,
-      //   '@context': 'https://www.w3.org/ns/activitystreams',
-      //   actor: this.relayActorUri,
-      //   type: ACTIVITY_TYPES.ANNOUNCE,
-      //   object: {
-      //     type: ACTIVITY_TYPES.CREATE,
-      //     object: resourceUri
-      //   },
-      //   to: await this.getFollowers()
-      // });
+    async resourceCreated(containerUri, resourceUri) {
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: ACTIVITY_TYPES.CREATE,
+            object: resourceUri,
+            target: containerUri
+          }
+        }
+      });
     },
     async resourceUpdated(resourceUri) {
-      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
-        collectionUri: this.relayOutboxUri,
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        actor: this.relayActorUri,
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.UPDATE,
-          object: resourceUri
-        },
-        to: await this.getFollowers()
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: ACTIVITY_TYPES.UPDATE,
+            object: resourceUri
+          }
+        }
       });
     },
     async resourceDeleted(resourceUri) {
-      const AnnounceActivity = await this.broker.call('activitypub.outbox.post', {
-        collectionUri: this.relayOutboxUri,
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        actor: this.relayActorUri,
-        type: ACTIVITY_TYPES.ANNOUNCE,
-        object: {
-          type: ACTIVITY_TYPES.DELETE,
-          object: resourceUri
-        },
-        to: await this.getFollowers()
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: ACTIVITY_TYPES.DELETE,
+            object: resourceUri
+          }
+        }
       });
     },
-    async checkHasFollowers() {
-      const res = await this.broker.call('activitypub.collection.isEmpty', {
-        collectionUri: this.relayFollowersUri
+    async resourceContainerUpdated(containerUri, resourceUri, attach) {
+      const AnnounceActivity = await this.broker.call('activitypub.relay.postToFollowers', {
+        activity: {
+          type: ACTIVITY_TYPES.ANNOUNCE,
+          object: {
+            type: attach ? ACTIVITY_TYPES.ADD : ACTIVITY_TYPES.REMOVE,
+            object: {
+              type: OBJECT_TYPES.RELATIONSHIP,
+              subject: containerUri,
+              relationship: 'http://www.w3.org/ns/ldp#contains',
+              object: resourceUri
+            }
+          }
+        }
       });
-      return !res;
     },
     async checkResourcePublic(resourceUri) {
       if (!this.hasWebacl) return true;
@@ -456,39 +397,6 @@ module.exports = {
         webId: 'system'
       });
       return res.map(o => o.object.value);
-    },
-    async getFollowers() {
-      return [this.relayFollowersUri, PUBLIC_URI];
-    },
-    async inboxReceived(ctx) {
-      const { activity } = ctx.params;
-
-      if (activity.type === ACTIVITY_TYPES.ANNOUNCE) {
-        // check that the sending actor is in our list of mirroredServers (security: if notm it is some spamming or malicious attempt)
-        if (!this.mirroredServers.includes(activity.actor)) {
-          console.log(this.mirroredServers);
-          this.logger.warn('SECURITY ALERT : received announce from actor we are not following : ' + activity.actor);
-          return;
-        }
-        switch (activity.object.type) {
-          case ACTIVITY_TYPES.CREATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.create', { resource: newResource, contentType: MIME_TYPES.JSON });
-            break;
-          }
-          case ACTIVITY_TYPES.UPDATE: {
-            let newResource = await fetch(activity.object.object, { headers: { Accept: MIME_TYPES.JSON } });
-            newResource = await newResource.json();
-            await ctx.call('ldp.resource.put', { resource: newResource, contentType: MIME_TYPES.JSON });
-            break;
-          }
-          case ACTIVITY_TYPES.DELETE: {
-            await ctx.call('ldp.resource.delete', { resourceUri: activity.object.object });
-            break;
-          }
-        }
-      }
     }
   }
 };

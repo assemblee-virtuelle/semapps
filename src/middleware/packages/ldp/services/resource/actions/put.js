@@ -10,7 +10,9 @@ module.exports = {
     // TODO generate an error instead of overwriting the ID
     resource['@id'] = urlJoin(containerUri, id);
 
-    const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: resource['@id'] });
+    const { controlledActions } = await ctx.call('ldp.registry.getByUri', {
+      resourceUri: resource['@id']
+    });
 
     if (ctx.meta.parser === 'file') {
       throw new MoleculerError(`PUT method is not supported for non-RDF resources`, 400, 'BAD_REQUEST');
@@ -38,11 +40,24 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resource: { type: 'object' },
-      webId: { type: 'string', optional: true },
-      body: { type: 'string', optional: true },
-      contentType: { type: 'string' },
-      disassembly: { type: 'array', optional: true }
+      resource: {
+        type: 'object'
+      },
+      webId: {
+        type: 'string',
+        optional: true
+      },
+      body: {
+        type: 'string',
+        optional: true
+      },
+      contentType: {
+        type: 'string'
+      },
+      disassembly: {
+        type: 'array',
+        optional: true
+      }
     },
     async handler(ctx) {
       let { resource, contentType, body } = ctx.params;
@@ -53,7 +68,9 @@ module.exports = {
       const resourceUri = resource.id || resource['@id'];
 
       const { disassembly, jsonContext } = {
-        ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
+        ...(await ctx.call('ldp.registry.getByUri', {
+          resourceUri
+        })),
         ...ctx.params
       };
 
@@ -82,13 +99,13 @@ module.exports = {
       if (isMirror(resourceUri, this.settings.baseUrl)) {
         await ctx.call('triplestore.update', {
           query: `
-            DELETE
-            WHERE { 
-              GRAPH <${this.settings.mirrorGraphName}> {
-                <${resourceUri}> ?p1 ?o1 .
-              }
-            }
-          `
+               DELETE
+               WHERE {
+                 GRAPH <${this.settings.mirrorGraphName}> {
+                   <${resourceUri}> ?p1 ?o1 .
+                 }
+               }
+             `
         });
 
         await ctx.call('triplestore.insert', {
@@ -106,37 +123,50 @@ module.exports = {
             accept: MIME_TYPES.JSON,
             webId
           },
-          { meta: { $cache: false } }
+          {
+            meta: {
+              $cache: false
+            }
+          }
         );
 
-        ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: this.settings.mirrorGraphName });
+        ctx.call('triplestore.deleteOrphanBlankNodes', {
+          graphName: this.settings.mirrorGraphName
+        });
       } else {
         let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);
         let newTriples = await this.bodyToTriples(body || resource, contentType);
-
-        const blankNodesVarsMap = this.mapBlankNodesOnVars([...oldTriples, ...newTriples]);
 
         // Filter out triples whose subject is not the resource itself
         // We don't want to update or delete resources with IDs
         oldTriples = this.filterOtherNamedNodes(oldTriples, resourceUri);
         newTriples = this.filterOtherNamedNodes(newTriples, resourceUri);
 
-        oldTriples = this.convertBlankNodesToVars(oldTriples, blankNodesVarsMap);
-        newTriples = this.convertBlankNodesToVars(newTriples, blankNodesVarsMap);
+        // blank nodes are convert to variable for sparql query (?variable)
+        oldTriples = this.convertBlankNodesToVars(oldTriples);
+        newTriples = this.convertBlankNodesToVars(newTriples);
+
+        // same values blackNodes removing because those duplicated values blank nodes cause indiscriminate blank resultings in bug wahen trying to delete both
+        newTriples = this.removeDuplicatedVariables(newTriples);
 
         // Triples to add are reversed, so that blank nodes are linked to resource before being assigned data properties
         // Triples to remove are not reversed, because we want to remove the data properties before unlinking it from the resource
         // This is needed, otherwise we have permissions violations with the WebACL (orphan blank nodes cannot be edited, except as "system")
         const triplesToAdd = this.getTriplesDifference(newTriples, oldTriples).reverse();
+
         const triplesToRemove = this.getTriplesDifference(oldTriples, newTriples);
 
-        // If the exact same data have been posted, skip
-        if (triplesToAdd.length > 0 || triplesToRemove.length > 0) {
+        if (triplesToAdd.length === 0 && triplesToRemove.length === 0) {
+          // If the exact same data have been posted, skip
+          newData = oldData;
+        } else {
           // Keep track of blank nodes to use in WHERE clause
           const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
             triple => triple.object.termType === 'Variable'
           );
-          const existingBlankNodes = oldTriples.filter(triple => triple.object.termType === 'Variable');
+          const existingBlankNodes = oldTriples.filter(
+            triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+          );
 
           // Generate the query
           let query = '';
@@ -147,7 +177,12 @@ module.exports = {
           if (newBlankNodes.length > 0) query += this.bindNewBlankNodes(newBlankNodes);
           query += ` }`;
 
-          await ctx.call('triplestore.update', { query, webId });
+          this.logger.info('PUT query', query);
+
+          await ctx.call('triplestore.update', {
+            query,
+            webId
+          });
 
           // Get the new data, with the same formatting as the old data
           // We skip the cache because it has not been invalidated yet
@@ -158,7 +193,11 @@ module.exports = {
               accept: MIME_TYPES.JSON,
               webId
             },
-            { meta: { $cache: false } }
+            {
+              meta: {
+                $cache: false
+              }
+            }
           );
 
           ctx.emit(
@@ -169,7 +208,12 @@ module.exports = {
               newData,
               webId
             },
-            { meta: { webId: null, dataset: null } }
+            {
+              meta: {
+                webId: null,
+                dataset: null
+              }
+            }
           );
         }
       }

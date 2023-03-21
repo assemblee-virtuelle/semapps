@@ -31,10 +31,13 @@ const ObjectService = {
           // TODO only do this for distant objects
           // If the object was not found in cache, try to query it distantly
           if (actorUri && actorUri !== 'system' && actorUri !== 'anon') {
-            return await ctx.call('activitypub.proxy.query', {
-              resourceUri: objectUri,
-              actorUri
-            });
+            const services = await ctx.call('$node.services');
+            if (services.filter(s => s.name === 'signature.proxy')) {
+              return await ctx.call('signature.proxy.query', {
+                resourceUri: objectUri,
+                actorUri
+              });
+            }
             // TODO put results in cache ?
           } else {
             const response = await fetch(objectUri, {
@@ -77,11 +80,6 @@ const ObjectService = {
       let activityType = activity.type || activity['@type'],
         objectUri;
 
-      if (typeof activity.object === 'string') {
-        // If the object passed is an URI, there is nothing to process
-        return activity;
-      }
-
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
         let { to, '@id': id, ...object } = activity;
@@ -97,6 +95,9 @@ const ObjectService = {
 
       switch (activityType) {
         case ACTIVITY_TYPES.CREATE: {
+          // If the object passed is an URI, this is an announcement and there is nothing to process
+          if (typeof activity.object === 'string') break;
+
           let containerUri;
           const container = await ctx.call('ldp.registry.getByType', {
             type: activity.object.type || activity.object['@type']
@@ -126,7 +127,10 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.UPDATE: {
-          await ctx.call('ldp.resource.patch', {
+          // If the object passed is an URI, this is an announcement and there is nothing to process
+          if (typeof activity.object === 'string') break;
+
+          await ctx.call('ldp.resource.put', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
             webId: actorUri
@@ -136,8 +140,9 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.DELETE: {
+          // TODO ensure that this is not an announcement (like for Update and Create)
           await ctx.call('ldp.resource.delete', {
-            resourceUri: activity.object,
+            resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
             webId: actorUri
           });
           break;

@@ -50,11 +50,12 @@ const DocumentShow = props => {
 }
 ```
 
-| Property       | Type     | Default        | Description                                                                                                        |
-|----------------|----------|----------------|--------------------------------------------------------------------------------------------------------------------|
-| `userResource` | `String` | **required**   | React-Admin resource ID for users                                                                                  |
-| `label`        | `String` | "Commentaires" | The label to use for the field                                                                                     |
-| `mentions`     | `Object` |                | A tiptap [suggestion](https://tiptap.dev/api/utilities/suggestion) object. If present, it allows to mention users. |
+| Property       | Type     | Default                                  | Description                                                                                                        |
+|----------------|----------|------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `userResource` | `String` | **required**                             | React-Admin resource ID for users                                                                                  |
+| `label`        | `String` | "Commentaires"                           | The label to use for the field                                                                                     |
+| `placeholder`  | `String` | "Commencez à taper votre commentaire..." | A placeholder to show before the user starts typing text.                                                          |
+| `mentions`     | `Object` |                                          | A tiptap [suggestion](https://tiptap.dev/api/utilities/suggestion) object. If present, it allows to mention users. |
 
 > To display the users' avatars, the `fieldsMapping.image` property must be defined in the data model of the user resource.
 

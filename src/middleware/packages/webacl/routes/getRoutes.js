@@ -14,6 +14,7 @@ const getRoutes = () => {
   return [
     {
       path: '/_acl',
+      name: 'acl',
       authorization: false,
       authentication: true,
       bodyParsers: {
@@ -35,6 +36,7 @@ const getRoutes = () => {
     },
     {
       path: '/_rights',
+      name: 'acl-rights',
       authorization: false,
       authentication: true,
       aliases: {
@@ -48,6 +50,7 @@ const getRoutes = () => {
     },
     {
       path: '/_groups',
+      name: 'acl-groups',
       authorization: false,
       authentication: true,
       aliases: {

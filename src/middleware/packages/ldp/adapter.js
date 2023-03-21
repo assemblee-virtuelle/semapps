@@ -149,7 +149,7 @@ class LdpAdapter {
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
     return this.broker
-      .call(this.resourceService + '.patch', {
+      .call(this.resourceService + '.put', {
         resource: {
           '@context': this.service.schema.settings.context,
           '@id': _id,

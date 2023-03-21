@@ -13,12 +13,14 @@ const useInbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'];
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || identity?.id + '/sparql';
     }
   }, [identity]);
 
   const fetch = useCallback(
     async ({ filters }) => {
+      console.log('inboxUrl', inboxUrl, sparqlEndpoint);
+
       if (!sparqlEndpoint || !inboxUrl) return;
 
       const token = localStorage.getItem('token');

@@ -3,29 +3,25 @@
   "private": true,
   "description": "SemApps integration tests",
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose"
+    "test": "jest --detectOpenHandles --verbose true --silent false"
   },
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "0.4.0-alpha.42",
-    "@semapps/auth": "0.4.0-alpha.42",
-    "@semapps/fuseki-admin": "0.4.0-alpha.42",
-    "@semapps/jsonld": "0.4.0-alpha.42",
-    "@semapps/ldp": "0.4.0-alpha.42",
-    "@semapps/middlewares": "0.4.0-alpha.42",
-    "@semapps/mime-types": "0.4.0-alpha.42",
-    "@semapps/signature": "0.4.0-alpha.42",
-    "@semapps/sparql-endpoint": "0.4.0-alpha.42",
-    "@semapps/triplestore": "0.4.0-alpha.42",
-    "@semapps/webacl": "0.4.0-alpha.42",
-    "@semapps/webid": "0.4.0-alpha.42",
+    "@semapps/activitypub": "0.4.4",
+    "@semapps/auth": "0.4.4",
+    "@semapps/core": "0.4.4",
+    "@semapps/ldp": "0.4.4",
+    "@semapps/middlewares": "0.4.4",
+    "@semapps/mime-types": "0.4.4",
+    "@semapps/webid": "0.4.4",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "fs-extra": "^9.0.1",
     "moleculer": "^0.14.17",
     "moleculer-db-adapter-mongo": "^0.4.7",
     "moleculer-web": "^0.10.0-beta1",
+    "rdf-data-model": "^1.0.0",
     "url-join": "^4.0.1",
     "wait-for-expect": "^3.0.2"
   },
@@ -33,5 +29,5 @@
     "jest": "^24.9.0",
     "supertest": "^4.0.2"
   },
-  "version": "0.4.0-alpha.42"
+  "version": "0.4.4"
 }

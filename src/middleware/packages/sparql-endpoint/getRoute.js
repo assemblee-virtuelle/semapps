@@ -4,6 +4,7 @@ function getRoute(path) {
   const middlewares = [parseSparql, negotiateAccept];
   return {
     path,
+    name: 'sparql-endpoint',
     authorization: false,
     authentication: true,
     mergeParams: true,

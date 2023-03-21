@@ -16,6 +16,7 @@ const WebfingerService = {
     await this.broker.call('api.addRoute', {
       route: {
         path: '/.well-known',
+        name: 'webfinger-endpoint',
         bodyParsers: { json: true },
         aliases: {
           'GET /webfinger': 'webfinger.get'
@@ -33,7 +34,6 @@ const WebfingerService = {
       if (matches) {
         const username = matches[1];
         const accounts = await ctx.call('auth.account.find', { query: { username } });
-
         if (accounts.length > 0) {
           return {
             subject: resource,

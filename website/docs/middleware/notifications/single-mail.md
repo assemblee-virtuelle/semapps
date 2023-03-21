@@ -62,6 +62,8 @@ module.exports = {
   settings: {
     defaultLocale: 'en',
     defaultFrontUrl: 'https://mydomain.com', // Base URL for the action links
+    color: '#E2003B', // Color of the mail buttons
+    delay: 0, // Delay (in ms) before processing notifications
     // The following settings are from the moleculer-mail mixin used to send emails
     // See https://github.com/moleculerjs/moleculer-addons/tree/master/packages/moleculer-mail
     from: `"My service" <myservice@mydomain.com>`,
@@ -76,7 +78,16 @@ module.exports = {
     // Return true if you want the notification to be sent by email
     async filterNotification(notification) {
       return true;
-    }
+    },
+    // Method called to format the actionLink prop of each notification
+    // Overwrite it if you have custom needs
+    async formatLink(link, recipientUri) {
+      if (link && !link.startsWith('http')) {
+        return urlJoin(this.settings.defaultFrontUrl, link);
+      } else {
+        return link;
+      }
+    },
   }
 };
 ```

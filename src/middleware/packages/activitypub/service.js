@@ -10,8 +10,9 @@ const LikeService = require('./services/like');
 const ObjectService = require('./services/object');
 const OutboxService = require('./services/outbox');
 const RegistryService = require('./services/registry');
+const RelayService = require('./services/relay');
 const ReplyService = require('./services/reply');
-const { ACTOR_TYPES, OBJECT_TYPES } = require('./constants');
+const { OBJECT_TYPES, ACTOR_TYPES } = require('./constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -19,11 +20,7 @@ const ActivityPubService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
-    selectActorData: resource => ({
-      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
-      name: undefined,
-      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    }),
+    selectActorData: null,
     dispatch: {
       queueServiceUrl: null,
       delay: 0
@@ -40,8 +37,8 @@ const ActivityPubService = {
     }
   },
   dependencies: ['api'],
-  async created() {
-    const { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow } = this.settings;
+  created() {
+    let { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow, relay } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -103,6 +100,16 @@ const ActivityPubService = {
         attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES)
       }
     });
+
+    if (relay === true || typeof relay === 'object') {
+      if (relay === true) relay = {};
+      this.broker.createService(RelayService, {
+        settings: {
+          baseUri,
+          ...relay
+        }
+      });
+    }
 
     this.broker.createService(OutboxService, {
       settings: {

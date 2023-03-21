@@ -6,6 +6,8 @@ import { createTheme, makeStyles } from '@material-ui/core/styles';
 import { Avatar, Button, Card, CardActions, Typography } from '@material-ui/core';
 import LockIcon from '@material-ui/icons/Lock';
 
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
+
 const useStyles = makeStyles(theme => ({
   main: {
     display: 'flex',
@@ -34,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SsoLoginPage = ({ theme, history, location, buttons, userResource, text }) => {
+const SsoLoginPage = ({ theme, history, location, buttons, userResource, propertiesExist, text }) => {
   const classes = useStyles();
   const notify = useNotify();
   const login = useLogin();
@@ -55,13 +57,27 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
         } else if (searchParams.has('token')) {
           const token = searchParams.get('token');
           const { webId } = jwtDecode(token);
-          const { data } = await dataProvider.getOne(userResource, { id: webId });
 
-          if (!authProvider.checkUser(data)) {
+          localStorage.setItem('token', token);
+
+          let userData;
+          ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
+
+          if (propertiesExist.length > 0) {
+            let allPropertiesExist = propertiesExist.every(p => userData[p]);
+            while (!allPropertiesExist) {
+              console.log('Waiting for all properties to have been created', propertiesExist);
+              await delay(500);
+              ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
+              allPropertiesExist = propertiesExist.every(p => userData[p]);
+            }
+          }
+
+          if (!authProvider.checkUser(userData)) {
+            localStorage.removeItem('token');
             notify('auth.message.user_not_allowed_to_login', 'error');
             history.replace('/login');
           } else {
-            localStorage.setItem('token', token);
             if (searchParams.has('redirect')) {
               notify('auth.message.user_connected', 'info');
               history.push(searchParams.get('redirect'));
@@ -77,7 +93,8 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
       }
 
       if (searchParams.has('logout')) {
-        localStorage.removeItem('token');
+        // Delete token and any other value in local storage
+        localStorage.clear();
         notify('auth.message.user_disconnected', 'info');
         history.push('/');
       }
@@ -116,8 +133,9 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, text })
   );
 };
 
-// TODO deprecate this
 SsoLoginPage.defaultProps = {
+  propertiesExist: [],
+  // TODO deprecate this
   buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>],
   userResource: 'Person'
 };

@@ -69,6 +69,7 @@ const AuthSSOMixin = {
       return [
         {
           path: '/auth',
+          name: 'auth',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             'GET /': [saveRedirectUrl, this.passport.authenticate(this.passportId, { session: false }), redirectToFront]
@@ -76,6 +77,7 @@ const AuthSSOMixin = {
         },
         {
           path: '/auth/logout',
+          name: 'auth-logout',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
             'GET /': [saveRedirectUrl, localLogout, redirectToFront]

@@ -6,6 +6,7 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'assemblee-virtuelle', // Usually your GitHub org/user name.
   projectName: 'semapps', // Usually your repo name.
+  /*
   i18n: {
     defaultLocale: 'en',
     locales: ['en', 'fr'],
@@ -20,21 +21,34 @@ module.exports = {
       }
     }
   },
+  */
   themeConfig: {
+    docs: {
+      sidebar: {
+        autoCollapseCategories: true,
+      },
+    },
+    prism: {
+      theme: require('prism-react-renderer/themes/shadesOfPurple'),
+    },
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true
+    },
     navbar: {
       title: 'SemApps',
+      /*
       logo: {
         alt: 'Logo Semapps',
         src: 'img/logo.png',
-        srcDark: 'img/logo_dark.png',
-        href: 'https://semapps.org/',
-        target: '_self',
       },
+      */
       items: [
-        {to: 'docs/about', label: 'About', position: 'left'},
+        {to: 'team', label: 'Team', position: 'left'},
         {to: 'docs/guides/ldp-server', label: 'Guides', position: 'left'},
-        {to: 'docs/middleware/auth', label: 'Middleware', position: 'left'},
-        {to: 'docs/frontend/auth-provider', label: 'Frontend', position: 'left'},
+        {to: 'docs/middleware', label: 'Middleware', position: 'left'},
+        {to: 'docs/frontend', label: 'Frontend', position: 'left'},
+        {to: 'docs/triplestore', label: 'Triple Store', position: 'left'},
         {to: 'docs/contribute/code', label: 'How to contribute', position: 'left'},
         {to: 'blog', label: 'Blog', position: 'left'},
         {
@@ -42,14 +56,15 @@ module.exports = {
           label: 'GitHub',
           position: 'right',
         },
+        /*
         {
           type: 'localeDropdown',
           position: 'right',
         },
+        */
       ],
     },
     footer: {
-      style: 'dark',
       links: [
         {
           title: 'Guides',
@@ -76,12 +91,12 @@ module.exports = {
               href: 'https://forums.assemblee-virtuelle.org/c/projets/semapps/11',
             },
             {
-              label: 'Chat (French and English)',
+              label: 'Chatroom',
               href: 'https://chat.lescommuns.org/channel/semapps_dev',
             },
             {
               label: 'Contact',
-              href: 'https://www.virtual-assembly.org/contact/'
+              href: 'https://chat.lescommuns.org/channel/Semapps_accueil'
             }
           ],
         },
@@ -113,4 +128,5 @@ module.exports = {
       },
     ],
   ],
+  plugins: ['docusaurus-plugin-sass'],
 };

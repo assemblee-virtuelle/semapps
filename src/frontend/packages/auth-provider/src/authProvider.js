@@ -1,25 +1,20 @@
 import jwtDecode from 'jwt-decode';
-import { defaultToArray, getAclUri, getAclContext } from './utils';
+import urlJoin from 'url-join';
+import { defaultToArray, getAclUri, getAclContext, getAuthServerUrl } from './utils';
 
 const authProvider = ({
-  middlewareUri,
+  dataProvider,
   allowAnonymous = true,
   localAccounts = false,
   checkUser,
-  httpClient,
-  checkPermissions
+  checkPermissions = false
 }) => ({
   login: async params => {
-    const url = new URL(window.location.href);
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the login method'
-      );
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     if (localAccounts) {
       const { username, password } = params;
       try {
-        const { json } = await httpClient(`${serverUrl}auth/login`, {
+        const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
           method: 'POST',
           body: JSON.stringify({ username: username.trim(), password: password.trim() }),
           headers: new Headers({ 'Content-Type': 'application/json' })
@@ -32,21 +27,17 @@ const authProvider = ({
         throw new Error('ra.auth.sign_in_error');
       }
     } else {
-      let redirectUrl = url.origin + '/login?login=true';
+      let redirectUrl = new URL(window.location.href).origin + '/login?login=true';
       if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
-      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(redirectUrl);
+      window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
   },
   signup: async params => {
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the signup method'
-      );
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     if (localAccounts) {
       const { username, email, password, domain, ...profileData } = params;
       try {
-        const { json } = await httpClient(`${serverUrl || `https://${domain}`}auth/signup`, {
+        const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/signup'), {
           method: 'POST',
           body: JSON.stringify({
             username: username.trim(),
@@ -72,36 +63,32 @@ const authProvider = ({
         }
       }
     } else {
-      window.location.href = `${serverUrl}auth?redirectUrl=` + encodeURIComponent(url.origin + '/login?login=true');
+      const redirectUrl = new URL(window.location.href).origin + '/login?login=true';
+      window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
     }
   },
   logout: async () => {
-    let serverUrl;
-    if (middlewareUri) {
-      serverUrl = middlewareUri;
-    } else {
-      // Get the server URL from the connected user's webId
-      const token = localStorage.getItem('token');
-      if (token) {
-        const { webId } = jwtDecode(token);
-        serverUrl = new URL(webId).origin + '/';
-      }
-    }
-
-    localStorage.removeItem('token');
+    const authServerUrl = await getAuthServerUrl(dataProvider);
+    // Delete token but also any other value in local storage
+    localStorage.clear();
     if (localAccounts) {
       // Reload to ensure the dataServer config is reset
       window.location.reload();
       window.location.href = '/';
-    } else if (serverUrl) {
-      const url = new URL(window.location.href);
+    } else {
+      const baseUrl = new URL(window.location.href).origin;
       if (!allowAnonymous) {
-        window.location.href = `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login');
+        window.location.href = urlJoin(
+          authServerUrl,
+          'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login')
+        );
       } else {
         // Redirect to login page after disconnecting from SSO
         // The login page will remove the token, display a notification and redirect to the homepage
-        window.location.href =
-          `${serverUrl}auth/logout?redirectUrl=` + encodeURIComponent(url.origin + '/login?logout=true');
+        window.location.href = urlJoin(
+          authServerUrl,
+          'auth/logout?redirectUrl=' + encodeURIComponent(baseUrl + '/login?logout=true')
+        );
       }
     }
 
@@ -121,23 +108,22 @@ const authProvider = ({
   },
   checkError: error => Promise.resolve(),
   getPermissions: async uri => {
-    // Do not get permissions for servers other than the one used for auth
-    // as this will always fail as long as cross-servers auth is not available
-    if (!uri.startsWith(middlewareUri)) return false;
-
     if (!checkPermissions) return true;
 
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
     const aclUri = getAclUri(uri);
 
-    const { json } = await httpClient(aclUri);
-
-    return json['@graph'];
+    try {
+      const { json } = await dataProvider.fetch(aclUri);
+      return json['@graph'];
+    } catch (e) {
+      console.warn(`Could not fetch ACL URI ${uri}`);
+      return [];
+    }
   },
   addPermission: async (uri, agentId, predicate, mode) => {
     if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
-    if (!uri.startsWith(middlewareUri)) new Error('Cannot add permissions on servers other than the one used for auth');
 
     const aclUri = getAclUri(uri);
 
@@ -149,7 +135,7 @@ const authProvider = ({
       'acl:mode': mode
     };
 
-    await httpClient(aclUri, {
+    await dataProvider.fetch(aclUri, {
       method: 'PATCH',
       body: JSON.stringify({
         '@context': getAclContext(aclUri),
@@ -160,13 +146,11 @@ const authProvider = ({
   removePermission: async (uri, agentId, predicate, mode) => {
     if (!uri || !uri.startsWith('http'))
       throw new Error('The first parameter passed to removePermission must be an URL');
-    if (!uri.startsWith(middlewareUri))
-      throw new Error('Cannot remove permissions on servers other than the one used for auth');
 
     const aclUri = getAclUri(uri);
 
     // Fetch current permissions
-    let { json } = await httpClient(aclUri);
+    let { json } = await dataProvider.fetch(aclUri);
 
     const updatedPermissions = json['@graph']
       .filter(authorization => !authorization['@id'].includes('#Default'))
@@ -179,7 +163,7 @@ const authProvider = ({
         return { ...authorization, [predicate]: agents };
       });
 
-    await httpClient(aclUri, {
+    await dataProvider.fetch(aclUri, {
       method: 'PUT',
       body: JSON.stringify({
         '@context': getAclContext(aclUri),
@@ -192,8 +176,8 @@ const authProvider = ({
     if (token) {
       const { webId } = jwtDecode(token);
 
-      const { json: webIdData } = await httpClient(webId);
-      const { json: profileData } = webIdData.url ? await httpClient(webIdData.url) : {};
+      const { json: webIdData } = await dataProvider.fetch(webId);
+      const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
 
       return {
         id: webId,
@@ -204,14 +188,10 @@ const authProvider = ({
     }
   },
   resetPassword: async params => {
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the forgot password method'
-      );
     const { email } = params;
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      await httpClient(`${serverUrl}auth/reset_password`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/reset_password'), {
         method: 'POST',
         body: JSON.stringify({ email: email.trim() }),
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -221,14 +201,10 @@ const authProvider = ({
     }
   },
   setNewPassword: async params => {
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the new password method'
-      );
     const { email, token, password } = params;
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      await httpClient(`${serverUrl}auth/new_password`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/new_password'), {
         method: 'POST',
         body: JSON.stringify({ email: email.trim(), token, password }),
         headers: new Headers({ 'Content-Type': 'application/json' })
@@ -238,32 +214,20 @@ const authProvider = ({
     }
   },
   getAccountSettings: async params => {
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the getAccountSettings method'
-      );
-
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
-      const { json } = await httpClient(`${serverUrl}auth/account`, {
-        method: 'GET'
-      });
+      const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'));
       return json;
     } catch (e) {
       throw new Error('app.notification.get_settings_error');
     }
   },
   updateAccountSettings: async params => {
-    const serverUrl = middlewareUri || (params.domain && `https://${params.domain}/`);
-    if (!serverUrl)
-      throw new Error(
-        'You must specify a middlewareUri in the authProvider config, or specify a domain when calling the updateAccountSettings method'
-      );
-
+    const authServerUrl = await getAuthServerUrl(dataProvider);
     try {
       const { email, currentPassword, newPassword } = params;
 
-      await httpClient(`${serverUrl}auth/account`, {
+      await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'), {
         method: 'POST',
         body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
         headers: new Headers({ 'Content-Type': 'application/json' })

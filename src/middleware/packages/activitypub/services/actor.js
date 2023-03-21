@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const { getSlugFromUri } = require('@semapps/ldp');
+const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTOR_TYPES } = require('../constants');
-const { delay, defaultToArray } = require('../utils');
+const { ACTOR_TYPES, AS_PREFIX } = require('../constants');
+const { delay, defaultToArray, getSlugFromUri } = require('../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -10,12 +10,11 @@ const ActorService = {
   settings: {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    selectActorData: resource => ({
-      '@type': resource.type || resource['@type'] || ACTOR_TYPES.PERSON,
-      name: undefined,
-      preferredUsername: getSlugFromUri(resource.id || resource['@id'])
-    }),
+    selectActorData: null,
     podProvider: false
+  },
+  started() {
+    this.remoteActorsCache = {};
   },
   actions: {
     async get(ctx) {
@@ -28,9 +27,15 @@ const ActorService = {
           return false;
         }
       } else {
-        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-        if (!response.ok) return false;
-        return await response.json();
+        if (this.remoteActorsCache[actorUri]) {
+          return this.remoteActorsCache[actorUri];
+        } else {
+          const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+          if (!response.ok) return false;
+          const actor = await response.json();
+          this.remoteActorsCache[actorUri] = actor;
+          return actor;
+        }
       }
     },
     async getProfile(ctx) {
@@ -38,50 +43,96 @@ const ActorService = {
       const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
       // If the URL is not in the same domain as the actor, it is most likely not a profile
       if (actor.url && new URL(actor.url).host === new URL(actorUri).host) {
-        return await ctx.call('activitypub.object.get', { objectUrl: actor.url });
+        return await ctx.call('ldp.resource.get', { resourceUri: actor.url, accept: MIME_TYPES.JSON, webId });
       }
     },
     async appendActorData(ctx) {
       const { actorUri } = ctx.params;
+      const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
+      let propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
 
-      const currentData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
-      const actorData = this.settings.selectActorData(currentData);
+      if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
+        // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
+        const resourceType = defaultToArray(userData.type || userData['@type']);
+        const includeActorType = resourceType ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type)) : false;
+        if (!includeActorType) {
+          propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = AS_PREFIX + 'Person';
+        }
+      }
 
-      if (actorData) {
+      if (!propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername']) {
+        propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(userData.id || userData['@id']);
+      }
+
+      if (Object.keys(propertiesToAdd).length > 0) {
         await ctx.call('ldp.resource.patch', {
-          resource: {
-            '@id': actorUri,
-            ...actorData
-          },
-          contentType: MIME_TYPES.JSON,
+          resourceUri: actorUri,
+          triplesToAdd: Object.entries(propertiesToAdd).map(([predicate, subject]) =>
+            triple(
+              namedNode(actorUri),
+              namedNode(predicate),
+              typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
+            )
+          ),
           webId: 'system'
         });
       }
     },
-    async generateKeyPair(ctx) {
-      const { actorUri } = ctx.params;
-      const actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
+    async addEndpoint(ctx) {
+      const { actorUri, predicate, endpoint } = ctx.params;
 
-      if (!actor.publicKey) {
-        const publicKey = await ctx.call('signature.generateActorKeyPair', { actorUri });
+      const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
+      const dataset = account.username;
 
-        await ctx.call('ldp.resource.patch', {
-          resource: {
-            '@context': ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-            '@id': actorUri,
-            publicKey: {
-              owner: actorUri,
-              publicKeyPem: publicKey
-            }
-          },
-          contentType: MIME_TYPES.JSON,
-          webId: 'system'
-        });
-      }
-    },
-    async deleteKeyPair(ctx) {
-      const { actorUri } = ctx.params;
-      await ctx.call('signature.deleteActorKeyPair', { actorUri });
+      await ctx.call('triplestore.update', {
+        query: {
+          type: 'update',
+          updates: [{
+            updateType: 'insertdelete',
+            insert: [{
+              type: 'bgp',
+              triples: [
+                triple(namedNode(actorUri), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), variable('endpoints')),
+                triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint)),
+              ]
+            }],
+            delete: [],
+            where: [
+              {
+                type: 'optional',
+                patterns: [{
+                  type: 'bgp',
+                  triples: [
+                    triple(namedNode(actorUri), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), variable('b0'))
+                  ]
+                }],
+              },
+              {
+                type: 'bind',
+                variable: variable('endpoints'),
+                expression: {
+                  type: 'operation',
+                  operator: 'if',
+                  args: [
+                    {
+                      type: 'operation',
+                      operator: 'bound',
+                      args: [variable('b0')]
+                    },
+                    variable('b0'),
+                    {
+                      type: 'operation',
+                      operator: 'BNODE',
+                      args: []
+                    }
+                  ]
+                }
+              }]
+          }]
+        },
+        webId: 'system',
+        dataset
+      });
     },
     async awaitCreateComplete(ctx) {
       let { actorUri, additionalKeys = [] } = ctx.params;
@@ -141,19 +192,19 @@ const ActorService = {
       const { resourceUri, newData } = ctx.params;
       if (this.isActor(newData)) {
         await this.actions.appendActorData({ actorUri: resourceUri }, { parentCtx: ctx });
-        await this.actions.generateKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
+        await ctx.call('signature.keypair.generate', { actorUri: resourceUri });
+        await ctx.call('signature.keypair.attachPublicKey', { actorUri: resourceUri });
       }
     },
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri, oldData } = ctx.params;
       if (this.isActor(oldData)) {
-        await this.actions.deleteKeyPair({ actorUri: resourceUri }, { parentCtx: ctx });
+        await ctx.call('signature.keypair.delete', { actorUri: resourceUri });
       }
     },
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
-      await this.actions.generateKeyPair({ actorUri: webId }, { parentCtx: ctx });
     }
   }
 };

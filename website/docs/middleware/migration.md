@@ -5,8 +5,8 @@ title: Migration utilities
 This package provide utilities to help migrate semantic data.
 
 ## Dependencies
-- [TripleStoreService](triplestore.md)
-- [LdpService](ldp/index.md)
+- [TripleStoreService](triplestore)
+- [LdpService](ldp)
 
 ## Install
 
@@ -30,16 +30,19 @@ module.exports = {
 
 ## Actions
 
-### `replacePredicate`
+The following service actions are available.
 
-Replace an old predicate with a new predicate on the whole dataset.
+
+### `clearUserRights`
+
+- Remove all rights associated with a user
+- Remove the user from all WebACL groups he may be member of
 
 ##### Parameters
-| Property       | Type     | Default         | Description                             |
-|----------------|----------|-----------------|-----------------------------------------|
-| `oldPredicate` | `String` | **required**    | Full URI of predicate to be replaced    |
-| `newPredicate` | `String` | **required**    | Full URI of predicate to replace with   |
-| `dataset`      | `String` | Default dataset | Dataset where migration will be applied |
+| Property      | Type     | Default         | Description                             |
+|---------------|----------|-----------------|-----------------------------------------|
+| `userUri`     | `String` | **required**    | URI of the user                         |
+| `dataset`     | `String` | Default dataset | Dataset where migration will be applied |
 
 
 ### `moveResource`
@@ -64,3 +67,15 @@ Move an ACL group to a new URI. Also move the WebACL rights of the group.
 | `oldGroupUri` | `String` | **required**    | Group to move                           |
 | `newGroupUri` | `String` | **required**    | New URI of the group                    |
 | `dataset`     | `String` | Default dataset | Dataset where migration will be applied |
+
+
+### `replacePredicate`
+
+Replace an old predicate with a new predicate on the whole dataset.
+
+##### Parameters
+| Property       | Type     | Default         | Description                             |
+|----------------|----------|-----------------|-----------------------------------------|
+| `oldPredicate` | `String` | **required**    | Full URI of predicate to be replaced    |
+| `newPredicate` | `String` | **required**    | Full URI of predicate to replace with   |
+| `dataset`      | `String` | Default dataset | Dataset where migration will be applied |

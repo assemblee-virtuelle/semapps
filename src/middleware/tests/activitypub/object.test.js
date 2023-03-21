@@ -36,10 +36,10 @@ describe('Create/Update/Delete objects', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.ARTICLE,
-      name: 'Mon premier article',
+      name: 'My first article',
       attributedTo: sebastien.id,
       to: sebastien.followers,
-      content: 'Mon premier article, soyez indulgents'
+      content: 'My first article, I hope there is no tipo'
     });
 
     expect(createActivity).toMatchObject({
@@ -47,8 +47,8 @@ describe('Create/Update/Delete objects', () => {
       actor: sebastien.id,
       object: {
         type: OBJECT_TYPES.ARTICLE,
-        name: 'Mon premier article',
-        content: 'Mon premier article, soyez indulgents'
+        name: 'My first article',
+        content: 'My first article, I hope there is no tipo'
       },
       to: sebastien.followers
     });
@@ -81,7 +81,8 @@ describe('Create/Update/Delete objects', () => {
       actor: sebastien.id,
       object: {
         id: objectUri,
-        name: 'Mon premier bel article'
+        type: OBJECT_TYPES.ARTICLE,
+        content: 'My first article, I hope there is no typo'
       },
       to: sebastien.followers
     });
@@ -92,12 +93,12 @@ describe('Create/Update/Delete objects', () => {
       object: {
         id: objectUri,
         type: OBJECT_TYPES.ARTICLE,
-        name: 'Mon premier bel article',
-        content: 'Mon premier article, soyez indulgents'
+        content: 'My first article, I hope there is no typo'
       },
       to: sebastien.followers
     });
-    expect(updateActivity).not.toHaveProperty('current');
+    expect(updateActivity.object).not.toHaveProperty('current');
+    expect(updateActivity.object).not.toHaveProperty('name');
 
     // Check the object has been updated
     const object = await broker.call('ldp.resource.get', {
@@ -107,8 +108,7 @@ describe('Create/Update/Delete objects', () => {
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
-      name: 'Mon premier bel article',
-      content: 'Mon premier article, soyez indulgents'
+      content: 'My first article, I hope there is no typo'
     });
   });
 

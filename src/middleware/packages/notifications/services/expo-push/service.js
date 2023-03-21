@@ -22,15 +22,17 @@ const ExpoPushService = {
   async started() {
     await this.broker.call('api.addRoute', {
       route: {
+        path: '/push',
+        name: 'push',
         bodyParsers: { json: true },
         authorization: false,
         authentication: true,
         aliases: {
-          [`POST push/devices`]: 'push.device.subscribe',
-          [`GET push/devices`]: 'push.device.find',
-          [`GET push/devices/:id`]: 'push.device.get',
-          [`GET push/notifications`]: 'push.notification.find',
-          [`GET push/notifications/:id`]: 'push.notification.get'
+          [`POST /devices`]: 'push.device.subscribe',
+          [`GET /devices`]: 'push.device.find',
+          [`GET /devices/:id`]: 'push.device.get',
+          [`GET /notifications`]: 'push.notification.find',
+          [`GET /notifications/:id`]: 'push.notification.get'
         }
       }
     });

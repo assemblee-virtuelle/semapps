@@ -1,81 +1,27 @@
-const fs = require('fs');
-const fsPromises = require('fs').promises;
-const path = require('path');
-const { generateKeyPair, createSign, createHash } = require('crypto');
+const { createSign, createHash } = require('crypto');
 const { parseRequest, verifySignature } = require('http-signature');
 const { createAuthzHeader, createSignatureString } = require('http-signature-header');
 const { Errors: E } = require('moleculer-web');
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
+const KeypairService = require('./services/keypair');
 
 const SignatureService = {
   name: 'signature',
   settings: {
     actorsKeyPairsDir: null
   },
+  created() {
+    const { actorsKeyPairsDir } = this.settings;
+
+    this.broker.createService(KeypairService, {
+      settings: {
+        actorsKeyPairsDir
+      }
+    });
+  },
   actions: {
-    async getActorPublicKey(ctx) {
-      const { actorUri } = ctx.params;
-      const { publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
-
-      try {
-        return await fs.promises.readFile(publicKeyPath, { encoding: 'utf8' });
-      } catch (e) {
-        return null;
-      }
-    },
-    async generateActorKeyPair(ctx) {
-      const { actorUri } = ctx.params;
-
-      const publicKey = await this.actions.getActorPublicKey({ actorUri }, { parentCtx: ctx });
-      if (publicKey) {
-        this.logger.info(`Key for ${actorUri} already exists, skipping...`);
-        return publicKey;
-      }
-
-      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
-
-      return new Promise((resolve, reject) => {
-        generateKeyPair(
-          'rsa',
-          {
-            modulusLength: 4096,
-            publicKeyEncoding: {
-              type: 'spki',
-              format: 'pem'
-            },
-            privateKeyEncoding: {
-              type: 'pkcs8',
-              format: 'pem'
-            }
-          },
-          (err, publicKey, privateKey) => {
-            if (!err) {
-              fs.writeFile(privateKeyPath, privateKey, err => reject(err));
-              fs.writeFile(publicKeyPath, publicKey, err => reject(err));
-              resolve(publicKey);
-            } else {
-              reject(err);
-            }
-          }
-        );
-      });
-    },
-    async deleteActorKeyPair(ctx) {
-      const { actorUri } = ctx.params;
-      const { privateKeyPath, publicKeyPath } = await this.getKeyPaths(ctx, actorUri);
-
-      try {
-        await fs.promises.unlink(privateKeyPath);
-        await fs.promises.unlink(publicKeyPath);
-      } catch (e) {
-        console.log(`Could not delete key pair for actor ${actorUri}`);
-      }
-    },
     async generateSignatureHeaders(ctx) {
       const { url, method, body, actorUri } = ctx.params;
-      const { privateKeyPath } = await this.getKeyPaths(ctx, actorUri);
-      const privateKey = await fsPromises.readFile(privateKeyPath);
+      const { privateKey } = await ctx.call('signature.keypair.get', { actorUri });
 
       const headers = { Date: new Date().toUTCString() };
       const includeHeaders = ['(request-target)', 'host', 'date'];
@@ -109,6 +55,12 @@ const SignatureService = {
     async verifyHttpSignature(ctx) {
       const { url, path, method, headers } = ctx.params;
 
+      // If there is a x-forwarded-host header, set is as host
+      // This is the default behavior for Express server but the ApiGateway doesn't use Express
+      if (headers['x-forwarded-host']) {
+        headers.host = headers['x-forwarded-host'];
+      }
+
       const parsedSignature = parseRequest({
         url: path || url.replace(new URL(url).origin, ''), // URL without domain name
         method,
@@ -119,7 +71,7 @@ const SignatureService = {
       if (!keyId) return false;
       const [actorUri] = keyId.split('#');
 
-      const publicKey = await this.getRemoteActorPublicKey(actorUri);
+      const publicKey = await ctx.call('signature.keypair.getRemotePublicKey', { actorUri });
       if (!publicKey) return false;
 
       const isValid = verifySignature(parsedSignature, publicKey);
@@ -174,33 +126,6 @@ const SignatureService = {
           .update(body)
           .digest('base64')
       );
-    },
-    // TODO use cache mechanisms
-    async getRemoteActorPublicKey(actorUri) {
-      // TODO use activitypub.actor.get
-      const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-      if (!response) return false;
-
-      const actor = await response.json();
-      if (!actor || !actor.publicKey) return false;
-
-      return actor.publicKey.publicKeyPem;
-    },
-    async getKeyPaths(ctx, actorUri) {
-      const actorData = await ctx.call('ldp.resource.get', {
-        resourceUri: actorUri,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
-
-      if (actorData) {
-        const username = actorData.preferredUsername || getSlugFromUri(actorUri);
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key.pub');
-        return { privateKeyPath, publicKeyPath };
-      } else {
-        throw new Error('No valid actor found with URI ' + actorUri);
-      }
     }
   }
 };

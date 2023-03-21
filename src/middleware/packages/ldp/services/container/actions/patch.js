@@ -1,22 +1,21 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { isMirror, regexPrefix } = require('../../../utils');
-
-var SparqlParser = require('sparqljs').Parser;
-var parser = new SparqlParser();
+const SparqlParser = require('sparqljs').Parser;
+const parser = new SparqlParser();
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, ...resource } = ctx.params;
+    let { containerUri, body } = ctx.params;
     try {
-      let resourceUri;
       if (ctx.meta.parser === 'sparql') {
-        resourceUri = await ctx.call('ldp.container.patch', {
+        await ctx.call('ldp.container.patch', {
           containerUri,
-          update: resource.body,
-          contentType: ctx.meta.headers['content-type']
+          sparqlUpdate: body
         });
-      } else throw new MoleculerError(`the content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
+      } else {
+        throw new MoleculerError(`The content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
+      }
       ctx.meta.$responseHeaders = {
         'Content-Length': 0
       };
@@ -33,10 +32,7 @@ module.exports = {
       containerUri: {
         type: 'string'
       },
-      update: {
-        type: 'string'
-      },
-      contentType: {
+      sparqlUpdate: {
         type: 'string'
       },
       webId: {
@@ -45,7 +41,7 @@ module.exports = {
       }
     },
     async handler(ctx) {
-      let { update, containerUri, contentType, webId } = ctx.params;
+      let { containerUri, sparqlUpdate, webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
       const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
@@ -53,15 +49,14 @@ module.exports = {
         throw new MoleculerError(`Cannot update content of non-existing container ${containerUri}`, 400, 'BAD_REQUEST');
       }
 
-      // parse the SPARQL-UPDATE content.
       try {
-        const parsedQuery = parser.parse(update);
+        const parsedQuery = parser.parse(sparqlUpdate);
 
         if (parsedQuery.type !== 'update')
           throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
         let updates = { insert: [], delete: [] };
-        parsedQuery.updates.map(p => updates[p.updateType].push(p[p.updateType][0]));
+        parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
 
         for (const inss of updates.insert) {
           // check that the containerUri is the same as specified in the params. ignore if not.
@@ -110,7 +105,7 @@ module.exports = {
               try {
                 await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
 
-                // if the resource is attached to any container, it must be deleted.
+                // if the resource is not attached to any container anymore, it must be deleted.
 
                 let remaining = await ctx.call('triplestore.query', {
                   query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`

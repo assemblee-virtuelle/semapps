@@ -127,13 +127,15 @@ module.exports = {
 
         if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
           try {
+            const file = fs.readFileSync(result['semapps:localPath']);
             // Overwrite response type set by the api action
             ctx.meta.$responseType = result['semapps:mimeType'];
             // Since files are currently immutable, we set a maximum browser cache age
+            // We do that after the file is read, otherwise the error 404 will be cached by the browser
             ctx.meta.$responseHeaders = {
               'Cache-Control': 'public, max-age=31536000'
             };
-            return fs.readFileSync(result['semapps:localPath']);
+            return file;
           } catch (e) {
             throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
           }

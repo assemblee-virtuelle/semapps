@@ -29,6 +29,13 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
 
         const predicates = params.filter?._predicates || dataModel.list?.predicates;
 
+        // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
+        if (
+          params.filter?.sparqlWhere &&
+          (typeof params.filter.sparqlWhere === 'string' || params.filter.sparqlWhere instanceof String)
+        ) {
+          params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
+        }
         const sparqlQuery = buildSparqlQuery({
           containers: containers[serverKey],
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
@@ -39,8 +46,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
 
         httpClient(dataServers[serverKey].sparqlEndpoint, {
           method: 'POST',
-          body: sparqlQuery,
-          noToken: dataServers[serverKey].authServer !== true
+          body: sparqlQuery
         })
           .then(({ json }) => {
             // By default, embed only the blank nodes we explicitly asked to dereference

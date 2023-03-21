@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useGetIdentity, useNotify, useRedirect } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 
-const useCheckAuthenticated = () => {
+const useCheckAuthenticated = message => {
   const { identity, loading } = useGetIdentity();
   const notify = useNotify();
   const redirect = useRedirect();
@@ -10,7 +10,7 @@ const useCheckAuthenticated = () => {
 
   useEffect(() => {
     if (!loading && !identity?.id) {
-      notify('ra.auth.auth_check_error', 'error');
+      notify(message || 'ra.auth.auth_check_error', 'error');
       redirect('/login?redirect=' + encodeURIComponent(location.pathname + location.search));
     }
   }, [loading, identity, redirect, notify, location]);

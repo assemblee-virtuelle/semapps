@@ -23,10 +23,6 @@
     "message": "Create an ActivityPub server",
     "description": "The label of footer link with label=Create an ActivityPub server linking to docs/guides/activitypub"
   },
-  "link.item.label.Riot": {
-    "message": "Riot",
-    "description": "The label of footer link with label=Riot linking to https://riot.im/app/#/room/#semapps:matrix.virtual-assembly.org"
-  },
   "link.item.label.Contact": {
     "message": "Contact",
     "description": "The label of footer link with label=Contact linking to https://www.virtual-assembly.org/contact/"
