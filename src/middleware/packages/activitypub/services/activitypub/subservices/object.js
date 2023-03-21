@@ -1,6 +1,6 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../constants');
-const { delay } = require('../utils');
+const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
+const { delay } = require('../../../utils');
 
 const ObjectService = {
   name: 'activitypub.object',

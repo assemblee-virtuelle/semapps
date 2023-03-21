@@ -1,23 +1,9 @@
 const constants = require('./constants');
 
 module.exports = {
-  ActivityPubService: require('./service'),
-  // Sub-services
-  ActorService: require('./services/actor'),
-  ActivityService: require('./services/activity'),
-  CollectionService: require('./services/collection'),
-  DispatchService: require('./services/dispatch'),
-  FollowService: require('./services/follow'),
-  InboxService: require('./services/inbox'),
-  ObjectService: require('./services/object'),
-  OutboxService: require('./services/outbox'),
-  RegistryService: require('./services/registry'),
-  RelayService: require('./services/relay'),
-  // Other services
+  ActivityPubService: require('./services/activitypub'),
   ActivityMappingService: require('./services/activity-mapping'),
-  SynchronizerService: require('./services/synchronizer'),
-  // Middlewares
-  ObjectsWatcherMiddleware: require('./middleware/objects-watcher'),
+  RelayService: require('./services/relay'),
   // Mixins
   BotService: require('./mixins/bot'),
   ControlledCollectionMixin: require('./mixins/controlled-collection'),

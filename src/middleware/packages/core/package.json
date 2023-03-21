@@ -8,7 +8,6 @@
     "@semapps/activitypub": "0.4.4",
     "@semapps/jsonld": "0.4.4",
     "@semapps/ldp": "0.4.4",
-    "@semapps/mirror": "0.4.4",
     "@semapps/signature": "0.4.4",
     "@semapps/sparql-endpoint": "0.4.4",
     "@semapps/triplestore": "0.4.4",

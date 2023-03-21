@@ -1,4 +1,4 @@
-const { PUBLIC_URI, ACTIVITY_TYPES } = require("@semapps/activitypub/constants");
+const { PUBLIC_URI, ACTIVITY_TYPES } = require("@semapps/activitypub");
 
 const handledActions = [
   'ldp.container.post',

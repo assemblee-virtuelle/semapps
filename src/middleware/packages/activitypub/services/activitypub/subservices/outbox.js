@@ -1,7 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
-const ControlledCollectionMixin = require('../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead } = require('../utils');
-const { ACTOR_TYPES } = require('../constants');
+const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
+const { collectionPermissionsWithAnonRead } = require('../../../utils');
+const { ACTOR_TYPES } = require('../../../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const OutboxService = {

@@ -1,17 +1,16 @@
 const QueueService = require('moleculer-bull');
-const ActorService = require('./services/actor');
-const ActivityService = require('./services/activity');
-const CollectionService = require('./services/collection');
-const DispatchService = require('./services/dispatch');
-const FollowService = require('./services/follow');
-const InboxService = require('./services/inbox');
-const LikeService = require('./services/like');
-const ObjectService = require('./services/object');
-const OutboxService = require('./services/outbox');
-const RegistryService = require('./services/registry');
-const RelayService = require('./services/relay');
-const ReplyService = require('./services/reply');
-const { OBJECT_TYPES, ACTOR_TYPES } = require('./constants');
+const ActorService = require('./subservices/actor');
+const ActivityService = require('./subservices/activity');
+const CollectionService = require('./subservices/collection');
+const DispatchService = require('./subservices/dispatch');
+const FollowService = require('./subservices/follow');
+const InboxService = require('./subservices/inbox');
+const LikeService = require('./subservices/like');
+const ObjectService = require('./subservices/object');
+const OutboxService = require('./subservices/outbox');
+const RegistryService = require('./subservices/registry');
+const ReplyService = require('./subservices/reply');
+const { OBJECT_TYPES, ACTOR_TYPES } = require('../../constants');
 
 const ActivityPubService = {
   name: 'activitypub',
@@ -103,16 +102,6 @@ const ActivityPubService = {
         attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES)
       }
     });
-
-    if (!podProvider && (relay === true || typeof relay === 'object')) {
-      if (relay === true) relay = {};
-      this.broker.createService(RelayService, {
-        settings: {
-          baseUri,
-          ...relay
-        }
-      });
-    }
 
     this.broker.createService(OutboxService, {
       settings: {

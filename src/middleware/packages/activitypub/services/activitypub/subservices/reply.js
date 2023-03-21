@@ -1,6 +1,6 @@
-const ActivitiesHandlerMixin = require('../mixins/activities-handler');
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../constants');
-const { collectionPermissionsWithAnonRead } = require('../utils');
+const ActivitiesHandlerMixin = require('../../../mixins/activities-handler');
+const { ACTIVITY_TYPES, OBJECT_TYPES } = require('../../../constants');
+const { collectionPermissionsWithAnonRead } = require('../../../utils');
 
 const ReplyService = {
   name: 'activitypub.reply',

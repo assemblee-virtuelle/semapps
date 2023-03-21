@@ -1,12 +1,10 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { defaultToArray } = require('../utils');
-const { ACTIVITY_TYPES, ACTOR_TYPES } = require('../constants');
+const { ACTOR_TYPES } = require('../constants');
 
 const RelayService = {
   name: 'activitypub.relay',
   settings: {
-    baseUri: null,
     actor: {
       username: 'relay',
       name: 'Relay actor for instance'
@@ -20,25 +18,13 @@ const RelayService = {
     'ldp.registry'
   ],
   async started() {
-    const containers = await this.broker.call('ldp.registry.list');
-
-    let actorContainer;
-    Object.values(containers).forEach(c => {
-      // we take the first container that accepts the type 'Application'
-      if (c.acceptedTypes && !actorContainer && defaultToArray(c.acceptedTypes).includes('Application'))
-        actorContainer = c.path;
-    });
-
-    if (!actorContainer) {
-      const errorMsg =
-        "RelayService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file";
-      throw new Error(errorMsg);
-    }
+    const appsContainer = await this.broker.call('ldp.registry.getByType', { type: ACTOR_TYPES.APPLICATION });
+    if (!appsContainer) throw new Error("RelayService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file");
 
     const actorSettings = this.settings.actor;
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
-    const containerUri = urlJoin(this.settings.baseUri, actorContainer);
+    const containerUri = await this.broker.call('ldp.registry.getUri', { path: appsContainer.path });
     const actorUri = urlJoin(containerUri, actorSettings.username);
 
     // creating the local actor 'relay'
@@ -80,7 +66,7 @@ const RelayService = {
       }
     }
 
-    // Wait until the relay actor is fully created, and keep the data for later use
+    // Wait until the relay actor is fully created
     this.relayActor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri });
   },
   actions: {
@@ -88,34 +74,6 @@ const RelayService = {
       visibility: 'public',
       handler() {
         return this.relayActor;
-      }
-    },
-    follow: {
-      visibility: 'public',
-      params: {
-        remoteRelayActorUri: { type: 'string', optional: false }
-      },
-      async handler(ctx) {
-        return await ctx.call('activitypub.outbox.post', {
-          collectionUri: this.relayActor.outbox,
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          actor: this.relayActor.id,
-          type: ACTIVITY_TYPES.FOLLOW,
-          object: ctx.params.remoteRelayActorUri,
-          to: [ctx.params.remoteRelayActorUri]
-        });
-      }
-    },
-    isFollowing: {
-      visibility: 'public',
-      params: {
-        remoteRelayActorUri: { type: 'string', optional: false }
-      },
-      async handler(ctx) {
-        return await ctx.call('activitypub.follow.isFollowing', {
-          follower: this.relayActor.id,
-          following: ctx.params.remoteRelayActorUri
-        });
       }
     }
   }

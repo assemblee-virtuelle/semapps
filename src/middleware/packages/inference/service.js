@@ -8,8 +8,8 @@ module.exports = {
   name: 'inference',
   settings: {
     baseUrl: null,
-    acceptFromRemoteServers: true,
-    offerToRemoteServers: true,
+    acceptFromRemoteServers: false,
+    offerToRemoteServers: false,
     ontologies: []
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],

@@ -1,6 +1,5 @@
 const { defaultToArray } = require("@semapps/ldp");
-const ActivitiesHandlerMixin = require("../mixins/activities-handler");
-const { ACTIVITY_TYPES, OBJECT_TYPES } = require("../constants");
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require("@semapps/activitypub");
 
 const SynchronizerService = {
   name: 'synchronizer',

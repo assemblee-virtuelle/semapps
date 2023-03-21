@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { delay, objectIdToCurrent } = require('../utils');
+const { delay, objectIdToCurrent } = require('../../../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',

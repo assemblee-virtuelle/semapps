@@ -1,12 +1,21 @@
+const SynchronizerService = require('./synchronizer');
 const { ActivitiesHandlerMixin, ACTIVITY_TYPES } = require("@semapps/activitypub");
 
-const MirrorSubscriptionService = {
-  name: 'mirror.subscription',
+module.exports = {
+  name: 'aggregator',
   mixins: [ActivitiesHandlerMixin],
   settings: {
     acceptFollowOffers: true
   },
   dependencies: ['activitypub.relay'],
+  created() {
+    this.broker.createService(SynchronizerService, {
+      podProvider: false,
+      mirrorGraph: false,
+      synchronizeContainers: false,
+      attachToLocalContainers: true
+    });
+  },
   async started() {
     this.relayActor = await this.broker.call('activitypub.relay.getActor');
   },
@@ -35,5 +44,3 @@ const MirrorSubscriptionService = {
     }
   }
 };
-
-module.exports = MirrorSubscriptionService;
