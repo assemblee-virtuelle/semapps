@@ -5,14 +5,15 @@ module.exports = {
   name: 'aggregator',
   mixins: [ActivitiesHandlerMixin],
   settings: {
-    acceptFollowOffers: true
+    acceptFollowOffers: true,
+    mirrorGraph: true
   },
   dependencies: ['activitypub.relay'],
   created() {
     this.broker.createService(SynchronizerService, {
       settings: {
         podProvider: false,
-        mirrorGraph: false,
+        mirrorGraph: this.settings.mirrorGraph,
         synchronizeContainers: false,
         attachToLocalContainers: true
       }

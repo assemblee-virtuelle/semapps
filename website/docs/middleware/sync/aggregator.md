@@ -25,7 +25,8 @@ const { AggregatorService } = require('@semapps/sync');
 module.exports = {
   mixins: [AggregatorService],
   settings: {
-    acceptFollowOffers: true
+    acceptFollowOffers: true,
+    mirrorGraph: true
   }
 };
 ```
@@ -33,7 +34,7 @@ module.exports = {
 
 ## Settings
 
-| Property             | Type      | Default | Description                                                                                    |
-|----------------------|-----------|---------|------------------------------------------------------------------------------------------------|
-| `acceptFollowOffers` | `Boolean` | true    | If true, the Relay actor will automatically follow actors which send `Offer > Follow` requests |            
-
+| Property             | Type      | Default | Description                                                                                               |
+|----------------------|-----------|---------|-----------------------------------------------------------------------------------------------------------|
+| `acceptFollowOffers` | `Boolean` | true    | If true, the Relay actor will automatically follow actors which send `Offer > Follow` requests            |            
+| `mirrorGraph`        | `Boolean` | true    | Store the remote resources in the mirror graph (recommended if WebACL are activated on the default graph) |            
