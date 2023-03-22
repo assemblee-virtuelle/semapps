@@ -44,7 +44,7 @@ module.exports = {
         );
       }
 
-      await ctx.call('triplestore.deleteOrphanBlankNodes', {
+      ctx.call('triplestore.deleteOrphanBlankNodes', {
         dataset,
         graphName
       });

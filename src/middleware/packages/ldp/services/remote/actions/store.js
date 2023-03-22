@@ -11,6 +11,7 @@ module.exports = {
   },
   async handler(ctx) {
     let { resourceUri, resource, keepInSync, mirrorGraph, webId } = ctx.params;
+    const graphName = mirrorGraph ? this.settings.mirrorGraphName : undefined;
 
     if (!resource && !resourceUri) {
       throw new Error('You must provide the resourceUri or resource param');
@@ -39,7 +40,23 @@ module.exports = {
     }
 
     // Delete the existing cached resource (if it exists)
-    await this.actions.delete({ resourceUri, webId }, { parentCtx: ctx });
+    await ctx.call('triplestore.update', {
+      query: `
+        DELETE
+        WHERE { 
+          ${graphName ? `GRAPH <${graphName}> {` : ''}
+            <${resourceUri}> ?p1 ?o1 .
+          ${graphName ? '}' : ''}
+        }
+      `,
+      webId,
+      dataset
+    });
+
+    ctx.call('triplestore.deleteOrphanBlankNodes', {
+      dataset,
+      graphName
+    });
 
     if (keepInSync) {
       resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
@@ -47,7 +64,7 @@ module.exports = {
 
     await ctx.call('triplestore.insert', {
       resource,
-      graphName: mirrorGraph ? this.settings.mirrorGraphName : undefined,
+      graphName,
       contentType: MIME_TYPES.JSON,
       webId: 'system',
       dataset
