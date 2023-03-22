@@ -10,10 +10,12 @@ module.exports = {
   dependencies: ['activitypub.relay'],
   created() {
     this.broker.createService(SynchronizerService, {
-      podProvider: false,
-      mirrorGraph: false,
-      synchronizeContainers: false,
-      attachToLocalContainers: true
+      settings: {
+        podProvider: false,
+        mirrorGraph: false,
+        synchronizeContainers: false,
+        attachToLocalContainers: true
+      }
     });
   },
   async started() {

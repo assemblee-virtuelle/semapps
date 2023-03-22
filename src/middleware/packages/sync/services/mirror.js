@@ -24,10 +24,12 @@ module.exports = {
   ],
   created() {
     this.broker.createService(SynchronizerService, {
-      podProvider: false,
-      mirrorGraph: true,
-      synchronizeContainers: true,
-      attachToLocalContainers: false
+      settings: {
+        podProvider: false,
+        mirrorGraph: true,
+        synchronizeContainers: true,
+        attachToLocalContainers: false
+      }
     });
   },
   async started() {
