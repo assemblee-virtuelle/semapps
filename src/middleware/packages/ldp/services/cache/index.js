@@ -22,9 +22,11 @@ module.exports = {
         const { resourceUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
 
-        // Also clean the container containing the resource
-        const containerUri = getContainerFromUri(resourceUri);
-        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+        // Also clean the containers containing the resource
+        const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+        for (let containerUri of containers) {
+          await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+        }
       }
     },
     async invalidateContainer(ctx) {
@@ -52,21 +54,15 @@ module.exports = {
   events: {
     async 'ldp.resource.deleted'(ctx) {
       const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
       await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
       await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
     },
     async 'ldp.resource.patched'(ctx) {
       const { resourceUri } = ctx.params;
-      const containerUri = getContainerFromUri(resourceUri);
       await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
-      await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
     },
     async 'ldp.container.attached'(ctx) {
       const { containerUri } = ctx.params;
@@ -79,6 +75,14 @@ module.exports = {
     async 'ldp.container.detached'(ctx) {
       const { containerUri } = ctx.params;
       await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+    },
+    async 'ldp.remote.deleted'(ctx) {
+      const { resourceUri } = ctx.params;
+      await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
+    },
+    async 'ldp.remote.stored'(ctx) {
+      const { resourceUri } = ctx.params;
+      await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
     },
     // Invalidate cache also when ACL rights are changed
     async 'webacl.resource.updated'(ctx) {

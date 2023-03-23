@@ -70,6 +70,12 @@ module.exports = {
       dataset
     });
 
+    ctx.emit(
+      'ldp.remote.stored',
+      { resourceUri, resource, mirrorGraph, keepInSync, webId },
+      { meta: { webId: null, dataset: null } }
+    );
+
     return resource;
   }
 };
