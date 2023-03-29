@@ -105,7 +105,8 @@ const ActivityPubService = {
 
     this.broker.createService(OutboxService, {
       settings: {
-        jsonContext
+        jsonContext,
+        podProvider
       }
     });
 

@@ -73,7 +73,7 @@ module.exports = {
       let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      if (this.isRemoteUri(resourceUri, webId))
+      if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
         throw new MoleculerError('Remote resources cannot be patched', 403, 'FORBIDDEN');
 
       // const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
@@ -143,7 +143,7 @@ module.exports = {
       ctx.emit(
         'ldp.resource.patched',
         returnValues,
-        { meta: { webId: null, dataset: null } }
+        { meta: { webId: null } }
       );
 
       return returnValues;

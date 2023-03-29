@@ -7,10 +7,11 @@ module.exports = {
     resource: { type: 'object', optional: true },
     keepInSync: { type: 'boolean', default: false },
     mirrorGraph: { type: 'boolean', default: false },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
+    dataset: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    let { resourceUri, resource, keepInSync, mirrorGraph, webId } = ctx.params;
+    let { resourceUri, resource, keepInSync, mirrorGraph, webId, dataset } = ctx.params;
     const graphName = mirrorGraph ? this.settings.mirrorGraphName : undefined;
 
     if (!resource && !resourceUri) {
@@ -33,8 +34,7 @@ module.exports = {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);
     }
 
-    let dataset;
-    if (this.settings.podProvider) {
+    if (!dataset && this.settings.podProvider) {
       const account = await ctx.call('auth.account.findByWebId', { webId });
       dataset = account.username;
     }

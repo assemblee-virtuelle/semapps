@@ -22,7 +22,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const resourceUri = resource.id || resource['@id'];
 
-    if (this.isRemoteUri(resourceUri, webId))
+    if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
     const { disassembly, jsonContext, controlledActions } = {
@@ -93,7 +93,7 @@ module.exports = {
       webId
     };
 
-    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null, dataset: null } });
+    ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null } });
 
     return returnValues;
   }

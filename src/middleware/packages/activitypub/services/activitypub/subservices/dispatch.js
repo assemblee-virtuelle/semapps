@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { delay, objectIdToCurrent } = require('../../../utils');
+const { delay, objectIdToCurrent, getSlugFromUri } = require('../../../utils');
 
 const DispatchService = {
   name: 'activitypub.dispatch',
@@ -60,17 +60,19 @@ const DispatchService = {
 
       for (const recipientUri of recipients) {
         try {
+          const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
+
           const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
             actorUri: recipientUri,
             predicate: 'inbox',
             webId: 'system'
-          });
+          }, { meta: { dataset }});
 
           // Attach activity to the inbox of the recipient
           await this.broker.call('activitypub.collection.attach', {
             collectionUri: recipientInbox,
             item: activity
-          });
+          }, { meta: { dataset }});
 
           if (this.settings.podProvider) {
             // Store the activity in the dataset of the recipient
@@ -78,7 +80,8 @@ const DispatchService = {
               resource: objectIdToCurrent(activity),
               mirrorGraph: false, // Store in default graph as activity may not be public
               keepInSync: false, // Activities are immutable
-              webId: recipientUri
+              webId: recipientUri,
+              dataset
             });
           }
 

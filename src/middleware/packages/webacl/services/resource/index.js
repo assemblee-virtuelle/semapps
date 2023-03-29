@@ -79,7 +79,7 @@ module.exports = {
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
         if (!resourceExist) {
           throw new MoleculerError(
-            `Cannot get permissions of non-existing container or resource ${resourceUri}`,
+            `Cannot get permissions of non-existing container or resource ${resourceUri} (dataset: ${ctx.meta.dataset})`,
             404,
             'NOT_FOUND'
           );
