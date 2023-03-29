@@ -81,7 +81,7 @@ describe('Permissions are correctly set on outbox', () => {
         page: 1,
         webId: 'anon'
       });
-      expect(outbox.totalItems).toBe(0);
+      expect(outbox.orderedItems).toHaveLength(0);
     });
   });
 
@@ -119,7 +119,7 @@ describe('Permissions are correctly set on outbox', () => {
         page: 1,
         webId: 'anon'
       });
-      expect(outbox.totalItems).toBe(0);
+      expect(outbox.orderedItems).toHaveLength(0);
     });
   });
 

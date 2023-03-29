@@ -183,12 +183,11 @@ const CollectionService = {
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          SELECT DISTINCT ?itemUri ?itemType
+          SELECT DISTINCT ?itemUri
           WHERE {
             <${collectionUri}> a as:Collection .
             OPTIONAL { 
               <${collectionUri}> as:items ?itemUri . 
-              ?itemUri a ?itemType . # Get a triple from the item to check we have permissions
               ${sort ? `OPTIONAL { ?itemUri ${sort.predicate} ?order . }` : ''}
             }
           }
