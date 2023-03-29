@@ -64,28 +64,19 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         returnData = returnData.filter(resource => {
           return Object.entries(params.filter).some(([k, v]) => {
             if (k == 'q') {
+              // if fiter is q, all properties have to be checked
               return Object.entries(resource).some(([kr, vr]) => {
                 if (!isobject(vr)) {
-                  const arrayValues= Array.isArray(vr)?vr:[vr];
-                  return arrayValues.some(va => {
-                    if (typeof va === 'string' || va instanceof String){
-                      return va.includes(v)
-                    }
-                  })
+                  return Array.isArray(vr) ? vr.some(va => va.includes(v)) : vr.includes(v);
                 } else {
                   return false;
                 }
               });
             } else {
-              if (resource[k]){
-                return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v); 
-              } else {
-                return false;
-              }
+              return Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k].includes(v);
             }
           });
         });
-        console.log('returnData',returnData)
       }
     }
 
