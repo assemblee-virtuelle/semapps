@@ -10,6 +10,7 @@ const modifyActions = [
   'activitypub.activity.attach',
   'webid.create',
   'ldp.remote.store',
+  'ldp.remote.delete',
   'ldp.resource.delete'
 ];
 
@@ -198,6 +199,14 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          */
         switch (action.name) {
           case 'ldp.resource.delete':
+            await ctx.call(
+              'webacl.resource.deleteAllRights',
+              { resourceUri: ctx.params.resourceUri },
+              { meta: { webId: 'system' } }
+            );
+            break;
+
+          case 'ldp.remote.delete':
             await ctx.call(
               'webacl.resource.deleteAllRights',
               { resourceUri: ctx.params.resourceUri },

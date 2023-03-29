@@ -51,7 +51,7 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        if (this.settings.podProvider && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
+        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
           ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
       }

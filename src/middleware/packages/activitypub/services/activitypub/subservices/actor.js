@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { getDatasetFromUri } = require("@semapps/ldp");
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 const { delay, defaultToArray, getSlugFromUri } = require('../../../utils');
 
@@ -21,7 +22,11 @@ const ActorService = {
       const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
         try {
-          return await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
+          return await ctx.call(
+            'ldp.resource.get',
+            { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId },
+            { meta: this.settings.podProvider ? { dataset: getDatasetFromUri(actorUri)} : undefined }
+          );
         } catch (e) {
           console.error(e);
           return false;
@@ -140,14 +145,9 @@ const ActorService = {
       let actor;
       do {
         await delay(1000);
-        actor = await ctx.call(
-          'ldp.resource.get',
-          {
-            resourceUri: actorUri,
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          },
-          { meta: { $cache: false } }
+        actor = await this.actions.get(
+          { actorUri, webId: 'system' },
+          { parentCtx: ctx, meta: { $cache: false } }
         );
       } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
       return actor;
