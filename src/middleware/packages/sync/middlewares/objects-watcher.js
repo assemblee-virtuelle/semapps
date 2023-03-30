@@ -123,6 +123,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               }
               break;
 
+            case 'webacl.resource.setRights':
             case 'webacl.resource.removeRights':
               oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               break;
