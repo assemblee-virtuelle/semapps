@@ -131,6 +131,7 @@ module.exports = {
 
       const returnValues = {
         uri: resourceUri,
+        webId,
         created: false,
         isContainer,
         defaultRightsUpdated,
