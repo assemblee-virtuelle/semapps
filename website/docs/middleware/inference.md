@@ -48,12 +48,12 @@ module.exports = {
 
 ## Service settings
 
-| Property                  | Type        | Default      | Description                                                                             |
-|---------------------------|-------------|--------------|-----------------------------------------------------------------------------------------|
-| `baseUrl`                 | `String`    | **required** | Base URL of the LDP server                                                              |
-| `acceptFromRemoteServers` | `Boolean`   | false        | Accept inferences from remote servers (require [RelayService](../activitypub/relay.md)) |
-| `offerToRemoteServers`    | `Boolean`   | false        | Offer inferences to remote servers (require [RelayService](../activitypub/relay.md))    |
-| `ontologies`              | `[Object] ` | **required** | List of ontology used (see example above)                                               |
+| Property                  | Type        | Default      | Description                                                                       |
+|---------------------------|-------------|--------------|-----------------------------------------------------------------------------------|
+| `baseUrl`                 | `String`    | **required** | Base URL of the LDP server                                                        |
+| `acceptFromRemoteServers` | `Boolean`   | false        | Accept inferences from remote servers (require [RelayService](activitypub/relay.md)) |
+| `offerToRemoteServers`    | `Boolean`   | false        | Offer inferences to remote servers (require [RelayService](activitypub/relay.md)) |
+| `ontologies`              | `[Object] ` | **required** | List of ontology used (see example above)                                         |
 
 
 ## Notes
