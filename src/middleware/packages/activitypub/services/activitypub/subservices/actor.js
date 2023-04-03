@@ -139,7 +139,7 @@ const ActorService = {
       const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
       let actor;
       do {
-        await delay(1000);
+        if (actor) await delay(1000);
         actor = await ctx.call(
           'ldp.resource.get',
           {
