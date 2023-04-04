@@ -104,7 +104,10 @@ const DispatchService = {
           webId: 'system'
         });
 
-        if (!recipientInbox) return false;
+        if (!recipientInbox) {
+          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: no inbox attached`);
+          return false;
+        }
 
         const body = JSON.stringify(activity);
 
@@ -116,7 +119,7 @@ const DispatchService = {
         });
 
         // Post activity to the inbox of the remote actor
-        return await fetch(recipientInbox, {
+        const response = await fetch(recipientInbox, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -124,6 +127,13 @@ const DispatchService = {
           },
           body
         });
+
+        if (response.ok) {
+          return true;
+        } else {
+          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
+          return false;
+        }
       } catch (e) {
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
         return false;
