@@ -4,91 +4,84 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let broker, broker2;
+const NUM_USERS = 2;
 
-beforeAll(async () => {
-  broker = await initialize(3000, 'testData', 'settings');
-  broker2 = broker;
-});
-afterAll(async () => {
-  if (broker) await broker.stop();
-});
+describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {
+  let broker, actors = [], alice, bob, followActivity;
 
-describe('Posting to followers', () => {
-  let simon, sebastien, followActivity;
+  beforeAll(async () => {
+    if (mode === 'single-server') {
+      broker = await initialize(3000, 'testData', 'settings');
+    } else {
+      broker = [];
+    }
 
-  test('Create actor', async () => {
-    const { webId: sebastienUri } = await broker.call('auth.signup', {
-      username: 'srosset81',
-      email: 'sebastien@test.com',
-      password: 'test',
-      name: 'Sébastien'
-    });
+    for (let i = 1; i <= NUM_USERS; i++) {
+      if (mode === 'multi-server') {
+        broker[i] = await initialize(3000 + i, 'testData' + i, 'settings' + i);
+      } else {
+        broker[i] = broker;
+      }
+      const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
+      actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
+      actors[i].call = (actionName, params, options = {}) => broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId }});
+    }
 
-    sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
+    bob = actors[1];
+    alice = actors[2];
+  });
 
-    const { webId: simonUri } = await broker2.call('auth.signup', {
-      username: 'simonlouvet',
-      email: 'simon@test.com',
-      password: 'test',
-      name: 'Simon'
-    });
-
-    simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
-
-    expect(sebastien).toMatchObject({
-      id: sebastienUri,
-      type: ['Person', 'foaf:Person'],
-      preferredUsername: 'srosset81',
-      'foaf:nick': 'srosset81',
-      inbox: sebastienUri + '/inbox',
-      outbox: sebastienUri + '/outbox',
-      followers: sebastienUri + '/followers',
-      following: sebastienUri + '/following'
-    });
+  afterAll(async () => {
+    if (mode === 'multi-server') {
+      for (let i = 1; i <= NUM_USERS; i++) {
+        await broker[i].stop();
+      }
+    } else {
+      await broker.stop();
+    }
   });
 
   test('Follow user', async () => {
-    followActivity = await broker.call('activitypub.outbox.post', {
-      collectionUri: sebastien.outbox,
+    followActivity = await bob.call('activitypub.outbox.post', {
+      collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: sebastien.id,
+      actor: bob.id,
       type: ACTIVITY_TYPES.FOLLOW,
-      object: simon.id,
-      to: [simon.id, sebastien.id + '/followers']
+      object: alice.id,
+      to: [alice.id, bob.id + '/followers']
     });
 
     await waitForExpect(async () => {
       await expect(
-        broker2.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
       ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
-      const inbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.inbox,
+      const inbox = await bob.call('activitypub.collection.get', {
+        collectionUri: bob.inbox,
         page: 1,
-        webId: sebastien.id
+        webId: bob.id
       });
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems).toHaveLength(1);
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.ACCEPT,
-        actor: simon.id,
+        actor: alice.id,
         object: followActivity.id
       });
     });
   });
 
   test('Send message to followers', async () => {
-    const createActivity = await broker2.call('activitypub.outbox.post', {
-      collectionUri: simon.outbox,
+    const createActivity = await alice.call('activitypub.outbox.post', {
+      collectionUri: alice.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
       name: 'Hello World',
-      attributedTo: simon.id,
-      to: [simon.followers],
-      content: 'Voilà mon premier message, très content de faire partie du fedivers !'
+      attributedTo: alice.id,
+      to: [alice.followers],
+      content: 'My first message, happy to be part of the fediverse !'
     });
 
     expect(createActivity).toMatchObject({
@@ -100,10 +93,10 @@ describe('Posting to followers', () => {
     });
 
     await waitForExpect(async () => {
-      const inbox = await broker.call('activitypub.collection.get', {
-        collectionUri: sebastien.inbox,
+      const inbox = await bob.call('activitypub.collection.get', {
+        collectionUri: bob.inbox,
         page: 1,
-        webId: sebastien.id
+        webId: bob.id
       });
 
       expect(inbox).not.toBeNull();
@@ -115,18 +108,18 @@ describe('Posting to followers', () => {
   });
 
   test('Unfollow user', async () => {
-    await broker.call('activitypub.outbox.post', {
-      collectionUri: sebastien.outbox,
+    await bob.call('activitypub.outbox.post', {
+      collectionUri: bob.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
-      actor: sebastien.id,
+      actor: bob.id,
       type: ACTIVITY_TYPES.UNDO,
       object: followActivity.id,
-      to: [simon.id, sebastien.id + '/followers']
+      to: [alice.id, bob.id + '/followers']
     });
 
     await waitForExpect(async () => {
       await expect(
-        broker2.call('activitypub.collection.includes', { collectionUri: simon.followers, itemUri: sebastien.id })
+        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
       ).resolves.toBeFalsy();
     });
   });

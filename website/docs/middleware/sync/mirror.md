@@ -8,9 +8,9 @@ Data will be cached in a named graph and will be kept updated through ActivityPu
 
 ## Dependencies
 
-- [ActivityPubService](activitypub)
-- [LdpService](ldp)
-- [WebfingerService](webfinger)
+- [ActivityPubService](../activitypub)
+- [LdpService](../ldp)
+- [WebfingerService](../webfinger)
 
 
 ## Sub-services
@@ -42,7 +42,7 @@ configuration(s). First remove the current version of the docker image:
 docker image rm -f semapps/jena-fuseki-webacl
 ```
 
-Then follow the guide on dataset migration [here](../triplestore/migrating-datasets).
+Then follow the guide on dataset migration [here](../../triplestore/migrating-datasets).
 
 
 ## Settings

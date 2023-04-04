@@ -4,7 +4,7 @@ title: HTTP & LD Signature
 
 This service implements the [HTTP Signature](https://tools.ietf.org/html/draft-cavage-http-signatures-12) and 
 [Linked Data Signature](https://ldapwiki.com/wiki/Linked%20Data%20Signatures) protocols, which allow to send messages 
-in a secure way between servers. It is used in particular with the [ActivityPub](activitypub) federation 
+in a secure way between servers. It is used in particular with the [ActivityPub](../activitypub) federation 
 mechanism.
 
 ## Features
