@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const getActorsRoute = require('./routes/getActorsRoute');
+const { ACTOR_TYPES } = require("@semapps/activitypub");
 
 module.exports = {
   name: 'pod',
@@ -8,6 +8,16 @@ module.exports = {
   },
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
   async started() {
+    // Container with actors
+    await this.broker.call('ldp.registry.register', {
+      path: '/',
+      podsContainer: true,
+      acceptedTypes: [ACTOR_TYPES.PERSON],
+      excludeFromMirror: true,
+      dereference: ['sec:publicKey', 'as:endpoints']
+      // newResourcesPermissions: {}
+    });
+
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
       path: '/',
@@ -18,8 +28,6 @@ module.exports = {
 
     const accounts = await this.broker.call('auth.account.find');
     this.registeredPods = accounts.map(account => account.username);
-
-    await this.broker.call('api.addRoute', { route: getActorsRoute() });
   },
   actions: {
     async create(ctx) {
@@ -45,15 +53,6 @@ module.exports = {
       });
 
       this.registeredPods.push(username);
-    },
-    async getActor(ctx) {
-      ctx.meta.$responseType = ctx.meta.headers.accept;
-      return await ctx.call('ldp.resource.get', {
-        resourceUri: urlJoin(this.settings.baseUrl, ctx.params.username),
-        accept: ctx.meta.headers.accept,
-        dereference: ['sec:publicKey', 'as:endpoints'],
-        aclVerified: true
-      });
     },
     list() {
       return this.registeredPods;

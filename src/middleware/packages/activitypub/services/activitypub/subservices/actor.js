@@ -22,11 +22,13 @@ const ActorService = {
       const { actorUri, webId } = ctx.params;
       if (this.isLocal(actorUri)) {
         try {
-          return await ctx.call(
+          // Don't return immediately the promise, or we won't be able to catch errors
+          const actor = await ctx.call(
             'ldp.resource.get',
             { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId },
             { meta: this.settings.podProvider ? { dataset: getDatasetFromUri(actorUri)} : undefined }
           );
+          return actor;
         } catch (e) {
           console.error(e);
           return false;

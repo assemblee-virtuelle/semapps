@@ -123,7 +123,7 @@ const SignatureService = {
       }
 
       const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-      if (!response) return false;
+      if (!response.ok) return false;
 
       const actor = await response.json();
       if (!actor || !actor.publicKey || !actor.publicKey.publicKeyPem) return false;
