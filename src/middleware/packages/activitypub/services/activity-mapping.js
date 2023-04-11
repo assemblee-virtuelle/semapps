@@ -41,7 +41,7 @@ const ActivityMappingService = {
       }
 
       for (const mapper of this.mappers) {
-        const dereferencedActivity = await this.matchActivity(mapper.match, activity);
+        const dereferencedActivity = await this.matchActivity(ctx, mapper.match, activity);
 
         // If we have a match...
         if (dereferencedActivity) {
@@ -49,9 +49,14 @@ const ActivityMappingService = {
           if (mapper.mapping === false) return;
 
           const emitter = await ctx.call('activitypub.actor.get', { actorUri: activity.actor });
-          const emitterProfile = emitter.url
-            ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor, webId: 'system' })
-            : {};
+
+          let emitterProfile = {};
+          try {
+            emitterProfile = emitter.url ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor }) : {};
+          } catch(e) {
+            this.logger.warn(`Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`);
+          }
+
           const templateParams = { activity: dereferencedActivity, emitter, emitterProfile, ...rest };
 
           return Object.fromEntries(
@@ -91,8 +96,8 @@ const ActivityMappingService = {
     }
   },
   methods: {
-    matchActivity(pattern, activityOrObject) {
-      return matchActivity(this.broker, pattern, activityOrObject);
+    matchActivity(ctx, pattern, activityOrObject) {
+      return matchActivity(ctx, pattern, activityOrObject);
     },
     prioritizeMappers() {
       this.mappers.sort((a, b) => b.priority - a.priority);

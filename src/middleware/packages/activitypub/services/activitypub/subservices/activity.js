@@ -8,6 +8,7 @@ const ActivityService = {
   name: 'activitypub.activity',
   mixins: [ControlledContainerMixin],
   settings: {
+    baseUri: null,
     path: '/activities',
     acceptedTypes: Object.values(ACTIVITY_TYPES),
     accept: MIME_TYPES.JSON,
@@ -65,6 +66,11 @@ const ActivityService = {
 
       return output;
     },
+    async getLocalRecipients(ctx) {
+      const { activity } = ctx.params;
+      const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
+      return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
+    },
     isPublic(ctx) {
       const { activity } = ctx.params;
       // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
@@ -73,6 +79,11 @@ const ActivityService = {
         ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r))
         : false;
     }
+  },
+  methods: {
+    isLocalActor(uri) {
+      return uri.startsWith(this.settings.baseUri);
+    },
   },
   hooks: {
     before: {

@@ -10,7 +10,8 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      let { groupUri, groupSlug, webId } = ctx.params;
+      let { groupUri, groupSlug } = ctx.params;
+      const webId = ctx.params.webId || ctx.meta.webId;
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
       if (!groupUri) groupUri = urlJoin(this.settings.baseUrl, '_groups', groupSlug);

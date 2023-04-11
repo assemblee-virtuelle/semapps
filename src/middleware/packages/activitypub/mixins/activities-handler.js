@@ -7,40 +7,69 @@ const ActivitiesHandlerMixin = {
     }
   },
   methods: {
-    matchActivity(pattern, activityOrObject) {
-      return matchActivity(this.broker, pattern, activityOrObject);
+    matchActivity(ctx, pattern, activityOrObject) {
+      return matchActivity(ctx, pattern, activityOrObject);
     }
   },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
       const { activity } = ctx.params;
-      const emitter = activity.actor;
+      const emitterUri = activity.actor;
       for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
-        if (activityHandler.onEmit) {
+        if (activityHandler.onEmit || activityHandler.onReceive) {
+          ctx.meta.webId = emitterUri;
+          ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: emitterUri });
+
+          if (!activityHandler.match)
+            throw new Error(`No match handler (object or function) defined for activity "${key}"`)
+
           const dereferencedActivity =
             typeof activityHandler.match === 'object'
-              ? await this.matchActivity(activityHandler.match, activity)
-              : await activityHandler.match.bind(this)(activity);
+              ? await this.matchActivity(ctx, activityHandler.match, activity)
+              : await activityHandler.match.bind(this)(ctx, activity);
 
           if (dereferencedActivity) {
-            this.logger.info(`Emission of activity "${key}" detected`);
-            await activityHandler.onEmit.bind(this)(ctx, dereferencedActivity, emitter);
+            if (activityHandler.onEmit) {
+              this.logger.info(`Emission of activity "${key}" by ${emitterUri} detected`);
+              await activityHandler.onEmit.bind(this)(ctx, dereferencedActivity, emitterUri);
+            }
+
+            // Once onEmit is processed, immediately call onReceive for local recipients
+            // We don't use the activitypub.inbox.received event since we have a match, and because activitypub.inbox.received is sent immediately
+            if (activityHandler.onReceive) {
+              const localRecipients = await ctx.call('activitypub.activity.getLocalRecipients', { activity });
+              for (let recipientUri of localRecipients) {
+                ctx.meta.webId = recipientUri;
+                ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
+                this.logger.info(`Reception of activity "${key}" by ${recipientUri} detected`);
+                await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, recipientUri);
+              }
+            }
           }
         }
       }
     },
     async 'activitypub.inbox.received'(ctx) {
-      const { activity, recipients } = ctx.params;
-      for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
-        if (activityHandler.onReceive) {
-          const dereferencedActivity =
-            typeof activityHandler.match === 'object'
-              ? await this.matchActivity(activityHandler.match, activity)
-              : await activityHandler.match.bind(this)(activity);
+      const { activity, recipients, local } = ctx.params;
+      // For local exchanges, we use activitypub.outbox.posted above
+      if (!local) {
+        for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
+          if (activityHandler.onReceive) {
+            for (let recipientUri of recipients) {
+              ctx.meta.webId = recipientUri;
+              ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
 
-          if (dereferencedActivity) {
-            this.logger.info(`Reception of activity "${key}" detected`);
-            await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, recipients);
+              // TODO in non-POD config, dereference activity only once ?
+              const dereferencedActivity =
+                typeof activityHandler.match === 'object'
+                  ? await this.matchActivity(ctx, activityHandler.match, activity)
+                  : await activityHandler.match.bind(this)(ctx, activity);
+
+              if (dereferencedActivity) {
+                this.logger.info(`Reception of activity "${key}" by ${recipientUri} detected`);
+                await activityHandler.onReceive.bind(this)(ctx, dereferencedActivity, recipientUri);
+              }
+            }
           }
         }
       }

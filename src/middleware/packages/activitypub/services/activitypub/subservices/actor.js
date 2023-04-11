@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const urlJoin = require("url-join");
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { getDatasetFromUri } = require("@semapps/ldp");
@@ -14,19 +15,18 @@ const ActorService = {
     selectActorData: null,
     podProvider: false
   },
-  started() {
-    this.remoteActorsCache = {};
-  },
+  // started() {
+  //   this.remoteActorsCache = {};
+  // },
   actions: {
     async get(ctx) {
       const { actorUri, webId } = ctx.params;
-      if (this.isLocal(actorUri)) {
+      if (!this.isRemoteUri(actorUri, ctx.meta.dataset)) {
         try {
           // Don't return immediately the promise, or we won't be able to catch errors
           const actor = await ctx.call(
             'ldp.resource.get',
-            { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId },
-            { meta: this.settings.podProvider ? { dataset: getDatasetFromUri(actorUri)} : undefined }
+            { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId }
           );
           return actor;
         } catch (e) {
@@ -34,15 +34,15 @@ const ActorService = {
           return false;
         }
       } else {
-        if (this.remoteActorsCache[actorUri]) {
-          return this.remoteActorsCache[actorUri];
-        } else {
+        // if (this.remoteActorsCache[actorUri]) {
+        //   return this.remoteActorsCache[actorUri];
+        // } else {
           const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
           if (!response.ok) return false;
           const actor = await response.json();
-          this.remoteActorsCache[actorUri] = actor;
+          // this.remoteActorsCache[actorUri] = actor;
           return actor;
-        }
+        // }
       }
     },
     async getProfile(ctx) {
@@ -180,8 +180,10 @@ const ActorService = {
     }
   },
   methods: {
-    isLocal(uri) {
-      return uri.startsWith(this.settings.baseUri);
+    isRemoteUri(uri, dataset) {
+      if (this.settings.podProvider && !dataset) return true; // If no dataset is set, assume actor is remote
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
     },
     isActor(resource) {
       return defaultToArray(resource['@type'] || resource.type || []).some(type =>

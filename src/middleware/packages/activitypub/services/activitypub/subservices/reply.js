@@ -39,8 +39,9 @@ const ReplyService = {
   },
   activities: {
     postReply: {
-      match(activity) {
+      match(ctx, activity) {
         return this.matchActivity(
+          ctx,
           {
             type: ACTIVITY_TYPES.CREATE,
             object: {
@@ -61,8 +62,9 @@ const ReplyService = {
       }
     },
     deleteReply: {
-      match(activity) {
+      match(ctx, activity) {
         return this.matchActivity(
+          ctx,
           {
             type: ACTIVITY_TYPES.DELETE,
             object: {

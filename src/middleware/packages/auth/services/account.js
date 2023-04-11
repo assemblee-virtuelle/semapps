@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
+const { getSlugFromUri } = require("@semapps/ldp");
 const crypto = require('crypto');
 
 module.exports = {
@@ -134,6 +135,12 @@ module.exports = {
       });
 
       return resetPasswordToken;
+    },
+    async findDatasetByWebId(ctx) {
+      const { webId } = ctx.meta;
+      const account = await ctx.call('auth.account.findByWebId', { webId });
+      // If no Pod config, will return undefined
+      return account.podUri && getSlugFromUri(webId);
     },
     async findSettingsByWebId(ctx) {
       const { webId } = ctx.meta;

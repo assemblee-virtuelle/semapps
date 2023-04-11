@@ -90,31 +90,39 @@ module.exports = {
   },
   activities: {
     offerInference: {
-      async match(activity) {
+      async match(ctx, activity) {
         return (
-          await this.matchActivity({
-            type: ACTIVITY_TYPES.OFFER,
-            object: {
-              type: ACTIVITY_TYPES.ADD,
+          await this.matchActivity(
+            ctx,
+            {
+              type: ACTIVITY_TYPES.OFFER,
               object: {
-                type: OBJECT_TYPES.RELATIONSHIP
+                type: ACTIVITY_TYPES.ADD,
+                object: {
+                  type: OBJECT_TYPES.RELATIONSHIP
+                }
               }
-            }
-          }, activity)
+            },
+            activity
+          )
         ) || (
-          await this.matchActivity({
-            type: ACTIVITY_TYPES.OFFER,
-            object: {
-              type: ACTIVITY_TYPES.REMOVE,
+          await this.matchActivity(
+            ctx,
+            {
+              type: ACTIVITY_TYPES.OFFER,
               object: {
-                type: OBJECT_TYPES.RELATIONSHIP
+                type: ACTIVITY_TYPES.REMOVE,
+                object: {
+                  type: OBJECT_TYPES.RELATIONSHIP
+                }
               }
-            }
-          }, activity)
+            },
+            activity
+          )
         );
       },
-      async onReceive(ctx, activity, recipients) {
-        if (this.settings.acceptFromRemoteServers && recipients.includes(this.relayActor.id)) {
+      async onReceive(ctx, activity, recipientUri) {
+        if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
           let relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (this.isRemoteUri(relationship.subject)) {

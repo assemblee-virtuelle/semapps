@@ -23,23 +23,23 @@ module.exports = {
       async onEmit(ctx, activity, emitterUri) {
         // Handle side effects on emit
       },
-      async onReceive(ctx, activity, recipients) {
+      async onReceive(ctx, activity, recipientUri) {
         // Handle side effects on receive
       }
     },
     myAnnounceActivity: {
-      async match(activity) {
+      async match(ctx, activity) {
         if (activity.actor !== 'http://localhost:3000/myself') {
           return false;
         } else {
-          const dereferenceActivityOrFalse = await this.matchActivity({ type: ACTIVITY_TYPES.ANNOUNCE }, activity);
+          const dereferenceActivityOrFalse = await this.matchActivity(ctx, { type: ACTIVITY_TYPES.ANNOUNCE }, activity);
           return dereferenceActivityOrFalse;
         }
       },
       async onEmit(ctx, activity, emitterUri) {
         // Handle side effects on emit
       },
-      async onReceive(ctx, activity, recipients) {
+      async onReceive(ctx, activity, recipientUri) {
         // Handle side effects on receive
       }
     }

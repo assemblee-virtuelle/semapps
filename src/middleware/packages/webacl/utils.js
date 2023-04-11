@@ -290,8 +290,10 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
-const isRemoteUri = (resourceUri, baseUrl) => {
-  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
+  if (podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+  return !urlJoin(uri, '/').startsWith(baseUrl)
+    || (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'));
 };
 
 module.exports = {

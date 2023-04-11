@@ -108,9 +108,13 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
         const resourceUri = ctx.params.resourceUri || ctx.params.resource.id || ctx.params.resource['@id'];
 
-        // Bypass if mirrored resource as WebACL are not activated in mirror graph
-        if (isRemoteUri(resourceUri, baseUrl) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
-          return bypass();
+        if (isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider })) {
+          // Bypass if mirrored resource as WebACL are not activated in mirror graph
+          if ((await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
+            return bypass();
+          } else {
+            return next(ctx);
+          }
         }
 
         // If the logged user is fetching is own POD, bypass ACL check
@@ -148,7 +152,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.resource.create':
             const resourceUri = ctx.params.resource['@id'] || ctx.params.resource.id;
             // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
-            if (isRemoteUri(resourceUri, baseUrl) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') return next(ctx);
+            if (isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider }) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') return next(ctx);
             // We must add the permissions before inserting the resource
             await addRightsToNewResource(ctx, resourceUri, webId);
             break;

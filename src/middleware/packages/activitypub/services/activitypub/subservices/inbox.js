@@ -81,7 +81,8 @@ const InboxService = {
         'activitypub.inbox.received',
         {
           activity,
-          recipients: [actorUri]
+          recipients: [actorUri],
+          local: false
         },
         { meta: { webId: null, dataset: null } }
       );

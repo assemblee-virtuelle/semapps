@@ -54,9 +54,7 @@ module.exports = {
   settings: {
     baseUri: 'http://localhost:3000/',
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    dispatch: {
-      queueServiceUrl: null
-    },
+    queueServiceUrl: null,
     like: {
       attachToObjectTypes: null,
       attachToActorTypes: null
@@ -128,7 +126,7 @@ Additionally, the ActivityPub services will append all the ActivityPub-specific 
 | `baseUri`                    | `String`             | **required**    | Base URI of your web server                                                                                                                        |
 | `jsonContext`                | `String` or `Object` | 'https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'                | The ActivityStreams ontology is the base ontology, but you can add more contexts here if you wish.                                                 |
 | `selectActorData`            | `Function`           |                 | Receives the data provided on signup (as JSON-LD), and must return the properties (with full URI) to be appended to the actor profile (see above). |
-| `dispatch.queueServiceUrl`   | `String`             |                 | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.             |
+| `queueServiceUrl`            | `String`             |                 | Redis connection string. If set, the [Bull](https://github.com/OptimalBits/bull) task manager will be used to handle federation POSTs.             |
 | `like.attachToObjectTypes`   | `Array`              | All AS objects  | The ActivityStreams objects which will be attached a `likes` collection                                                                            |
 | `like.attachToActorsTypes`   | `Array`              | All AS actors   | The ActivityStreams actors which will be attached a `liked` collection                                                                             |
 | `follow.attachToActorsTypes` | `Array`              | All AS actors   | The ActivityStreams actors which will be attached a `followers` and `following` collections                                                        |
@@ -162,11 +160,11 @@ Sent after an actor stops following another one.
 Sent after an actor receives an activity in his inbox.
 
 ##### Payload
-| Property     | Type     | Description             |
-|--------------|----------|-------------------------|
-| `activity`   | `Object` | Activity payload        |
-| `recipients` | `Array`  | List of recipients URIs |
-
+| Property     | Type      | Description                                |
+|--------------|-----------|--------------------------------------------|
+| `activity`   | `Object`  | Activity payload                           |
+| `recipients` | `Array`   | List of recipients URIs                    |
+| `local`      | `Boolean` | True if activity was sent by a local actor |
 
 ### `activitypub.like.added`
 Sent after an actor likes an object
