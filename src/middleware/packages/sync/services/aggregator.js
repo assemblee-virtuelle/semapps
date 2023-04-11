@@ -30,18 +30,16 @@ module.exports = {
           type: ACTIVITY_TYPES.FOLLOW
         }
       },
-      async onReceive(ctx, activity, recipients) {
-        for (let recipient of recipients) {
-          if (this.settings.acceptFollowOffers && recipient === this.relayActor.id) {
-            return await ctx.call('activitypub.outbox.post', {
-              collectionUri: this.relayActor.outbox,
-              '@context': 'https://www.w3.org/ns/activitystreams',
-              actor: this.relayActor.id,
-              type: ACTIVITY_TYPES.FOLLOW,
-              object: activity.actor,
-              to: activity.actor
-            });
-          }
+      async onReceive(ctx, activity, recipientUri) {
+        if (this.settings.acceptFollowOffers && recipientUri === this.relayActor.id) {
+          return await ctx.call('activitypub.outbox.post', {
+            collectionUri: this.relayActor.outbox,
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            actor: this.relayActor.id,
+            type: ACTIVITY_TYPES.FOLLOW,
+            object: activity.actor,
+            to: activity.actor
+          });
         }
       }
     }
