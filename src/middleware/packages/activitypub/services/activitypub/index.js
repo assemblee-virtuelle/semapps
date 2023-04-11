@@ -2,7 +2,6 @@ const QueueService = require('moleculer-bull');
 const ActorService = require('./subservices/actor');
 const ActivityService = require('./subservices/activity');
 const CollectionService = require('./subservices/collection');
-const DispatchService = require('./subservices/dispatch');
 const FollowService = require('./subservices/follow');
 const InboxService = require('./subservices/inbox');
 const LikeService = require('./subservices/like');
@@ -19,10 +18,7 @@ const ActivityPubService = {
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     podProvider: false,
     selectActorData: null,
-    dispatch: {
-      queueServiceUrl: null,
-      delay: 0
-    },
+    queueServiceUrl: null,
     like: {
       attachToObjectTypes: null,
       attachToActorTypes: null
@@ -36,7 +32,7 @@ const ActivityPubService = {
   },
   dependencies: ['api'],
   created() {
-    let { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow } = this.settings;
+    let { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
@@ -71,6 +67,7 @@ const ActivityPubService = {
 
     this.broker.createService(ActivityService, {
       settings: {
+        baseUri,
         jsonContext
       }
     });
@@ -104,18 +101,11 @@ const ActivityPubService = {
     });
 
     this.broker.createService(OutboxService, {
-      settings: {
-        jsonContext,
-        podProvider
-      }
-    });
-
-    this.broker.createService(DispatchService, {
-      mixins: dispatch.queueServiceUrl ? [QueueService(dispatch.queueServiceUrl)] : undefined,
+      mixins: queueServiceUrl ? [QueueService(queueServiceUrl)] : undefined,
       settings: {
         baseUri,
-        podProvider,
-        delay: dispatch.delay
+        jsonContext,
+        podProvider
       }
     });
   }
