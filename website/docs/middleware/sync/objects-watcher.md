@@ -24,8 +24,8 @@ const { ObjectsWatcherMiddleware } = require('@semapps/sync');
 module.exports = {
   middlewares: [
     CacherMiddleware({ ... }),
-    WebAclMiddleware({ baseUrl: CONFIG.HOME_URL, podProvider: false }),
-    ObjectsWatcherMiddleware({ podProvider: false }) // This middleware should come after the WebAclMiddleware
+    WebAclMiddleware({ baseUrl: 'http://localhost:3000', podProvider: false }),
+    ObjectsWatcherMiddleware({ baseUrl: 'http://localhost:3000', podProvider: false, }) // This middleware should come after the WebAclMiddleware
   ],
   ...
 };
@@ -40,8 +40,9 @@ This choice will appear on the [VoID endpoint](../void.md), so that mirrors igno
 
 ## Settings
 
-| Property          | Type      | Default | Description                                      |
-|-------------------|-----------|---------|--------------------------------------------------|
-| `podProvider`     | `Boolean` | false   | If your instance is a Pods provider, set to true |            
+| Property      | Type      | Default      | Description                                      |
+|---------------|-----------|--------------|--------------------------------------------------|
+| `baseUrl`     | `String`  | **Required** | The base URL of your instance                    |            
+| `podProvider` | `Boolean` | false        | If your instance is a Pods provider, set to true |            
 
 

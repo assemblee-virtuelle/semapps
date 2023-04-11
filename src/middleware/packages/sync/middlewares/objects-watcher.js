@@ -1,3 +1,4 @@
+const urlJoin = require("url-join");
 const { PUBLIC_URI, ACTIVITY_TYPES } = require("@semapps/activitypub");
 
 const handledActions = [
@@ -11,8 +12,10 @@ const handledActions = [
 ];
 
 const ObjectsWatcherMiddleware = (config = {}) => {
-  const { podProvider = false } = config;
+  const { baseUrl, podProvider = false } = config;
   let relayActor, watchedContainers = [], initialized = false;
+
+  if (!baseUrl) throw new Error('The baseUrl setting is missing from ObjectsWatcherMiddleware');
 
   const getActor = async (ctx, resourceUri) => {
     if (podProvider) {
@@ -38,6 +41,12 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
   const isWatched = (containersUris) => {
     return containersUris.some(uri => watchedContainers.some(container => container.pathRegex.test((new URL(uri)).pathname)));
+  };
+
+  const isRemoteUri = (uri, dataset) => {
+    if (podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+    return !urlJoin(uri, '/').startsWith(baseUrl)
+      || (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'));
   };
 
   const announce = async (ctx, resourceUri, recipients, activity) => {
@@ -104,6 +113,9 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               }
               break;
           }
+
+          // We never want to watch remote resources
+          if (resourceUri && isRemoteUri(resourceUri, ctx.meta.dataset)) return await next(ctx);
 
           const containers = containerUri ? [containerUri] : await ctx.call('ldp.resource.getContainers', { resourceUri });
           if (!isWatched(containers)) return await next(ctx);

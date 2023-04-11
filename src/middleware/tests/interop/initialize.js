@@ -48,7 +48,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   const broker = new ServiceBroker({
     nodeID: 'server' + port,
-    middlewares: [WebAclMiddleware({ baseUrl }), ObjectsWatcherMiddleware()],
+    middlewares: [WebAclMiddleware({ baseUrl }), ObjectsWatcherMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {
