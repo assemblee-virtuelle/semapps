@@ -87,6 +87,11 @@ const ProxyService = {
         actorUri
       });
 
+      // Convert Headers object if necessary (otherwise we can't destructure it below)
+      if (headers && typeof headers === 'object' && headers.constructor.name === 'Headers') {
+        headers = Object.fromEntries(headers);
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -115,6 +120,7 @@ const ProxyService = {
           statusText: response.statusText
         }
       } else {
+        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
         throw new MoleculerError(response.statusText, response.status);
       }
     }

@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "@semapps/ldp": "0.5.0-alpha.4",
     "@semapps/mime-types": "0.5.0-alpha.4",
     "@semapps/triplestore": "0.5.0-alpha.4",
     "bcrypt": "^5.0.1",
