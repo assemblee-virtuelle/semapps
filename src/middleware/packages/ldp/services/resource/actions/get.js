@@ -75,7 +75,7 @@ module.exports = {
       const { resourceUri, forceSemantic, aclVerified } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-      if (this.isRemoteUri(resourceUri, webId)) {
+      if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
         return await ctx.call('ldp.remote.get', ctx.params);
       }
 

@@ -4,7 +4,6 @@ const fetch = require('node-fetch');
 const { generateKeyPair } = require('crypto');
 const { namedNode, blankNode, literal, triple } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getSlugFromUri } = require('@semapps/ldp');
 
 const SignatureService = {
   name: 'signature.keypair',
@@ -95,19 +94,14 @@ const SignatureService = {
     async getPaths(ctx) {
       const { actorUri } = ctx.params;
 
-      const actorData = await ctx.call('ldp.resource.get', {
-        resourceUri: actorUri,
-        accept: MIME_TYPES.JSON,
-        webId: 'system'
-      });
+      const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
 
-      if (actorData) {
-        const username = actorData.preferredUsername || getSlugFromUri(actorUri);
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, username + '.key.pub');
+      if (account) {
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, account.username + '.key');
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, account.username + '.key.pub');
         return { privateKeyPath, publicKeyPath };
       } else {
-        throw new Error('No valid actor found with URI ' + actorUri);
+        throw new Error('No account found with URI ' + actorUri);
       }
     },
     async get(ctx) {
@@ -129,7 +123,7 @@ const SignatureService = {
       }
 
       const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-      if (!response) return false;
+      if (!response.ok) return false;
 
       const actor = await response.json();
       if (!actor || !actor.publicKey || !actor.publicKey.publicKeyPem) return false;

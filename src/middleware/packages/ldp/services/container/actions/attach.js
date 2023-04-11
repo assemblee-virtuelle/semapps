@@ -13,9 +13,8 @@ module.exports = {
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
-    const isRemoteContainer = this.isRemoteUri(containerUri, webId);
+    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
@@ -31,7 +30,6 @@ module.exports = {
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
-      dataset,
       graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 
@@ -42,7 +40,7 @@ module.exports = {
           containerUri,
           resourceUri
         },
-        { meta: { webId: null, dataset: null } }
+        { meta: { webId: null } }
       );
 
     return {

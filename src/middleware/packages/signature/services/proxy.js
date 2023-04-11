@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { parseFile } = require('@semapps/middlewares');
+const { parseFile, saveDatasetMeta } = require('@semapps/middlewares');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
@@ -25,7 +25,7 @@ const ProxyService = {
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [parseFile, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+        'POST /': [parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
       }
     };
 

@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead } = require('../../../utils');
+const { collectionPermissionsWithAnonRead, getSlugFromUri } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -15,7 +15,8 @@ const OutboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead
+    permissions: collectionPermissionsWithAnonRead,
+    podProvider: false
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -31,6 +32,10 @@ const OutboxService = {
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
         throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+      }
+
+      if (this.settings.podProvider) {
+        ctx.meta.dataset = getSlugFromUri(actorUri);
       }
 
       if (!activity['@context']) {

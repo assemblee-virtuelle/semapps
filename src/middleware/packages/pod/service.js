@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { ACTOR_TYPES } = require("@semapps/activitypub");
 
 module.exports = {
   name: 'pod',
@@ -38,6 +38,8 @@ module.exports = {
         dataset: username,
         secure: true
       });
+
+      ctx.meta.dataset = username;
 
       // Create the POD root container so that the LdpRegistryService can create the default containers
       const podUri = urlJoin(this.settings.baseUrl, username, 'data');

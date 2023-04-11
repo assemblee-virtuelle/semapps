@@ -1,4 +1,4 @@
-const { parseHeader, parseJson } = require('@semapps/middlewares');
+const { parseHeader, parseJson, saveDatasetMeta } = require('@semapps/middlewares');
 
 const addCollectionUriMiddleware = collectionUri => (req, res, next) => {
   let fullCollectionUri = collectionUri;
@@ -19,7 +19,7 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   const collectionPath = new URL(collectionUri).pathname;
 
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
-  const middlewares = [parseHeader, parseJson];
+  const middlewares = [parseHeader, parseJson, saveDatasetMeta];
 
   let aliases = {
     'GET /': [

@@ -108,7 +108,7 @@ const CollectionService = {
 
       // TODO check why thrown error is lost and process is stopped
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error('Cannot attach to a non-existing collection: ' + collectionUri);
+      if (!collectionExist) throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
       await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
@@ -183,7 +183,7 @@ const CollectionService = {
       let result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
-          SELECT DISTINCT ?itemUri 
+          SELECT DISTINCT ?itemUri
           WHERE {
             <${collectionUri}> a as:Collection .
             OPTIONAL { 
@@ -198,15 +198,16 @@ const CollectionService = {
       });
 
       const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
-      const numPages = !itemsPerPage ? 1 : allItems ? Math.ceil(allItems.length / itemsPerPage) : 0;
+      const numPages = !itemsPerPage ? 1 : allItems.length > 0 ? Math.ceil(allItems.length / itemsPerPage) : 0;
       let returnData = null;
 
-      if (page && page > numPages) {
+      if (page > 1 && page > numPages) {
         // The collection page does not exist
         ctx.meta.$statusCode = 404;
         return;
-      } else if (itemsPerPage && !page) {
+      } else if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
+        // OR the first page is selected but there is no item, return an empty page
         returnData = {
           '@context': this.settings.jsonContext,
           id: collectionUri,
