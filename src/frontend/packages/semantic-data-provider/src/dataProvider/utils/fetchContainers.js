@@ -69,7 +69,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
                   const arrayValues= Array.isArray(vr)?vr:[vr];
                   return arrayValues.some(va => {
                     if (typeof va === 'string' || va instanceof String){
-                      return va.includes(v)
+                      return va.toLowerCase().normalize("NFD").includes(v.toLowerCase().normalize("NFD"))
                     }
                   })
                 } else {
@@ -85,7 +85,6 @@ const fetchContainers = async (containers, resourceId, params, config) => {
             }
           });
         });
-        console.log('returnData',returnData)
       }
     }
 
