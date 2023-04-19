@@ -66,19 +66,22 @@ const fetchContainers = async (containers, resourceId, params, config) => {
             if (k == 'q') {
               return Object.entries(resource).some(([kr, vr]) => {
                 if (!isobject(vr)) {
-                  const arrayValues= Array.isArray(vr)?vr:[vr];
+                  const arrayValues = Array.isArray(vr) ? vr : [vr];
                   return arrayValues.some(va => {
-                    if (typeof va === 'string' || va instanceof String){
-                      return va.toLowerCase().normalize("NFD").includes(v.toLowerCase().normalize("NFD"))
+                    if (typeof va === 'string' || va instanceof String) {
+                      return va
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .includes(v.toLowerCase().normalize('NFD'));
                     }
-                  })
+                  });
                 } else {
                   return false;
                 }
               });
             } else {
-              if (resource[k]){
-                return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v); 
+              if (resource[k]) {
+                return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v);
               } else {
                 return false;
               }
