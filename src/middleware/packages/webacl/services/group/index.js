@@ -4,6 +4,7 @@ const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const addMemberAction = require('./actions/addMember');
 const getMembersAction = require('./actions/getMembers');
+const getUriAction = require('./actions/getUri');
 const isMemberAction = require('./actions/isMember');
 const removeMemberAction = require('./actions/removeMember');
 const getGroupsAction = require('./actions/getGroups');
@@ -18,6 +19,7 @@ module.exports = {
   },
   dependencies: ['triplestore', 'webacl.resource','ldp.container'],
   actions: {
+    getUri: getUriAction.action,
     isMember: isMemberAction.action,
     exist: existAction.action,
     // Actions accessible through the API

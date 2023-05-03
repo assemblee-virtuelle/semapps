@@ -5,7 +5,7 @@ const fetchVoidEndpoints = async config => {
     .filter(([key, server]) => server.pod !== true)
     .map(([key, server]) =>
       config
-        .httpClient(new URL('/.well-known/void', server.baseUrl), { noToken: !server.authServer })
+        .httpClient(new URL('/.well-known/void', server.baseUrl).toString())
         .then(result => ({ key, datasets: result.json['@graph'] }))
         .catch(e => {
           if (e.status === 404 || e.status === 401) {
@@ -25,11 +25,11 @@ const fetchVoidEndpoints = async config => {
   }
 
   for (let result of results) {
+    config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
+    config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
+
     // Ignore unfetchable endpoints
     if (result.datasets) {
-      config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
-      config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
-
       for (let dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
           key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl

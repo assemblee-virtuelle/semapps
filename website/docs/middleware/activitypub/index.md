@@ -22,7 +22,6 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - [SignatureService](../signature)
 
 ## Sub-services
-
 - ActivityService
 - ActorService
 - CollectionService
@@ -31,7 +30,6 @@ This service allows you to create an ActivityPub server with data stored in a tr
 - LikeService
 - ObjectService
 - OutboxService
-- ProxyService
 - ReplyService
 - RegistryService
 

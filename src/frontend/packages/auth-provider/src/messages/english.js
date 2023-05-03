@@ -55,7 +55,9 @@ const englishMessages = {
       user_disconnected: 'You are now disconnected',
       bad_request: 'Bad request (Error message returned by the server: %{error})',
       account_settings_updated: 'Your account settings have been successfully updated',
-      login_to_continue: 'Please login to continue'
+      login_to_continue: 'Please login to continue',
+      choose_pod_provider:
+        'Please choose a POD provider in the list below. All application data will be saved on your POD.'
     }
   }
 };

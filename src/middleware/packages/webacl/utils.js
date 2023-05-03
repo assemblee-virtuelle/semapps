@@ -158,7 +158,7 @@ async function aclGroupExists(groupUri, ctx, graphName) {
 }
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, '_acl/'));
+  return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
 }
 
 function filterAndConvertTriple(quad, property) {

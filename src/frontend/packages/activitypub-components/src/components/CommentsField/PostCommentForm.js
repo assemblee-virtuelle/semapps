@@ -140,7 +140,13 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           return (
             <form onSubmit={handleSubmit} className={classes.form}>
               <Box className={classes.container} onClick={openAuthIfDisconnected}>
-                <Avatar src={identity?.webIdData?.[userDataModel?.fieldsMapping?.image]} className={classes.avatar} />
+                <Avatar
+                  src={
+                    identity?.webIdData?.[userDataModel?.fieldsMapping?.image] ||
+                    identity?.profileData?.[userDataModel?.fieldsMapping?.image]
+                  }
+                  className={classes.avatar}
+                />
                 <RichTextInput
                   source="comment"
                   label=""
@@ -154,9 +160,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
                     },
                     extensions: [
                       ...DefaultEditorOptions.extensions,
-                      placeholder
-                        ? Placeholder.configure({ placeholder })
-                        : null,
+                      placeholder ? Placeholder.configure({ placeholder }) : null,
                       mentions
                         ? CustomMention.configure({
                             HTMLAttributes: {

@@ -51,8 +51,7 @@ const createMethod = config => async (resourceId, params) => {
         '@context': jsonContext,
         '@type': dataModel.types,
         ...params.data
-      }),
-      noToken: dataServers[serverKey].authServer !== true
+      })
     });
 
     // Retrieve newly-created resource
@@ -67,8 +66,7 @@ const createMethod = config => async (resourceId, params) => {
       body: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { <${containerUri}> ldp:contains <${params.id}>. };
-      `,
-      noToken: dataServers[serverKey].authServer !== true
+      `
     });
 
     // Create must return the new data, so get them from the remote URI

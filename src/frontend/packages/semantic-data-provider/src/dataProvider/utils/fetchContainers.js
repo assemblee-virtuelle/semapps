@@ -7,7 +7,7 @@ export const isType = (type, resource) => {
 };
 
 const fetchContainers = async (containers, resourceId, params, config) => {
-  const { dataServers, httpClient, jsonContext } = config;
+  const { httpClient, jsonContext } = config;
 
   // Transform in an containerUri:serverKey object
   const containersServers = Object.keys(containers).reduce(
@@ -19,9 +19,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
   );
 
   const fetchPromises = Object.keys(containersServers).map(containerUri =>
-    httpClient(containerUri, {
-      noToken: !containersServers[containerUri] || dataServers[containersServers[containerUri]].authServer !== true
-    })
+    httpClient(containerUri)
       .then(({ json }) => {
         // If container's context is different, compact it to have an uniform result
         // TODO deep compare if the context is an object
@@ -66,16 +64,27 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         returnData = returnData.filter(resource => {
           return Object.entries(params.filter).some(([k, v]) => {
             if (k == 'q') {
-              // if fiter is q, all properties have to be checked
               return Object.entries(resource).some(([kr, vr]) => {
                 if (!isobject(vr)) {
-                  return Array.isArray(vr) ? vr.some(va => va.includes(v)) : vr.includes(v);
+                  const arrayValues = Array.isArray(vr) ? vr : [vr];
+                  return arrayValues.some(va => {
+                    if (typeof va === 'string' || va instanceof String) {
+                      return va
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .includes(v.toLowerCase().normalize('NFD'));
+                    }
+                  });
                 } else {
                   return false;
                 }
               });
             } else {
-              return Array.isArray(resource[k]) ? resource[k].includes(v) : resource[k].includes(v);
+              if (resource[k]) {
+                return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v);
+              } else {
+                return false;
+              }
             }
           });
         });

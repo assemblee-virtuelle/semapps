@@ -1,54 +1,54 @@
+const fs = require('fs');
 const rdfParser = require('rdf-parse').default;
 const streamifyString = require('streamify-string');
 const { variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const fs = require('fs');
-
 const { defaultToArray } = require('../../utils');
 
 // TODO put each method in a different file (problems with "this" not working)
 module.exports = {
   async updateSingleMirroredResources() {
-    this.logger.info('updateSingleMirroredResources');
-    let singles = await this.broker.call('triplestore.query', {
-      query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#singleMirroredResource> ?o } }`
-    });
-    for (const single of singles) {
-      try {
-        const resourceUri = single.s.value;
+    if (!this.settings.podProvider) {
+      let singles = await this.broker.call('triplestore.query', {
+        query: `SELECT DISTINCT ?s WHERE { GRAPH <${this.settings.mirrorGraphName}> { ?s <http://semapps.org/ns/core#singleMirroredResource> ?o } }`
+      });
+      for (const single of singles) {
+        try {
+          const resourceUri = single.s.value;
 
-        const response = await fetch(resourceUri, { headers: { Accept: MIME_TYPES.JSON } });
-        if (response.status == 403 || response.status == 404 || response.status == 401) {
-          // remove the resource from cache and from its containers
-          await this.broker.call(
-            'ldp.resource.delete',
-            { resourceUri, webId: 'system' },
-            { meta: { forceMirror: true } }
-          );
-          // get the list of all the containers that contain this mirrored resource we are removing
-          const containers = await this.broker.call('triplestore.query', {
-            query: `SELECT ?container WHERE { ?container <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`
-          });
-          for (let containerUri of containers.map(c => c.container.value)) {
+          const response = await fetch(resourceUri, {headers: {Accept: MIME_TYPES.JSON}});
+          if (response.status === 403 || response.status === 404 || response.status === 401) {
+            // remove the resource from cache and from its containers
             await this.broker.call(
-              'ldp.container.detach',
-              { containerUri, resourceUri, webId: 'system' },
+              'ldp.resource.delete',
+              { resourceUri, webId: 'system' },
               { meta: { forceMirror: true } }
             );
-          }
-        } else {
-          // update the local cache
-          let resource = await response.json();
-          resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
+            // get the list of all the containers that contain this mirrored resource we are removing
+            const containers = await this.broker.call('triplestore.query', {
+              query: `SELECT ?container WHERE { ?container <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`
+            });
+            for (let containerUri of containers.map(c => c.container.value)) {
+              await this.broker.call(
+                'ldp.container.detach',
+                { containerUri, resourceUri, webId: 'system' },
+                { meta: { forceMirror: true } }
+              );
+            }
+          } else {
+            // update the local cache
+            let resource = await response.json();
+            resource['http://semapps.org/ns/core#singleMirroredResource'] = new URL(resourceUri).origin;
 
-          await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
+            await this.broker.call('ldp.resource.put', { resource, contentType: MIME_TYPES.JSON });
+          }
+        } catch (e) {
+          // connection errors are not counted as errors that indicate the resource is gone.
+          // those error just indicate that the remote server is not responding. can be temporary.
+          this.logger.warn('Failed to update single mirrored resource: ' + single.s.value);
+          console.error(e);
         }
-      } catch (e) {
-        // connection errors are not counted as errors that indicate the resource is gone.
-        // those error just indicate that the remote server is not responding. can be temporary.
-        this.logger.warn('Failed to update single mirrored resource' + single.s.value);
-        console.error(e);
       }
     }
   },

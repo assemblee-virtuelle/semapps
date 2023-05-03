@@ -14,6 +14,7 @@ const AuthLocalService = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
+    formUrl: null,
     mail: {
       from: null,
       transport: {
@@ -71,6 +72,24 @@ const AuthLocalService = {
 
       return { token, webId: accountData.webId, newUser: false };
     },
+    async logout(ctx) {
+      ctx.meta.$statusCode = 302;
+      ctx.meta.$location = ctx.params.redirectUrl || this.settings.formUrl;
+    },
+    async redirectToForm(ctx) {
+      if (this.settings.formUrl) {
+        const formUrl = new URL(this.settings.formUrl);
+        if (ctx.params) {
+          for (let [key, value] of Object.entries(ctx.params)) {
+            formUrl.searchParams.set(key, value);
+          }
+        }
+        ctx.meta.$statusCode = 302;
+        ctx.meta.$location = formUrl.toString();
+      } else {
+        throw new Error('No formUrl defined in auth.local settings')
+      }
+    },
     async resetPassword(ctx) {
       const { email } = ctx.params;
 
@@ -123,27 +142,47 @@ const AuthLocalService = {
     getApiRoutes() {
       const loginRoute = {
         path: '/auth/login',
+        name: 'auth-login',
         use: [this.passport.initialize()],
         aliases: {
           'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
         }
       };
 
+      const logoutRoute = {
+        path: '/auth/logout',
+        name: 'auth-logout',
+        aliases: {
+          'GET /': 'auth.logout'
+        }
+      };
+
       const signupRoute = {
         path: '/auth/signup',
+        name: 'auth-signup',
         aliases: {
           'POST /': 'auth.signup'
         }
       };
 
+      const formRoute = {
+        path: '/auth',
+        name: 'auth',
+        aliases: {
+          'GET /': 'auth.redirectToForm'
+        }
+      };
+
       const resetPasswordRoute = {
         path: '/auth/reset_password',
+        name: 'auth-reset-password',
         aliases: {
           'POST /': 'auth.resetPassword'
         }
       };
       const setNewPasswordRoute = {
         path: '/auth/new_password',
+        name: 'auth-new-password',
         aliases: {
           'POST /': 'auth.setNewPassword'
         }
@@ -151,6 +190,7 @@ const AuthLocalService = {
 
       const accountSettingsRoute = {
         path: '/auth/account',
+        name: 'auth-account',
         aliases: {
           'GET /': 'auth.account.findSettingsByWebId',
           'POST /': 'auth.account.updateAccountSettings'
@@ -158,7 +198,7 @@ const AuthLocalService = {
         authorization: true
       };
 
-      const routes = [loginRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
+      const routes = [loginRoute, logoutRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
 
       if (this.settings.registrationAllowed) {
         return [...routes, signupRoute];

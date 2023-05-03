@@ -33,6 +33,7 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   }
 
   return {
+    name: 'collection' + collectionPath.replace(new RegExp('/', 'g'), '-'),
     path: collectionPath,
     authorization: false,
     authentication: true,

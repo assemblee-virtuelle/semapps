@@ -19,7 +19,7 @@ const fetchUserConfig = async config => {
     } catch (e) {
       console.error(e);
       // If the webId cannot be fetched, assume an invalid token and disconnect the user
-      localStorage.removeItem('token');
+      localStorage.clear();
       window.location.reload();
       return;
     }
@@ -40,10 +40,10 @@ const fetchUserConfig = async config => {
       config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
     }
   } else {
-    if (podKey) {
-      // If the user is not logged in, ignore the POD server
-      delete config.dataServers[podKey];
-    }
+    // if (podKey) {
+    //   // If the user is not logged in, ignore the POD server
+    //   delete config.dataServers[podKey];
+    // }
   }
 };
 

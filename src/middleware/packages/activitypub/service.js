@@ -37,7 +37,7 @@ const ActivityPubService = {
     }
   },
   dependencies: ['api'],
-  async created() {
+  created() {
     let { baseUri, jsonContext, podProvider, selectActorData, dispatch, reply, like, follow, relay } = this.settings;
 
     this.broker.createService(CollectionService, {

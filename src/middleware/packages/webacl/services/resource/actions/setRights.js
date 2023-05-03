@@ -1,6 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getAclUriFromResourceUri, convertBodyToTriples, filterTriplesForResource } = require('../../../utils');
+const { getAclUriFromResourceUri, convertBodyToTriples, filterTriplesForResource, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } = require('../../../utils');
 const urlJoin = require('url-join');
 
 module.exports = {
@@ -63,7 +63,7 @@ module.exports = {
         isContainer
       );
 
-      // find the difference between newRights and currentPerms. add only what is not existant yet. and remove those that are not needed anymore
+      // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
       let differenceAdd = newRights.filter(
         x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
