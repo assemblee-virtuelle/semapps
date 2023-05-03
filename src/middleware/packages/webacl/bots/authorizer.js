@@ -81,7 +81,8 @@ module.exports = {
                   uri: userUri,
                   ...rule.rights
                 }
-              }
+              },
+              webId: 'system'
             });
           }
         }
