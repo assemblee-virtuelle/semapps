@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { useGetIdentity, useNotify, useRecordContext, useTheme } from 'react-admin';
-import { RichTextInput, DefaultEditorOptions } from 'ra-richtext-tiptap';
+import { useGetIdentity, useNotify, useRecordContext } from 'react-admin';
+import { RichTextInput, DefaultEditorOptions } from 'ra-input-rich-text';
 import Placeholder from '@tiptap/extension-placeholder';
 import { Form } from 'react-final-form';
 import { Button, Box, Avatar } from '@mui/material';
@@ -12,7 +12,7 @@ import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
+const useStyles = makeStyles(theme => ({
   form: {
     marginTop: -12 // Negative margin to keep the form close to the label
   },
@@ -57,7 +57,7 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   button: {
     marginBottom: 15
   }
-})});
+}));
 
 const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }) => {
   const record = useRecordContext();

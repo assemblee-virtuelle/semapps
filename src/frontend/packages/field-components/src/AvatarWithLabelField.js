@@ -1,10 +1,10 @@
 import React from 'react';
-import { useRecordContext, useTheme } from 'react-admin';
+import { useRecordContext } from 'react-admin';
 import { Box, Avatar, Chip } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import LaunchIcon from '@mui/icons-material/Launch';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
+const useStyles = makeStyles(theme => ({
   parent: props => ({
     position: 'relative',
     ...props.parent
@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
   launchIcon: {
     width: 14
   }
-})});
+}));
 
 const handleClick = () => {};
 

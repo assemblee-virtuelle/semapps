@@ -11,21 +11,20 @@ const stopPropagation = e => e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const ImageList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
-  const { ids, data, basePath } = useListContext();
+const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
+  const { data, basePath } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
   return (
     <Grid container spacing={spacing}>
-      {ids.map(id => {
-        if (!data[id] || data[id]['_error']) return null;
-        const externalLink = getExternalLink(data[id]);
+      {data.map(record => {
+        if (!record || record['_error']) return null;
+        const externalLink = getExternalLink(record);
         let child;
 
         if (externalLink) {
           child = (
             <a href={externalLink} target="_blank" rel="noopener noreferrer" onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                record: data[id],
                 basePath: children.props.basePath || basePath,
                 externalLink: true,
                 // Workaround to force ChipField to be clickable
@@ -35,9 +34,8 @@ const ImageList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg,
           );
         } else if (linkType) {
           child = (
-            <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
+            <Link to={linkToRecord(basePath, record.id, linkType)} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                record: data[id],
                 basePath: children.props.basePath || basePath,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
@@ -46,14 +44,13 @@ const ImageList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg,
           );
         } else {
           child = React.cloneElement(React.Children.only(children), {
-            record: data[id],
             basePath: children.props.basePath || basePath
           });
         }
 
         return (
-          <Grid item key={id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
-            <RecordContextProvider value={data[id]} key={id}>
+          <Grid item key={record.id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
+            <RecordContextProvider value={record}>
               {child}
             </RecordContextProvider>
           </Grid>
@@ -63,11 +60,11 @@ const ImageList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg,
   );
 };
 
-ImageList.defaultProps = {
+GridList.defaultProps = {
   xs: 6,
   spacing: 3,
   linkType: 'edit',
   externalLinks: false
 };
 
-export default ImageList;
+export default GridList;

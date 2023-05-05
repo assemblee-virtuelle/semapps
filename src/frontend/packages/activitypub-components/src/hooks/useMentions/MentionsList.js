@@ -1,8 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import makeStyles from '@mui/styles/makeStyles';
-import { useTheme } from 'react-admin';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
+const useStyles = makeStyles(theme => ({
   items: {
     background: '#fff',
     borderRadius: '0.5rem',
@@ -26,7 +25,7 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
       borderColor: '#000'
     }
   }
-})});
+}));
 
 export default forwardRef((props, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);

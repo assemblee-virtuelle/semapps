@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
 import { useNotify, useAuthProvider, useDataProvider, useLocale, useTranslate } from 'react-admin';
-import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, makeStyles, Divider } from '@material-ui/core';
-import { Card, Typography } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
-import StorageIcon from '@material-ui/icons/Storage';
+import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider, Card, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import LockIcon from '@mui/icons-material/Lock';
+import StorageIcon from '@mui/icons-material/Storage';
 
 const useStyles = makeStyles(theme => ({
   '@global': {

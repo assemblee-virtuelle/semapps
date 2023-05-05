@@ -4,8 +4,7 @@ import {
   useRecordContext,
   linkToRecord,
   useGetResourceLabel,
-  useTranslate,
-  useTheme
+  useTranslate
 } from 'react-admin';
 import debounce from 'lodash.debounce';
 import {
@@ -25,7 +24,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDataServers, useDataModel } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     maxWidth: '100%',
@@ -40,7 +39,7 @@ const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
     fontStyle: 'italic',
     color: 'grey'
   }
-})});
+}));
 
 const getServerName = (resourceUri, dataServers) => {
   const server = dataServers && Object.values(dataServers).find(server => resourceUri.startsWith(server.baseUrl));

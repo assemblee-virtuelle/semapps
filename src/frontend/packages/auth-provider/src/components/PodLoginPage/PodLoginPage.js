@@ -1,15 +1,18 @@
-import React, { useMemo } from 'react';
-import { Notification } from 'react-admin';
-import { createTheme, ThemeProvider } from '@material-ui/core';
+import React from 'react';
+import { Notification, useTheme } from 'react-admin';
+import { ThemeProvider } from '@mui/system';
+import { StyledEngineProvider } from '@mui/material';
 import PodLoginPageView from './PodLoginPageView';
 
 const PodLoginPage = props => {
-  const muiTheme = useMemo(() => createTheme(props.theme), [props.theme]);
+  const [theme] = useTheme();
   return (
-    <ThemeProvider theme={muiTheme}>
-      <PodLoginPageView {...props} />
-      <Notification />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <PodLoginPageView {...props} />
+        <Notification />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 
