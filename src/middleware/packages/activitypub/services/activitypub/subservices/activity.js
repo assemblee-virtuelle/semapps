@@ -48,11 +48,15 @@ const ActivityService = {
 
               // Sender's followers list
               case actor.followers:
-                const collection = await ctx.call('activitypub.collection.get', {
-                  collectionUri: recipient,
-                  webId: activity.actor
-                });
-                if (collection && collection.items) output.push(...defaultToArray(collection.items));
+                // Ignore remote followers list
+                // TODO Fetch remote followers list ?
+                if (recipient.startsWith(this.settings.baseUri)) {
+                  const collection = await ctx.call('activitypub.collection.get', {
+                    collectionUri: recipient,
+                    webId: activity.actor
+                  });
+                  if (collection && collection.items) output.push(...defaultToArray(collection.items));
+                }
                 break;
 
               // Simple actor URI
