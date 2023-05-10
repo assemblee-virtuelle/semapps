@@ -84,7 +84,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           // Otherwise, the creation of the relay actor calls the middleware before it started
           if (!initialized) return await next(ctx);
 
-          if (ctx.meta.skipAnnounce === true) return await next(ctx);
+          if (ctx.meta.skipObjectsWatcher === true) return await next(ctx);
 
           let actionReturnValue, resourceUri, containerUri, oldContainers, oldRecipients;
 
