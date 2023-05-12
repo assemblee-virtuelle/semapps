@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
 
 const useCollection = predicateOrUrl => {
-  const { identity } = useGetIdentity();
+  const { identity, loaded: identityLoaded } = useGetIdentity();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -22,11 +22,16 @@ const useCollection = predicateOrUrl => {
     if (!collectionUrl) return;
 
     setLoading(true);
+
+    const headers = new Headers({ Accept: 'application/ld+json' });
+
+    // Add authorization token if it is set and if the user is on the same server as the collection
+    const identityOrigin = identity && (new URL(identity.id)).origin;
+    const collectionOrigin = (new URL(collectionUrl)).origin;
     const token = localStorage.getItem('token');
-    const headers = new Headers({
-      Accept: 'application/ld+json',
-      Authorization: token ? `Bearer ${token}` : undefined
-    });
+    if (identityOrigin === collectionOrigin && token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
 
     fetchUtils
       .fetchJson(collectionUrl, { headers })
@@ -47,13 +52,13 @@ const useCollection = predicateOrUrl => {
         setLoaded(true);
         setLoading(false);
       });
-  }, [setItems, setLoaded, setLoading, setError, collectionUrl]);
+  }, [setItems, setLoaded, setLoading, setError, collectionUrl, identity]);
 
   useEffect(() => {
-    if (!loading && !loaded && !error) {
+    if (identityLoaded && !loading && !loaded && !error) {
       fetch();
     }
-  }, [fetch, loading, loaded, error]);
+  }, [fetch, identityLoaded, loading, loaded, error]);
 
   const addItem = useCallback(
     item => {
