@@ -40,10 +40,10 @@ const fetchUserConfig = async config => {
       config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
     }
   } else {
-    // if (podKey) {
-    //   // If the user is not logged in, ignore the POD server
-    //   delete config.dataServers[podKey];
-    // }
+    if (podKey) {
+      // If the user is not logged in, ignore the POD server
+      delete config.dataServers[podKey];
+    }
   }
 };
 
