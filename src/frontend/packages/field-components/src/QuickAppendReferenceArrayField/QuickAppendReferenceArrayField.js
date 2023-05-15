@@ -1,15 +1,20 @@
 import React, { useState, useMemo } from 'react';
-import { ReferenceArrayField as RaReferenceArrayField, usePermissionsOptimized } from 'react-admin';
+import { ReferenceArrayField as RaReferenceArrayField, useRecordContext, usePermissionsOptimized } from 'react-admin';
 import QuickAppendDialog from './QuickAppendDialog';
 
-const QuickAppendReferenceArrayField = ({ record, reference, source, resource, ...otherProps }) => {
+const QuickAppendReferenceArrayField = ({ reference, source, resource, ...otherProps }) => {
+  const record = useRecordContext();
   const [showDialog, setShowDialog] = useState(false);
   const { permissions } = usePermissionsOptimized(record.id);
+
+  console.log('permissions', permissions)
 
   const canAppend = useMemo(
     () => !!permissions && permissions.some(p => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),
     [permissions]
   );
+
+  console.log('canAppend', canAppend);
 
   if (record?.[source]) {
     if (!Array.isArray(record[source])) {
@@ -21,10 +26,8 @@ const QuickAppendReferenceArrayField = ({ record, reference, source, resource, .
   return (
     <>
       <RaReferenceArrayField
-        record={record}
         reference={reference}
         source={source}
-        resource={resource}
         appendLink={canAppend ? () => setShowDialog(true) : undefined}
         {...otherProps}
       />

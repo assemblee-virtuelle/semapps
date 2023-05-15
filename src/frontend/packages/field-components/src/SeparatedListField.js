@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cloneElement, Children } from 'react';
-import { linkToRecord, useListContext, useResourceContext, Link } from 'react-admin';
+import { linkToRecord, useListContext, useResourceContext, Link, RecordContextProvider } from 'react-admin';
 import { LinearProgress } from '@mui/material';
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -21,24 +21,19 @@ const SeparatedListField = props => {
     link = linkType;
   }
 
-  if (isLoading === true) {
-    return <LinearProgress />;
-  }
+  if (isLoading) return <LinearProgress />;
   
   return (
     <React.Fragment>
-      {data.map((dataItem, i) => {
-        if (!dataItem.id) return null;
+      {data.map((record, i) => {
+        if (!record.id) return null;
         const resourceLinkPath =
-          link !== false && (typeof link === 'function' ? link(dataItem.id) : linkToRecord(basePath, dataItem.id, link));
+          link !== false && (typeof link === 'function' ? link(record.id) : linkToRecord(basePath, record.id, link));
         if (resourceLinkPath) {
           return (
-            <span key={dataItem.id}>
+            <span key={record.id}>
               <Link to={resourceLinkPath} onClick={stopPropagation}>
                 {cloneElement(Children.only(children), {
-                  //record: dataItem.id,
-                  resource,
-                  basePath,
                   // Workaround to force ChipField to be clickable
                   onClick: handleClick
                 })}
@@ -49,12 +44,10 @@ const SeparatedListField = props => {
         }
 
         return (
-          <span key={dataItem.id}>
-            {cloneElement(Children.only(children), {
-              //record: dataItem.id,
-              resource,
-              basePath
-            })}
+          <span key={record.id}>
+            <RecordContextProvider value={record}>
+              {children}
+            </RecordContextProvider>
             {i < data.length - 1 && separator}
           </span>
         );

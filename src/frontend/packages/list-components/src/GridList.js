@@ -12,8 +12,9 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
-  const { data, basePath } = useListContext();
+  const { data, basePath, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
+  if (isLoading) return null;
   return (
     <Grid container spacing={spacing}>
       {data.map(record => {
@@ -25,7 +26,6 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
           child = (
             <a href={externalLink} target="_blank" rel="noopener noreferrer" onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                basePath: children.props.basePath || basePath,
                 externalLink: true,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
@@ -36,16 +36,13 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
           child = (
             <Link to={linkToRecord(basePath, record.id, linkType)} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                basePath: children.props.basePath || basePath,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
               })}
             </Link>
           );
         } else {
-          child = React.cloneElement(React.Children.only(children), {
-            basePath: children.props.basePath || basePath
-          });
+          child = children;
         }
 
         return (

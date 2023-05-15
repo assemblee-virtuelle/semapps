@@ -178,8 +178,8 @@ const LocationInput = ({
 };
 
 LocationInput.defaultProps = {
-  variant: 'filled',
-  margin: 'dense'
+  variant: 'outlined',
+  size: 'small'
 };
 
 export default LocationInput;

@@ -25,7 +25,7 @@ const defaultdomainMapping = {
   },
   'opencollective.com': {
     label: 'Open Collective',
-    icon: <Avatar src="https://opencollective.com/static/images/opencollective-icon.svg" />,
+    icon: <Avatar component="span" src="https://opencollective.com/static/images/opencollective-icon.svg" />,
     color: 'white',
     contrastText: '#297EFF'
   },
@@ -88,10 +88,10 @@ const MultiUrlField = ({ source, domainMapping, ...rest }) => {
       contrastText: 'black'
     };
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link}>
+      <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link} key={index}>
         <Chip
-          {...rest}
-          icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText } })}
+          component="span"
+          icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText, width: 18, height: 18 } })}
           size="small"
           label={chip.label}
           classes={{ root: classes.chip, label: classes.label }}
