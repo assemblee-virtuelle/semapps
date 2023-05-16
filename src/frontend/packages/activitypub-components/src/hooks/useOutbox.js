@@ -20,6 +20,7 @@ const useOutbox = () => {
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
     async activity => {
+      if (!outboxUrl) throw new Error('Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox');
       const token = localStorage.getItem('token');
       const { headers } = await fetchUtils.fetchJson(outboxUrl, {
         method: 'POST',
@@ -72,7 +73,7 @@ const useOutbox = () => {
     }
   }, [sparqlEndpoint, outboxUrl]);
 
-  return { post, fetch, url: outboxUrl, owner: identity?.id };
+  return { post, fetch, url: outboxUrl, loaded: !!outboxUrl, owner: identity?.id };
 };
 
 export default useOutbox;
