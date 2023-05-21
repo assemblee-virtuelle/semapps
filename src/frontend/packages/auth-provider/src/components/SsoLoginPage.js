@@ -83,7 +83,7 @@ const SsoLoginPage = ({ theme, history, location, buttons, userResource, propert
               history.push(searchParams.get('redirect'));
             } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
               notify('auth.message.new_user_created', 'info');
-              history.push('/' + userResource + '/' + encodeURIComponent(webId) + '/edit');
+              history.push('/' + userResource + '/' + encodeURIComponent(webId));
             } else {
               notify('auth.message.user_connected', 'info');
               history.push('/');
