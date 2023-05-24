@@ -3,21 +3,27 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
 const { getSlugFromUri, getContainerFromUri, defaultToArray } = require('../utils');
 
-const BotService = {
-  name: '', // Must be overwritten
+const BotMixin = {
   settings: {
     actor: {
       uri: null,
+      username: null,
       name: null
     }
   },
-  dependencies: ['ldp', 'activitypub.actor'],
+  dependencies: [
+    'activitypub',
+    'activitypub.follow', // Ensure the /followers and /following collection are registered
+    'auth.account',
+    'ldp.container',
+    'ldp.registry'
+  ],
   async started() {
     // Ensure LDP sub-services have been started
     await this.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
     const actorSettings = this.settings.actor;
-    if (!actorSettings.uri || !actorSettings.name) {
+    if (!actorSettings.uri || !actorSettings.name || !actorSettings.username) {
       return Promise.reject(new Error('Please set the actor settings in schema!'));
     }
 
@@ -28,17 +34,33 @@ const BotService = {
     if (!actorExist) {
       console.log(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
 
-      await this.broker.call('ldp.container.post', {
-        containerUri: getContainerFromUri(actorSettings.uri),
-        slug: getSlugFromUri(actorSettings.uri),
-        resource: {
-          '@context': 'https://www.w3.org/ns/activitystreams',
-          type: ACTOR_TYPES.APPLICATION,
-          preferredUsername: actorSettings.username,
-          name: actorSettings.name
+      const account = await this.broker.call(
+        'auth.account.create',
+        {
+          username: actorSettings.username,
+          webId: actorSettings.uri
         },
-        contentType: MIME_TYPES.JSON
-      });
+        { meta: { isSystemCall: true } }
+      );
+
+      try {
+        await this.broker.call('ldp.container.post', {
+          containerUri: getContainerFromUri(actorSettings.uri),
+          slug: getSlugFromUri(actorSettings.uri),
+          resource: {
+            '@context': 'https://www.w3.org/ns/activitystreams',
+            type: ACTOR_TYPES.APPLICATION,
+            preferredUsername: actorSettings.username,
+            name: actorSettings.name
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+      } catch(e) {
+        // Delete account if resource creation failed, or it may cause problems when retrying
+        await this.broker.call('auth.account.remove', { id: account['@id'] });
+        throw e;
+      }
 
       if (this.actorCreated) {
         const actor = await this.broker.call('activitypub.actor.awaitCreateComplete', { actorUri: actorSettings.uri });
@@ -52,10 +74,10 @@ const BotService = {
     }
   },
   events: {
-    'activitypub.inbox.received'(params) {
+    'activitypub.inbox.received'(ctx) {
       if (this.inboxReceived) {
-        if (params.recipients.includes(this.settings.actor.uri)) {
-          this.inboxReceived(params.activity);
+        if (ctx.params.recipients.includes(this.settings.actor.uri)) {
+          this.inboxReceived(ctx.params.activity);
         }
       }
     }
@@ -70,4 +92,4 @@ const BotService = {
   }
 };
 
-module.exports = BotService;
+module.exports = BotMixin;
