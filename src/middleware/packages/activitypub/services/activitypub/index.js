@@ -81,7 +81,8 @@ const ActivityPubService = {
 
     this.broker.createService(InboxService, {
       settings: {
-        baseUri
+        baseUri,
+        podProvider
       }
     });
 

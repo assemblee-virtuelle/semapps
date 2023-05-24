@@ -14,7 +14,8 @@ const InboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead
+    permissions: collectionPermissionsWithAnonRead,
+    podProvider: false
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
@@ -69,7 +70,10 @@ const InboxService = {
       });
 
       // Attach the activity to the activities container, in order to use the container options
-      await ctx.call('activitypub.activity.attach', { resourceUri: activity.id, webId: actorUri });
+      await ctx.call('activitypub.activity.attach', {
+        resourceUri: activity.id,
+        webId: this.settings.podProvider ? actorUri : 'system'
+      });
 
       // Attach the activity to the inbox
       await ctx.call('activitypub.collection.attach', {
