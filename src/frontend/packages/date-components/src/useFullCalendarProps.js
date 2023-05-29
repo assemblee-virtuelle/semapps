@@ -1,13 +1,14 @@
 import React, { useMemo, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useListContext, useCreatePath } from 'react-admin';
 
 const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
+  const { data, isLoading, resource } = useListContext();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { ids, data, resource } = useListContext();
   const createPath = useCreatePath();
 
-  let query = new URLSearchParams(navigate.location.search);
+  let query = new URLSearchParams(location.search);
 
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
@@ -18,25 +19,24 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   // Change the query string when month change
   const datesSet = useCallback(
     ({ view }) => {
-      query.set('month', view.currentStart.getMonth() + 1);
-      query.set('year', view.currentStart.getFullYear());
-      navigate.replace({ pathname: navigate.location.pathname, search: '?' + query.toString() });
+      setSearchParams({ month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() });
     },
-    [query]
+    [setSearchParams]
   );
 
   const events = useMemo(
     () =>
-      ids
-        .filter(id => data[id])
-        .map(id => ({
-          id,
-          title: typeof label === 'string' ? data[id][label] : label(data[id]),
-          start: typeof startDate === 'string' ? data[id][startDate] : startDate(data[id]),
-          end: typeof endDate === 'string' ? data[id][endDate] : endDate(data[id]),
-          url: createPath({ resource, id, type: linkType })
+      !isLoading &&
+      data
+        .filter(record => record)
+        .map(record => ({
+          id: record.id,
+          title: typeof label === 'string' ? record[label] : label(record),
+          start: typeof startDate === 'string' ? record[startDate] : startDate(record),
+          end: typeof endDate === 'string' ? record[endDate] : endDate(record),
+          url: createPath({ resource, id: record.id, type: linkType })
         })),
-    [data, ids, resource]
+    [isLoading, data, resource, createPath]
   );
 
   return {

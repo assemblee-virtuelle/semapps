@@ -97,7 +97,7 @@ const ChipList = props => {
         } else if (linkType) {
           return (
             <RecordContextProvider value={record} key={record.id}>
-              <Link className={classes.link} to={createPath({ record, id: record.id, type: linkType })} onClick={stopPropagation}>
+              <Link className={classes.link} to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
                 <ChipField
                   source={primaryText}
                   className={classes.chipField}
