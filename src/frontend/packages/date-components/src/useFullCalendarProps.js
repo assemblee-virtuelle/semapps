@@ -1,10 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useListContext, linkToRecord } from 'react-admin';
+import { useListContext, useCreatePath } from 'react-admin';
 
 const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   const navigate = useNavigate();
-  const { ids, data, basePath } = useListContext();
+  const { ids, data, resource } = useListContext();
+  const createPath = useCreatePath();
 
   let query = new URLSearchParams(navigate.location.search);
 
@@ -33,9 +34,9 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
           title: typeof label === 'string' ? data[id][label] : label(data[id]),
           start: typeof startDate === 'string' ? data[id][startDate] : startDate(data[id]),
           end: typeof endDate === 'string' ? data[id][endDate] : endDate(data[id]),
-          url: linkToRecord(basePath, id) + '/' + linkType
+          url: createPath({ resource, id, type: linkType })
         })),
-    [data, ids, basePath]
+    [data, ids, resource]
   );
 
   return {

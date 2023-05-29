@@ -1,10 +1,9 @@
 import React from 'react';
 import {
   ChipField,
-  useResourceContext,
+  useCreatePath,
   useListContext,
   sanitizeListRestProps,
-  linkToRecord,
   RecordContextProvider,
   Link
 } from 'react-admin';
@@ -59,8 +58,9 @@ const ChipList = props => {
     externalLinks = false,
     ...rest
   } = props;
-  const { data, isLoading, basePath } = useListContext(props);
+  const { data, isLoading } = useListContext(props);
   const getExternalLink = useGetExternalLink(externalLinks);
+  const createPath = useCreatePath();
 
   const classes = useStyles(props);
   const Component = component;
@@ -98,7 +98,7 @@ const ChipList = props => {
         } else if (linkType) {
           return (
             <RecordContextProvider value={record} key={record.id}>
-              <Link className={classes.link} to={linkToRecord(basePath, record.id, linkType)} onClick={stopPropagation}>
+              <Link className={classes.link} to={createPath({ record, id: record.id, type: linkType })} onClick={stopPropagation}>
                 <ChipField
                   source={primaryText}
                   className={classes.chipField}

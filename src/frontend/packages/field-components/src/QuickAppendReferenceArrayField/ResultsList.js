@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   useDataProvider,
   useRecordContext,
-  linkToRecord,
+  useCreatePath,
   useGetResourceLabel,
+  useResourceDefinition,
   useTranslate
 } from 'react-admin';
 import debounce from 'lodash.debounce';
@@ -55,6 +56,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   const dataProvider = useDataProvider();
   const dataServers = useDataServers();
   const record = useRecordContext();
+  const createPath = useCreatePath();
 
   const referenceDefinition = useResourceDefinition({resource: reference});
   const getResourceLabel = useGetResourceLabel();
@@ -115,7 +117,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
             <ListItemText className={classes.primaryText} primary={resource[dataModel.fieldsMapping.title]} />
             <ListItemText className={classes.secondaryText} primary={getServerName(resource.id, dataServers)} />
             <ListItemSecondaryAction>
-              <a href={linkToRecord('/' + reference, resource.id, 'show')} target="_blank" rel="noopener noreferrer">
+              <a href={createPath({ resource: reference, id: resource.id, type: 'show' })} target="_blank" rel="noopener noreferrer">
                 <IconButton edge="end" size="large">
                   <VisibilityIcon />
                 </IconButton>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useListContext, linkToRecord, Link, RecordContextProvider } from 'react-admin';
+import { useListContext, useCreatePath, Link, RecordContextProvider } from 'react-admin';
 import { Grid } from '@mui/material';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
@@ -12,8 +12,9 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
-  const { data, basePath, isLoading } = useListContext();
+  const { data, resource, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
+  const createPath = useCreatePath();
   if (isLoading) return null;
   return (
     <Grid container spacing={spacing}>
@@ -34,7 +35,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
           );
         } else if (linkType) {
           child = (
-            <Link to={linkToRecord(basePath, record.id, linkType)} onClick={stopPropagation}>
+            <Link to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick

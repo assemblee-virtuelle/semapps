@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cloneElement, Children } from 'react';
-import { linkToRecord, useListContext, useResourceContext, Link, RecordContextProvider } from 'react-admin';
+import { useCreatePath, useListContext, Link, RecordContextProvider } from 'react-admin';
 import { LinearProgress } from '@mui/material';
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -12,10 +12,10 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const SeparatedListField = props => {
-  let { classes: classesOverride, className, children, link = 'edit', linkType, separator = ',\u00A0' } = props;
+  let { children, link = 'edit', linkType, separator = ',\u00A0' } = props;
   const { data, isLoading, resource } = useListContext(props);
-  const basePath = '/' + useResourceContext(resource);
-  
+  const createPath = useCreatePath();
+
   if (linkType !== undefined) {
     console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
     link = linkType;
@@ -28,7 +28,7 @@ const SeparatedListField = props => {
       {data.map((record, i) => {
         if (!record.id) return null;
         const resourceLinkPath =
-          link !== false && (typeof link === 'function' ? link(record.id) : linkToRecord(basePath, record.id, link));
+          link !== false && (typeof link === 'function' ? link(record.id) : createPath({ resource, id: record.id, type: link }));
         if (resourceLinkPath) {
           return (
             <span key={record.id}>
