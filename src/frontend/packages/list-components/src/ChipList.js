@@ -13,7 +13,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap'
@@ -29,11 +29,10 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     fontSize: 35,
     position: 'relative',
-    top: -2,
-    left: -2
+    top: 2
   },
   launchIcon: {
-    width: 16,
+    width: 20,
     paddingRight: 6,
     marginLeft: -10
   }
@@ -58,7 +57,7 @@ const ChipList = props => {
     externalLinks = false,
     ...rest
   } = props;
-  const { data, isLoading } = useListContext(props);
+  const { data, isLoading, resource } = useListContext(props);
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
 
