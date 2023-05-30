@@ -9,7 +9,6 @@ import { useTheme } from 'react-admin';
 // Do not show Export and Refresh buttons on mobile
 const ListActionsWithPermissions = ({
   bulkActions,
-  basePath,
   sort,
   displayedFilters,
   exporter,
@@ -38,10 +37,10 @@ const ListActionsWithPermissions = ({
           context: 'button'
         })}
       {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && (
-        <CreateButton basePath={basePath} />
+        <CreateButton />
       )}
       {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
-        <PermissionsButton basePath={basePath} record={createContainerUri} />
+        <PermissionsButton record={createContainerUri} />
       )}
       {!xs && exporter !== false && (
         <ExportButton
@@ -54,7 +53,6 @@ const ListActionsWithPermissions = ({
       )}
       {bulkActions &&
         React.cloneElement(bulkActions, {
-          basePath,
           filterValues,
           resource,
           selectedIds,

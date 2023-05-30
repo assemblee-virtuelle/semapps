@@ -25,11 +25,17 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
 
   const { data } = useGetList(
     'Person',
-    { page: 1, perPage: 100 },
-    { field: 'pair:label', order: 'ASC' },
-    { q: inputValue },
-    { enabled: inputValue.length > 0 }
+    {
+      pagination: { page: 1, perPage: 100 },
+      sort: { field: 'pair:label', order: 'ASC' },
+      filter: { q: inputValue },
+    },
+    { 
+      enabled: inputValue.length > 0 
+    }
   );
+
+  console.log('inputvalue', inputValue, data);
 
   useEffect(() => {
     setOptions(data?.length > 0 ? Object.values(data) : []);
@@ -60,8 +66,8 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       renderInput={params => (
         <TextField {...params} label={translate('auth.input.agent_select')} variant="filled" margin="dense" fullWidth />
       )}
-      renderOption={option => (
-        <List dense className={classes.list}>
+      renderOption={(props, option) => (
+        <List dense className={classes.list} {...props}>
           <ListItem button>
             <ListItemAvatar>
               <Avatar src={option.image}>

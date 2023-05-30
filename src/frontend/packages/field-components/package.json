@@ -15,10 +15,8 @@
   },
   "dependencies": {
     "@semapps/semantic-data-provider": "0.4.6",
-    "final-form": "^4.20.8",
     "lodash.debounce": "^4.0.8",
-    "react-icons": "^4.4.0",
-    "react-final-form": "^6.5.9"
+    "react-icons": "^4.4.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",

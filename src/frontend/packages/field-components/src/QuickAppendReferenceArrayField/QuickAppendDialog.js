@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { Button, useDataProvider, useTranslate, useRefresh, useNotify, useGetResourceLabel } from 'react-admin';
+import { Button, useDataProvider, useTranslate, useRefresh, useNotify, useGetResourceLabel, useShowContext } from 'react-admin';
 import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { Field, Form } from 'react-final-form';
+import { useForm } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
 import ResultsList from './ResultsList';
 import { useDataModel } from '@semapps/semantic-data-provider';
@@ -26,12 +26,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Input = ({ meta: { isTouched, error }, input: inputProps, ...props }) => (
-  <TextField error={!!(isTouched && error)} helperText={isTouched && error} {...inputProps} {...props} fullWidth />
-);
-
-const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, reference }) => {
+const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => {
   const classes = useStyles();
+  const { resource } = useShowContext();
   const [keyword, setKeyword] = useState('');
   const [panel, setPanel] = useState('find');
   const dataProvider = useDataProvider();
@@ -40,6 +37,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
   const notify = useNotify();
   const getResourceLabel = useGetResourceLabel();
   const dataModel = useDataModel(reference);
+  const { register, setValue, handleSubmit } = useForm();
 
   const appendLink = useCallback(
     async objectUri => {
@@ -103,7 +101,10 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
               source={source}
               reference={reference}
               appendLink={appendLink}
-              switchToCreate={() => setPanel('create')}
+              switchToCreate={() => {
+                setValue('title', keyword);
+                setPanel('create');
+              }}
             />
           </DialogContent>
           <DialogActions className={classes.actions}>
@@ -111,41 +112,30 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, resource, source, refere
           </DialogActions>
         </>
       ) : (
-        <Form
-          onSubmit={create}
-          initialValues={{
-            title: keyword
-          }}
-          render={({ handleSubmit, submitting }) => (
-            <form onSubmit={handleSubmit}>
-              <DialogTitle className={classes.title}>
-                {translate('ra.page.create', { name: getResourceLabel(reference, 1) })}
-              </DialogTitle>
-              <DialogContent className={classes.addForm}>
-                <Field
-                  autoFocus
-                  id="title"
-                  name="title"
-                  component={Input}
-                  label="Titre"
-                  disabled={submitting}
-                  variant="filled"
-                  margin="dense"
-                />
-              </DialogContent>
-              <DialogActions className={classes.actions}>
-                <Button
-                  label="ra.action.create"
-                  variant="contained"
-                  startIcon={<AddIcon />}
-                  type="submit"
-                  disabled={submitting}
-                />
-                <Button label="ra.action.close" variant="text" onClick={onClose} />
-              </DialogActions>
-            </form>
-          )}
-        />
+        <form onSubmit={handleSubmit(create)}>
+          <DialogTitle className={classes.title}>
+            {translate('ra.page.create', { name: getResourceLabel(reference, 1) })}
+          </DialogTitle>
+          <DialogContent className={classes.addForm}>
+            <TextField
+              {...register("title")}
+              autoFocus
+              label="Titre"
+              variant="filled"
+              margin="dense"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions className={classes.actions}>
+            <Button
+              label="ra.action.create"
+              variant="contained"
+              startIcon={<AddIcon />}
+              type="submit"
+            />
+            <Button label="ra.action.close" variant="text" onClick={onClose} />
+          </DialogActions>
+        </form>
       )}
     </Dialog>
   );
