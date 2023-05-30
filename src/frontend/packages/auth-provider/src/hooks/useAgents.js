@@ -1,10 +1,10 @@
 import { useEffect, useCallback, useState } from 'react';
-import { usePermissionsOptimized, useAuthProvider } from 'react-admin';
+import { usePermissions, useAuthProvider } from 'react-admin';
 import { defaultToArray } from '../utils';
 import { CLASS_AGENT, GROUP_AGENT, USER_AGENT, ANONYMOUS_AGENT, AUTHENTICATED_AGENT } from '../constants';
 
 const useAgents = uri => {
-  const { permissions } = usePermissionsOptimized(uri);
+  const { permissions } = usePermissions(uri);
   const authProvider = useAuthProvider();
   const [agents, setAgents] = useState({});
 

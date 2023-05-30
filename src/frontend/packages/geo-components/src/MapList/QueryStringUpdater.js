@@ -1,23 +1,27 @@
-import React from 'react';
 import { useMapEvents } from 'react-leaflet';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 // Keep the zoom and center in query string, so that when we navigate back to the page, it stays focused on the same area
 const QueryStringUpdater = () => {
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useMapEvents({
     moveend: test => {
-      query.set('lat', test.target.getCenter().lat);
-      query.set('lng', test.target.getCenter().lng);
-      navigate.replace({ pathname: navigate.location.pathname, search: '?' + query.toString() });
+      setSearchParams(params => ({ 
+        ...Object.fromEntries(params), 
+        lat: test.target.getCenter().lat, 
+        lng: test.target.getCenter().lng, 
+        zoom: test.target.getZoom() 
+      }));
     },
     zoomend: test => {
-      query.set('zoom', test.target.getZoom());
-      navigate.replace({ pathname: navigate.location.pathname, search: '?' + query.toString() });
+      setSearchParams(params => ({ 
+        ...Object.fromEntries(params), 
+        zoom: test.target.getZoom() 
+      }));
     }
   });
+
   return null;
 };
 

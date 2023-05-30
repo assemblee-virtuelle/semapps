@@ -1,5 +1,5 @@
 import React from 'react';
-import { useRecordContext, useTheme } from 'react-admin';
+import { useRecordContext } from 'react-admin';
 import { Chip, Avatar } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -54,6 +54,7 @@ const defaultdomainMapping = {
     contrastText: 'white'
   }
 };
+
 const useStyles = makeStyles(() => ({
   link: {
     textDecoration: 'unset',
@@ -72,7 +73,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MultiUrlField = ({ source, domainMapping, ...rest }) => {
+const MultiUrlField = ({ source, domainMapping }) => {
   const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
   const record = useRecordContext();
   const classes = useStyles();

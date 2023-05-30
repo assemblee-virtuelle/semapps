@@ -1,9 +1,13 @@
 import React from 'react';
+import { useRecordContext } from 'react-admin';
 import Markdown from 'markdown-to-jsx';
 import get from 'lodash/get';
 
-const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest }) =>
-  record && get(record, source) ? (
+const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
+  const record = useRecordContext();
+  if (!record || !get(record, source)) return null;
+
+  return (
     <Markdown
       options={{
         createElement(type, props, children) {
@@ -27,7 +31,8 @@ const MarkdownField = ({ source, record, LabelComponent, overrides = {}, ...rest
     >
       {get(record, source)}
     </Markdown>
-  ) : null;
+  )
+};
 
 MarkdownField.defaultProps = {
   LabelComponent: 'h2'

@@ -19,7 +19,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   // Change the query string when month change
   const datesSet = useCallback(
     ({ view }) => {
-      setSearchParams({ month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() });
+      setSearchParams(params => ({ ...params, month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() }));
     },
     [setSearchParams]
   );

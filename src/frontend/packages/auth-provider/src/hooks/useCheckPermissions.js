@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { usePermissionsOptimized, useRedirect, useNotify, useGetIdentity } from 'react-admin';
+import { usePermissions, useRedirect, useNotify, useGetIdentity } from 'react-admin';
 import { rights, forbiddenErrors } from '../constants';
 
 const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
   const { identity, isLoading } = useGetIdentity();
-  const { permissions } = usePermissionsOptimized(uri);
+  const { permissions } = usePermissions(uri);
   const notify = useNotify();
   const redirect = useRedirect();
 

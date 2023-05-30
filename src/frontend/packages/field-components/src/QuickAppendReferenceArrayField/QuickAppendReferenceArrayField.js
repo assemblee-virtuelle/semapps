@@ -1,12 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { useRecordContext, usePermissionsOptimized } from 'react-admin';
+import { useRecordContext, usePermissions } from 'react-admin';
 import { ReferenceArrayField } from "../index";
 import QuickAppendDialog from './QuickAppendDialog';
 
 const QuickAppendReferenceArrayField = ({ reference, source, resource, children, ...otherProps }) => {
   const record = useRecordContext();
   const [showDialog, setShowDialog] = useState(false);
-  const { permissions } = usePermissionsOptimized(record.id);
+  const { permissions } = usePermissions(record.id);
 
   const canAppend = useMemo(
     () => !!permissions && permissions.some(p => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),

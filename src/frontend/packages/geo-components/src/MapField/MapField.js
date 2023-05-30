@@ -1,11 +1,15 @@
 import React from 'react';
+import { useRecordContext } from 'react-admin';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { Box, Typography } from '@mui/material';
 import ChangeView from './ChangeView';
 
-const MapField = ({ record, latitude, longitude, address, height, typographyProps, ...rest }) => {
-  // Do not display the component if it has no latitude or longitude
+const MapField = ({ latitude, longitude, address, height, typographyProps, ...rest }) => {
+  const record = useRecordContext();
   const position = [latitude(record), longitude(record)];
+
+  // Do not display the component if it has no latitude or longitude
+  
   if (!position[0] || !position[1]) return null;
 
   return (

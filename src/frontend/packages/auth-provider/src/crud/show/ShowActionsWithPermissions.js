@@ -1,11 +1,12 @@
 import React from 'react';
-import { EditButton, ListButton, TopToolbar, usePermissionsOptimized, useResourceDefinition } from 'react-admin';
+import { EditButton, ListButton, TopToolbar, usePermissions, useResourceDefinition, useRecordContext } from 'react-admin';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToControl, rightsToEdit } from '../../constants';
 
-const ShowActionsWithPermissions = ({ record }) => {
+const ShowActionsWithPermissions = () => {
   const { hasList, hasEdit } = useResourceDefinition();
-  const { permissions } = usePermissionsOptimized(record?.id);
+  const record = useRecordContext();
+  const { permissions } = usePermissions(record?.id);
   return (
     <TopToolbar>
       {hasList && <ListButton record={record} />}
