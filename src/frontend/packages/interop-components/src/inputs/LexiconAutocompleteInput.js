@@ -1,18 +1,20 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, useInput, useTranslate, useLocale, useNotify, useTheme } from 'react-admin';
+import React, { useState, useMemo, useEffect, forwardRef } from 'react';
+import { FieldTitle, useInput, useTranslate, useLocale, useNotify, useResourceContext, InputHelperText } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 import LanguageIcon from '@mui/icons-material/Language';
 import AddIcon from '@mui/icons-material/Add';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
-import { styled } from '@mui/system';
 
-const StyledLanguageIcon = styled(LanguageIcon)(() => { const [theme] = useTheme(); return ({
-  color: theme.palette.text.secondary,
-  marginRight: theme.spacing(2)
-})});
+const useStyles = makeStyles(theme => ({
+  icon: {
+    color: theme.palette.text.secondary,
+    marginRight: theme.spacing(2)
+  }
+}));
 
 const selectOptionText = (option, optionText) => {
   if (typeof option === 'string') {
@@ -28,29 +30,31 @@ const selectOptionText = (option, optionText) => {
 
 const capitalizeFirstLetter = string => string && string.charAt(0).toUpperCase() + string.slice(1);
 
-const LexiconAutocompleteInput = ({
+const LexiconAutocompleteInput = forwardRef(({
   fetchLexicon,
-  resource,
   source,
-  initialValue,
+  defaultValue,
   label,
   parse,
   optionText,
   helperText,
   ...rest
-}) => {
+}, ref) => { 
+  const resource = useResourceContext();
+  const classes = useStyles();
   const locale = useLocale();
   const translate = useTranslate();
   const notify = useNotify();
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    input: { value, onChange, onBlur, onFocus },
-    isRequired,
-    meta: { error, submitError, isTouched }
-  } = useInput({ source, initialValue, ...rest });
+    field: { value, onChange, onBlur },
+    fieldState: { isTouched, error },
+    formState: { submitError },
+    isRequired
+  } = useInput({ source, defaultValue, ...rest });
 
-  const [keyword, setKeyword] = useState(initialValue); // Typed keywords
+  const [keyword, setKeyword] = useState(defaultValue); // Typed keywords
   const [options, setOptions] = useState([]); // Options returned by MapBox
 
   const throttledFetchLexicon = useMemo(
@@ -58,26 +62,28 @@ const LexiconAutocompleteInput = ({
       throttle((keyword, callback) => {
         fetchLexicon({ keyword, locale })
           .then(data => callback(data))
-          .catch(e => notify(e.message, {type: 'error'}));
+          .catch(e => notify(e.message, { type: 'error' }));
       }, 200),
     [locale, fetchLexicon, notify]
   );
 
   useEffect(() => {
-    // Do not trigger search if text input is empty or if it is the same as the current value
-    if (!keyword /*|| keyword === selectOptionText(value, optionText)*/) {
+    // Do not trigger search if text input is empty
+    if (!keyword) {
       return undefined;
     } else {
       throttledFetchLexicon(keyword, results => setOptions(results));
     }
-  }, [value, keyword, optionText, throttledFetchLexicon]);
+  }, [value, keyword, throttledFetchLexicon]);
 
   return (
     <Autocomplete
+      fullWidth
       freeSolo
       autoComplete
       value={value || null}
-      openOnFocus={!!initialValue}
+      ref={ref}
+      openOnFocus={!!defaultValue}
       // We must include the current value as an option, to avoid this error
       // https://github.com/mui-org/material-ui/issues/18514#issuecomment-636096386
       options={value ? [value, ...options] : options}
@@ -128,7 +134,6 @@ const LexiconAutocompleteInput = ({
                 }
               },
               onFocus: e => {
-                onFocus(e);
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
@@ -141,18 +146,16 @@ const LexiconAutocompleteInput = ({
               )
             }
             error={!!(isTouched && (error || submitError))}
-            // helperText={<InputHelperText touched={isTouched} error={error || submitError} helperText={helperText} />}
-            {...rest}
+            helperText={<InputHelperText touched={isTouched} error={error || submitError} helperText={helperText} />}
           />
         );
       }}
-      renderOption={option => {
+      renderOption={(props, option) => {
         const matches = highlightMatch(option.label, keyword);
         const parts = highlightParse(option.label, matches);
-
         return (
-          <Grid container alignItems="center">
-            <Grid item>{React.createElement(option.icon || StyledLanguageIcon)}</Grid>
+          <Grid container alignItems="center" {...props} key={option.uri || 'create'}>
+            <Grid item>{React.createElement(option.icon || LanguageIcon, { className: classes.icon })}</Grid>
             <Grid item xs>
               {typeof parts === 'string'
                 ? parts
@@ -170,11 +173,10 @@ const LexiconAutocompleteInput = ({
       }}
     />
   );
-};
+});
 
 LexiconAutocompleteInput.defaultProps = {
-  variant: 'filled',
-  margin: 'dense'
+  optionText: 'label'
 };
 
 export default LexiconAutocompleteInput;
