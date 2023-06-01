@@ -11,7 +11,6 @@ const external = createFilter(
     'react',
     'react-admin',
     'react-router-dom',
-    'react-final-form',
     'react-router',
     '@mui/**',
     '@semapps/**',

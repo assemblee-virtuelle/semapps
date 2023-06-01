@@ -1,30 +1,22 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Field, Form } from 'react-final-form';
-import { useTranslate, useNotify, useSafeSetState, useTheme } from 'react-admin';
+import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { Button, CardActions, CircularProgress, TextField } from '@mui/material';
+import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { default as useSignup } from '../hooks/useSignup';
 
-const useStyles = makeStyles(() => { const [theme] = useTheme(); return ({
-  form: {
-    padding: '0 1em 1em 1em'
-  },
-  input: {
-    marginTop: '1em'
+const useStyles = makeStyles(theme => ({
+  content: {
+    width: 300,
   },
   button: {
-    width: '100%'
+    marginTop: theme.spacing(2),
   },
   icon: {
-    marginRight: theme.spacing(1)
+    margin: theme.spacing(0.3),
   }
-})});
-
-const Input = ({ meta: { isTouched, error }, input: inputProps, ...props }) => (
-  <TextField error={!!(isTouched && error)} helperText={isTouched && error} {...inputProps} {...props} fullWidth />
-);
+}));
 
 const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const [loading, setLoading] = useSafeSetState(false);
@@ -34,18 +26,6 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const classes = useStyles();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-
-  const validate = values => {
-    const errors = { email: undefined, password: undefined };
-
-    if (!values.email) {
-      errors.email = translate('ra.validation.required');
-    }
-    if (!values.password) {
-      errors.password = translate('ra.validation.required');
-    }
-    return errors;
-  };
 
   const submit = values => {
     setLoading(true);
@@ -85,49 +65,51 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   return (
     <Form
       onSubmit={submit}
-      validate={validate}
-      initialValues={{ email: searchParams.get('email') }}
-      render={({ handleSubmit }) => (
-        <form onSubmit={handleSubmit} noValidate>
-          <div className={classes.form}>
-            <div className={classes.input}>
-              <Field
-                id="username"
-                name="username"
-                component={Input}
-                label={translate('auth.input.username')}
-                disabled={loading}
-              />
-            </div>
-            <div className={classes.input}>
-              <Field
-                id="email"
-                name="email"
-                component={Input}
-                label={translate('auth.input.email')}
-                disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-              />
-            </div>
-            <div className={classes.input}>
-              <Field
-                id="password"
-                name="password"
-                component={Input}
-                label={translate('ra.auth.password')}
-                type="password"
-                disabled={loading}
-              />
-            </div>
-          </div>
-          <CardActions>
-            <Button variant="contained" type="submit" color="primary" disabled={loading} className={classes.button}>
-              {loading && <CircularProgress className={classes.icon} size={18} thickness={2} />}
-              {translate('auth.action.signup')}
-            </Button>
-          </CardActions>
-        </form>
-      )}
-    />
+      noValidate
+      defaultValues={{ email: searchParams.get('email') }}
+    >
+      <CardContent className={classes.content}>
+        <TextInput
+          autoFocus
+          source="username"
+          label={translate('auth.input.username')}
+          autoComplete="username"
+          fullWidth
+          disabled={loading}
+          validate={required()}
+        />
+        <TextInput
+          source="email"
+          label={translate('auth.input.email')}
+          autoComplete="email"
+          fullWidth
+          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+          validate={[required(), email()]}
+        />
+        <TextInput
+          source="password"
+          type="password"
+          label={translate('ra.auth.password')}
+          autoComplete="new-password"
+          fullWidth
+          disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
+          validate={required()}
+        />
+        <Button 
+          variant="contained" 
+          type="submit" 
+          color="primary" 
+          disabled={loading} 
+          fullWidth
+          className={classes.button}
+        >
+          {loading 
+            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
+            : translate('auth.action.signup')
+          }
+        </Button>
+      </CardContent>
+    </Form>
   );
 };
 

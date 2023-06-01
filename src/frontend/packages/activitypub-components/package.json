@@ -21,9 +21,7 @@
     "@tiptap/extension-mention": "^2.0.0-beta.95",
     "@tiptap/extension-placeholder": "^2.0.0-beta.95",
     "@tiptap/suggestion": "^2.0.0-beta.95",
-    "final-form": "^4.20.8",
     "ra-input-rich-text": "^4.7.0",
-    "react-final-form": "^6.5.9",
     "tippy.js": "^6.3.7"
   },
   "peerDependencies": {
