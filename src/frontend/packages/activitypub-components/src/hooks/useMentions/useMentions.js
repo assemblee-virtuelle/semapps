@@ -8,13 +8,11 @@ const useMentions = userResource => {
 
   // The "enabled" option doesn't work with useQueryWithStore
   const { data } = useGetList(
+    userResource,
     {
-      resource: userResource,
-      payload: {
-        filter: {
-          _predicates: [userDataModel?.fieldsMapping?.title],
-          blankNodes: []
-        }
+      filter: {
+        _predicates: [userDataModel?.fieldsMapping?.title],
+        blankNodes: []
       }
     },
     {
