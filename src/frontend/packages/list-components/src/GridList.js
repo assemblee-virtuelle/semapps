@@ -15,7 +15,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
   const { data, resource, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
   const createPath = useCreatePath();
-  if (isLoading) return null;
+  if (isLoading || !data) return null;
   return (
     <Grid container spacing={spacing}>
       {data.map(record => {

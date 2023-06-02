@@ -43,19 +43,6 @@ const PersonShow = props => (
 | `externalLink` | `Boolean`              | false        | If true, will display an icon next to the label showing this is an external link     |
 
 
-### ImageField
-
-To be used with React-Admin [ImageInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#imageinput) because the
-official React-Admin [ImageField](https://marmelab.com/react-admin/doc/3.19/Fields.html#imagefield) expects an object 
-while uploads handled through SemApps return only an URL.
-
-```jsx
-<ImageInput source="image" accept="image/*">
-  <ImageField source="src" />
-</ImageInput>
-```
-
-
 ### MultiUrlField
 
 Display a list of MUI [Chips](https://v4.mui.com/components/chips/), with an icon, color and label which depends on the 

@@ -14,6 +14,12 @@ npm install @semapps/input-components --save
 
 ## Components
 
+### ImageInput
+
+To be used instead of React-Admin [ImageInput](https://marmelab.com/react-admin/ImageInput.html) because this
+component expects an object while uploads handled through SemApps return only an URL.
+
+
 ### MultiLinesInput
 
 A multi-lines [TextInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#textinput), which returns an array with
