@@ -1,30 +1,27 @@
 import React, { useMemo, useState } from 'react';
 import ReactMde from 'react-mde';
 import Markdown from 'markdown-to-jsx';
-import { useInput, InputHelperText, Labeled, required, useTheme } from 'react-admin';
+import { useInput, InputHelperText, Labeled, required } from 'react-admin';
 import { FormControl, FormHelperText } from '@mui/material';
 import { styled } from '@mui/system';
 
-const StyledFormControl = styled(FormControl)(() => {
-  const [theme] = useTheme();  
-  return ({
-    color: 'blue',
-    '&.validationError': {
-      '& p': {
-        color: theme.palette.error.main
-      },
-      '& .mde-text': {
-        outline: '-webkit-focus-ring-color auto 1px',
-        outlineOffset: 0,
-        outlineColor: theme.palette.error.main,
-        outlineStyle: 'auto',
-        outlineWidth: 1
-      },
-      '& p.MuiFormHelperText-root': {
-        color: theme.palette.error.main
-      }
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
+  '&.validationError': {
+    '& p': {
+      color: theme.palette.error.main
+    },
+    '& .mde-text': {
+      outline: '-webkit-focus-ring-color auto 1px',
+      outlineOffset: 0,
+      outlineColor: theme.palette.error.main,
+      outlineStyle: 'auto',
+      outlineWidth: 1
+    },
+    '& p.MuiFormHelperText-root': {
+      color: theme.palette.error.main
     }
-})});
+  }
+}));
 
 const MarkdownInput = props => {
   const { validate } = props;

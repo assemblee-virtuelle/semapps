@@ -1,14 +1,14 @@
-import React from 'react';
-import { Notification, useTheme } from 'react-admin';
+import React, { useMemo } from 'react';
+import { Notification } from 'react-admin';
 import { ThemeProvider } from '@mui/system';
 import { StyledEngineProvider } from '@mui/material';
 import PodLoginPageView from './PodLoginPageView';
 
 const PodLoginPage = props => {
-  const [theme] = useTheme();
+  const muiTheme = useMemo(() => createTheme(props.theme), [props.theme]);
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={muiTheme}>
         <PodLoginPageView {...props} />
         <Notification />
       </ThemeProvider>

@@ -1,68 +1,72 @@
-import React, { forwardRef } from 'react';
-import { UserMenu as RaUserMenu, MenuItemLink, useGetIdentity, useTranslate } from 'react-admin';
+import React, { forwardRef, useCallback } from 'react';
+import { Logout, UserMenu as RaUserMenu, useGetIdentity, useTranslate, useUserMenu } from 'react-admin';
+import { MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import EditIcon from '@mui/icons-material/Edit';
-import LogoutButton from './LogoutButton';
+import { useNavigate } from 'react-router-dom';
 
-const ViewProfileMenu = forwardRef(({ onClick, profileResource, label, webId }, ref) => (
-  <MenuItemLink
-    ref={ref}
-    to={`/${profileResource}/${encodeURIComponent(webId)}/show`}
-    primaryText={label}
-    leftIcon={<AccountCircleIcon />}
-    onClick={onClick}
-  />
-));
-
-const EditProfileMenu = forwardRef(({ onClick, profileResource, label, webId }, ref) => (
-  <MenuItemLink
-    ref={ref}
-    to={`/${profileResource}/${encodeURIComponent(webId)}`}
-    primaryText={label}
-    leftIcon={<EditIcon />}
-    onClick={onClick}
-  />
-));
-
-const LoginMenu = forwardRef(({ onClick, label }, ref) => (
-  <MenuItemLink ref={ref} to="/login" primaryText={label} onClick={onClick} />
-));
-
-const SignupMenu = forwardRef(({ onClick, label }, ref) => (
-  <MenuItemLink ref={ref} to="/login?signup=true" primaryText={label} onClick={onClick} />
-));
+// It's important to pass the ref to allow Material UI to manage the keyboard navigation
+const UserMenuItem = forwardRef(({ label, icon, to, ...rest }, ref) => {
+  const { onClose } = useUserMenu();
+  const translate = useTranslate();
+  const navigate = useNavigate();
+  const onClick = useCallback(() => {
+    navigate(to);
+    onClose();
+  }, [to, onClose, navigate])
+  return (
+      <MenuItem
+          onClick={onClick}
+          ref={ref}
+          // It's important to pass the props to allow Material UI to manage the keyboard navigation
+          {...rest}
+      >
+          {icon && <ListItemIcon>
+            {React.cloneElement(icon, { fontSize: 'small' })}  
+          </ListItemIcon>}
+          <ListItemText>{translate(label)}</ListItemText>
+      </MenuItem>
+  );
+});
 
 const UserMenu = ({ logout, profileResource, ...otherProps }) => {
   const { identity } = useGetIdentity();
-  const translate = useTranslate();
   return (
     <RaUserMenu {...otherProps}>
       {identity && identity.id !== ''
         ? [
-            <ViewProfileMenu
-              webId={identity?.profileData?.id || identity.id}
-              label={translate('auth.action.view_my_profile')}
-              profileResource={profileResource}
+            <UserMenuItem
               key="view"
+              label="auth.action.view_my_profile"
+              icon={<AccountCircleIcon />}
+              to={`/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`}
             />,
-            <EditProfileMenu
-              webId={identity?.profileData?.id || identity.id}
-              label={translate('auth.action.edit_my_profile')}
-              profileResource={profileResource}
+            <UserMenuItem
               key="edit"
+              label="auth.action.edit_my_profile"
+              icon={<EditIcon />}
+              to={`/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`}
             />,
             React.cloneElement(logout, { key: 'logout' })
           ]
         : [
-            <SignupMenu label={translate('auth.action.signup')} key="signup" />,
-            <LoginMenu label={translate('auth.action.login')} key="login" />
+            <UserMenuItem 
+              key="signup" 
+              label="auth.action.signup" 
+              to="/login?signup=true"
+            />,
+            <UserMenuItem 
+              key="login"
+              label="auth.action.login" 
+              to="/login"
+            />
           ]}
     </RaUserMenu>
   );
 };
 
 UserMenu.defaultProps = {
-  logout: <LogoutButton />,
+  logout: <Logout />,
   profileResource: 'Person'
 };
 

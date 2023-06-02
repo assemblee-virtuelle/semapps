@@ -6,7 +6,6 @@ import { useDataModel } from '@semapps/semantic-data-provider';
 const useMentions = userResource => {
   const userDataModel = useDataModel(userResource);
 
-  // The "enabled" option doesn't work with useQueryWithStore
   const { data } = useGetList(
     userResource,
     {

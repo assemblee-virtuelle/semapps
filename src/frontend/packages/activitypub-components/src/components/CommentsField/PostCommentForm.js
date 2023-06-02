@@ -71,7 +71,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   const [openAuth, setOpenAuth] = useState(false);
 
   const onSubmit = useCallback(
-    async (values, rest) => {
+    async (values) => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
       let mentionedUsersUris = [];

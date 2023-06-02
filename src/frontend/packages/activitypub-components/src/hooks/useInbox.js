@@ -19,8 +19,6 @@ const useInbox = () => {
 
   const fetch = useCallback(
     async ({ filters }) => {
-      console.log('inboxUrl', inboxUrl, sparqlEndpoint);
-
       if (!sparqlEndpoint || !inboxUrl) return;
 
       const token = localStorage.getItem('token');

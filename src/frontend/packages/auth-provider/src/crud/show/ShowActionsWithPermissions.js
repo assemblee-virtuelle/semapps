@@ -9,12 +9,12 @@ const ShowActionsWithPermissions = () => {
   const { permissions } = usePermissions(record?.id);
   return (
     <TopToolbar>
-      {hasList && <ListButton record={record} />}
+      {hasList && <ListButton />}
       {hasEdit && permissions && permissions.some(p => rightsToEdit.includes(p['acl:mode'])) && (
-        <EditButton record={record} />
+        <EditButton />
       )}
       {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
-        <PermissionsButton record={record} />
+        <PermissionsButton />
       )}
     </TopToolbar>
   );

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMap } from "react-leaflet";
+import { useRecordContext } from 'react-admin';
 import { Drawer, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -13,8 +14,9 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
+const MobileDrawer = ({ popupContent, onClose }) => {
   const classes = useStyles();
+  const record = useRecordContext();
   const map = useMap();
   useEffect(() => {
     if (record) {
@@ -28,7 +30,7 @@ const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
         <IconButton onClick={onClose} className={classes.closeButton} size="large">
           <ClearIcon />
         </IconButton>
-        {record && React.createElement(popupContent, { record, basePath })}
+        {React.createElement(popupContent)}
       </Box>
     </Drawer>
   );

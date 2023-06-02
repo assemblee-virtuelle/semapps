@@ -8,10 +8,10 @@ import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
 import { styled } from '@mui/system';
 
-const StyledLocationOnIcon = styled(LocationOnIcon)(() => { const [theme] = useTheme(); return ({
+const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
   color: theme.palette.text.secondary,
   marginRight: theme.spacing(2)
-})});
+}));
 
 const selectOptionText = (option, optionText) => {
   if (option.place_name) {

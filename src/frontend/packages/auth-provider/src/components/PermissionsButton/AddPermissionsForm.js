@@ -35,8 +35,6 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
     }
   );
 
-  console.log('inputvalue', inputValue, data);
-
   useEffect(() => {
     setOptions(data?.length > 0 ? Object.values(data) : []);
   }, [data]);

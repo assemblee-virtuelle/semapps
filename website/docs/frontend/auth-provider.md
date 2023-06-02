@@ -16,7 +16,7 @@ npm install @semapps/auth-provider
 
 ```jsx
 import { Admin } from 'react-admin';
-import { authProvider, SsoLoginPage, LogoutButton } from '@semapps/auth-provider';
+import { authProvider, SsoLoginPage } from '@semapps/auth-provider';
 import { httpClient } from '@semapps/semantic-data-provider';
 
 const App = () => (
@@ -27,7 +27,6 @@ const App = () => (
       localAccounts: false // Set to true if you use the LocalLoginPage
     })}
     loginPage={SsoLoginPage} // Or you can use the LocalLoginPage
-    logoutButton={LogoutButton}
   >
     <Resource name="Project" ... />
     <Resource name="Organization" ... />

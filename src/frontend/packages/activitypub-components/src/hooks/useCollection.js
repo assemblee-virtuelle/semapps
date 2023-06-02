@@ -57,7 +57,6 @@ const useCollection = predicateOrUrl => {
 
   const addItem = useCallback(
     item => {
-      console.log('item', item);
       setItems(oldItems => [...oldItems, item]);
     },
     [setItems]

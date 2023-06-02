@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useListContext } from 'react-admin';
+import { useListContext, RecordContextProvider } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 import { useMediaQuery, Box } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -10,7 +10,6 @@ import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
 import MobileDrawer from "./MobileDrawer";
-import { useTheme } from 'react-admin';
 
 const useStyles = makeStyles(() => ({
   isLoading: {
@@ -41,8 +40,7 @@ const MapList = ({
   ...otherProps
 }) => {
   const { data, isLoading } = useListContext();
-  const [theme] = useTheme();
-  const xs = useMediaQuery(() => theme.breakpoints.down('sm'), { noSsr: true });
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 
@@ -85,7 +83,13 @@ const MapList = ({
               : undefined
           }
         >
-          {!xs && <Popup>{React.createElement(popupContent, { record /*, basePath*/ })}</Popup>}
+          {!xs && 
+            <Popup>
+              <RecordContextProvider value={record}>
+                {React.createElement(popupContent)}
+              </RecordContextProvider>
+            </Popup>
+          }
         </Marker>
         {connectMarkers && previousRecord && (
           <Polyline
@@ -123,12 +127,12 @@ const MapList = ({
       )}
       {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
-      <MobileDrawer
-        record={drawerRecord}
-        /*basePath={basePath}*/
-        popupContent={popupContent}
-        onClose={() => setDrawerRecord(null)}
-      />
+      <RecordContextProvider value={drawerRecord}>
+        <MobileDrawer
+          popupContent={popupContent}
+          onClose={() => setDrawerRecord(null)}
+        />
+      </RecordContextProvider>
     </MapContainer>
   );
 };
