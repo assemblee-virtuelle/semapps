@@ -10,7 +10,6 @@ This service allows you to easily configure standard SemApps services. It is off
 - [ApiGateway](https://moleculer.services/docs/0.14/moleculer-web.html)
 - [JsonLdService](jsonld)
 - [LdpService](ldp)
-- [MirrorService](mirror)
 - [SignatureService](signature)
 - [SparqlEndpointService](sparql-endpoint)
 - [TripleStoreService](triplestore)

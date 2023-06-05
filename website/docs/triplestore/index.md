@@ -9,7 +9,7 @@ To be able to offer public SPARQL endpoint which take into account WebACL permis
 checks the rights of each triples before returning them. The WebACL triples themselves should be stored on a graph named 
 `http://semapps.org/webacl`. You can have more information about this class by reading [this page](webacl-implementation).
 
-If you have activated the [MirrorService](../middleware/mirror.md), mirrored data are also stored on their own graph,
+If you have activated the [MirrorService](../middleware/sync/mirror), mirrored data are also stored on their own graph,
 named `http://semapps.org/mirror`. This allows to easily differentiate local data from cached data, and thus improve
 performances of SPARQL queries.
 

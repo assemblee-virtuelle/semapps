@@ -61,17 +61,13 @@ function Home() {
                 </div>
                 <div className={styles.heroIcons}>
                   <img src="img/sw-icon.svg" alt="semantic web icon" />
-                  <img src="img/react-icon.svg" alt="semantic react icon" />
-                  <img src="img/ra-icon.svg" alt="react admin icon "/>
                   <img src="img/solid-icon.svg" alt="solid icon" />
                   <img src="img/activitypub-icon.svg" alt="activitypub icon" />
                 </div>
-                <AnimationOnScroll animateIn="animate__slideInLeft">
-                  <div className={styles.av}>
-                    <span>SemApps is co-built as part of the Virtual Assembly</span>
-                    <img src="img/av-icon.png" alt="virtual assembly icon" />
-                  </div>
-                </AnimationOnScroll>
+                <div className={styles.av}>
+                  <span>The SemApps project is part of Virtual Assembly</span>
+                  <img src="img/av-icon.png" alt="virtual assembly icon" />
+                </div>
                </div>
             </div>
           </div>
@@ -140,7 +136,7 @@ function Home() {
                   '
                   image='img/activity-pods.png' 
                   github='https://github.com/assemblee-virtuelle/activitypods'
-                  link=''
+                  link='https://activitypods.org'
                 />
               </li>
               <li className={styles.productCard}>

@@ -25,26 +25,6 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-const buildBlankNodesQuery = depth => {
-  let construct = '',
-    where = '';
-  if (depth > 0) {
-    for (let i = depth; i >= 1; i--) {
-      construct += `
-        ?o${i} ?p${i + 1} ?o${i + 1} .
-      `;
-      where = `
-        OPTIONAL {
-          FILTER((isBLANK(?o${i}))) .
-          ?o${i} ?p${i + 1} ?o${i + 1} .
-          ${where}
-        }
-      `;
-    }
-  }
-  return { construct, where };
-};
-
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
   let nodes = [];
@@ -163,9 +143,16 @@ const useFullURI = (prefixedUri, ontologies) => {
   return prefixedUri.replace(ontology.prefix + ':', ontology.url);
 };
 
-const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+
+// Transforms "http://localhost:3000/dataset/data" to "dataset"
+const getDatasetFromUri = uri => {
+  const path = new URL(uri).pathname;
+  const parts = path.split('/');
+  if (parts.length > 1) return parts[1];
+};
 
 const hasType = (resource, type) => {
   const resourceType = resource.type || resource['@type'];
@@ -179,7 +166,6 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 module.exports = {
-  buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
   getPrefixRdf,
@@ -188,6 +174,7 @@ module.exports = {
   useFullURI,
   getSlugFromUri,
   getContainerFromUri,
+  getDatasetFromUri,
   hasType,
   isContainer,
   defaultToArray,

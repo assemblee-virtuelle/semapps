@@ -65,7 +65,6 @@ module.exports = {
       ],
     },
     'middleware/migration',
-    'middleware/mirror',
     {
       type: 'category',
       label: 'Notifications',
@@ -79,6 +78,20 @@ module.exports = {
       ],
     },
     'middleware/sparql-endpoint',
+    {
+      type: 'category',
+      label: 'Sync',
+      link: {
+        type: 'doc',
+        id: 'middleware/sync/index'
+      },
+      items: [
+        'middleware/sync/objects-watcher',
+        'middleware/sync/aggregator',
+        'middleware/sync/mirror',
+        'middleware/sync/synchronizer',
+      ],
+    },
     {
       type: 'category',
       label: 'Triplestore',

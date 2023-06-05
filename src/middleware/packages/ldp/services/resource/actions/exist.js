@@ -1,4 +1,4 @@
-const { isMirror } = require('../../../utils');
+const { triple, namedNode, variable } = require('@rdfjs/data-model');
 
 module.exports = {
   visibility: 'public',
@@ -10,14 +10,20 @@ module.exports = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
-    let triplesNb;
-
-    triplesNb = await ctx.call('triplestore.countTriplesOfSubject', {
-      uri: resourceUri,
-      webId,
-      graphName: isMirror(resourceUri, this.settings.baseUrl) ? this.settings.mirrorGraphName : undefined
+    let exist = await ctx.call('triplestore.tripleExist', {
+      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      webId
     });
 
-    return triplesNb > 0;
+    // If this is a remote URI and the resource is not found in default graph, also look in mirror graph
+    if (!exist && this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
+      exist = await ctx.call('triplestore.tripleExist', {
+        triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+        webId,
+        graphName: this.settings.mirrorGraphName
+      });
+    }
+
+    return exist;
   }
 };

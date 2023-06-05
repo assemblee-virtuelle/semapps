@@ -57,7 +57,7 @@ module.exports = {
 
       ctx.emit(
         'webacl.resource.updated',
-        { uri: resourceUri, isContainer, defaultRightsUpdated, removePublicRead, removeDefaultPublicRead },
+        { uri: resourceUri, webId, isContainer, defaultRightsUpdated, removePublicRead, removeDefaultPublicRead },
         { meta: { webId: null, dataset: null } }
       );
     }

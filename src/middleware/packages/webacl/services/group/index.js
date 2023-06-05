@@ -98,7 +98,6 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the group URI or group slug
         if (this.settings.podProvider && !ctx.meta.dataset) {
           if (ctx.params.groupUri) {
             const groupPath = new URL(ctx.params.groupUri).pathname;

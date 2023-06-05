@@ -9,6 +9,7 @@ const dropAll = require('./actions/dropAll');
 const insert = require('./actions/insert');
 const query = require('./actions/query');
 const update = require('./actions/update');
+const tripleExist = require('./actions/tripleExist');
 const DatasetService = require('./subservices/dataset');
 
 const TripleStoreService = {
@@ -47,6 +48,7 @@ const TripleStoreService = {
     query,
     dropAll,
     countTriplesOfSubject,
+    tripleExist,
     deleteOrphanBlankNodes
   },
   methods: {
