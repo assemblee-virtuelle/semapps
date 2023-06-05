@@ -1,17 +1,8 @@
 import React from 'react';
-import { ImageInput as RaImageInput, useRecordContext, RecordContextProvider } from 'react-admin';
+import { ImageInput as RaImageInput } from 'react-admin';
 
-const ImageInput = ({ source, ...rest }) => {
-  const record = useRecordContext();
-  const modifiedRecord = record && record[source] && typeof record[source] === 'string' 
-    ? { ...record, [source]: { src: record[source] } }
-    : record;
-
-  return (
-    <RecordContextProvider value={modifiedRecord}>
-      <RaImageInput source={source} {...rest} />
-    </RecordContextProvider>
-  );
-};
+const ImageInput = (props) => (
+  <RaImageInput {...props} format={v => typeof v === 'string' ? { src: v } : v} />
+);
 
 export default ImageInput;
