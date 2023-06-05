@@ -14,13 +14,12 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@date-io/core": "^1.3.6",
-    "@date-io/date-fns": "^1.3.13",
     "@fullcalendar/core": "^5.7.2",
     "@fullcalendar/daygrid": "^5.7.2",
     "@fullcalendar/list": "^5.7.2",
     "@fullcalendar/react": "^5.7.0",
-    "date-fns": "~2.8.1"
+    "date-fns": "~2.8.1",
+    "@mui/x-date-pickers": "^6.6.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",

@@ -1,15 +1,85 @@
 import React, { useCallback } from 'react';
-import { useInput, useTranslate, FieldTitle, InputHelperText } from 'react-admin';
-import { IconButton } from '@mui/material';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DateFnsUtils from '@date-io/date-fns';
+import { useInput, FieldTitle, InputHelperText } from 'react-admin';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { dateTimeFormatter, dateTimeParser } from './utils';
-import ClearIcon from '@mui/icons-material/Clear';
+
+const Picker = ({
+  PickerComponent,
+  format = dateTimeFormatter,
+  label,
+  source,
+  helperText,
+  onBlur,
+  onChange,
+  onFocus,
+  parse = dateTimeParser,
+  validate,
+  defaultValue,
+  locale,
+  pickerVariant = 'dialog',
+  stringFormat = 'ISO',
+  allowClear,
+  ...rest
+}) => {
+  const {
+    field,
+    isRequired,
+    fieldState: { error, isTouched }
+  } = useInput({
+    format,
+    onBlur,
+    onChange,
+    onFocus,
+    parse,
+    source,
+    validate,
+    ...rest
+  });
+
+  const handleChange = useCallback(value => {
+    Date.parse(value)
+      ? field.onChange(stringFormat === 'ISO' ? value.toISOString() : value.toString())
+      : field.onChange(null);
+  }, []);
+
+  return (
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={locale}>
+      <PickerComponent
+        label={<FieldTitle label={label} source={source} isRequired={isRequired} />}
+        error={!!(isTouched && error)}
+        slotProps={{
+          textField: {
+            helperText: <InputHelperText touched={isTouched} error={error} helperText={helperText} />
+          },
+        }}
+        {...sanitizeRestProps(rest)}
+        value={field.value ? new Date(field.value) : null}
+        onChange={handleChange}
+        onBlur={() =>
+          field.onBlur(
+            field.value
+              ? stringFormat === 'ISO'
+                ? new Date(field.value).toISOString()
+                : new Date(field.value).toString()
+              : null
+          )
+        }
+      />
+    </LocalizationProvider>
+  );
+};
+
+Picker.defaultProps = {
+  isRequired: false,
+  meta: { isTouched: false, error: false },
+  locale: undefined, // Default to english
+  parse: value => (value === '' ? null : value) // Avoid saving an empty string in the dataset
+};
 
 const sanitizeRestProps = ({
   allowEmpty,
   alwaysOn,
-  basePath,
   component,
   defaultValue,
   format,
@@ -26,8 +96,6 @@ const sanitizeRestProps = ({
   optionText,
   optionValue,
   parse,
-  record,
-  resource,
   source,
   textAlign,
   translate,
@@ -36,110 +104,5 @@ const sanitizeRestProps = ({
   ...rest
 }) => rest;
 
-const Picker = ({
-  PickerComponent,
-  format = dateTimeFormatter,
-  label,
-  options,
-  source,
-  resource,
-  helperText,
-  margin = 'dense',
-  onBlur,
-  onChange,
-  onFocus,
-  parse = dateTimeParser,
-  validate,
-  variant = 'filled',
-  defaultValue,
-  providerOptions: { utils, locale },
-  pickerVariant = 'dialog',
-  stringFormat = 'ISO',
-  allowClear,
-  ...rest
-}) => {
-  const translate = useTranslate();
-  const {
-    id,
-    input,
-    isRequired,
-    meta: { error, isTouched }
-  } = useInput({
-    format,
-    onBlur,
-    onChange,
-    onFocus,
-    parse,
-    resource,
-    source,
-    validate,
-    /* type: 'datetime-local', */
-    ...rest
-  });
-
-  const handleChange = useCallback(value => {
-    Date.parse(value)
-      ? input.onChange(stringFormat === 'ISO' ? value.toISOString() : value.toString())
-      : input.onChange(null);
-  }, []);
-
-  const handleClear = useCallback(e => {
-    e.stopPropagation();
-    input.onChange(null);
-  }, []);
-
-  return (
-    <LocalizationProvider utils={utils || DateFnsUtils} locale={locale}>
-      <PickerComponent
-        id={id}
-        InputLabelProps={{
-          shrink: true
-        }}
-        InputProps={{
-          endAdornment: allowClear ? (
-            <IconButton onClick={handleClear} size="large">
-              <ClearIcon />
-            </IconButton>
-          ) : (
-            undefined
-          )
-        }}
-        label={<FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />}
-        variant={pickerVariant}
-        inputVariant={variant}
-        margin={margin}
-        error={!!(isTouched && error)}
-        helperText={<InputHelperText touched={isTouched} error={error} helperText={helperText} />}
-        clearLabel={translate('ra.action.clear_input_value')}
-        cancelLabel={translate('ra.action.cancel')}
-        {...options}
-        {...sanitizeRestProps(rest)}
-        value={input.value ? new Date(input.value) : null}
-        onChange={handleChange}
-        onBlur={() =>
-          input.onBlur(
-            input.value
-              ? stringFormat === 'ISO'
-                ? new Date(input.value).toISOString()
-                : new Date(input.value).toString()
-              : null
-          )
-        }
-      />
-    </LocalizationProvider>
-  );
-};
-
-Picker.defaultProps = {
-  isRequired: false,
-  meta: { isTouched: false, error: false },
-  options: {},
-  providerOptions: {
-    utils: DateFnsUtils,
-    locale: undefined
-  },
-  // Avoid saving an empty string in the dataset
-  parse: value => (value === '' ? null : value)
-};
 
 export default Picker;
