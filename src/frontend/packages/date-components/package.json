@@ -1,6 +1,6 @@
 {
   "name": "@semapps/date-components",
-  "version": "0.4.7",
+  "version": "0.5.0-alpha.0",
   "description": "React-Admin components for date display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -18,8 +18,8 @@
     "@fullcalendar/daygrid": "^5.7.2",
     "@fullcalendar/list": "^5.7.2",
     "@fullcalendar/react": "^5.7.0",
-    "date-fns": "~2.8.1",
-    "@mui/x-date-pickers": "^6.6.0"
+    "@mui/x-date-pickers": "^6.6.0",
+    "date-fns": "~2.8.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",
