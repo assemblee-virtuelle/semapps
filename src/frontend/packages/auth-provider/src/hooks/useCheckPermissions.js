@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
-import { usePermissionsOptimized, useRedirect, useNotify, useGetIdentity } from 'react-admin';
+import { usePermissions, useRedirect, useNotify, useGetIdentity } from 'react-admin';
 import { rights, forbiddenErrors } from '../constants';
 
 const useCheckPermissions = (uri, mode, redirectUrl = '/') => {
-  const { identity, loading } = useGetIdentity();
-  const { permissions } = usePermissionsOptimized(uri);
+  const { identity, isLoading } = useGetIdentity();
+  const { permissions } = usePermissions(uri);
   const notify = useNotify();
   const redirect = useRedirect();
 
   useEffect(() => {
-    if (!loading && identity && permissions && !permissions.some(p => rights[mode].includes(p['acl:mode']))) {
-      notify(forbiddenErrors[mode], 'error');
+    if (!isLoading && identity && permissions && !permissions.some(p => rights[mode].includes(p['acl:mode']))) {
+      notify(forbiddenErrors[mode], {type: 'error'});
       redirect(redirectUrl);
     }
-  }, [permissions, identity, redirect, notify, loading]);
+  }, [permissions, identity, redirect, notify, isLoading]);
 
   return permissions;
 };

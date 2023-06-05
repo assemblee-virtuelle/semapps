@@ -1,6 +1,6 @@
 import React from 'react';
 import { SaveButton, Toolbar } from 'react-admin';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import DeleteButtonWithPermissions from './DeleteButtonWithPermissions';
 
 const useStyles = makeStyles(() => ({
@@ -16,7 +16,7 @@ const EditToolbarWithPermissions = props => {
   return (
     <Toolbar {...props} className={classes.toolbar}>
       <SaveButton />
-      <DeleteButtonWithPermissions undoable={false} />}
+      <DeleteButtonWithPermissions mutationMode="undoable" />
     </Toolbar>
   );
 };

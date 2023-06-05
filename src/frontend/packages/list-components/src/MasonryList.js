@@ -1,6 +1,7 @@
 import React from 'react';
-import { useListContext, Link, linkToRecord } from 'react-admin';
-import { makeStyles, Card, CardActionArea, CardMedia, CardContent, CardActions } from '@material-ui/core';
+import { useListContext, Link, useCreatePath, RecordContextProvider } from 'react-admin';
+import { Card, CardActionArea, CardMedia, CardContent, CardActions } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import Masonry from 'react-masonry-css';
 
 const useStyles = makeStyles(() => ({
@@ -40,26 +41,29 @@ const useStyles = makeStyles(() => ({
  */
 const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
   const classes = useStyles();
-  const { ids, data, basePath } = useListContext();
+  const { data, resource } = useListContext();
+  const createPath = useCreatePath();
   return (
     <Masonry breakpointCols={breakpointCols} className={classes.grid} columnClassName={classes.column}>
-      {ids.map(id => {
-        if (!data[id] || data[id]['_error']) return null;
-        const imageUrl = typeof image === 'function' ? image(data[id]) : image;
+      {data.map(record => {
+        if (!record || record['_error']) return null;
+        const imageUrl = typeof image === 'function' ? image(record) : image;
         return (
-          <Card key={id} className={classes.card}>
-            <Link to={linkToRecord(basePath, id) + '/' + linkType}>
-              <CardActionArea>
-                {imageUrl && <CardMedia className={classes.media} image={imageUrl} />}
-                {content && <CardContent>{content(data[id])}</CardContent>}
-              </CardActionArea>
-            </Link>
-            {actions && (
-              <CardActions>
-                {actions.map(action => React.createElement(action, { record: data[id], basePath }))}
-              </CardActions>
-            )}
-          </Card>
+          <RecordContextProvider value={record}>
+            <Card key={record.id} className={classes.card}>
+              <Link to={createPath({ resource, id: record.id, type: linkType })}>
+                <CardActionArea>
+                  {imageUrl && <CardMedia className={classes.media} image={imageUrl} />}
+                  {content && <CardContent>{content(record)}</CardContent>}
+                </CardActionArea>
+              </Link>
+              {actions && (
+                <CardActions>
+                  {actions.map(action => React.createElement(action))}
+                </CardActions>
+              )}
+            </Card>
+          </RecordContextProvider>
         );
       })}
     </Masonry>

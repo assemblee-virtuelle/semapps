@@ -1,6 +1,6 @@
 import React from 'react';
-import { CreateButton, ExportButton, useResourceDefinition, TopToolbar, usePermissionsOptimized } from 'react-admin';
-import { useMediaQuery } from '@material-ui/core';
+import { CreateButton, ExportButton, useResourceDefinition, TopToolbar, usePermissions, useResourceContext } from 'react-admin';
+import { useMediaQuery } from '@mui/material';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToCreate, rightsToControl } from '../../constants';
@@ -8,53 +8,47 @@ import { rightsToCreate, rightsToControl } from '../../constants';
 // Do not show Export and Refresh buttons on mobile
 const ListActionsWithPermissions = ({
   bulkActions,
-  basePath,
-  currentSort,
+  sort,
   displayedFilters,
   exporter,
   filters,
   filterValues,
   onUnselectItems,
-  resource,
   selectedIds,
   showFilter,
-  total,
-  ...rest
+  total
 }) => {
+  const resource = useResourceContext();
   const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
-  const resourceDefinition = useResourceDefinition(rest);
+  const resourceDefinition = useResourceDefinition();
   const createContainerUri = useCreateContainer(resource);
-  const { permissions } = usePermissionsOptimized(createContainerUri);
+  const { permissions } = usePermissions(createContainerUri);
   return (
     <TopToolbar>
       {filters &&
         React.cloneElement(filters, {
-          resource,
           showFilter,
           displayedFilters,
           filterValues,
           context: 'button'
         })}
       {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && (
-        <CreateButton basePath={basePath} />
+        <CreateButton />
       )}
       {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
-        <PermissionsButton basePath={basePath} record={createContainerUri} />
+        <PermissionsButton isContainer />
       )}
       {!xs && exporter !== false && (
         <ExportButton
           disabled={total === 0}
-          resource={resource}
-          sort={currentSort}
+          sort={sort}
           filter={filterValues}
           exporter={exporter}
         />
       )}
       {bulkActions &&
         React.cloneElement(bulkActions, {
-          basePath,
           filterValues,
-          resource,
           selectedIds,
           onUnselectItems
         })}

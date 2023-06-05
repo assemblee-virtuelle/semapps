@@ -1,7 +1,8 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Box, makeStyles, Avatar, Chip } from '@material-ui/core';
-import LaunchIcon from '@material-ui/icons/Launch';
+import { Box, Avatar, Chip } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import LaunchIcon from '@mui/icons-material/Launch';
 
 const useStyles = makeStyles(theme => ({
   parent: props => ({

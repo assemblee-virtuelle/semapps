@@ -1,17 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale } from 'react-admin';
-import { TextField, Typography, Grid, makeStyles } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale, useRecordContext, useResourceContext, useTheme } from 'react-admin';
+import { TextField, Typography, Grid } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
+import { styled } from '@mui/system';
 
-const useStyles = makeStyles(theme => ({
-  icon: {
-    color: theme.palette.text.secondary,
-    marginRight: theme.spacing(2)
-  }
+const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  marginRight: theme.spacing(2)
 }));
 
 const selectOptionText = (option, optionText) => {
@@ -26,11 +25,8 @@ const selectOptionText = (option, optionText) => {
 
 const LocationInput = ({
   mapboxConfig,
-  record,
-  resource,
   source,
   label,
-  basePath,
   parse,
   optionText,
   helperText,
@@ -43,7 +39,8 @@ const LocationInput = ({
     throw new Error('@semapps/geo-components : No access token in mapbox configuration');
   }
 
-  const classes = useStyles();
+  const record = useRecordContext();
+  const resource = useResourceContext();
   const locale = useLocale();
   const translate = useTranslate();
 
@@ -52,9 +49,9 @@ const LocationInput = ({
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    input: { value, onChange, onBlur, onFocus },
+    field: { value, onChange, onBlur /*, onFocus*/ },
     isRequired,
-    meta: { error, submitError, touched }
+    fieldState: { error, /*submitError,*/ isTouched }
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -103,7 +100,7 @@ const LocationInput = ({
       // For some reasons, this prop has to be passed
       filterOptions={x => x}
       getOptionLabel={option => selectOptionText(option, optionText)}
-      getOptionSelected={(option, value) =>
+      isOptionEqualToValue={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
       }
       // This function is called when the user selects an option
@@ -129,13 +126,13 @@ const LocationInput = ({
                 if (params.inputProps.onBlur) {
                   params.inputProps.onBlur(e);
                 }
-              },
+              }/*,
               onFocus: e => {
                 onFocus(e);
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
-              }
+              }*/
             }}
             label={
               label !== '' &&
@@ -143,43 +140,46 @@ const LocationInput = ({
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(touched && (error || submitError))}
-            helperText={<InputHelperText touched={touched} error={error || submitError} helperText={helperText} />}
+            error={!!(isTouched && (error /*|| submitError*/))}
+            helperText={<InputHelperText touched={isTouched} error={error /*|| submitError*/} helperText={helperText} />}
             {...rest}
           />
         );
       }}
-      renderOption={option => {
+      renderOption={(props, option, state) => {
         const matches = highlightMatch(option.text, keyword);
         const parts = highlightParse(option.text, matches);
 
         return (
-          <Grid container alignItems="center">
-            <Grid item>
-              <LocationOnIcon className={classes.icon} />
+          <li {...props}>
+            <Grid container alignItems="center">
+              <Grid item>
+                <StyledLocationOnIcon />
+              </Grid>
+              <Grid item xs>
+                {typeof parts === 'string'
+                  ? parts
+                  : parts.map((part, index) => (
+                      <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                        {part.text}
+                      </span>
+                    ))}
+                <Typography variant="body2" color="textSecondary">
+                  {option.place_name}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item xs>
-              {typeof parts === 'string'
-                ? parts
-                : parts.map((part, index) => (
-                    <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
-                      {part.text}
-                    </span>
-                  ))}
-              <Typography variant="body2" color="textSecondary">
-                {option.place_name}
-              </Typography>
-            </Grid>
-          </Grid>
+          </li>
         );
       }}
+      {...rest}
     />
   );
 };
 
 LocationInput.defaultProps = {
-  variant: 'filled',
-  margin: 'dense'
+  variant: 'outlined',
+  size: 'small'
 };
 
 export default LocationInput;

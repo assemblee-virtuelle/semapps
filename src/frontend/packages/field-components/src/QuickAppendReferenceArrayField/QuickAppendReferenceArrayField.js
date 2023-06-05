@@ -1,33 +1,27 @@
 import React, { useState, useMemo } from 'react';
-import { ReferenceArrayField as RaReferenceArrayField, usePermissionsOptimized } from 'react-admin';
+import { useRecordContext, usePermissions } from 'react-admin';
+import { ReferenceArrayField } from "../index";
 import QuickAppendDialog from './QuickAppendDialog';
 
-const QuickAppendReferenceArrayField = ({ record, reference, source, resource, ...otherProps }) => {
+const QuickAppendReferenceArrayField = ({ reference, source, resource, children, ...otherProps }) => {
+  const record = useRecordContext();
   const [showDialog, setShowDialog] = useState(false);
-  const { permissions } = usePermissionsOptimized(record.id);
+  const { permissions } = usePermissions(record.id);
 
   const canAppend = useMemo(
     () => !!permissions && permissions.some(p => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),
     [permissions]
   );
 
-  if (record?.[source]) {
-    if (!Array.isArray(record[source])) {
-      record[source] = [record[source]];
-    }
-    record[source] = record[source].map(i => i['@id'] || i.id || i);
-  }
-
   return (
     <>
-      <RaReferenceArrayField
-        record={record}
+      <ReferenceArrayField
         reference={reference}
         source={source}
-        resource={resource}
-        appendLink={canAppend ? () => setShowDialog(true) : undefined}
         {...otherProps}
-      />
+      >
+        {React.Children.only(children) && React.cloneElement(children, { appendLink: canAppend ? () => setShowDialog(true) : undefined })}
+      </ReferenceArrayField>
       {canAppend && showDialog && (
         <QuickAppendDialog
           open={showDialog}
@@ -40,10 +34,6 @@ const QuickAppendReferenceArrayField = ({ record, reference, source, resource, .
       )}
     </>
   );
-};
-
-QuickAppendReferenceArrayField.defaultProps = {
-  addLabel: true
 };
 
 export default QuickAppendReferenceArrayField;

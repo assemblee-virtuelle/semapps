@@ -1,5 +1,5 @@
 import urlJoin from 'url-join';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 const capitalize = s => (s && s[0].toUpperCase() + s.slice(1)) || '';
 

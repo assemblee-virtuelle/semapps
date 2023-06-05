@@ -1,12 +1,13 @@
 import React from 'react';
 import { useRecordContext } from 'react-admin';
-import { Chip, Avatar, makeStyles } from '@material-ui/core';
-import LanguageIcon from '@material-ui/icons/Language';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import InstagramIcon from '@material-ui/icons/Instagram';
-import YouTubeIcon from '@material-ui/icons/YouTube';
+import { Chip, Avatar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import LanguageIcon from '@mui/icons-material/Language';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import YouTubeIcon from '@mui/icons-material/YouTube';
 import { FiGitlab } from 'react-icons/fi';
 
 const defaultdomainMapping = {
@@ -24,7 +25,7 @@ const defaultdomainMapping = {
   },
   'opencollective.com': {
     label: 'Open Collective',
-    icon: <Avatar src="https://opencollective.com/static/images/opencollective-icon.svg" />,
+    icon: <Avatar component="span" src="https://opencollective.com/static/images/opencollective-icon.svg" />,
     color: 'white',
     contrastText: '#297EFF'
   },
@@ -53,7 +54,8 @@ const defaultdomainMapping = {
     contrastText: 'white'
   }
 };
-const useStyles = makeStyles(theme => ({
+
+const useStyles = makeStyles(() => ({
   link: {
     textDecoration: 'unset',
     '& :hover': {
@@ -63,14 +65,15 @@ const useStyles = makeStyles(theme => ({
   chip: {
     paddingLeft: 5,
     paddingRight: 5,
-    marginRight: 5
+    marginRight: 5,
+    marginBottom: 5
   },
   label: {
     marginTop: -1
   }
 }));
 
-const MultiUrlField = ({ source, domainMapping, ...rest }) => {
+const MultiUrlField = ({ source, domainMapping }) => {
   const newDomainMapping = { ...defaultdomainMapping, ...domainMapping };
   const record = useRecordContext();
   const classes = useStyles();
@@ -86,10 +89,10 @@ const MultiUrlField = ({ source, domainMapping, ...rest }) => {
       contrastText: 'black'
     };
     return (
-      <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link}>
+      <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link} key={index}>
         <Chip
-          {...rest}
-          icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText } })}
+          component="span"
+          icon={React.cloneElement(chip.icon, { style: { color: chip.contrastText, width: 18, height: 18 } })}
           size="small"
           label={chip.label}
           classes={{ root: classes.chip, label: classes.label }}
@@ -98,10 +101,6 @@ const MultiUrlField = ({ source, domainMapping, ...rest }) => {
       </a>
     );
   });
-};
-
-MultiUrlField.defaultProps = {
-  addLabel: true
 };
 
 export default MultiUrlField;

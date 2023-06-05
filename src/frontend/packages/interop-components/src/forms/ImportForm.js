@@ -1,50 +1,72 @@
-import React, { useCallback } from 'react';
-import { FormInput, TextInput, RadioButtonGroupInput } from 'react-admin';
-import { Form } from 'react-final-form';
-import createDecorator from 'final-form-calculate';
-import { Box, Toolbar, makeStyles, Button } from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import React, { useCallback, useEffect } from 'react';
+import { SimpleForm, TextInput, RadioButtonGroupInput, useResourceContext } from 'react-admin';
+import { useFormContext } from 'react-hook-form';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 import { ReferenceInput, MultiServerAutocompleteInput } from '@semapps/input-components';
 import useFork from '../hooks/useFork';
 import useSync from '../hooks/useSync';
 
-const useStyles = makeStyles(theme => ({
-  toolbar: {
-    backgroundColor: theme.palette.type === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
-    marginTop: theme.spacing(2)
-  },
-  field: {
-    marginBottom: 23,
-    minWidth: theme.spacing(20)
-  }
-}));
-
-const decorator = createDecorator(
-  {
-    field: 'remoteUri',
-    updates: value => {
-      if (value) {
-        return { plainUri: value };
-      }
-      return {};
-    }
-  },
-  {
-    field: 'plainUri',
-    updates: (value, name, allValues) => {
-      if (value !== allValues.remoteUri) {
-        return { remoteUri: null };
-      }
-      return {};
-    }
-  }
-);
-
-const ImportForm = ({ basePath, record, resource, stripProperties }) => {
-  const classes = useStyles();
+const ImportFormInputs = () => {
+  const resource = useResourceContext();
   const containers = useContainers(resource, '@remote');
   const dataModel = useDataModel(resource);
+
+  const { watch, setValue } = useFormContext();
+  const watchRemoteUri = watch('remoteUri');
+  const watchPlainUri = watch('plainUri');
+
+  useEffect(() => {
+    if (watchRemoteUri) {
+      setValue('plainUri', watchRemoteUri);
+    }
+  }, [watchRemoteUri]);
+
+  useEffect(() => {
+    if (watchPlainUri && watchPlainUri !== watchRemoteUri) {
+      setValue('remoteUri', null);
+    }
+  }, [watchRemoteUri, watchPlainUri]);
+
+  if (!dataModel) return null;
+
+  return(
+    <>
+      {containers && Object.keys(containers).length > 0 && (
+        <ReferenceInput
+          source="remoteUri"
+          reference={resource}
+          filter={{ _servers: '@remote', _predicates: [dataModel?.fieldsMapping?.title] }}
+          enableGetChoices={({ q }) => !!(q && q.length > 1)}
+        >
+          <MultiServerAutocompleteInput
+            optionText={dataModel?.fieldsMapping?.title}
+            shouldRenderSuggestions={value => value.length > 1}
+            noOptionsText="Tapez au moins deux lettres"
+            emptyText="Rechercher..."
+            label="Resource distante"
+            fullWidth
+          />
+        </ReferenceInput>
+      )}
+      <TextInput 
+        source="plainUri" 
+        label="URL de la ressource distante" 
+        fullWidth 
+      />
+      <RadioButtonGroupInput
+        source="method"
+        label="Méthode d'importation"
+        choices={[
+          { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
+          { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
+        ]}
+      />
+    </>
+  )
+}
+
+const ImportForm = ({ stripProperties }) => {
+  const resource = useResourceContext();
   const fork = useFork(resource);
   const sync = useSync(resource);
 
@@ -59,81 +81,10 @@ const ImportForm = ({ basePath, record, resource, stripProperties }) => {
     [fork, sync, stripProperties]
   );
 
-  if (!dataModel) return null;
-
   return (
-    <Form
-      onSubmit={onSubmit}
-      decorators={[decorator]}
-      initialValues={{ method: 'sync' }}
-      render={({ handleSubmit, dirtyFields }) => (
-        <form onSubmit={handleSubmit}>
-          <Box m="1em">
-            {containers && Object.keys(containers).length > 0 && (
-              <FormInput
-                input={
-                  <ReferenceInput
-                    source="remoteUri"
-                    label="Rechercher..."
-                    reference={resource}
-                    filter={{ _servers: '@remote', _predicates: [dataModel?.fieldsMapping?.title] }}
-                    enableGetChoices={({ q }) => !!(q && q.length > 1)}
-                    fullWidth
-                  >
-                    <MultiServerAutocompleteInput
-                      optionText={dataModel?.fieldsMapping?.title}
-                      shouldRenderSuggestions={value => value.length > 1}
-                      resettable
-                    />
-                  </ReferenceInput>
-                }
-                basePath={basePath}
-                record={record}
-                resource={resource}
-                variant="filled"
-                margin="dense"
-              />
-            )}
-            <FormInput
-              input={<TextInput source="plainUri" label="URL de la ressource distante" fullWidth />}
-              basePath={basePath}
-              record={record}
-              resource={resource}
-              variant="filled"
-              margin="dense"
-            />
-            <FormInput
-              input={
-                <RadioButtonGroupInput
-                  source="method"
-                  label="Méthode d'importation"
-                  choices={[
-                    { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
-                    { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
-                  ]}
-                />
-              }
-              basePath={basePath}
-              record={record}
-              resource={resource}
-              variant="filled"
-              margin="dense"
-            />
-          </Box>
-          <Toolbar className={classes.toolbar}>
-            <Button
-              type="submit"
-              startIcon={<SaveAltIcon />}
-              variant="contained"
-              color="primary"
-              disabled={!dirtyFields.plainUri}
-            >
-              Importer
-            </Button>
-          </Toolbar>
-        </form>
-      )}
-    />
+    <SimpleForm onSubmit={onSubmit} defaultValues={{ method: 'sync' }}>
+      <ImportFormInputs />
+    </SimpleForm>
   );
 };
 

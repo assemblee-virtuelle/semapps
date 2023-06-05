@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useGetList, useTranslate } from 'react-admin';
-import { TextField, makeStyles, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import PersonIcon from '@material-ui/icons/Person';
+import { TextField, List, ListItem, ListItemAvatar, ListItemText, Avatar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import Autocomplete from '@mui/material/Autocomplete';
+import PersonIcon from '@mui/icons-material/Person';
 import { USER_AGENT, ACL_READ } from '../../constants';
 
 const useStyles = makeStyles(() => ({
@@ -22,17 +23,21 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
   const [inputValue, setInputValue] = useState('');
   const [options, setOptions] = useState([]);
 
-  const { ids, data } = useGetList(
+  const { data } = useGetList(
     'Person',
-    { page: 1, perPage: 100 },
-    { field: 'pair:label', order: 'ASC' },
-    { q: inputValue },
-    { enabled: inputValue.length > 0 }
+    {
+      pagination: { page: 1, perPage: 100 },
+      sort: { field: 'pair:label', order: 'ASC' },
+      filter: { q: inputValue },
+    },
+    { 
+      enabled: inputValue.length > 0 
+    }
   );
 
   useEffect(() => {
-    setOptions(ids.length > 0 ? Object.values(data) : []);
-  }, [ids, data]);
+    setOptions(data?.length > 0 ? Object.values(data) : []);
+  }, [data]);
 
   return (
     <Autocomplete
@@ -59,8 +64,8 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       renderInput={params => (
         <TextField {...params} label={translate('auth.input.agent_select')} variant="filled" margin="dense" fullWidth />
       )}
-      renderOption={option => (
-        <List dense className={classes.list}>
+      renderOption={(props, option) => (
+        <List dense className={classes.list} {...props}>
           <ListItem button>
             <ListItemAvatar>
               <Avatar src={option.image}>

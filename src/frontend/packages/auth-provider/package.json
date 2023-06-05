@@ -14,14 +14,14 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.57",
     "@semapps/semantic-data-provider": "0.4.7",
+    "classnames": "^2.3.2",
     "jwt-decode": "^3.0.0",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "react": "^16.13..1 || ^17.0.0",
-    "react-admin": "^3.19.10"
+    "react": "^18.2.0",
+    "react-admin": "^4.11.0"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useQueryWithStore } from 'react-admin';
+import { useGetList } from 'react-admin';
 import { default as FilterHandler } from './FilterHandler';
 
 /*
@@ -14,11 +14,10 @@ import { default as FilterHandler } from './FilterHandler';
  *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
  *   groupHeader={({group,...otherProps}) => <Label {...otherProps} label={group['pair:label']}></Label> }
  *   filterProperty="property of source filtered by groupReference"
- *   addLabel={false}
  * >
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  * </GroupedReferenceHandler>
  *
@@ -28,12 +27,11 @@ import { default as FilterHandler } from './FilterHandler';
  *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
  *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
  *   filterProperty="property of source filtered by groupReference"
- *   addLabel={false}
  * >
  *   <Label>
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  * </GroupedReferenceHandler>
  *
@@ -53,13 +51,12 @@ import { default as FilterHandler } from './FilterHandler';
  *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
  *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
  *   filterProperty="property of source filtered by groupReference"
- *   addLabel={false}
  * >
  *  <ConditionalSourceDefinedHandler>
  *   <Label>
  *   <ArrayField source="property"> // same props as GroupedArrayField source
- *    <GridList>
- *    </GridList>
+ *    <ImageList>
+ *    </ImageList>
  *   </ArrayField>
  *  </ConditionalSourceDefinedHandler>
  * </GroupedReferenceHandler>
@@ -74,8 +71,7 @@ const GroupedReferenceHandler = ({
   filterProperty,
   ...otherProps
 }) => {
-  const { data } = useQueryWithStore({
-    type: 'getList',
+  const { data } = useGetList({
     resource: groupReference,
     payload: {}
   });

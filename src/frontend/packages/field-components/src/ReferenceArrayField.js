@@ -1,18 +1,19 @@
 import React from 'react';
-import { ReferenceArrayField as RaReferenceArrayField } from 'react-admin';
+import { ReferenceArrayField as RaReferenceArrayField, useRecordContext, RecordContextProvider } from 'react-admin';
 
-const ReferenceArrayField = ({ record, source, ...otherProps }) => {
+const ReferenceArrayField = ({ source, ...otherProps }) => {
+  const record = useRecordContext();
   if (record?.[source]) {
     if (!Array.isArray(record[source])) {
       record[source] = [record[source]];
     }
     record[source] = record[source].map(i => i['@id'] || i.id || i);
   }
-  return <RaReferenceArrayField record={record} source={source} {...otherProps} />;
-};
-
-ReferenceArrayField.defaultProps = {
-  addLabel: true
+  return (
+    <RecordContextProvider value={record}>
+      <RaReferenceArrayField source={source} {...otherProps} />
+    </RecordContextProvider>
+  );
 };
 
 export default ReferenceArrayField;

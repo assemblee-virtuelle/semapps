@@ -4,3 +4,8 @@
 */actors/*.key.pub
 */jwt/*.key
 */jwt/*.key.pub
+
+*/actors/*.key
+*/actors/*.key.pub
+*/jwt/*.key
+*/jwt/*.key.pub

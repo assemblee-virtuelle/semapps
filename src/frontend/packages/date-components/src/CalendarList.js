@@ -1,7 +1,8 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { useTheme, makeStyles } from '@material-ui/core';
+import { useTheme } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import useFullCalendarProps from './useFullCalendarProps';
 
 const useGlobalStyles = makeStyles(theme => ({

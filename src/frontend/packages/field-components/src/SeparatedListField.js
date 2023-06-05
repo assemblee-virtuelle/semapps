@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { cloneElement, Children } from 'react';
-import { linkToRecord, useListContext, Link } from 'react-admin';
-import { LinearProgress } from '@material-ui/core';
+import { useCreatePath, useListContext, Link, RecordContextProvider } from 'react-admin';
+import { LinearProgress } from '@mui/material';
 
 // useful to prevent click bubbling in a datagrid with rowClick
 const stopPropagation = e => e.stopPropagation();
@@ -12,50 +12,43 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const SeparatedListField = props => {
-  let { classes: classesOverride, className, children, link = 'edit', linkType, separator = ',\u00A0' } = props;
-  const { ids, data, loaded, resource, basePath } = useListContext(props);
+  let { children, link = 'edit', linkType, separator = ',\u00A0' } = props;
+  const { data, isLoading, resource } = useListContext(props);
+  const createPath = useCreatePath();
 
   if (linkType !== undefined) {
     console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
     link = linkType;
   }
 
-  if (loaded === false) {
-    return <LinearProgress />;
-  }
-
+  if (isLoading) return <LinearProgress />;
+  
   return (
     <React.Fragment>
-      {ids.map((id, i) => {
-        if (!data[id]) return null;
+      {data.map((record, i) => {
+        if (!record.id) return null;
         const resourceLinkPath =
-          link !== false && (typeof link === 'function' ? link(data[id]) : linkToRecord(basePath, id, link));
-
+          link !== false && (typeof link === 'function' ? link(record.id) : createPath({ resource, id: record.id, type: link }));
         if (resourceLinkPath) {
           return (
-            <span key={id}>
+            <span key={record.id}>
               <Link to={resourceLinkPath} onClick={stopPropagation}>
                 {cloneElement(Children.only(children), {
-                  record: data[id],
-                  resource,
-                  basePath,
                   // Workaround to force ChipField to be clickable
                   onClick: handleClick
                 })}
               </Link>
-              {i < ids.length - 1 && separator}
+              {i < data.length - 1 && separator}
             </span>
           );
         }
 
         return (
-          <span key={id}>
-            {cloneElement(Children.only(children), {
-              record: data[id],
-              resource,
-              basePath
-            })}
-            {i < ids.length - 1 && separator}
+          <span key={record.id}>
+            <RecordContextProvider value={record}>
+              {children}
+            </RecordContextProvider>
+            {i < data.length - 1 && separator}
           </span>
         );
       })}

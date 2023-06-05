@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { useMap } from 'react-leaflet';
-import { Drawer, Box, IconButton, makeStyles } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { useMap } from "react-leaflet";
+import { useRecordContext } from 'react-admin';
+import { Drawer, Box, IconButton } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const useStyles = makeStyles(() => ({
   closeButton: {
@@ -12,22 +14,23 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const MobileDrawer = ({ record, basePath, popupContent, onClose }) => {
+const MobileDrawer = ({ popupContent, onClose }) => {
   const classes = useStyles();
+  const record = useRecordContext();
   const map = useMap();
   useEffect(() => {
     if (record) {
       map.setView([record.latitude, record.longitude]);
     }
-  }, [record, map]);
+  }, [record, map])
 
   return (
     <Drawer anchor="bottom" open={!!record} onClose={onClose}>
       <Box p={1} position="relative">
-        <IconButton onClick={onClose} className={classes.closeButton}>
-          <CloseIcon />
+        <IconButton onClick={onClose} className={classes.closeButton} size="large">
+          <ClearIcon />
         </IconButton>
-        {record && React.createElement(popupContent, { record, basePath })}
+        {React.createElement(popupContent)}
       </Box>
     </Drawer>
   );

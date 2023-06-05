@@ -21,7 +21,7 @@ const useFork = resourceId => {
       const { data: localData } = await dataProvider.create(resourceId, { data: strippedData });
 
       redirect('/' + resourceId + '/' + encodeURIComponent(localData.id) + '/show');
-      notify('La ressource a bien été copiée', { type: 'success' });
+      notify('La ressource a bien été copiée', {type: 'success'});
     },
     [resourceId, dataProvider, redirect, notify]
   );

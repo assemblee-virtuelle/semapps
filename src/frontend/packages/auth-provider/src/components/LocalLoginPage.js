@@ -1,14 +1,97 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
-import { LoginForm, Notification, useGetIdentity, useTranslate } from 'react-admin';
-import { Card, Avatar, makeStyles, createTheme, ThemeProvider, Typography } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
-import { Link, useLocation, Redirect } from 'react-router-dom';
+import React from 'react';
+import { useRef, useEffect } from 'react';
+import { Card, Avatar, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import LockIcon from '@mui/icons-material/Lock';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { LoginForm, useTranslate, useGetIdentity } from 'react-admin';
 import SignupForm from './SignupForm';
 
-const useStyles = makeStyles(theme => ({
-  main: {
+// Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
+const LocalLoginPage = (props) => {
+    const { children, backgroundImage, ...rest } = props;
+    const containerRef = useRef();
+    let backgroundImageLoaded = false;
+    const navigate = useNavigate();
+    const translate = useTranslate();
+    const [searchParams] = useSearchParams();
+    const isSignup = searchParams.has('signup');
+    const redirectTo = searchParams.get('redirect');
+    const { identity, isLoading } = useGetIdentity();
+
+    useEffect(() => {
+      if (!isLoading && identity?.id) {
+        // Already authenticated, redirect to the home page
+        navigate(redirectTo || '/');
+      }    
+    }, [identity, isLoading, navigate, redirectTo]);
+
+    const updateBackgroundImage = () => {
+        if (!backgroundImageLoaded && containerRef.current) {
+            containerRef.current.style.backgroundImage = `url(${backgroundImage})`;
+            backgroundImageLoaded = true;
+        }
+    };
+
+    // Load background image asynchronously to speed up time to interactive
+    const lazyLoadBackgroundImage = () => {
+        if (backgroundImage) {
+            const img = new Image();
+            img.onload = updateBackgroundImage;
+            img.src = backgroundImage;
+        }
+    };
+
+    useEffect(() => {
+        if (!backgroundImageLoaded) {
+            lazyLoadBackgroundImage();
+        }
+    });
+
+    if (isLoading) return null;
+
+    return (
+      <Root {...rest} ref={containerRef}>
+          <Card className={LocalLoginPageClasses.card}>
+              <div className={LocalLoginPageClasses.avatar}>
+                  <Avatar className={LocalLoginPageClasses.icon}>
+                      <LockIcon />
+                  </Avatar>
+              </div>
+              {isSignup ? (
+                <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />
+              ) : (
+                <LoginForm redirectTo={redirectTo} />
+              )}
+              <div className={LocalLoginPageClasses.switch}>
+                {isSignup ? (
+                  <Link to="/login">
+                    <Typography variant="body2">{translate('auth.action.login')}</Typography>
+                  </Link>
+                ) : (
+                  <Link to="/login?signup=true">
+                    <Typography variant="body2">{translate('auth.action.signup')}</Typography>
+                  </Link>
+                )}
+              </div> 
+          </Card>
+      </Root>
+    );
+};
+
+const PREFIX = 'LocalLoginPage';
+
+export const LocalLoginPageClasses = {
+    card: `${PREFIX}-card`,
+    avatar: `${PREFIX}-avatar`,
+    icon: `${PREFIX}-icon`,
+    switch: `${PREFIX}-switch`,
+};
+
+const Root = styled('div', {
+    name: PREFIX,
+    overridesResolver: (props, styles) => styles.root,
+})(({ theme }) => ({
     display: 'flex',
     flexDirection: 'column',
     minHeight: '100vh',
@@ -17,82 +100,24 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'flex-start',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)'
+    backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
+    [`& .${LocalLoginPageClasses.card}`]: {
+        minWidth: 300,
+        marginTop: '6em',
+    },
+    [`& .${LocalLoginPageClasses.avatar}`]: {
+        margin: '1em',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    [`& .${LocalLoginPageClasses.icon}`]: {
+        backgroundColor: theme.palette.secondary[500],
+    },
+    [`& .${LocalLoginPageClasses.switch}`]: {
+      marginBottom: '1em',
+      display: 'flex',
+      justifyContent: 'center'
   },
-  card: {
-    minWidth: 300,
-    marginTop: '6em'
-  },
-  avatar: {
-    margin: '1em',
-    display: 'flex',
-    justifyContent: 'center'
-  },
-  icon: {
-    backgroundColor: theme.palette.secondary[500]
-  },
-  switch: {
-    margin: '1em',
-    display: 'flex',
-    justifyContent: 'center'
-  }
 }));
-
-const LocalLoginPage = props => {
-  const { theme, title, classes: classesOverride, className, ...rest } = props;
-  const classes = useStyles(props);
-  const location = useLocation();
-  const translate = useTranslate();
-  const muiTheme = useMemo(() => createTheme(theme), [theme]);
-  const searchParams = new URLSearchParams(location.search);
-  const isSignup = searchParams.has('signup');
-  const redirectTo = searchParams.get('redirect');
-  const { identity, loading } = useGetIdentity();
-
-  if (loading) {
-    return null;
-  } else if (identity?.id) {
-    // Do not show login page if user is already connected
-    return <Redirect to={redirectTo || '/'} />;
-  } else {
-    return (
-      <ThemeProvider theme={muiTheme}>
-        <div className={classnames(classes.main, className)} {...rest}>
-          <Card className={classes.card}>
-            <div className={classes.avatar}>
-              <Avatar className={classes.icon}>
-                <LockIcon />
-              </Avatar>
-            </div>
-            {isSignup ? (
-              <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />
-            ) : (
-              <LoginForm redirectTo={redirectTo} />
-            )}
-            <div className={classes.switch}>
-              {isSignup ? (
-                <Link to="/login">
-                  <Typography variant="body2">{translate('auth.action.login')}</Typography>
-                </Link>
-              ) : (
-                <Link to="/login?signup=true">
-                  <Typography variant="body2">{translate('auth.action.signup')}</Typography>
-                </Link>
-              )}
-            </div>
-          </Card>
-          <Notification />
-        </div>
-      </ThemeProvider>
-    );
-  }
-};
-
-LocalLoginPage.propTypes = {
-  children: PropTypes.node,
-  classes: PropTypes.object,
-  className: PropTypes.string,
-  theme: PropTypes.object
-};
 
 export default LocalLoginPage;

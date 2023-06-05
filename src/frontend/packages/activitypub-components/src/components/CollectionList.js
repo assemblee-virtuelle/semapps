@@ -8,9 +8,9 @@ const CollectionList = ({ collectionUrl, resource, children, ...rest }) => {
   }
 
   // TODO use a simple fetch call, as the resource is not good and it is useless
-  const { data: collection, loading } = useGetOne(resource, collectionUrl, { enabled: !!collectionUrl });
+  const { data: collection, isLoading } = useGetOne(resource, collectionUrl, { enabled: !!collectionUrl });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div style={{ marginTop: 8 }}>
         <LinearProgress />

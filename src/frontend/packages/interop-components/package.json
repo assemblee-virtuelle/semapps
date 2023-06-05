@@ -14,17 +14,15 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.57",
     "@semapps/input-components": "0.4.7",
     "@semapps/semantic-data-provider": "0.4.7",
     "autosuggest-highlight": "^3.1.1",
-    "final-form-calculate": "^1.3.2",
     "lodash.throttle": "^4.1.1",
     "url-join": "^4.0.1"
   },
   "peerDependencies": {
-    "react": "^16.13.1 || ^17.0.0",
-    "react-admin": "^3.19.10"
+    "react": "^18.2.0",
+    "react-admin": "^4.11.0"
   },
   "publishConfig": {
     "access": "public"

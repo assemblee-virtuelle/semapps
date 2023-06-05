@@ -1,21 +1,17 @@
 import { useMemo } from 'react';
-import { useQuery } from 'react-admin';
+import { useGetList } from 'react-admin';
 import renderMentions from './renderMentions';
 import { useDataModel } from '@semapps/semantic-data-provider';
 
 const useMentions = userResource => {
   const userDataModel = useDataModel(userResource);
 
-  // The "enabled" option doesn't work with useQueryWithStore
-  const { data } = useQuery(
+  const { data } = useGetList(
+    userResource,
     {
-      type: 'getList',
-      resource: userResource,
-      payload: {
-        filter: {
-          _predicates: [userDataModel?.fieldsMapping?.title],
-          blankNodes: []
-        }
+      filter: {
+        _predicates: [userDataModel?.fieldsMapping?.title],
+        blankNodes: []
       }
     },
     {

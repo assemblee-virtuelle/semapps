@@ -1,22 +1,14 @@
 import React from 'react';
-import {
-  DatePicker,
-  TimePicker,
-  DateTimePicker,
-  KeyboardDatePicker,
-  KeyboardDateTimePicker,
-  KeyboardTimePicker
-} from '@material-ui/pickers';
 import Picker from './Picker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 const DateInput = props => <Picker PickerComponent={DatePicker} {...props} />;
 const TimeInput = props => <Picker PickerComponent={TimePicker} {...props} />;
 const DateTimeInput = props => <Picker PickerComponent={DateTimePicker} {...props} />;
-const KeyboardDateInput = props => <Picker PickerComponent={KeyboardDatePicker} {...props} />;
-const KeyboardDateTimeInput = props => <Picker PickerComponent={KeyboardDateTimePicker} {...props} />;
-const KeyboardTimeInput = props => <Picker PickerComponent={KeyboardTimePicker} {...props} />;
 
-export { DateInput, TimeInput, DateTimeInput, KeyboardDateInput, KeyboardDateTimeInput, KeyboardTimeInput };
+export { DateInput, TimeInput, DateTimeInput };
 
 export { default as CalendarList } from './CalendarList';
 export { default as DaysList } from './DaysList';
