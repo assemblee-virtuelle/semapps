@@ -25,7 +25,7 @@ const SingleMailNotificationsService = {
       if (this.settings.delay) {
         await delay(this.settings.delay);
       }
-
+      
       for (let recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
         const locale = account.preferredLocale || this.settings.defaultLocale;
