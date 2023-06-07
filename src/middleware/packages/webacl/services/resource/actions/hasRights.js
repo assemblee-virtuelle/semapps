@@ -103,6 +103,10 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     cache: {
+      enabled(ctx) {
+        // Do not cache remote resources as we have no mecanism to clear this cache
+        return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
+      },
       keys: ['resourceUri', 'rights', 'webId']
     },
     async handler(ctx) {
