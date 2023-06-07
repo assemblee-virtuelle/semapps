@@ -51,8 +51,8 @@ module.exports = {
       );
     },
     async 'webacl.resource.deleted'(ctx) {
-      const { uri } = ctx.params;
-      await this.actions.invalidateResourceRights({ uri, specificUriOnly: false }, { parentCtx: ctx });
+      const { uri, isContainer } = ctx.params;
+      await this.actions.invalidateResourceRights({ uri, specificUriOnly: !isContainer }, { parentCtx: ctx });
     },
     async 'webacl.group.member-added'(ctx) {
       const { groupUri, memberUri } = ctx.params;
