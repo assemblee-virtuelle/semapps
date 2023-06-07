@@ -154,6 +154,11 @@ const OutboxService = {
               webId: recipientUri,
               dataset
             });
+
+            await this.broker.call('activitypub.activity.attach', {
+              resourceUri: activity.id,
+              webId: recipientUri
+            }, { meta: { dataset }});
           }
 
           success.push(recipientUri);
