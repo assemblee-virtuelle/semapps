@@ -63,7 +63,7 @@ module.exports = {
       aclVerified: { type: 'boolean', optional: true }
     },
     cache: {
-      enabled: ctx => {
+      enabled(ctx) {
         // Do not cache remote resources as we have no mecanism to clear this cache
         if (!ctx.params.resourceUri.startsWith(this.settings.baseUrl)) return false;
         // Check if container URI is a file, disable cache in this case
