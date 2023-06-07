@@ -64,8 +64,8 @@ module.exports = {
       await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
     },
     async 'ldp.remote.stored'(ctx) {
-      const { resourceUri, webId } = ctx.params;
-      await this.actions.invalidateResource({ resourceUri, webId }, { parentCtx: ctx });
+      const { resourceUri } = ctx.params;
+      await this.actions.invalidateResource({ resourceUri }, { parentCtx: ctx });
     },
     // Invalidate cache also when ACL rights are changed
     async 'webacl.resource.updated'(ctx) {

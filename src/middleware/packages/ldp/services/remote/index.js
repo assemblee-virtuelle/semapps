@@ -1,11 +1,11 @@
 const urlJoin = require("url-join");
 const Schedule = require('moleculer-schedule');
-const { MIME_TYPES } = require("@semapps/mime-types");
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
 const getGraphAction = require('./actions/getGraph');
 const getNetworkAction = require('./actions/getNetwork');
 const getStoredAction = require('./actions/getStored');
+const isRemoteAction = require('./actions/isRemote');
 const storeAction = require('./actions/store');
 
 module.exports = {
@@ -24,6 +24,7 @@ module.exports = {
     getGraph: getGraphAction,
     getNetwork: getNetworkAction,
     getStored: getStoredAction,
+    isRemote: isRemoteAction,
     store: storeAction,
     runCron() { this.updateSingleMirroredResources() } // Used by tests
   },
