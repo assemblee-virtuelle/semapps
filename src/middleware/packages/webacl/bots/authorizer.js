@@ -47,6 +47,13 @@ module.exports = {
               webId: 'system'
             });
           }
+          if (users.length > 0) {
+            ctx.emit('authorizer.added', {
+              resourceUri,
+              users,
+              rule
+            });
+          }
         }
       }
     },
@@ -71,6 +78,13 @@ module.exports = {
               webId: 'system'
             });
           }
+          if (usersToAdd.length > 0) {
+            ctx.emit('authorizer.added', {
+              resourceUri,
+              users: usersToAdd,
+              rule
+            });
+          }
 
           const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
           for (let userUri of usersToRemove) {
@@ -83,6 +97,13 @@ module.exports = {
                 }
               },
               webId: 'system'
+            });
+          }
+          if (usersToRemove.length > 0) {
+            ctx.emit('authorizer.removed', {
+              resourceUri,
+              users: usersToRemove,
+              rule
             });
           }
         }
