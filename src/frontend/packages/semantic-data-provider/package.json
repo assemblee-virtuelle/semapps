@@ -1,6 +1,6 @@
 {
   "name": "@semapps/semantic-data-provider",
-  "version": "0.5.0-alpha.0",
+  "version": "0.5.0-alpha.1",
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
