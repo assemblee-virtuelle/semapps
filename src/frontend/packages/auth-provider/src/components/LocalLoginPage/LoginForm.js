@@ -1,52 +1,35 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email } from 'react-admin';
+import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
-import { default as useSignup } from '../hooks/useSignup';
 
 const useStyles = makeStyles(theme => ({
   content: {
-    width: 300,
-  },
-  button: {
-    marginTop: theme.spacing(2),
+    width: 450,
   },
   icon: {
     margin: theme.spacing(0.3),
   }
 }));
 
-const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
+const LoginForm = ({ redirectTo }) => {
   const [loading, setLoading] = useSafeSetState(false);
-  const signup = useSignup();
+  const login = useLogin();
   const translate = useTranslate();
   const notify = useNotify();
   const classes = useStyles();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  const submit = values => {
+  const submit = (values) => {
     setLoading(true);
-    signup(values)
-      .then(webId => {
-        if (delayBeforeRedirect) {
-          setTimeout(() => {
-            // Reload to ensure the dataServer config is reset
-            window.location.reload();
-            window.location.href = redirectTo || '/';
-            setLoading(false);
-          }, delayBeforeRedirect);
-        } else {
-          // Reload to ensure the dataServer config is reset
-          window.location.reload();
-          window.location.href = redirectTo || '/';
-          setLoading(false);
-        }
-        notify('auth.message.new_user_created', {type: 'info'});
+    login(values, redirectTo)
+      .then(() => {
+        setLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -54,9 +37,11 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
             : typeof error === 'undefined' || !error.message
             ? 'ra.auth.sign_in_error'
             : error.message,
-          { 
+          {
             type: 'warning',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            messageArgs: {
+              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
+            },
           }
         );
       });
@@ -70,16 +55,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
     >
       <CardContent className={classes.content}>
         <TextInput
-          autoFocus
           source="username"
-          label={translate('auth.input.username')}
-          autoComplete="username"
-          fullWidth
-          disabled={loading}
-          validate={required()}
-        />
-        <TextInput
-          source="email"
           label={translate('auth.input.email')}
           autoComplete="email"
           fullWidth
@@ -90,7 +66,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           source="password"
           type="password"
           label={translate('ra.auth.password')}
-          autoComplete="new-password"
+          autoComplete="current-password"
           fullWidth
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={required()}
@@ -105,7 +81,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
         >
           {loading 
             ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.signup')
+            : translate('auth.action.login')
           }
         </Button>
       </CardContent>
@@ -113,8 +89,8 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   );
 };
 
-SignupForm.propTypes = {
+LoginForm.propTypes = {
   redirectTo: PropTypes.string
 };
 
-export default SignupForm;
+export default LoginForm;

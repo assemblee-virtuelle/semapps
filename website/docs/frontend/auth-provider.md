@@ -136,7 +136,11 @@ All other props are passed to the underlying Material-UI [Dialog](https://v4.mui
 
 ### LocalLoginPage
 
-Login/signup page to use with a [local authentication](../middleware/auth#local-accounts).
+Login/signup page to use with a [local authentication](../middleware/auth#local-accounts). Include reset password feature.
+
+| Property          | Type      | Default                    | Description                                                  |
+|-------------------|-----------|----------------------------|--------------------------------------------------------------|
+| `hasSignup`       | `String`  | `true`                     | Set to false if you don't the user to be able to signup      |
 
 
 ### SsoLoginPage

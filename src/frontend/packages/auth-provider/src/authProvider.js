@@ -186,7 +186,7 @@ const authProvider = ({
 
       return {
         id: webId,
-        fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'],
+        fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
         profileData,
         webIdData
       };
@@ -202,7 +202,7 @@ const authProvider = ({
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
     } catch (e) {
-      throw new Error('app.notification.reset_password_error');
+      throw new Error('auth.notification.reset_password_error');
     }
   },
   setNewPassword: async params => {
@@ -215,7 +215,7 @@ const authProvider = ({
         headers: new Headers({ 'Content-Type': 'application/json' })
       });
     } catch (e) {
-      throw new Error('app.notification.new_password_error');
+      throw new Error('auth.notification.new_password_error');
     }
   },
   getAccountSettings: async params => {
@@ -224,7 +224,7 @@ const authProvider = ({
       const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'));
       return json;
     } catch (e) {
-      throw new Error('app.notification.get_settings_error');
+      throw new Error('auth.notification.get_settings_error');
     }
   },
   updateAccountSettings: async params => {
@@ -239,10 +239,10 @@ const authProvider = ({
       });
     } catch (e) {
       if (e.message === 'auth.account.invalid_password') {
-        throw new Error('app.notification.invalid_password');
+        throw new Error('auth.notification.invalid_password');
       }
 
-      throw new Error('app.notification.update_settings_error');
+      throw new Error('auth.notification.update_settings_error');
     }
   }
 });
