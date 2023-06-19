@@ -62,23 +62,24 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
   async started(broker) {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
     if (!podProvider) {
+      await broker.waitForServices(['ldp.container', 'triplestore']);
       const containers = await broker.call('ldp.container.getAll');
       for (let containerUri of containers) {
         const authorizations = await broker.call('triplestore.query', {
           query: `
-          PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-          PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-          PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-          SELECT ?auth
-          WHERE {
-            GRAPH <${graphName}> {
-              ?auth a acl:Authorization ;
-                acl:default <${containerUri}> ;
-                acl:agentClass foaf:Agent ;
-                acl:mode acl:Read .
+            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+            PREFIX acl: <http://www.w3.org/ns/auth/acl#>
+            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+            SELECT ?auth
+            WHERE {
+              GRAPH <${graphName}> {
+                ?auth a acl:Authorization ;
+                  acl:default <${containerUri}> ;
+                  acl:agentClass foaf:Agent ;
+                  acl:mode acl:Read .
+              }
             }
-          }
-        `,
+          `,
           webId: 'system'
         });
 
