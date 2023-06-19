@@ -17,14 +17,13 @@ npm install @semapps/auth-provider
 ```jsx
 import { Admin } from 'react-admin';
 import { authProvider, SsoLoginPage } from '@semapps/auth-provider';
-import { httpClient } from '@semapps/semantic-data-provider';
+import dataProvider from './dataProvider.js';
 
 const App = () => (
   <Admin
     authProvider={authProvider({ 
-      middlewareUri: 'http://localhost:3000/',
-      httpClient,
-      localAccounts: false // Set to true if you use the LocalLoginPage
+      dataProvider,
+      authType: 'sso' // or "local" or "pod"
     })}
     loginPage={SsoLoginPage} // Or you can use the LocalLoginPage
   >
@@ -73,10 +72,6 @@ If you only want certain types of users to access your app, you can pass a `chec
 This function receives user data and must return true or false, depending on whether the user is granted access or not.
 
 > This `checkUser` function is also available to any of your components using the React-Admin's `useAuthProvider` hook.
-
-### `localAccounts`
-
-If you use the [LocalLoginPage](#localloginpage) instead of the [SsoLoginPage](#ssologinpage), you must set `localAccounts: true`.
 
 
 ## Pages components
