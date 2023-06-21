@@ -31,7 +31,7 @@ const SingleMailNotificationsService = {
         const locale = account.preferredLocale || this.settings.defaultLocale;
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
-        if (notification && (await this.filterNotification(notification, activity))) {
+        if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
           if (notification.actionLink) notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
           await this.queueMail(ctx, notification.key, {
@@ -52,7 +52,7 @@ const SingleMailNotificationsService = {
   methods: {
     // Optional method called for each notification
     // Return true if you want the notification to be sent by email
-    async filterNotification(notification, activity) {
+    async filterNotification(notification, activity, recipientUri) {
       return true;
     },
     // Method called to format "actionLink" returned for each notification
