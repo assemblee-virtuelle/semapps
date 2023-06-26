@@ -76,7 +76,7 @@ module.exports = {
   methods: {
     // Optional method called for each notification
     // Return true if you want the notification to be sent by email
-    async filterNotification(notification, activity) {
+    async filterNotification(notification, activity, recipientUri) {
       return true;
     },
     // Method called to format the actionLink prop of each notification
