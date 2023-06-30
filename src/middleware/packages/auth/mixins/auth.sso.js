@@ -1,4 +1,5 @@
 const session = require('express-session');
+const { v4: uuidv4 } = require('uuid');
 const AuthMixin = require('./auth');
 const saveRedirectUrl = require('../middlewares/saveRedirectUrl');
 const redirectToFront = require('../middlewares/redirectToFront');
@@ -43,7 +44,7 @@ const AuthSSOMixin = {
         accountData = await ctx.call('auth.account.create', {
           uuid: profileData.uuid,
           email: profileData.email,
-          username: profileData.username
+          username: profileData.username || uuidv4(),
         });
         webId = await ctx.call('webid.create', this.pickWebIdData({ nick: accountData.username, ...profileData }));
         newUser = true;
