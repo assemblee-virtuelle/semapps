@@ -15,51 +15,6 @@ afterAll(async () => {
 describe('Container options', () => {
   let orga1;
 
-  test('Get resource with queryDepth', async () => {
-    const resourceUri = await broker.call('ldp.container.post', {
-      resource: {
-        '@context': 'https://www.w3.org/ns/activitystreams',
-        type: 'Event',
-        location: {
-          type: 'Place',
-          name: 'Chantilly'
-        }
-      },
-      contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
-    });
-
-    // Get resource without queryDepth
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        accept: MIME_TYPES.JSON,
-        jsonContext: 'https://www.w3.org/ns/activitystreams'
-      })
-    ).resolves.toMatchObject({
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Event',
-      location: {}
-    });
-
-    // Get resource with queryDepth
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        queryDepth: 1,
-        accept: MIME_TYPES.JSON,
-        jsonContext: 'https://www.w3.org/ns/activitystreams'
-      })
-    ).resolves.toMatchObject({
-      '@context': 'https://www.w3.org/ns/activitystreams',
-      type: 'Event',
-      location: {
-        type: 'Place',
-        name: 'Chantilly'
-      }
-    });
-  });
-
   test('Get resource with dereference', async () => {
     const jsonContext = [
       'https://www.w3.org/ns/activitystreams',

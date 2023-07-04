@@ -1,6 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { isMirror, regexPrefix } = require('../../../utils');
+const { isMirror } = require('../../../utils');
 const SparqlParser = require('sparqljs').Parser;
 const parser = new SparqlParser();
 
@@ -70,25 +69,14 @@ module.exports = {
                   // we need to import the remote resource
                   this.logger.info('IMPORTING ' + insUri);
                   try {
-                    let newResource = await fetch(insUri, { headers: { Accept: MIME_TYPES.TURTLE } });
-                    newResource = await newResource.text();
+                    await ctx.call('ldp.remote.store', {
+                      resourceUri: insUri,
+                      keepInSync: true,
+                      mirrorGraph: true,
+                      webId
+                    });
 
-                    const prefixes = [...newResource.matchAll(regexPrefix)];
-
-                    let turtleToSparql = '';
-                    for (const pref of prefixes) {
-                      turtleToSparql += 'PREFIX ' + pref[1] + '\n';
-                    }
-                    turtleToSparql += `INSERT DATA { GRAPH <${this.settings.mirrorGraphName}> { \n`;
-                    turtleToSparql += newResource.replace(regexPrefix, '');
-                    turtleToSparql += `<${insUri}> <http://semapps.org/ns/core#singleMirroredResource> <${
-                      new URL(insUri).origin
-                    }> .`;
-                    turtleToSparql += '} }';
-
-                    await ctx.call('triplestore.update', { query: turtleToSparql });
-
-                    // now if the import went well, we can retry the attach
+                    // Now if the import went well, we can retry the attach
                     await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
                   } catch (e) {
                     this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e.message);
@@ -105,38 +93,14 @@ module.exports = {
               try {
                 await ctx.call('ldp.container.detach', { containerUri, resourceUri: delUri });
 
-                // if the resource is not attached to any container anymore, it must be deleted.
-
-                let remaining = await ctx.call('triplestore.query', {
-                  query: `SELECT (COUNT (?s) as ?count) WHERE { ?s <http://www.w3.org/ns/ldp#contains> <${delUri}> }`
-                });
-                remaining = Number(remaining[0].count.value);
-                if (remaining === 0) {
-                  const isM = isMirror(delUri, this.settings.baseUrl);
-
-                  await ctx.call('triplestore.update', {
-                    query: `
-                    DELETE
-                    WHERE { 
-                      ${isM ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
-                      <${delUri}> ?p1 ?o1 . ${isM ? '}' : ''}
-                    }
-                  `,
-                    webId: 'system'
-                  });
-
-                  ctx.call('triplestore.deleteOrphanBlankNodes', {
-                    graphName: isM ? this.settings.mirrorGraphName : undefined
-                  });
-
-                  ctx.emit(
-                    'ldp.resource.deletedSingleMirror',
-                    { resourceUri: delUri },
-                    { meta: { webId: null, dataset: null, isMirror: true } }
-                  );
+                // If the mirrored resource is not attached to any container anymore, it must be deleted.
+                const containers = await ctx.call('ldp.resource.getContainers', { resourceUri: delUri });
+                if (containers.length === 0 && isMirror(delUri, this.settings.baseUrl)) {
+                  await ctx.call('ldp.remote.delete', { resourceUri: delUri });
                 }
               } catch (e) {
-                // fail silently
+                // Fail silently
+                this.logger.warn(`Error when detaching ${delUri} from ${containerUri}: ${e.message}`);
               }
             }
         }
@@ -147,9 +111,7 @@ module.exports = {
 
       ctx.emit(
         'ldp.container.patched',
-        {
-          containerUri
-        },
+        { containerUri },
         { meta: { webId: null, dataset: null } }
       );
     }

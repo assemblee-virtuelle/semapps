@@ -1,16 +1,18 @@
 import React from 'react';
-import { usePermissionsOptimized, ShowButton, ListButton, TopToolbar } from 'react-admin';
+import { usePermissionsOptimized, ShowButton, ListButton, TopToolbar, useResourceDefinition, useRecordContext } from 'react-admin';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToControl } from '../../constants';
 
-const EditActionsWithPermissions = ({ basePath, record, hasList, hasShow }) => {
+const EditActionsWithPermissions = () => {
+  const { hasList, hasShow } = useResourceDefinition();
+  const record = useRecordContext();
   const { permissions } = usePermissionsOptimized(record?.id);
   return (
     <TopToolbar>
-      {hasList && <ListButton basePath={basePath} record={record} />}
-      {hasShow && <ShowButton basePath={basePath} record={record} />}
+      {hasList && <ListButton />}
+      {hasShow && <ShowButton />}
       {!!permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
-        <PermissionsButton basePath={basePath} record={record} />
+        <PermissionsButton />
       )}
     </TopToolbar>
   );

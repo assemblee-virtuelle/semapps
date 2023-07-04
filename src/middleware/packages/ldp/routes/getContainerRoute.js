@@ -6,7 +6,8 @@ const {
   parseJson,
   parseTurtle,
   parseFile,
-  addContainerUriMiddleware
+  addContainerUriMiddleware,
+  saveDatasetMeta
 } = require('@semapps/middlewares');
 
 function getContainerRoute(containerUri, readOnly = false) {
@@ -20,7 +21,8 @@ function getContainerRoute(containerUri, readOnly = false) {
     parseJson,
     parseTurtle,
     parseFile,
-    addContainerUriMiddleware(containerUri)
+    addContainerUriMiddleware(containerUri),
+    saveDatasetMeta
   ];
 
   // Container aliases

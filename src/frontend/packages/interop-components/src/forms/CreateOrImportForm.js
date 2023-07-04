@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { SimpleForm } from 'react-admin';
-import { Box, Tab, Tabs, Divider, makeStyles, useMediaQuery } from '@material-ui/core';
+import { Box, Tabs, Tab, Divider, useMediaQuery } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import ImportForm from './ImportForm';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   tab: {
     maxWidth: 'unset',
     padding: '6px 24px'
@@ -12,11 +13,11 @@ const useStyles = makeStyles(theme => ({
 
 const CreateOrImportForm = ({ stripProperties, ...rest }) => {
   const [tab, setTab] = useState(0);
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
   const classes = useStyles();
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   return (
     <>
-      <Box pb={2} fullWidth>
+      <Box pb={2}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} indicatorColor="primary">
           <Tab className={classes.tab} label="Créer" />
           <Tab className={classes.tab} label={xs ? 'Importer' : 'Importer une ressource distante'} />

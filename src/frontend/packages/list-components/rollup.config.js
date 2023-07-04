@@ -12,10 +12,8 @@ const external = createFilter(
     'react-admin',
     'react-dom',
     'react-router-dom',
-    'react-final-form',
     'react-router',
-    'react-redux',
-    '@material-ui/**',
+    '@mui/**',
     'react-masonry-css',
     '@semapps/**'
   ],

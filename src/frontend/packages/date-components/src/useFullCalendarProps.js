@@ -1,41 +1,42 @@
 import React, { useMemo, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useListContext, linkToRecord } from 'react-admin';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useListContext, useCreatePath } from 'react-admin';
 
 const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
-  const history = useHistory();
-  const { ids, data, basePath } = useListContext();
+  const { data, isLoading, resource } = useListContext();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const createPath = useCreatePath();
 
-  let query = new URLSearchParams(history.location.search);
+  let query = new URLSearchParams(location.search);
 
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
     jsEvent.preventDefault();
-    history.push(event.url);
+    navigate(event.url);
   }, []);
 
   // Change the query string when month change
   const datesSet = useCallback(
     ({ view }) => {
-      query.set('month', view.currentStart.getMonth() + 1);
-      query.set('year', view.currentStart.getFullYear());
-      history.replace({ pathname: history.location.pathname, search: '?' + query.toString() });
+      setSearchParams(params => ({ ...params, month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() }));
     },
-    [query]
+    [setSearchParams]
   );
 
   const events = useMemo(
     () =>
-      ids
-        .filter(id => data[id])
-        .map(id => ({
-          id,
-          title: typeof label === 'string' ? data[id][label] : label(data[id]),
-          start: typeof startDate === 'string' ? data[id][startDate] : startDate(data[id]),
-          end: typeof endDate === 'string' ? data[id][endDate] : endDate(data[id]),
-          url: linkToRecord(basePath, id) + '/' + linkType
+      !isLoading &&
+      data
+        .filter(record => record)
+        .map(record => ({
+          id: record.id,
+          title: typeof label === 'string' ? record[label] : label(record),
+          start: typeof startDate === 'string' ? record[startDate] : startDate(record),
+          end: typeof endDate === 'string' ? record[endDate] : endDate(record),
+          url: createPath({ resource, id: record.id, type: linkType })
         })),
-    [data, ids, basePath]
+    [isLoading, data, resource, createPath]
   );
 
   return {

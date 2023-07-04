@@ -7,7 +7,7 @@ import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
 const external = createFilter(
-  ['react', 'react-admin', '@material-ui/**', '@semapps/**', 'react-mde', 'markdown-to-jsx'],
+  ['react', 'react-admin', '@mui/**', '@semapps/**', 'react-mde', 'markdown-to-jsx'],
   null,
   { resolve: false }
 );

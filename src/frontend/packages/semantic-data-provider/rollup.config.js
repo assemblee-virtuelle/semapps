@@ -10,12 +10,10 @@ const external = createFilter(
     'react',
     'react-admin',
     'react-router-dom',
-    'react-final-form',
     'react-router',
-    'react-redux',
     'speakingurl',
     'jsonld',
-    '@material-ui/**',
+    '@mui/**',
     '@rdfjs/**',
     'crypto-js'
   ],

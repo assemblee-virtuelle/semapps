@@ -1,6 +1,6 @@
 {
   "name": "@semapps/input-components",
-  "version": "0.4.8",
+  "version": "0.5.0-alpha.2",
   "description": "React-Admin input components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -14,11 +14,11 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.4.8"
+    "@semapps/semantic-data-provider": "0.5.0-alpha.2"
   },
   "peerDependencies": {
-    "react": "^16.13.1 || ^17.0.0",
-    "react-admin": "^3.19.10"
+    "react": "^18.2.0",
+    "react-admin": "^4.11.0"
   },
   "publishConfig": {
     "access": "public"

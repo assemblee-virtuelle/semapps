@@ -12,7 +12,7 @@ const external = createFilter(
     'react-dom',
     'react-admin',
     'react-router-dom',
-    '@material-ui/**',
+    '@mui/**',
     '@fullcalendar/**',
     '@date-io/**',
     'date-fns'

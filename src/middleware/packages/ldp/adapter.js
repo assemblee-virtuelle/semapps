@@ -50,7 +50,6 @@ class LdpAdapter {
     return this.broker.call(this.containerService + '.get', {
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
-      queryDepth: this.service.schema.settings.queryDepth,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });
@@ -72,7 +71,6 @@ class LdpAdapter {
     }
     return this.broker.call(this.resourceService + '.get', {
       resourceUri: _id,
-      queryDepth: this.service.schema.settings.queryDepth,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
     });

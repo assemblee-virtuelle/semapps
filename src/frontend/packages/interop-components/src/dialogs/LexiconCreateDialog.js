@@ -1,60 +1,57 @@
 import React, { useCallback, useState } from 'react';
-import { Form } from 'react-final-form';
 import { useCreate, useCreateSuggestionContext, useResourceContext } from 'react-admin';
-import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import LexiconAutocompleteInput from '../inputs/LexiconAutocompleteInput';
 
 const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
   const { filter, onCancel, onCreate } = useCreateSuggestionContext();
   const resource = useResourceContext();
   const [value, setValue] = useState(filter || '');
-  const [create] = useCreate(resource);
+  const [create] = useCreate();
+
+  const onClose = useCallback(() => {
+    setValue('');
+    onCancel();
+  }, [setValue, onCancel])
 
   const onSubmit = useCallback(
-    ({ lexicon }) => {
+    () => {
       // If we have no URI, it means we are creating a new definition
       // Delete the summary as it is "Ajouter XXX au dictionaire"
-      if (!lexicon.uri) delete lexicon.summary;
+      if (!value.uri) delete value.summary;
       create(
+        resource,
+        { data: selectData(value) },
         {
-          payload: {
-            data: selectData(lexicon)
-          }
-        },
-        {
-          onSuccess: ({ data }) => {
+          onSuccess: (data) => {
+            console.log('onSuccess', data);
             setValue('');
             onCreate(data);
           }
         }
       );
     },
-    [create, onCreate, selectData]
+    [create, onCreate, selectData, value, setValue, resource]
   );
 
   return (
-    <Dialog open onClose={onCancel} fullWidth maxWidth="sm">
-      <Form
-        onSubmit={onSubmit}
-        render={({ handleSubmit, dirtyFields }) => (
-          <form onSubmit={handleSubmit}>
-            <DialogContent>
-              <LexiconAutocompleteInput
-                label="Titre"
-                source="lexicon"
-                initialValue={value}
-                fetchLexicon={fetchLexicon}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={onCancel}>Annuler</Button>
-              <Button variant="contained" color="primary" type="submit" disabled={!dirtyFields.lexicon}>
-                Ajouter
-              </Button>
-            </DialogActions>
-          </form>
-        )}
-      />
+    <Dialog open onClose={onClose} fullWidth maxWidth="sm">
+      <DialogContent>
+        <LexiconAutocompleteInput
+          source="lexicon"
+          label="Titre"
+          fetchLexicon={fetchLexicon}
+          defaultValue={filter}
+          value={value}
+          onChange={setValue}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Annuler</Button>
+        <Button variant="contained" color="primary" onClick={onSubmit}>
+          Ajouter
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

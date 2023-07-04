@@ -12,6 +12,13 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
+// Transforms "http://localhost:3000/dataset/data" to "dataset"
+const getDatasetFromUri = uri => {
+  const path = new URL(uri).pathname;
+  const parts = path.split('/');
+  if (parts.length > 1) return parts[1];
+};
+
 const findParentContainers = async (ctx, resource) => {
   let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
 
@@ -124,6 +131,10 @@ function getUserAgentSearchParam(user, groups) {
     return {
       foafAgent: true
     };
+  } if (user === 'system') {
+    return {
+      system: true
+    };
   } else {
     return {
       foafAgent: true,
@@ -158,7 +169,9 @@ async function aclGroupExists(groupUri, ctx, graphName) {
 }
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
-  return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
+  return resourceUri.startsWith(baseUrl)
+    ? urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'))
+    : resourceUri;
 }
 
 function filterAndConvertTriple(quad, property) {
@@ -277,13 +290,16 @@ const processRights = (rights, aclUri) => {
   return list;
 };
 
-const isMirror = (resourceUri, baseUrl) => {
-  return !urlJoin(resourceUri, '/').startsWith(baseUrl);
+const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
+  if (podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+  return !urlJoin(uri, '/').startsWith(baseUrl)
+    || (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'));
 };
 
 module.exports = {
   getSlugFromUri,
   getContainerFromUri,
+  getDatasetFromUri,
   getAuthorizationNode,
   checkAgentPresent,
   getUserGroups,
@@ -308,5 +324,5 @@ module.exports = {
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
   FULL_ACL_ANYAGENT,
-  isMirror
+  isRemoteUri
 };

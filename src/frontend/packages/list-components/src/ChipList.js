@@ -1,19 +1,19 @@
 import React from 'react';
 import {
   ChipField,
-  useResourceContext,
+  useCreatePath,
   useListContext,
   sanitizeListRestProps,
-  linkToRecord,
   RecordContextProvider,
   Link
 } from 'react-admin';
-import { makeStyles, LinearProgress } from '@material-ui/core';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import LaunchIcon from '@material-ui/icons/Launch';
+import { LinearProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import LaunchIcon from '@mui/icons-material/Launch';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap'
@@ -29,11 +29,10 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     fontSize: 35,
     position: 'relative',
-    top: -2,
-    left: -2
+    top: 2
   },
   launchIcon: {
-    width: 16,
+    width: 20,
     paddingRight: 6,
     marginLeft: -10
   }
@@ -58,25 +57,23 @@ const ChipList = props => {
     externalLinks = false,
     ...rest
   } = props;
-  const { ids, data, loaded, basePath } = useListContext(props);
-  const resource = useResourceContext(props);
+  const { data, isLoading, resource } = useListContext(props);
   const getExternalLink = useGetExternalLink(externalLinks);
+  const createPath = useCreatePath();
 
   const classes = useStyles(props);
   const Component = component;
 
-  if (loaded === false) {
-    return <LinearProgress />;
-  }
+  if (isLoading) return <LinearProgress />;
 
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
-      {ids.map(id => {
-        if (!data[id] || data[id]['_error']) return null;
-        const externalLink = getExternalLink(data[id]);
+      {data.map(record => {
+        if (!record || record['_error']) return null;
+        const externalLink = getExternalLink(record);
         if (externalLink) {
           return (
-            <RecordContextProvider value={data[id]} key={id}>
+            <RecordContextProvider value={record} key={record.id}>
               <a
                 href={externalLink}
                 target="_blank"
@@ -85,9 +82,6 @@ const ChipList = props => {
                 onClick={stopPropagation}
               >
                 <ChipField
-                  record={data[id]}
-                  resource={resource}
-                  basePath={basePath}
                   source={primaryText}
                   className={classes.chipField}
                   color="secondary"
@@ -102,12 +96,9 @@ const ChipList = props => {
           );
         } else if (linkType) {
           return (
-            <RecordContextProvider value={data[id]} key={id}>
-              <Link className={classes.link} to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
+            <RecordContextProvider value={record} key={record.id}>
+              <Link className={classes.link} to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
                 <ChipField
-                  record={data[id]}
-                  resource={resource}
-                  basePath={basePath}
                   source={primaryText}
                   className={classes.chipField}
                   color="secondary"
@@ -119,11 +110,8 @@ const ChipList = props => {
           );
         } else {
           return (
-            <RecordContextProvider value={data[id]} key={id}>
+            <RecordContextProvider value={record} key={record.id}>
               <ChipField
-                record={data[id]}
-                resource={resource}
-                basePath={basePath}
                 source={primaryText}
                 className={classes.chipField}
                 color="secondary"

@@ -64,7 +64,7 @@ const ThemeCreate = (props) => (
 
 ### LexiconCreateDialog
 
-Dialog to be used with the `create` props of React-Admin [AutocompleteArrayInput](https://marmelab.com/react-admin/doc/3.19/Inputs.html#creating-new-choices-2)
+Dialog to be used with the `create` props of React-Admin [AutocompleteArrayInput](https://marmelab.com/react-admin/AutocompleteArrayInput.html#create)
 
 ```js
 import { AutocompleteArrayInput } from 'react-admin';

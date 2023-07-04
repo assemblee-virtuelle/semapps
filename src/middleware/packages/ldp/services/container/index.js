@@ -1,3 +1,4 @@
+const urlJoin = require("url-join");
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
@@ -11,6 +12,7 @@ const headAction = require('./actions/head');
 const includesAction = require('./actions/includes');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
+const { getDatasetFromUri } = require("../../utils");
 
 module.exports = {
   name: 'ldp.container',
@@ -40,16 +42,19 @@ module.exports = {
     api_head: headAction.api,
     api_patch: patchAction.api
   },
+  methods: {
+    isRemoteUri(uri, dataset) {
+      if (this.settings.podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
+        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
+    }
+  },
   hooks: {
     before: {
       '*'(ctx) {
-        if (this.settings.podProvider && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
-          // If we have a pod provider, guess the dataset from the container URI
-          const containerPath = new URL(ctx.params.containerUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
+        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
+          // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
+          ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
       }
     }

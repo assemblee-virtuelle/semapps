@@ -1,6 +1,5 @@
-const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri, isMirror } = require('../../../utils');
 const fs = require('fs');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
@@ -28,17 +27,16 @@ module.exports = {
     params: {
       resourceUri: 'string',
       webId: { type: 'string', optional: true },
-      disassembly: {
-        type: 'array',
-        optional: true
-      }
+      disassembly: { type: 'array', optional: true }
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      const mirror = isMirror(resourceUri, this.settings.baseUrl);
+      if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
+        return await ctx.call('ldp.remote.delete', { resourceUri, webId })
+      }
 
       const { disassembly } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
@@ -50,7 +48,6 @@ module.exports = {
       let oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        queryDepth: 1,
         forceSemantic: true,
         webId
       });
@@ -59,47 +56,21 @@ module.exports = {
         await this.deleteDisassembly(ctx, disassembly, oldData);
       }
 
-      // TODO see why blank node deletion does not work (permission error)
-      // TODO when fixed, remove the call to triplestore.deleteOrphanBlankNodes below
-      // const blandNodeQuery = buildBlankNodesQuery(3);
-      //
-      // // The resource must be deleted after the blank node, otherwise the permissions will fail
-      // const query =  `
-      //   DELETE {
-      //     ${blandNodeQuery.construct}
-      //     <${resourceUri}> ?p1 ?dataProp1 .
-      //   }
-      //   WHERE {
-      //     {
-      //       ${blandNodeQuery.where}
-      //       <${resourceUri}> ?p1 ?o1 .
-      //     }
-      //     UNION
-      //     {
-      //       <${resourceUri}> ?p1 ?dataProp1 .
-      //     }
-      //   }
-      // `;
-
       await ctx.call('triplestore.update', {
         query: `
           DELETE
           WHERE {
-            ${mirror ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
             <${resourceUri}> ?p1 ?o1 .
-            ${mirror ? '}' : ''}
           }
         `,
         webId
       });
 
-      // We must detach the resource from the container after deletion, otherwise the permissions will fail
-      if (!ctx.meta.forceMirror)
-        await ctx.call('ldp.container.detach', {
-          containerUri: getContainerFromUri(resourceUri),
-          resourceUri,
-          webId
-        });
+      // We must detach the resource from the containers after deletion, otherwise the permissions may fail
+      const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
+      for (let containerUri of containers) {
+        await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
+      }
 
       if (oldData['@type'] === 'semapps:File') {
         fs.unlinkSync(oldData['semapps:localPath']);
@@ -111,11 +82,9 @@ module.exports = {
         webId
       };
 
-      ctx.call('triplestore.deleteOrphanBlankNodes', { graphName: mirror ? this.settings.mirrorGraphName : undefined });
+      ctx.call('triplestore.deleteOrphanBlankNodes');
 
-      if (!mirror) {
-        ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null, dataset: null, isMirror: mirror } });
-      }
+      ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
 
       return returnValues;
     }

@@ -4,6 +4,8 @@ const awaitReadRight = require('./actions/awaitReadRight');
 const getRights = require('./actions/getRights');
 const setRights = require('./actions/setRights');
 const hasRights = require('./actions/hasRights');
+const isPublic = require('./actions/isPublic');
+const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
 const deleteAllRights = require('./actions/deleteAllRights');
 const refreshContainersRights = require('./actions/refreshContainersRights');
 const removeRights = require('./actions/removeRights');
@@ -17,7 +19,8 @@ const {
   FULL_DEFAULT_URI,
   FULL_MODE_URI,
   FULL_TYPE_URI,
-  ACL_NS
+  ACL_NS,
+  getDatasetFromUri
 } = require('../../utils');
 
 const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
@@ -36,6 +39,8 @@ module.exports = {
     deleteAllRights: deleteAllRights.action,
     getRights: getRights.action,
     hasRights: hasRights.action,
+    isPublic: isPublic.action,
+    getUsersWithReadRights: getUsersWithReadRights.action,
     refreshContainersRights: refreshContainersRights.action,
     removeRights: removeRights.action,
     setRights: setRights.action,
@@ -48,13 +53,8 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        // If we have a pod provider, guess the dataset from the container URI
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
-          const containerPath = new URL(ctx.params.resourceUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 2) {
-            ctx.meta.dataset = parts[2];
-          }
+          ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
       }
     }
@@ -79,7 +79,7 @@ module.exports = {
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: 'system' });
         if (!resourceExist) {
           throw new MoleculerError(
-            `Cannot get permissions of non-existing container or resource ${resourceUri}`,
+            `Cannot get permissions of non-existing container or resource ${resourceUri} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`,
             404,
             'NOT_FOUND'
           );

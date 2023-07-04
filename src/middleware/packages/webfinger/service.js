@@ -51,6 +51,7 @@ const WebfingerService = {
 
       ctx.meta.$statusCode = 404;
     },
+    // TODO add cache if response.ok
     async getRemoteUri(ctx) {
       const { account } = ctx.params;
       const splitAccount = account.split('@');

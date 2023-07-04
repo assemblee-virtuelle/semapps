@@ -9,7 +9,7 @@ const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
 let broker;
 
 beforeAll(async () => {
-  broker = await initialize();
+  broker = await initialize(3000, 'testData', 'settings');
 });
 afterAll(async () => {
   if (broker) await broker.stop();

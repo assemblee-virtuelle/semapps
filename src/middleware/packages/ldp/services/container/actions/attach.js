@@ -1,5 +1,4 @@
 const { MoleculerError } = require('moleculer').Errors;
-const { isMirror } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -14,18 +13,13 @@ module.exports = {
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.meta.dataset; // Save dataset, so that it is not modified by action calls below
 
-    const mirror = isMirror(containerUri, this.settings.baseUrl);
-
-    if (mirror && !ctx.meta.forceMirror)
-      throw new MoleculerError('Mirrored containers cannot be modified', 403, 'FORBIDDEN');
+    const isRemoteContainer = this.isRemoteUri(containerUri, ctx.meta.dataset);
 
     const resourceExists = await ctx.call('ldp.resource.exist', { resourceUri, webId });
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
-        //throw new Error('Cannot attach non-existing resource or container: ' + resourceUri);
         throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
       }
     }
@@ -36,18 +30,23 @@ module.exports = {
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
-      dataset,
-      graphName: mirror ? this.settings.mirrorGraphName : undefined
+      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 
-    if (!mirror)
+    if (!isRemoteContainer)
       ctx.emit(
         'ldp.container.attached',
         {
           containerUri,
           resourceUri
         },
-        { meta: { webId: null, dataset: null } }
+        { meta: { webId: null } }
       );
+
+    return {
+      containerUri,
+      resourceUri,
+      webId
+    };
   }
 };

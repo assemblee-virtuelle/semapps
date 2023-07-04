@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { useGetIdentity, useNotify, useRecordContext } from 'react-admin';
-import { RichTextInput, DefaultEditorOptions } from 'ra-richtext-tiptap';
+import { Form, useGetIdentity, useNotify, useRecordContext } from 'react-admin';
+import { RichTextInput, DefaultEditorOptions } from 'ra-input-rich-text';
 import Placeholder from '@tiptap/extension-placeholder';
-import { Form } from 'react-final-form';
-import { Button, Box, makeStyles, Avatar } from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
+import { Button, Box, Avatar } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import SendIcon from '@mui/icons-material/Send';
 import { useDataModel } from '@semapps/semantic-data-provider';
 import { AuthDialog } from '@semapps/auth-provider';
 import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
@@ -50,17 +50,19 @@ const useStyles = makeStyles(theme => ({
       float: 'left',
       height: 0,
       pointerEvents: 'none'
-    },
-    marginBottom: -19 // To hide helper text block
+    }
   },
   button: {
+    marginTop: -10, // To go over helper text block
     marginBottom: 15
   }
 }));
 
+const EmptyToolbar = () => null;
+
 const PostCommentForm = ({ context, placeholder, helperText, mentions, userResource, addItem, removeItem }) => {
   const record = useRecordContext();
-  const { identity } = useGetIdentity();
+  const { identity, isLoading } = useGetIdentity();
   const userDataModel = useDataModel(userResource);
   const classes = useStyles();
   const notify = useNotify();
@@ -69,7 +71,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   const [openAuth, setOpenAuth] = useState(false);
 
   const onSubmit = useCallback(
-    async (values, { reset }) => {
+    async (values) => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
       let mentionedUsersUris = [];
@@ -88,7 +90,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
       });
 
       if (document.body.innerHTML === 'undefined') {
-        notify('Votre commentaire est vide', 'error');
+        notify('Votre commentaire est vide', {type: 'error'});
       } else {
         const tempId = Date.now();
 
@@ -102,13 +104,14 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
 
         try {
           addItem({ id: tempId, ...note });
-          reset();
+          // TODO reset the form
           setExpanded(false);
           await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
-          notify('Commentaire posté avec succès', 'success');
+          notify('Commentaire posté avec succès', {type: 'success'});
         } catch (e) {
+          console.error(e);
           removeItem(tempId);
-          notify(e.message, 'error');
+          notify(e.message, {type: 'error'});
         }
       }
     },
@@ -116,82 +119,67 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   );
 
   const openAuthIfDisconnected = useCallback(() => {
-    if (!identity.id) {
+    if (!identity?.id) {
       setOpenAuth(true);
     }
   }, [identity, setOpenAuth]);
 
   // Don't init the editor options until mentions and identity are loaded, as they can only be initialized once
-  if ((mentions && !mentions.items) || !identity) return null;
+  if ((mentions && !mentions.items) || isLoading) return null;
 
   return (
     <>
-      <Form
-        onSubmit={onSubmit}
-        subscription={{ submitting: true, pristine: true }}
-        render={({ handleSubmit, submitting, pristine }) => {
-          // Hack to clear comment input when form is reset
-          // TODO When we update to React-Admin 4, check if the new RichTextInput solves this bug
-          if (pristine) {
-            const commentElement = document.getElementById('comment');
-            if (commentElement && commentElement.textContent !== '') commentElement.innerHTML = '';
-          }
-          return (
-            <form onSubmit={handleSubmit} className={classes.form}>
-              <Box className={classes.container} onClick={openAuthIfDisconnected}>
-                <Avatar
-                  src={
-                    identity?.webIdData?.[userDataModel?.fieldsMapping?.image] ||
-                    identity?.profileData?.[userDataModel?.fieldsMapping?.image]
-                  }
-                  className={classes.avatar}
-                />
-                <RichTextInput
-                  source="comment"
-                  label=""
-                  toolbar={null}
-                  fullWidth
-                  classes={{ editorContent: classes.editorContent }}
-                  editorOptions={{
-                    ...DefaultEditorOptions,
-                    onFocus() {
-                      setExpanded(true);
-                    },
-                    extensions: [
-                      ...DefaultEditorOptions.extensions,
-                      placeholder ? Placeholder.configure({ placeholder }) : null,
-                      mentions
-                        ? CustomMention.configure({
-                            HTMLAttributes: {
-                              class: 'mention'
-                            },
-                            suggestion: mentions
-                          })
-                        : null
-                    ],
-                    // Disable editor if user is not connected
-                    editable: !!identity.id
-                  }}
-                  helperText={helperText}
-                />
-                {expanded && (
-                  <Button
-                    type="submit"
-                    size="small"
-                    variant="contained"
-                    color="primary"
-                    endIcon={<SendIcon />}
-                    disabled={submitting}
-                    className={classes.button}
-                  >
-                    Envoyer
-                  </Button>
-                )}
-              </Box>
-            </form>
-          );
-        }}
-      />
+      <Form onSubmit={onSubmit} className={classes.form}>
+        <Box className={classes.container} onClick={openAuthIfDisconnected}>
+          <Avatar
+            src={
+              identity?.webIdData?.[userDataModel?.fieldsMapping?.image] ||
+              identity?.profileData?.[userDataModel?.fieldsMapping?.image]
+            }
+            className={classes.avatar}
+          />
+          <RichTextInput
+            source="comment"
+            label=" "
+            toolbar={<EmptyToolbar />}
+            fullWidth
+            classes={{ editorContent: classes.editorContent }}
+            editorOptions={{
+              ...DefaultEditorOptions,
+              onFocus() {
+                setExpanded(true);
+              },
+              extensions: [
+                ...DefaultEditorOptions.extensions,
+                placeholder ? Placeholder.configure({ placeholder }) : null,
+                mentions
+                  ? CustomMention.configure({
+                      HTMLAttributes: {
+                        class: 'mention'
+                      },
+                      suggestion: mentions
+                    })
+                  : null
+              ],
+              // Disable editor if user is not connected
+              editable: !!identity?.id
+            }}
+            helperText={helperText}
+          />
+          {expanded && (
+            <Button
+              type="submit"
+              size="small"
+              variant="contained"
+              color="primary"
+              endIcon={<SendIcon />}
+              className={classes.button}
+            >
+              Envoyer
+            </Button>
+          )}
+        </Box>
+      </Form>
       <AuthDialog
         open={openAuth}
         onClose={() => setOpenAuth(false)}

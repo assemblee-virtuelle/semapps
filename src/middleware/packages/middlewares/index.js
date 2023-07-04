@@ -1,7 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { negotiateTypeMime, MIME_TYPES } = require('@semapps/mime-types');
 const Busboy = require('busboy');
-const inspect = require('util').inspect;
 const streams = require('memory-streams');
 
 const parseHeader = async (req, res, next) => {
@@ -160,10 +159,14 @@ const parseFile = (req, res, next) => {
 const addContainerUriMiddleware = containerUri => (req, res, next) => {
   if (containerUri.includes('/:username')) {
     req.$params.containerUri = containerUri.replace(':username', req.$params.username).replace(/\/$/, '');
-    delete req.$params.username;
   } else {
     req.$params.containerUri = containerUri;
   }
+  next();
+};
+
+const saveDatasetMeta = (req, res, next) => {
+  req.$ctx.meta.dataset = req.$params.username;
   next();
 };
 
@@ -176,6 +179,7 @@ module.exports = {
   parseTurtle,
   parseFile,
   addContainerUriMiddleware,
+  saveDatasetMeta,
   throw403,
   throw500
 };

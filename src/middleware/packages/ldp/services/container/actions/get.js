@@ -2,12 +2,10 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const {
   getPrefixRdf,
   getPrefixJSON,
-  buildBlankNodesQuery,
   buildDereferenceQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray,
-  isMirror
+  defaultToArray
 } = require('../../../utils');
 
 module.exports = {
@@ -36,19 +34,18 @@ module.exports = {
       webId: { type: 'string', optional: true },
       accept: { type: 'string', optional: true },
       filters: { type: 'object', optional: true },
-      queryDepth: { type: 'number', optional: true },
       dereference: { type: 'array', optional: true },
       jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
     },
     cache: {
-      keys: ['containerUri', 'accept', 'filters', 'queryDepth', 'dereference', 'jsonContext', 'webId', '#webId']
+      keys: ['containerUri', 'accept', 'filters', 'dereference', 'jsonContext', 'webId', '#webId']
     },
     async handler(ctx) {
       const { containerUri, filters } = ctx.params;
       let { webId } = ctx.params;
       webId = webId || ctx.meta.webId || 'anon';
 
-      const { accept, dereference, queryDepth, jsonContext } = {
+      const { accept, dereference, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
         ...ctx.params
       };
@@ -84,7 +81,7 @@ module.exports = {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
               // We pass the following parameters only if they are explicit
-              let explicitProperties = ['queryDepth', 'dereference', 'jsonContext', 'accept'];
+              let explicitProperties = ['dereference', 'jsonContext', 'accept'];
               let explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
                 if (ctx.params[currentProperty]) {
                   accumulator[currentProperty] = ctx.params[currentProperty];
@@ -135,7 +132,6 @@ module.exports = {
 
         return result;
       } else {
-        const blandNodeQuery = buildBlankNodesQuery(queryDepth);
         const dereferenceQuery = buildDereferenceQuery(dereference);
 
         return await ctx.call('triplestore.query', {
@@ -146,7 +142,6 @@ module.exports = {
                 a ?containerType ;
                 ldp:contains ?s1 .
               ?s1 ?p1 ?o1 .
-              ${blandNodeQuery.construct}
               ${dereferenceQuery.construct}
             }
             WHERE {
@@ -154,7 +149,6 @@ module.exports = {
               OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ?s1 ?p1 ?o1 .
-                ${blandNodeQuery.where}
                 ${dereferenceQuery.where}
                 ${filtersQuery.where}
               }

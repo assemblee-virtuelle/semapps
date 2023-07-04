@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { FilterList, FilterListItem, useGetList, getResources, useResourceContext, useListContext } from 'react-admin';
-import { shallowEqual, useSelector } from 'react-redux';
+import { FilterList, FilterListItem, useGetList, useResourceContext, useListContext, useResourceDefinition } from 'react-admin';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
 /**
@@ -18,69 +17,76 @@ import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
 const ReferenceFilterCounter = ({ source, id }) => {
   const resourceContext = useResourceContext();
-  const { data } = useGetList(resourceContext);
+  const { data, isLoading } = useGetList(resourceContext);
   return (
     <>
       &nbsp;
-      <span className="filter-count">
-        {'(' + Object.values(data).filter(d => [].concat(d[source]).includes(id)).length + ')'}
-      </span>
+      { ! isLoading &&
+        <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
+      }
     </>
   );
 };
 
 const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
-  const { data, ids } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
-  const resources = useSelector(getResources, shallowEqual);
-  const currentResource = resources.filter(r => r?.name === reference)[0];
+  const { data, isLoading } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
+  const currentResource = useResourceDefinition({resource: reference});
   const resourceContext = useResourceContext();
   const resourceContextDataModel = useDataModel(resourceContext);
   const resourceContextContainers = useContainers(resourceContext);
 
-  const { displayedFilters, filterValues, setFilters, hideFilter } = useListContext();
+  const {
+    displayedFilters,
+    filterValues,
+    setFilters,
+    hideFilter
+  } = useListContext();
   useEffect(() => {
     // Needed when filter item is active and its last relation is removed
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    if (!params.filter) {
+    if (! params.filter && ! isLoading) {
       setFilters({});
     }
   }, []);
-
-  const itemIsUsed = id => {
+  
+  const itemIsUsed = (itemData) => {
     if (!inverseSource) {
       return true;
     }
-    if (!resourceContextContainers || !data || !data[id][inverseSource]) {
+    if (!resourceContextContainers || !itemData) {
       return false;
     }
     let itemIsUsed = false;
     Object.values(resourceContextContainers).forEach(value => {
       value.forEach(containerUrl => {
-        [].concat(data[id][inverseSource]).forEach(inverseSourceData => {
-          if (inverseSourceData.startsWith(containerUrl)) {
+        [].concat(itemData[inverseSource]).forEach(inverseSourceData => {
+          if (inverseSourceData?.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
-        });
-      });
+        })
+      })
     });
     return itemIsUsed;
-  };
-
+  }
+  
   return (
-    <FilterList label={label || currentResource.options.label} icon={icon || React.createElement(currentResource.icon)}>
-      {ids
-        .filter(id => itemIsUsed(id))
-        .map(id => (
+    <FilterList
+      label={label || currentResource?.options?.label || ''}
+      icon={icon || currentResource?.icon ? React.createElement(currentResource.icon) : undefined}
+    >
+      {data && data
+        .filter(itemData => itemIsUsed(itemData))
+        .map(itemData => (
           <FilterListItem
-            key={id}
+            key={itemData.id}
             label={
               <span className="filter-label">
-                {data[id]['pair:label']}
-                {showCounters && <ReferenceFilterCounter source={source} id={id} />}
+                {itemData['pair:label']}
+                {showCounters && <ReferenceFilterCounter source={source} id={itemData.id} />}
               </span>
             }
-            value={{ [source]: id }}
+            value={{ [source]: itemData.id }}
           />
         ))}
     </FilterList>

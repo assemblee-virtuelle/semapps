@@ -121,7 +121,12 @@ module.exports = {
           .on('error', error => reject(error))
           .on('end', () => resolve(res));
       });
-    }
+    },
+    async expandPredicate(ctx) {
+      const { predicate, context } = ctx.params;
+      const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' }}, { parentCtx: ctx });
+      return Object.keys(result[0])[0];
+    },
   },
   methods: {
     async documentLoaderWithCache(url, options) {

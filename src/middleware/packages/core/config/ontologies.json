@@ -88,5 +88,10 @@
     "prefix": "og",
     "owl": "https://raw.githubusercontent.com/assemblee-virtuelle/organigraph/master/ontology/organigraph.owl",
     "url": "http://virtual-assembly.org/ontologies/organigraph#"
+  },
+  {
+    "prefix": "syreen",
+    "owl": "",
+    "url": "http://syreen.fr/ns/core#"
   }
 ]

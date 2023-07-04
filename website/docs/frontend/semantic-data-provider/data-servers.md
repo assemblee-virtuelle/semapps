@@ -59,7 +59,7 @@ const dataServers = {
 
 ## Mirrors
 
-If a server is [mirroring](../../middleware/mirror.md) another server, the VoID endpoint will show this information and 
+If a server is [mirroring](../../middleware/sync/mirror.md) another server, the VoID endpoint will show this information and 
 the semantic data provider will automatically adapt its requests. If no VoID endpoint is available, you can indicate
 manually the mirrored data like this:
 

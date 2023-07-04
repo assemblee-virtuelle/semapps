@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextField, RichTextField, DateField } from 'react-admin';
-import { Box, Typography, CircularProgress, makeStyles } from '@material-ui/core';
+import { Box, Typography, CircularProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { useDataModel } from '@semapps/semantic-data-provider';
 import { AvatarWithLabelField, ReferenceField } from '@semapps/field-components';
 
@@ -58,7 +59,7 @@ const CommentsList = ({ comments, userResource, loading }) => {
         comments
           .sort((a, b) => new Date(b.published) - new Date(a.published))
           .map(comment => (
-            <Box className={classes.container}>
+            <Box className={classes.container} key={comment.id}>
               <Box className={classes.avatar}>
                 <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
                   <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />

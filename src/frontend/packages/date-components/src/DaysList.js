@@ -1,7 +1,7 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 import useFullCalendarProps from './useFullCalendarProps';
 
 const useGlobalStyles = makeStyles(theme => ({

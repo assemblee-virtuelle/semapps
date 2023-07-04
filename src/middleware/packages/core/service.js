@@ -5,7 +5,6 @@ const { Errors: E } = require('moleculer-web');
 const { ActivityPubService } = require('@semapps/activitypub');
 const { JsonLdService } = require('@semapps/jsonld');
 const { LdpService, DocumentTaggerMixin } = require('@semapps/ldp');
-const { MirrorService, botsContainer } = require('@semapps/mirror');
 const { SignatureService } = require('@semapps/signature');
 const { SparqlEndpointService } = require('@semapps/sparql-endpoint');
 const { TripleStoreService } = require('@semapps/triplestore');
@@ -30,11 +29,10 @@ const CoreService = {
     jsonContext: null,
     ontologies: null,
     // Services configurations
-    activitypub: {}, // if you want the relay service to run, insert a relay:{ /* relay options*/ } inside the activitypub config.
+    activitypub: {},
     api: {},
     jsonld: {},
     ldp: {},
-    mirror: {},
     signature: {},
     sparqlEndpoint: {},
     void: {},
@@ -46,11 +44,6 @@ const CoreService = {
 
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
-
-    // relay service will automatically start if we want mirror and activitypub services
-    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
-      this.settings.activitypub.relay = this.settings.activitypub.relay || {};
-    }
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
@@ -133,15 +126,6 @@ const CoreService = {
             jsonContext: jsonContext || defaultJsonContext,
             ...this.settings.ldp.defaultContainerOptions
           }
-        }
-      });
-    }
-
-    if (this.settings.mirror !== false && this.settings.activitypub !== false) {
-      this.broker.createService(MirrorService, {
-        settings: {
-          baseUrl,
-          ...this.settings.mirror
         }
       });
     }

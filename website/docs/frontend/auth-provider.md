@@ -16,7 +16,7 @@ npm install @semapps/auth-provider
 
 ```jsx
 import { Admin } from 'react-admin';
-import { authProvider, SsoLoginPage, LogoutButton } from '@semapps/auth-provider';
+import { authProvider, SsoLoginPage } from '@semapps/auth-provider';
 import dataProvider from './dataProvider.js';
 
 const App = () => (
@@ -26,7 +26,6 @@ const App = () => (
       authType: 'sso' // or "local" or "pod"
     })}
     loginPage={SsoLoginPage} // Or you can use the LocalLoginPage
-    logoutButton={LogoutButton}
   >
     <Resource name="Project" ... />
     <Resource name="Organization" ... />
@@ -132,7 +131,11 @@ All other props are passed to the underlying Material-UI [Dialog](https://v4.mui
 
 ### LocalLoginPage
 
-Login/signup page to use with a [local authentication](../middleware/auth#local-accounts).
+Login/signup page to use with a [local authentication](../middleware/auth#local-accounts). Include reset password feature.
+
+| Property          | Type      | Default                    | Description                                                  |
+|-------------------|-----------|----------------------------|--------------------------------------------------------------|
+| `hasSignup`       | `String`  | `true`                     | Set to false if you don't the user to be able to signup      |
 
 
 ### SsoLoginPage

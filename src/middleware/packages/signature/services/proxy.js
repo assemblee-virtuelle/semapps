@@ -1,6 +1,6 @@
 const urlJoin = require('url-join');
 const { MoleculerError } = require('moleculer').Errors;
-const { parseFile } = require('@semapps/middlewares');
+const { parseFile, saveDatasetMeta } = require('@semapps/middlewares');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
@@ -25,7 +25,7 @@ const ProxyService = {
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [parseFile, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
+        'POST /': [parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
       }
     };
 
@@ -87,6 +87,11 @@ const ProxyService = {
         actorUri
       });
 
+      // Convert Headers object if necessary (otherwise we can't destructure it below)
+      if (headers && typeof headers === 'object' && headers.constructor.name === 'Headers') {
+        headers = Object.fromEntries(headers);
+      }
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -115,6 +120,7 @@ const ProxyService = {
           statusText: response.statusText
         }
       } else {
+        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
         throw new MoleculerError(response.statusText, response.status);
       }
     }

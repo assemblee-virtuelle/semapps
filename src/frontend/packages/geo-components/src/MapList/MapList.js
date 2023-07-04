@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
-import { useListContext } from 'react-admin';
-import { useLocation } from 'react-router';
-import { useMediaQuery, Box, makeStyles } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { useListContext, RecordContextProvider } from 'react-admin';
+import { useLocation } from 'react-router-dom';
+import { useMediaQuery, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import CircularProgress from '@mui/material/CircularProgress';
 import 'leaflet-defaulticon-compatibility';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
-import MobileDrawer from './MobileDrawer';
+import MobileDrawer from "./MobileDrawer";
 
 const useStyles = makeStyles(() => ({
-  loading: {
+  isLoading: {
     zIndex: 1000,
     position: 'absolute',
     top: 0,
@@ -38,28 +39,30 @@ const MapList = ({
   connectMarkers,
   ...otherProps
 }) => {
-  const { ids, data, basePath, loading } = useListContext();
-  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'), { noSsr: true });
+  const { data, isLoading } = useListContext();
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 
   // Get the zoom and center from query string, if available
-  const query = new URLSearchParams(useLocation().search);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
   center = query.has('lat') && query.has('lng') ? [query.get('lat'), query.get('lng')] : center;
   zoom = query.has('zoom') ? query.get('zoom') : zoom;
 
   let previousRecord;
 
-  const records = ids
-    .filter(id => data[id])
-    .map(id => ({
-      ...data[id],
-      latitude: latitude && latitude(data[id]),
-      longitude: longitude && longitude(data[id]),
-      label: label && label(data[id]),
-      description: description && description(data[id])
-    }))
-    .filter(record => record.latitude && record.longitude);
+  const records = isLoading
+    ? []
+    : data
+      .map(record => ({
+        ...record,
+        latitude: latitude && latitude(record),
+        longitude: longitude && longitude(record),
+        label: label && label(record),
+        description: description && description(record)
+      }))
+      .filter(record => record.latitude && record.longitude);
 
   const bounds =
     boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
@@ -80,7 +83,13 @@ const MapList = ({
               : undefined
           }
         >
-          {!xs && <Popup>{React.createElement(popupContent, { record, basePath })}</Popup>}
+          {!xs && 
+            <Popup>
+              <RecordContextProvider value={record}>
+                {React.createElement(popupContent)}
+              </RecordContextProvider>
+            </Popup>
+          }
         </Marker>
         {connectMarkers && previousRecord && (
           <Polyline
@@ -111,19 +120,19 @@ const MapList = ({
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {loading && (
-        <Box alignItems="center" className={classes.loading}>
+      {isLoading && (
+        <Box alignItems="center" className={classes.isLoading}>
           <CircularProgress size={60} thickness={6} />
         </Box>
       )}
       {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
-      <MobileDrawer
-        record={drawerRecord}
-        basePath={basePath}
-        popupContent={popupContent}
-        onClose={() => setDrawerRecord(null)}
-      />
+      <RecordContextProvider value={drawerRecord}>
+        <MobileDrawer
+          popupContent={popupContent}
+          onClose={() => setDrawerRecord(null)}
+        />
+      </RecordContextProvider>
     </MapContainer>
   );
 };

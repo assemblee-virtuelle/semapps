@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { ACTOR_TYPES } = require('@semapps/activitypub');
+const { ACTOR_TYPES } = require("@semapps/activitypub");
 
 module.exports = {
   name: 'pod',
@@ -13,6 +13,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
+      excludeFromMirror: true,
       dereference: ['sec:publicKey', 'as:endpoints']
       // newResourcesPermissions: {}
     });
@@ -20,6 +21,7 @@ module.exports = {
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
       path: '/',
+      excludeFromMirror: true,
       permissions: {},
       newResourcesPermissions: {}
     });
@@ -36,6 +38,8 @@ module.exports = {
         dataset: username,
         secure: true
       });
+
+      ctx.meta.dataset = username;
 
       // Create the POD root container so that the LdpRegistryService can create the default containers
       const podUri = urlJoin(this.settings.baseUrl, username, 'data');
@@ -60,7 +64,7 @@ module.exports = {
       const { podUri } = accountData;
 
       // Give full rights to user on his pod
-      await this.broker.call('webacl.resource.addRights', {
+      await ctx.call('webacl.resource.addRights', {
         resourceUri: podUri,
         additionalRights: {
           user: {
@@ -83,7 +87,7 @@ module.exports = {
 
       // TODO Does not work, this is done in the webacl middleware. Good ?
       // Give public right to the webId
-      // await this.broker.call('webacl.resource.addRights', {
+      // await ctx.call('webacl.resource.addRights', {
       //   resourceUri: webId,
       //   additionalRights: {
       //     anon: {

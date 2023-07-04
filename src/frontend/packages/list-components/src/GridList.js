@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useListContext, linkToRecord, Link, RecordContextProvider } from 'react-admin';
-import { Grid } from '@material-ui/core';
+import { useListContext, useCreatePath, Link, RecordContextProvider } from 'react-admin';
+import { Grid } from '@mui/material';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 // useful to prevent click bubbling in a datagrid with rowClick
@@ -12,21 +12,21 @@ const stopPropagation = e => e.stopPropagation();
 const handleClick = () => {};
 
 const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, xl }) => {
-  const { ids, data, basePath } = useListContext();
+  const { data, resource, isLoading } = useListContext();
   const getExternalLink = useGetExternalLink(externalLinks);
+  const createPath = useCreatePath();
+  if (isLoading || !data) return null;
   return (
     <Grid container spacing={spacing}>
-      {ids.map(id => {
-        if (!data[id] || data[id]['_error']) return null;
-        const externalLink = getExternalLink(data[id]);
+      {data.map(record => {
+        if (!record || record['_error']) return null;
+        const externalLink = getExternalLink(record);
         let child;
 
         if (externalLink) {
           child = (
             <a href={externalLink} target="_blank" rel="noopener noreferrer" onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                record: data[id],
-                basePath: children.props.basePath || basePath,
                 externalLink: true,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
@@ -35,25 +35,20 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
           );
         } else if (linkType) {
           child = (
-            <Link to={linkToRecord(basePath, id, linkType)} onClick={stopPropagation}>
+            <Link to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
-                record: data[id],
-                basePath: children.props.basePath || basePath,
                 // Workaround to force ChipField to be clickable
                 onClick: handleClick
               })}
             </Link>
           );
         } else {
-          child = React.cloneElement(React.Children.only(children), {
-            record: data[id],
-            basePath: children.props.basePath || basePath
-          });
+          child = children;
         }
 
         return (
-          <Grid item key={id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
-            <RecordContextProvider value={data[id]} key={id}>
+          <Grid item key={record.id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
+            <RecordContextProvider value={record}>
               {child}
             </RecordContextProvider>
           </Grid>

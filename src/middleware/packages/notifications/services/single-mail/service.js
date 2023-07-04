@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const path = require('path');
 const MailService = require('moleculer-mail');
+const { getSlugFromUri } = require("@semapps/ldp");
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -28,6 +29,10 @@ const SingleMailNotificationsService = {
 
       for (let recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
+
+        ctx.meta.webId = recipientUri;
+        ctx.meta.dataset = account.podUri && getSlugFromUri(recipientUri); // If no Pod config, will be undefined
+
         const locale = account.preferredLocale || this.settings.defaultLocale;
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 

@@ -1,3 +1,5 @@
+const { getDatasetFromUri } = require('../utils');
+
 module.exports = {
   settings: {
     documentPredicates: {
@@ -71,13 +73,8 @@ module.exports = {
   hooks: {
     before: {
       '*'(ctx) {
-        if (this.settings.podProvider) {
-          // If we have a pod provider, guess the dataset from the URI
-          const containerPath = new URL(ctx.params.resourceUri).pathname;
-          const parts = containerPath.split('/');
-          if (parts.length > 1) {
-            ctx.meta.dataset = parts[1];
-          }
+        if (this.settings.podProvider && !ctx.meta.dataset) {
+          ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
       }
     }
