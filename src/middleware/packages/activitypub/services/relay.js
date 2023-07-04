@@ -1,6 +1,7 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES } = require('../constants');
+const { delay } = require('../utils');
 
 const RelayService = {
   name: 'activitypub.relay',
@@ -18,16 +19,22 @@ const RelayService = {
     'ldp.registry'
   ],
   async started() {
-    const appsContainer = await this.broker.call('ldp.registry.getByType', { type: ACTOR_TYPES.APPLICATION });
-    if (!appsContainer) throw new Error("RelayService cannot start. You must configure at least one container that accepts the type 'Application'. see acceptedTypes in your containers.js config file");
-
+    let appsContainer;
+    do {
+      appsContainer = await this.broker.call('ldp.registry.getByType', { type: ACTOR_TYPES.APPLICATION });
+      if (!appsContainer) {
+        this.logger.warn("Waiting for a container that accepts the 'Application' type...");
+        await delay(3000);
+      }
+    } while(!appsContainer);
+    
     const actorSettings = this.settings.actor;
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
     const containerUri = await this.broker.call('ldp.registry.getUri', { path: appsContainer.path });
     const actorUri = urlJoin(containerUri, actorSettings.username);
 
-    // creating the local actor 'relay'
+    // Creating the local actor 'relay'
     if (!actorExist) {
       this.logger.info(`ActorService > Actor "${actorSettings.name}" does not exist yet, creating it...`);
 
