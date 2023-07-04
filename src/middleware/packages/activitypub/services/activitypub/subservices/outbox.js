@@ -34,7 +34,7 @@ const OutboxService = {
       // Ensure logged user is posting to his own outbox
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-        throw new MoleculerError('You are not allowed to post to this outbox', 403, 'FORBIDDEN');
+        throw new MoleculerError(`Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`, 403, 'FORBIDDEN');
       }
 
       if (this.settings.podProvider) {

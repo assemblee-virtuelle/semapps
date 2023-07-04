@@ -72,7 +72,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
         type: ACTIVITY_TYPES.ANNOUNCE,
         object: activity,
         to: recipients
-      });
+      }, { meta: { webId: actor.id }});
     }
   }
 

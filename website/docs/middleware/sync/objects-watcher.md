@@ -33,7 +33,7 @@ module.exports = {
 
 ### Excluding containers
 
-If you don't want a container with public data to be mirrored, you can add the `excludeMirror: true` option.
+If you don't want a container with public data to be mirrored, you can add the `excludeFromMirror: true` option.
 
 This choice will appear on the [VoID endpoint](../void.md), so that mirrors ignore them.
 
