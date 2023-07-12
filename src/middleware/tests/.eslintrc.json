@@ -1,0 +1,4 @@
+{
+  "extends": "../.eslintrc.json",
+  "rules": { "node/no-extraneous-require": "off" }
+}
