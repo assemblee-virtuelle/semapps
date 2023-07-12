@@ -7,6 +7,7 @@
   "dependencies": {
     "cron": "^1.8.2",
     "fs-extra": "^10.0.0",
+    "moleculer": "^0.14.31",
     "rsync": "^0.6.1",
     "ssh2-sftp-client": "^7.2.1"
   },
