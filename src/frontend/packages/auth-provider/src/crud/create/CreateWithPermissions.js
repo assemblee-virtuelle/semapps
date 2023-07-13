@@ -1,10 +1,11 @@
 import React from 'react';
-import { Create, CreateActions } from 'react-admin';
+import { Create, CreateActions, useResourceContext } from 'react-admin';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import useCheckPermissions from '../../hooks/useCheckPermissions';
 
 const CreateWithPermissions = props => {
-  const createContainerUri = useCreateContainer(props.resource);
+  const resource = useResourceContext();
+  const createContainerUri = useCreateContainer(resource);
   useCheckPermissions(createContainerUri, 'create');
   return <Create {...props} />;
 };

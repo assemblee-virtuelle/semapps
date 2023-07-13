@@ -1,11 +1,12 @@
 import React from 'react';
-import { Edit } from 'react-admin';
+import { Edit, useGetRecordId } from 'react-admin';
 import EditActionsWithPermissions from './EditActionsWithPermissions';
 import EditToolbarWithPermissions from './EditToolbarWithPermissions';
 import useCheckPermissions from '../../hooks/useCheckPermissions';
 
 const EditWithPermissions = props => {
-  useCheckPermissions(props.id, 'edit');
+  const recordId = useGetRecordId();
+  useCheckPermissions(recordId, 'edit');
   return (
     <Edit {...props}>
       {React.cloneElement(props.children, {

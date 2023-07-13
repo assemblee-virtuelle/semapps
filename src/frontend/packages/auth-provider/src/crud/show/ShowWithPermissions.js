@@ -1,10 +1,11 @@
 import React from 'react';
-import { Show } from 'react-admin';
+import { Show, useGetRecordId } from 'react-admin';
 import ShowActionsWithPermissions from './ShowActionsWithPermissions';
 import useCheckPermissions from '../../hooks/useCheckPermissions';
 
 const ShowWithPermissions = props => {
-  useCheckPermissions(props.id, 'edit');
+  const recordId = useGetRecordId();
+  useCheckPermissions(recordId, 'show');
   return <Show {...props} />;
 };
 

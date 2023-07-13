@@ -7,6 +7,7 @@ export { default as CreateWithPermissions } from './crud/create/CreateWithPermis
 export { default as EditWithPermissions } from './crud/edit/EditWithPermissions';
 export { default as EditActionsWithPermissions } from './crud/edit/EditActionsWithPermissions';
 export { default as EditToolbarWithPermissions } from './crud/edit/EditToolbarWithPermissions';
+export { default as EditButtonWithPermissions } from './crud/edit/EditButtonWithPermissions';
 export { default as DeleteButtonWithPermissions } from './crud/edit/DeleteButtonWithPermissions';
 
 // List
