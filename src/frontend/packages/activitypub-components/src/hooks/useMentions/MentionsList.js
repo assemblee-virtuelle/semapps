@@ -51,7 +51,9 @@ export default forwardRef((props, ref) => {
     selectItem(selectedIndex);
   };
 
-  useEffect(() => setSelectedIndex(0), [props.items]);
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [props.items]);
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }) => {
@@ -81,7 +83,9 @@ export default forwardRef((props, ref) => {
           <button
             className={classes.item + (index === selectedIndex ? ' selected' : '')}
             key={index}
-            onClick={() => selectItem(index)}
+            onClick={() => {
+              selectItem(index);
+            }}
           >
             {item.label}
           </button>

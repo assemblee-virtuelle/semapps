@@ -13,19 +13,17 @@ const UserMenuItem = forwardRef(({ label, icon, to, ...rest }, ref) => {
   const onClick = useCallback(() => {
     navigate(to);
     onClose();
-  }, [to, onClose, navigate])
+  }, [to, onClose, navigate]);
   return (
-      <MenuItem
-          onClick={onClick}
-          ref={ref}
-          // It's important to pass the props to allow Material UI to manage the keyboard navigation
-          {...rest}
-      >
-          {icon && <ListItemIcon>
-            {React.cloneElement(icon, { fontSize: 'small' })}  
-          </ListItemIcon>}
-          <ListItemText>{translate(label)}</ListItemText>
-      </MenuItem>
+    <MenuItem
+      onClick={onClick}
+      ref={ref}
+      // It's important to pass the props to allow Material UI to manage the keyboard navigation
+      {...rest}
+    >
+      {icon && <ListItemIcon>{React.cloneElement(icon, { fontSize: 'small' })}</ListItemIcon>}
+      <ListItemText>{translate(label)}</ListItemText>
+    </MenuItem>
   );
 });
 
@@ -50,16 +48,8 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
             React.cloneElement(logout, { key: 'logout' })
           ]
         : [
-            <UserMenuItem 
-              key="signup" 
-              label="auth.action.signup" 
-              to="/login?signup=true"
-            />,
-            <UserMenuItem 
-              key="login"
-              label="auth.action.login" 
-              to="/login"
-            />
+            <UserMenuItem key="signup" label="auth.action.signup" to="/login?signup=true" />,
+            <UserMenuItem key="login" label="auth.action.login" to="/login" />
           ]}
     </RaUserMenu>
   );

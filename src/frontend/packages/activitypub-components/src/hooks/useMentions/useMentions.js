@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useGetList } from 'react-admin';
-import renderMentions from './renderMentions';
 import { useDataModel } from '@semapps/semantic-data-provider';
+import renderMentions from './renderMentions';
 
 const useMentions = userResource => {
   const userDataModel = useDataModel(userResource);

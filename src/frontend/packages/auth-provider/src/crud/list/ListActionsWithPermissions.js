@@ -1,5 +1,12 @@
 import React from 'react';
-import { CreateButton, ExportButton, useResourceDefinition, TopToolbar, usePermissions, useResourceContext } from 'react-admin';
+import {
+  CreateButton,
+  ExportButton,
+  useResourceDefinition,
+  TopToolbar,
+  usePermissions,
+  useResourceContext
+} from 'react-admin';
 import { useMediaQuery } from '@mui/material';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
@@ -32,19 +39,12 @@ const ListActionsWithPermissions = ({
           filterValues,
           context: 'button'
         })}
-      {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && (
+      {resourceDefinition.hasCreate && permissions?.some(p => rightsToCreate.includes(p['acl:mode'])) && (
         <CreateButton />
       )}
-      {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
-        <PermissionsButton isContainer />
-      )}
+      {permissions?.some(p => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton isContainer />}
       {!xs && exporter !== false && (
-        <ExportButton
-          disabled={total === 0}
-          sort={sort}
-          filter={filterValues}
-          exporter={exporter}
-        />
+        <ExportButton disabled={total === 0} sort={sort} filter={filterValues} exporter={exporter} />
       )}
       {bulkActions &&
         React.cloneElement(bulkActions, {

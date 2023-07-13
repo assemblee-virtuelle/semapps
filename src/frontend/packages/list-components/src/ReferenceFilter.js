@@ -1,5 +1,12 @@
 import React, { useEffect } from 'react';
-import { FilterList, FilterListItem, useGetList, useResourceContext, useListContext, useResourceDefinition } from 'react-admin';
+import {
+  FilterList,
+  FilterListItem,
+  useGetList,
+  useResourceContext,
+  useListContext,
+  useResourceDefinition
+} from 'react-admin';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
 /**
@@ -21,36 +28,33 @@ const ReferenceFilterCounter = ({ source, id }) => {
   return (
     <>
       &nbsp;
-      { ! isLoading &&
-        <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
-      }
+      {!isLoading && (
+        <span className="filter-count">{`(${
+          Object.values(data).filter(d => [].concat(d[source]).includes(id)).length
+        })`}</span>
+      )}
     </>
   );
 };
 
 const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter, label, icon, showCounters }) => {
   const { data, isLoading } = useGetList(reference, { page: 1, perPage: limit }, sort, filter);
-  const currentResource = useResourceDefinition({resource: reference});
+  const currentResource = useResourceDefinition({ resource: reference });
   const resourceContext = useResourceContext();
   const resourceContextDataModel = useDataModel(resourceContext);
   const resourceContextContainers = useContainers(resourceContext);
 
-  const {
-    displayedFilters,
-    filterValues,
-    setFilters,
-    hideFilter
-  } = useListContext();
+  const { displayedFilters, filterValues, setFilters, hideFilter } = useListContext();
   useEffect(() => {
     // Needed when filter item is active and its last relation is removed
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-    if (! params.filter && ! isLoading) {
+    if (!params.filter && !isLoading) {
       setFilters({});
     }
   }, []);
-  
-  const itemIsUsed = (itemData) => {
+
+  const itemIsUsed = itemData => {
     if (!inverseSource) {
       return true;
     }
@@ -61,22 +65,22 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     Object.values(resourceContextContainers).forEach(value => {
       value.forEach(containerUrl => {
         [].concat(itemData[inverseSource]).forEach(inverseSourceData => {
-          if (inverseSourceData?.startsWith(containerUrl)) {
+          if (inverseSourceData.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
-        })
-      })
+        });
+      });
     });
     return itemIsUsed;
-  }
-  
+  };
+
   return (
     <FilterList
       label={label || currentResource?.options?.label || ''}
       icon={icon || currentResource?.icon ? React.createElement(currentResource.icon) : undefined}
     >
-      {data && data
-        .filter(itemData => itemIsUsed(itemData))
+      {data
+        ?.filter(itemData => itemIsUsed(itemData))
         .map(itemData => (
           <FilterListItem
             key={itemData.id}

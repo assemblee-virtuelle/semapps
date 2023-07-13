@@ -79,11 +79,11 @@ const GroupedReferenceHandler = ({
   return (
     <>
       {data?.map((data, index) => {
-        let filter = {};
+        const filter = {};
         filter[filterProperty] = data.id;
         return (
           <>
-            {groupHeader && groupHeader({ ...otherProps, group: data })}
+            {groupHeader?.({ ...otherProps, group: data })}
             <FilterHandler {...otherProps} filter={filter} label={data[groupLabel]}>
               {children}
             </FilterHandler>

@@ -6,7 +6,7 @@ const ReferenceCollectionField = ({ source, record, reference, children, ...rest
     throw new Error('<ReferenceCollectionField> only accepts a single child');
   }
 
-  if (!record || !record[source]) return null;
+  if (!record?.[source]) return null;
 
   return (
     <CollectionList resource={reference} collectionUrl={record[source]} {...rest}>

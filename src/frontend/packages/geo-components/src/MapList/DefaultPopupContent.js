@@ -11,7 +11,7 @@ const DefaultPopupContent = () => {
       {record.label && <Typography variant="h5">{record.label}</Typography>}
       {record.description && (
         <Typography>
-          {record.description.length > 150 ? record.description.substring(0, 150) + '...' : record.description}
+          {record.description.length > 150 ? `${record.description.substring(0, 150)}...` : record.description}
         </Typography>
       )}
       {resourceDefinition.hasShow && <ShowButton />}

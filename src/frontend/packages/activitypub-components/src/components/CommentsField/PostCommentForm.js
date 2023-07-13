@@ -71,10 +71,10 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
   const [openAuth, setOpenAuth] = useState(false);
 
   const onSubmit = useCallback(
-    async (values) => {
+    async values => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
-      let mentionedUsersUris = [];
+      const mentionedUsersUris = [];
 
       mentions.forEach(node => {
         const userUri = node.attributes['data-mention-id'].value;
@@ -82,15 +82,15 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
         const link = document.createElement('a');
         link.setAttribute(
           'href',
-          new URL(window.location.href).origin + '/' + userResource + '/' + encodeURIComponent(userUri) + '/show'
+          `${new URL(window.location.href).origin}/${userResource}/${encodeURIComponent(userUri)}/show`
         );
-        link.textContent = '@' + userLabel;
+        link.textContent = `@${userLabel}`;
         node.parentNode.replaceChild(link, node);
         mentionedUsersUris.push(userUri);
       });
 
       if (document.body.innerHTML === 'undefined') {
-        notify('Votre commentaire est vide', {type: 'error'});
+        notify('Votre commentaire est vide', { type: 'error' });
       } else {
         const tempId = Date.now();
 
@@ -107,11 +107,11 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           // TODO reset the form
           setExpanded(false);
           await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
-          notify('Commentaire posté avec succès', {type: 'success'});
+          notify('Commentaire posté avec succès', { type: 'success' });
         } catch (e) {
           console.error(e);
           removeItem(tempId);
-          notify(e.message, {type: 'error'});
+          notify(e.message, { type: 'error' });
         }
       }
     },
@@ -182,7 +182,9 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
       </Form>
       <AuthDialog
         open={openAuth}
-        onClose={() => setOpenAuth(false)}
+        onClose={() => {
+          setOpenAuth(false);
+        }}
         message="Pour poster un commentaire, vous devez être connecté."
       />
     </>

@@ -46,7 +46,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
   return (
     <Masonry breakpointCols={breakpointCols} className={classes.grid} columnClassName={classes.column}>
       {data.map(record => {
-        if (!record || record['_error']) return null;
+        if (!record || record._error) return null;
         const imageUrl = typeof image === 'function' ? image(record) : image;
         return (
           <RecordContextProvider value={record}>
@@ -57,11 +57,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
                   {content && <CardContent>{content(record)}</CardContent>}
                 </CardActionArea>
               </Link>
-              {actions && (
-                <CardActions>
-                  {actions.map(action => React.createElement(action))}
-                </CardActions>
-              )}
+              {actions && <CardActions>{actions.map(action => React.createElement(action))}</CardActions>}
             </Card>
           </RecordContextProvider>
         );

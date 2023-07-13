@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { useRecordContext, usePermissions } from 'react-admin';
-import { ReferenceArrayField } from "../index";
+import ReferenceArrayField from '../ReferenceArrayField';
 import QuickAppendDialog from './QuickAppendDialog';
 
-const QuickAppendReferenceArrayField = ({ reference, source, resource, children, ...otherProps }) => {
+function QuickAppendReferenceArrayField({ reference, source, resource, children, ...otherProps }) {
   const record = useRecordContext();
   const [showDialog, setShowDialog] = useState(false);
   const { permissions } = usePermissions(record.id);
@@ -15,17 +15,22 @@ const QuickAppendReferenceArrayField = ({ reference, source, resource, children,
 
   return (
     <>
-      <ReferenceArrayField
-        reference={reference}
-        source={source}
-        {...otherProps}
-      >
-        {React.Children.only(children) && React.cloneElement(children, { appendLink: canAppend ? () => setShowDialog(true) : undefined })}
+      <ReferenceArrayField reference={reference} source={source} {...otherProps}>
+        {React.Children.only(children) &&
+          React.cloneElement(children, {
+            appendLink: canAppend
+              ? () => {
+                  setShowDialog(true);
+                }
+              : undefined
+          })}
       </ReferenceArrayField>
       {canAppend && showDialog && (
         <QuickAppendDialog
           open={showDialog}
-          onClose={() => setShowDialog(false)}
+          onClose={() => {
+            setShowDialog(false);
+          }}
           subjectUri={record.id}
           resource={resource}
           source={source}
@@ -34,6 +39,6 @@ const QuickAppendReferenceArrayField = ({ reference, source, resource, children,
       )}
     </>
   );
-};
+}
 
 export default QuickAppendReferenceArrayField;

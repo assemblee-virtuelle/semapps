@@ -10,7 +10,7 @@ const useAgents = uri => {
 
   // Format list of authorized agents, based on the permissions returned for the resource
   useEffect(() => {
-    let result = {
+    const result = {
       [ANONYMOUS_AGENT]: {
         id: ANONYMOUS_AGENT,
         predicate: CLASS_AGENT,
@@ -36,15 +36,21 @@ const useAgents = uri => {
     };
 
     if (permissions) {
-      for (let p of permissions) {
+      for (const p of permissions) {
         if (p[CLASS_AGENT]) {
-          defaultToArray(p[CLASS_AGENT]).forEach(agentId => appendPermission(agentId, CLASS_AGENT, p['acl:mode']));
+          defaultToArray(p[CLASS_AGENT]).forEach(agentId => {
+            appendPermission(agentId, CLASS_AGENT, p['acl:mode']);
+          });
         }
         if (p[USER_AGENT]) {
-          defaultToArray(p[USER_AGENT]).forEach(userUri => appendPermission(userUri, USER_AGENT, p['acl:mode']));
+          defaultToArray(p[USER_AGENT]).forEach(userUri => {
+            appendPermission(userUri, USER_AGENT, p['acl:mode']);
+          });
         }
         if (p[GROUP_AGENT]) {
-          defaultToArray(p[GROUP_AGENT]).forEach(groupUri => appendPermission(groupUri, GROUP_AGENT, p['acl:mode']));
+          defaultToArray(p[GROUP_AGENT]).forEach(groupUri => {
+            appendPermission(groupUri, GROUP_AGENT, p['acl:mode']);
+          });
         }
       }
       setAgents(result);
@@ -59,7 +65,7 @@ const useAgents = uri => {
         [agentId]: {
           id: agentId,
           predicate,
-          permissions: agents[agentId] ? [...agents[agentId]?.permissions, mode] : [mode]
+          permissions: agents[agentId] ? [...(agents[agentId]?.permissions || []), mode] : [mode]
         }
       });
       authProvider.addPermission(uri, agentId, predicate, mode).catch(e => {

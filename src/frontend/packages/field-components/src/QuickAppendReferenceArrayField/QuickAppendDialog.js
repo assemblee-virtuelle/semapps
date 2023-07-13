@@ -1,11 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import { Button, useDataProvider, useTranslate, useRefresh, useNotify, useGetResourceLabel, useShowContext } from 'react-admin';
+import {
+  Button,
+  useDataProvider,
+  useTranslate,
+  useRefresh,
+  useNotify,
+  useGetResourceLabel,
+  useShowContext
+} from 'react-admin';
 import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import { useForm } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
-import ResultsList from './ResultsList';
 import { useDataModel } from '@semapps/semantic-data-provider';
+import ResultsList from './ResultsList';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -74,7 +82,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
 
       await appendLink(data.id);
 
-      notify(`La resource "${values.title}" a été créée`, {type: 'success'});
+      notify(`La resource "${values.title}" a été créée`, { type: 'success' });
     },
     [dataProvider, dataModel, appendLink, reference, notify]
   );
@@ -87,11 +95,13 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
           <DialogContent className={classes.addForm}>
             <TextField
               autoFocus
-              label={'Rechercher ou créer des ' + getResourceLabel(reference, 2).toLowerCase()}
+              label={`Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`}
               variant="filled"
               margin="dense"
               value={keyword}
-              onChange={e => setKeyword(e.target.value)}
+              onChange={e => {
+                setKeyword(e.target.value);
+              }}
               fullWidth
             />
           </DialogContent>
@@ -117,22 +127,10 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
             {translate('ra.page.create', { name: getResourceLabel(reference, 1) })}
           </DialogTitle>
           <DialogContent className={classes.addForm}>
-            <TextField
-              {...register("title")}
-              autoFocus
-              label="Titre"
-              variant="filled"
-              margin="dense"
-              fullWidth
-            />
+            <TextField {...register('title')} autoFocus label="Titre" variant="filled" margin="dense" fullWidth />
           </DialogContent>
           <DialogActions className={classes.actions}>
-            <Button
-              label="ra.action.create"
-              variant="contained"
-              startIcon={<AddIcon />}
-              type="submit"
-            />
+            <Button label="ra.action.create" variant="contained" startIcon={<AddIcon />} type="submit" />
             <Button label="ra.action.close" variant="text" onClick={onClose} />
           </DialogActions>
         </form>

@@ -22,13 +22,14 @@ const SeparatedListField = props => {
   }
 
   if (isLoading) return <LinearProgress />;
-  
+
   return (
-    <React.Fragment>
+    <>
       {data.map((record, i) => {
         if (!record.id) return null;
         const resourceLinkPath =
-          link !== false && (typeof link === 'function' ? link(record.id) : createPath({ resource, id: record.id, type: link }));
+          link !== false &&
+          (typeof link === 'function' ? link(record.id) : createPath({ resource, id: record.id, type: link }));
         if (resourceLinkPath) {
           return (
             <span key={record.id}>
@@ -45,14 +46,12 @@ const SeparatedListField = props => {
 
         return (
           <span key={record.id}>
-            <RecordContextProvider value={record}>
-              {children}
-            </RecordContextProvider>
+            <RecordContextProvider value={record}>{children}</RecordContextProvider>
             {i < data.length - 1 && separator}
           </span>
         );
       })}
-    </React.Fragment>
+    </>
   );
 };
 

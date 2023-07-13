@@ -7,7 +7,9 @@ const useDataModels = () => {
   const [dataModels, setDataModels] = useState();
 
   useEffect(() => {
-    dataProvider.getDataModels().then(results => setDataModels(results));
+    dataProvider.getDataModels().then(results => {
+      setDataModels(results);
+    });
   }, [dataProvider, setDataModels]);
 
   return dataModels;

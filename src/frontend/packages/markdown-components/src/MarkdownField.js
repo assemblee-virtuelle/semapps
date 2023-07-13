@@ -18,9 +18,8 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
                 {React.createElement(type, props, children)}
               </>
             );
-          } else {
-            return React.createElement(type, props, children);
           }
+          return React.createElement(type, props, children);
         },
         overrides: {
           h1: LabelComponent,
@@ -31,7 +30,7 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
     >
       {get(record, source)}
     </Markdown>
-  )
+  );
 };
 
 MarkdownField.defaultProps = {

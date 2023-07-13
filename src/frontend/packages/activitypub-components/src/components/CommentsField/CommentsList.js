@@ -55,28 +55,27 @@ const CommentsList = ({ comments, userResource, loading }) => {
   const userDataModel = useDataModel(userResource);
   return (
     <Box position="relative">
-      {comments &&
-        comments
-          .sort((a, b) => new Date(b.published) - new Date(a.published))
-          .map(comment => (
-            <Box className={classes.container} key={comment.id}>
-              <Box className={classes.avatar}>
-                <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
-                  <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
-                </ReferenceField>
-              </Box>
-              <Box className={classes.text}>
-                <Typography variant="body2">
-                  <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
-                    <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
-                  </ReferenceField>
-                  &nbsp;•&nbsp;
-                  <DateField record={comment} variant="body2" source="published" showTime />
-                </Typography>
-                <RichTextField record={comment} variant="body1" source="content" className={classes.content} />
-              </Box>
+      {comments
+        ?.sort((a, b) => new Date(b.published) - new Date(a.published))
+        .map(comment => (
+          <Box className={classes.container} key={comment.id}>
+            <Box className={classes.avatar}>
+              <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
+                <AvatarWithLabelField image={userDataModel?.fieldsMapping?.image} />
+              </ReferenceField>
             </Box>
-          ))}
+            <Box className={classes.text}>
+              <Typography variant="body2">
+                <ReferenceField record={comment} reference={userResource} source="attributedTo" linkType="show">
+                  <TextField variant="body2" source={userDataModel?.fieldsMapping?.title} className={classes.label} />
+                </ReferenceField>
+                &nbsp;•&nbsp;
+                <DateField record={comment} variant="body2" source="published" showTime />
+              </Typography>
+              <RichTextField record={comment} variant="body1" source="content" className={classes.content} />
+            </Box>
+          </Box>
+        ))}
       {loading && (
         <Box minHeight={200}>
           <Box alignItems="center" className={classes.loading}>

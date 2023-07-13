@@ -8,7 +8,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   const navigate = useNavigate();
   const createPath = useCreatePath();
 
-  let query = new URLSearchParams(location.search);
+  const query = new URLSearchParams(location.search);
 
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {
@@ -19,7 +19,11 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   // Change the query string when month change
   const datesSet = useCallback(
     ({ view }) => {
-      setSearchParams(params => ({ ...params, month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() }));
+      setSearchParams(params => ({
+        ...params,
+        month: view.currentStart.getMonth() + 1,
+        year: view.currentStart.getFullYear()
+      }));
     },
     [setSearchParams]
   );

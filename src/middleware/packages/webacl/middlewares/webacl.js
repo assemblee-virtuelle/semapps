@@ -89,7 +89,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
       }
     }
   },
-  localAction: (wrapWebAclMiddleware = (next, action) => {
+  localAction: (next, action) => {
     if (action.name === 'ldp.resource.get') {
       /*
        * VERIFY AUTHORIZATIONS
@@ -150,7 +150,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
          * BEFORE HOOKS
          */
         switch (action.name) {
-          case 'ldp.resource.create':
+          case 'ldp.resource.create': {
             const resourceUri = ctx.params.resource['@id'] || ctx.params.resource.id;
             // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
             if (
@@ -161,8 +161,9 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // We must add the permissions before inserting the resource
             await addRightsToNewResource(ctx, resourceUri, webId);
             break;
+          }
 
-          case 'activitypub.collection.create':
+          case 'activitypub.collection.create': {
             const { permissions } = await ctx.call('activitypub.registry.getByUri', {
               collectionUri: ctx.params.collectionUri
             });
@@ -175,6 +176,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               webId: 'system'
             });
             break;
+          }
         }
 
         /*
@@ -223,7 +225,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             );
             break;
 
-          case 'ldp.container.create':
+          case 'ldp.container.create': {
             const { permissions } = await ctx.call('ldp.registry.getByUri', {
               containerUri: ctx.params.containerUri
             });
@@ -235,7 +237,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               webId: 'system'
             });
             break;
-
+          }
           case 'webid.create':
             await addRightsToNewUser(ctx, actionReturnValue);
             break;
@@ -265,7 +267,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           }
 
           case 'activitypub.activity.create':
-          case 'activitypub.activity.attach':
+          case 'activitypub.activity.attach': {
             const activity = await ctx.call('activitypub.activity.get', {
               resourceUri: actionReturnValue.resourceUri,
               webId: ctx.params.webId || 'system'
@@ -306,6 +308,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 webId: 'system'
               });
             }
+          }
         }
 
         return actionReturnValue;
@@ -314,7 +317,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
     // Do not use the middleware for this action
     return next;
-  })
+  }
 });
 
 module.exports = WebAclMiddleware;

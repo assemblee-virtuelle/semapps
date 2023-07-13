@@ -102,7 +102,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       initialized = true;
       cacherActivated = !!broker.cacher;
     },
-    localAction: (wrapWatcherMiddleware = (next, action) => {
+    localAction: (next, action) => {
       if (handledActions.includes(action.name)) {
         return async ctx => {
           // Don't handle actions until middleware is fully started
@@ -129,7 +129,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
             case 'webacl.resource.addRights':
             case 'webacl.resource.setRights':
             case 'webacl.resource.removeRights':
-            case 'webacl.resource.deleteAllRights':
+            case 'webacl.resource.deleteAllRights': {
               // If we are modifying rights of an ACL group, ignore
               if (new URL(ctx.params.resourceUri).pathname.startsWith('/_groups/')) return await next(ctx);
               const containerExist = await ctx.call('ldp.container.exist', {
@@ -142,6 +142,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 resourceUri = ctx.params.resourceUri;
               }
               break;
+            }
           }
 
           // We never want to watch remote resources
@@ -172,7 +173,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
               oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               break;
 
-            case 'webacl.resource.deleteAllRights':
+            case 'webacl.resource.deleteAllRights': {
               // Ensure the resource has not already been deleted (this action is used by the WebAclMiddleware when resources are deleted)
               const containerExist = await ctx.call('ldp.container.exist', {
                 containerUri: ctx.params.resourceUri,
@@ -186,6 +187,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
                 oldRecipients = await getRecipients(ctx, ctx.params.resourceUri);
               }
               break;
+            }
           }
 
           /*
@@ -328,7 +330,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
       // Do not use the middleware for this action
       return next;
-    }),
+    },
     localEvent(next, event) {
       if (event.name === 'ldp.registry.registered') {
         return async ctx => {

@@ -3,6 +3,7 @@ const fsCopy = require('./utils/fsCopy');
 const ftpCopy = require('./utils/ftpCopy');
 const rsyncCopy = require('./utils/rsyncCopy');
 
+/** @type {import('./indexTypes').BackupService} */
 const BackupService = {
   name: 'backup',
   settings: {
@@ -48,7 +49,7 @@ const BackupService = {
       // Generate new backup of all datasets
       const datasets = await ctx.call('triplestore.dataset.list');
       for (const dataset of datasets) {
-        this.logger.info('Backing up dataset: ' + dataset);
+        this.logger.info(`Backing up dataset: ${dataset}`);
         await ctx.call('triplestore.dataset.backup', { dataset });
       }
 
@@ -63,7 +64,7 @@ const BackupService = {
       }
 
       for (const [key, path] of Object.entries(otherDirsPaths)) {
-        this.logger.info('Backing up directory: ' + path);
+        this.logger.info(`Backing up directory: ${path}`);
         await this.actions.copyToRemoteServer({ path, subDir: key }, { parentCtx: ctx });
       }
     },
@@ -91,7 +92,7 @@ const BackupService = {
           break;
 
         default:
-          throw new Error('Unknow copy method: ' + copyMethod);
+          throw new Error(`Unknow copy method: ${copyMethod}`);
       }
     }
   }

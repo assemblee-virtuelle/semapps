@@ -27,10 +27,10 @@ const buildSparqlUriQuery = ({ types, params: { sort, filter }, ontologies }) =>
       ?resource a ?type .
       FILTER( ?type IN (${types.join(', ')}) ) .
       FILTER( (isIRI(?resource)) ) .
-      ${sort && sort.field.includes(':') ? `?resource ${sort.field} ?sortField .` : ''}
+      ${sort?.field.includes(':') ? `?resource ${sort.field} ?sortField .` : ''}
       ${whereQuery}
     }
-    ${sort && sort.field.includes(':') ? `ORDER BY ${sort.order}(?sortField)` : ''}
+    ${sort?.field.includes(':') ? `ORDER BY ${sort.order}(?sortField)` : ''}
   `;
 };
 

@@ -27,11 +27,12 @@
     "node-fetch": "^3.3.2",
     "rdf-data-model": "^1.0.0",
     "url-join": "^4.0.1",
-    "wait-for-expect": "^3.0.2"
+    "wait-for-expect": "^3.0.2",
+    "supertest": "^4.0.2"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
-    "supertest": "^4.0.2"
+    "@types/jest": "^29.5.3",
+    "jest": "^24.9.0"
   },
   "version": "0.5.1",
   "engines": {

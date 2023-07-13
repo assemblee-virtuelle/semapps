@@ -12,10 +12,22 @@ const PermissionsButton = ({ isContainer }) => {
   const uri = isContainer ? createContainer : record.id || record['@id'];
   return (
     <>
-      <Button label="auth.action.permissions" onClick={() => setShowDialog(true)}>
+      <Button
+        label="auth.action.permissions"
+        onClick={() => {
+          setShowDialog(true);
+        }}
+      >
         <ShareIcon />
       </Button>
-      <PermissionsDialog uri={uri} isContainer={isContainer} open={showDialog} onClose={() => setShowDialog(false)} />
+      <PermissionsDialog
+        uri={uri}
+        isContainer={isContainer}
+        open={showDialog}
+        onClose={() => {
+          setShowDialog(false);
+        }}
+      />
     </>
   );
 };

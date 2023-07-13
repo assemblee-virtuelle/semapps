@@ -6,16 +6,10 @@ const AUTH_TYPE_SSO = 'sso';
 const AUTH_TYPE_LOCAL = 'local';
 const AUTH_TYPE_POD = 'pod';
 
-const authProvider = ({
-  dataProvider,
-  authType,
-  allowAnonymous = true,
-  checkUser,
-  checkPermissions = false
-}) => {
+const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser, checkPermissions = false }) => {
   if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD].includes(authType))
     throw new Error('The authType parameter is missing from the auth provider');
-  return ({
+  return {
     login: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
@@ -34,9 +28,9 @@ const authProvider = ({
           throw new Error('ra.auth.sign_in_error');
         }
       } else {
-        let redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
     signup: async params => {
@@ -70,12 +64,12 @@ const authProvider = ({
           }
         }
       } else {
-        const redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
     logout: async () => {
-      switch(authType) {
+      switch (authType) {
         case AUTH_TYPE_LOCAL:
           // Delete token but also any other value in local storage
           localStorage.clear();
@@ -84,22 +78,26 @@ const authProvider = ({
           window.location.href = '/';
           break;
 
-        case AUTH_TYPE_SSO:
+        case AUTH_TYPE_SSO: {
           const authServerUrl = await getAuthServerUrl(dataProvider);
           const baseUrl = new URL(window.location.href).origin;
           window.location.href = urlJoin(
             authServerUrl,
-            'auth/logout?redirectUrl=' + encodeURIComponent(urlJoin(baseUrl, 'login') + '?logout=true')
+            `auth/logout?redirectUrl=${encodeURIComponent(`${urlJoin(baseUrl, 'login')}?logout=true`)}`
           );
           break;
+        }
 
-        case AUTH_TYPE_POD:
+        case AUTH_TYPE_POD: {
           const token = localStorage.getItem('token');
           const { webId } = jwtDecode(token);
           // Delete token but also any other value in local storage
           localStorage.clear();
-          window.location.href = urlJoin(webId, 'openApp') + '?type=' + encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
+          window.location.href = `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
+            'http://activitypods.org/ns/core#FrontAppRegistration'
+          )}`;
           break;
+        }
       }
 
       // Avoid displaying immediately the login page
@@ -112,11 +110,10 @@ const authProvider = ({
     checkUser: userData => {
       if (checkUser) {
         return checkUser(userData);
-      } else {
-        return true;
       }
+      return true;
     },
-    checkError: error => Promise.resolve(),
+    checkError: async error => Promise.resolve(),
     getPermissions: async uri => {
       if (!checkPermissions) return;
 
@@ -125,7 +122,7 @@ const authProvider = ({
       // Ignore all this until we found a way to bypass these redundant calls
       if (typeof uri === 'object') return;
 
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
+      if (!uri?.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
 
       const aclUri = getAclUri(uri);
 
@@ -138,12 +135,12 @@ const authProvider = ({
       }
     },
     addPermission: async (uri, agentId, predicate, mode) => {
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+      if (!uri?.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
 
       const aclUri = getAclUri(uri);
 
-      let authorization = {
-        '@id': '#' + mode.replace('acl:', ''),
+      const authorization = {
+        '@id': `#${mode.replace('acl:', '')}`,
         '@type': 'acl:Authorization',
         [predicate]: agentId,
         'acl:accessTo': uri,
@@ -159,13 +156,12 @@ const authProvider = ({
       });
     },
     removePermission: async (uri, agentId, predicate, mode) => {
-      if (!uri || !uri.startsWith('http'))
-        throw new Error('The first parameter passed to removePermission must be an URL');
+      if (!uri?.startsWith('http')) throw new Error('The first parameter passed to removePermission must be an URL');
 
       const aclUri = getAclUri(uri);
 
       // Fetch current permissions
-      let { json } = await dataProvider.fetch(aclUri);
+      const { json } = await dataProvider.fetch(aclUri);
 
       const updatedPermissions = json['@graph']
         .filter(authorization => !authorization['@id'].includes('#Default'))
@@ -196,7 +192,11 @@ const authProvider = ({
 
         return {
           id: webId,
-          fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+          fullName:
+            profileData?.['vcard:given-name'] ||
+            profileData?.['pair:label'] ||
+            webIdData['foaf:name'] ||
+            webIdData['pair:label'],
           profileData,
           webIdData
         };
@@ -255,7 +255,7 @@ const authProvider = ({
         throw new Error('auth.notification.update_settings_error');
       }
     }
-  });
-}
+  };
+};
 
 export default authProvider;

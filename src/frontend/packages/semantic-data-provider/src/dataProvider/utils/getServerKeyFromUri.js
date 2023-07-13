@@ -4,9 +4,8 @@ const getServerKeyFromUri = (uri, dataServers) => {
     if (dataServers[key].pod) {
       // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
       return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace('/data', ''));
-    } else {
-      return uri.startsWith(dataServers[key].baseUrl);
     }
+    return uri.startsWith(dataServers[key].baseUrl);
   });
 };
 

@@ -9,7 +9,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import EditIcon from '@mui/icons-material/Edit';
@@ -90,7 +90,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
       />
       <ListItemText
         className={classes.secondaryText}
-        primary={agent.permissions && agent.permissions.map(p => translate(labels[p])).join(', ')}
+        primary={agent.permissions?.map(p => translate(labels[p])).join(', ')}
       />
       <ListItemSecondaryAction>
         <IconButton onClick={openMenu} size="large">
@@ -98,7 +98,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
         </IconButton>
         <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
           {Object.entries(labels).map(([rightKey, rightLabel]) => {
-            const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
+            const hasPermission = agent.permissions?.includes(rightKey);
             return (
               <MenuItem
                 key={rightKey}

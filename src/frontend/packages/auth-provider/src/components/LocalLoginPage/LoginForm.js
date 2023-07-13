@@ -7,10 +7,10 @@ import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
+    margin: theme.spacing(0.3)
   }
 }));
 
@@ -23,13 +23,13 @@ const LoginForm = ({ redirectTo }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     login(values, redirectTo)
       .then(() => {
         setLoading(false);
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -40,19 +40,15 @@ const LoginForm = ({ redirectTo }) => {
           {
             type: 'warning',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-            },
+              _: typeof error === 'string' ? error : error?.message ? error.message : undefined
+            }
           }
         );
       });
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      noValidate
-      defaultValues={{ email: searchParams.get('email') }}
-    >
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           source="username"
@@ -71,18 +67,19 @@ const LoginForm = ({ redirectTo }) => {
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={required()}
         />
-        <Button 
-          variant="contained" 
-          type="submit" 
-          color="primary" 
-          disabled={loading} 
+        <Button
+          variant="contained"
+          type="submit"
+          color="primary"
+          disabled={loading}
           fullWidth
           className={classes.button}
         >
-          {loading 
-            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.login')
-          }
+          {loading ? (
+            <CircularProgress className={classes.icon} size={19} thickness={3} />
+          ) : (
+            translate('auth.action.login')
+          )}
         </Button>
       </CardContent>
     </Form>
