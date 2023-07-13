@@ -33,5 +33,8 @@
     "packages/*",
     "tests"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "engines": {
+    "node": ">=14"
+  }
 }
