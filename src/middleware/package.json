@@ -10,7 +10,8 @@
     "link-all": "lerna exec --parallel --scope @semapps/** -- yarn link",
     "unlink-all": "lerna exec --parallel --scope @semapps/** -- yarn unlink",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "preinstall": "git config core.hooksPath .git-hooks"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.0.0",
