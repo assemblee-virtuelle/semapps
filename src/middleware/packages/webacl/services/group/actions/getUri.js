@@ -4,7 +4,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      groupSlug: { type: 'string', optional: false, trim: true },
+      groupSlug: { type: 'string', optional: false, trim: true }
     },
     async handler(ctx) {
       let { groupSlug } = ctx.params;

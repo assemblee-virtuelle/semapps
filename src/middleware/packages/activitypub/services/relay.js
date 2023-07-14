@@ -11,13 +11,7 @@ const RelayService = {
       name: 'Relay actor for instance'
     }
   },
-  dependencies: [
-    'activitypub',
-    'activitypub.follow',
-    'auth.account',
-    'ldp.container',
-    'ldp.registry'
-  ],
+  dependencies: ['activitypub', 'activitypub.follow', 'auth.account', 'ldp.container', 'ldp.registry'],
   async started() {
     let appsContainer;
     do {
@@ -26,8 +20,8 @@ const RelayService = {
         this.logger.warn("Waiting for a container that accepts the 'Application' type...");
         await delay(3000);
       }
-    } while(!appsContainer);
-    
+    } while (!appsContainer);
+
     const actorSettings = this.settings.actor;
     const actorExist = await this.broker.call('auth.account.usernameExists', { username: actorSettings.username });
 
@@ -66,7 +60,7 @@ const RelayService = {
           contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
-      } catch(e) {
+      } catch (e) {
         // Delete account if resource creation failed, or it may cause problems when retrying
         await this.broker.call('auth.account.remove', { id: account['@id'] });
         throw e;

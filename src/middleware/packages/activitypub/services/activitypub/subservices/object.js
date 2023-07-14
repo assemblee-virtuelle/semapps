@@ -121,7 +121,7 @@ const ObjectService = {
       }
 
       return activity;
-    },
+    }
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
     // async create(ctx) {
     //   // If there is already a tombstone in the desired URI,

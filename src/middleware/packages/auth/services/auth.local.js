@@ -87,7 +87,7 @@ const AuthLocalService = {
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = formUrl.toString();
       } else {
-        throw new Error('No formUrl defined in auth.local settings')
+        throw new Error('No formUrl defined in auth.local settings');
       }
     },
     async resetPassword(ctx) {
@@ -198,7 +198,14 @@ const AuthLocalService = {
         authorization: true
       };
 
-      const routes = [loginRoute, logoutRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
+      const routes = [
+        loginRoute,
+        logoutRoute,
+        formRoute,
+        resetPasswordRoute,
+        setNewPasswordRoute,
+        accountSettingsRoute
+      ];
 
       if (this.settings.registrationAllowed) {
         return [...routes, signupRoute];

@@ -3,7 +3,7 @@ const pathJoin = require('path').join;
 const { quad, namedNode } = require('@rdfjs/data-model');
 const getCollectionRoute = require('../../../routes/getCollectionRoute');
 const { defaultToArray, getSlugFromUri } = require('../../../utils');
-const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX} = require('../../../constants');
+const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const RegistryService = {
   name: 'activitypub.registry',
@@ -125,11 +125,14 @@ const RegistryService = {
             this.logger.info('Looking for resources in container ' + containerUri);
             const resources = await ctx.call('ldp.container.getUris', { containerUri });
             for (let resourceUri of resources) {
-              await this.actions.createAndAttachCollection({
-                objectUri: resourceUri,
-                collection,
-                webId: 'system'
-              }, { parentCtx: ctx });
+              await this.actions.createAndAttachCollection(
+                {
+                  objectUri: resourceUri,
+                  collection,
+                  webId: 'system'
+                },
+                { parentCtx: ctx }
+              );
             }
           }
         }
@@ -158,7 +161,7 @@ const RegistryService = {
                 Array.isArray(collection.attachToTypes)
                   ? collection.attachToTypes.includes(type)
                   : collection.attachToTypes === type
-            )
+              )
           )
         : [];
     },
@@ -174,7 +177,9 @@ const RegistryService = {
       );
     },
     isActor(types) {
-      return defaultToArray(types).some(type => [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type));
+      return defaultToArray(types).some(type =>
+        [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type)
+      );
     },
     hasTypeChanged(oldData, newData) {
       return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
@@ -187,9 +192,15 @@ const RegistryService = {
       for (let collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
           // If the resource is an actor, use the resource URI as the webId
-          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
+          await this.actions.createAndAttachCollection(
+            { objectUri: resourceUri, collection, webId: resourceUri },
+            { parentCtx: ctx }
+          );
         } else {
-          await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
+          await this.actions.createAndAttachCollection(
+            { objectUri: resourceUri, collection, webId },
+            { parentCtx: ctx }
+          );
         }
       }
     },
@@ -201,9 +212,15 @@ const RegistryService = {
         for (let collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
+            await this.actions.createAndAttachCollection(
+              { objectUri: resourceUri, collection, webId: resourceUri },
+              { parentCtx: ctx }
+            );
           } else {
-            await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
+            await this.actions.createAndAttachCollection(
+              { objectUri: resourceUri, collection, webId },
+              { parentCtx: ctx }
+            );
           }
         }
       }
@@ -216,9 +233,15 @@ const RegistryService = {
           for (let collection of collections) {
             if (this.isActor(triple.object.value)) {
               // If the resource is an actor, use the resource URI as the webId
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId: resourceUri }, { parentCtx: ctx });
+              await this.actions.createAndAttachCollection(
+                { objectUri: resourceUri, collection, webId: resourceUri },
+                { parentCtx: ctx }
+              );
             } else {
-              await this.actions.createAndAttachCollection({ objectUri: resourceUri, collection, webId }, { parentCtx: ctx });
+              await this.actions.createAndAttachCollection(
+                { objectUri: resourceUri, collection, webId },
+                { parentCtx: ctx }
+              );
             }
           }
         }
@@ -228,7 +251,10 @@ const RegistryService = {
       const { oldData } = ctx.params;
       const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
       for (let collection of collections) {
-        await this.actions.deleteCollection({ objectUri: oldData.id || oldData['@id'], collection }, { parentCtx: ctx });
+        await this.actions.deleteCollection(
+          { objectUri: oldData.id || oldData['@id'], collection },
+          { parentCtx: ctx }
+        );
       }
     },
     async 'ldp.registry.registered'(ctx) {

@@ -1,5 +1,5 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
-const { getContainerFromUri } = require("../../../utils");
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -13,7 +13,7 @@ module.exports = {
     // Because we have chosen not to use a common dataset for this kind of data
     // So we use the soon-deprecated getContainerFromUri to find the container
     // TODO store actors in a proper LDP container, with its own dataset ?
-    if (this.settings.podProvider && (getContainerFromUri(resourceUri) + '/' === this.settings.baseUrl)) {
+    if (this.settings.podProvider && getContainerFromUri(resourceUri) + '/' === this.settings.baseUrl) {
       return [getContainerFromUri(resourceUri)];
     }
 

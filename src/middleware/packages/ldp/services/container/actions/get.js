@@ -35,7 +35,11 @@ module.exports = {
       accept: { type: 'string', optional: true },
       filters: { type: 'object', optional: true },
       dereference: { type: 'array', optional: true },
-      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+      jsonContext: {
+        type: 'multi',
+        rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+        optional: true
+      }
     },
     cache: {
       keys: ['containerUri', 'accept', 'filters', 'dereference', 'jsonContext', 'webId', '#webId']

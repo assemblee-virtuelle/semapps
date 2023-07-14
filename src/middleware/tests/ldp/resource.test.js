@@ -654,10 +654,18 @@ describe('Resource CRUD operations', () => {
       resourceUri: projectUri,
       triplesToAdd: [
         quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemApps')),
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#comment'), literal('An open source toolbox to help you easily build semantic web applications'))
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#comment'),
+          literal('An open source toolbox to help you easily build semantic web applications')
+        )
       ],
       triplesToRemove: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemanticApps'))
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          literal('SemanticApps')
+        )
       ],
       contentType: MIME_TYPES.JSON
     });
@@ -691,9 +699,17 @@ describe('Resource CRUD operations', () => {
     await broker.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
-        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris')),
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          blankNode('b_0')
+        ),
+        quad(
+          blankNode('b_0'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        ),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris'))
       ],
       contentType: MIME_TYPES.JSON
     });
@@ -715,9 +731,17 @@ describe('Resource CRUD operations', () => {
     await broker.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
-        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne')),
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          blankNode('b_0')
+        ),
+        quad(
+          blankNode('b_0'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        ),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne'))
       ],
       contentType: MIME_TYPES.JSON
     });

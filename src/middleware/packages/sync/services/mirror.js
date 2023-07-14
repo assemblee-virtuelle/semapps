@@ -1,8 +1,8 @@
-const urlJoin = require("url-join");
-const fetch = require("node-fetch");
+const urlJoin = require('url-join');
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, defaultToArray } = require("@semapps/ldp");
-const { ACTIVITY_TYPES } = require("@semapps/activitypub");
+const { createFragmentURL, defaultToArray } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const SynchronizerService = require('./synchronizer');
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
@@ -37,7 +37,8 @@ module.exports = {
     if (this.settings.servers.length > 0) {
       for (let serverUrl of this.settings.servers) {
         // Do not await because we don't want to block the startup of the services.
-        this.actions.mirror({ serverUrl })
+        this.actions
+          .mirror({ serverUrl })
           .catch(e => this.logger.warn('Mirroring failed for ' + serverUrl + ' : ' + e.message));
       }
     }
@@ -125,7 +126,7 @@ module.exports = {
               sparqlQuery += container.replace(regexPrefix, '');
               sparqlQuery += '} }';
 
-              await ctx.call('triplestore.update', {query: sparqlQuery});
+              await ctx.call('triplestore.update', { query: sparqlQuery });
             }
           }
         }

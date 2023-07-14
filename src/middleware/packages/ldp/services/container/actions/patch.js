@@ -109,11 +109,7 @@ module.exports = {
         throw new MoleculerError(`Invalid SPARQL UPDATE content`, 400, 'BAD_REQUEST');
       }
 
-      ctx.emit(
-        'ldp.container.patched',
-        { containerUri },
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('ldp.container.patched', { containerUri }, { meta: { webId: null, dataset: null } });
     }
   }
 };

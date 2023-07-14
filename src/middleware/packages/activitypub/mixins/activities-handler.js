@@ -21,7 +21,7 @@ const ActivitiesHandlerMixin = {
           ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: emitterUri });
 
           if (!activityHandler.match)
-            throw new Error(`No match handler (object or function) defined for activity "${key}"`)
+            throw new Error(`No match handler (object or function) defined for activity "${key}"`);
 
           const dereferencedActivity =
             typeof activityHandler.match === 'object'

@@ -89,7 +89,11 @@ module.exports = {
         for (const t of triples) {
           if (this.inverseRelations[t.predicate.value]) {
             inverseTriples.push(
-              triple(namedNode(t.object.value), namedNode(this.inverseRelations[t.predicate.value]), namedNode(t.subject.value))
+              triple(
+                namedNode(t.object.value),
+                namedNode(this.inverseRelations[t.predicate.value]),
+                namedNode(t.subject.value)
+              )
             );
           }
         }
@@ -303,6 +307,6 @@ module.exports = {
           });
         }
       }
-    },
+    }
   }
 };

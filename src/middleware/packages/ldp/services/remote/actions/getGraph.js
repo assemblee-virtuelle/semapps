@@ -18,7 +18,7 @@ module.exports = {
     } else {
       exist = await ctx.call('triplestore.tripleExist', {
         triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-        graphName: this.settings.mirrorGraphName,
+        graphName: this.settings.mirrorGraphName
       });
 
       if (exist) {

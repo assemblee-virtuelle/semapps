@@ -85,7 +85,7 @@ const SignatureService = {
           triplesToAdd: [
             triple(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b0')),
             triple(blankNode('b0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
-            triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey)),
+            triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey))
           ],
           webId: 'system'
         });
@@ -130,7 +130,7 @@ const SignatureService = {
 
       this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
       return actor.publicKey.publicKeyPem;
-    },
+    }
   },
   events: {
     async 'auth.registered'(ctx) {
