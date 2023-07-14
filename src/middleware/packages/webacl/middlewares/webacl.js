@@ -153,7 +153,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'ldp.resource.create':
             const resourceUri = ctx.params.resource['@id'] || ctx.params.resource.id;
             // Do not add ACLs if this is a mirrored resource as WebACL are not activated on the mirror graph
-            if (isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider }) && (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') return next(ctx);
+            if (
+              isRemoteUri(resourceUri, ctx.meta.dataset, { baseUrl, podProvider }) &&
+              (await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror'
+            )
+              return next(ctx);
             // We must add the permissions before inserting the resource
             await addRightsToNewResource(ctx, resourceUri, webId);
             break;
@@ -254,7 +258,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                   },
                   webId: 'system'
                 },
-                { meta: { dataset }}
+                { meta: { dataset } }
               );
             }
             break;

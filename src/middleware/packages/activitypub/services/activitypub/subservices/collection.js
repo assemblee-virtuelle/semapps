@@ -108,7 +108,8 @@ const CollectionService = {
 
       // TODO check why thrown error is lost and process is stopped
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
+      if (!collectionExist)
+        throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
       await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
@@ -231,7 +232,13 @@ const CollectionService = {
         if (dereferenceItems) {
           for (let itemUri of selectedItemsUris) {
             try {
-              selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId, jsonContext: this.settings.jsonContext }));
+              selectedItems.push(
+                await ctx.call('activitypub.object.get', {
+                  objectUri: itemUri,
+                  actorUri: webId,
+                  jsonContext: this.settings.jsonContext
+                })
+              );
             } catch (e) {
               if (e.code === 404 || e.code === 403) {
                 // Ignore resource if it is not found

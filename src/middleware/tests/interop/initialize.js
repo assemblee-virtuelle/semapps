@@ -9,12 +9,12 @@ const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
-const { clearDataset } = require("../utils");
+const { clearDataset } = require('../utils');
 
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource'],
+    acceptedTypes: ['pair:Resource']
   },
   {
     path: '/protected-resources',
@@ -80,7 +80,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   if (serverToMirror) {
     await broker.createService(MirrorService, {
       settings: {
-       servers: [serverToMirror]
+        servers: [serverToMirror]
       }
     });
   }

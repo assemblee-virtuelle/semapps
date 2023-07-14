@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getDatasetFromUri } = require("@semapps/ldp");
+const { getDatasetFromUri } = require('@semapps/ldp');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 const { delay, defaultToArray, getSlugFromUri } = require('../../../utils');
 
@@ -24,10 +24,7 @@ const ActorService = {
       if (!this.isRemoteUri(actorUri, ctx.meta.dataset)) {
         try {
           // Don't return immediately the promise, or we won't be able to catch errors
-          const actor = await ctx.call(
-            'ldp.resource.get',
-            { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId }
-          );
+          const actor = await ctx.call('ldp.resource.get', { resourceUri: actorUri, accept: MIME_TYPES.JSON, webId });
           return actor;
         } catch (e) {
           console.error(e);
@@ -37,11 +34,11 @@ const ActorService = {
         // if (this.remoteActorsCache[actorUri]) {
         //   return this.remoteActorsCache[actorUri];
         // } else {
-          const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
-          if (!response.ok) return false;
-          const actor = await response.json();
-          // this.remoteActorsCache[actorUri] = actor;
-          return actor;
+        const response = await fetch(actorUri, { headers: { Accept: 'application/json' } });
+        if (!response.ok) return false;
+        const actor = await response.json();
+        // this.remoteActorsCache[actorUri] = actor;
+        return actor;
         // }
       }
     },
@@ -61,14 +58,18 @@ const ActorService = {
       if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
         // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
         const resourceType = defaultToArray(userData.type || userData['@type']);
-        const includeActorType = resourceType ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type)) : false;
+        const includeActorType = resourceType
+          ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type))
+          : false;
         if (!includeActorType) {
           propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = AS_PREFIX + 'Person';
         }
       }
 
       if (!propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername']) {
-        propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(userData.id || userData['@id']);
+        propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(
+          userData.id || userData['@id']
+        );
       }
 
       if (Object.keys(propertiesToAdd).length > 0) {
@@ -94,48 +95,63 @@ const ActorService = {
       await ctx.call('triplestore.update', {
         query: {
           type: 'update',
-          updates: [{
-            updateType: 'insertdelete',
-            insert: [{
-              type: 'bgp',
-              triples: [
-                triple(namedNode(actorUri), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), variable('endpoints')),
-                triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint)),
-              ]
-            }],
-            delete: [],
-            where: [
-              {
-                type: 'optional',
-                patterns: [{
+          updates: [
+            {
+              updateType: 'insertdelete',
+              insert: [
+                {
                   type: 'bgp',
                   triples: [
-                    triple(namedNode(actorUri), namedNode('https://www.w3.org/ns/activitystreams#endpoints'), variable('b0'))
-                  ]
-                }],
-              },
-              {
-                type: 'bind',
-                variable: variable('endpoints'),
-                expression: {
-                  type: 'operation',
-                  operator: 'if',
-                  args: [
-                    {
-                      type: 'operation',
-                      operator: 'bound',
-                      args: [variable('b0')]
-                    },
-                    variable('b0'),
-                    {
-                      type: 'operation',
-                      operator: 'BNODE',
-                      args: []
-                    }
+                    triple(
+                      namedNode(actorUri),
+                      namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                      variable('endpoints')
+                    ),
+                    triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
                   ]
                 }
-              }]
-          }]
+              ],
+              delete: [],
+              where: [
+                {
+                  type: 'optional',
+                  patterns: [
+                    {
+                      type: 'bgp',
+                      triples: [
+                        triple(
+                          namedNode(actorUri),
+                          namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
+                          variable('b0')
+                        )
+                      ]
+                    }
+                  ]
+                },
+                {
+                  type: 'bind',
+                  variable: variable('endpoints'),
+                  expression: {
+                    type: 'operation',
+                    operator: 'if',
+                    args: [
+                      {
+                        type: 'operation',
+                        operator: 'bound',
+                        args: [variable('b0')]
+                      },
+                      variable('b0'),
+                      {
+                        type: 'operation',
+                        operator: 'BNODE',
+                        args: []
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
         },
         webId: 'system',
         dataset
@@ -147,10 +163,7 @@ const ActorService = {
       let actor;
       do {
         if (actor) await delay(1000);
-        actor = await this.actions.get(
-          { actorUri, webId: 'system' },
-          { parentCtx: ctx, meta: { $cache: false } }
-        );
+        actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } });
       } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
       return actor;
     },
@@ -182,8 +195,10 @@ const ActorService = {
   methods: {
     isRemoteUri(uri, dataset) {
       if (this.settings.podProvider && !dataset) return true; // If no dataset is set, assume actor is remote
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
-        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
+      return (
+        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
+        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'))
+      );
     },
     isActor(resource) {
       return defaultToArray(resource['@type'] || resource.type || []).some(type =>

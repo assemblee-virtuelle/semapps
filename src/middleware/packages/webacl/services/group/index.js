@@ -17,7 +17,7 @@ module.exports = {
     podProvider: false,
     superAdmins: []
   },
-  dependencies: ['triplestore', 'webacl.resource','ldp.container'],
+  dependencies: ['triplestore', 'webacl.resource', 'ldp.container'],
   actions: {
     getUri: getUriAction.action,
     isMember: isMemberAction.action,

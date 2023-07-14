@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require("@semapps/activitypub");
-const urlJoin = require("url-join");
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+const urlJoin = require('url-join');
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
@@ -29,7 +29,9 @@ module.exports = {
       async handler(ctx) {
         if (this.settings.offerToRemoteServers) {
           const serverDomainName = new URL(ctx.params.subject).host;
-          const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
+          const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', {
+            account: 'relay@' + serverDomainName
+          });
 
           if (remoteRelayActorUri) {
             await ctx.call('activitypub.outbox.post', {
@@ -76,7 +78,9 @@ module.exports = {
                 });
               }
             } catch (e) {
-              this.logger.warn(`Error while connecting to remove server for offering inverse relationship: ${e.message}`);
+              this.logger.warn(
+                `Error while connecting to remove server for offering inverse relationship: ${e.message}`
+              );
             }
           }
         }
@@ -92,7 +96,7 @@ module.exports = {
     offerInference: {
       async match(ctx, activity) {
         return (
-          await this.matchActivity(
+          (await this.matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -104,9 +108,8 @@ module.exports = {
               }
             },
             activity
-          )
-        ) || (
-          await this.matchActivity(
+          )) ||
+          (await this.matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -118,7 +121,7 @@ module.exports = {
               }
             },
             activity
-          )
+          ))
         );
       },
       async onReceive(ctx, activity, recipientUri) {
@@ -131,11 +134,20 @@ module.exports = {
             }
 
             // Remove prefix from predicate if it exists
-            relationship.relationship = await ctx.call('jsonld.expandPredicate', { predicate: relationship.relationship, context: activity['@context'] });
+            relationship.relationship = await ctx.call('jsonld.expandPredicate', {
+              predicate: relationship.relationship,
+              context: activity['@context']
+            });
 
             // TODO ensure that the object exist and has a remote relationship
 
-            const triples = [triple(namedNode(relationship.subject), namedNode(relationship.relationship), namedNode(relationship.object))];
+            const triples = [
+              triple(
+                namedNode(relationship.subject),
+                namedNode(relationship.relationship),
+                namedNode(relationship.object)
+              )
+            ];
 
             await ctx.call('ldp.resource.patch', {
               resourceUri: relationship.subject,

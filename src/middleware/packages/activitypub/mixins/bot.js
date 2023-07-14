@@ -56,7 +56,7 @@ const BotMixin = {
           contentType: MIME_TYPES.JSON,
           webId: 'system'
         });
-      } catch(e) {
+      } catch (e) {
         // Delete account if resource creation failed, or it may cause problems when retrying
         await this.broker.call('auth.account.remove', { id: account['@id'] });
         throw e;

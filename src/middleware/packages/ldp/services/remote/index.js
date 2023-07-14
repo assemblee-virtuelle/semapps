@@ -1,4 +1,4 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const Schedule = require('moleculer-schedule');
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
@@ -15,7 +15,7 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    mirrorGraphName: null,
+    mirrorGraphName: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -26,12 +26,20 @@ module.exports = {
     getStored: getStoredAction,
     isRemote: isRemoteAction,
     store: storeAction,
-    runCron() { this.updateSingleMirroredResources() } // Used by tests
+    runCron() {
+      this.updateSingleMirroredResources();
+    } // Used by tests
   },
   methods: {
     isRemoteUri(uri, webId) {
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
-        || (this.settings.podProvider && webId && webId !== 'anon' && webId !== 'system' && !urlJoin(uri, '/').startsWith(webId + '/'));
+      return (
+        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
+        (this.settings.podProvider &&
+          webId &&
+          webId !== 'anon' &&
+          webId !== 'system' &&
+          !urlJoin(uri, '/').startsWith(webId + '/'))
+      );
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
@@ -55,8 +63,8 @@ module.exports = {
             await this.actions.store({
               resourceUri,
               keepInSync: true,
-              mirrorGraph: true,
-            })
+              mirrorGraph: true
+            });
           } catch (e) {
             if (e.code === 403 || e.code === 404 || e.code === 401) {
               await this.actions.delete({ resourceUri });
@@ -68,7 +76,7 @@ module.exports = {
           }
         }
       }
-    },
+    }
   },
   jobs: [
     {

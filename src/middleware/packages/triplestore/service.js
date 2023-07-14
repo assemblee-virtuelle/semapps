@@ -40,7 +40,9 @@ const TripleStoreService = {
   },
   started() {
     this.sparqlJsonParser = new SparqlJsonParser();
-    this.sparqlGenerator = new SparqlGenerator({ /* prefixes, baseIRI, factory, sparqlStar */ });
+    this.sparqlGenerator = new SparqlGenerator({
+      /* prefixes, baseIRI, factory, sparqlStar */
+    });
   },
   actions: {
     insert,
@@ -81,7 +83,7 @@ const TripleStoreService = {
     generateSparqlQuery(query) {
       try {
         return this.sparqlGenerator.stringify(query);
-      } catch(e) {
+      } catch (e) {
         console.error(e);
         throw new MoleculerError(`Invalid SPARQL.js object: ${JSON.stringify(query)}`, 400, 'BAD_REQUEST');
       }

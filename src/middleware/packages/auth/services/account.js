@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const { getSlugFromUri } = require("@semapps/ldp");
+const { getSlugFromUri } = require('@semapps/ldp');
 const crypto = require('crypto');
 
 module.exports = {
