@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "lib": ["es2020"],
     "allowJs": true,
     "checkJs": false,
     "resolveJsonModule": true,
@@ -10,5 +11,6 @@
     "sourceMap": true,
     "strictNullChecks": true
   },
+  "include": ["**/*.js", "**/*.ts"],
   "exclude": ["node_modules"]
 }

@@ -16,5 +16,8 @@
   },
   "engines": {
     "node": ">=14"
+  },
+  "devDependencies": {
+    "@types/cron": "^2.0.1"
   }
 }
