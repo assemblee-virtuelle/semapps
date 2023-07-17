@@ -3,6 +3,7 @@ const { objectIdToCurrent, collectionPermissionsWithAnonRead } = require('../../
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { ACTOR_TYPES } = require('../../../constants');
 
+/** @type {import('moleculer').ServiceSchema} */
 const InboxService = {
   name: 'activitypub.inbox',
   mixins: [ControlledCollectionMixin],

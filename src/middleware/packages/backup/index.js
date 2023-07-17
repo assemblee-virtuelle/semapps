@@ -2,6 +2,9 @@ const { CronJob } = require('cron');
 const fsCopy = require('./utils/fsCopy');
 const ftpCopy = require('./utils/ftpCopy');
 const rsyncCopy = require('./utils/rsyncCopy');
+/**
+ * @typedef {import('moleculer').Context} Context
+ */
 
 /** @type {import('./indexTypes').BackupService} */
 const BackupService = {
@@ -9,21 +12,21 @@ const BackupService = {
   settings: {
     localServer: {
       fusekiBackupsPath: null,
-      otherDirsPaths: {}
+      otherDirsPaths: {},
     },
-    copyMethod: 'rsync', // rsync, ftp or fs
+    copyMethod: 'rsync', // rsync, ftp, or fs
     remoteServer: {
       path: null, // Required
       user: null, // Required by rsync and ftp
       password: null, // Required by rsync and ftp
       host: null, // Required by rsync and ftp
-      port: null // Required by ftp
+      port: null, // Required by ftp
     },
     // Required for automated backups
     cronJob: {
       time: null,
-      timeZone: 'Europe/Paris'
-    }
+      timeZone: 'Europe/Paris',
+    },
   },
   dependencies: ['triplestore'],
   started() {
@@ -46,7 +49,7 @@ const BackupService = {
         return;
       }
 
-      // Generate new backup of all datasets
+      // Generate a new backup of all datasets
       const datasets = await ctx.call('triplestore.dataset.list');
       for (const dataset of datasets) {
         this.logger.info(`Backing up dataset: ${dataset}`);
@@ -92,10 +95,10 @@ const BackupService = {
           break;
 
         default:
-          throw new Error(`Unknow copy method: ${copyMethod}`);
+          throw new Error(`Unknown copy method: ${copyMethod}`);
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = BackupService;
