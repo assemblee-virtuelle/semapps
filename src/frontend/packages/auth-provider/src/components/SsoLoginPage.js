@@ -64,7 +64,7 @@ const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, proper
                 window.location.href = searchParams.get('redirect');
               } else if (searchParams.has('new') && searchParams.get('new') === 'true') {
                 notify('auth.message.new_user_created', { type: 'info' });
-                window.location.href = '/' + userResource + '/' + encodeURIComponent(webId) + '/edit';
+                window.location.href = '/' + userResource + '/' + encodeURIComponent(webId);
               } else {
                 notify('auth.message.user_connected', { type: 'info' });
                 window.location.href = '/';
