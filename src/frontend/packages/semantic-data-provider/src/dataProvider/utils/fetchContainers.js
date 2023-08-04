@@ -61,8 +61,8 @@ const fetchContainers = async (containers, resourceId, params, config) => {
       }
 
       if (Object.keys(params.filter).length > 0) {
+        console.log('-------------- EVERY');
         returnData = returnData.filter(resource => {
-          // console.log
           return Object.entries(params.filter).every(([k, v]) => {
             if (k == 'q') {
               return Object.entries(resource).some(([kr, vr]) => {
