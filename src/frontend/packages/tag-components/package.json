@@ -1,0 +1,42 @@
+{
+  "name": "@semapps/tag-components",
+  "version": "0.5.1",
+  "description": "React-Admin component for markdown display and input",
+  "license": "Apache-2.0",
+  "author": "Virtual Assembly",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "pre-publish": "rollup --sourcemap --config",
+    "dev": "rollup --watch --sourcemap --config"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.3",
+    "@mui/material": "^5.14.5"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-admin": "^4.11.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.9.4",
+    "rollup": "^2.7.6",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-pluginutils": "^2.8.2"
+  }
+}
