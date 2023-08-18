@@ -13,6 +13,7 @@ const external = createFilter(
     'react-dom',
     'react-router-dom',
     'react-router',
+    'react-hook-form',
     '@mui/**',
     '@semapps/**'
   ],
