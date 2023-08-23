@@ -23,18 +23,12 @@ const format = v => {
 }
 
 const parse = v => {
-  if (v && v.src && !v.rawFile) {
+  if (v instanceof File) {
+    return transformFile(v);
+  } else if (v && v.src && !v.rawFile) {
     return v.src;
-  } else  if (Array.isArray(v)) {
-    return v.map(e => {
-      if (e && e.src && !e.rawFile) {
-        return e.src;
-      } else if (e instanceof File) { 
-        return transformFile(e);
-      } else {
-        return e;
-      }
-    });
+  } else if (Array.isArray(v)) {
+    return v.map(e => parse(e));
   } else {
     return v;
   }
