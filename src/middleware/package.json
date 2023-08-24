@@ -10,6 +10,7 @@
     "link-all": "lerna exec --parallel --scope @semapps/** -- yarn link",
     "unlink-all": "lerna exec --parallel --scope @semapps/** -- yarn unlink",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "preinstall": "git config core.hooksPath .git-hooks"
   },
