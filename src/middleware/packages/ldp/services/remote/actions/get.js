@@ -32,18 +32,16 @@ module.exports = {
         return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx }).catch(e => {
           if (e.code === 404) {
             return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-          } else {
-            throw e;
           }
+          throw e;
         });
 
       case 'networkFirst':
         return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx }).catch(e => {
           if (e.code === 404) {
             return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
-          } else {
-            throw e;
           }
+          throw e;
         });
 
       case 'cacheOnly':

@@ -1,7 +1,7 @@
 const Rsync = require('rsync');
 const { join: pathJoin } = require('path');
 
-const rsyncCopy = (path, subDir, remoteServer) => {
+const rsyncCopy = async (path, subDir, remoteServer) => {
   // Setup rsync to remote server
   const rsync = new Rsync()
     .flags('arv')
@@ -10,7 +10,7 @@ const rsyncCopy = (path, subDir, remoteServer) => {
     .destination(`${remoteServer.user}@${remoteServer.host}:${pathJoin(remoteServer.path, subDir)}`);
 
   return new Promise((resolve, reject) => {
-    console.log('Rsync started with command: ' + rsync.command());
+    console.log(`Rsync started with command: ${rsync.command()}`);
     rsync.execute(error => {
       if (error) {
         reject(error);

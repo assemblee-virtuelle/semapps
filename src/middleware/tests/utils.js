@@ -8,7 +8,7 @@ const clearDataset = async dataset => {
     body: 'update=CLEAR+ALL',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: 'Basic ' + Buffer.from(CONFIG.JENA_USER + ':' + CONFIG.JENA_PASSWORD).toString('base64'),
+      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`,
       'X-SemappsUser': 'system'
     }
   });

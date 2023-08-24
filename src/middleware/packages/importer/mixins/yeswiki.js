@@ -42,9 +42,8 @@ module.exports = {
       const data = await this.fetch(url);
       if (data) {
         return Object.values(data)[0];
-      } else {
-        return false;
       }
+      return false;
     }
   }
 };

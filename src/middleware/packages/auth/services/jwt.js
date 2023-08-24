@@ -24,7 +24,7 @@ module.exports = {
     this.publicKey = fs.readFileSync(publicKeyPath);
   },
   actions: {
-    generateKeyPair(ctx) {
+    async generateKeyPair(ctx) {
       const { privateKeyPath, publicKeyPath } = ctx.params;
 
       return new Promise((resolve, reject) => {

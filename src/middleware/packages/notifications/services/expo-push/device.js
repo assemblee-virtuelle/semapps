@@ -38,7 +38,7 @@ const ExpoPushDeviceService = {
           { parentCtx: ctx }
         );
 
-        if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
+        if (this.settings.newDeviceNotification?.message) {
           await ctx.call('push.notification.send', {
             to: userUri,
             ...this.settings.newDeviceNotification
@@ -60,9 +60,9 @@ const ExpoPushDeviceService = {
       return device;
     },
     async findUsersDevices(ctx) {
-      let devices = [];
+      const devices = [];
 
-      for (let userUri of ctx.params.users) {
+      for (const userUri of ctx.params.users) {
         const container = await this.actions.find(
           {
             query: {

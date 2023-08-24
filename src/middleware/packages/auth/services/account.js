@@ -18,7 +18,7 @@ module.exports = {
       let { uuid, username, password, email, webId, ...rest } = ctx.params;
       const hashedPassword = password ? await this.hashPassword(password) : undefined;
 
-      email = email && email.toLowerCase();
+      email = email?.toLowerCase();
 
       const emailExists = !email ? false : await ctx.call('auth.account.emailExists', { email });
       if (emailExists) {
@@ -30,8 +30,8 @@ module.exports = {
       } else if (email) {
         // If username is not provided, find an username based on the email
         const usernameFromEmail = email.split('@')[0].toLowerCase();
-        let usernameValid = false,
-          i = 0;
+        let usernameValid = false;
+        let i = 0;
         do {
           username = i === 0 ? usernameFromEmail : usernameFromEmail + i;
           try {
@@ -72,9 +72,8 @@ module.exports = {
         const passwordMatch = await this.comparePassword(password, accounts[0].hashedPassword);
         if (passwordMatch) {
           return accounts[0];
-        } else {
-          throw new Error('account.not-found');
         }
+        throw new Error('account.not-found');
       } else {
         throw new Error('account.not-found');
       }
@@ -147,8 +146,8 @@ module.exports = {
       const account = await ctx.call('auth.account.findByWebId', { webId });
 
       return {
-        email: account['email'],
-        preferredLocale: account['preferredLocale']
+        email: account.email,
+        preferredLocale: account.preferredLocale
       };
     },
     async updateAccountSettings(ctx) {
@@ -167,7 +166,7 @@ module.exports = {
         params = { ...params, hashedPassword };
       }
 
-      if (email !== account['email']) {
+      if (email !== account.email) {
         const existing = await ctx.call('auth.account.findByEmail', { email });
         if (existing) {
           throw new Error('email.already.exists');
@@ -226,7 +225,7 @@ module.exports = {
     },
     async generateResetPasswordToken() {
       return new Promise((resolve, reject) => {
-        crypto.randomBytes(32, function(ex, buf) {
+        crypto.randomBytes(32, (ex, buf) => {
           if (ex) {
             reject(ex);
           }

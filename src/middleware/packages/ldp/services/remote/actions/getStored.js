@@ -62,12 +62,7 @@ module.exports = {
       }
 
       return result;
-    } else {
-      throw new MoleculerError(
-        'Resource Not found ' + resourceUri + ' in dataset ' + ctx.meta.dataset,
-        404,
-        'NOT_FOUND'
-      );
     }
+    throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
   }
 };

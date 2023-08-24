@@ -9,13 +9,12 @@ module.exports = {
       if (typeof rule.match === 'function') {
         // If match is a function, pass it the record
         return rule.match(record);
-      } else {
-        // If match is an object, go through all entries and check they match with the record
-        return Object.keys(rule.match).every(predicate => {
-          const value = rule.match[predicate];
-          return Array.isArray(record[predicate]) ? record[predicate].includes(value) : record[predicate] === value;
-        });
       }
+      // If match is an object, go through all entries and check they match with the record
+      return Object.keys(rule.match).every(predicate => {
+        const value = rule.match[predicate];
+        return Array.isArray(record[predicate]) ? record[predicate].includes(value) : record[predicate] === value;
+      });
     },
     getUsers(rule, record) {
       let users;
@@ -32,10 +31,10 @@ module.exports = {
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      for (let rule of this.settings.rules) {
+      for (const rule of this.settings.rules) {
         if (this.matchRule(rule, newData)) {
           const users = this.getUsers(rule, newData);
-          for (let user of users) {
+          for (const user of users) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri,
               additionalRights: {
@@ -60,13 +59,13 @@ module.exports = {
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData, oldData } = ctx.params;
 
-      for (let rule of this.settings.rules) {
+      for (const rule of this.settings.rules) {
         if (this.matchRule(rule, newData)) {
           const newUsers = this.getUsers(rule, newData);
           const oldUsers = this.getUsers(rule, oldData);
 
           const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
-          for (let userUri of usersToAdd) {
+          for (const userUri of usersToAdd) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri,
               additionalRights: {
@@ -87,7 +86,7 @@ module.exports = {
           }
 
           const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
-          for (let userUri of usersToRemove) {
+          for (const userUri of usersToRemove) {
             await ctx.call('webacl.resource.removeRights', {
               resourceUri,
               rights: {

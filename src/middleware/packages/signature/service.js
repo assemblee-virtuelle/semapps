@@ -67,7 +67,7 @@ const SignatureService = {
         headers
       });
 
-      const keyId = parsedSignature.params.keyId;
+      const { keyId } = parsedSignature.params;
       if (!keyId) return false;
       const [actorUri] = keyId.split('#');
 
@@ -88,14 +88,12 @@ const SignatureService = {
         if (isValid) {
           ctx.meta.webId = actorUri;
           return Promise.resolve();
-        } else {
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
-      } else {
         ctx.meta.webId = 'anon';
-        return Promise.resolve(null);
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
+      ctx.meta.webId = 'anon';
+      return Promise.resolve(null);
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
@@ -108,24 +106,19 @@ const SignatureService = {
         if (isValid) {
           ctx.meta.webId = actorUri;
           return Promise.resolve(payload);
-        } else {
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
-      } else {
         ctx.meta.webId = 'anon';
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
+      ctx.meta.webId = 'anon';
+      return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
     }
   },
   methods: {
     buildDigest(body) {
-      return (
-        'SHA-256=' +
-        createHash('sha256')
-          .update(body)
-          .digest('base64')
-      );
+      return `SHA-256=${createHash('sha256')
+        .update(body)
+        .digest('base64')}`;
     }
   }
 };

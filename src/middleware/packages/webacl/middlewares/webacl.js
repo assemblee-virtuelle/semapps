@@ -55,7 +55,7 @@ const addRightsToNewUser = async (ctx, userUri) => {
 
 // List of containers with default anon read, so that we can bypass permissions check for the resources it contains
 // TODO invalidate this cache when default permissions are changed
-let containersWithDefaultAnonRead = [];
+const containersWithDefaultAnonRead = [];
 
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
@@ -64,7 +64,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
     if (!podProvider) {
       await broker.waitForServices(['ldp.container', 'triplestore']);
       const containers = await broker.call('ldp.container.getAll');
-      for (let containerUri of containers) {
+      for (const containerUri of containers) {
         const authorizations = await broker.call('triplestore.query', {
           query: `
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -113,14 +113,13 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           // Bypass if mirrored resource as WebACL are not activated in mirror graph
           if ((await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
             return bypass();
-          } else {
-            return next(ctx);
           }
+          return next(ctx);
         }
 
         // If the logged user is fetching is own POD, bypass ACL check
         // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-        if (podProvider && resourceUri.startsWith(webId + '/')) {
+        if (podProvider && resourceUri.startsWith(`${webId}/`)) {
           return bypass();
         }
 
@@ -137,11 +136,11 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
         if (result.read) {
           return bypass();
-        } else {
-          throw403();
         }
+        throw403();
       };
-    } else if (modifyActions.includes(action.name)) {
+    }
+    if (modifyActions.includes(action.name)) {
       return async ctx => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let actionReturnValue;
@@ -273,7 +272,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               webId: ctx.params.webId || 'system'
             });
 
-            let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+            const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // When a new activity is created, ensure the emitter has read rights also
             if (action.name === 'activitypub.activity.create') {
@@ -283,7 +282,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once
             // https://github.com/assemblee-virtuelle/semapps/issues/908
-            for (let recipient of recipients) {
+            for (const recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
                 resourceUri: actionReturnValue.resourceUri,
                 additionalRights: {

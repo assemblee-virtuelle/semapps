@@ -20,7 +20,7 @@ const InboxService = {
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
     async post(ctx) {
-      let { collectionUri, ...activity } = ctx.params;
+      const { collectionUri, ...activity } = ctx.params;
 
       // Ensure the actor in the activity is the same as the posting actor
       // (When posting, the webId is the one of the poster)
@@ -117,7 +117,7 @@ const InboxService = {
         webId: 'system'
       });
 
-      let activities = [];
+      const activities = [];
 
       for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
         const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });

@@ -1,10 +1,10 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const ObjectID = require('bson').ObjectID;
+const { ObjectID } = require('bson');
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
     this.type = type;
-    this.baseUri = baseUri || 'urn:' + type + ':';
+    this.baseUri = baseUri || `urn:${type}:`;
     this.dataset = dataset;
     this.ontology = ontology;
   }
@@ -23,7 +23,7 @@ class TripleStoreAdapter {
     });
   }
 
-  disconnect() {
+  async disconnect() {
     return Promise.resolve();
   }
 
@@ -73,13 +73,13 @@ class TripleStoreAdapter {
         if (result['@graph']) {
           // Several results
           return result['@graph'];
-        } else if (result['@id']) {
+        }
+        if (result['@id']) {
           // Single result
           return [result];
-        } else {
-          // No result
-          return [];
         }
+        // No result
+        return [];
       });
   }
 
@@ -119,7 +119,7 @@ class TripleStoreAdapter {
   /**
    * Find all entities by IDs
    */
-  findByIds(ids) {
+  async findByIds(ids) {
     return Promise.all(ids.map(id => this.findById(id)));
   }
 
@@ -173,7 +173,7 @@ class TripleStoreAdapter {
    * Update an entity by ID
    */
   updateById(_id, update) {
-    let { id, '@id': arobaseId, ...newData } = update['$set'];
+    let { id, '@id': arobaseId, ...newData } = update.$set;
 
     // Check ID and transform it to URI if necessary
     _id = _id || id || arobaseId;

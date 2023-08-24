@@ -81,7 +81,7 @@ module.exports = {
         webId: 'system'
       });
 
-      for (let memberUri of this.settings.superAdmins) {
+      for (const memberUri of this.settings.superAdmins) {
         const isMember = await this.actions.isMember({
           groupUri,
           memberId: memberUri,

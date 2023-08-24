@@ -13,21 +13,20 @@ const handledActions = [
 
 const ObjectsWatcherMiddleware = (config = {}) => {
   const { baseUrl, podProvider = false } = config;
-  let relayActor,
-    watchedContainers = [],
-    initialized = false,
-    cacherActivated = false;
+  let relayActor;
+  let watchedContainers = [];
+  let initialized = false;
+  let cacherActivated = false;
 
   if (!baseUrl) throw new Error('The baseUrl setting is missing from ObjectsWatcherMiddleware');
 
   const getActor = async (ctx, resourceUri) => {
     if (podProvider) {
       const url = new URL(resourceUri);
-      const podOwnerUri = url.origin + '/' + url.pathname.split('/')[1];
+      const podOwnerUri = `${url.origin}/${url.pathname.split('/')[1]}`;
       return await ctx.call('activitypub.actor.awaitCreateComplete', { actorUri: podOwnerUri });
-    } else {
-      return relayActor;
     }
+    return relayActor;
   };
 
   const clearWebAclCache = async (ctx, resourceUri, containerUri) => {
@@ -49,9 +48,8 @@ const ObjectsWatcherMiddleware = (config = {}) => {
     const recipients = usersWithReadRights.filter(u => u !== actor.id);
     if (isPublic) {
       return [...recipients, actor.followers, PUBLIC_URI];
-    } else {
-      return recipients;
     }
+    return recipients;
   };
 
   const isWatched = containersUris => {
@@ -65,7 +63,7 @@ const ObjectsWatcherMiddleware = (config = {}) => {
       throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
     return (
       !urlJoin(uri, '/').startsWith(baseUrl) ||
-      (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'))
+      (podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(baseUrl, dataset)}/`))
     );
   };
 
@@ -111,7 +109,11 @@ const ObjectsWatcherMiddleware = (config = {}) => {
 
           if (ctx.meta.skipObjectsWatcher === true) return await next(ctx);
 
-          let actionReturnValue, resourceUri, containerUri, oldContainers, oldRecipients;
+          let actionReturnValue;
+          let resourceUri;
+          let containerUri;
+          let oldContainers;
+          let oldRecipients;
 
           switch (action.name) {
             case 'ldp.container.post':
@@ -338,9 +340,8 @@ const ObjectsWatcherMiddleware = (config = {}) => {
           if (!container.excludeFromMirror) watchedContainers.push(container);
           return next(ctx);
         };
-      } else {
-        return next;
       }
+      return next;
     }
   };
 };

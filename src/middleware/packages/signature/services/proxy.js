@@ -4,12 +4,16 @@ const { parseFile, saveDatasetMeta } = require('@semapps/middlewares');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
-const stream2buffer = stream => {
+const stream2buffer = async stream => {
   return new Promise((resolve, reject) => {
     const _buf = [];
     stream.on('data', chunk => _buf.push(chunk));
-    stream.on('end', () => resolve(Buffer.concat(_buf)));
-    stream.on('error', err => reject(err));
+    stream.on('end', () => {
+      resolve(Buffer.concat(_buf));
+    });
+    stream.on('error', err => {
+      reject(err);
+    });
   });
 };
 
@@ -120,10 +124,9 @@ const ProxyService = {
           status: response.status,
           statusText: response.statusText
         };
-      } else {
-        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
-        throw new MoleculerError(response.statusText, response.status);
       }
+      this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
+      throw new MoleculerError(response.statusText, response.status);
     }
   },
   events: {

@@ -1,4 +1,4 @@
-const Cachers = require('moleculer').Cachers;
+const { Cachers } = require('moleculer');
 
 let cacher;
 
@@ -22,9 +22,8 @@ const CacherMiddleware = opts => ({
   localAction(next, action) {
     if (cacher) {
       return cacher.localAction(next, action);
-    } else {
-      return next;
     }
+    return next;
   }
 });
 

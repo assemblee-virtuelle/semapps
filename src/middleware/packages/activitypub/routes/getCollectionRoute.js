@@ -21,19 +21,19 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
   const middlewares = [parseHeader, parseJson, saveDatasetMeta];
 
-  let aliases = {
+  const aliases = {
     'GET /': [
       ...middlewares,
       addCollectionUriMiddleware(collectionUri),
-      (controlledActions && controlledActions.get) || 'activitypub.collection.get'
+      controlledActions?.get || 'activitypub.collection.get'
     ]
   };
-  if (controlledActions && controlledActions.post) {
+  if (controlledActions?.post) {
     aliases['POST /'] = [...middlewares, addCollectionUriMiddleware(collectionUri), controlledActions.post];
   }
 
   return {
-    name: 'collection' + collectionPath.replace(new RegExp('/', 'g'), '-'),
+    name: `collection${collectionPath.replace(new RegExp('/', 'g'), '-')}`,
     path: collectionPath,
     authorization: false,
     authentication: true,

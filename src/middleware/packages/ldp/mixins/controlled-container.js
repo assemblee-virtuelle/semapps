@@ -27,13 +27,13 @@ module.exports = {
       excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
-        post: this.name + '.post',
-        list: this.name + '.list',
-        get: this.name + '.get',
-        create: this.name + '.create',
-        patch: this.name + '.patch',
-        put: this.name + '.put',
-        delete: this.name + '.delete',
+        post: `${this.name}.post`,
+        list: `${this.name}.list`,
+        get: `${this.name}.get`,
+        create: `${this.name}.create`,
+        patch: `${this.name}.patch`,
+        put: `${this.name}.put`,
+        delete: `${this.name}.delete`,
         ...this.settings.controlledActions
       },
       readOnly: this.settings.readOnly
@@ -66,7 +66,7 @@ module.exports = {
     },
     get(ctx) {
       const { accept, dereference, jsonContext } = this.settings;
-      let containerParams = {};
+      const containerParams = {};
       if (accept) containerParams.accept = accept;
       if (dereference) containerParams.dereference = dereference;
       if (jsonContext) containerParams.jsonContext = jsonContext;
@@ -92,7 +92,8 @@ module.exports = {
     },
     async waitForContainerCreation(ctx) {
       const { containerUri } = ctx.params;
-      let containerExist, containerAttached;
+      let containerExist;
+      let containerAttached;
 
       do {
         if (containerExist === false) await delay(1000);

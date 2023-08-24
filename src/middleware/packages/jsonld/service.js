@@ -2,7 +2,7 @@ const jsonld = require('jsonld');
 const urlJoin = require('url-join');
 const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
-const JsonLdParser = require('jsonld-streaming-parser').JsonLdParser;
+const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
 
 const defaultDocumentLoader = jsonld.documentLoaders.node();
@@ -26,7 +26,7 @@ module.exports = {
       }
     });
 
-    for (let contextFile of this.settings.localContextFiles) {
+    for (const contextFile of this.settings.localContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       const contextUri = urlJoin(this.settings.baseUri, contextFile.path);
@@ -41,7 +41,7 @@ module.exports = {
       this.broker.call('api.addRoute', {
         route: {
           path: contextFile.path,
-          name: 'context-' + contextFile.path.replace(new RegExp('/', 'g'), '-'),
+          name: `context-${contextFile.path.replace(new RegExp('/', 'g'), '-')}`,
           bodyParsers: {
             json: true
           },
@@ -58,7 +58,7 @@ module.exports = {
       });
     }
 
-    for (let contextFile of this.settings.remoteContextFiles) {
+    for (const contextFile of this.settings.remoteContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       cache.set(contextFile.uri, {
@@ -109,17 +109,21 @@ module.exports = {
     // Return quads in RDF.JS data model
     // (this.jsonld.toRDF does not use the same model)
     // https://github.com/rdfjs/data-model-spec
-    toQuads(ctx) {
+    async toQuads(ctx) {
       const { input } = ctx.params;
       return new Promise((resolve, reject) => {
         const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
         const textStream = streamifyString(jsonString);
-        let res = [];
+        const res = [];
         this.jsonLdParser
           .import(textStream)
           .on('data', quad => res.push(quad))
-          .on('error', error => reject(error))
-          .on('end', () => resolve(res));
+          .on('error', error => {
+            reject(error);
+          })
+          .on('end', () => {
+            resolve(res);
+          });
       });
     },
     async expandPredicate(ctx) {
@@ -132,14 +136,13 @@ module.exports = {
     async documentLoaderWithCache(url, options) {
       if (cache.has(url)) {
         return cache.get(url);
-      } else {
-        const context = await defaultDocumentLoader(url, options);
-        if (typeof context.document === 'string') {
-          context.document = JSON.parse(context.document);
-        }
-        cache.set(url, context);
-        return context;
       }
+      const context = await defaultDocumentLoader(url, options);
+      if (typeof context.document === 'string') {
+        context.document = JSON.parse(context.document);
+      }
+      cache.set(url, context);
+      return context;
     }
   }
 };

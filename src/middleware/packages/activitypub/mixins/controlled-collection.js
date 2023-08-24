@@ -23,8 +23,8 @@ module.exports = {
       sort: this.settings.sort,
       permissions: this.settings.permissions,
       controlledActions: {
-        get: this.name + '.get',
-        post: this.name + '.post',
+        get: `${this.name}.get`,
+        post: `${this.name}.post`,
         ...this.settings.controlledActions
       }
     });

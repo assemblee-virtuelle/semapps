@@ -12,7 +12,7 @@ module.exports = {
     async tagCreatedResource(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
       const now = new Date();
-      let triples = [];
+      const triples = [];
 
       if (!newData['dc:created']) {
         triples.push(
@@ -30,7 +30,7 @@ module.exports = {
         );
       }
 
-      if (!newData['dc:creator'] && webId && webId.startsWith('http')) {
+      if (!newData['dc:creator'] && webId?.startsWith('http')) {
         triples.push(`<${resourceUri}> <${this.settings.documentPredicates.creator}> <${webId}> .`);
       }
 

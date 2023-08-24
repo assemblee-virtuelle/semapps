@@ -2,7 +2,7 @@ const appendPrefix = types => Object.fromEntries(Object.entries(types).map(([key
 
 const AS_PREFIX = 'https://www.w3.org/ns/activitystreams#';
 
-const PUBLIC_URI = AS_PREFIX + 'Public';
+const PUBLIC_URI = `${AS_PREFIX}Public`;
 
 const ACTIVITY_TYPES = {
   ACCEPT: 'Accept',

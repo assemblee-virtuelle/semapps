@@ -31,9 +31,8 @@ module.exports = {
             webId: 'system'
           });
 
-          const removePublicRead = perms.read && (!containerRights.anon || !containerRights.anon.read);
-          const removeDefaultPublicRead =
-            !containerRights.default || !containerRights.default.anon || !containerRights.default.anon.read;
+          const removePublicRead = perms.read && !containerRights.anon?.read;
+          const removeDefaultPublicRead = !containerRights.default?.anon?.read;
           ctx.emit(
             'webacl.resource.updated',
             { uri: containerUri, isContainer: true, removePublicRead, removeDefaultPublicRead },

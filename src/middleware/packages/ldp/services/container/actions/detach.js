@@ -19,14 +19,14 @@ module.exports = {
     }
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
     if (!containerExists && isRemoteContainer) return;
-    if (!containerExists) throw new Error('Cannot detach from a non-existing container: ' + containerUri);
+    if (!containerExists) throw new Error(`Cannot detach from a non-existing container: ${containerUri}`);
 
     await ctx.call('triplestore.update', {
       query: `
         DELETE
         WHERE
         { 
-          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> 
           ${isRemoteContainer ? '}' : ''}
         }

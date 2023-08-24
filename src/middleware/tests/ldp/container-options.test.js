@@ -1,5 +1,5 @@
-const CONFIG = require('../config');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const CONFIG = require('../config');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);
@@ -40,7 +40,7 @@ describe('Container options', () => {
         }
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
+      containerUri: `${CONFIG.HOME_URL}resources`
     });
 
     // Get resource without dereference
@@ -114,7 +114,7 @@ describe('Container options', () => {
         }
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'organizations'
+      containerUri: `${CONFIG.HOME_URL}organizations`
     });
 
     orga1 = await broker.call('ldp.resource.get', { resourceUri: organizationUri, accept: MIME_TYPES.JSON });
@@ -166,7 +166,7 @@ describe('Container options', () => {
     } catch (e) {
       error = e;
     } finally {
-      expect(error && error.code).toBe(404);
+      expect(error?.code).toBe(404);
     }
   }, 20000);
 });

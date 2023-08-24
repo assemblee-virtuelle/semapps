@@ -57,7 +57,7 @@ module.exports = {
 
     if (!jwtToken) throw new Error('The source.humhub.jwtSettings setting is missing');
     if (!allowedTypes.includes(type))
-      throw new Error('Only the following types are allowed: ' + allowedTypes.join(', '));
+      throw new Error(`Only the following types are allowed: ${allowedTypes.join(', ')}`);
 
     this.settings.source.headers.Authorization = `Bearer ${jwtToken}`;
 
@@ -73,9 +73,9 @@ module.exports = {
   },
   methods: {
     async list(url) {
-      let results,
-        data = [],
-        page = 0;
+      let results;
+      const data = [];
+      let page = 0;
 
       do {
         page++;

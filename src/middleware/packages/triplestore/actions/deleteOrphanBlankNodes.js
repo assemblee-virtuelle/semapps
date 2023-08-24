@@ -18,7 +18,7 @@ module.exports = {
       await this.actions.update(
         {
           query: `
-          ${graphName ? 'WITH <' + graphName + '>' : ''}
+          ${graphName ? `WITH <${graphName}>` : ''}
           DELETE {
             ?s ?p ?o .
           }

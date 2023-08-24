@@ -11,10 +11,9 @@ module.exports = {
 
     if (this.settings.podProvider) {
       const account = await ctx.call('auth.account.findByWebId', { webId });
-      if (!account) throw new Error('No account found with webId ' + webId);
+      if (!account) throw new Error(`No account found with webId ${webId}`);
       return urlJoin(account.podUri, path);
-    } else {
-      return urlJoin(this.settings.baseUrl, path);
     }
+    return urlJoin(this.settings.baseUrl, path);
   }
 };

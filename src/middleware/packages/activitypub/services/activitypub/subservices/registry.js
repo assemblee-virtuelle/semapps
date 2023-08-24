@@ -42,7 +42,7 @@ const RegistryService = {
 
       if (containers) {
         // Go through each container
-        for (let container of Object.values(containers)) {
+        for (const container of Object.values(containers)) {
           // Add a corresponding API route
           await this.actions.addApiRoute({ collection: ctx.params, container }, { parentCtx: ctx });
         }
@@ -73,7 +73,7 @@ const RegistryService = {
       }
 
       // Get last part of the URI (eg. /followers)
-      let path = '/' + getSlugFromUri(collectionUri);
+      const path = `/${getSlugFromUri(collectionUri)}`;
 
       return {
         ...this.settings.defaultCollectionOptions,
@@ -114,17 +114,17 @@ const RegistryService = {
       }
     },
     async createAndAttachMissingCollections(ctx) {
-      for (let collection of this.registeredCollections) {
-        this.logger.info('Looking for containers with types: ' + JSON.stringify(collection.attachToTypes));
+      for (const collection of this.registeredCollections) {
+        this.logger.info(`Looking for containers with types: ${JSON.stringify(collection.attachToTypes)}`);
         // Find all containers where we want to attach this collection
         const containers = this.getContainersByType(collection.attachToTypes);
         if (containers) {
           // Go through each container
-          for (let container of Object.values(containers)) {
+          for (const container of Object.values(containers)) {
             const containerUri = urlJoin(this.settings.baseUri, container.fullPath);
-            this.logger.info('Looking for resources in container ' + containerUri);
+            this.logger.info(`Looking for resources in container ${containerUri}`);
             const resources = await ctx.call('ldp.container.getUris', { containerUri });
-            for (let resourceUri of resources) {
+            for (const resourceUri of resources) {
               await this.actions.createAndAttachCollection(
                 {
                   objectUri: resourceUri,
@@ -189,7 +189,7 @@ const RegistryService = {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
       const collections = this.getCollectionsByType(newData.type || newData['@type']);
-      for (let collection of collections) {
+      for (const collection of collections) {
         if (this.isActor(newData.type || newData['@type'])) {
           // If the resource is an actor, use the resource URI as the webId
           await this.actions.createAndAttachCollection(
@@ -209,7 +209,7 @@ const RegistryService = {
       // Check if we need to create collection only if the type has changed
       if (this.hasTypeChanged(oldData, newData)) {
         const collections = this.getCollectionsByType(newData.type || newData['@type']);
-        for (let collection of collections) {
+        for (const collection of collections) {
           if (this.isActor(newData.type || newData['@type'])) {
             // If the resource is an actor, use the resource URI as the webId
             await this.actions.createAndAttachCollection(
@@ -227,10 +227,10 @@ const RegistryService = {
     },
     async 'ldp.resource.patched'(ctx) {
       const { resourceUri, triplesAdded, webId } = ctx.params;
-      for (let triple of triplesAdded) {
+      for (const triple of triplesAdded) {
         if (triple.predicate.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
           const collections = this.getCollectionsByType(triple.object.value);
-          for (let collection of collections) {
+          for (const collection of collections) {
             if (this.isActor(triple.object.value)) {
               // If the resource is an actor, use the resource URI as the webId
               await this.actions.createAndAttachCollection(
@@ -250,7 +250,7 @@ const RegistryService = {
     async 'ldp.resource.deleted'(ctx) {
       const { oldData } = ctx.params;
       const collections = this.getCollectionsByType(oldData.type || oldData['@type']);
-      for (let collection of collections) {
+      for (const collection of collections) {
         await this.actions.deleteCollection(
           { objectUri: oldData.id || oldData['@id'], collection },
           { parentCtx: ctx }
@@ -268,7 +268,7 @@ const RegistryService = {
       const collections = this.getCollectionsByType(container.acceptedTypes);
 
       // Go through each collection and add a corresponding API route
-      for (let collection of collections) {
+      for (const collection of collections) {
         await this.actions.addApiRoute({ collection, container }, { parentCtx: ctx });
       }
     }

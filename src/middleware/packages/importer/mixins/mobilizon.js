@@ -51,7 +51,7 @@ module.exports = {
   methods: {
     async list(url) {
       const results = await this.fetch(url);
-      return results && results.data && results.data.events && results.data.events.elements;
+      return results?.data?.events?.elements;
     }
   }
 };

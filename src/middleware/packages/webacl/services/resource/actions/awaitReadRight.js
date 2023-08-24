@@ -6,11 +6,11 @@ module.exports = {
       webId: { type: 'string' },
       timeout: { type: 'number', default: 10000 }
     },
-    handler(ctx) {
+    async handler(ctx) {
       const { resourceUri, webId, timeout } = ctx.params;
       return new Promise(resolve => {
-        let i = 0,
-          interval;
+        let i = 0;
+        let interval;
         const checkRights = () => {
           ctx
             .call('webacl.resource.hasRights', {

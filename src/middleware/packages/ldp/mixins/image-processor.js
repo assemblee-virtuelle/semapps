@@ -22,7 +22,7 @@ module.exports = {
   },
   actions: {
     async processImage(ctx) {
-      let { resourceUri } = ctx.params;
+      const { resourceUri } = ctx.params;
 
       const metadata = await ctx.call('ldp.resource.get', {
         resourceUri,
@@ -69,8 +69,8 @@ module.exports = {
       if (container['ldp:contains']) {
         const resources = defaultToArray(container['ldp:contains']);
         this.logger.info(`Processing ${resources.length} images...`);
-        for (let resource of defaultToArray(container['ldp:contains'])) {
-          this.logger.info('Processing image ' + resource.id + '...');
+        for (const resource of defaultToArray(container['ldp:contains'])) {
+          this.logger.info(`Processing image ${resource.id}...`);
           await this.actions.processImage({ resourceUri: resource.id }, { parentCtx: ctx });
         }
       }

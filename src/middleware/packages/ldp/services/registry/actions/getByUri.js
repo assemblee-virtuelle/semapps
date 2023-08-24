@@ -21,8 +21,7 @@ module.exports = {
       const containerOptions =
         Object.values(this.registeredContainers).find(container => container.pathRegex.test(path)) || {};
       return { ...this.settings.defaultOptions, ...containerOptions };
-    } else {
-      return this.settings.defaultOptions;
     }
+    return this.settings.defaultOptions;
   }
 };

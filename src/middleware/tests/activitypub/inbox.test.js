@@ -4,7 +4,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let broker, broker2;
+let broker;
+let broker2;
 
 beforeAll(async () => {
   broker = await initialize(3000, 'testData', 'settings');
@@ -15,7 +16,8 @@ afterAll(async () => {
 });
 
 describe('Permissions are correctly set on inbox', () => {
-  let simon, sebastien;
+  let simon;
+  let sebastien;
 
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {
@@ -41,10 +43,10 @@ describe('Permissions are correctly set on inbox', () => {
       type: ['Person', 'foaf:Person'],
       preferredUsername: 'srosset81',
       'foaf:nick': 'srosset81',
-      inbox: sebastienUri + '/inbox',
-      outbox: sebastienUri + '/outbox',
-      followers: sebastienUri + '/followers',
-      following: sebastienUri + '/following'
+      inbox: `${sebastienUri}/inbox`,
+      outbox: `${sebastienUri}/outbox`,
+      followers: `${sebastienUri}/followers`,
+      following: `${sebastienUri}/following`
     });
   });
 

@@ -5,7 +5,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');
@@ -17,7 +18,8 @@ afterAll(async () => {
 });
 
 describe('An inference is added between server1 et server2', () => {
-  let resourceUri1, resourceUri2;
+  let resourceUri1;
+  let resourceUri2;
 
   test('An remote relationship is added on create', async () => {
     resourceUri1 = await server1.call('ldp.container.post', {

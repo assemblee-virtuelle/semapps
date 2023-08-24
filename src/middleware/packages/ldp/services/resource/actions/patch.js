@@ -23,7 +23,7 @@ function checkTriplesSubjectIsResource(triples, resourceUri) {
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, id, body } = ctx.params;
+    const { containerUri, id, body } = ctx.params;
     const resourceUri = urlJoin(containerUri, id);
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
     try {

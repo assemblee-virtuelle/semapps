@@ -18,7 +18,7 @@ const EventsWatcher = {
 
   created(broker) {
     // Add a new method to broker object
-    broker.watchForEvent = eventName => {
+    broker.watchForEvent = async eventName => {
       return new Promise(resolve => {
         const timerId = setInterval(() => {
           if (broker.latestEventName === eventName) {

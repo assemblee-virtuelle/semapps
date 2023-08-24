@@ -3,7 +3,7 @@ const path = require('path');
 const MailService = require('moleculer-mail');
 const { getSlugFromUri } = require('@semapps/ldp');
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = async t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
   name: 'notifications.single-mail',
@@ -27,7 +27,7 @@ const SingleMailNotificationsService = {
         await delay(this.settings.delay);
       }
 
-      for (let recipientUri of recipients) {
+      for (const recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
         ctx.meta.webId = recipientUri;
@@ -66,17 +66,15 @@ const SingleMailNotificationsService = {
     async formatLink(link, recipientUri) {
       if (link && !link.startsWith('http')) {
         return urlJoin(this.settings.defaultFrontUrl, link);
-      } else {
-        return link;
       }
+      return link;
     },
     async queueMail(ctx, key, payload) {
       payload.template = 'single-mail';
       if (this.createJob) {
         return this.createJob('sendMail', key, payload);
-      } else {
-        await this.actions.send(payload, { parentCtx: ctx });
       }
+      await this.actions.send(payload, { parentCtx: ctx });
     }
   },
   queues: {

@@ -19,7 +19,7 @@ module.exports = {
       ...ctx.meta.headers
     };
     try {
-      if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
+      if (ctx.meta.accepts?.includes('text/html') && this.settings.preferredViewForResource) {
         const webId = ctx.meta.webId || 'anon';
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
         if (resourceExist) {

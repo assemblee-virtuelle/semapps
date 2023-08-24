@@ -10,9 +10,8 @@ const objectCurrentToId = activityJson => {
         ...objectCurrentToId(object)
       }
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
 const objectIdToCurrent = activityJson => {
@@ -30,13 +29,12 @@ const objectIdToCurrent = activityJson => {
         ...objectIdToCurrent(object)
       }
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
 const collectionPermissionsWithAnonRead = webId => {
-  let permissions = {
+  const permissions = {
     anon: {
       read: true
     }
@@ -63,7 +61,7 @@ const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = async t => new Promise(resolve => setTimeout(resolve, t));
 
 module.exports = {
   objectCurrentToId,

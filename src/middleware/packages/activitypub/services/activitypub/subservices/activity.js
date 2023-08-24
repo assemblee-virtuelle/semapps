@@ -32,11 +32,11 @@ const ActivityService = {
     },
     async getRecipients(ctx) {
       const { activity } = ctx.params;
-      let output = [];
+      const output = [];
 
       const actor = activity.actor ? await ctx.call('activitypub.actor.get', { actorUri: activity.actor }) : {};
 
-      for (let predicates of ['to', 'bto', 'cc', 'bcc']) {
+      for (const predicates of ['to', 'bto', 'cc', 'bcc']) {
         if (activity[predicates]) {
           for (const recipient of defaultToArray(activity[predicates])) {
             switch (recipient) {
@@ -55,7 +55,7 @@ const ActivityService = {
                     collectionUri: recipient,
                     webId: activity.actor
                   });
-                  if (collection && collection.items) output.push(...defaultToArray(collection.items));
+                  if (collection?.items) output.push(...defaultToArray(collection.items));
                 }
                 break;
 

@@ -14,8 +14,7 @@ module.exports = {
         { resourceUri, accept: MIME_TYPES.JSON, webId: 'system' },
         { parentCtx: ctx }
       );
-      const readAuthorization =
-        authorizations['@graph'] && authorizations['@graph'].find(auth => auth['@id'] === '#Read');
+      const readAuthorization = authorizations['@graph']?.find(auth => auth['@id'] === '#Read');
 
       let usersWithReadRights = [];
 
@@ -23,7 +22,7 @@ module.exports = {
         usersWithReadRights = defaultToArray(readAuthorization['acl:agent']) || [];
         const groupsWithReadRights = defaultToArray(readAuthorization['acl:agentGroup']) || [];
 
-        for (let groupUri of groupsWithReadRights) {
+        for (const groupUri of groupsWithReadRights) {
           const members = await ctx.call('webacl.group.getMembers', { groupUri, webId: 'system' });
           if (members) usersWithReadRights.push(...members);
         }

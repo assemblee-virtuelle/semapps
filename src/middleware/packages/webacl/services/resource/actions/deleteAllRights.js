@@ -7,7 +7,7 @@ module.exports = {
       resourceUri: { type: 'string', optional: false }
     },
     async handler(ctx) {
-      let { resourceUri } = ctx.params;
+      const { resourceUri } = ctx.params;
 
       const isContainer = await ctx.call('ldp.container.exist', { containerUri: resourceUri, webId: 'system' });
 

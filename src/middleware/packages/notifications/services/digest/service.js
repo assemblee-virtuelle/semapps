@@ -1,7 +1,7 @@
 const MailService = require('moleculer-mail');
 const cronParser = require('cron-parser');
-const DigestSubscriptionService = require('./subscription');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
+const DigestSubscriptionService = require('./subscription');
 
 const DigestNotificationsService = {
   name: 'digest',
@@ -38,8 +38,8 @@ const DigestNotificationsService = {
   actions: {
     async build(ctx) {
       const { frequency, timestamp } = ctx.params;
-      const success = [],
-        failures = [];
+      const success = [];
+      const failures = [];
 
       const currentDate = timestamp ? new Date(timestamp) : new Date();
 
@@ -52,7 +52,7 @@ const DigestNotificationsService = {
 
       const subscriptions = await ctx.call('digest.subscription.find', { query: { frequency } });
 
-      for (let subscription of subscriptions) {
+      for (const subscription of subscriptions) {
         try {
           const subscriber = await ctx.call('activitypub.actor.get', { actorUri: subscription.webId });
           const account = await ctx.call('auth.account.findByWebId', { webId: subscription.webId });
@@ -63,11 +63,11 @@ const DigestNotificationsService = {
           });
 
           if (newActivities.length > 0) {
-            let notifications = [],
-              notificationsByCategories = {};
+            const notifications = [];
+            const notificationsByCategories = {};
 
             // Map received activities to notifications
-            for (let activity of newActivities) {
+            for (const activity of newActivities) {
               const notification = await ctx.call('activity-mapping.map', {
                 activity,
                 locale: subscription.locale || account.locale

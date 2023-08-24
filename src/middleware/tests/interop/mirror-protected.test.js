@@ -6,7 +6,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 const relay1 = 'http://localhost:3001/applications/relay';
 const relay2 = 'http://localhost:3002/applications/relay';
@@ -27,7 +28,8 @@ afterAll(async () => {
 });
 
 describe('Resource on server1 is shared with user on server2', () => {
-  let resourceUri, user2;
+  let resourceUri;
+  let user2;
 
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
@@ -76,7 +78,7 @@ describe('Resource on server1 is shared with user on server2', () => {
 
     await waitForExpect(async () => {
       const inbox = await server1.call('activitypub.collection.get', {
-        collectionUri: relay1 + '/outbox',
+        collectionUri: `${relay1}/outbox`,
         page: 1,
         webId: relay1
       });
@@ -108,7 +110,7 @@ describe('Resource on server1 is shared with user on server2', () => {
 
     await waitForExpect(async () => {
       const inbox = await server1.call('activitypub.collection.get', {
-        collectionUri: relay1 + '/outbox',
+        collectionUri: `${relay1}/outbox`,
         page: 1,
         webId: relay1
       });

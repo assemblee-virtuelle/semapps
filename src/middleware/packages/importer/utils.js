@@ -24,9 +24,8 @@ const frenchAddressSearch = async query => {
   if (response.ok) {
     const json = await response.json();
     return json.features[0];
-  } else {
-    return false;
   }
+  return false;
 };
 
 const frenchAddressReverseSearch = async (lat, lon) => {
@@ -38,9 +37,8 @@ const frenchAddressReverseSearch = async (lat, lon) => {
   if (response.ok) {
     const json = await response.json();
     return json.features.length > 0 ? json.features[0] : false;
-  } else {
-    return false;
   }
+  return false;
 };
 
 const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();

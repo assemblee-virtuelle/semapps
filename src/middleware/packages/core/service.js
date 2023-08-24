@@ -40,7 +40,7 @@ const CoreService = {
     webfinger: {}
   },
   created() {
-    let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
+    const { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
@@ -70,22 +70,22 @@ const CoreService = {
           authenticate(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authenticate', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authenticate', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.resolve(null);
             }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authenticate', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.resolve(null);
           },
           authorize(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authorize', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authorize', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
             }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authorize', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
           }
         }
       });

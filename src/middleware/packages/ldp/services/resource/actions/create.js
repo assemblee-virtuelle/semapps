@@ -77,7 +77,7 @@ module.exports = {
     });
 
     const newData = await ctx.call(
-      (controlledActions && controlledActions.get) || 'ldp.resource.get',
+      controlledActions?.get || 'ldp.resource.get',
       {
         resourceUri,
         accept: MIME_TYPES.JSON,

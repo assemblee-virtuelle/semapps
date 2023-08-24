@@ -48,7 +48,7 @@ module.exports = {
         throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
       return (
         !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'))
+        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
       );
     }
   },
@@ -58,8 +58,7 @@ module.exports = {
         if (
           this.settings.podProvider &&
           !ctx.meta.dataset &&
-          ctx.params.containerUri &&
-          ctx.params.containerUri.startsWith(this.settings.baseUrl)
+          ctx.params.containerUri?.startsWith(this.settings.baseUrl)
         ) {
           // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);

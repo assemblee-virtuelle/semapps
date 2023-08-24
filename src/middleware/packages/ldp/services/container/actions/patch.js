@@ -1,11 +1,12 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { isMirror } = require('../../../utils');
 const SparqlParser = require('sparqljs').Parser;
+
 const parser = new SparqlParser();
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, body } = ctx.params;
+    const { containerUri, body } = ctx.params;
     try {
       if (ctx.meta.parser === 'sparql') {
         await ctx.call('ldp.container.patch', {
@@ -54,7 +55,7 @@ module.exports = {
         if (parsedQuery.type !== 'update')
           throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
-        let updates = { insert: [], delete: [] };
+        const updates = { insert: [], delete: [] };
         parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
 
         for (const inss of updates.insert) {
@@ -67,7 +68,7 @@ module.exports = {
               } catch (e) {
                 if (e.code === 404 && isMirror(insUri, this.settings.baseUrl)) {
                   // we need to import the remote resource
-                  this.logger.info('IMPORTING ' + insUri);
+                  this.logger.info(`IMPORTING ${insUri}`);
                   try {
                     await ctx.call('ldp.remote.store', {
                       resourceUri: insUri,
@@ -79,7 +80,7 @@ module.exports = {
                     // Now if the import went well, we can retry the attach
                     await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
                   } catch (e) {
-                    this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e.message);
+                    this.logger.warn(`ERROR while IMPORTING ${insUri} : ${e.message}`);
                   }
                 }
               }
