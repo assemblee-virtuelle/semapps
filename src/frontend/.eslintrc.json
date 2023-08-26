@@ -74,7 +74,7 @@
     "import/newline-after-import": "warn",
     "import/no-dynamic-require": "off",
     "import/no-named-default": "warn",
-    "import/no-unresolved": "off",
+    "import/no-unresolved": "warn",
     "import/no-useless-path-segments": "warn",
     "import/order": "warn",
     "jsdoc/require-jsdoc": "off",
