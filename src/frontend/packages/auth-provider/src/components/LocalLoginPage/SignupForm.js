@@ -1,6 +1,6 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email } from 'react-admin';
+import createSlug from 'speakingurl';
+import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLocaleState } from 'react-admin';
 import { useSignup } from '@semapps/auth-provider';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
+const SignupForm = ({ redirectTo, postSignupRedirect, delayBeforeRedirect }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
@@ -23,6 +23,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const classes = useStyles();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const [locale] = useLocaleState();
 
   const submit = values => {
     setLoading(true);
@@ -32,13 +33,13 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
             window.location.reload();
-            window.location.href = redirectTo || '/';
+            window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
           // Reload to ensure the dataServer config is reset
           window.location.reload();
-          window.location.href = redirectTo || '/';
+          window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
           setLoading(false);
         }
         notify('auth.message.new_user_created', {type: 'info'});
@@ -74,6 +75,15 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           fullWidth
           disabled={loading}
           validate={required()}
+          format={(value) =>
+            value
+              ? createSlug(value, {
+                  lang: locale || 'fr',
+                  separator: '_',
+                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                })
+              : ''
+          }
         />
         <TextInput
           source="email"
@@ -110,8 +120,8 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   );
 };
 
-SignupForm.propTypes = {
-  redirectTo: PropTypes.string
+SignupForm.defaultValues = {
+  redirectTo: '/'
 };
 
 export default SignupForm;

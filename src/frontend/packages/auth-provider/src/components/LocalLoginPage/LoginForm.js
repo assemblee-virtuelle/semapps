@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLogin } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
@@ -14,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const LoginForm = ({ redirectTo }) => {
+const LoginForm = ({ redirectTo, allowUsername }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const login = useLogin();
   const translate = useTranslate();
@@ -56,11 +55,12 @@ const LoginForm = ({ redirectTo }) => {
       <CardContent className={classes.content}>
         <TextInput
           source="username"
-          label={translate('auth.input.email')}
+          label={translate(allowUsername ? 'auth.input.username_or_email' : 'auth.input.email')}
           autoComplete="email"
           fullWidth
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          validate={[required(), email()]}
+          format={(value) => (value ? value.toLowerCase() : '')}
+          validate={allowUsername ? [required()] : [required(), email()]}
         />
         <TextInput
           source="password"
@@ -89,8 +89,9 @@ const LoginForm = ({ redirectTo }) => {
   );
 };
 
-LoginForm.propTypes = {
-  redirectTo: PropTypes.string
+LoginForm.defaultValues = {
+  redirectTo: '/',
+  allowUsername: false,
 };
 
 export default LoginForm;
