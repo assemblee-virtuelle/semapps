@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
 
 const useCollection = predicateOrUrl => {
-  const { identity, loaded: identityLoaded } = useGetIdentity();
+  const { identity, isLoading: identityLoading } = useGetIdentity();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -55,10 +55,10 @@ const useCollection = predicateOrUrl => {
   }, [setItems, setLoaded, setLoading, setError, collectionUrl, identity]);
 
   useEffect(() => {
-    if (identityLoaded && !loading && !loaded && !error) {
+    if (!identityLoading && !loading && !loaded && !error) {
       fetch();
     }
-  }, [fetch, identityLoaded, loading, loaded, error]);
+  }, [fetch, identityLoading, loading, loaded, error]);
 
   const addItem = useCallback(
     item => {
