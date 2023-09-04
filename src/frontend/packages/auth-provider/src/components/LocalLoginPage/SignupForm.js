@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SignupForm = ({ redirectTo, postSignupRedirect, delayBeforeRedirect }) => {
+const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, delayBeforeRedirect }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
@@ -27,7 +27,10 @@ const SignupForm = ({ redirectTo, postSignupRedirect, delayBeforeRedirect }) => 
 
   const submit = values => {
     setLoading(true);
-    signup(values)
+    signup({
+      ...values,
+      ...additionalSignupValues
+    })
       .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
@@ -121,7 +124,8 @@ const SignupForm = ({ redirectTo, postSignupRedirect, delayBeforeRedirect }) => 
 };
 
 SignupForm.defaultValues = {
-  redirectTo: '/'
+  redirectTo: '/',
+  additionalSignupValues: {}
 };
 
 export default SignupForm;

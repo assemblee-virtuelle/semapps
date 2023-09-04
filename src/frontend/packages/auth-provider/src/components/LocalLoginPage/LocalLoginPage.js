@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLoginRedirect }) => {
+const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLoginRedirect, additionalSignupValues }) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const translate = useTranslate();
@@ -63,7 +63,7 @@ const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLogi
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} postSignupRedirect={postSignupRedirect} />}
+        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={4000} postSignupRedirect={postSignupRedirect} additionalSignupValues={additionalSignupValues} />}
         {isResetPassword && <ResetPasswordForm />}
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
         {isLogin && <LoginForm redirectTo={redirectTo} allowUsername={allowUsername} />}
@@ -97,7 +97,8 @@ const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLogi
 
 LocalLoginPage.defaultProps = {
   hasSignup: true,
-  allowUsername: false
+  allowUsername: false,
+  additionalSignupValues: {}
 };
 
 export default LocalLoginPage;
