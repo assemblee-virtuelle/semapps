@@ -42,12 +42,16 @@ module.exports = {
           CONSTRUCT  {
             <${containerUri}>
               a ?containerType ;
-              ldp:contains ?s1 .
+              <http://www.w3.org/ns/ldp#contains> ?s1 ;
+              <http://purl.org/dc/terms/title> ?title ;
+              <http://purl.org/dc/terms/description> ?description .
           }
           WHERE {
-            <${containerUri}> a ldp:Container, ?containerType .
+            <${containerUri}> a <http://www.w3.org/ns/ldp#Container>, ?containerType .
+            OPTIONAL { <${containerUri}> <http://purl.org/dc/terms/title> ?title . }
+            OPTIONAL { <${containerUri}> <http://purl.org/dc/terms/description> ?description . }
             OPTIONAL {
-              <${containerUri}> ldp:contains ?s1 .
+              <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?s1 .
               ${filtersQuery.where}
             }
           }
@@ -98,6 +102,8 @@ module.exports = {
         input: {
           '@id': containerUri,
           '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
+          'http://purl.org/dc/terms/title': result.title,
+          'http://purl.org/dc/terms/description': result.description,
           'http://www.w3.org/ns/ldp#contains': resources
         },
         context: jsonContext || getPrefixJSON(this.settings.ontologies)

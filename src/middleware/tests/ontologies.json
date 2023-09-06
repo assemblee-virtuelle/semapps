@@ -38,5 +38,10 @@
     "prefix": "petr",
     "owl": "",
     "url": "https://data.petr-msb.data-players.com/ontology#"
+  },
+  {
+    "prefix": "dc",
+    "owl": "",
+    "url": "http://purl.org/dc/terms/"
   }
 ]

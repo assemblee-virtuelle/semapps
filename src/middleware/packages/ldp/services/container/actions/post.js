@@ -1,3 +1,4 @@
+const { defaultToArray } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
@@ -58,16 +59,27 @@ module.exports = {
         resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
       }
 
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+      const resourceType = resource['@type'] || resource.type;
 
-      await ctx.call(controlledActions.create || 'ldp.resource.create', {
-        resource: {
-          '@id': resourceUri,
-          ...resource
-        },
-        contentType,
-        webId
-      });
+      if (defaultToArray(resourceType).includes('ldp:Container')) {
+        await ctx.call('ldp.container.create', {
+          containerUri: resourceUri,
+          title: resource['dc:title'],
+          description: resource['dc:description'],
+          webId
+        });
+      } else {
+        const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
+
+        await ctx.call(controlledActions.create || 'ldp.resource.create', {
+          resource: {
+            '@id': resourceUri,
+            ...resource
+          },
+          contentType,
+          webId
+        });
+      }
     } catch (e) {
       // If there was an error inserting the resource, detach it from the container
       await ctx.call('triplestore.update', {

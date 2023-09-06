@@ -158,7 +158,22 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await addRightsToNewResource(ctx, resourceUri, webId);
             break;
 
-          case 'activitypub.collection.create':
+
+          case 'ldp.container.create': {
+            const { permissions } = await ctx.call('ldp.registry.getByUri', {
+              containerUri: ctx.params.containerUri
+            });
+            const containerRights = typeof permissions === 'function' ? permissions(webId) : permissions;
+
+            await ctx.call('webacl.resource.addRights', {
+              resourceUri: ctx.params.containerUri,
+              newRights: ctx.params.rights || containerRights || defaultContainerRights(webId),
+              webId: 'system'
+            });
+            break;
+          }
+
+          case 'activitypub.collection.create': {
             const { permissions } = await ctx.call('activitypub.registry.getByUri', {
               collectionUri: ctx.params.collectionUri
             });
@@ -171,6 +186,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               webId: 'system'
             });
             break;
+          }
         }
 
         /*
@@ -185,6 +201,13 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               await ctx.call(
                 'webacl.resource.deleteAllRights',
                 { resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id },
+                { meta: { webId: 'system' } }
+              );
+            break;
+            case 'ldp.container.create':
+              await ctx.call(
+                'webacl.resource.deleteAllRights',
+                { resourceUri: ctx.params.containerUri },
                 { meta: { webId: 'system' } }
               );
               break;
@@ -217,19 +240,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               { resourceUri: ctx.params.resourceUri },
               { meta: { webId: 'system' } }
             );
-            break;
-
-          case 'ldp.container.create':
-            const { permissions } = await ctx.call('ldp.registry.getByUri', {
-              containerUri: ctx.params.containerUri
-            });
-            const containerRights = typeof permissions === 'function' ? permissions(webId) : permissions;
-
-            await ctx.call('webacl.resource.addRights', {
-              resourceUri: ctx.params.containerUri,
-              newRights: ctx.params.rights || containerRights || defaultContainerRights(webId),
-              webId: 'system'
-            });
             break;
 
           case 'webid.create':
