@@ -1,3 +1,4 @@
+const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
 const LdpRegistryService = require('./services/registry');
@@ -62,6 +63,13 @@ module.exports = {
         baseUrl,
         containers,
         defaultOptions: defaultContainerOptions,
+        podProvider
+      }
+    });
+
+    await this.broker.createService(LdpApiService, {
+      settings: {
+        baseUrl,
         podProvider
       }
     });

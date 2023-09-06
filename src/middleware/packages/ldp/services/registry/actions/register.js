@@ -1,8 +1,7 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
-const getContainerRoute = require('../../../routes/getContainerRoute');
-const getResourcesRoute = require('../../../routes/getResourcesRoute');
+const getPodsRoute = require('../../../routes/getPodsRoute');
 
 module.exports = {
   visibility: 'public',
@@ -28,8 +27,9 @@ module.exports = {
     Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
 
     if (this.settings.podProvider && podsContainer === true) {
+      // TODO put this on the pod service ??
       name = 'actors';
-      await this.broker.call('api.addRoute', { route: getResourcesRoute(this.settings.baseUrl, options.readOnly) });
+      await this.broker.call('api.addRoute', { route: getPodsRoute() });
     } else if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
@@ -42,22 +42,15 @@ module.exports = {
 
       // TODO see if we can base ourselves on a general config for the POD data path
       fullPath = pathJoin('/:username', 'data', path);
-
-      // 2. Create the API route
-      const containerUriWithParams = urlJoin(this.settings.baseUrl, fullPath);
-      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUriWithParams, options.readOnly) });
     } else {
-      // 1. Ensure the container has been created
+      // Ensure the container has been created
       const containerUri = urlJoin(this.settings.baseUrl, path);
       await this.createAndAttachContainer(ctx, containerUri, path);
-
-      // 2. Create the API route
-      await this.broker.call('api.addRoute', { route: getContainerRoute(containerUri, options.readOnly) });
     }
 
     const pathRegex = pathToRegexp(fullPath);
 
-    // 3. Save the options
+    // Save the options
     this.registeredContainers[name] = { path, fullPath, pathRegex, name, ...options };
 
     ctx.emit(

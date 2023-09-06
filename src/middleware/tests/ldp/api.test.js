@@ -143,7 +143,7 @@ describe('CRUD Project', () => {
     expect(response.body['pair:description']).toBe('myProject');
   }, 20000);
 
-  test('Get many project', async () => {
+  test('Get container', async () => {
     const response = await expressMocked.get(containerUrl).set('Accept', 'application/ld+json');
 
     expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);

@@ -10,6 +10,5 @@ module.exports = {
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   LdpAdapter: require('./adapter'),
-  getContainerRoute: require('./routes/getContainerRoute'),
   ...utils
 };

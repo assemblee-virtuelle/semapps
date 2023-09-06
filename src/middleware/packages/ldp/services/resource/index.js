@@ -8,7 +8,6 @@ const generateIdAction = require('./actions/generateId');
 const getContainersAction = require('./actions/getContainers');
 const getTypeAction = require('./actions/getTypes');
 const uploadAction = require('./actions/upload');
-const headAction = require('./actions/head');
 const methods = require('./methods');
 const {getDatasetFromUri} = require("../../utils");
 
@@ -23,22 +22,16 @@ module.exports = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+    create: createAction,
+    delete: deleteAction,
     exist: existAction,
     generateId: generateIdAction,
+    get: getAction,
     getContainers: getContainersAction,
     getType: getTypeAction,
-    create: createAction,
+    patch: patchAction,
+    put: putAction,
     upload: uploadAction,
-    // Actions accessible through the API
-    api_get: getAction.api,
-    get: getAction.action,
-    api_patch: patchAction.api,
-    patch: patchAction.action,
-    api_delete: deleteAction.api,
-    delete: deleteAction.action,
-    api_put: putAction.api,
-    put: putAction.action,
-    api_head: headAction.api
   },
   hooks: {
     before: {
