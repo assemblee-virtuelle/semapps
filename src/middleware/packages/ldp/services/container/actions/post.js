@@ -1,4 +1,3 @@
-const { defaultToArray } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = {
@@ -59,13 +58,19 @@ module.exports = {
         resource = await ctx.call('ldp.resource.upload', { resourceUri, file });
       }
 
-      const resourceType = resource['@type'] || resource.type;
+      // Expand resource to ensure consistant data
+      const [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
 
-      if (defaultToArray(resourceType).includes('ldp:Container')) {
+      if (expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container')) {
+        if (expandedResource['@type'].includes('http://www.w3.org/ns/ldp#DirectContainer') 
+            || expandedResource['@type'].includes('http://www.w3.org/ns/ldp#IndirectContainer')) {
+          throw new MoleculerError('Only LDP Basic Containers are supported by this server');
+        }
+
         await ctx.call('ldp.container.create', {
           containerUri: resourceUri,
-          title: resource['dc:title'],
-          description: resource['dc:description'],
+          title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
+          description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
           webId
         });
       } else {

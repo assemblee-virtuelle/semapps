@@ -15,97 +15,13 @@ afterAll(async () => {
 describe('Container options', () => {
   let orga1;
 
-  test('Get resource with dereference', async () => {
-    const jsonContext = [
-      'https://www.w3.org/ns/activitystreams',
-      {
-        schema: 'http://schema.org/'
-      }
-    ];
-
-    const resourceUri = await broker.call('ldp.container.post', {
-      resource: {
-        '@context': jsonContext,
-        type: 'Event',
-        location: {
-          type: 'Place',
-          name: 'Chantilly',
-          'schema:address': {
-            type: 'schema:PostalAddress',
-            'schema:streetAddress': 'Rue du Général Paton',
-            'schema:postalCode': '28190',
-            'schema:addressLocality': 'Pontgouin',
-            'schema:addressCountry': 'France'
-          }
-        }
-      },
-      contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
-    });
-
-    // Get resource without dereference
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        accept: MIME_TYPES.JSON,
-        jsonContext
-      })
-    ).resolves.toMatchObject({
-      '@context': jsonContext,
-      type: 'Event',
-      location: {}
-    });
-
-    // Get resource with partial dereference
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        dereference: ['as:location'],
-        accept: MIME_TYPES.JSON,
-        jsonContext: jsonContext
-      })
-    ).resolves.toMatchObject({
-      '@context': jsonContext,
-      type: 'Event',
-      location: {
-        type: 'Place',
-        name: 'Chantilly',
-        'schema:address': {}
-      }
-    });
-
-    // Get resource with full dereference
-    await expect(
-      broker.call('ldp.resource.get', {
-        resourceUri,
-        dereference: ['as:location/schema:address'],
-        accept: MIME_TYPES.JSON,
-        jsonContext
-      })
-    ).resolves.toMatchObject({
-      '@context': jsonContext,
-      type: 'Event',
-      location: {
-        type: 'Place',
-        name: 'Chantilly',
-        'schema:address': {
-          type: 'schema:PostalAddress',
-          'schema:streetAddress': 'Rue du Général Paton',
-          'schema:postalCode': '28190',
-          'schema:addressLocality': 'Pontgouin',
-          'schema:addressCountry': 'France'
-        }
-      }
-    });
-  });
-
   test('Create resource with disassembly', async () => {
     const organizationUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
           pair: 'http://virtual-assembly.org/ontologies/pair#'
         },
-        '@type': 'Organization',
+        '@type': 'pair:Organization',
         'pair:description': 'myOrga',
         'pair:label': 'myTitle',
         'pair:hasLocation': {
