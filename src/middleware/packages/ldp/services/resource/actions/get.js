@@ -4,9 +4,9 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const {
   getPrefixRdf,
   getPrefixJSON,
-  buildDereferenceQuery,
   getContainerFromUri,
-  getSlugFromUri
+  getSlugFromUri,
+  buildBlankNodesQuery
 } = require('../../../utils');
 
 module.exports = {
@@ -15,7 +15,6 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
-    dereference: { type: 'array', optional: true },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -33,7 +32,7 @@ module.exports = {
       const containerSlug = getSlugFromUri(containerUri);
       return containerSlug !== 'files';
     },
-    keys: ['resourceUri', 'accept', 'dereference', 'jsonContext', 'forceSemantic']
+    keys: ['resourceUri', 'accept', 'jsonContext', 'forceSemantic']
   },
   async handler(ctx) {
     const { resourceUri, forceSemantic, aclVerified } = ctx.params;
@@ -43,7 +42,7 @@ module.exports = {
       return await ctx.call('ldp.remote.get', ctx.params);
     }
 
-    const { accept, dereference, jsonContext } = {
+    const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -51,19 +50,19 @@ module.exports = {
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
 
     if (resourceExist) {
-      const dereferenceQuery = buildDereferenceQuery(dereference);
+      const blankNodesQuery = buildBlankNodesQuery(4);
 
       let result = await ctx.call('triplestore.query', {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
             ?s1 ?p1 ?o1 .
-            ${dereferenceQuery.construct}
+            ${blankNodesQuery.construct}
           }
           WHERE {
             BIND(<${resourceUri}> AS ?s1) .
             ?s1 ?p1 ?o1 .
-            ${dereferenceQuery.where}
+            ${blankNodesQuery.where}
           }
         `,
         accept,

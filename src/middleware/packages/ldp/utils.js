@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const crypto = require('crypto');
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
@@ -25,77 +24,24 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-// Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const extractNodes = predicates => {
-  let nodes = [];
-  if (predicates) {
-    for (let predicate of predicates) {
-      if (predicate.includes('/')) {
-        const nodeNames = predicate.split('/');
-        for (let i = 1; i <= nodeNames.length; i++) {
-          nodes.push(nodeNames.slice(0, i).join('/'));
+const buildBlankNodesQuery = depth => {
+  let construct = '',
+    where = '';
+  if (depth > 0) {
+    for (let i = depth; i >= 1; i--) {
+      construct += `
+        ?o${i} ?p${i + 1} ?o${i + 1} .
+      `;
+      where = `
+        OPTIONAL {
+          FILTER((isBLANK(?o${i}))) .
+          ?o${i} ?p${i + 1} ?o${i + 1} .
+          ${where}
         }
-      } else {
-        nodes.push(predicate);
-      }
+      `;
     }
   }
-  return nodes;
-};
-
-const generateSparqlVarName = node =>
-  crypto
-    .createHash('md5')
-    .update(node)
-    .digest('hex');
-
-const getParentNode = node => node.includes('/') && node.split('/')[0];
-
-const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
-
-const buildOptionalQuery = (queries, parentNode = false) =>
-  queries
-    .filter(q => q.parentNode === parentNode)
-    .map(
-      q => `
-      OPTIONAL { 
-        ${q.query}
-        ${q.filter}
-        ${buildOptionalQuery(queries, q.node)}
-      }
-    `
-    )
-    .join('\n');
-
-const buildDereferenceQuery = predicates => {
-  let queries = [];
-  const nodes = extractNodes(predicates);
-
-  if (nodes && nodes.length) {
-    for (let node of nodes) {
-      const parentNode = getParentNode(node);
-      const predicate = getPredicate(node);
-      const varName = generateSparqlVarName(node);
-      const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
-
-      queries.push({
-        node,
-        parentNode,
-        query: `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`,
-        filter: `FILTER(isBLANK(?s${varName})) .`
-      });
-    }
-
-    return {
-      construct: queries.map(q => q.query).join('\n'),
-      where: buildOptionalQuery(queries)
-    };
-  } else {
-    return {
-      construct: '',
-      where: ''
-    };
-  }
+  return { construct, where };
 };
 
 const buildFiltersQuery = filters => {
@@ -166,7 +112,7 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 module.exports = {
-  buildDereferenceQuery,
+  buildBlankNodesQuery,
   buildFiltersQuery,
   getPrefixRdf,
   getPrefixJSON,
