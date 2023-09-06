@@ -31,7 +31,7 @@ module.exports = async function post(ctx) {
     };
     ctx.meta.$statusCode = 201;
   } catch (e) {
-    console.error(e);
+    if (e.code !== 404 && e.code !== 403) console.error(e);
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }

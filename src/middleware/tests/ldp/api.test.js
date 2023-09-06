@@ -111,7 +111,7 @@ afterAll(async () => {
 });
 
 describe('CRUD Project', () => {
-  let projet1;
+  let resource1;
 
   test('Create resource', async () => {
     const postResponse = await expressMocked
@@ -130,14 +130,14 @@ describe('CRUD Project', () => {
     expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
-    projet1 = response.body;
+    resource1 = response.body;
 
-    expect(projet1['pair:description']).toBe('myProject');
+    expect(resource1['pair:description']).toBe('myProject');
   }, 20000);
 
   test('Get resource', async () => {
     const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .get(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProject');
   }, 20000);
@@ -145,7 +145,7 @@ describe('CRUD Project', () => {
   test('Get container', async () => {
     const response = await expressMocked.get('/resources').set('Accept', 'application/ld+json');
 
-    expect(response.body['ldp:contains'][0]['@id']).toBe(projet1['@id']);
+    expect(response.body['ldp:contains'][0]['@id']).toBe(resource1['@id']);
   }, 20000);
 
   test('Replace resource', async () => {
@@ -157,12 +157,12 @@ describe('CRUD Project', () => {
     };
 
     await expressMocked
-      .put(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .put(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
       .set('content-type', 'application/json');
 
     const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .get(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:description']).toBe('myProjectUpdated');
     expect(response.body['pair:label']).toBeUndefined();
@@ -172,21 +172,21 @@ describe('CRUD Project', () => {
     const body = `
       PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
       INSERT DATA {
-        <${projet1['@id']}> pair:label "myLabel" .
-        <${projet1['@id']}> pair:description "myProjectPatched" .
+        <${resource1['@id']}> pair:label "myLabel" .
+        <${resource1['@id']}> pair:description "myProjectPatched" .
       };
       DELETE DATA {
-        <${projet1['@id']}> pair:description "myProjectUpdated" .
+        <${resource1['@id']}> pair:description "myProjectUpdated" .
       };
     `;
 
     await expressMocked
-      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .patch(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
       .set('content-type', 'application/sparql-update');
 
     const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .get(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:label']).toBe('myLabel');
     expect(response.body['pair:description']).toBe('myProjectPatched');
@@ -196,7 +196,7 @@ describe('CRUD Project', () => {
     const body = `
       PREFIX pair: <http://virtual-assembly.org/ontologies/pair#>
       INSERT DATA {
-        <${projet1['@id']}> pair:hasLocation [
+        <${resource1['@id']}> pair:hasLocation [
           a pair:Place ;
           pair:label "Paris"
         ]
@@ -204,12 +204,12 @@ describe('CRUD Project', () => {
     `;
 
     await expressMocked
-      .patch(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .patch(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .send(body)
       .set('content-type', 'application/sparql-update');
 
     const response = await expressMocked
-      .get(projet1['@id'].replace(CONFIG.HOME_URL, '/'))
+      .get(resource1['@id'].replace(CONFIG.HOME_URL, '/'))
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:hasLocation']).toMatchObject({
       '@type': 'pair:Place',
@@ -219,9 +219,9 @@ describe('CRUD Project', () => {
   }, 20000);
 
   test('Delete resource', async () => {
-    const responseDelete = await expressMocked.delete(projet1['@id'].replace(CONFIG.HOME_URL, '/'));
+    const responseDelete = await expressMocked.delete(resource1['@id'].replace(CONFIG.HOME_URL, '/'));
     expect(responseDelete.status).toBe(204);
-    const response = await expressMocked.get(projet1['@id'].replace(CONFIG.HOME_URL, '/'));
+    const response = await expressMocked.get(resource1['@id'].replace(CONFIG.HOME_URL, '/'));
     expect(response.status).toBe(404);
   }, 20000);
 
@@ -248,5 +248,67 @@ describe('CRUD Project', () => {
 
     expect(subContainer['dc:title']).toBe('Sub-resources');
     expect(subContainer['dc:description']).toBe('Used to test dynamic containers creation');
+  }, 20000);
+
+  test('Create resource in sub-container', async () => {
+    const postResponse = await expressMocked
+      .post('/resources/sub-resources')
+      .send({
+        '@context': {
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        },
+        '@type': 'Project',
+        description: 'My sub-resource'
+      })
+      .set('content-type', 'application/ld+json');
+
+    const subResourceId = postResponse.headers.location;
+
+    let response = await expressMocked.get('/resources').set('Accept', 'application/ld+json');
+
+    // Sub-containers appear as ldp:Resource
+    expect(response.body).toMatchObject({
+      'ldp:contains': [{
+        '@id': CONFIG.HOME_URL + 'resources/sub-resources',
+        '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'],
+      }]
+    });
+
+    // The content of sub-containers is not displayed
+    expect(response.body['ldp:contains'][0]['ldp:contains']).toBeUndefined();
+
+    response = await expressMocked.get('/resources/sub-resources').set('Accept', 'application/ld+json');
+
+    expect(response.body).toMatchObject({
+      'dc:title': 'Sub-resources',
+      'dc:description': 'Used to test dynamic containers creation',
+      'ldp:contains': [{
+        '@id': subResourceId,
+        '@type': 'pair:Project',
+        'pair:description': 'My sub-resource'
+      }]
+    });
+  }, 20000);
+
+  test('Delete sub-container', async () => {
+    // Give write permission on sub-container, or we won't be able to delete it as anonymous
+    await broker.call('webacl.resource.addRights', {
+      webId: 'system',
+      resourceUri: CONFIG.HOME_URL + 'resources/sub-resources',
+      additionalRights: {
+        anon: {
+          write: true
+        }
+      }
+    });
+
+    let response = await expressMocked.delete('/resources/sub-resources');
+    expect(response.status).toBe(204);
+
+    response = await expressMocked.get('/resources/sub-resources');
+    expect(response.status).toBe(404);
+
+    response = await expressMocked.get('/resources').set('Accept', 'application/ld+json');
+    expect(response.body['ldp:contains'].length).toBe(0);
   }, 20000);
 });

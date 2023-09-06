@@ -39,7 +39,7 @@ module.exports = async function patch(ctx) {
     };
     ctx.meta.$statusCode = 204;
   } catch (e) {
-    console.error(e);
+    if (e.code !== 404 && e.code !== 403) console.error(e);
     ctx.meta.$statusCode = e.code || 500;
     ctx.meta.$statusMessage = e.message;
   }

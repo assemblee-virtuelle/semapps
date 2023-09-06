@@ -86,8 +86,8 @@ module.exports = {
             // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
             if (isContainer(resource)) {
               delete resource['ldp:contains'];
-              resource.type = defaultToArray(resource.type);
-              resource.type.push('ldp:Resource');
+              resource['@type'] = defaultToArray(resource['@type']);
+              resource['@type'].push('ldp:Resource');
             }
 
             resources.push(resource);
