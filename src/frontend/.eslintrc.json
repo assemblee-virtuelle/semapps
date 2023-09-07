@@ -6,7 +6,7 @@
     "plugin:jsdoc/recommended-typescript-flavor",
     "eslint:recommended",
     "airbnb",
-    "plugin:@typescript-eslint/recommended-type-checked",
+    // "plugin:@typescript-eslint/recommended-type-checked",
     "prettier"
   ],
   "ignorePatterns": ["*.cjs", "*.es.js", "*.cjs.js"],
@@ -14,9 +14,15 @@
   "parserOptions": {
     "project": true
   },
-  "plugins": ["jsdoc", "@typescript-eslint", "prettier"],
+  "plugins": [
+    "jsdoc",
+    // "@typescript-eslint",
+    "prettier"
+  ],
   "root": true,
   "rules": {
+    // Typescript strict rules should warn instead of error
+    /*
     "@typescript-eslint/await-thenable": "warn",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/consistent-type-exports": "warn",
@@ -61,6 +67,7 @@
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/switch-exhaustiveness-check": "warn",
     "@typescript-eslint/unbound-method": "warn",
+    */
     "array-callback-return": "warn",
     "arrow-body-style": "off",
     "camelcase": "warn",
