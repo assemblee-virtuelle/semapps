@@ -20,8 +20,7 @@ const containers = [
   },
   {
     path: '/organizations',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
+    dereference: ['pair:hasLocation/pair:hasPostalAddress']
   },
   {
     path: '/places'

@@ -17,10 +17,6 @@ module.exports = {
     },
     contentType: {
       type: 'string'
-    },
-    disassembly: {
-      type: 'array',
-      optional: true
     }
   },
   async handler(ctx) {
@@ -34,7 +30,7 @@ module.exports = {
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be modified', 403, 'FORBIDDEN');
 
-    const { disassembly, jsonContext } = {
+    const { jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', {
         resourceUri
       })),
@@ -55,10 +51,6 @@ module.exports = {
         '@context': jsonContext,
         ...resource
       };
-    }
-
-    if (disassembly && contentType === MIME_TYPES.JSON) {
-      await this.updateDisassembly(ctx, disassembly, resource, oldData, 'PUT');
     }
 
     let oldTriples = await this.bodyToTriples(oldData, MIME_TYPES.JSON);

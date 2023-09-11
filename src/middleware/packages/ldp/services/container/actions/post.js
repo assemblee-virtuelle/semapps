@@ -24,10 +24,6 @@ module.exports = {
     webId: {
       type: 'string',
       optional: true
-    },
-    disassembly: {
-      type: 'array',
-      optional: true
     }
   },
   async handler(ctx) {

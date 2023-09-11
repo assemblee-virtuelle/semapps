@@ -5,8 +5,7 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
-    webId: { type: 'string', optional: true },
-    disassembly: { type: 'array', optional: true }
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
@@ -17,11 +16,6 @@ module.exports = {
       return await ctx.call('ldp.remote.delete', { resourceUri, webId })
     }
 
-    const { disassembly } = {
-      ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
-    };
-
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
     let oldData = await ctx.call('ldp.resource.get', {
@@ -30,10 +24,6 @@ module.exports = {
       forceSemantic: true,
       webId
     });
-
-    if (disassembly) {
-      await this.deleteDisassembly(ctx, disassembly, oldData);
-    }
 
     await ctx.call('triplestore.update', {
       query: `
