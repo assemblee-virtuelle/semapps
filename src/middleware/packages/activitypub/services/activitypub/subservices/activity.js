@@ -13,7 +13,6 @@ const ActivityService = {
     acceptedTypes: Object.values(ACTIVITY_TYPES),
     accept: MIME_TYPES.JSON,
     jsonContext: null,
-    dereference: ['as:object/as:object'],
     permissions: {},
     newResourcesPermissions: {},
     readOnly: true,

@@ -37,12 +37,7 @@ beforeAll(async () => {
       },
       ontologies,
       jsonContext: getPrefixJSON(ontologies),
-      containers: [
-        {
-          path: '/resources',
-          dereference: ['pair:hasLocation']
-        }
-      ],
+      containers: ['/resources'],
       api: false,
       activitypub: false,
       mirror: false,

@@ -11,16 +11,13 @@ const { getPrefixJSON } = require('@semapps/ldp');
 
 const containers = [
   {
-    path: '/resources',
-    dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay']
+    path: '/resources'
   },
   {
-    path: '/resources2',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay']
+    path: '/resources2'
   },
   {
-    path: '/organizations',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress']
+    path: '/organizations'
   },
   {
     path: '/places'

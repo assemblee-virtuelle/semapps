@@ -10,7 +10,6 @@ module.exports = {
     name: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     jsonContext: { type: 'multi', rules: [{ type: 'string' }, { type: 'object' }, { type: 'array' }], optional: true },
-    dereference: { type: 'array', optional: true },
     permissions: { type: 'object', optional: true },
     excludeFromMirror: { type: 'boolean', optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },

@@ -14,7 +14,6 @@ module.exports = {
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
       excludeFromMirror: true,
-      dereference: ['sec:publicKey', 'as:endpoints']
       // newResourcesPermissions: {}
     });
 

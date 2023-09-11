@@ -25,14 +25,12 @@ const containers = [
   {
     path: '/actors',
     acceptedTypes: [ACTOR_TYPES.PERSON],
-    excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
+    excludeFromMirror: true
   },
   {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
-    excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
+    excludeFromMirror: true
   }
 ];
 

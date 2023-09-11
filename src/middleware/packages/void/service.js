@@ -43,9 +43,6 @@ const jsonContext = {
   'void:doNotMirror': { '@type': 'xsd:boolean' },
   'void:class': { '@type': '@id' },
   'void:classPartition': { '@type': '@id' },
-  'semapps:blankNodes': {
-    '@type': '@id'
-  }
 };
 
 const addClassPartition = (serverUrl, partition, graph, scalar) => {
@@ -68,12 +65,6 @@ const addClassPartition = (serverUrl, partition, graph, scalar) => {
       )
     }
   ];
-  if (partition['http://semapps.org/ns/core#blankNodes'])
-    blank.data.push({
-      s: blankNode('b' + scalar),
-      p: namedNode('http://semapps.org/ns/core#blankNodes'),
-      o: partition['http://semapps.org/ns/core#blankNodes'].map(bn => namedNode(bn))
-    });
   if (partition['http://semapps.org/ns/core#doNotMirror'])
     blank.data.push({
       s: blankNode('b' + scalar),
@@ -143,11 +134,6 @@ const addMirrorServer = async (
       'http://rdfs.org/ns/void#uriSpace': p,
       'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
     };
-
-    let dereference = partitionsMap[p];
-    if (dereference) {
-      partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
-    }
 
     const count = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
@@ -382,7 +368,6 @@ module.exports = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
               'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
             };
-            if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference;
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
               query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`

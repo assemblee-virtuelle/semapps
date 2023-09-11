@@ -7,7 +7,6 @@ module.exports = {
     acceptedTypes: null,
     accept: MIME_TYPES.JSON,
     jsonContext: null,
-    dereference: null,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
@@ -22,7 +21,6 @@ module.exports = {
       acceptedTypes: this.settings.acceptedTypes,
       accept: this.settings.accept,
       jsonContext: this.settings.jsonContext,
-      dereference: this.settings.dereference,
       permissions: this.settings.permissions,
       excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
@@ -65,10 +63,9 @@ module.exports = {
       return ctx.call('ldp.container.detach', ctx.params);
     },
     get(ctx) {
-      const { accept, dereference, jsonContext } = this.settings;
+      const { accept, jsonContext } = this.settings;
       let containerParams = {};
       if (accept) containerParams.accept = accept;
-      if (dereference) containerParams.dereference = dereference;
       if (jsonContext) containerParams.jsonContext = jsonContext;
       return ctx.call('ldp.resource.get', {
         ...containerParams,
