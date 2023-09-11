@@ -11,7 +11,7 @@ const modifyActions = [
   'webid.create',
   'ldp.remote.store',
   'ldp.remote.delete',
-  'ldp.resource.delete'
+  'ldp.resource.delete',
 ];
 
 const addRightsToNewResource = async (ctx, resourceUri, webId) => {
@@ -22,7 +22,7 @@ const addRightsToNewResource = async (ctx, resourceUri, webId) => {
   await ctx.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri,
-    newRights
+    newRights,
   });
 };
 
@@ -41,21 +41,21 @@ const addRightsToNewUser = async (ctx, userUri) => {
     resourceUri: userUri,
     newRights: {
       anon: {
-        read: true
+        read: true,
       },
       user: {
         uri: userUri,
         read: true,
         write: true,
-        control: true
-      }
-    }
+        control: true,
+      },
+    },
   });
 };
 
 // List of containers with default anon read, so that we can bypass permissions check for the resources it contains
 // TODO invalidate this cache when default permissions are changed
-let containersWithDefaultAnonRead = [];
+const containersWithDefaultAnonRead = [];
 
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
@@ -64,7 +64,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
     if (!podProvider) {
       await broker.waitForServices(['ldp.container', 'triplestore']);
       const containers = await broker.call('ldp.container.getAll');
-      for (let containerUri of containers) {
+      for (const containerUri of containers) {
         const authorizations = await broker.call('triplestore.query', {
           query: `
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -80,7 +80,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               }
             }
           `,
-          webId: 'system'
+          webId: 'system',
         });
 
         if (authorizations.length > 0) {
@@ -89,14 +89,14 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
       }
     }
   },
-  localAction: (wrapWebAclMiddleware = (next, action) => {
+  localAction: (next, action) => {
     if (action.name === 'ldp.resource.get') {
       /*
        * VERIFY AUTHORIZATIONS
        * This allows us to quickly check the permissions for GET operations using the Redis cache
        * This way, we don't need to add the webId in the Redis cache key and it is more efficient
        */
-      return async ctx => {
+      return async (ctx) => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         const bypass = () => {
           ctx.params.aclVerified = true;
@@ -113,14 +113,13 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           // Bypass if mirrored resource as WebACL are not activated in mirror graph
           if ((await ctx.call('ldp.remote.getGraph', { resourceUri })) === 'http://semapps.org/mirror') {
             return bypass();
-          } else {
-            return next(ctx);
           }
+          return next(ctx);
         }
 
         // If the logged user is fetching is own POD, bypass ACL check
         // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
-        if (podProvider && resourceUri.startsWith(webId + '/')) {
+        if (podProvider && resourceUri.startsWith(`${webId}/`)) {
           return bypass();
         }
 
@@ -132,17 +131,17 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         const result = await ctx.call('webacl.resource.hasRights', {
           resourceUri,
           rights: { read: true }, // Check only the read permissions to improve performances
-          webId
+          webId,
         });
 
         if (result.read) {
           return bypass();
-        } else {
-          throw403();
         }
+        throw403();
       };
-    } else if (modifyActions.includes(action.name)) {
-      return async ctx => {
+    }
+    if (modifyActions.includes(action.name)) {
+      return async (ctx) => {
         const webId = ctx.params.webId || ctx.meta.webId || 'anon';
         let actionReturnValue;
 
@@ -164,7 +163,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
           case 'activitypub.collection.create':
             const { permissions } = await ctx.call('activitypub.registry.getByUri', {
-              collectionUri: ctx.params.collectionUri
+              collectionUri: ctx.params.collectionUri,
             });
             const collectionRights = typeof permissions === 'function' ? permissions(webId) : permissions;
 
@@ -172,7 +171,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.collectionUri,
               newRights: ctx.params.rights || collectionRights || defaultCollectionRights(webId),
-              webId: 'system'
+              webId: 'system',
             });
             break;
         }
@@ -189,14 +188,14 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
               await ctx.call(
                 'webacl.resource.deleteAllRights',
                 { resourceUri: ctx.params.resource['@id'] || ctx.params.resource.id },
-                { meta: { webId: 'system' } }
+                { meta: { webId: 'system' } },
               );
               break;
             case 'activitypub.collection.create':
               await ctx.call(
                 'webacl.resource.deleteAllRights',
                 { resourceUri: ctx.params.collectionUri },
-                { meta: { webId: 'system' } }
+                { meta: { webId: 'system' } },
               );
               break;
           }
@@ -211,7 +210,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await ctx.call(
               'webacl.resource.deleteAllRights',
               { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
+              { meta: { webId: 'system' } },
             );
             break;
 
@@ -219,20 +218,20 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             await ctx.call(
               'webacl.resource.deleteAllRights',
               { resourceUri: ctx.params.resourceUri },
-              { meta: { webId: 'system' } }
+              { meta: { webId: 'system' } },
             );
             break;
 
           case 'ldp.container.create':
             const { permissions } = await ctx.call('ldp.registry.getByUri', {
-              containerUri: ctx.params.containerUri
+              containerUri: ctx.params.containerUri,
             });
             const containerRights = typeof permissions === 'function' ? permissions(webId) : permissions;
 
             await ctx.call('webacl.resource.addRights', {
               resourceUri: ctx.params.containerUri,
               newRights: ctx.params.rights || containerRights || defaultContainerRights(webId),
-              webId: 'system'
+              webId: 'system',
             });
             break;
 
@@ -253,12 +252,12 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                   additionalRights: {
                     user: {
                       uri: webId,
-                      read: true
-                    }
+                      read: true,
+                    },
                   },
-                  webId: 'system'
+                  webId: 'system',
                 },
-                { meta: { dataset } }
+                { meta: { dataset } },
               );
             }
             break;
@@ -268,10 +267,10 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           case 'activitypub.activity.attach':
             const activity = await ctx.call('activitypub.activity.get', {
               resourceUri: actionReturnValue.resourceUri,
-              webId: ctx.params.webId || 'system'
+              webId: ctx.params.webId || 'system',
             });
 
-            let recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
+            const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
             // When a new activity is created, ensure the emitter has read rights also
             if (action.name === 'activitypub.activity.create') {
@@ -281,16 +280,16 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
             // Give read rights to the activity's recipients
             // TODO improve performances by passing all users at once
             // https://github.com/assemblee-virtuelle/semapps/issues/908
-            for (let recipient of recipients) {
+            for (const recipient of recipients) {
               await ctx.call('webacl.resource.addRights', {
                 resourceUri: actionReturnValue.resourceUri,
                 additionalRights: {
                   user: {
                     uri: recipient,
-                    read: true
-                  }
+                    read: true,
+                  },
                 },
-                webId: 'system'
+                webId: 'system',
               });
             }
 
@@ -300,10 +299,10 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
                 resourceUri: actionReturnValue.resourceUri,
                 additionalRights: {
                   anon: {
-                    read: true
-                  }
+                    read: true,
+                  },
                 },
-                webId: 'system'
+                webId: 'system',
               });
             }
         }
@@ -314,7 +313,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
 
     // Do not use the middleware for this action
     return next;
-  })
+  },
 });
 
 module.exports = WebAclMiddleware;

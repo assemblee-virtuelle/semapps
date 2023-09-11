@@ -772,7 +772,7 @@ describe('Resource CRUD operations', () => {
       resourceUri: project1['@id']
     });
 
-    expect(
+    await expect(
       broker.call('ldp.resource.get', {
         resourceUri: project1['@id'],
         accept: MIME_TYPES.JSON

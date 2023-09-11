@@ -14,6 +14,7 @@
     "dev": "rollup --watch --sourcemap --config"
   },
   "dependencies": {
+    "@react-leaflet/core": "^2.1.0",
     "autosuggest-highlight": "^3.1.1",
     "lodash.throttle": "^4.1.1",
     "react-leaflet": "4.0.2"
