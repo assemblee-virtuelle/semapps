@@ -25,7 +25,7 @@ const Picker = ({
   const {
     field,
     isRequired,
-    fieldState: { error, isTouched }
+    fieldState: { error, isTouched },
   } = useInput({
     format,
     onBlur,
@@ -34,10 +34,10 @@ const Picker = ({
     parse,
     source,
     validate,
-    ...rest
+    ...rest,
   });
 
-  const handleChange = useCallback(value => {
+  const handleChange = useCallback((value) => {
     Date.parse(value)
       ? field.onChange(stringFormat === 'ISO' ? value.toISOString() : value.toString())
       : field.onChange(null);
@@ -50,8 +50,8 @@ const Picker = ({
         error={!!(isTouched && error)}
         slotProps={{
           textField: {
-            helperText: <InputHelperText touched={isTouched} error={error} helperText={helperText} />
-          }
+            helperText: <InputHelperText touched={isTouched} error={error} helperText={helperText} />,
+          },
         }}
         {...sanitizeRestProps(rest)}
         value={field.value ? new Date(field.value) : null}
@@ -62,7 +62,7 @@ const Picker = ({
               ? stringFormat === 'ISO'
                 ? new Date(field.value).toISOString()
                 : new Date(field.value).toString()
-              : null
+              : null,
           )
         }
       />
@@ -74,7 +74,7 @@ Picker.defaultProps = {
   isRequired: false,
   meta: { isTouched: false, error: false },
   locale: undefined, // Default to english
-  parse: value => (value === '' ? null : value) // Avoid saving an empty string in the dataset
+  parse: (value) => (value === '' ? null : value), // Avoid saving an empty string in the dataset
 };
 
 const sanitizeRestProps = ({

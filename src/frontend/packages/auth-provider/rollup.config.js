@@ -7,29 +7,29 @@ import json from 'rollup-plugin-json';
 import { createFilter } from 'rollup-pluginutils';
 
 const external = createFilter(['react', 'react-admin', 'react-router-dom', '@mui/**', '@semapps/**'], null, {
-  resolve: false
+  resolve: false,
 });
 
 export default {
   input: './src/index.js',
   output: [
     { format: 'cjs', file: './dist/index.cjs.js', sourcemap: false },
-    { format: 'es', file: './dist/index.es.js', sourcemap: false }
+    { format: 'es', file: './dist/index.es.js', sourcemap: false },
   ],
   external,
   plugins: [
     json(),
     replace({
       // Make sure React code is compiled in production mode
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
     // Resolve but don't compile the node_modules directory
     nodeResolve(),
     commonjs(),
     // Minify the result
-    terser()
-  ]
+    terser(),
+  ],
 };

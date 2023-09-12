@@ -10,8 +10,8 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     zIndex: 1400,
     top: 0,
-    right: 0
-  }
+    right: 0,
+  },
 }));
 
 const MobileDrawer = ({ popupContent, onClose }) => {

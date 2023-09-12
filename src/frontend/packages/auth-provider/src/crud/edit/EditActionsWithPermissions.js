@@ -5,7 +5,7 @@ import {
   ListButton,
   TopToolbar,
   useResourceDefinition,
-  useRecordContext
+  useRecordContext,
 } from 'react-admin';
 import PermissionsButton from '../../components/PermissionsButton/PermissionsButton';
 import { rightsToControl } from '../../constants';
@@ -18,7 +18,7 @@ const EditActionsWithPermissions = () => {
     <TopToolbar>
       {hasList && <ListButton />}
       {hasShow && <ShowButton />}
-      {!!permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton />}
+      {!!permissions && permissions.some((p) => rightsToControl.includes(p['acl:mode'])) && <PermissionsButton />}
     </TopToolbar>
   );
 };

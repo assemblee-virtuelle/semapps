@@ -40,7 +40,7 @@ const ImportFormInputs = () => {
         >
           <MultiServerAutocompleteInput
             optionText={dataModel?.fieldsMapping?.title}
-            shouldRenderSuggestions={value => value.length > 1}
+            shouldRenderSuggestions={(value) => value.length > 1}
             noOptionsText="Tapez au moins deux lettres"
             emptyText="Rechercher..."
             label="Resource distante"
@@ -54,7 +54,7 @@ const ImportFormInputs = () => {
         label="Méthode d'importation"
         choices={[
           { id: 'sync', name: 'Garder la ressource locale synchronisée avec la ressource distante' },
-          { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' }
+          { id: 'fork', name: 'Créer une nouvelle version de la ressource (fork)' },
         ]}
       />
     </>
@@ -74,7 +74,7 @@ const ImportForm = ({ stripProperties }) => {
         await sync(plainUri);
       }
     },
-    [fork, sync, stripProperties]
+    [fork, sync, stripProperties],
   );
 
   return (

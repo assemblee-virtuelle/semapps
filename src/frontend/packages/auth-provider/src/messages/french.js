@@ -3,7 +3,7 @@ const frenchMessages = {
     dialog: {
       container_permissions: 'Permissions sur le container',
       resource_permissions: 'Permissions sur la ressource',
-      login_required: 'Connexion requise'
+      login_required: 'Connexion requise',
     },
     action: {
       permissions: 'Permissions',
@@ -13,25 +13,25 @@ const frenchMessages = {
       logout: 'Se déconnecter',
       login: 'Se connecter',
       view_my_profile: 'Voir mon profil',
-      edit_my_profile: 'Éditer mon profil'
+      edit_my_profile: 'Éditer mon profil',
     },
     right: {
       resource: {
         read: 'Lire',
         append: 'Enrichir',
         write: 'Modifier',
-        control: 'Administrer'
+        control: 'Administrer',
       },
       container: {
         read: 'Lister',
         append: 'Ajouter',
         write: 'Ajouter',
-        control: 'Administrer'
-      }
+        control: 'Administrer',
+      },
     },
     agent: {
       anonymous: 'Tous les utilisateurs',
-      authenticated: 'Utilisateurs connectés'
+      authenticated: 'Utilisateurs connectés',
     },
     input: {
       agent_select: 'Ajouter un utilisateur...',
@@ -41,14 +41,14 @@ const frenchMessages = {
       username_or_email: 'Identifiant ou adresse e-mail',
       current_password: 'Mot de passe actuel',
       new_password: 'Nouveau mot de passe',
-      confirm_new_password: 'Confirmer le nouveau mot de passe'
+      confirm_new_password: 'Confirmer le nouveau mot de passe',
     },
     helper: {
       login: 'Connectez-vous à votre compte.',
       signup: 'Créez votre compte',
       reset_password:
         'Entrez votre adresse mail ci-dessous et nous vous enverrons un lien pour réinitialiser votre mot de passe',
-      set_new_password: 'Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous'
+      set_new_password: 'Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous',
     },
     message: {
       resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
@@ -70,7 +70,7 @@ const frenchMessages = {
       account_settings_updated: 'Les paramètres de votre compte ont été mis à jour avec succès',
       login_to_continue: 'Veuillez vous connecter pour continuer',
       choose_pod_provider:
-        "Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les données de l'application seront enregistrées sur votre POD."
+        "Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les données de l'application seront enregistrées sur votre POD.",
     },
     notification: {
       reset_password_submitted: 'Un e-mail a été envoyé avec les instructions de réinitialisation du mot de passe',
@@ -79,9 +79,9 @@ const frenchMessages = {
       new_password_error: "Une erreur s'est produite",
       invalid_password: 'Mot de passe incorrect',
       get_settings_error: "Une erreur s'est produite",
-      update_settings_error: "Une erreur s'est produite"
-    }
-  }
+      update_settings_error: "Une erreur s'est produite",
+    },
+  },
 };
 
 export default frenchMessages;

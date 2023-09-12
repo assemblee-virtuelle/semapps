@@ -3,7 +3,7 @@ const englishMessages = {
     dialog: {
       container_permissions: 'Container permissions',
       resource_permissions: 'Resource permissions',
-      login_required: 'Login required'
+      login_required: 'Login required',
     },
     action: {
       permissions: 'Permissions',
@@ -13,25 +13,25 @@ const englishMessages = {
       logout: 'Logout',
       login: 'Login',
       view_my_profile: 'View my profile',
-      edit_my_profile: 'Edit my profile'
+      edit_my_profile: 'Edit my profile',
     },
     right: {
       resource: {
         read: 'Read',
         append: 'Append',
         write: 'Write',
-        control: 'Control'
+        control: 'Control',
       },
       container: {
         read: 'List',
         append: 'Add',
         write: 'Add',
-        control: 'Control'
-      }
+        control: 'Control',
+      },
     },
     agent: {
       anonymous: 'All users',
-      authenticated: 'Connected users'
+      authenticated: 'Connected users',
     },
     input: {
       agent_select: 'Add an user...',
@@ -41,13 +41,13 @@ const englishMessages = {
       username_or_email: 'User ID or email address',
       current_password: 'Current password',
       new_password: 'New password',
-      confirm_new_password: 'Confirm new password'
+      confirm_new_password: 'Confirm new password',
     },
     helper: {
       login: 'Sign in to your account',
       signup: 'Create your account',
       reset_password: 'Enter your email address below and we will send you a link to reset your password',
-      set_new_password: 'Please enter your email address and a new password below'
+      set_new_password: 'Please enter your email address and a new password below',
     },
     message: {
       resource_show_forbidden: 'You are not allowed to view this resource',
@@ -68,7 +68,7 @@ const englishMessages = {
       account_settings_updated: 'Your account settings have been successfully updated',
       login_to_continue: 'Please login to continue',
       choose_pod_provider:
-        'Please choose a POD provider in the list below. All application data will be saved on your POD.'
+        'Please choose a POD provider in the list below. All application data will be saved on your POD.',
     },
     notification: {
       reset_password_submitted: 'An email has been sent with reset password instructions',
@@ -77,9 +77,9 @@ const englishMessages = {
       new_password_error: 'An error occurred',
       invalid_password: 'Invalid password',
       get_settings_error: 'An error occurred',
-      update_settings_error: 'An error occurred'
-    }
-  }
+      update_settings_error: 'An error occurred',
+    },
+  },
 };
 
 export default englishMessages;

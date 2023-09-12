@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReferenceInput as RaReferenceInput } from 'react-admin';
 
-const format = value => {
+const format = (value) => {
   // If there is no value, return immediately
   if (!value) return value;
   // If the value is an object with an @id field, return the uri

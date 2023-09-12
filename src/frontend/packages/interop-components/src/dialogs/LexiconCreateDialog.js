@@ -22,12 +22,12 @@ const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
       resource,
       { data: selectData(value) },
       {
-        onSuccess: data => {
+        onSuccess: (data) => {
           console.log('onSuccess', data);
           setValue('');
           onCreate(data);
-        }
-      }
+        },
+      },
     );
   }, [create, onCreate, selectData, value, setValue, resource]);
 

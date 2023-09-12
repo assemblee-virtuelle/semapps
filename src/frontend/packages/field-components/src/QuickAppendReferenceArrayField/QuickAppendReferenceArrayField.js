@@ -9,8 +9,8 @@ const QuickAppendReferenceArrayField = ({ reference, source, resource, children,
   const { permissions } = usePermissions(record.id);
 
   const canAppend = useMemo(
-    () => !!permissions && permissions.some(p => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),
-    [permissions]
+    () => !!permissions && permissions.some((p) => ['acl:Append', 'acl:Write', 'acl:Control'].includes(p['acl:mode'])),
+    [permissions],
   );
 
   return (

@@ -45,11 +45,11 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
               icon={<EditIcon />}
               to={`/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`}
             />,
-            React.cloneElement(logout, { key: 'logout' })
+            React.cloneElement(logout, { key: 'logout' }),
           ]
         : [
             <UserMenuItem key="signup" label="auth.action.signup" to="/login?signup=true" />,
-            <UserMenuItem key="login" label="auth.action.login" to="/login" />
+            <UserMenuItem key="login" label="auth.action.login" to="/login" />,
           ]}
     </RaUserMenu>
   );
@@ -57,7 +57,7 @@ const UserMenu = ({ logout, profileResource, ...otherProps }) => {
 
 UserMenu.defaultProps = {
   logout: <Logout />,
-  profileResource: 'Person'
+  profileResource: 'Person',
 };
 
 export default UserMenu;

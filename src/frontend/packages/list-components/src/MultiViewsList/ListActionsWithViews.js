@@ -17,7 +17,7 @@ const ListActionsWithViews = ({
   total,
   ...rest
 }) => {
-  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'));
+  const xs = useMediaQuery((theme) => theme.breakpoints.down('sm'));
   const resourceDefinition = useResourceDefinition(rest);
   return (
     <TopToolbar>
@@ -27,7 +27,7 @@ const ListActionsWithViews = ({
           showFilter,
           displayedFilters,
           filterValues,
-          context: 'button'
+          context: 'button',
         })}
       {resourceDefinition.hasCreate && <CreateButton />}
       {!xs && exporter !== false && (
@@ -37,7 +37,7 @@ const ListActionsWithViews = ({
         React.cloneElement(bulkActions, {
           filterValues,
           selectedIds,
-          onUnselectItems
+          onUnselectItems,
         })}
     </TopToolbar>
   );
