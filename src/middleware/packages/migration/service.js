@@ -4,7 +4,7 @@ const { getContainerFromUri } = require('@semapps/ldp');
 module.exports = {
   name: 'migration',
   settings: {
-    baseUrl: undefined
+    baseUrl: undefined,
   },
   created() {
     if (!this.settings.baseUrl) {
@@ -16,9 +16,9 @@ module.exports = {
       const { oldPredicate, newPredicate, dataset } = ctx.params;
 
       if (!oldPredicate.startsWith('http'))
-        throw new Error('oldPredicate must be a full URI. Received: ' + oldPredicate);
+        throw new Error(`oldPredicate must be a full URI. Received: ${oldPredicate}`);
       if (!newPredicate.startsWith('http'))
-        throw new Error('newPredicate must be a full URI. Received: ' + oldPredicate);
+        throw new Error(`newPredicate must be a full URI. Received: ${oldPredicate}`);
 
       this.logger.info(`Replacing predicate ${oldPredicate} with ${newPredicate}...`);
 
@@ -29,7 +29,7 @@ module.exports = {
           WHERE { ?s <${oldPredicate}> ?o . }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
     },
     async moveResource(ctx) {
@@ -44,7 +44,7 @@ module.exports = {
           WHERE { <${oldResourceUri}> ?p ?o }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       await ctx.call('triplestore.update', {
@@ -54,7 +54,7 @@ module.exports = {
           WHERE { ?s ?p <${oldResourceUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       await ctx.call('triplestore.update', {
@@ -65,7 +65,7 @@ module.exports = {
           WHERE { ?s ?p <${oldResourceUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       const oldContainerUri = getContainerFromUri(oldResourceUri);
@@ -79,7 +79,7 @@ module.exports = {
           WHERE { <${oldContainerUri}> ldp:contains <${newResourceUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       await this.actions.moveAclRights({ newResourceUri, oldResourceUri, dataset }, { parentCtx: ctx });
@@ -97,7 +97,7 @@ module.exports = {
           WHERE { <${oldGroupUri}> ?p ?o }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       await ctx.call('triplestore.update', {
@@ -108,20 +108,20 @@ module.exports = {
           WHERE { ?s ?p <${oldGroupUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       await this.actions.moveAclRights(
         { newResourceUri: newGroupUri, oldResourceUri: oldGroupUri, dataset },
-        { parentCtx: ctx }
+        { parentCtx: ctx },
       );
     },
     async moveAclRights(ctx) {
       const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
-      for (let right of ['Read', 'Append', 'Write', 'Control']) {
-        const oldResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri) + '#' + right;
-        const newResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri) + '#' + right;
+      for (const right of ['Read', 'Append', 'Write', 'Control']) {
+        const oldResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri)}#${right}`;
+        const newResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri)}#${right}`;
 
         this.logger.info(`Moving ACL rights ${oldResourceAclUri} to ${newResourceAclUri}...`);
 
@@ -133,7 +133,7 @@ module.exports = {
             WHERE { <${oldResourceAclUri}> ?p ?o }
           `,
           dataset,
-          webId: 'system'
+          webId: 'system',
         });
       }
     },
@@ -148,7 +148,7 @@ module.exports = {
           WHERE { ?groupUri <http://www.w3.org/2006/vcard/ns#hasMember> <${userUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
 
       // Remove all authorization given specifically to this user
@@ -159,8 +159,8 @@ module.exports = {
           WHERE { ?authorizationUri <http://www.w3.org/ns/auth/acl#agent> <${userUri}> }
         `,
         dataset,
-        webId: 'system'
+        webId: 'system',
       });
-    }
-  }
+    },
+  },
 };

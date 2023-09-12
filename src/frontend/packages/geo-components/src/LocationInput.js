@@ -1,5 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FieldTitle, InputHelperText, useInput, useTranslate, useLocale, useRecordContext, useResourceContext, useTheme } from 'react-admin';
+import {
+  FieldTitle,
+  InputHelperText,
+  useInput,
+  useTranslate,
+  useLocale,
+  useRecordContext,
+  useResourceContext,
+  useTheme,
+} from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
@@ -10,28 +19,22 @@ import { styled } from '@mui/system';
 
 const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  marginRight: theme.spacing(2)
+  marginRight: theme.spacing(2),
 }));
 
 const selectOptionText = (option, optionText) => {
   if (option.place_name) {
     return option.place_name;
-  } else if (typeof optionText === 'string') {
+  }
+  if (typeof optionText === 'string') {
     return option[optionText];
-  } else if (typeof optionText === 'function') {
+  }
+  if (typeof optionText === 'function') {
     return optionText(option);
   }
 };
 
-const LocationInput = ({
-  mapboxConfig,
-  source,
-  label,
-  parse,
-  optionText,
-  helperText,
-  ...rest
-}) => {
+const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperText, ...rest }) => {
   if (!mapboxConfig) {
     throw new Error('@semapps/geo-components : No mapbox configuration');
   }
@@ -49,9 +52,9 @@ const LocationInput = ({
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    field: { value, onChange, onBlur /*, onFocus*/ },
+    field: { value, onChange, onBlur /* , onFocus */ },
     isRequired,
-    fieldState: { error, /*submitError,*/ isTouched }
+    fieldState: { error, /* submitError, */ isTouched },
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -73,19 +76,18 @@ const LocationInput = ({
         });
 
         fetch(fetchUrl.toString())
-          .then(res => res.json())
-          .then(json => callback(json));
+          .then((res) => res.json())
+          .then((json) => callback(json));
       }, 200),
-    [mapboxConfig, locale]
+    [mapboxConfig, locale],
   );
 
   useEffect(() => {
     // Do not trigger search if text input is empty or if it is the same as the current value
     if (!keyword || keyword === selectOptionText(value, optionText)) {
       return undefined;
-    } else {
-      fetchMapbox(keyword, results => setOptions(results.features));
     }
+    fetchMapbox(keyword, (results) => setOptions(results.features));
   }, [value, keyword, fetchMapbox]);
 
   return (
@@ -98,8 +100,8 @@ const LocationInput = ({
       // Do not show the current value as an option (this would break renderOptions)
       filterSelectedOptions
       // For some reasons, this prop has to be passed
-      filterOptions={x => x}
-      getOptionLabel={option => selectOptionText(option, optionText)}
+      filterOptions={(x) => x}
+      getOptionLabel={(option) => selectOptionText(option, optionText)}
       isOptionEqualToValue={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
       }
@@ -112,7 +114,7 @@ const LocationInput = ({
       }}
       onInputChange={(event, newKeyword) => setKeyword(newKeyword)}
       noOptionsText={translate('ra.navigation.no_results')}
-      renderInput={params => {
+      renderInput={(params) => {
         // Autocomplete=off doesn't work anymore in modern browsers
         // https://stackoverflow.com/a/40791726/7900695
         params.inputProps.autoComplete = 'new-password';
@@ -121,18 +123,18 @@ const LocationInput = ({
             {...params}
             inputProps={{
               ...params.inputProps,
-              onBlur: e => {
+              onBlur: (e) => {
                 onBlur(e);
                 if (params.inputProps.onBlur) {
                   params.inputProps.onBlur(e);
                 }
-              }/*,
+              } /* ,
               onFocus: e => {
                 onFocus(e);
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
-              }*/
+              } */,
             }}
             label={
               label !== '' &&
@@ -140,8 +142,10 @@ const LocationInput = ({
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(isTouched && (error /*|| submitError*/))}
-            helperText={<InputHelperText touched={isTouched} error={error /*|| submitError*/} helperText={helperText} />}
+            error={!!((isTouched && error) /* || submitError */)}
+            helperText={
+              <InputHelperText touched={isTouched} error={error /* || submitError */} helperText={helperText} />
+            }
             {...rest}
           />
         );
@@ -179,7 +183,7 @@ const LocationInput = ({
 
 LocationInput.defaultProps = {
   variant: 'outlined',
-  size: 'small'
+  size: 'small',
 };
 
 export default LocationInput;

@@ -5,42 +5,38 @@ module.exports = {
   params: {
     query: {
       type: 'multi',
-      rules: [
-        { type: 'string' },
-        { type: 'object' }
-      ]
+      rules: [{ type: 'string' }, { type: 'object' }],
     },
     webId: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     dataset: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     let { query } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    if (!dataset) throw new Error('No dataset defined for triplestore update: ' + query);
+    if (!dataset) throw new Error(`No dataset defined for triplestore update: ${query}`);
 
-    if (typeof query === 'object')
-      query = this.generateSparqlQuery(query);
+    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
-    for (let dataset of datasets) {
+    for (const dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
       await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId
-        }
+          'X-SemappsUser': webId,
+        },
       });
     }
-  }
+  },
 };

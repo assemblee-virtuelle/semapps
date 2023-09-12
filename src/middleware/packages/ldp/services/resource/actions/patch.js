@@ -23,14 +23,14 @@ function checkTriplesSubjectIsResource(triples, resourceUri) {
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, id, body } = ctx.params;
+    const { containerUri, id, body } = ctx.params;
     const resourceUri = urlJoin(containerUri, id);
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri });
     try {
       if (ctx.meta.parser === 'sparql') {
         await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
           resourceUri,
-          sparqlUpdate: body
+          sparqlUpdate: body,
         });
       } else {
         throw new MoleculerError(`The content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
@@ -38,7 +38,7 @@ module.exports = {
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
+        'Content-Length': 0,
       };
     } catch (e) {
       console.error(e);
@@ -50,24 +50,24 @@ module.exports = {
     visibility: 'public',
     params: {
       resourceUri: {
-        type: 'string'
+        type: 'string',
       },
       sparqlUpdate: {
         type: 'string',
-        optional: true
+        optional: true,
       },
       triplesToAdd: {
         type: 'array',
-        optional: true
+        optional: true,
       },
       triplesToRemove: {
         type: 'array',
-        optional: true
+        optional: true,
       },
       webId: {
         type: 'string',
-        optional: true
-      }
+        optional: true,
+      },
     },
     async handler(ctx) {
       let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
@@ -91,13 +91,18 @@ module.exports = {
         if (parsedQuery.type !== 'update')
           throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
-        const triplesByOperation = Object.fromEntries(parsedQuery.updates
-          .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
-          .map(p => [p.updateType, p[p.updateType][0].triples])
+        const triplesByOperation = Object.fromEntries(
+          parsedQuery.updates
+            .filter((p) => ACCEPTED_OPERATIONS.includes(p.updateType))
+            .map((p) => [p.updateType, p[p.updateType][0].triples]),
         );
 
         if (Object.values(triplesByOperation).length === 0)
-          throw new MoleculerError('Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA', 400, 'BAD_REQUEST');
+          throw new MoleculerError(
+            'Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA',
+            400,
+            'BAD_REQUEST',
+          );
 
         triplesToAdd = triplesByOperation.insert;
         triplesToRemove = triplesByOperation.delete;
@@ -109,14 +114,14 @@ module.exports = {
       // Rebuild the sparql update to reduce security risks
       sparqlUpdate = {
         type: 'update',
-        updates: []
+        updates: [],
       };
 
       if (triplesToAdd) {
         checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
         sparqlUpdate.updates.push({
           updateType: 'insert',
-          insert: [{ type: 'bgp', triples: triplesToAdd }]
+          insert: [{ type: 'bgp', triples: triplesToAdd }],
         });
       }
 
@@ -124,29 +129,25 @@ module.exports = {
         checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
         sparqlUpdate.updates.push({
           updateType: 'delete',
-          delete: [{ type: 'bgp', triples: triplesToRemove }]
+          delete: [{ type: 'bgp', triples: triplesToRemove }],
         });
       }
 
       await ctx.call('triplestore.update', {
         query: sparqlUpdate,
-        webId
+        webId,
       });
 
       const returnValues = {
         resourceUri,
         triplesAdded: triplesToAdd,
         triplesRemoved: triplesToRemove,
-        webId
+        webId,
       };
 
-      ctx.emit(
-        'ldp.resource.patched',
-        returnValues,
-        { meta: { webId: null } }
-      );
+      ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null } });
 
       return returnValues;
-    }
-  }
+    },
+  },
 };

@@ -9,7 +9,7 @@ const { MirrorService, ObjectsWatcherMiddleware } = require('@semapps/sync');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { WebIdService } = require('@semapps/webid');
 const CONFIG = require('../config');
-const { clearDataset } = require("../utils");
+const { clearDataset } = require('../utils');
 
 const containers = [
   {
@@ -20,20 +20,20 @@ const containers = [
     path: '/protected-resources',
     acceptedTypes: ['pair:Resource'],
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
   },
   {
     path: '/actors',
     acceptedTypes: [ACTOR_TYPES.PERSON],
     excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
+    dereference: ['sec:publicKey', 'as:endpoints'],
   },
   {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
-  }
+    dereference: ['sec:publicKey', 'as:endpoints'],
+  },
 ];
 
 const initialize = async (port, mainDataset, accountsDataset, serverToMirror) => {
@@ -47,14 +47,14 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
-    nodeID: 'server' + port,
+    nodeID: `server${port}`,
     middlewares: [WebAclMiddleware({ baseUrl }), ObjectsWatcherMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
       options: {
-        level: 'warn'
-      }
-    }
+        level: 'warn',
+      },
+    },
   });
 
   await broker.createService(CoreService, {
@@ -65,14 +65,14 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
       },
       containers,
       api: {
-        port
+        port,
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true
-    }
+      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
+    },
   });
 
   await broker.createService(RelayService);
@@ -80,8 +80,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   if (serverToMirror) {
     await broker.createService(MirrorService, {
       settings: {
-       servers: [serverToMirror]
-      }
+        servers: [serverToMirror],
+      },
     });
   }
 
@@ -89,14 +89,14 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset
-    }
+      accountsDataset,
+    },
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: baseUrl + 'actors/'
-    }
+      usersContainer: `${baseUrl}actors/`,
+    },
   });
 
   await broker.createService(InferenceService, {
@@ -104,8 +104,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       baseUrl,
       acceptFromRemoteServers: true,
       offerToRemoteServers: true,
-      ontologies: defaultOntologies
-    }
+      ontologies: defaultOntologies,
+    },
   });
 
   await broker.start();
@@ -113,24 +113,24 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: baseUrl + 'resources',
+    resourceUri: `${baseUrl}resources`,
     additionalRights: {
       anon: {
         read: true,
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: baseUrl + 'applications',
+    resourceUri: `${baseUrl}applications`,
     additionalRights: {
       anon: {
         read: true,
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   return broker;

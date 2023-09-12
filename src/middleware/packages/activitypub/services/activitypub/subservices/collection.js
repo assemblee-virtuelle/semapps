@@ -4,7 +4,7 @@ const CollectionService = {
   name: 'activitypub.collection',
   settings: {
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    podProvider: false
+    podProvider: false,
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
@@ -17,17 +17,17 @@ const CollectionService = {
       const { collectionUri } = ctx.params;
       const { ordered, summary } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params
+        ...ctx.params,
       };
       await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
           type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary
+          summary,
         },
         contentType: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -46,7 +46,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -66,7 +66,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
       return Number(res[0].count.value) === 0;
     },
@@ -89,7 +89,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -108,11 +108,12 @@ const CollectionService = {
 
       // TODO check why thrown error is lost and process is stopped
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
+      if (!collectionExist)
+        throw new Error(`Cannot attach to a non-existing collection: ${collectionUri} (dataset: ${ctx.meta.dataset})`);
 
       await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -126,7 +127,7 @@ const CollectionService = {
       if (!itemUri) throw new Error('No valid item URI provided for activitypub.collection.detach');
 
       const collectionExist = await ctx.call('activitypub.collection.exist', { collectionUri });
-      if (!collectionExist) throw new Error('Cannot detach from a non-existing collection: ' + collectionUri);
+      if (!collectionExist) throw new Error(`Cannot detach from a non-existing collection: ${collectionUri}`);
 
       await ctx.call('triplestore.update', {
         query: `
@@ -134,7 +135,7 @@ const CollectionService = {
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -150,10 +151,10 @@ const CollectionService = {
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params
+        ...ctx.params,
       };
 
-      let collection = await ctx.call('triplestore.query', {
+      const collection = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           CONSTRUCT {
@@ -166,7 +167,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId
+        webId,
       });
 
       // No persisted collection found
@@ -180,7 +181,7 @@ const CollectionService = {
       }
 
       // Caution: we must do a select query, because construct queries cannot be sorted
-      let result = await ctx.call('triplestore.query', {
+      const result = await ctx.call('triplestore.query', {
         query: `
           PREFIX as: <https://www.w3.org/ns/activitystreams#>
           SELECT DISTINCT ?itemUri
@@ -194,10 +195,10 @@ const CollectionService = {
           ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
         `,
         accept: MIME_TYPES.JSON,
-        webId
+        webId,
       });
 
-      const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
+      const allItems = result.filter((node) => node.itemUri).map((node) => node.itemUri.value);
       const numPages = !itemsPerPage ? 1 : allItems.length > 0 ? Math.ceil(allItems.length / itemsPerPage) : 0;
       let returnData = null;
 
@@ -205,7 +206,8 @@ const CollectionService = {
         // The collection page does not exist
         ctx.meta.$statusCode = 404;
         return;
-      } else if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
+      }
+      if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
@@ -213,13 +215,13 @@ const CollectionService = {
           id: collectionUri,
           type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
           summary: collection.summary,
-          first: numPages > 0 ? collectionUri + '?page=1' : undefined,
-          last: numPages > 0 ? collectionUri + '?page=' + numPages : undefined,
-          totalItems: allItems ? allItems.length : 0
+          first: numPages > 0 ? `${collectionUri}?page=1` : undefined,
+          last: numPages > 0 ? `${collectionUri}?page=${numPages}` : undefined,
+          totalItems: allItems ? allItems.length : 0,
         };
       } else {
-        let selectedItemsUris = allItems,
-          selectedItems = [];
+        let selectedItemsUris = allItems;
+        let selectedItems = [];
         const itemsProp = this.isOrderedCollection(collection) ? 'orderedItems' : 'items';
 
         // If pagination is enabled, return a slice of the items
@@ -229,13 +231,19 @@ const CollectionService = {
         }
 
         if (dereferenceItems) {
-          for (let itemUri of selectedItemsUris) {
+          for (const itemUri of selectedItemsUris) {
             try {
-              selectedItems.push(await ctx.call('activitypub.object.get', { objectUri: itemUri, actorUri: webId, jsonContext: this.settings.jsonContext }));
+              selectedItems.push(
+                await ctx.call('activitypub.object.get', {
+                  objectUri: itemUri,
+                  actorUri: webId,
+                  jsonContext: this.settings.jsonContext,
+                }),
+              );
             } catch (e) {
               if (e.code === 404 || e.code === 403) {
                 // Ignore resource if it is not found
-                this.logger.warn('Resource not found with URI: ' + itemUri);
+                this.logger.warn(`Resource not found with URI: ${itemUri}`);
               } else {
                 throw e;
               }
@@ -251,13 +259,13 @@ const CollectionService = {
         if (itemsPerPage) {
           returnData = {
             '@context': this.settings.jsonContext,
-            id: collectionUri + '?page=' + page,
+            id: `${collectionUri}?page=${page}`,
             type: this.isOrderedCollection(collection) ? 'OrderedCollectionPage' : 'CollectionPage',
             partOf: collectionUri,
-            prev: page > 1 ? collectionUri + '?page=' + (parseInt(page) - 1) : undefined,
-            next: page < numPages ? collectionUri + '?page=' + (parseInt(page) + 1) : undefined,
+            prev: page > 1 ? `${collectionUri}?page=${parseInt(page) - 1}` : undefined,
+            next: page < numPages ? `${collectionUri}?page=${parseInt(page) + 1}` : undefined,
             [itemsProp]: selectedItems,
-            totalItems: allItems ? allItems.length : 0
+            totalItems: allItems ? allItems.length : 0,
           };
         } else {
           // No pagination, return the collection
@@ -267,7 +275,7 @@ const CollectionService = {
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
             [itemsProp]: selectedItems,
-            totalItems: allItems ? allItems.length : 0
+            totalItems: allItems ? allItems.length : 0,
           };
         }
       }
@@ -288,12 +296,12 @@ const CollectionService = {
             ?s1 ?p1 ?o1 .
           }
           WHERE { 
-            FILTER(?container IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            FILTER(?container IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
             ?container as:items ?s1 .
             ?s1 ?p1 ?o1 .
           } 
         `,
-        webId: 'system'
+        webId: 'system',
       });
     },
     /*
@@ -310,11 +318,11 @@ const CollectionService = {
             ?s1 ?p1 ?o1 .
           }
           WHERE { 
-            FILTER(?s1 IN (<${collectionUri}>, <${collectionUri + '/'}>)) .
+            FILTER(?s1 IN (<${collectionUri}>, <${`${collectionUri}/`}>)) .
             ?s1 ?p1 ?o1 .
           }
         `,
-        webId: 'system'
+        webId: 'system',
       });
     },
     async getOwner(ctx) {
@@ -333,11 +341,11 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
 
       return results.length > 0 ? results[0].actorUri.value : null;
-    }
+    },
   },
   hooks: {
     before: {
@@ -350,8 +358,8 @@ const CollectionService = {
             ctx.meta.dataset = parts[1];
           }
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     isOrderedCollection(collection) {
@@ -359,8 +367,8 @@ const CollectionService = {
         collection['@type'] === 'as:OrderedCollection' ||
         (Array.isArray(collection['@type']) && collection['@type'].includes('as:OrderedCollection'))
       );
-    }
-  }
+    },
+  },
 };
 
 module.exports = CollectionService;

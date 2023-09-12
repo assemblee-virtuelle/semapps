@@ -1,5 +1,5 @@
-const CONFIG = require('../config');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const CONFIG = require('../config');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);
@@ -19,8 +19,8 @@ describe('Container options', () => {
     const jsonContext = [
       'https://www.w3.org/ns/activitystreams',
       {
-        schema: 'http://schema.org/'
-      }
+        schema: 'http://schema.org/',
+      },
     ];
 
     const resourceUri = await broker.call('ldp.container.post', {
@@ -35,12 +35,12 @@ describe('Container options', () => {
             'schema:streetAddress': 'Rue du Général Paton',
             'schema:postalCode': '28190',
             'schema:addressLocality': 'Pontgouin',
-            'schema:addressCountry': 'France'
-          }
-        }
+            'schema:addressCountry': 'France',
+          },
+        },
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
+      containerUri: `${CONFIG.HOME_URL}resources`,
     });
 
     // Get resource without dereference
@@ -48,12 +48,12 @@ describe('Container options', () => {
       broker.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        jsonContext
-      })
+        jsonContext,
+      }),
     ).resolves.toMatchObject({
       '@context': jsonContext,
       type: 'Event',
-      location: {}
+      location: {},
     });
 
     // Get resource with partial dereference
@@ -62,16 +62,16 @@ describe('Container options', () => {
         resourceUri,
         dereference: ['as:location'],
         accept: MIME_TYPES.JSON,
-        jsonContext: jsonContext
-      })
+        jsonContext: jsonContext,
+      }),
     ).resolves.toMatchObject({
       '@context': jsonContext,
       type: 'Event',
       location: {
         type: 'Place',
         name: 'Chantilly',
-        'schema:address': {}
-      }
+        'schema:address': {},
+      },
     });
 
     // Get resource with full dereference
@@ -80,8 +80,8 @@ describe('Container options', () => {
         resourceUri,
         dereference: ['as:location/schema:address'],
         accept: MIME_TYPES.JSON,
-        jsonContext
-      })
+        jsonContext,
+      }),
     ).resolves.toMatchObject({
       '@context': jsonContext,
       type: 'Event',
@@ -93,9 +93,9 @@ describe('Container options', () => {
           'schema:streetAddress': 'Rue du Général Paton',
           'schema:postalCode': '28190',
           'schema:addressLocality': 'Pontgouin',
-          'schema:addressCountry': 'France'
-        }
-      }
+          'schema:addressCountry': 'France',
+        },
+      },
     });
   });
 
@@ -103,18 +103,18 @@ describe('Container options', () => {
     const organizationUri = await broker.call('ldp.container.post', {
       resource: {
         '@context': {
-          pair: 'http://virtual-assembly.org/ontologies/pair#'
+          pair: 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Organization',
         'pair:description': 'myOrga',
         'pair:label': 'myTitle',
         'pair:hasLocation': {
           '@type': 'pair:Place',
-          'pair:description': 'myPlace'
-        }
+          'pair:description': 'myPlace',
+        },
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'organizations'
+      containerUri: `${CONFIG.HOME_URL}organizations`,
     });
 
     orga1 = await broker.call('ldp.resource.get', { resourceUri: organizationUri, accept: MIME_TYPES.JSON });
@@ -123,7 +123,7 @@ describe('Container options', () => {
 
     const place = await broker.call('ldp.resource.get', {
       resourceUri: orga1['pair:hasLocation']['@id'],
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
     });
     expect(place['pair:description']).toBe('myPlace');
   });
@@ -134,11 +134,11 @@ describe('Container options', () => {
         ...orga1,
         'pair:hasLocation': {
           '@type': 'pair:Place',
-          'pair:description': 'myPlace2'
+          'pair:description': 'myPlace2',
         },
-        'pair:description': 'myOrga2'
+        'pair:description': 'myOrga2',
       },
-      contentType: MIME_TYPES.JSON
+      contentType: MIME_TYPES.JSON,
     });
 
     const orga1Updated = await broker.call('ldp.resource.get', { resourceUri: orga1['@id'], accept: MIME_TYPES.JSON });
@@ -147,21 +147,21 @@ describe('Container options', () => {
 
     const place = await broker.call('ldp.resource.get', {
       resourceUri: orga1Updated['pair:hasLocation']['@id'],
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
     });
     expect(place['pair:description']).toBe('myPlace2');
   }, 20000);
 
   test('Delete resource with disassembly', async () => {
     await broker.call('ldp.resource.delete', {
-      resourceUri: orga1['@id']
+      resourceUri: orga1['@id'],
     });
 
     let error;
     try {
       await broker.call('ldp.resource.get', {
         resourceUri: orga1['pair:hasLocation']['@id'],
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
       });
     } catch (e) {
       error = e;

@@ -9,11 +9,11 @@ module.exports = {
       groupSlug: { type: 'string', optional: true, min: 1, trim: true },
       groupUri: { type: 'string', optional: true, trim: true },
       webId: { type: 'string', optional: true },
-      memberId: { type: 'string', optional: true }
+      memberId: { type: 'string', optional: true },
     },
     async handler(ctx) {
       let { groupSlug, groupUri, memberId } = ctx.params;
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
@@ -26,12 +26,12 @@ module.exports = {
 
       if (webId !== 'system') {
         // verifier que nous avons bien le droit Read sur le group.
-        let groupRights = await ctx.call('webacl.resource.hasRights', {
+        const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
-            read: true
+            read: true,
           },
-          webId
+          webId,
         });
         if (!groupRights.read) throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
       }
@@ -46,8 +46,8 @@ module.exports = {
             <${groupUri}> vcard:hasMember <${memberId}> .
           } }
           `,
-        webId: 'system'
+        webId: 'system',
       });
-    }
-  }
+    },
+  },
 };

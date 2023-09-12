@@ -4,19 +4,19 @@ const { parseFile, saveDatasetMeta } = require('@semapps/middlewares');
 const fetch = require('node-fetch');
 const { Errors: E } = require('moleculer-web');
 
-const stream2buffer = stream => {
+const stream2buffer = (stream) => {
   return new Promise((resolve, reject) => {
     const _buf = [];
-    stream.on("data", (chunk) => _buf.push(chunk));
-    stream.on("end", () => resolve(Buffer.concat(_buf)));
-    stream.on("error", (err) => reject(err));
+    stream.on('data', (chunk) => _buf.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(_buf)));
+    stream.on('error', (err) => reject(err));
   });
 };
 
 const ProxyService = {
   name: 'signature.proxy',
   settings: {
-    podProvider: false
+    podProvider: false,
   },
   dependencies: ['api'],
   async started() {
@@ -25,8 +25,8 @@ const ProxyService = {
       authorization: true,
       authentication: false,
       aliases: {
-        'POST /': [parseFile, saveDatasetMeta, 'signature.proxy.api_query'] // parseFile handles multipart/form-data
-      }
+        'POST /': [parseFile, saveDatasetMeta, 'signature.proxy.api_query'], // parseFile handles multipart/form-data
+      },
     };
 
     if (this.settings.podProvider) {
@@ -42,9 +42,10 @@ const ProxyService = {
       const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
 
       // If a file is uploaded, convert it to a Buffer
-      const body = ctx.params.files && ctx.params.files.length > 0
-        ? await stream2buffer(ctx.params.files[0].readableStream)
-        : ctx.params.body;
+      const body =
+        ctx.params.files && ctx.params.files.length > 0
+          ? await stream2buffer(ctx.params.files[0].readableStream)
+          : ctx.params.body;
 
       const actorUri = ctx.meta.webId;
 
@@ -61,11 +62,11 @@ const ProxyService = {
             method,
             headers,
             body,
-            actorUri
+            actorUri,
           },
           {
-            parentCtx: ctx
-          }
+            parentCtx: ctx,
+          },
         );
         ctx.meta.$statusCode = response.status;
         ctx.meta.$statusMessage = response.statusText;
@@ -84,7 +85,7 @@ const ProxyService = {
         url,
         method,
         body,
-        actorUri
+        actorUri,
       });
 
       // Convert Headers object if necessary (otherwise we can't destructure it below)
@@ -96,16 +97,16 @@ const ProxyService = {
         method,
         headers: {
           ...headers,
-          ...signatureHeaders
+          ...signatureHeaders,
         },
-        body
+        body,
       });
 
       if (response.ok) {
         let body = await response.text();
         try {
           body = JSON.parse(body);
-        } catch(e) {
+        } catch (e) {
           // Do nothing if body is not JSON
         }
 
@@ -117,29 +118,28 @@ const ProxyService = {
           body,
           headers: Object.fromEntries(response.headers.entries()),
           status: response.status,
-          statusText: response.statusText
-        }
-      } else {
-        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
-        throw new MoleculerError(response.statusText, response.status);
+          statusText: response.statusText,
+        };
       }
-    }
+      this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
+      throw new MoleculerError(response.statusText, response.status);
+    },
   },
   events: {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       if (this.settings.podProvider) {
         const services = await ctx.call('$node.services');
-        if (services.filter(s => s.name === 'activitypub.actor')) {
+        if (services.filter((s) => s.name === 'activitypub.actor')) {
           await ctx.call('activitypub.actor.addEndpoint', {
             actorUri: webId,
             predicate: 'https://www.w3.org/ns/activitystreams#proxyUrl',
-            endpoint: urlJoin(webId, 'proxy')
+            endpoint: urlJoin(webId, 'proxy'),
           });
         }
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = ProxyService;

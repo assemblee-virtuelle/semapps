@@ -2,7 +2,7 @@ const { Strategy } = require('passport-local');
 const AuthMixin = require('../mixins/auth');
 const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
-const AuthMailService = require('../services/mail');
+const AuthMailService = require('./mail');
 
 const AuthLocalService = {
   name: 'auth',
@@ -19,13 +19,13 @@ const AuthLocalService = {
       from: null,
       transport: {
         host: null,
-        port: null
+        port: null,
       },
       defaults: {
         locale: null,
-        frontUrl: null
-      }
-    }
+        frontUrl: null,
+      },
+    },
   },
   async created() {
     const { mail } = this.settings;
@@ -34,8 +34,8 @@ const AuthLocalService = {
 
     await this.broker.createService(AuthMailService, {
       settings: {
-        ...mail
-      }
+        ...mail,
+      },
     });
   },
   actions: {
@@ -46,7 +46,7 @@ const AuthLocalService = {
         username,
         email,
         password,
-        ...this.pickAccountData(rest)
+        ...this.pickAccountData(rest),
       });
 
       const profileData = { nick: username, email, ...rest };
@@ -80,14 +80,14 @@ const AuthLocalService = {
       if (this.settings.formUrl) {
         const formUrl = new URL(this.settings.formUrl);
         if (ctx.params) {
-          for (let [key, value] of Object.entries(ctx.params)) {
+          for (const [key, value] of Object.entries(ctx.params)) {
             formUrl.searchParams.set(key, value);
           }
         }
         ctx.meta.$statusCode = 302;
         ctx.meta.$location = formUrl.toString();
       } else {
-        throw new Error('No formUrl defined in auth.local settings')
+        throw new Error('No formUrl defined in auth.local settings');
       }
     },
     async resetPassword(ctx) {
@@ -103,7 +103,7 @@ const AuthLocalService = {
 
       await ctx.call('auth.mail.sendResetPasswordEmail', {
         account,
-        token
+        token,
       });
     },
     async setNewPassword(ctx) {
@@ -116,7 +116,7 @@ const AuthLocalService = {
       }
 
       await ctx.call('auth.account.setNewPassword', { webId: account.webId, token, password });
-    }
+    },
   },
   methods: {
     getStrategy() {
@@ -124,19 +124,19 @@ const AuthLocalService = {
         {
           usernameField: 'username',
           passwordField: 'password',
-          passReqToCallback: true // We want to have access to req below
+          passReqToCallback: true, // We want to have access to req below
         },
         (req, username, password, done) => {
           req.$ctx
             .call('auth.login', { username, password })
-            .then(returnedData => {
+            .then((returnedData) => {
               done(null, returnedData);
             })
-            .catch(e => {
+            .catch((e) => {
               console.error(e);
               done(new MoleculerError(e.message, 401), false);
             });
-        }
+        },
       );
     },
     getApiRoutes() {
@@ -145,47 +145,47 @@ const AuthLocalService = {
         name: 'auth-login',
         use: [this.passport.initialize()],
         aliases: {
-          'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken]
-        }
+          'POST /': [this.passport.authenticate(this.passportId, { session: false }), sendToken],
+        },
       };
 
       const logoutRoute = {
         path: '/auth/logout',
         name: 'auth-logout',
         aliases: {
-          'GET /': 'auth.logout'
-        }
+          'GET /': 'auth.logout',
+        },
       };
 
       const signupRoute = {
         path: '/auth/signup',
         name: 'auth-signup',
         aliases: {
-          'POST /': 'auth.signup'
-        }
+          'POST /': 'auth.signup',
+        },
       };
 
       const formRoute = {
         path: '/auth',
         name: 'auth',
         aliases: {
-          'GET /': 'auth.redirectToForm'
-        }
+          'GET /': 'auth.redirectToForm',
+        },
       };
 
       const resetPasswordRoute = {
         path: '/auth/reset_password',
         name: 'auth-reset-password',
         aliases: {
-          'POST /': 'auth.resetPassword'
-        }
+          'POST /': 'auth.resetPassword',
+        },
       };
       const setNewPasswordRoute = {
         path: '/auth/new_password',
         name: 'auth-new-password',
         aliases: {
-          'POST /': 'auth.setNewPassword'
-        }
+          'POST /': 'auth.setNewPassword',
+        },
       };
 
       const accountSettingsRoute = {
@@ -193,20 +193,27 @@ const AuthLocalService = {
         name: 'auth-account',
         aliases: {
           'GET /': 'auth.account.findSettingsByWebId',
-          'POST /': 'auth.account.updateAccountSettings'
+          'POST /': 'auth.account.updateAccountSettings',
         },
-        authorization: true
+        authorization: true,
       };
 
-      const routes = [loginRoute, logoutRoute, formRoute, resetPasswordRoute, setNewPasswordRoute, accountSettingsRoute];
+      const routes = [
+        loginRoute,
+        logoutRoute,
+        formRoute,
+        resetPasswordRoute,
+        setNewPasswordRoute,
+        accountSettingsRoute,
+      ];
 
       if (this.settings.registrationAllowed) {
         return [...routes, signupRoute];
       }
 
       return routes;
-    }
-  }
+    },
+  },
 };
 
 module.exports = AuthLocalService;

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useGetList } from 'react-admin';
-import renderMentions from './renderMentions';
 import { useDataModel } from '@semapps/semantic-data-provider';
+import renderMentions from './renderMentions';
 
-const useMentions = userResource => {
+const useMentions = (userResource) => {
   const userDataModel = useDataModel(userResource);
 
   const { data } = useGetList(
@@ -11,17 +11,17 @@ const useMentions = userResource => {
     {
       filter: {
         _predicates: [userDataModel?.fieldsMapping?.title],
-        blankNodes: []
-      }
+        blankNodes: [],
+      },
     },
     {
-      enabled: !!userDataModel?.fieldsMapping?.title
-    }
+      enabled: !!userDataModel?.fieldsMapping?.title,
+    },
   );
 
   const availableMentions = useMemo(() => {
     if (data) {
-      return data.map(item => ({ id: item.id, label: item[userDataModel?.fieldsMapping?.title] }));
+      return data.map((item) => ({ id: item.id, label: item[userDataModel?.fieldsMapping?.title] }));
     }
   }, [data]);
 
@@ -35,7 +35,7 @@ const useMentions = userResource => {
 
   return {
     items,
-    render: renderMentions
+    render: renderMentions,
   };
 };
 

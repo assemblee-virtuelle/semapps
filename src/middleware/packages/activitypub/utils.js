@@ -1,21 +1,20 @@
 const { ACTIVITY_TYPES } = require('./constants');
 
-const objectCurrentToId = activityJson => {
+const objectCurrentToId = (activityJson) => {
   if (activityJson.object && typeof activityJson.object === 'object' && activityJson.object.current) {
     const { current, ...object } = activityJson.object;
     return {
       ...activityJson,
       object: {
         id: current,
-        ...objectCurrentToId(object)
-      }
+        ...objectCurrentToId(object),
+      },
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
-const objectIdToCurrent = activityJson => {
+const objectIdToCurrent = (activityJson) => {
   // If the activity has an object predicate, and this object is not an activity
   if (
     activityJson.object &&
@@ -27,19 +26,18 @@ const objectIdToCurrent = activityJson => {
       ...activityJson,
       object: {
         current: id || arobaseId,
-        ...objectIdToCurrent(object)
-      }
+        ...objectIdToCurrent(object),
+      },
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
-const collectionPermissionsWithAnonRead = webId => {
-  let permissions = {
+const collectionPermissionsWithAnonRead = (webId) => {
+  const permissions = {
     anon: {
-      read: true
-    }
+      read: true,
+    },
   };
 
   if (webId !== 'anon' && webId !== 'system') {
@@ -47,7 +45,7 @@ const collectionPermissionsWithAnonRead = webId => {
       uri: webId,
       read: true,
       write: true,
-      control: true
+      control: true,
     };
   }
 
@@ -55,15 +53,15 @@ const collectionPermissionsWithAnonRead = webId => {
 };
 
 // Items or recipients may be string or array, so default to array for easier handling
-const defaultToArray = value => {
+const defaultToArray = (value) => {
   return !value ? undefined : Array.isArray(value) ? value : [value];
 };
 
-const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = (str) => str.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = (str) => str.match(new RegExp(`(.*)/.*`))[1];
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
 module.exports = {
   objectCurrentToId,
@@ -72,5 +70,5 @@ module.exports = {
   defaultToArray,
   getSlugFromUri,
   getContainerFromUri,
-  delay
+  delay,
 };

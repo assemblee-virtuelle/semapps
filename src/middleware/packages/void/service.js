@@ -1,7 +1,8 @@
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer;
+const { JsonLdSerializer } = require('jsonld-streaming-serializer');
 const { DataFactory, Writer } = require('n3');
+
 const { quad, namedNode, literal, blankNode } = DataFactory;
 const { MoleculerError } = require('moleculer').Errors;
 const { getPrefixJSON, createFragmentURL, regexProtocolAndHostAndPort, defaultToArray } = require('@semapps/ldp');
@@ -10,14 +11,14 @@ const { parseHeader } = require('@semapps/middlewares');
 const prefixes = {
   dc: 'http://purl.org/dc/terms/',
   void: 'http://rdfs.org/ns/void#',
-  semapps: 'http://semapps.org/ns/core#'
+  semapps: 'http://semapps.org/ns/core#',
 };
 
 function streamToString(stream) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk) => (res += chunk));
+    stream.on('error', (err) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
@@ -25,60 +26,60 @@ function streamToString(stream) {
 const jsonContext = {
   ...prefixes,
   'dc:license': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'void:feature': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'void:sparqlEndpoint': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'void:rootResource': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'void:vocabulary': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'void:entities': { '@type': 'xsd:integer' },
   'void:doNotMirror': { '@type': 'xsd:boolean' },
   'void:class': { '@type': '@id' },
   'void:classPartition': { '@type': '@id' },
   'semapps:blankNodes': {
-    '@type': '@id'
-  }
+    '@type': '@id',
+  },
 };
 
 const addClassPartition = (serverUrl, partition, graph, scalar) => {
-  let blank = blankNode('b' + scalar);
+  const blank = blankNode(`b${scalar}`);
   blank.data = [
     {
-      s: blankNode('b' + scalar),
+      s: blankNode(`b${scalar}`),
       p: namedNode('http://rdfs.org/ns/void#uriSpace'),
-      o: literal(partition['http://rdfs.org/ns/void#uriSpace'])
+      o: literal(partition['http://rdfs.org/ns/void#uriSpace']),
     },
-    ...partition['http://rdfs.org/ns/void#class'].map(t => {
-      return { s: blankNode('b' + scalar), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(t) };
+    ...partition['http://rdfs.org/ns/void#class'].map((t) => {
+      return { s: blankNode(`b${scalar}`), p: namedNode('http://rdfs.org/ns/void#class'), o: namedNode(t) };
     }),
     {
-      s: blankNode('b' + scalar),
+      s: blankNode(`b${scalar}`),
       p: namedNode('http://rdfs.org/ns/void#entities'),
       o: literal(
         partition['http://rdfs.org/ns/void#entities'].toString(),
-        namedNode('http://www.w3.org/2001/XMLSchema#integer')
-      )
-    }
+        namedNode('http://www.w3.org/2001/XMLSchema#integer'),
+      ),
+    },
   ];
   if (partition['http://semapps.org/ns/core#blankNodes'])
     blank.data.push({
-      s: blankNode('b' + scalar),
+      s: blankNode(`b${scalar}`),
       p: namedNode('http://semapps.org/ns/core#blankNodes'),
-      o: partition['http://semapps.org/ns/core#blankNodes'].map(bn => namedNode(bn))
+      o: partition['http://semapps.org/ns/core#blankNodes'].map((bn) => namedNode(bn)),
     });
   if (partition['http://semapps.org/ns/core#doNotMirror'])
     blank.data.push({
-      s: blankNode('b' + scalar),
+      s: blankNode(`b${scalar}`),
       p: namedNode('http://semapps.org/ns/core#doNotMirror'),
-      o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
+      o: literal(true, namedNode('http://www.w3.org/2001/XMLSchema#boolean')),
     });
 
   graph.push({ s: namedNode(serverUrl), p: namedNode('http://rdfs.org/ns/void#classPartition'), o: blank });
@@ -93,14 +94,14 @@ const addMirrorServer = async (
   mirrorGraph,
   ctx,
   nextScalar,
-  originalVoid
+  originalVoid,
 ) => {
-  let thisServer = createFragmentURL(baseUrl, serverUrl);
+  const thisServer = createFragmentURL(baseUrl, serverUrl);
 
   graph.push({
     s: namedNode(thisServer),
     p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    o: namedNode('http://rdfs.org/ns/void#Dataset')
+    o: namedNode('http://rdfs.org/ns/void#Dataset'),
   });
   // graph.push({
   //   s: namedNode(thisServer),
@@ -110,7 +111,7 @@ const addMirrorServer = async (
   graph.push({
     s: namedNode(thisServer),
     p: namedNode('http://rdfs.org/ns/void#feature'),
-    o: namedNode('http://www.w3.org/ns/formats/N-Triples')
+    o: namedNode('http://www.w3.org/ns/formats/N-Triples'),
   });
   graph.push({ s: namedNode(thisServer), p: namedNode('http://rdfs.org/ns/void#uriSpace'), o: literal(serverUrl) });
 
@@ -118,10 +119,10 @@ const addMirrorServer = async (
     graph.push({
       s: namedNode(thisServer),
       p: namedNode('http://rdfs.org/ns/void#sparqlEndpoint'),
-      o: namedNode(hasSparql)
+      o: namedNode(hasSparql),
     });
 
-  let partitionsMap = {};
+  const partitionsMap = {};
   if (originalVoid) {
     const originalPartitions = originalVoid['void:classPartition'];
 
@@ -136,21 +137,21 @@ const addMirrorServer = async (
 
   for (const [i, p] of containers.entries()) {
     const types = await ctx.call('triplestore.query', {
-      query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`
+      query: `SELECT DISTINCT ?t FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o. ?o <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?t }`,
     });
 
-    let partition = {
+    const partition = {
       'http://rdfs.org/ns/void#uriSpace': p,
-      'http://rdfs.org/ns/void#class': types.map(type => type.t.value)
+      'http://rdfs.org/ns/void#class': types.map((type) => type.t.value),
     };
 
-    let dereference = partitionsMap[p];
+    const dereference = partitionsMap[p];
     if (dereference) {
       partition['http://semapps.org/ns/core#blankNodes'] = defaultToArray(dereference['semapps:blankNodes']);
     }
 
     const count = await ctx.call('triplestore.query', {
-      query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`
+      query: `SELECT (COUNT (?o) as ?count) FROM <${mirrorGraph}> { <${p}> <http://www.w3.org/ns/ldp#contains> ?o }`,
     });
 
     partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
@@ -167,14 +168,14 @@ module.exports = {
     ontologies: [],
     title: null,
     description: null,
-    license: null
+    license: null,
   },
   dependencies: ['ldp.registry', 'api', 'triplestore', 'jsonld'],
   actions: {
     getRemote: {
       visibility: 'public',
       params: {
-        serverUrl: { type: 'string', optional: false }
+        serverUrl: { type: 'string', optional: false },
       },
       async handler(ctx) {
         try {
@@ -182,23 +183,23 @@ module.exports = {
           const response = await fetch(voidUrl, {
             method: 'GET',
             headers: {
-              Accept: 'application/ld+json'
-            }
+              Accept: 'application/ld+json',
+            },
           });
           if (response.ok) {
             const json = await response.json();
             return json;
           }
         } catch (e) {
-          this.logger.warn('Silently ignored error when fetching void endpoint: ' + e.message);
+          this.logger.warn(`Silently ignored error when fetching void endpoint: ${e.message}`);
         }
-      }
+      },
     },
     get: {
       visibility: 'public',
       params: {
         accept: { type: 'string', optional: true },
-        webId: { type: 'string', optional: true }
+        webId: { type: 'string', optional: true },
       },
       async handler(ctx) {
         let { webId, accept } = ctx.params;
@@ -212,33 +213,33 @@ module.exports = {
 
         // first we compile the local data void information (local containers)
 
-        let thisServer = createFragmentURL(url, this.settings.baseUrl);
+        const thisServer = createFragmentURL(url, this.settings.baseUrl);
 
-        let graph = [];
+        const graph = [];
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-          o: namedNode('http://rdfs.org/ns/void#Dataset')
+          o: namedNode('http://rdfs.org/ns/void#Dataset'),
         });
         if (this.settings.title) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/title'),
-            o: literal(this.settings.title)
+            o: literal(this.settings.title),
           });
         }
         if (this.settings.description) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/description'),
-            o: literal(this.settings.description)
+            o: literal(this.settings.description),
           });
         }
         if (this.settings.license) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://purl.org/dc/terms/license'),
-            o: namedNode(this.settings.license)
+            o: namedNode(this.settings.license),
           });
         }
         // graph.push({
@@ -249,36 +250,36 @@ module.exports = {
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#feature'),
-          o: namedNode('http://www.w3.org/ns/formats/N-Triples')
+          o: namedNode('http://www.w3.org/ns/formats/N-Triples'),
         });
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#uriSpace'),
-          o: literal(this.settings.baseUrl)
+          o: literal(this.settings.baseUrl),
         });
 
         const services = await ctx.call('$node.services');
         const hasSparql =
-          services.filter(s => s.name === 'sparqlEndpoint').length > 0
+          services.filter((s) => s.name === 'sparqlEndpoint').length > 0
             ? urlJoin(this.settings.baseUrl, 'sparql')
             : undefined;
         if (hasSparql)
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://rdfs.org/ns/void#sparqlEndpoint'),
-            o: namedNode(hasSparql)
+            o: namedNode(hasSparql),
           });
 
         graph.push({
           s: namedNode(thisServer),
           p: namedNode('http://rdfs.org/ns/void#rootResource'),
-          o: namedNode(this.settings.baseUrl)
+          o: namedNode(this.settings.baseUrl),
         });
         for (const onto of this.settings.ontologies) {
           graph.push({
             s: namedNode(thisServer),
             p: namedNode('http://rdfs.org/ns/void#vocabulary'),
-            o: namedNode(onto.url)
+            o: namedNode(onto.url),
           });
         }
 
@@ -290,14 +291,14 @@ module.exports = {
         // then we move on to the mirrored data (containers that have been mirrored from remote servers)
 
         const serversContainers = await ctx.call('triplestore.query', {
-          query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`
+          query: `SELECT DISTINCT ?s FROM <${this.settings.mirrorGraphName}> { ?s <http://www.w3.org/ns/ldp#contains> ?o }`,
         });
 
-        let serversMap = {};
-        for (const s of serversContainers.map(sc => sc.s.value)) {
+        const serversMap = {};
+        for (const s of serversContainers.map((sc) => sc.s.value)) {
           const res = s.match(regexProtocolAndHostAndPort);
           if (res) {
-            let name = urlJoin(res[0], '/');
+            const name = urlJoin(res[0], '/');
             let serverName = serversMap[name];
             if (!serverName) {
               serversMap[name] = [];
@@ -311,8 +312,8 @@ module.exports = {
           let originalVoid;
           const json = await ctx.call('void.getRemote', { serverUrl });
           if (json) {
-            let mapServers = {};
-            for (let s of json['@graph']) {
+            const mapServers = {};
+            for (const s of json['@graph']) {
               mapServers[s['@id']] = s;
             }
             const server = mapServers[createFragmentURL('', serverUrl)];
@@ -328,7 +329,7 @@ module.exports = {
             this.settings.mirrorGraphName,
             ctx,
             scalar,
-            originalVoid
+            originalVoid,
           );
           scalar += serversMap[serverUrl].length;
         }
@@ -342,18 +343,18 @@ module.exports = {
         // };
 
         return await this.formatOutput(ctx, graph, url, accept === MIME_TYPES.JSON);
-      }
+      },
     },
     api_get: async function api(ctx) {
-      let accept = ctx.meta.headers.accept;
+      let { accept } = ctx.meta.headers;
       if (accept.includes('*/*')) accept = MIME_TYPES.JSON;
       else if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-        throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
+        throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
 
       return await ctx.call('void.get', {
-        accept: accept
+        accept: accept,
       });
-    }
+    },
   },
   async started() {
     await this.broker.call('api.addRoute', {
@@ -364,51 +365,51 @@ module.exports = {
         authorization: false,
         authentication: true,
         aliases: {
-          'GET /': [parseHeader, 'void.api_get']
-        }
-      }
+          'GET /': [parseHeader, 'void.api_get'],
+        },
+      },
     });
   },
   methods: {
     async getContainers(ctx) {
-      const baseUrl = this.settings.baseUrl;
+      const { baseUrl } = this.settings;
       const registeredContainers = await ctx.call('ldp.registry.list');
 
       const res = await Promise.all(
         Object.values(registeredContainers)
-          .filter(c => c.acceptedTypes)
-          .map(async c => {
-            let partition = {
+          .filter((c) => c.acceptedTypes)
+          .map(async (c) => {
+            const partition = {
               'http://rdfs.org/ns/void#uriSpace': urlJoin(baseUrl, c.path),
-              'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes)
+              'http://rdfs.org/ns/void#class': defaultToArray(c.acceptedTypes),
             };
             if (c.dereference) partition['http://semapps.org/ns/core#blankNodes'] = c.dereference;
             if (c.excludeFromMirror) partition['http://semapps.org/ns/core#doNotMirror'] = true;
             const count = await ctx.call('triplestore.query', {
-              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`
+              query: `SELECT (COUNT (?o) as ?count) { <${partition['http://rdfs.org/ns/void#uriSpace']}> <http://www.w3.org/ns/ldp#contains> ?o }`,
             });
             partition['http://rdfs.org/ns/void#entities'] = Number(count[0].count.value);
             return partition;
-          })
+          }),
       );
       return res;
     },
     async formatOutput(ctx, output, voidUrl, jsonLD) {
       const prefix = getPrefixJSON(this.settings.ontologies);
       if (!jsonLD) {
-        let turtle = await new Promise((resolve, reject) => {
+        const turtle = await new Promise((resolve, reject) => {
           const writer = new Writer({
-            prefixes: { ...prefixes, ...prefix, '': voidUrl + '#' },
-            format: 'Turtle'
+            prefixes: { ...prefixes, ...prefix, '': `${voidUrl}#` },
+            format: 'Turtle',
           });
-          output.forEach(f => {
+          output.forEach((f) => {
             if (f.o.termType === 'BlankNode') {
-              let predicates = f.o.data.map(p => {
+              const predicates = f.o.data.map((p) => {
                 let obj = p.o;
                 if (Array.isArray(obj)) obj = writer.list(obj);
                 return {
                   predicate: p.p,
-                  object: obj
+                  object: obj,
                 };
               });
               writer.addQuad(f.s, f.p, writer.blank(predicates));
@@ -420,47 +421,46 @@ module.exports = {
         });
 
         return turtle;
-      } else {
-        const jsonldContext = { ...jsonContext, ...prefix };
-
-        const mySerializer = new JsonLdSerializer({
-          context: jsonldContext,
-          baseIRI: voidUrl
-        });
-
-        for (const f of output) {
-          if (f.o.termType === 'BlankNode') {
-            mySerializer.write(quad(f.s, f.p, f.o));
-            for (const d of f.o.data) {
-              let obj = d.o;
-              if (Array.isArray(obj)) {
-                //obj = await mySerializer.list(obj)
-                for (const oo of obj) {
-                  mySerializer.write(quad(d.s, d.p, oo));
-                }
-              } else mySerializer.write(quad(d.s, d.p, obj));
-            }
-          } else mySerializer.write(quad(f.s, f.p, f.o));
-        }
-        mySerializer.end();
-
-        let jsonLd = JSON.parse(await streamToString(mySerializer));
-
-        let compactJsonLd = await ctx.call('jsonld.frame', {
-          input: jsonLd,
-          frame: {
-            '@context': jsonldContext,
-            '@type': 'void:Dataset'
-          },
-          // Force results to be in a @graph, even if we have a single result
-          options: { omitGraph: false }
-        });
-
-        // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
-        compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': voidUrl };
-
-        return compactJsonLd;
       }
-    }
-  }
+      const jsonldContext = { ...jsonContext, ...prefix };
+
+      const mySerializer = new JsonLdSerializer({
+        context: jsonldContext,
+        baseIRI: voidUrl,
+      });
+
+      for (const f of output) {
+        if (f.o.termType === 'BlankNode') {
+          mySerializer.write(quad(f.s, f.p, f.o));
+          for (const d of f.o.data) {
+            const obj = d.o;
+            if (Array.isArray(obj)) {
+              // obj = await mySerializer.list(obj)
+              for (const oo of obj) {
+                mySerializer.write(quad(d.s, d.p, oo));
+              }
+            } else mySerializer.write(quad(d.s, d.p, obj));
+          }
+        } else mySerializer.write(quad(f.s, f.p, f.o));
+      }
+      mySerializer.end();
+
+      const jsonLd = JSON.parse(await streamToString(mySerializer));
+
+      const compactJsonLd = await ctx.call('jsonld.frame', {
+        input: jsonLd,
+        frame: {
+          '@context': jsonldContext,
+          '@type': 'void:Dataset',
+        },
+        // Force results to be in a @graph, even if we have a single result
+        options: { omitGraph: false },
+      });
+
+      // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
+      compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': voidUrl };
+
+      return compactJsonLd;
+    },
+  },
 };

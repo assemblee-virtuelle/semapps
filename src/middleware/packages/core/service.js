@@ -13,21 +13,35 @@ const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const defaultOntologies = require('./config/ontologies.json');
 
+const botsContainer = {
+  path: '/bots',
+  acceptedTypes: ['Application'],
+  dereference: ['sec:publicKey'],
+  readOnly: true,
+};
+
+/**
+ * @typedef {import('http').ServerResponse} ServerResponse
+ * @typedef {import('http').IncomingMessage} IncomingMessage
+ * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
+ */
+
+/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core',
   settings: {
-    baseUrl: null,
-    baseDir: null,
+    baseUrl: undefined,
+    baseDir: undefined,
     triplestore: {
-      url: null,
-      user: null,
-      password: null,
-      mainDataset: null
+      url: undefined,
+      user: undefined,
+      password: undefined,
+      mainDataset: undefined,
     },
     // Optional
-    containers: null,
-    jsonContext: null,
-    ontologies: null,
+    containers: undefined,
+    jsonContext: undefined,
+    ontologies: undefined,
     // Services configurations
     activitypub: {},
     api: {},
@@ -37,21 +51,22 @@ const CoreService = {
     sparqlEndpoint: {},
     void: {},
     webacl: {},
-    webfinger: {}
+    webfinger: {},
   },
   created() {
-    let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
+    const { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
+        // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
           jsonContext: jsonContext || defaultJsonContext,
-          ...this.settings.activitypub
-        }
+          ...this.settings.activitypub,
+        },
       });
     }
 
@@ -61,33 +76,33 @@ const CoreService = {
           cors: {
             origin: '*',
             methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'HEAD', 'OPTIONS'],
-            exposedHeaders: '*'
+            exposedHeaders: '*',
           },
           httpServerTimeout: 300000,
-          ...this.settings.api
+          ...this.settings.api,
         },
         methods: {
           authenticate(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authenticate', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authenticate', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.resolve(null);
             }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authenticate', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.resolve(null);
           },
           authorize(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authorize', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authorize', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
             }
-          }
-        }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authorize', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+          },
+        },
       });
     }
 
@@ -100,17 +115,17 @@ const CoreService = {
             : [
                 {
                   path: 'context.json',
-                  file: path.resolve(__dirname, './config/context.json')
-                }
+                  file: path.resolve(__dirname, './config/context.json'),
+                },
               ],
           remoteContextFiles: [
             {
               uri: 'https://www.w3.org/ns/activitystreams',
-              file: path.resolve(__dirname, './config/context-as.json')
-            }
+              file: path.resolve(__dirname, './config/context-as.json'),
+            },
           ],
-          ...this.settings.jsonld
-        }
+          ...this.settings.jsonld,
+        },
       });
     }
 
@@ -124,9 +139,9 @@ const CoreService = {
           ...this.settings.ldp,
           defaultContainerOptions: {
             jsonContext: jsonContext || defaultJsonContext,
-            ...this.settings.ldp.defaultContainerOptions
-          }
-        }
+            ...this.settings.ldp.defaultContainerOptions,
+          },
+        },
       });
     }
 
@@ -134,8 +149,8 @@ const CoreService = {
       this.broker.createService(SignatureService, {
         settings: {
           actorsKeyPairsDir: path.resolve(baseDir, './actors'),
-          ...this.settings.signature
-        }
+          ...this.settings.signature,
+        },
       });
     }
 
@@ -143,8 +158,8 @@ const CoreService = {
       this.broker.createService(SparqlEndpointService, {
         settings: {
           defaultAccept: 'application/ld+json',
-          ...this.settings.sparqlEndpoint
-        }
+          ...this.settings.sparqlEndpoint,
+        },
       });
     }
 
@@ -159,16 +174,16 @@ const CoreService = {
           user: triplestore.user,
           password: triplestore.password,
           mainDataset: triplestore.mainDataset,
-          ...this.settings.triplestore
+          ...this.settings.triplestore,
         },
         async started() {
           if (triplestore.mainDataset) {
             await this.broker.call('triplestore.dataset.create', {
               dataset: triplestore.mainDataset,
-              secure
+              secure,
             });
           }
-        }
+        },
       });
     }
 
@@ -177,8 +192,8 @@ const CoreService = {
         settings: {
           baseUrl,
           ontologies: ontologies || defaultOntologies,
-          ...this.settings.void
-        }
+          ...this.settings.void,
+        },
       });
     }
 
@@ -186,8 +201,8 @@ const CoreService = {
       this.broker.createService(WebAclService, {
         settings: {
           baseUrl,
-          ...this.settings.webacl
-        }
+          ...this.settings.webacl,
+        },
       });
     }
 
@@ -195,11 +210,11 @@ const CoreService = {
       this.broker.createService(WebfingerService, {
         settings: {
           baseUrl,
-          ...this.settings.webfinger
-        }
+          ...this.settings.webfinger,
+        },
       });
     }
-  }
+  },
 };
 
 module.exports = CoreService;

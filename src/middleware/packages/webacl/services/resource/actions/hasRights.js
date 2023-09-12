@@ -5,14 +5,14 @@ const {
   getUserGroups,
   findParentContainers,
   getUserAgentSearchParam,
-  getAclUriFromResourceUri
+  getAclUriFromResourceUri,
 } = require('../../../utils');
 
 const perms = {
   read: 'Read',
   write: 'Write',
   append: 'Append',
-  control: 'Control'
+  control: 'Control',
 };
 
 async function checkRights(
@@ -23,43 +23,50 @@ async function checkRights(
   resourceAclUri,
   uaSearchParam,
   graphName,
-  isContainerDefault
+  isContainerDefault,
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
-      let permTuples = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, p2, graphName, isContainerDefault);
-      let hasPerm = checkAgentPresent(permTuples, uaSearchParam);
+      const permTuples = await getAuthorizationNode(
+        ctx,
+        resourceUri,
+        resourceAclUri,
+        p2,
+        graphName,
+        isContainerDefault,
+      );
+      const hasPerm = checkAgentPresent(permTuples, uaSearchParam);
       if (hasPerm) resultRights[p1] = hasPerm;
     }
   }
 }
 
 async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, graphName) {
-  let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  let resultRights = {};
+  const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+  const resultRights = {};
   let groups;
   if (user !== 'anon') {
     // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
   }
-  let uaSearchParam = getUserAgentSearchParam(user, groups);
+  const uaSearchParam = getUserAgentSearchParam(user, groups);
 
   await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
 
   if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
     // we haven't found all the rights yet, we search in parent containers
-    let parentContainers = await findParentContainers(ctx, resourceUri);
+    const parentContainers = await findParentContainers(ctx, resourceUri);
 
     while (parentContainers.length) {
-      let container = parentContainers.shift();
-      let containerUri = container.container.value;
-      let aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
+      const container = parentContainers.shift();
+      const containerUri = container.container.value;
+      const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
       await checkRights(askedRights, resultRights, ctx, containerUri, aclUri, uaSearchParam, graphName, true);
 
       // if we are done finding all the asked rights, we return here, saving some processing.
       if (Object.keys(askedRights).length === Object.keys(resultRights).length) return resultRights;
 
-      let moreParentContainers = await findParentContainers(ctx, containerUri);
+      const moreParentContainers = await findParentContainers(ctx, containerUri);
       parentContainers.push(...moreParentContainers);
     }
   }
@@ -74,7 +81,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 
 module.exports = {
   api: async function api(ctx) {
-    let slugParts = ctx.params.slugParts;
+    let { slugParts } = ctx.params;
 
     // This is the root container
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];
@@ -82,7 +89,7 @@ module.exports = {
     return await ctx.call('webacl.resource.hasRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       rights: ctx.params.rights,
-      webId: ctx.meta.webId
+      webId: ctx.meta.webId,
     });
   },
   action: {
@@ -97,17 +104,17 @@ module.exports = {
           read: { type: 'boolean', optional: true },
           write: { type: 'boolean', optional: true },
           append: { type: 'boolean', optional: true },
-          control: { type: 'boolean', optional: true }
-        }
+          control: { type: 'boolean', optional: true },
+        },
       },
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
     },
     cache: {
       enabled(ctx) {
         // Do not cache remote resources as we have no mecanism to clear this cache
         return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
       },
-      keys: ['resourceUri', 'rights', 'webId']
+      keys: ['resourceUri', 'rights', 'webId'],
     },
     async handler(ctx) {
       let { resourceUri, webId, rights } = ctx.params;
@@ -117,6 +124,6 @@ module.exports = {
 
       await this.checkResourceOrContainerExists(ctx, resourceUri);
       return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
-    }
-  }
+    },
+  },
 };

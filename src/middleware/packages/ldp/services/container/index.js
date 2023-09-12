@@ -1,4 +1,4 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const attachAction = require('./actions/attach');
 const clearAction = require('./actions/clear');
 const createAction = require('./actions/create');
@@ -12,7 +12,7 @@ const headAction = require('./actions/head');
 const includesAction = require('./actions/includes');
 const postAction = require('./actions/post');
 const patchAction = require('./actions/patch');
-const { getDatasetFromUri } = require("../../utils");
+const { getDatasetFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.container',
@@ -20,7 +20,7 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    mirrorGraphName: null
+    mirrorGraphName: null,
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -40,23 +40,31 @@ module.exports = {
     api_get: getAction.api,
     api_post: postAction.api,
     api_head: headAction.api,
-    api_patch: patchAction.api
+    api_patch: patchAction.api,
   },
   methods: {
     isRemoteUri(uri, dataset) {
-      if (this.settings.podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-      return !urlJoin(uri, '/').startsWith(this.settings.baseUrl)
-        || (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'));
-    }
+      if (this.settings.podProvider && !dataset)
+        throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+      return (
+        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
+        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
+      );
+    },
   },
   hooks: {
     before: {
       '*'(ctx) {
-        if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.containerUri && ctx.params.containerUri.startsWith(this.settings.baseUrl)) {
+        if (
+          this.settings.podProvider &&
+          !ctx.meta.dataset &&
+          ctx.params.containerUri &&
+          ctx.params.containerUri.startsWith(this.settings.baseUrl)
+        ) {
           // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };

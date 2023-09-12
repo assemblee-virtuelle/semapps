@@ -16,7 +16,8 @@ const CollectionList = ({ collectionUrl, resource, children, ...rest }) => {
         <LinearProgress />
       </div>
     );
-  } else if (!collection) {
+  }
+  if (!collection) {
     return null;
   }
 

@@ -3,32 +3,32 @@ const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
+const path = require('path');
+const { getPrefixJSON } = require('@semapps/ldp');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require('path');
-const { getPrefixJSON } = require('@semapps/ldp');
 
 const containers = [
   {
     path: '/resources',
-    dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay']
+    dereference: ['pair:hasLocation', 'pair:hasTopic', 'petr:openingTimesDay'],
   },
   {
     path: '/resources2',
-    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay']
+    dereference: ['pair:hasLocation/pair:hasPostalAddress', 'pair:hasTopic', 'petr:openingTimesDay'],
   },
   {
     path: '/organizations',
     dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
+    disassembly: [{ path: 'pair:hasLocation', container: `${CONFIG.HOME_URL}places` }],
   },
   {
-    path: '/places'
+    path: '/places',
   },
   {
-    path: '/themes'
-  }
+    path: '/themes',
+  },
 ];
 
 const initialize = async () => {
@@ -37,9 +37,9 @@ const initialize = async () => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
-      }
-    }
+        level: 'error',
+      },
+    },
   });
 
   await broker.createService(CoreService, {
@@ -50,7 +50,7 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
       },
       ontologies,
       jsonContext: getPrefixJSON(ontologies),
@@ -58,22 +58,22 @@ const initialize = async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false
-    }
+      webfinger: false,
+    },
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET
-    }
+      accountsDataset: CONFIG.SETTINGS_DATASET,
+    },
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users'
-    }
+      usersContainer: `${CONFIG.HOME_URL}users`,
+    },
   });
 
   // Drop all existing triples, then restart broker so that default containers are recreated
@@ -85,51 +85,51 @@ const initialize = async () => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources',
+    resourceUri: `${CONFIG.HOME_URL}resources`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources2',
+    resourceUri: `${CONFIG.HOME_URL}resources2`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'organizations',
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'places',
+    resourceUri: `${CONFIG.HOME_URL}organizations`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'themes',
+    resourceUri: `${CONFIG.HOME_URL}places`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
+  });
+
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: `${CONFIG.HOME_URL}themes`,
+    additionalRights: {
+      anon: {
+        write: true,
+      },
+    },
   });
 
   return broker;

@@ -4,7 +4,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-let expressMocked, broker;
+let expressMocked;
+let broker;
 
 beforeAll(async () => {
   ({ broker, expressMocked } = await initialize());
@@ -22,14 +23,14 @@ describe('middleware CRUD resource with perms', () => {
       const urlParamsPost = {
         resource: {
           '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
           },
           '@type': 'Project',
           description: 'myProject',
-          label: 'myTitle'
+          label: 'myTitle',
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: CONFIG.HOME_URL + 'resources'
+        containerUri: `${CONFIG.HOME_URL}resources`,
       };
       const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
@@ -44,36 +45,36 @@ describe('middleware CRUD resource with perms', () => {
       const urlParamsPost = {
         resource: {
           '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
           },
           '@type': 'Project',
           description: 'myProject',
-          label: 'myTitle'
+          label: 'myTitle',
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: CONFIG.HOME_URL + 'resources'
+        containerUri: `${CONFIG.HOME_URL}resources`,
       };
-      let webId = 'http://a/user';
+      const webId = 'http://a/user';
       resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
-      project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
+      const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 
-      let resourceRights = await broker.call('webacl.resource.hasRights', {
+      const resourceRights = await broker.call('webacl.resource.hasRights', {
         resourceUri,
         rights: {
           read: true,
           write: true,
           append: true,
-          control: true
+          control: true,
         },
-        webId
+        webId,
       });
 
       expect(resourceRights).toMatchObject({
         read: true,
         write: true,
         append: false,
-        control: true
+        control: true,
       });
     } catch (e) {
       console.log(e);
@@ -85,7 +86,7 @@ describe('middleware CRUD resource with perms', () => {
     try {
       const urlParamsPost = {
         resourceUri,
-        webId: 'http://a/user'
+        webId: 'http://a/user',
       };
 
       await broker.call('ldp.resource.delete', urlParamsPost);
@@ -97,7 +98,7 @@ describe('middleware CRUD resource with perms', () => {
           FILTER (?p IN (acl:accessTo, acl:default ) )
           ?auth ?p2 ?o  } }`,
         webId: 'system',
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
       });
 
       expect(result.length).toBe(0);

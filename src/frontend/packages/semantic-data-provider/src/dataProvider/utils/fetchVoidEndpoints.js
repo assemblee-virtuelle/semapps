@@ -1,19 +1,18 @@
-const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
+const defaultToArray = (value) => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
-const fetchVoidEndpoints = async config => {
+const fetchVoidEndpoints = async (config) => {
   const fetchPromises = Object.entries(config.dataServers)
     .filter(([key, server]) => server.pod !== true)
     .map(([key, server]) =>
       config
         .httpClient(new URL('/.well-known/void', server.baseUrl).toString())
-        .then(result => ({ key, datasets: result.json['@graph'] }))
-        .catch(e => {
+        .then((result) => ({ key, datasets: result.json['@graph'] }))
+        .catch((e) => {
           if (e.status === 404 || e.status === 401) {
             return { key, error: e };
-          } else {
-            throw e;
           }
-        })
+          throw e;
+        }),
     );
 
   let results = [];
@@ -24,15 +23,15 @@ const fetchVoidEndpoints = async config => {
     // Do not throw error if no endpoint found
   }
 
-  for (let result of results) {
+  for (const result of results) {
     config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
     config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
 
     // Ignore unfetchable endpoints
     if (result.datasets) {
-      for (let dataset of result.datasets) {
+      for (const dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
-          key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl
+          (key) => dataset['void:uriSpace'] === config.dataServers[key].baseUrl,
         );
 
         // If the dataset is not part of a server mapped in the dataServers, ignore it
@@ -49,8 +48,8 @@ const fetchVoidEndpoints = async config => {
           config.dataServers[result.key].containers[datasetServerKey] =
             config.dataServers[result.key].containers[datasetServerKey] || {};
 
-          for (let partition of defaultToArray(dataset['void:classPartition'])) {
-            for (let type of defaultToArray(partition['void:class'])) {
+          for (const partition of defaultToArray(dataset['void:classPartition'])) {
+            for (const type of defaultToArray(partition['void:class'])) {
               // Set containers by type
               const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
               if (config.dataServers[result.key].containers[datasetServerKey][type]) {
@@ -63,7 +62,7 @@ const fetchVoidEndpoints = async config => {
               const blankNodes = defaultToArray(partition['semapps:blankNodes']);
               if (blankNodes) {
                 config.dataServers[result.key].blankNodes[partition['void:uriSpace']] = defaultToArray(
-                  partition['semapps:blankNodes']
+                  partition['semapps:blankNodes'],
                 );
               }
             }

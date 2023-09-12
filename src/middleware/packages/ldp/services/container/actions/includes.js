@@ -5,8 +5,8 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
@@ -17,12 +17,12 @@ module.exports = {
     return await ctx.call('triplestore.query', {
       query: `
         ASK {
-          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
           ${isRemoteContainer ? '}' : ''}
         }
       `,
-      webId
+      webId,
     });
-  }
+  },
 };

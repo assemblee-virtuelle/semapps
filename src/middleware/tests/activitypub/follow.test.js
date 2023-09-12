@@ -6,8 +6,12 @@ jest.setTimeout(50000);
 
 const NUM_USERS = 2;
 
-describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {
-  let broker, actors = [], alice, bob, followActivity;
+describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', (mode) => {
+  let broker;
+  const actors = [];
+  let alice;
+  let bob;
+  let followActivity;
 
   beforeAll(async () => {
     if (mode === 'single-server') {
@@ -18,13 +22,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     for (let i = 1; i <= NUM_USERS; i++) {
       if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, 'testData' + i, 'settings' + i);
+        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`);
       } else {
         broker[i] = broker;
       }
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName, params, options = {}) => broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId }});
+      actors[i].call = (actionName, params, options = {}) =>
+        broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
     bob = actors[1];
@@ -48,12 +53,12 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.FOLLOW,
       object: alice.id,
-      to: [alice.id, bob.id + '/followers']
+      to: [alice.id, `${bob.id}/followers`],
     });
 
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
+        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id }),
       ).resolves.toBeTruthy();
     });
 
@@ -61,14 +66,14 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       const inbox = await bob.call('activitypub.collection.get', {
         collectionUri: bob.inbox,
         page: 1,
-        webId: bob.id
+        webId: bob.id,
       });
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems).toHaveLength(1);
       expect(inbox.orderedItems[0]).toMatchObject({
         type: ACTIVITY_TYPES.ACCEPT,
         actor: alice.id,
-        object: followActivity.id
+        object: followActivity.id,
       });
     });
   });
@@ -81,28 +86,28 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       name: 'Hello World',
       attributedTo: alice.id,
       to: [alice.followers],
-      content: 'My first message, happy to be part of the fediverse !'
+      content: 'My first message, happy to be part of the fediverse !',
     });
 
     expect(createActivity).toMatchObject({
       type: ACTIVITY_TYPES.CREATE,
       object: {
         type: OBJECT_TYPES.NOTE,
-        name: 'Hello World'
-      }
+        name: 'Hello World',
+      },
     });
 
     await waitForExpect(async () => {
       const inbox = await bob.call('activitypub.collection.get', {
         collectionUri: bob.inbox,
         page: 1,
-        webId: bob.id
+        webId: bob.id,
       });
 
       expect(inbox).not.toBeNull();
       expect(inbox.orderedItems).toHaveLength(2);
       expect(inbox.orderedItems[0]).toMatchObject({
-        id: createActivity.id
+        id: createActivity.id,
       });
     });
   });
@@ -114,12 +119,12 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.UNDO,
       object: followActivity.id,
-      to: [alice.id, bob.id + '/followers']
+      to: [alice.id, `${bob.id}/followers`],
     });
 
     await waitForExpect(async () => {
       await expect(
-        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id })
+        alice.call('activitypub.collection.includes', { collectionUri: alice.followers, itemUri: bob.id }),
       ).resolves.toBeFalsy();
     });
   });

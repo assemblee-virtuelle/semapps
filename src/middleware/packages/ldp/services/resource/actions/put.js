@@ -10,7 +10,7 @@ module.exports = {
     resource['@id'] = urlJoin(containerUri, id);
 
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', {
-      resourceUri: resource['@id']
+      resourceUri: resource['@id'],
     });
 
     if (ctx.meta.parser === 'file') {
@@ -23,12 +23,12 @@ module.exports = {
         contentType: ctx.meta.headers['content-type'],
         containerUri,
         body,
-        slug: id
+        slug: id,
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
+        'Content-Length': 0,
       };
     } catch (e) {
       console.error(e);
@@ -40,23 +40,23 @@ module.exports = {
     visibility: 'public',
     params: {
       resource: {
-        type: 'object'
+        type: 'object',
       },
       webId: {
         type: 'string',
-        optional: true
+        optional: true,
       },
       body: {
         type: 'string',
-        optional: true
+        optional: true,
       },
       contentType: {
-        type: 'string'
+        type: 'string',
       },
       disassembly: {
         type: 'array',
-        optional: true
-      }
+        optional: true,
+      },
     },
     async handler(ctx) {
       let { resource, contentType, body } = ctx.params;
@@ -71,24 +71,24 @@ module.exports = {
 
       const { disassembly, jsonContext } = {
         ...(await ctx.call('ldp.registry.getByUri', {
-          resourceUri
+          resourceUri,
         })),
-        ...ctx.params
+        ...ctx.params,
       };
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      let oldData = await ctx.call('ldp.resource.get', {
+      const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        webId
+        webId,
       });
 
       // Adds the default context, if it is missing
       if (contentType === MIME_TYPES.JSON && !resource['@context'] && jsonContext) {
         resource = {
           '@context': jsonContext,
-          ...resource
+          ...resource,
         };
       }
 
@@ -124,10 +124,10 @@ module.exports = {
       } else {
         // Keep track of blank nodes to use in WHERE clause
         const newBlankNodes = this.getTriplesDifference(newTriples, oldTriples).filter(
-          triple => triple.object.termType === 'Variable'
+          (triple) => triple.object.termType === 'Variable',
         );
         const existingBlankNodes = oldTriples.filter(
-          triple => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable'
+          (triple) => triple.object.termType === 'Variable' || triple.subject.termType === 'Variable',
         );
 
         // Generate the query
@@ -143,7 +143,7 @@ module.exports = {
 
         await ctx.call('triplestore.update', {
           query,
-          webId
+          webId,
         });
 
         // Get the new data, with the same formatting as the old data
@@ -153,13 +153,13 @@ module.exports = {
           {
             resourceUri,
             accept: MIME_TYPES.JSON,
-            webId
+            webId,
           },
           {
             meta: {
-              $cache: false
-            }
-          }
+              $cache: false,
+            },
+          },
         );
 
         ctx.emit(
@@ -168,14 +168,14 @@ module.exports = {
             resourceUri,
             oldData,
             newData,
-            webId
+            webId,
           },
           {
             meta: {
               webId: null,
-              dataset: null
-            }
-          }
+              dataset: null,
+            },
+          },
         );
       }
 
@@ -183,8 +183,8 @@ module.exports = {
         resourceUri,
         oldData,
         newData,
-        webId
+        webId,
       };
-    }
-  }
+    },
+  },
 };

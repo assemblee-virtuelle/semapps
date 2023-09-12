@@ -46,7 +46,7 @@ Our [Semantic Data Provider](https://semapps.org/docs/frontend/semantic-data-pro
 Since SemApps is just a toolbox, products can be built upon it. Here are the main open-source products:
 
 - [Archipelago](https://github.com/assemblee-virtuelle/archipelago)
-- [ActivityPods](https://github.com/assemblee-virtuelle/activitypods)
+- [ActivityPods](https://activitypods.org)
 - [OrganiGraph](https://github.com/assemblee-virtuelle/organigraph)
 
 ## Websites powered by SemApps
@@ -55,8 +55,8 @@ Here are some examples of websites made with SemApps:
 
 - [Les Chemins de la Transition](https://lescheminsdelatransition.org/)
 - [Archipel](https://archipel.assemblee-virtuelle.org/)
+- [Destination Oasis](https://destination-oasis.fr)
 - [Cercles Jardiniers du Nous](https://cercles.jardiniersdunous.org)
-- [100 lieux nourriciers](https://100lieuxnourriciers.fr/)
 
 > Feel free to open a PR to add your own website here.
 

@@ -10,7 +10,7 @@ const getTypeAction = require('./actions/getTypes');
 const uploadAction = require('./actions/upload');
 const headAction = require('./actions/head');
 const methods = require('./methods');
-const {getDatasetFromUri} = require("../../utils");
+const { getDatasetFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.resource',
@@ -45,7 +45,8 @@ module.exports = {
       '*'(ctx) {
         if (this.settings.podProvider && !ctx.meta.dataset) {
           // If we have a pod provider, guess the dataset from the URI
-          const uri = ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
+          const uri =
+            ctx.params.resourceUri || (ctx.params.resource && (ctx.params.resource.id || ctx.params.resource['@id']));
           if (uri && uri.startsWith(this.settings.baseUrl)) {
             ctx.meta.dataset = getDatasetFromUri(uri);
           }

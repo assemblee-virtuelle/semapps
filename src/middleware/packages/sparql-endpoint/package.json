@@ -16,5 +16,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599"
+  "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
+  "engines": {
+    "node": ">=14"
+  }
 }

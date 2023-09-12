@@ -8,7 +8,7 @@ const dataProvider = semanticDataProvider({
   httpClient,
   resources,
   ontologies,
-  jsonContext: process.env.REACT_APP_MIDDLEWARE_URL + 'context.json'
+  jsonContext: `${process.env.REACT_APP_MIDDLEWARE_URL}context.json`,
 });
 
 export default dataProvider;

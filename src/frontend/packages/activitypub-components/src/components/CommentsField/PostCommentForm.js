@@ -11,13 +11,13 @@ import { OBJECT_TYPES, PUBLIC_URI } from '../../constants';
 import useOutbox from '../../hooks/useOutbox';
 import CustomMention from './CustomMention';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   form: {
-    marginTop: -12 // Negative margin to keep the form close to the label
+    marginTop: -12, // Negative margin to keep the form close to the label
   },
   container: {
     paddingLeft: 80,
-    position: 'relative'
+    position: 'relative',
   },
   avatar: {
     position: 'absolute',
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     bottom: 0,
     width: 64,
-    height: 64
+    height: 64,
   },
   editorContent: {
     '& > div': {
@@ -35,27 +35,27 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 0,
       borderBottom: '1px solid #FFF',
       minHeight: 60,
-      outline: 'unset !important'
+      outline: 'unset !important',
     },
     '& > div > p': {
       marginTop: 12,
       marginBottom: 12,
       fontFamily: theme.typography.body1.fontFamily,
       marginBlockStart: '0.5em',
-      marginBlockEnd: '0.5em'
+      marginBlockEnd: '0.5em',
     },
     '& > div > p.is-editor-empty:first-child::before': {
       color: 'grey',
       content: 'attr(data-placeholder)',
       float: 'left',
       height: 0,
-      pointerEvents: 'none'
-    }
+      pointerEvents: 'none',
+    },
   },
   button: {
     marginTop: -10, // To go over helper text block
-    marginBottom: 15
-  }
+    marginBottom: 15,
+  },
 }));
 
 const EmptyToolbar = () => null;
@@ -74,23 +74,23 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
     async (values) => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
-      let mentionedUsersUris = [];
+      const mentionedUsersUris = [];
 
-      mentions.forEach(node => {
+      mentions.forEach((node) => {
         const userUri = node.attributes['data-mention-id'].value;
         const userLabel = node.attributes['data-mention-label'].value;
         const link = document.createElement('a');
         link.setAttribute(
           'href',
-          new URL(window.location.href).origin + '/' + userResource + '/' + encodeURIComponent(userUri) + '/show'
+          `${new URL(window.location.href).origin}/${userResource}/${encodeURIComponent(userUri)}/show`,
         );
-        link.textContent = '@' + userLabel;
+        link.textContent = `@${userLabel}`;
         node.parentNode.replaceChild(link, node);
         mentionedUsersUris.push(userUri);
       });
 
       if (document.body.innerHTML === 'undefined') {
-        notify('Votre commentaire est vide', {type: 'error'});
+        notify('Votre commentaire est vide', { type: 'error' });
       } else {
         const tempId = Date.now();
 
@@ -99,7 +99,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           attributedTo: outbox.owner,
           content: document.body.innerHTML,
           inReplyTo: record[context],
-          published: new Date().toISOString()
+          published: new Date().toISOString(),
         };
 
         try {
@@ -107,15 +107,15 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
           // TODO reset the form
           setExpanded(false);
           await outbox.post({ ...note, to: [...mentionedUsersUris, PUBLIC_URI] });
-          notify('Commentaire posté avec succès', {type: 'success'});
+          notify('Commentaire posté avec succès', { type: 'success' });
         } catch (e) {
           console.error(e);
           removeItem(tempId);
-          notify(e.message, {type: 'error'});
+          notify(e.message, { type: 'error' });
         }
       }
     },
-    [outbox, notify, setExpanded, addItem, removeItem]
+    [outbox, notify, setExpanded, addItem, removeItem],
   );
 
   const openAuthIfDisconnected = useCallback(() => {
@@ -155,14 +155,14 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
                 mentions
                   ? CustomMention.configure({
                       HTMLAttributes: {
-                        class: 'mention'
+                        class: 'mention',
                       },
-                      suggestion: mentions
+                      suggestion: mentions,
                     })
-                  : null
+                  : null,
               ],
               // Disable editor if user is not connected
-              editable: !!identity?.id
+              editable: !!identity?.id,
             }}
             helperText={helperText}
           />

@@ -7,7 +7,7 @@ const {
   parseTurtle,
   parseFile,
   addContainerUriMiddleware,
-  saveDatasetMeta
+  saveDatasetMeta,
 } = require('@semapps/middlewares');
 
 function getResourcesRoute(containerUri, readOnly = false) {
@@ -22,12 +22,12 @@ function getResourcesRoute(containerUri, readOnly = false) {
     parseTurtle,
     parseFile,
     addContainerUriMiddleware(containerUri),
-    saveDatasetMeta
+    saveDatasetMeta,
   ];
 
   let aliases = {
     'GET /:id': [...middlewares, 'ldp.resource.api_get'],
-    'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
+    'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head'],
   };
 
   if (!readOnly) {
@@ -35,19 +35,19 @@ function getResourcesRoute(containerUri, readOnly = false) {
       ...aliases,
       'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
       'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
-      'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
+      'DELETE /:id': [...middlewares, 'ldp.resource.api_delete'],
     };
   }
 
   return {
-    name: 'resources' + containerPath.replace(new RegExp('/', 'g'), '-'),
+    name: `resources${containerPath.replace(new RegExp('/', 'g'), '-')}`,
     path: containerPath,
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)
     bodyParsers: false,
     authorization: false,
     authentication: true,
-    aliases
+    aliases,
   };
 }
 

@@ -1,10 +1,10 @@
 import getOne from './getOne';
 
-const getManyMethod = config => async (resourceId, params) => {
+const getManyMethod = (config) => async (resourceId, params) => {
   const { returnFailedResources } = config;
 
   let returnData = await Promise.all(
-    params.ids.map(id =>
+    params.ids.map((id) =>
       getOne(config)(resourceId, { id: typeof id === 'object' ? id['@id'] : id })
         .then(({ data }) => data)
         .catch(() => {
@@ -13,15 +13,14 @@ const getManyMethod = config => async (resourceId, params) => {
           // See https://github.com/marmelab/react-admin/issues/5190
           if (returnFailedResources) {
             return { id, _error: true };
-          } else {
-            // Returning nothing
           }
-        })
-    )
+          // Returning nothing
+        }),
+    ),
   );
 
   // We don't want undefined results to appear in the results as it will break with react-admin
-  returnData = returnData.filter(e => e);
+  returnData = returnData.filter((e) => e);
 
   return { data: returnData };
 };

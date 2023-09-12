@@ -1,8 +1,8 @@
-const getEmbedFrame = blankNodes => {
-  let embedFrame = {},
-    predicates;
+const getEmbedFrame = (blankNodes) => {
+  let embedFrame = {};
+  let predicates;
   if (blankNodes) {
-    for (let blankNode of blankNodes) {
+    for (const blankNode of blankNodes) {
       if (blankNode.includes('/')) {
         predicates = blankNode.split('/').reverse();
       } else {
@@ -14,11 +14,11 @@ const getEmbedFrame = blankNodes => {
           (accumulator, predicate) => ({
             [predicate]: {
               '@embed': '@last',
-              ...accumulator
-            }
+              ...accumulator,
+            },
           }),
-          {}
-        )
+          {},
+        ),
       };
     }
     return embedFrame;

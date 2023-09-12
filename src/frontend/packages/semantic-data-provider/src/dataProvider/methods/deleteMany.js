@@ -1,11 +1,11 @@
-const deleteManyMethod = config => async (resourceId, params) => {
+const deleteManyMethod = (config) => async (resourceId, params) => {
   const { httpClient } = config;
-  let ids = [];
+  const ids = [];
 
-  for (let id of params.ids) {
+  for (const id of params.ids) {
     try {
       await httpClient(id, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
       ids.push(id);
     } catch (e) {

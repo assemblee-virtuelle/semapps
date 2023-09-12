@@ -9,8 +9,8 @@ const ExpoPushDeviceService = {
     idField: '@id',
     newDeviceNotification: {
       message: null,
-      data: {}
-    }
+      data: {},
+    },
   },
   actions: {
     async subscribe(ctx) {
@@ -20,10 +20,10 @@ const ExpoPushDeviceService = {
         {
           query: {
             ownedBy: userUri,
-            pushToken: pushToken
-          }
+            pushToken: pushToken,
+          },
         },
-        { parentCtx: ctx }
+        { parentCtx: ctx },
       );
 
       if (!device['ldp:contains']) {
@@ -33,15 +33,15 @@ const ExpoPushDeviceService = {
             yearClass: yearClass,
             ownedBy: userUri,
             pushToken: pushToken,
-            addedAt: new Date().toISOString()
+            addedAt: new Date().toISOString(),
           },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
 
         if (this.settings.newDeviceNotification && this.settings.newDeviceNotification.message) {
           await ctx.call('push.notification.send', {
             to: userUri,
-            ...this.settings.newDeviceNotification
+            ...this.settings.newDeviceNotification,
           });
         }
       } else {
@@ -51,26 +51,26 @@ const ExpoPushDeviceService = {
             '@id': device['ldp:contains'][0]['@id'],
             name: name,
             yearClass: yearClass,
-            errorMessage: null
+            errorMessage: null,
           },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
       }
 
       return device;
     },
     async findUsersDevices(ctx) {
-      let devices = [];
+      const devices = [];
 
-      for (let userUri of ctx.params.users) {
+      for (const userUri of ctx.params.users) {
         const container = await this.actions.find(
           {
             query: {
               ownedBy: userUri,
-              errorMessage: null
-            }
+              errorMessage: null,
+            },
           },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
 
         if (container['ldp:contains']) {
@@ -79,8 +79,8 @@ const ExpoPushDeviceService = {
       }
 
       return devices;
-    }
-  }
+    },
+  },
 };
 
 module.exports = ExpoPushDeviceService;

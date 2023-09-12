@@ -10,7 +10,7 @@ const getOneMethod = config => async (resourceId, params) => {
 
   // Transform single value into array if forceArray is set
   if (dataModel.list?.forceArray) {
-    for (const forceArrayItem of dataModel.list?.forceArray) {
+    for (const forceArrayItem of dataModel.list?.forceArray || []) {
       if (data[forceArrayItem] && !Array.isArray(data[forceArrayItem])) {
         data[forceArrayItem] = [data[forceArrayItem]];
       }

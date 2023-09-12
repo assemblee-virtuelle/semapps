@@ -7,8 +7,8 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
@@ -20,17 +20,17 @@ module.exports = {
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
-        throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
+        throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
     }
 
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
-    if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
+    if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
-      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
+      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined,
     });
 
     if (!isRemoteContainer)
@@ -38,15 +38,15 @@ module.exports = {
         'ldp.container.attached',
         {
           containerUri,
-          resourceUri
+          resourceUri,
         },
-        { meta: { webId: null } }
+        { meta: { webId: null } },
       );
 
     return {
       containerUri,
       resourceUri,
-      webId
+      webId,
     };
-  }
+  },
 };

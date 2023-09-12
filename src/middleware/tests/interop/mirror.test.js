@@ -1,12 +1,13 @@
 const urlJoin = require('url-join');
 const waitForExpect = require('wait-for-expect');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ACTIVITY_TYPES } = require("@semapps/activitypub");
+const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 const relay1 = 'http://localhost:3001/applications/relay';
 const relay2 = 'http://localhost:3002/applications/relay';
@@ -16,7 +17,7 @@ beforeAll(async () => {
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
   await server1.call('activitypub.actor.awaitCreateComplete', {
-    actorUri: relay1
+    actorUri: relay1,
   });
 
   server2 = await initialize(3002, 'testData2', 'settings2', 'http://localhost:3001');
@@ -32,7 +33,10 @@ describe('Server2 mirror server1', () => {
   test('Server2 follow server1', async () => {
     await waitForExpect(async () => {
       await expect(
-        server1.call('activitypub.collection.includes', { collectionUri: urlJoin(relay1, 'followers'), itemUri: relay2 })
+        server1.call('activitypub.collection.includes', {
+          collectionUri: urlJoin(relay1, 'followers'),
+          itemUri: relay2,
+        }),
       ).resolves.toBeTruthy();
     });
   });
@@ -40,7 +44,7 @@ describe('Server2 mirror server1', () => {
   test('Server1 resources container is mirrored on server2', async () => {
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.exist', { containerUri: 'http://localhost:3001/resources' })
+        server2.call('ldp.container.exist', { containerUri: 'http://localhost:3001/resources' }),
       ).resolves.toBeTruthy();
     });
   });
@@ -49,28 +53,26 @@ describe('Server2 mirror server1', () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Resource',
         label: 'My resource',
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3001/resources'
+      containerUri: 'http://localhost:3001/resources',
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri }),
       ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
-        'pair:label': 'My resource'
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
+        'pair:label': 'My resource',
       });
     });
   });
@@ -79,22 +81,20 @@ describe('Server2 mirror server1', () => {
     await server1.call('ldp.resource.put', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated',
       },
-      contentType: MIME_TYPES.JSON
+      contentType: MIME_TYPES.JSON,
     });
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
-        'pair:label': 'My resource updated'
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
+        'pair:label': 'My resource updated',
       });
     });
   });
@@ -105,20 +105,20 @@ describe('Server2 mirror server1', () => {
       sparqlUpdate: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
-      `
+      `,
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri }),
       ).resolves.toBeTruthy();
     });
 
     // Since server1 is mirrored by server2, we don't need to mark it as singleMirroredResource
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.not.toHaveProperty('semapps:singleMirroredResource');
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.not.toHaveProperty(
+        'semapps:singleMirroredResource',
+      );
     });
   });
 
@@ -127,14 +127,12 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri }),
       ).resolves.toBeFalsy();
     });
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).rejects.toThrow();
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });
   });
 });

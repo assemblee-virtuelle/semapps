@@ -12,7 +12,7 @@ module.exports = {
     newResourcesPermissions: null,
     controlledActions: {},
     readOnly: false,
-    excludeFromMirror: false
+    excludeFromMirror: false,
   },
   dependencies: ['ldp'],
   async started() {
@@ -27,16 +27,16 @@ module.exports = {
       excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
       controlledActions: {
-        post: this.name + '.post',
-        list: this.name + '.list',
-        get: this.name + '.get',
-        create: this.name + '.create',
-        patch: this.name + '.patch',
-        put: this.name + '.put',
-        delete: this.name + '.delete',
-        ...this.settings.controlledActions
+        post: `${this.name}.post`,
+        list: `${this.name}.list`,
+        get: `${this.name}.get`,
+        create: `${this.name}.create`,
+        patch: `${this.name}.patch`,
+        put: `${this.name}.put`,
+        delete: `${this.name}.delete`,
+        ...this.settings.controlledActions,
       },
-      readOnly: this.settings.readOnly
+      readOnly: this.settings.readOnly,
     });
   },
   actions: {
@@ -66,13 +66,13 @@ module.exports = {
     },
     get(ctx) {
       const { accept, dereference, jsonContext } = this.settings;
-      let containerParams = {};
+      const containerParams = {};
       if (accept) containerParams.accept = accept;
       if (dereference) containerParams.dereference = dereference;
       if (jsonContext) containerParams.jsonContext = jsonContext;
       return ctx.call('ldp.resource.get', {
         ...containerParams,
-        ...ctx.params
+        ...ctx.params,
       });
     },
     create(ctx) {
@@ -92,7 +92,8 @@ module.exports = {
     },
     async waitForContainerCreation(ctx) {
       const { containerUri } = ctx.params;
-      let containerExist, containerAttached;
+      let containerExist;
+      let containerAttached;
 
       do {
         if (containerExist === false) await delay(1000);
@@ -102,7 +103,7 @@ module.exports = {
       const parentContainerUri = getContainerFromUri(containerUri);
       const parentContainerExist = await ctx.call('ldp.container.exist', {
         containerUri: parentContainerUri,
-        webId: 'system'
+        webId: 'system',
       });
 
       // If a parent container exist, check that the child container has been attached
@@ -113,10 +114,10 @@ module.exports = {
           containerAttached = await ctx.call('ldp.container.includes', {
             containerUri: parentContainerUri,
             resourceUri: containerUri,
-            webId: 'system'
+            webId: 'system',
           });
         } while (!containerAttached);
       }
-    }
-  }
+    },
+  },
 };

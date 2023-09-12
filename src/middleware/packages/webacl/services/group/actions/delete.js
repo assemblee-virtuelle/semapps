@@ -5,7 +5,7 @@ const { removeAgentGroupOrAgentFromAuthorizations, sanitizeSPARQL } = require('.
 module.exports = {
   api: async function api(ctx) {
     await ctx.call('webacl.group.delete', {
-      groupSlug: ctx.params.id
+      groupSlug: ctx.params.id,
     });
 
     ctx.meta.$statusCode = 204;
@@ -15,11 +15,11 @@ module.exports = {
     params: {
       groupSlug: { type: 'string', optional: true, min: 1, trim: true },
       groupUri: { type: 'string', optional: true, trim: true },
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
     },
     async handler(ctx) {
       let { groupSlug, groupUri } = ctx.params;
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
@@ -31,12 +31,12 @@ module.exports = {
 
       if (webId !== 'system') {
         // verifier que nous avons bien le droit Write sur le group.
-        let groupRights = await ctx.call('webacl.resource.hasRights', {
+        const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
-            write: true
+            write: true,
           },
-          webId
+          webId,
         });
         if (!groupRights.write)
           throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
@@ -46,12 +46,12 @@ module.exports = {
       await ctx.call('triplestore.update', {
         query: `DELETE WHERE { GRAPH <${this.settings.graphName}> 
                 { <${groupUri}> ?p ?o. } }`,
-        webId: 'system'
+        webId: 'system',
       });
 
       await ctx.call('webacl.resource.deleteAllRights', { resourceUri: groupUri });
 
       await removeAgentGroupOrAgentFromAuthorizations(groupUri, true, this.settings.graphName, ctx);
-    }
-  }
+    },
+  },
 };

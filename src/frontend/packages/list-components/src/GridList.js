@@ -4,7 +4,7 @@ import { Grid } from '@mui/material';
 import { useGetExternalLink } from '@semapps/semantic-data-provider';
 
 // useful to prevent click bubbling in a datagrid with rowClick
-const stopPropagation = e => e.stopPropagation();
+const stopPropagation = (e) => e.stopPropagation();
 
 // Our handleClick does nothing as we wrap the children inside a Link but it is
 // required by ChipField, which uses a Chip from material-ui.
@@ -18,8 +18,8 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
   if (isLoading || !data) return null;
   return (
     <Grid container spacing={spacing}>
-      {data.map(record => {
-        if (!record || record['_error']) return null;
+      {data.map((record) => {
+        if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         let child;
 
@@ -29,7 +29,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
               {React.cloneElement(React.Children.only(children), {
                 externalLink: true,
                 // Workaround to force ChipField to be clickable
-                onClick: handleClick
+                onClick: handleClick,
               })}
             </a>
           );
@@ -38,7 +38,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
             <Link to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
               {React.cloneElement(React.Children.only(children), {
                 // Workaround to force ChipField to be clickable
-                onClick: handleClick
+                onClick: handleClick,
               })}
             </Link>
           );
@@ -48,9 +48,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
 
         return (
           <Grid item key={record.id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
-            <RecordContextProvider value={record}>
-              {child}
-            </RecordContextProvider>
+            <RecordContextProvider value={record}>{child}</RecordContextProvider>
           </Grid>
         );
       })}
@@ -62,7 +60,7 @@ GridList.defaultProps = {
   xs: 6,
   spacing: 3,
   linkType: 'edit',
-  externalLinks: false
+  externalLinks: false,
 };
 
 export default GridList;

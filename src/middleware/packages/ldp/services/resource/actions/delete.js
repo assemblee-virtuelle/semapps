@@ -9,12 +9,12 @@ module.exports = {
 
     try {
       await ctx.call(controlledActions.delete || 'ldp.resource.delete', {
-        resourceUri
+        resourceUri,
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0
+        'Content-Length': 0,
       };
     } catch (e) {
       console.error(e);
@@ -27,7 +27,7 @@ module.exports = {
     params: {
       resourceUri: 'string',
       webId: { type: 'string', optional: true },
-      disassembly: { type: 'array', optional: true }
+      disassembly: { type: 'array', optional: true },
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
@@ -35,21 +35,21 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
-        return await ctx.call('ldp.remote.delete', { resourceUri, webId })
+        return await ctx.call('ldp.remote.delete', { resourceUri, webId });
       }
 
       const { disassembly } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-        ...ctx.params
+        ...ctx.params,
       };
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      let oldData = await ctx.call('ldp.resource.get', {
+      const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
         forceSemantic: true,
-        webId
+        webId,
       });
 
       if (disassembly) {
@@ -63,12 +63,12 @@ module.exports = {
             <${resourceUri}> ?p1 ?o1 .
           }
         `,
-        webId
+        webId,
       });
 
       // We must detach the resource from the containers after deletion, otherwise the permissions may fail
       const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      for (let containerUri of containers) {
+      for (const containerUri of containers) {
         await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
       }
 
@@ -79,7 +79,7 @@ module.exports = {
       const returnValues = {
         resourceUri,
         oldData,
-        webId
+        webId,
       };
 
       ctx.call('triplestore.deleteOrphanBlankNodes');
@@ -87,6 +87,6 @@ module.exports = {
       ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
 
       return returnValues;
-    }
-  }
+    },
+  },
 };

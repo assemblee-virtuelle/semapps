@@ -9,7 +9,7 @@ module.exports = {
 
     await ctx.call('webacl.group.removeMember', {
       groupSlug: ctx.params.id,
-      memberUri: ctx.params.deleteUserUri
+      memberUri: ctx.params.deleteUserUri,
     });
 
     ctx.meta.$statusCode = 204;
@@ -20,11 +20,11 @@ module.exports = {
       groupSlug: { type: 'string', optional: true, min: 1, trim: true },
       groupUri: { type: 'string', optional: true, trim: true },
       memberUri: { type: 'string', optional: false, trim: true },
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
     },
     async handler(ctx) {
       let { groupSlug, groupUri, memberUri } = ctx.params;
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
       if (!memberUri) throw new MoleculerError('needs a memberUri', 400, 'BAD_REQUEST');
@@ -38,12 +38,12 @@ module.exports = {
 
       if (webId !== 'system') {
         // verifier que nous avons bien le droit Write sur le group.
-        let groupRights = await ctx.call('webacl.resource.hasRights', {
+        const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
-            write: true
+            write: true,
           },
-          webId
+          webId,
         });
         if (!groupRights.write)
           throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
@@ -53,10 +53,10 @@ module.exports = {
         query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
         DELETE DATA { GRAPH <${this.settings.graphName}>
           { <${groupUri}> vcard:hasMember <${memberUri}> } }`,
-        webId: 'system'
+        webId: 'system',
       });
 
       ctx.emit('webacl.group.member-removed', { groupUri, memberUri }, { meta: { webId: null, dataset: null } });
-    }
-  }
+    },
+  },
 };

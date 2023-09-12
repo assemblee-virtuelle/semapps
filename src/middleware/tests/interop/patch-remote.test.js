@@ -5,7 +5,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');
@@ -23,18 +24,18 @@ describe('Server2 imports a single resource from server1', () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Resource',
         label: 'My resource',
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3001/resources'
+      containerUri: 'http://localhost:3001/resources',
     });
 
     await waitForExpect(async () => {
       await expect(
-        server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
+        server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri }),
       ).resolves.toBeTruthy();
     });
   });
@@ -45,23 +46,21 @@ describe('Server2 imports a single resource from server1', () => {
       sparqlUpdate: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
-      `
+      `,
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri }),
       ).resolves.toBeTruthy();
     });
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource',
-        'semapps:singleMirroredResource': 'http://localhost:3001'
+        'semapps:singleMirroredResource': 'http://localhost:3001',
       });
     });
   });
@@ -70,26 +69,24 @@ describe('Server2 imports a single resource from server1', () => {
     await server1.call('ldp.resource.put', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@id': resourceUri,
         '@type': 'Resource',
         label: 'My resource updated',
       },
-      contentType: MIME_TYPES.JSON
+      contentType: MIME_TYPES.JSON,
     });
 
     // Force call of updateSingleMirroredResources
     await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource updated',
-        'semapps:singleMirroredResource': 'http://localhost:3001'
+        'semapps:singleMirroredResource': 'http://localhost:3001',
       });
     });
   });
@@ -101,9 +98,7 @@ describe('Server2 imports a single resource from server1', () => {
     await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).rejects.toThrow();
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });
   });
 });

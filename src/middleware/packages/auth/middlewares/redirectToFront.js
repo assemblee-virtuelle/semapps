@@ -1,6 +1,6 @@
 const redirectToFront = (req, res) => {
   // Redirect browser to the redirect URL pushed in session
-  let redirectUrl = new URL(req.session.redirectUrl);
+  const redirectUrl = new URL(req.session.redirectUrl);
   if (req.user) {
     // If a token was stored, add it to the URL so that the client may use it
     if (req.user.token) redirectUrl.searchParams.set('token', req.user.token);

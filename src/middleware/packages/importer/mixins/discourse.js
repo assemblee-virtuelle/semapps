@@ -7,20 +7,21 @@ module.exports = {
     source: {
       discourse: {
         baseUrl: null,
-        type: 'topics'
+        type: 'topics',
       },
       fieldsMapping: {
         slug: 'slug',
         created: 'created_at',
-        updated: data => data.last_posted_at || data.created_at
-      }
-    }
+        updated: (data) => data.last_posted_at || data.created_at,
+      },
+    },
   },
   created() {
     if (this.settings.source.discourse.type === 'topics') {
       this.settings.source.apiUrl = this.settings.source.discourse.baseUrl;
       this.settings.source.getAllCompact = urlJoin(this.settings.source.discourse.baseUrl, 'latest.json');
-      this.settings.source.getOneFull = data => urlJoin(this.settings.source.discourse.baseUrl, 't', `${data.id}.json`);
+      this.settings.source.getOneFull = (data) =>
+        urlJoin(this.settings.source.discourse.baseUrl, 't', `${data.id}.json`);
     } else {
       throw new Error('The DiscourseImporterMixin can only import topics for now');
     }
@@ -28,18 +29,18 @@ module.exports = {
   methods: {
     async list(url) {
       if (this.settings.source.discourse.type === 'topics') {
-        let topics = [],
-          page = 0,
-          result;
+        const topics = [];
+        let page = 0;
+        let result;
 
         do {
-          result = await this.fetch(url + '?page=' + page);
+          result = await this.fetch(`${url}?page=${page}`);
           topics.push(...result.topic_list.topics);
           page++;
         } while (result.topic_list.more_topics_url);
 
         return topics;
       }
-    }
-  }
+    },
+  },
 };

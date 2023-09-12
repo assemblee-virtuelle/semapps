@@ -1,9 +1,9 @@
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent} = require('../../../utils');
-const { ACTOR_TYPES } = require('../../../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
+const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent } = require('../../../utils');
+const { ACTOR_TYPES } = require('../../../constants');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -28,13 +28,17 @@ const OutboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
-        throw new MoleculerError('Collection not found:' + collectionUri, 404, 'NOT_FOUND');
+        throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
       }
 
       // Ensure logged user is posting to his own outbox
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-        throw new MoleculerError(`Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`, 403, 'FORBIDDEN');
+        throw new MoleculerError(
+          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
+          403,
+          'FORBIDDEN',
+        );
       }
 
       if (this.settings.podProvider) {
@@ -58,14 +62,14 @@ const OutboxService = {
       activity.published = new Date().toISOString();
 
       const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
-        webId: actorUri
+        webId: actorUri,
       });
 
       const activityUri = await ctx.call('activitypub.activity.post', {
         containerUri: activitiesContainerUri,
         resource: activity,
         contentType: MIME_TYPES.JSON,
-        webId: 'system' // Post as system since there is no write permission to the activities container
+        webId: 'system', // Post as system since there is no write permission to the activities container
       });
 
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
@@ -73,10 +77,10 @@ const OutboxService = {
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
         collectionUri,
-        item: activity
+        item: activity,
       });
 
-      let localRecipients = [];
+      const localRecipients = [];
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
       // Post to remote recipients
@@ -112,38 +116,46 @@ const OutboxService = {
       // (They can enter into conflict with an usage of ctx.meta.$location)
       ctx.meta.$responseHeaders = {
         Location: activityUri,
-        'Content-Length': 0
+        'Content-Length': 0,
       };
 
       ctx.meta.$statusCode = 201;
 
       // TODO do not return activity when calling through API calls
       return activity;
-    }
+    },
   },
   methods: {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
     },
     async localPost(recipients, activity) {
-      const success = [],
-        failures = [];
+      const success = [];
+      const failures = [];
 
       for (const recipientUri of recipients) {
         try {
           const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
-          const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-            actorUri: recipientUri,
-            predicate: 'inbox',
-            webId: 'system'
-          }, { meta: { dataset }});
+          const recipientInbox = await this.broker.call(
+            'activitypub.actor.getCollectionUri',
+            {
+              actorUri: recipientUri,
+              predicate: 'inbox',
+              webId: 'system',
+            },
+            { meta: { dataset } },
+          );
 
           // Attach activity to the inbox of the recipient
-          await this.broker.call('activitypub.collection.attach', {
-            collectionUri: recipientInbox,
-            item: activity
-          }, { meta: { dataset }});
+          await this.broker.call(
+            'activitypub.collection.attach',
+            {
+              collectionUri: recipientInbox,
+              item: activity,
+            },
+            { meta: { dataset } },
+          );
 
           if (this.settings.podProvider) {
             // Store the activity in the dataset of the recipient
@@ -152,13 +164,17 @@ const OutboxService = {
               mirrorGraph: false, // Store in default graph as activity may not be public
               keepInSync: false, // Activities are immutable
               webId: recipientUri,
-              dataset
+              dataset,
             });
 
-            await this.broker.call('activitypub.activity.attach', {
-              resourceUri: activity.id,
-              webId: recipientUri
-            }, { meta: { dataset }});
+            await this.broker.call(
+              'activitypub.activity.attach',
+              {
+                resourceUri: activity.id,
+                webId: recipientUri,
+              },
+              { meta: { dataset } },
+            );
           }
 
           success.push(recipientUri);
@@ -180,7 +196,7 @@ const OutboxService = {
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,
           predicate: 'inbox',
-          webId: 'system'
+          webId: 'system',
         });
 
         if (!recipientInbox) {
@@ -194,7 +210,7 @@ const OutboxService = {
           url: recipientInbox,
           method: 'POST',
           body,
-          actorUri: activity.actor
+          actorUri: activity.actor,
         });
 
         // Post activity to the inbox of the remote actor
@@ -202,23 +218,22 @@ const OutboxService = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...signatureHeaders
+            ...signatureHeaders,
           },
-          body
+          body,
         });
 
         if (response.ok) {
           return true;
-        } else {
-          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-          return false;
         }
+        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
+        return false;
       } catch (e) {
         console.error(e);
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
         return false;
       }
-    }
+    },
   },
   queues: {
     remotePost: {
@@ -228,13 +243,13 @@ const OutboxService = {
         const response = await this.remotePost(recipientUri, activity);
 
         if (!response.ok) {
-          job.moveToFailed({ message: 'Unable to send to remote actor ' + recipientUri }, true);
+          job.moveToFailed({ message: `Unable to send to remote actor ${recipientUri}` }, true);
         } else {
           job.progress(100);
         }
 
         return { response };
-      }
+      },
     },
     localPost: {
       name: '*',
@@ -249,9 +264,9 @@ const OutboxService = {
         }
 
         return { success, failures };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 module.exports = OutboxService;

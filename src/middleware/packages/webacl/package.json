@@ -16,6 +16,7 @@
     "url": "https://github.com/assemblee-virtuelle/semapps/issues"
   },
   "dependencies": {
+    "@semapps/ldp": "0.5.1",
     "@semapps/middlewares": "0.5.1",
     "@semapps/mime-types": "0.5.1",
     "@semapps/triplestore": "0.5.1",
@@ -28,5 +29,8 @@
     "streamify-string": "^1.0.1",
     "url-join": "^4.0.1"
   },
-  "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599"
+  "gitHead": "684ba335d0759920f4134f550431b3c3af8e2599",
+  "engines": {
+    "node": ">=14"
+  }
 }

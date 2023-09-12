@@ -4,20 +4,20 @@ module.exports = {
   visibility: 'public',
   params: {
     uri: {
-      type: 'string'
+      type: 'string',
     },
     webId: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     dataset: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     graphName: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -26,16 +26,16 @@ module.exports = {
     const results = await ctx.call('triplestore.query', {
       query: `
         SELECT ?p ?v
-        ${ctx.params.graphName ? 'FROM <' + ctx.params.graphName + '>' : ''}
+        ${ctx.params.graphName ? `FROM <${ctx.params.graphName}>` : ''}
         WHERE {
           <${ctx.params.uri}> ?p ?v
         }
       `,
       accept: MIME_TYPES.JSON,
       webId,
-      dataset
+      dataset,
     });
 
     return results.length;
-  }
+  },
 };

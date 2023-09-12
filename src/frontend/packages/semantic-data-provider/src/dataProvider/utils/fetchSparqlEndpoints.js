@@ -1,7 +1,7 @@
+import jsonld from 'jsonld';
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
 import getBlankNodesFromDataServers from './getBlankNodesFromDataServers';
-import jsonld from 'jsonld';
 
 const compare = (a, b) => {
   switch (typeof a) {
@@ -20,7 +20,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const dataModel = resources[resourceId];
 
   const sparqlQueryPromises = Object.keys(containers).map(
-    serverKey =>
+    (serverKey) =>
       new Promise((resolve, reject) => {
         const blankNodes =
           params.filter?.blankNodes ||
@@ -41,12 +41,12 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
           blankNodes,
           predicates,
-          ontologies
+          ontologies,
         });
 
         httpClient(dataServers[serverKey].sparqlEndpoint, {
           method: 'POST',
-          body: sparqlQuery
+          body: sparqlQuery,
         })
           .then(({ json }) => {
             // By default, embed only the blank nodes we explicitly asked to dereference
@@ -58,28 +58,28 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
                     '@context': jsonContext,
                     '@type': dataModel.types,
                     '@embed': '@never',
-                    ...getEmbedFrame(blankNodes)
+                    ...getEmbedFrame(blankNodes),
                   }
                 : {
                     '@context': jsonContext,
-                    '@type': dataModel.types
+                    '@type': dataModel.types,
                   };
 
             // omitGraph option force results to be in a @graph, even if we have a single result
             return jsonld.frame(json, frame, { omitGraph: false });
           })
-          .then(compactJson => {
+          .then((compactJson) => {
             if (compactJson['@id']) {
               const { '@context': context, ...rest } = compactJson;
               compactJson = {
                 '@context': context,
-                '@graph': [rest]
+                '@graph': [rest],
               };
             }
             resolve(compactJson['@graph'] || []);
           })
-          .catch(e => reject(e));
-      })
+          .catch((e) => reject(e));
+      }),
   );
 
   // Run simultaneous SPARQL queries
@@ -87,39 +87,36 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
 
   if (results.length === 0) {
     return { data: [], total: 0 };
-  } else {
-    // Merge all results in one array
-    results = [].concat(...results);
-
-    // Add id in addition to @id, as this is what React-Admin expects
-    let returnData = results.map(item => {
-      item.id = item.id || item['@id'];
-      return item;
-    });
-
-    // TODO sort and paginate the results in the SPARQL query to improve performances
-    if (params.sort) {
-      returnData = returnData.sort((a, b) => {
-        if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
-          if (params.sort.order === 'ASC') {
-            return compare(a[params.sort.field], b[params.sort.field]);
-          } else {
-            return compare(b[params.sort.field], a[params.sort.field]);
-          }
-        } else {
-          return 0;
-        }
-      });
-    }
-    if (params.pagination) {
-      returnData = returnData.slice(
-        (params.pagination.page - 1) * params.pagination.perPage,
-        params.pagination.page * params.pagination.perPage
-      );
-    }
-
-    return { data: returnData, total: results.length };
   }
+  // Merge all results in one array
+  results = [].concat(...results);
+
+  // Add id in addition to @id, as this is what React-Admin expects
+  let returnData = results.map((item) => {
+    item.id = item.id || item['@id'];
+    return item;
+  });
+
+  // TODO sort and paginate the results in the SPARQL query to improve performances
+  if (params.sort) {
+    returnData = returnData.sort((a, b) => {
+      if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
+        if (params.sort.order === 'ASC') {
+          return compare(a[params.sort.field], b[params.sort.field]);
+        }
+        return compare(b[params.sort.field], a[params.sort.field]);
+      }
+      return 0;
+    });
+  }
+  if (params.pagination) {
+    returnData = returnData.slice(
+      (params.pagination.page - 1) * params.pagination.perPage,
+      params.pagination.page * params.pagination.perPage,
+    );
+  }
+
+  return { data: returnData, total: results.length };
 };
 
 export default fetchSparqlEndpoints;

@@ -21,32 +21,32 @@ const ActivityPubService = {
     queueServiceUrl: null,
     like: {
       attachToObjectTypes: null,
-      attachToActorTypes: null
+      attachToActorTypes: null,
     },
     follow: {
-      attachToActorTypes: null
+      attachToActorTypes: null,
     },
     reply: {
-      attachToObjectTypes: null
-    }
+      attachToObjectTypes: null,
+    },
   },
   dependencies: ['api'],
   created() {
-    let { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
+    const { baseUri, jsonContext, podProvider, selectActorData, queueServiceUrl, reply, like, follow } = this.settings;
 
     this.broker.createService(CollectionService, {
       settings: {
         jsonContext,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     this.broker.createService(RegistryService, {
       settings: {
         baseUri,
         jsonContext,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     this.broker.createService(ActorService, {
@@ -54,51 +54,51 @@ const ActivityPubService = {
         baseUri,
         jsonContext,
         selectActorData,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     this.broker.createService(ObjectService, {
       settings: {
         baseUri,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     this.broker.createService(ActivityService, {
       settings: {
         baseUri,
-        jsonContext
-      }
+        jsonContext,
+      },
     });
 
     this.broker.createService(FollowService, {
       settings: {
         baseUri,
-        attachToActorTypes: follow.attachToActorTypes || Object.values(ACTOR_TYPES)
-      }
+        attachToActorTypes: follow.attachToActorTypes || Object.values(ACTOR_TYPES),
+      },
     });
 
     this.broker.createService(InboxService, {
       settings: {
         baseUri,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     this.broker.createService(LikeService, {
       settings: {
         baseUri,
         attachToObjectTypes: like.attachToObjectTypes || Object.values(OBJECT_TYPES),
-        attachToActorTypes: like.attachToActorTypes || Object.values(ACTOR_TYPES)
-      }
+        attachToActorTypes: like.attachToActorTypes || Object.values(ACTOR_TYPES),
+      },
     });
 
     this.broker.createService(ReplyService, {
       settings: {
         baseUri,
-        attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES)
-      }
+        attachToObjectTypes: reply.attachToObjectTypes || Object.values(OBJECT_TYPES),
+      },
     });
 
     this.broker.createService(OutboxService, {
@@ -106,10 +106,10 @@ const ActivityPubService = {
       settings: {
         baseUri,
         jsonContext,
-        podProvider
-      }
+        podProvider,
+      },
     });
-  }
+  },
 };
 
 module.exports = ActivityPubService;
