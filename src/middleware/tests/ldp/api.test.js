@@ -61,7 +61,7 @@ beforeAll(async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users'
+      usersContainer: `${CONFIG.HOME_URL}users`
     }
   });
 
@@ -95,7 +95,7 @@ beforeAll(async () => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources',
+    resourceUri: `${CONFIG.HOME_URL}resources`,
     additionalRights: {
       anon: {
         write: true
@@ -127,7 +127,7 @@ describe('CRUD Project', () => {
       })
       .set('content-type', 'application/ld+json');
 
-    let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
+    const location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
     expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');

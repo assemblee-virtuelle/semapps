@@ -1,7 +1,7 @@
 const { parseHeader, negotiateContentType, negotiateAccept, parseJson } = require('@semapps/middlewares');
 
 const onError = (req, res, err) => {
-  let { type, code, message, data, name } = err;
+  const { type, code, message, data, name } = err;
   res.writeHead(Number(code) || 500, data && data.status ? data.status : 'Server error', {
     'Content-Type': 'application/json'
   });

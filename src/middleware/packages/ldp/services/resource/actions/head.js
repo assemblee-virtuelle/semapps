@@ -4,7 +4,7 @@ const { getAclUriFromResourceUri } = require('../../../utils');
 module.exports = {
   api: async function api(ctx) {
     const { containerUri, id } = ctx.params;
-    let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, urlJoin(containerUri, id));
+    const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, urlJoin(containerUri, id));
 
     ctx.meta.$statusCode = 200;
     ctx.meta.$statusMessage = 'OK';

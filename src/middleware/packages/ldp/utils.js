@@ -18,7 +18,7 @@ function createFragmentURL(baseUrl, serverUrl) {
       .replace('.', '_')
       .replace(':', '_');
 
-  return urlJoin(baseUrl, '#' + fragment);
+  return urlJoin(baseUrl, `#${fragment}`);
 }
 
 const isMirror = (resourceUri, baseUrl) => {
@@ -27,9 +27,9 @@ const isMirror = (resourceUri, baseUrl) => {
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = predicates => {
-  let nodes = [];
+  const nodes = [];
   if (predicates) {
-    for (let predicate of predicates) {
+    for (const predicate of predicates) {
       if (predicate.includes('/')) {
         const nodeNames = predicate.split('/');
         for (let i = 1; i <= nodeNames.length; i++) {
@@ -68,11 +68,11 @@ const buildOptionalQuery = (queries, parentNode = false) =>
     .join('\n');
 
 const buildDereferenceQuery = predicates => {
-  let queries = [];
+  const queries = [];
   const nodes = extractNodes(predicates);
 
   if (nodes && nodes.length) {
-    for (let node of nodes) {
+    for (const node of nodes) {
       const parentNode = getParentNode(node);
       const predicate = getPredicate(node);
       const varName = generateSparqlVarName(node);
@@ -90,12 +90,11 @@ const buildDereferenceQuery = predicates => {
       construct: queries.map(q => q.query).join('\n'),
       where: buildOptionalQuery(queries)
     };
-  } else {
-    return {
-      construct: '',
-      where: ''
-    };
   }
+  return {
+    construct: '',
+    where: ''
+  };
 };
 
 const buildFiltersQuery = filters => {
@@ -123,7 +122,7 @@ const getPrefixRdf = ontologies => {
 };
 
 const getPrefixJSON = ontologies => {
-  let pattern = {};
+  const pattern = {};
   ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
   return pattern;
 };
@@ -132,7 +131,7 @@ const getPrefixJSON = ontologies => {
 const usePrefix = (uri, ontologies) => {
   if (!uri.startsWith('http')) return uri; // If it is already prefixed
   const ontology = ontologies.find(o => uri.startsWith(o.url));
-  return uri.replace(ontology.url, ontology.prefix + ':');
+  return uri.replace(ontology.url, `${ontology.prefix}:`);
 };
 
 // Replace a full URI with a prefix
@@ -140,7 +139,7 @@ const useFullURI = (prefixedUri, ontologies) => {
   if (prefixedUri.startsWith('http')) return prefixedUri; // If it is already a full URI
   const [prefix] = prefixedUri.split(':');
   const ontology = ontologies.find(o => o.prefix === prefix);
-  return prefixedUri.replace(ontology.prefix + ':', ontology.url);
+  return prefixedUri.replace(`${ontology.prefix}:`, ontology.url);
 };
 
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];

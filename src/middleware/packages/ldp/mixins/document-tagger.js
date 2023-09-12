@@ -12,7 +12,7 @@ module.exports = {
     async tagCreatedResource(ctx) {
       const { resourceUri, newData, webId } = ctx.params;
       const now = new Date();
-      let triples = [];
+      const triples = [];
 
       if (!newData['dc:created']) {
         triples.push(

@@ -3,8 +3,8 @@ const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES, TYPES_REPO } = require('./constants');
 
 const negotiateType = function(incomingType) {
-  let availableMediaTypes = [];
-  let negotiatorType = incomingType;
+  const availableMediaTypes = [];
+  const negotiatorType = incomingType;
   TYPES_REPO.forEach(trSupported => {
     trSupported.mimeFull.forEach(tr => availableMediaTypes.push(tr));
   });
@@ -16,9 +16,8 @@ const negotiateType = function(incomingType) {
   const rawNegotiatedAccept = negotiator.mediaType(availableMediaTypes);
   if (rawNegotiatedAccept !== undefined) {
     return TYPES_REPO.filter(tr => tr.mimeFull.includes(rawNegotiatedAccept))[0];
-  } else {
-    throw new MoleculerError('Type not supported : ' + incomingType, 400, 'TYPE_NOT_SUPPORTED');
   }
+  throw new MoleculerError(`Type not supported : ${incomingType}`, 400, 'TYPE_NOT_SUPPORTED');
 };
 
 const negotiateTypeMime = function(incomingType) {

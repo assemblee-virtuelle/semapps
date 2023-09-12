@@ -7,11 +7,11 @@ jest.setTimeout(50000);
 const NUM_USERS = 2;
 
 describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {
-  let broker,
-    actors = [],
-    alice,
-    bob,
-    followActivity;
+  let broker;
+  const actors = [];
+  let alice;
+  let bob;
+  let followActivity;
 
   beforeAll(async () => {
     if (mode === 'single-server') {
@@ -22,7 +22,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
 
     for (let i = 1; i <= NUM_USERS; i++) {
       if (mode === 'multi-server') {
-        broker[i] = await initialize(3000 + i, 'testData' + i, 'settings' + i);
+        broker[i] = await initialize(3000 + i, `testData${i}`, `settings${i}`);
       } else {
         broker[i] = broker;
       }
@@ -53,7 +53,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.FOLLOW,
       object: alice.id,
-      to: [alice.id, bob.id + '/followers']
+      to: [alice.id, `${bob.id}/followers`]
     });
 
     await waitForExpect(async () => {
@@ -119,7 +119,7 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       actor: bob.id,
       type: ACTIVITY_TYPES.UNDO,
       object: followActivity.id,
-      to: [alice.id, bob.id + '/followers']
+      to: [alice.id, `${bob.id}/followers`]
     });
 
     await waitForExpect(async () => {

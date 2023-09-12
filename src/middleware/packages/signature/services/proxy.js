@@ -120,10 +120,9 @@ const ProxyService = {
           status: response.status,
           statusText: response.statusText
         };
-      } else {
-        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
-        throw new MoleculerError(response.statusText, response.status);
       }
+      this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
+      throw new MoleculerError(response.statusText, response.status);
     }
   },
   events: {

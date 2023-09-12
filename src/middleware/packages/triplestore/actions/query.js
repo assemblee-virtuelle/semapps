@@ -28,7 +28,7 @@ module.exports = {
 
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
-    if (!dataset) throw new Error('No dataset defined for triplestore query: ' + query);
+    if (!dataset) throw new Error(`No dataset defined for triplestore query: ${query}`);
 
     const acceptNegotiatedType = negotiateType(accept);
     const acceptType = acceptNegotiatedType.mime;
@@ -54,22 +54,22 @@ module.exports = {
         if (acceptType === MIME_TYPES.JSON) {
           const jsonResult = await response.json();
           return jsonResult.boolean;
-        } else {
-          throw new Error('Only JSON accept type is currently allowed for ASK queries');
         }
+        throw new Error('Only JSON accept type is currently allowed for ASK queries');
+
       case 'SELECT':
         if (acceptType === MIME_TYPES.JSON || acceptType === MIME_TYPES.SPARQL_JSON) {
           const jsonResult = await response.json();
           return await this.sparqlJsonParser.parseJsonResults(jsonResult);
-        } else {
-          return await response.text();
         }
+        return await response.text();
+
       case 'CONSTRUCT':
         if (acceptType === MIME_TYPES.TURTLE || acceptType === MIME_TYPES.TRIPLE) {
           return await response.text();
-        } else {
-          return await response.json();
         }
+        return await response.json();
+
       default:
         throw new Error('SPARQL Verb not supported');
     }

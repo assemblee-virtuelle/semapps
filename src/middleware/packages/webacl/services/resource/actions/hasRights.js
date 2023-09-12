@@ -27,39 +27,46 @@ async function checkRights(
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
-      let permTuples = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, p2, graphName, isContainerDefault);
-      let hasPerm = checkAgentPresent(permTuples, uaSearchParam);
+      const permTuples = await getAuthorizationNode(
+        ctx,
+        resourceUri,
+        resourceAclUri,
+        p2,
+        graphName,
+        isContainerDefault
+      );
+      const hasPerm = checkAgentPresent(permTuples, uaSearchParam);
       if (hasPerm) resultRights[p1] = hasPerm;
     }
   }
 }
 
 async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, graphName) {
-  let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  let resultRights = {};
+  const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+  const resultRights = {};
   let groups;
   if (user !== 'anon') {
     // retrieve the groups of the user
     groups = await getUserGroups(ctx, user, graphName);
   }
-  let uaSearchParam = getUserAgentSearchParam(user, groups);
+  const uaSearchParam = getUserAgentSearchParam(user, groups);
 
   await checkRights(askedRights, resultRights, ctx, resourceUri, resourceAclUri, uaSearchParam, graphName);
 
   if (Object.keys(askedRights).length !== Object.keys(resultRights).length) {
     // we haven't found all the rights yet, we search in parent containers
-    let parentContainers = await findParentContainers(ctx, resourceUri);
+    const parentContainers = await findParentContainers(ctx, resourceUri);
 
     while (parentContainers.length) {
-      let container = parentContainers.shift();
-      let containerUri = container.container.value;
-      let aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
+      const container = parentContainers.shift();
+      const containerUri = container.container.value;
+      const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
       await checkRights(askedRights, resultRights, ctx, containerUri, aclUri, uaSearchParam, graphName, true);
 
       // if we are done finding all the asked rights, we return here, saving some processing.
       if (Object.keys(askedRights).length === Object.keys(resultRights).length) return resultRights;
 
-      let moreParentContainers = await findParentContainers(ctx, containerUri);
+      const moreParentContainers = await findParentContainers(ctx, containerUri);
       parentContainers.push(...moreParentContainers);
     }
   }
@@ -74,7 +81,7 @@ async function hasPermissions(ctx, resourceUri, askedRights, baseUrl, user, grap
 
 module.exports = {
   api: async function api(ctx) {
-    let slugParts = ctx.params.slugParts;
+    let { slugParts } = ctx.params;
 
     // This is the root container
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];

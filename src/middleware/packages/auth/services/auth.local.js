@@ -2,7 +2,7 @@ const { Strategy } = require('passport-local');
 const AuthMixin = require('../mixins/auth');
 const sendToken = require('../middlewares/sendToken');
 const { MoleculerError } = require('moleculer').Errors;
-const AuthMailService = require('../services/mail');
+const AuthMailService = require('./mail');
 
 const AuthLocalService = {
   name: 'auth',
@@ -80,7 +80,7 @@ const AuthLocalService = {
       if (this.settings.formUrl) {
         const formUrl = new URL(this.settings.formUrl);
         if (ctx.params) {
-          for (let [key, value] of Object.entries(ctx.params)) {
+          for (const [key, value] of Object.entries(ctx.params)) {
             formUrl.searchParams.set(key, value);
           }
         }

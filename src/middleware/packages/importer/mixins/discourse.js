@@ -28,12 +28,12 @@ module.exports = {
   methods: {
     async list(url) {
       if (this.settings.source.discourse.type === 'topics') {
-        let topics = [],
-          page = 0,
-          result;
+        const topics = [];
+        let page = 0;
+        let result;
 
         do {
-          result = await this.fetch(url + '?page=' + page);
+          result = await this.fetch(`${url}?page=${page}`);
           topics.push(...result.topic_list.topics);
           page++;
         } while (result.topic_list.more_topics_url);

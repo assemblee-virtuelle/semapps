@@ -12,12 +12,12 @@ module.exports = {
     async handler(ctx) {
       let { resourceUri, rights, webId } = ctx.params;
 
-      let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
+      const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
       webId = webId || ctx.meta.webId || 'anon';
 
       if (webId !== 'system') {
-        let { control } = await ctx.call('webacl.resource.hasRights', {
+        const { control } = await ctx.call('webacl.resource.hasRights', {
           resourceUri,
           rights: { control: true },
           webId
@@ -28,9 +28,9 @@ module.exports = {
 
       const isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
 
-      let processedRights = processRights(rights, aclUri + '#');
+      let processedRights = processRights(rights, `${aclUri}#`);
       if (isContainer && rights.default)
-        processedRights = processedRights.concat(processRights(rights.default, aclUri + '#Default'));
+        processedRights = processedRights.concat(processRights(rights.default, `${aclUri}#Default`));
 
       await ctx.call('triplestore.update', {
         query: `

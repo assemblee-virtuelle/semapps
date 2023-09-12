@@ -33,7 +33,7 @@ module.exports = {
 
       // Detach from all containers with the mirrored resource
       const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      for (let containerUri of containers) {
+      for (const containerUri of containers) {
         await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
       }
 

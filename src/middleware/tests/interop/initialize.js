@@ -47,7 +47,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
-    nodeID: 'server' + port,
+    nodeID: `server${port}`,
     middlewares: [WebAclMiddleware({ baseUrl }), ObjectsWatcherMiddleware({ baseUrl })],
     logger: {
       type: 'Console',
@@ -95,7 +95,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: baseUrl + 'actors/'
+      usersContainer: `${baseUrl}actors/`
     }
   });
 
@@ -113,7 +113,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: baseUrl + 'resources',
+    resourceUri: `${baseUrl}resources`,
     additionalRights: {
       anon: {
         read: true,
@@ -124,7 +124,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: baseUrl + 'applications',
+    resourceUri: `${baseUrl}applications`,
     additionalRights: {
       anon: {
         read: true,

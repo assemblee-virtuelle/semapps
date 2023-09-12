@@ -33,8 +33,8 @@ module.exports = {
     } else if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
-      for (let account of accounts) {
-        if (!account.podUri) throw new Error('The podUri is not defined for account ' + account.username);
+      for (const account of accounts) {
+        if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
         ctx.meta.dataset = account.username;
         const containerUri = urlJoin(account.podUri, path);
         await this.createAndAttachContainer(ctx, containerUri, path);

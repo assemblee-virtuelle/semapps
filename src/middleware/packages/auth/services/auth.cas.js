@@ -1,6 +1,6 @@
 const { Strategy } = require('passport-cas2');
-const AuthSSOMixin = require('../mixins/auth.sso');
 const { Errors: E } = require('moleculer-web');
+const AuthSSOMixin = require('../mixins/auth.sso');
 
 const AuthCASService = {
   name: 'auth',

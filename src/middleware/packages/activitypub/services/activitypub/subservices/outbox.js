@@ -1,9 +1,9 @@
 const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
 const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
-const { MIME_TYPES } = require('@semapps/mime-types');
 
 const OutboxService = {
   name: 'activitypub.outbox',
@@ -28,7 +28,7 @@ const OutboxService = {
 
       const collectionExists = await ctx.call('activitypub.collection.exist', { collectionUri });
       if (!collectionExists) {
-        throw new MoleculerError('Collection not found:' + collectionUri, 404, 'NOT_FOUND');
+        throw new MoleculerError(`Collection not found:${collectionUri}`, 404, 'NOT_FOUND');
       }
 
       // Ensure logged user is posting to his own outbox
@@ -80,7 +80,7 @@ const OutboxService = {
         item: activity
       });
 
-      let localRecipients = [];
+      const localRecipients = [];
       const recipients = await ctx.call('activitypub.activity.getRecipients', { activity });
 
       // Post to remote recipients
@@ -130,8 +130,8 @@ const OutboxService = {
       return uri.startsWith(this.settings.baseUri);
     },
     async localPost(recipients, activity) {
-      const success = [],
-        failures = [];
+      const success = [];
+      const failures = [];
 
       for (const recipientUri of recipients) {
         try {
@@ -225,10 +225,9 @@ const OutboxService = {
 
         if (response.ok) {
           return true;
-        } else {
-          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-          return false;
         }
+        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
+        return false;
       } catch (e) {
         console.error(e);
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
@@ -244,7 +243,7 @@ const OutboxService = {
         const response = await this.remotePost(recipientUri, activity);
 
         if (!response.ok) {
-          job.moveToFailed({ message: 'Unable to send to remote actor ' + recipientUri }, true);
+          job.moveToFailed({ message: `Unable to send to remote actor ${recipientUri}` }, true);
         } else {
           job.progress(100);
         }

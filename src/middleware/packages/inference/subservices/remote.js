@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const N3 = require('n3');
 const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
 const urlJoin = require('url-join');
+
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
@@ -30,7 +31,7 @@ module.exports = {
         if (this.settings.offerToRemoteServers) {
           const serverDomainName = new URL(ctx.params.subject).host;
           const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', {
-            account: 'relay@' + serverDomainName
+            account: `relay@${serverDomainName}`
           });
 
           if (remoteRelayActorUri) {
@@ -65,7 +66,7 @@ module.exports = {
                 if (ctx.params.add) {
                   json[ctx.params.predicate] = { id: ctx.params.object };
                 } else {
-                  let expanded_resource = await ctx.call('jsonld.expand', { input: json });
+                  const expanded_resource = await ctx.call('jsonld.expand', { input: json });
                   delete expanded_resource[0]?.[ctx.params.predicate];
                   json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
                 }
@@ -126,7 +127,7 @@ module.exports = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
-          let relationship = activity.object.object;
+          const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (this.isRemoteUri(relationship.subject)) {
               this.logger.warn('Attempt at offering an inverse relationship on a remote resource. Aborting...');

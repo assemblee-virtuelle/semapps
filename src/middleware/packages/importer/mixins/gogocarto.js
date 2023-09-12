@@ -20,8 +20,11 @@ module.exports = {
     if (this.settings.source.gogocarto.type === 'elements') {
       this.settings.source.apiUrl = urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements');
       this.settings.source.getAllFull = urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements');
-      this.settings.source.getAllCompact =
-        urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements') + '?ontology=gogosync';
+      this.settings.source.getAllCompact = `${urlJoin(
+        this.settings.source.gogocarto.baseUrl,
+        'api',
+        'elements'
+      )}?ontology=gogosync`;
       this.settings.source.getOneFull = data =>
         urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements', `${data.id}`);
     } else {

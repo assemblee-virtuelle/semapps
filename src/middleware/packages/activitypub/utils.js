@@ -10,9 +10,8 @@ const objectCurrentToId = activityJson => {
         ...objectCurrentToId(object)
       }
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
 const objectIdToCurrent = activityJson => {
@@ -30,13 +29,12 @@ const objectIdToCurrent = activityJson => {
         ...objectIdToCurrent(object)
       }
     };
-  } else {
-    return activityJson;
   }
+  return activityJson;
 };
 
 const collectionPermissionsWithAnonRead = webId => {
-  let permissions = {
+  const permissions = {
     anon: {
       read: true
     }

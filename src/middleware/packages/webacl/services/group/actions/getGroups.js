@@ -8,12 +8,12 @@ module.exports = {
       webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       let groups;
 
       if (webId !== 'system') {
-        let agentSelector = webId === 'anon' ? 'acl:agentClass foaf:Agent.' : `acl:agent <${webId}>.`;
+        const agentSelector = webId === 'anon' ? 'acl:agentClass foaf:Agent.' : `acl:agent <${webId}>.`;
 
         groups = await ctx.call('triplestore.query', {
           query: `

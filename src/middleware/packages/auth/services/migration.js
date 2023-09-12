@@ -9,7 +9,7 @@ module.exports = {
 
       const results = await ctx.call('ldp.container.get', { containerUri: usersContainer, accept: MIME_TYPES.JSON });
 
-      for (let user of results['ldp:contains']) {
+      for (const user of results['ldp:contains']) {
         if (user[emailPredicate]) {
           try {
             await ctx.call('auth.account.create', {
@@ -21,7 +21,7 @@ module.exports = {
             console.log(`Unable to create account for user ${user.id}. Error message: ${e.message}`);
           }
         } else {
-          console.log('No email found for user ' + user.id);
+          console.log(`No email found for user ${user.id}`);
         }
       }
     }

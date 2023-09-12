@@ -58,7 +58,7 @@ module.exports = {
       }
     }
 
-    for (let route of getRoutes()) {
+    for (const route of getRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
   }

@@ -53,7 +53,7 @@ const ActorService = {
     async appendActorData(ctx) {
       const { actorUri } = ctx.params;
       const userData = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx });
-      let propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
+      const propertiesToAdd = this.settings.selectActorData ? this.settings.selectActorData(userData) : {};
 
       if (!propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']) {
         // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
@@ -62,7 +62,7 @@ const ActorService = {
           ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type))
           : false;
         if (!includeActorType) {
-          propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = AS_PREFIX + 'Person';
+          propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = `${AS_PREFIX}Person`;
         }
       }
 
@@ -158,7 +158,7 @@ const ActorService = {
       });
     },
     async awaitCreateComplete(ctx) {
-      let { actorUri, additionalKeys = [] } = ctx.params;
+      const { actorUri, additionalKeys = [] } = ctx.params;
       const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
       let actor;
       do {
@@ -168,9 +168,9 @@ const ActorService = {
       return actor;
     },
     async generateMissingActorsData(ctx) {
-      for (let containerUri of this.settings.actorsContainers) {
+      for (const containerUri of this.settings.actorsContainers) {
         const containerData = await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
-        for (let actor of containerData['ldp:contains']) {
+        for (const actor of containerData['ldp:contains']) {
           const actorUri = actor.id || actor['@id'];
           await this.actions.appendActorData({ actorUri, userData: actor }, { parentCtx: ctx });
           if (!actor.inbox) {
@@ -179,7 +179,7 @@ const ActorService = {
           if (!actor.publicKey) {
             await this.actions.generateKeyPair({ actorUri }, { parentCtx: ctx });
           }
-          this.broker.info('Generated missing data for actor ' + actorUri);
+          this.broker.info(`Generated missing data for actor ${actorUri}`);
         }
       }
     },
@@ -197,7 +197,7 @@ const ActorService = {
       if (this.settings.podProvider && !dataset) return true; // If no dataset is set, assume actor is remote
       return (
         !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'))
+        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
       );
     },
     isActor(resource) {

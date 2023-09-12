@@ -28,7 +28,7 @@ const ExpoPushNotificationService = {
         users: Array.isArray(to) ? to : [to]
       });
 
-      for (let device of devices) {
+      for (const device of devices) {
         await this.actions.create(
           {
             deviceId: device.id,
@@ -47,7 +47,7 @@ const ExpoPushNotificationService = {
     async processQueue(ctx) {
       const notifications = await this.findByStatus('queued', ctx);
 
-      for (let notification of notifications) {
+      for (const notification of notifications) {
         const message = JSON.parse(notification['semapps:message']);
 
         if (!Expo.isExpoPushToken(message.to)) {
@@ -80,15 +80,15 @@ const ExpoPushNotificationService = {
       const notifications = await this.findByStatus('processed', ctx);
 
       if (notifications) {
-        let receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
+        const receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
           notifications.map(notification => notification['semapps:receiptId'])
         );
 
         // Like sending notifications, there are different strategies you could use
         // to retrieve batches of receipts from the Expo service.
-        for (let chunk of receiptIdChunks) {
+        for (const chunk of receiptIdChunks) {
           try {
-            let receipts = await this.expo.getPushNotificationReceiptsAsync(chunk);
+            const receipts = await this.expo.getPushNotificationReceiptsAsync(chunk);
 
             // The receipts specify whether Apple or Google successfully received the
             // notification and information about an error, if one occurred.

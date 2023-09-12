@@ -23,7 +23,7 @@ module.exports = {
     },
     async handler(ctx) {
       let { groupSlug, groupUri, memberUri } = ctx.params;
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri && !groupSlug) throw new MoleculerError('needs a groupSlug or a groupUri', 400, 'BAD_REQUEST');
 
@@ -37,7 +37,7 @@ module.exports = {
 
       // verifier que nous avons bien le droit Append ou Write sur le group.
       if (webId !== 'system') {
-        let groupRights = await ctx.call('webacl.resource.hasRights', {
+        const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
             append: true,

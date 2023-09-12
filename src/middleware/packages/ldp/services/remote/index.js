@@ -38,7 +38,7 @@ module.exports = {
           webId &&
           webId !== 'anon' &&
           webId !== 'system' &&
-          !urlJoin(uri, '/').startsWith(webId + '/'))
+          !urlJoin(uri, '/').startsWith(`${webId}/`))
       );
     },
     async proxyAvailable() {
@@ -71,7 +71,7 @@ module.exports = {
             } else {
               // Connection errors are not counted as errors that indicate the resource is gone.
               // Those error just indicate that the remote server is not responding. Can be temporary.
-              this.logger.warn('Failed to update single mirrored resource: ' + resourceUri);
+              this.logger.warn(`Failed to update single mirrored resource: ${resourceUri}`);
             }
           }
         }

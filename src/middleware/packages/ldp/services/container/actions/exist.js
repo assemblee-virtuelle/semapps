@@ -18,9 +18,9 @@ module.exports = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
-          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           ?container a ldp:Container .
-          FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
+          FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .
           ${isRemoteContainer ? '}' : ''}
         }
       `,

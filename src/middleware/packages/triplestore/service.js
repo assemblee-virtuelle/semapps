@@ -60,7 +60,7 @@ const TripleStoreService = {
         body,
         headers: {
           ...headers,
-          Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
+          Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
         }
       });
 

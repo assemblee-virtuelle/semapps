@@ -24,7 +24,7 @@ const ObjectService = {
       });
     },
     async awaitCreateComplete(ctx) {
-      let { objectUri, predicates } = ctx.params;
+      const { objectUri, predicates } = ctx.params;
       let object;
       do {
         if (object) await delay(1000); // Delay only on second loop
@@ -42,12 +42,12 @@ const ObjectService = {
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
-      let activityType = activity.type || activity['@type'],
-        objectUri;
+      let activityType = activity.type || activity['@type'];
+      let objectUri;
 
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        let { to, '@id': id, ...object } = activity;
+        const { to, '@id': id, ...object } = activity;
         activityType = ACTIVITY_TYPES.CREATE;
         activity = {
           '@context': object['@context'],

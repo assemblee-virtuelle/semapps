@@ -17,7 +17,7 @@ module.exports = {
     return await ctx.call('triplestore.query', {
       query: `
         ASK {
-          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>
           ${isRemoteContainer ? '}' : ''}
         }

@@ -7,7 +7,7 @@ module.exports = {
       groupSlug: { type: 'string', optional: false, trim: true }
     },
     async handler(ctx) {
-      let { groupSlug } = ctx.params;
+      const { groupSlug } = ctx.params;
       return urlJoin(this.settings.baseUrl, '_groups', groupSlug);
     }
   }

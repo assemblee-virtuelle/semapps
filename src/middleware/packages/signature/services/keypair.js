@@ -68,7 +68,7 @@ const SignatureService = {
       }
     },
     async attachPublicKey(ctx) {
-      let { actorUri } = ctx.params;
+      const { actorUri } = ctx.params;
 
       const actor = await ctx.call('ldp.resource.get', {
         resourceUri: actorUri,
@@ -97,12 +97,11 @@ const SignatureService = {
       const account = await ctx.call('auth.account.findByWebId', { webId: actorUri });
 
       if (account) {
-        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, account.username + '.key');
-        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, account.username + '.key.pub');
+        const privateKeyPath = path.join(this.settings.actorsKeyPairsDir, `${account.username}.key`);
+        const publicKeyPath = path.join(this.settings.actorsKeyPairsDir, `${account.username}.key.pub`);
         return { privateKeyPath, publicKeyPath };
-      } else {
-        throw new Error('No account found with URI ' + actorUri);
       }
+      throw new Error(`No account found with URI ${actorUri}`);
     },
     async get(ctx) {
       const { actorUri } = ctx.params;

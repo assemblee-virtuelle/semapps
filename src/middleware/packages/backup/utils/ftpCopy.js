@@ -13,12 +13,12 @@ const ftpCopy = (path, subDir, remoteServer) => {
         password: remoteServer.password
       })
       .then(() => {
-        fs.readdir(path, async function(err, files) {
+        fs.readdir(path, async (err, files) => {
           if (err) {
-            reject('Unable to scan directory: ' + err.message);
+            reject(`Unable to scan directory: ${err.message}`);
           } else {
             const now = Date.now();
-            const newFiles = files.filter(f => now - fs.statSync(path + '/' + f).mtime < 60000);
+            const newFiles = files.filter(f => now - fs.statSync(`${path}/${f}`).mtime < 60000);
             for (const filename of newFiles) {
               await sftp.put(pathJoin(path, filename), pathJoin(remoteServer.path, filename));
             }

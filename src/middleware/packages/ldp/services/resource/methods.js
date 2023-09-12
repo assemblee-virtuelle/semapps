@@ -21,18 +21,17 @@ module.exports = {
   async bodyToTriples(body, contentType) {
     if (contentType === MIME_TYPES.JSON) {
       return await this.broker.call('jsonld.toQuads', { input: body });
-    } else {
-      if (!(typeof body == 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
-      return new Promise((resolve, reject) => {
-        const textStream = streamifyString(body);
-        let res = [];
-        rdfParser
-          .parse(textStream, { contentType })
-          .on('data', quad => res.push(quad))
-          .on('error', error => reject(error))
-          .on('end', () => resolve(res));
-      });
     }
+    if (!(typeof body === 'string')) throw new MoleculerError('no body provided', 400, 'BAD_REQUEST');
+    return new Promise((resolve, reject) => {
+      const textStream = streamifyString(body);
+      const res = [];
+      rdfParser
+        .parse(textStream, { contentType })
+        .on('data', quad => res.push(quad))
+        .on('error', error => reject(error))
+        .on('end', () => resolve(res));
+    });
   },
   // Filter out triples whose subject is not the resource itself
   // We don't want to update or delete resources with IDs
@@ -65,18 +64,18 @@ module.exports = {
           // Use triple quotes SPARQL notation to allow new lines and double quotes
           // See https://www.w3.org/TR/sparql11-query/#QSynLiterals
           return `'''${node.value}'''`;
-        } else {
-          return `"${node.value}"^^<${node.datatype.value}>`;
         }
+        return `"${node.value}"^^<${node.datatype.value}>`;
+
       default:
-        throw new Error('Unknown node type: ' + node.termType);
+        throw new Error(`Unknown node type: ${node.termType}`);
     }
   },
   buildJsonVariable(identifier, triples) {
     const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) === 0);
-    let json = {};
+    const json = {};
     let allIdentifiers = [identifier];
-    for (var blankVariable of blankVariables) {
+    for (const blankVariable of blankVariables) {
       if (blankVariable.object.termType === 'Variable') {
         const jsonVariable = this.buildJsonVariable(blankVariable.object.value, triples);
         json[blankVariable.predicate.value] = jsonVariable.json;
@@ -90,14 +89,14 @@ module.exports = {
   removeDuplicatedVariables(triples) {
     const roots = triples.filter(n => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
     const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
-      let result = previousValue;
+      const result = previousValue;
       if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
         result.push(currentValue.object.value);
       }
       return result;
     }, []);
-    let rootsJson = [];
-    for (var rootIdentifier of rootsIdentifiers) {
+    const rootsJson = [];
+    for (const rootIdentifier of rootsIdentifiers) {
       const jsonVariable = this.buildJsonVariable(rootIdentifier, triples);
       rootsJson.push({
         rootIdentifier,
@@ -105,8 +104,8 @@ module.exports = {
         allIdentifiers: jsonVariable.allIdentifiers
       });
     }
-    let keepVariables = [];
-    let duplicatedVariables = [];
+    const keepVariables = [];
+    const duplicatedVariables = [];
     for (var rootJson of rootsJson) {
       if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
         duplicatedVariables.push(rootJson);
@@ -114,8 +113,8 @@ module.exports = {
         keepVariables.push(rootJson);
       }
     }
-    let allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
-    let removedDuplicatedVariables = triples.filter(
+    const allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
+    const removedDuplicatedVariables = triples.filter(
       t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
     );
     return removedDuplicatedVariables;
@@ -132,15 +131,15 @@ module.exports = {
     return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
   },
   async createDisassembly(ctx, disassembly, newData) {
-    for (let disassemblyConfig of disassembly) {
+    for (const disassemblyConfig of disassembly) {
       if (newData[disassemblyConfig.path]) {
         let disassemblyValue = newData[disassemblyConfig.path];
         if (!Array.isArray(disassemblyValue)) {
           disassemblyValue = [disassemblyValue];
         }
         const uriAdded = [];
-        for (let resource of disassemblyValue) {
-          let { id, ...resourceWithoutId } = resource;
+        for (const resource of disassemblyValue) {
+          const { id, ...resourceWithoutId } = resource;
           const newResourceUri = await ctx.call('ldp.container.post', {
             containerUri: disassemblyConfig.container,
             resource: {
@@ -157,26 +156,26 @@ module.exports = {
     }
   },
   async updateDisassembly(ctx, disassembly, newData, oldData, method) {
-    for (let disassemblyConfig of disassembly) {
-      let uriAdded = [],
-        uriRemoved = [],
-        uriKept = [];
+    for (const disassemblyConfig of disassembly) {
+      const uriAdded = [];
+      const uriRemoved = [];
+      let uriKept = [];
 
-      let oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
-      let newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
+      const oldDisassemblyValue = defaultToArray(oldData[disassemblyConfig.path]) || [];
+      const newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
 
-      let resourcesToAdd = newDisassemblyValue.filter(
+      const resourcesToAdd = newDisassemblyValue.filter(
         t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
       );
-      let resourcesToRemove = oldDisassemblyValue.filter(
+      const resourcesToRemove = oldDisassemblyValue.filter(
         t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
       );
-      let resourcesToKeep = oldDisassemblyValue.filter(t1 =>
+      const resourcesToKeep = oldDisassemblyValue.filter(t1 =>
         newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
       );
 
       if (resourcesToAdd) {
-        for (let resource of resourcesToAdd) {
+        for (const resource of resourcesToAdd) {
           delete resource.id;
 
           const newResourceUri = await ctx.call('ldp.container.post', {
@@ -194,12 +193,12 @@ module.exports = {
 
       if (method === 'PUT') {
         if (resourcesToRemove) {
-          for (let resource of resourcesToRemove) {
+          for (const resource of resourcesToRemove) {
             await ctx.call('ldp.resource.delete', {
-              resourceUri: resource['@id'] || resource['id'] || resource,
+              resourceUri: resource['@id'] || resource.id || resource,
               webId: 'system'
             });
-            uriRemoved.push({ '@id': resource['@id'] || resource['id'] || resource, '@type': '@id' });
+            uriRemoved.push({ '@id': resource['@id'] || resource.id || resource, '@type': '@id' });
           }
         }
 
@@ -209,7 +208,7 @@ module.exports = {
       } else if (method === 'PATCH') {
         uriKept = oldDisassemblyValue.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
       } else {
-        throw new Error('Unknown method ' + method);
+        throw new Error(`Unknown method ${method}`);
       }
 
       oldData[disassemblyConfig.path] = [...uriRemoved, ...uriKept];
@@ -217,15 +216,15 @@ module.exports = {
     }
   },
   async deleteDisassembly(ctx, disassembly, resource) {
-    for (let disassemblyConfig of disassembly) {
+    for (const disassemblyConfig of disassembly) {
       if (resource[disassemblyConfig.path]) {
         let disassemblyValue = resource[disassemblyConfig.path];
         if (!Array.isArray(disassemblyValue)) {
           disassemblyValue = [disassemblyValue];
         }
-        for (let resource of disassemblyValue) {
+        for (const resource of disassemblyValue) {
           await ctx.call('ldp.resource.delete', {
-            resourceUri: resource['@id'] || resource['id'] || resource,
+            resourceUri: resource['@id'] || resource.id || resource,
             webId: 'system'
           });
         }
@@ -237,7 +236,7 @@ module.exports = {
       throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
     return (
       !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-      (this.settings.podProvider && !urlJoin(uri, '/').startsWith(urlJoin(this.settings.baseUrl, dataset) + '/'))
+      (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
     );
   }
 };

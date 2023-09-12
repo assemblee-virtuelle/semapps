@@ -20,7 +20,7 @@ const WebhooksService = {
       }
     });
     const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
+    for (const route of routes) {
       await this.broker.call('api.addRoute', {
         route
       });
@@ -45,8 +45,8 @@ const WebhooksService = {
       }
     },
     async generate(ctx) {
-      let userUri = ctx.meta.webId || ctx.params.userUri,
-        action = ctx.params.action;
+      const userUri = ctx.meta.webId || ctx.params.userUri;
+      const { action } = ctx.params;
 
       if (!userUri || !action || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');

@@ -17,14 +17,12 @@ const negotiateContentType = (req, res, next) => {
     } catch (e) {
       next();
     }
+  } else if (req.$params.body) {
+    next(
+      new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED')
+    );
   } else {
-    if (req.$params.body) {
-      next(
-        new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED')
-      );
-    } else {
-      next();
-    }
+    next();
   }
 };
 
@@ -48,7 +46,7 @@ const negotiateAccept = (req, res, next) => {
       req.$ctx.meta.headers.accept = negotiateTypeMime(req.headers.accept);
       next();
     } catch (e) {
-      next(new MoleculerError('Accept not supported : ' + req.headers.accept, 400, 'ACCEPT_NOT_SUPPORTED'));
+      next(new MoleculerError(`Accept not supported : ${req.headers.accept}`, 400, 'ACCEPT_NOT_SUPPORTED'));
     }
   } else {
     next();
@@ -58,10 +56,10 @@ const negotiateAccept = (req, res, next) => {
 const getRawBody = req => {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', function(chunk) {
+    req.on('data', chunk => {
       data += chunk;
     });
-    req.on('end', function() {
+    req.on('end', () => {
       resolve(data.length > 0 ? data : undefined);
     });
   });
@@ -120,7 +118,7 @@ const parseFile = (req, res, next) => {
   if (!req.$ctx.meta.parser && (req.method === 'POST' || req.method === 'PUT')) {
     if (req.headers['content-type'] && req.headers['content-type'].includes('multipart/form-data')) {
       const busboy = new Busboy({ headers: req.headers });
-      let files = [];
+      const files = [];
       busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         const readableStream = new streams.ReadableStream();
         file.on('data', data => readableStream.push(data));

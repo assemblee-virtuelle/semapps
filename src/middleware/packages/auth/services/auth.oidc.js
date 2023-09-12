@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { Issuer, Strategy, custom } = require('openid-client');
+
 custom.setHttpOptionsDefaults({
   timeout: 10000
 });

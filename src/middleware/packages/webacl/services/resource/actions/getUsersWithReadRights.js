@@ -23,7 +23,7 @@ module.exports = {
         usersWithReadRights = defaultToArray(readAuthorization['acl:agent']) || [];
         const groupsWithReadRights = defaultToArray(readAuthorization['acl:agentGroup']) || [];
 
-        for (let groupUri of groupsWithReadRights) {
+        for (const groupUri of groupsWithReadRights) {
           const members = await ctx.call('webacl.group.getMembers', { groupUri, webId: 'system' });
           if (members) usersWithReadRights.push(...members);
         }

@@ -6,7 +6,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 const relay1 = 'http://localhost:3001/applications/relay';
 const relay2 = 'http://localhost:3002/applications/relay';

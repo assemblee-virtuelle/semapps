@@ -25,7 +25,7 @@ module.exports = {
           locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
           data: {
             account,
-            resetUrl: urlJoin(this.settings.defaults.frontUrl, 'login') + '?new_password=true&token=' + token
+            resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`
           }
         },
         {

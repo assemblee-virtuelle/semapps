@@ -3,11 +3,11 @@ const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
+const path = require('path');
+const { getPrefixJSON } = require('@semapps/ldp');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require('path');
-const { getPrefixJSON } = require('@semapps/ldp');
 
 const containers = [
   {
@@ -21,7 +21,7 @@ const containers = [
   {
     path: '/organizations',
     dereference: ['pair:hasLocation/pair:hasPostalAddress'],
-    disassembly: [{ path: 'pair:hasLocation', container: CONFIG.HOME_URL + 'places' }]
+    disassembly: [{ path: 'pair:hasLocation', container: `${CONFIG.HOME_URL}places` }]
   },
   {
     path: '/places'
@@ -72,7 +72,7 @@ const initialize = async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users'
+      usersContainer: `${CONFIG.HOME_URL}users`
     }
   });
 
@@ -85,7 +85,7 @@ const initialize = async () => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources',
+    resourceUri: `${CONFIG.HOME_URL}resources`,
     additionalRights: {
       anon: {
         write: true
@@ -94,17 +94,7 @@ const initialize = async () => {
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources2',
-    additionalRights: {
-      anon: {
-        write: true
-      }
-    }
-  });
-
-  await broker.call('webacl.resource.addRights', {
-    webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'organizations',
+    resourceUri: `${CONFIG.HOME_URL}resources2`,
     additionalRights: {
       anon: {
         write: true
@@ -114,7 +104,7 @@ const initialize = async () => {
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'places',
+    resourceUri: `${CONFIG.HOME_URL}organizations`,
     additionalRights: {
       anon: {
         write: true
@@ -124,7 +114,17 @@ const initialize = async () => {
 
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'themes',
+    resourceUri: `${CONFIG.HOME_URL}places`,
+    additionalRights: {
+      anon: {
+        write: true
+      }
+    }
+  });
+
+  await broker.call('webacl.resource.addRights', {
+    webId: 'system',
+    resourceUri: `${CONFIG.HOME_URL}themes`,
     additionalRights: {
       anon: {
         write: true
