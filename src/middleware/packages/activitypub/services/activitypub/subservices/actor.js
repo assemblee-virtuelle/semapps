@@ -2,7 +2,6 @@ const fetch = require('node-fetch');
 const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getDatasetFromUri } = require('@semapps/ldp');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 const { delay, defaultToArray, getSlugFromUri } = require('../../../utils');
 
