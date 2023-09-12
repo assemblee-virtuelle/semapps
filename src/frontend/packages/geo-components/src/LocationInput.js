@@ -16,9 +16,9 @@ const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
 const selectOptionText = (option, optionText) => {
   if (option.place_name) {
     return option.place_name;
-  } else if (typeof optionText === 'string') {
+  } if (typeof optionText === 'string') {
     return option[optionText];
-  } else if (typeof optionText === 'function') {
+  } if (typeof optionText === 'function') {
     return optionText(option);
   }
 };
@@ -49,9 +49,9 @@ const LocationInput = ({
 
   // Do not pass the `parse` prop to useInput, as we manually call it on the onChange prop below
   const {
-    field: { value, onChange, onBlur /*, onFocus*/ },
+    field: { value, onChange, onBlur /* , onFocus */ },
     isRequired,
-    fieldState: { error, /*submitError,*/ isTouched }
+    fieldState: { error, /* submitError, */ isTouched }
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -83,9 +83,9 @@ const LocationInput = ({
     // Do not trigger search if text input is empty or if it is the same as the current value
     if (!keyword || keyword === selectOptionText(value, optionText)) {
       return undefined;
-    } else {
+    } 
       fetchMapbox(keyword, results => setOptions(results.features));
-    }
+    
   }, [value, keyword, fetchMapbox]);
 
   return (
@@ -126,13 +126,13 @@ const LocationInput = ({
                 if (params.inputProps.onBlur) {
                   params.inputProps.onBlur(e);
                 }
-              }/*,
+              }/* ,
               onFocus: e => {
                 onFocus(e);
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
-              }*/
+              } */
             }}
             label={
               label !== '' &&
@@ -140,8 +140,8 @@ const LocationInput = ({
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(isTouched && (error /*|| submitError*/))}
-            helperText={<InputHelperText touched={isTouched} error={error /*|| submitError*/} helperText={helperText} />}
+            error={!!(isTouched && (error /* || submitError */))}
+            helperText={<InputHelperText touched={isTouched} error={error /* || submitError */} helperText={helperText} />}
             {...rest}
           />
         );

@@ -13,7 +13,7 @@ const useOutbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || identity?.id + '/sparql';
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || `${identity?.id  }/sparql`;
     }
   }, [identity]);
 
@@ -68,9 +68,9 @@ const useOutbox = () => {
 
     if (json['@graph']) {
       return json['@graph'];
-    } else {
+    } 
       return null;
-    }
+    
   }, [sparqlEndpoint, outboxUrl]);
 
   return { post, fetch, url: outboxUrl, loaded: !!outboxUrl, owner: identity?.id };

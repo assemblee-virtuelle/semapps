@@ -18,9 +18,9 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
                 {React.createElement(type, props, children)}
               </>
             );
-          } else {
+          } 
             return React.createElement(type, props, children);
-          }
+          
         },
         overrides: {
           h1: LabelComponent,

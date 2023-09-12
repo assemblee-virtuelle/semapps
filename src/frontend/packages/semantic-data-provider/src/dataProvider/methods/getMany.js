@@ -13,9 +13,9 @@ const getManyMethod = config => async (resourceId, params) => {
           // See https://github.com/marmelab/react-admin/issues/5190
           if (returnFailedResources) {
             return { id, _error: true };
-          } else {
+          } 
             // Returning nothing
-          }
+          
         })
     )
   );

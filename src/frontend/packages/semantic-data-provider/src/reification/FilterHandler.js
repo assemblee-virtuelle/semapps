@@ -27,18 +27,16 @@ const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
             if (!value.includes(filter[key])) {
               eq = false;
             }
-          } else {
-            if (value !== filter[key]) {
+          } else if (value !== filter[key]) {
               eq = false;
             }
-          }
         }
         return eq;
       });
-      let newRecord = {
+      const newRecord = {
         ...record
       };
-      //undefined setted if no data to obtain no render in RightLabel or equivalent
+      // undefined setted if no data to obtain no render in RightLabel or equivalent
       newRecord[source] = filteredData.length > 0 ? filteredData : undefined;
       setFiltered(newRecord);
     }

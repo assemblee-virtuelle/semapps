@@ -8,12 +8,12 @@ import useFullCalendarProps from './useFullCalendarProps';
 const useGlobalStyles = makeStyles(theme => ({
   '@global': {
     '.fc-button': {
-      backgroundColor: theme.palette.primary.main + ' !important',
+      backgroundColor: `${theme.palette.primary.main  } !important`,
       border: 'none !important',
       opacity: '1 !important'
     },
     '.fc-day-today': {
-      backgroundColor: theme.palette.secondary.light + ' !important'
+      backgroundColor: `${theme.palette.secondary.light  } !important`
     },
     // Overwrite violet color of links
     'a.fc-daygrid-dot-event': {

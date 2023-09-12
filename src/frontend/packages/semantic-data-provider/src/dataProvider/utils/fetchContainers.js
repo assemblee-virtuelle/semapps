@@ -25,16 +25,16 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         // TODO deep compare if the context is an object
         if (json['@context'] !== jsonContext) {
           return jsonld.compact(json, jsonContext);
-        } else {
+        } 
           return json;
-        }
+        
       })
       .then(json => {
         if (isType('ldp:Container', json)) {
           return json['ldp:contains'];
-        } else {
-          throw new Error(containerUri + ' is not a LDP container');
-        }
+        } 
+          throw new Error(`${containerUri  } is not a LDP container`);
+        
       })
   );
 
@@ -43,7 +43,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
 
   if (results.length === 0) {
     return { data: [], total: 0 };
-  } else {
+  } 
     // Merge all results in one array
     results = [].concat.apply(...results);
 
@@ -75,17 +75,17 @@ const fetchContainers = async (containers, resourceId, params, config) => {
                         .includes(v.toLowerCase().normalize('NFD'));
                     }
                   });
-                } else {
+                } 
                   return false;
-                }
+                
               });
-            } else {
+            } 
               if (resource[k]) {
                 return Array.isArray(resource[k]) ? resource[k].some(va => va.includes(v)) : resource[k].includes(v);
-              } else {
+              } 
                 return false;
-              }
-            }
+              
+            
           });
         });
       }
@@ -96,12 +96,12 @@ const fetchContainers = async (containers, resourceId, params, config) => {
         if (a[params.sort.field] && b[params.sort.field]) {
           if (params.sort.order === 'ASC') {
             return a[params.sort.field].localeCompare(b[params.sort.field]);
-          } else {
+          } 
             return b[params.sort.field].localeCompare(a[params.sort.field]);
-          }
-        } else {
+          
+        } 
           return true;
-        }
+        
       });
     }
     if (params.pagination) {
@@ -112,7 +112,7 @@ const fetchContainers = async (containers, resourceId, params, config) => {
     }
 
     return { data: returnData, total: results.length };
-  }
+  
 };
 
 export default fetchContainers;

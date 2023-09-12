@@ -74,7 +74,7 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
     async (values) => {
       const document = new DOMParser().parseFromString(values.comment, 'text/html');
       const mentions = Array.from(document.body.getElementsByClassName('mention'));
-      let mentionedUsersUris = [];
+      const mentionedUsersUris = [];
 
       mentions.forEach(node => {
         const userUri = node.attributes['data-mention-id'].value;
@@ -82,9 +82,9 @@ const PostCommentForm = ({ context, placeholder, helperText, mentions, userResou
         const link = document.createElement('a');
         link.setAttribute(
           'href',
-          new URL(window.location.href).origin + '/' + userResource + '/' + encodeURIComponent(userUri) + '/show'
+          `${new URL(window.location.href).origin  }/${  userResource  }/${  encodeURIComponent(userUri)  }/show`
         );
-        link.textContent = '@' + userLabel;
+        link.textContent = `@${  userLabel}`;
         node.parentNode.replaceChild(link, node);
         mentionedUsersUris.push(userUri);
       });

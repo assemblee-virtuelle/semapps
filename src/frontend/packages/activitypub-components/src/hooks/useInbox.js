@@ -13,7 +13,7 @@ const useInbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || identity?.id + '/sparql';
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || `${identity?.id  }/sparql`;
     }
   }, [identity]);
 
@@ -60,9 +60,9 @@ const useInbox = () => {
 
       if (json['@graph']) {
         return json['@graph'];
-      } else {
+      } 
         return null;
-      }
+      
     },
     [sparqlEndpoint, inboxUrl]
   );

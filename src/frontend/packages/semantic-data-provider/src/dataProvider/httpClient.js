@@ -54,14 +54,14 @@ const httpClient = dataServers => (url, options = {}) => {
       }),
       body: formData
     });
-  } else {
+  } 
     // Add token if the server is the same as the auth server
     if (serverKey === authServerKey) {
       const token = localStorage.getItem('token');
       if (token) options.headers.set('Authorization', `Bearer ${token}`);
     }
     return fetchUtils.fetchJson(url, options);
-  }
+  
 };
 
 export default httpClient;

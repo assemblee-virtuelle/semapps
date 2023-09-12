@@ -22,7 +22,7 @@ const ReferenceFilterCounter = ({ source, id }) => {
     <>
       &nbsp;
       { ! isLoading &&
-        <span className="filter-count">{'(' + Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length + ')'}</span>
+        <span className="filter-count">{`(${  Object.values(data).filter(d => ([].concat(d[source])).includes(id)).length  })`}</span>
       }
     </>
   );

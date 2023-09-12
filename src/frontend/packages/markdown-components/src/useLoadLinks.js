@@ -17,11 +17,11 @@ const useLoadLinks = (resourceType, labelProp) => {
           preview: record[labelProp],
           value: `[${record[labelProp]}](/${resourceType}/${encodeURIComponent(record.id)}/show)`
         }));
-      } else {
-        return [{ preview: translate('ra.navigation.no_results'), value: '[' + keyword }];
-      }
+      } 
+        return [{ preview: translate('ra.navigation.no_results'), value: `[${  keyword}` }];
+      
     }
-    return [{ preview: translate('ra.action.search'), value: '[' + keyword }];
+    return [{ preview: translate('ra.action.search'), value: `[${  keyword}` }];
   };
 };
 

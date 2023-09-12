@@ -19,7 +19,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
   return (
     <Grid container spacing={spacing}>
       {data.map(record => {
-        if (!record || record['_error']) return null;
+        if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         let child;
 

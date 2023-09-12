@@ -40,11 +40,11 @@ const useGetExternalLink = componentExternalLinks => {
 
       if (isURL(computedComponentExternalLinks)) {
         return computedComponentExternalLinks;
-      } else if (isURL(computedServerExternalLinks)) {
+      } if (isURL(computedServerExternalLinks)) {
         return computedServerExternalLinks;
-      } else {
+      } 
         return record.id;
-      }
+      
     },
     [serversExternalLinks, componentExternalLinks]
   );

@@ -79,7 +79,7 @@ const GroupedReferenceHandler = ({
   return (
     <>
       {data?.map((data, index) => {
-        let filter = {};
+        const filter = {};
         filter[filterProperty] = data.id;
         return (
           <>

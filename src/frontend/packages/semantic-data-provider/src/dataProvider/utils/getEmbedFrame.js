@@ -1,8 +1,8 @@
 const getEmbedFrame = blankNodes => {
-  let embedFrame = {},
-    predicates;
+  let embedFrame = {};
+    let predicates;
   if (blankNodes) {
-    for (let blankNode of blankNodes) {
+    for (const blankNode of blankNodes) {
       if (blankNode.includes('/')) {
         predicates = blankNode.split('/').reverse();
       } else {

@@ -14,7 +14,7 @@ const AgentIcon = ({ agent }) => {
     case GROUP_AGENT:
       return <GroupIcon />;
     default:
-      throw new Error('Unknown agent predicate: ' + agent.predicate);
+      throw new Error(`Unknown agent predicate: ${  agent.predicate}`);
   }
 };
 

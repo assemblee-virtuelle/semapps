@@ -16,9 +16,9 @@ const fetchWikidata = (apiUrl = 'https://www.wikidata.org/w/api.php') => async (
       summary: capitalize(r.description),
       icon: LanguageIcon
     }));
-  } else {
+  } 
     throw new Error('Failed to fetch Wikidata server');
-  }
+  
 };
 
 export default fetchWikidata;

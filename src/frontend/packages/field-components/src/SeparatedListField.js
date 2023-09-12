@@ -24,7 +24,7 @@ const SeparatedListField = props => {
   if (isLoading) return <LinearProgress />;
   
   return (
-    <React.Fragment>
+    <>
       {data.map((record, i) => {
         if (!record.id) return null;
         const resourceLinkPath =
@@ -52,7 +52,7 @@ const SeparatedListField = props => {
           </span>
         );
       })}
-    </React.Fragment>
+    </>
   );
 };
 

@@ -8,7 +8,7 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   const navigate = useNavigate();
   const createPath = useCreatePath();
 
-  let query = new URLSearchParams(location.search);
+  const query = new URLSearchParams(location.search);
 
   // Bypass the link in order to use React-Router
   const eventClick = useCallback(({ event, jsEvent }) => {

@@ -15,23 +15,23 @@ const transformFile = file => {
 const format = v => {
   if (typeof v === 'string') {
     return ({ src: v });
-  } else if ( Array.isArray(v) ) {
+  } if ( Array.isArray(v) ) {
     return v.map(e => typeof e === 'string' ? { src: e } : e);
-  } else {
+  } 
     return v;
-  }
+  
 }
 
 const parse = v => {
   if (v instanceof File) {
     return transformFile(v);
-  } else if (v && v.src && !v.rawFile) {
+  } if (v && v.src && !v.rawFile) {
     return v.src;
-  } else if (Array.isArray(v)) {
+  } if (Array.isArray(v)) {
     return v.map(e => parse(e));
-  } else {
+  } 
     return v;
-  }
+  
 }
 
 const ImageInput = (props) => (
