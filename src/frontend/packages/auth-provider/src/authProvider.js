@@ -6,17 +6,11 @@ const AUTH_TYPE_SSO = 'sso';
 const AUTH_TYPE_LOCAL = 'local';
 const AUTH_TYPE_POD = 'pod';
 
-const authProvider = ({
-  dataProvider,
-  authType,
-  allowAnonymous = true,
-  checkUser,
-  checkPermissions = false
-}) => {
+const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser, checkPermissions = false }) => {
   if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD].includes(authType))
     throw new Error('The authType parameter is missing from the auth provider');
-  return ({
-    login: async params => {
+  return {
+    login: async (params) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
         const { username, password } = params;
@@ -24,7 +18,7 @@ const authProvider = ({
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
             method: 'POST',
             body: JSON.stringify({ username: username.trim(), password: password.trim() }),
-            headers: new Headers({ 'Content-Type': 'application/json' })
+            headers: new Headers({ 'Content-Type': 'application/json' }),
           });
           const { token } = json;
           localStorage.setItem('token', token);
@@ -34,12 +28,12 @@ const authProvider = ({
           throw new Error('ra.auth.sign_in_error');
         }
       } else {
-        let redirectUrl = `${new URL(window.location.href).origin  }/login?login=true`;
-        if (params.redirect) redirectUrl += `&redirect=${  encodeURIComponent(params.redirect)}`;
-        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${  encodeURIComponent(redirectUrl)}`);
+        let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
-    signup: async params => {
+    signup: async (params) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
         const { username, email, password, domain, ...profileData } = params;
@@ -50,9 +44,9 @@ const authProvider = ({
               username: username.trim(),
               email: email.trim(),
               password: password.trim(),
-              ...profileData
+              ...profileData,
             }),
-            headers: new Headers({ 'Content-Type': 'application/json' })
+            headers: new Headers({ 'Content-Type': 'application/json' }),
           });
           const { token } = json;
           localStorage.setItem('token', token);
@@ -70,12 +64,12 @@ const authProvider = ({
           }
         }
       } else {
-        const redirectUrl = `${new URL(window.location.href).origin  }/login?login=true`;
-        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${  encodeURIComponent(redirectUrl)}`);
+        const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
     logout: async () => {
-      switch(authType) {
+      switch (authType) {
         case AUTH_TYPE_LOCAL:
           // Delete token but also any other value in local storage
           localStorage.clear();
@@ -89,7 +83,7 @@ const authProvider = ({
           const baseUrl = new URL(window.location.href).origin;
           window.location.href = urlJoin(
             authServerUrl,
-            `auth/logout?redirectUrl=${  encodeURIComponent(`${urlJoin(baseUrl, 'login')  }?logout=true`)}`
+            `auth/logout?redirectUrl=${encodeURIComponent(`${urlJoin(baseUrl, 'login')}?logout=true`)}`,
           );
           break;
 
@@ -98,7 +92,9 @@ const authProvider = ({
           const { webId } = jwtDecode(token);
           // Delete token but also any other value in local storage
           localStorage.clear();
-          window.location.href = `${urlJoin(webId, 'openApp')  }?type=${  encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration')}`;
+          window.location.href = `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
+            'http://activitypods.org/ns/core#FrontAppRegistration',
+          )}`;
           break;
       }
 
@@ -109,15 +105,14 @@ const authProvider = ({
       const token = localStorage.getItem('token');
       if (!token && !allowAnonymous) throw new Error();
     },
-    checkUser: userData => {
+    checkUser: (userData) => {
       if (checkUser) {
         return checkUser(userData);
-      } 
-        return true;
-      
+      }
+      return true;
     },
-    checkError: error => Promise.resolve(),
-    getPermissions: async uri => {
+    checkError: (error) => Promise.resolve(),
+    getPermissions: async (uri) => {
       if (!checkPermissions) return;
 
       // React-admin calls getPermissions with an empty object on every page refresh
@@ -125,7 +120,8 @@ const authProvider = ({
       // Ignore all this until we found a way to bypass these redundant calls
       if (typeof uri === 'object') return;
 
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
+      if (!uri || !uri.startsWith('http'))
+        throw new Error('The first parameter passed to getPermissions must be an URL');
 
       const aclUri = getAclUri(uri);
 
@@ -138,24 +134,25 @@ const authProvider = ({
       }
     },
     addPermission: async (uri, agentId, predicate, mode) => {
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+      if (!uri || !uri.startsWith('http'))
+        throw new Error('The first parameter passed to addPermission must be an URL');
 
       const aclUri = getAclUri(uri);
 
       const authorization = {
-        '@id': `#${  mode.replace('acl:', '')}`,
+        '@id': `#${mode.replace('acl:', '')}`,
         '@type': 'acl:Authorization',
         [predicate]: agentId,
         'acl:accessTo': uri,
-        'acl:mode': mode
+        'acl:mode': mode,
       };
 
       await dataProvider.fetch(aclUri, {
         method: 'PATCH',
         body: JSON.stringify({
           '@context': getAclContext(aclUri),
-          '@graph': [authorization]
-        })
+          '@graph': [authorization],
+        }),
       });
     },
     removePermission: async (uri, agentId, predicate, mode) => {
@@ -168,12 +165,12 @@ const authProvider = ({
       const { json } = await dataProvider.fetch(aclUri);
 
       const updatedPermissions = json['@graph']
-        .filter(authorization => !authorization['@id'].includes('#Default'))
-        .map(authorization => {
+        .filter((authorization) => !authorization['@id'].includes('#Default'))
+        .map((authorization) => {
           const modes = defaultToArray(authorization['acl:mode']);
           let agents = defaultToArray(authorization[predicate]);
           if (mode && modes.includes(mode) && agents && agents.includes(agentId)) {
-            agents = agents.filter(agent => agent !== agentId);
+            agents = agents.filter((agent) => agent !== agentId);
           }
           return { ...authorization, [predicate]: agents };
         });
@@ -182,8 +179,8 @@ const authProvider = ({
         method: 'PUT',
         body: JSON.stringify({
           '@context': getAclContext(aclUri),
-          '@graph': updatedPermissions
-        })
+          '@graph': updatedPermissions,
+        }),
       });
     },
     getIdentity: async () => {
@@ -196,39 +193,43 @@ const authProvider = ({
 
         return {
           id: webId,
-          fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+          fullName:
+            profileData?.['vcard:given-name'] ||
+            profileData?.['pair:label'] ||
+            webIdData['foaf:name'] ||
+            webIdData['pair:label'],
           profileData,
-          webIdData
+          webIdData,
         };
       }
     },
-    resetPassword: async params => {
+    resetPassword: async (params) => {
       const { email } = params;
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         await dataProvider.fetch(urlJoin(authServerUrl, 'auth/reset_password'), {
           method: 'POST',
           body: JSON.stringify({ email: email.trim() }),
-          headers: new Headers({ 'Content-Type': 'application/json' })
+          headers: new Headers({ 'Content-Type': 'application/json' }),
         });
       } catch (e) {
         throw new Error('auth.notification.reset_password_error');
       }
     },
-    setNewPassword: async params => {
+    setNewPassword: async (params) => {
       const { email, token, password } = params;
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         await dataProvider.fetch(urlJoin(authServerUrl, 'auth/new_password'), {
           method: 'POST',
           body: JSON.stringify({ email: email.trim(), token, password }),
-          headers: new Headers({ 'Content-Type': 'application/json' })
+          headers: new Headers({ 'Content-Type': 'application/json' }),
         });
       } catch (e) {
         throw new Error('auth.notification.new_password_error');
       }
     },
-    getAccountSettings: async params => {
+    getAccountSettings: async (params) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'));
@@ -237,7 +238,7 @@ const authProvider = ({
         throw new Error('auth.notification.get_settings_error');
       }
     },
-    updateAccountSettings: async params => {
+    updateAccountSettings: async (params) => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       try {
         const { email, currentPassword, newPassword } = params;
@@ -245,7 +246,7 @@ const authProvider = ({
         await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'), {
           method: 'POST',
           body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
-          headers: new Headers({ 'Content-Type': 'application/json' })
+          headers: new Headers({ 'Content-Type': 'application/json' }),
         });
       } catch (e) {
         if (e.message === 'auth.account.invalid_password') {
@@ -254,8 +255,8 @@ const authProvider = ({
 
         throw new Error('auth.notification.update_settings_error');
       }
-    }
-  });
-}
+    },
+  };
+};
 
 export default authProvider;

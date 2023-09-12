@@ -3,7 +3,7 @@ import { namedNode, triple, variable } from '@rdfjs/data-model';
 import resolvePrefix from './resolvePrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const extractNodes = blankNodes => {
+const extractNodes = (blankNodes) => {
   const nodes = [];
   if (blankNodes) {
     for (const predicate of blankNodes) {
@@ -20,22 +20,22 @@ const extractNodes = blankNodes => {
   return nodes;
 };
 
-const generateSparqlVarName = node => md5(node);
+const generateSparqlVarName = (node) => md5(node);
 
-const getParentNode = node => node.includes('/') && node.split('/')[0];
+const getParentNode = (node) => node.includes('/') && node.split('/')[0];
 
-const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
+const getPredicate = (node) => (node.includes('/') ? node.split('/')[1] : node);
 
-const buildUnionQuery = queries =>
-  queries.map(q => {
+const buildUnionQuery = (queries) =>
+  queries.map((q) => {
     let triples = q.query;
-    const firstTriple = queries.find(q2 => q.parentNode === q2.node);
+    const firstTriple = queries.find((q2) => q.parentNode === q2.node);
     if (firstTriple !== undefined) {
       triples = triples.concat(firstTriple.query[0]);
     }
     return {
       type: 'bgp',
-      triples
+      triples,
     };
   });
 
@@ -51,31 +51,30 @@ const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
       const query = [
-        triple(variable(`s${  parentVarName}`), namedNode(resolvePrefix(predicate, ontologies)), variable(`s${  varName}`)),
-        triple(variable(`s${  varName}`), variable(`p${  varName}`), variable(`o${  varName}`))
+        triple(variable(`s${parentVarName}`), namedNode(resolvePrefix(predicate, ontologies)), variable(`s${varName}`)),
+        triple(variable(`s${varName}`), variable(`p${varName}`), variable(`o${varName}`)),
       ];
 
       queries.push({
         node,
         parentNode,
         query,
-        filter: '' // `FILTER(isBLANK(?s${varName})) .`
+        filter: '', // `FILTER(isBLANK(?s${varName})) .`
       });
     }
 
     return {
-      construct: queries.length > 0 ? queries.map(q => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
+      construct: queries.length > 0 ? queries.map((q) => q.query).reduce((pre, cur) => pre.concat(cur)) : null,
       where: {
         type: 'union',
-        patterns: [baseQuery.where, ...buildUnionQuery(queries)]
-      }
+        patterns: [baseQuery.where, ...buildUnionQuery(queries)],
+      },
     };
-  } 
-    return {
-      construct: '',
-      where: ''
-    };
-  
+  }
+  return {
+    construct: '',
+    where: '',
+  };
 };
 
 export default buildBlankNodesQuery;

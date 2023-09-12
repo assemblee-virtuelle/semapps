@@ -19,7 +19,7 @@ const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
   const [filtered, setFiltered] = useState();
   useEffect(() => {
     if (record && source && Array.isArray(record?.[source])) {
-      const filteredData = record?.[source].filter(r => {
+      const filteredData = record?.[source].filter((r) => {
         let eq = true;
         for (const key in filter) {
           const value = r[key];
@@ -28,13 +28,13 @@ const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
               eq = false;
             }
           } else if (value !== filter[key]) {
-              eq = false;
-            }
+            eq = false;
+          }
         }
         return eq;
       });
       const newRecord = {
-        ...record
+        ...record,
       };
       // undefined setted if no data to obtain no render in RightLabel or equivalent
       newRecord[source] = filteredData.length > 0 ? filteredData : undefined;
@@ -48,7 +48,7 @@ const FilterHandler = ({ children, record, filter, source, ...otherProps }) => {
         return React.cloneElement(child, {
           ...otherProps,
           record: filtered,
-          source
+          source,
         });
       })}
     </>

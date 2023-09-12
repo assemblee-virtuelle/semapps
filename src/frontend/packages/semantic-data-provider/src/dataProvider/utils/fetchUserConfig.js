@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import getServerKeyFromType from './getServerKeyFromType';
 
-const fetchUserConfig = async config => {
+const fetchUserConfig = async (config) => {
   const { dataServers, httpClient } = config;
   const token = localStorage.getItem('token');
   const podKey = getServerKeyFromType('pod', dataServers);
@@ -40,9 +40,9 @@ const fetchUserConfig = async config => {
       config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
     }
   } else if (podKey) {
-      // If the user is not logged in, ignore the POD server
-      delete config.dataServers[podKey];
-    }
+    // If the user is not logged in, ignore the POD server
+    delete config.dataServers[podKey];
+  }
 };
 
 export default fetchUserConfig;

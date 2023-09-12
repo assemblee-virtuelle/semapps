@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDataProvider, useRedirect, useNotify } from 'react-admin';
 
-const useFork = resourceId => {
+const useFork = (resourceId) => {
   const dataProvider = useDataProvider();
   const redirect = useRedirect();
   const notify = useNotify();
@@ -14,16 +14,16 @@ const useFork = resourceId => {
       strippedData['http://www.w3.org/ns/prov#wasDerivedFrom'] = strippedData.id;
       delete strippedData.id;
       delete strippedData['@context'];
-      stripProperties.forEach(prop => {
+      stripProperties.forEach((prop) => {
         delete strippedData[prop];
       });
 
       const { data: localData } = await dataProvider.create(resourceId, { data: strippedData });
 
-      redirect(`/${  resourceId  }/${  encodeURIComponent(localData.id)  }/show`);
-      notify('La ressource a bien été copiée', {type: 'success'});
+      redirect(`/${resourceId}/${encodeURIComponent(localData.id)}/show`);
+      notify('La ressource a bien été copiée', { type: 'success' });
     },
-    [resourceId, dataProvider, redirect, notify]
+    [resourceId, dataProvider, redirect, notify],
   );
 };
 

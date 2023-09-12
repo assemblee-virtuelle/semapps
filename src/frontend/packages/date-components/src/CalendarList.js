@@ -5,24 +5,24 @@ import { useTheme } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import useFullCalendarProps from './useFullCalendarProps';
 
-const useGlobalStyles = makeStyles(theme => ({
+const useGlobalStyles = makeStyles((theme) => ({
   '@global': {
     '.fc-button': {
-      backgroundColor: `${theme.palette.primary.main  } !important`,
+      backgroundColor: `${theme.palette.primary.main} !important`,
       border: 'none !important',
-      opacity: '1 !important'
+      opacity: '1 !important',
     },
     '.fc-day-today': {
-      backgroundColor: `${theme.palette.secondary.light  } !important`
+      backgroundColor: `${theme.palette.secondary.light} !important`,
     },
     // Overwrite violet color of links
     'a.fc-daygrid-dot-event': {
-      color: 'black !important'
-    }
-  }
+      color: 'black !important',
+    },
+  },
 }));
 
-const CalendarList = props => {
+const CalendarList = (props) => {
   const theme = useTheme();
   const fullCalendarProps = useFullCalendarProps(props);
   useGlobalStyles();
@@ -39,7 +39,7 @@ const CalendarList = props => {
 };
 
 CalendarList.defaultProps = {
-  linkType: 'edit'
+  linkType: 'edit',
 };
 
 export default CalendarList;

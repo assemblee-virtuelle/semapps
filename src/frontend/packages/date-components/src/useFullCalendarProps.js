@@ -19,31 +19,35 @@ const useFullCalendarProps = ({ label, startDate, endDate, linkType }) => {
   // Change the query string when month change
   const datesSet = useCallback(
     ({ view }) => {
-      setSearchParams(params => ({ ...params, month: view.currentStart.getMonth() + 1, year: view.currentStart.getFullYear() }));
+      setSearchParams((params) => ({
+        ...params,
+        month: view.currentStart.getMonth() + 1,
+        year: view.currentStart.getFullYear(),
+      }));
     },
-    [setSearchParams]
+    [setSearchParams],
   );
 
   const events = useMemo(
     () =>
       !isLoading &&
       data
-        .filter(record => record)
-        .map(record => ({
+        .filter((record) => record)
+        .map((record) => ({
           id: record.id,
           title: typeof label === 'string' ? record[label] : label(record),
           start: typeof startDate === 'string' ? record[startDate] : startDate(record),
           end: typeof endDate === 'string' ? record[endDate] : endDate(record),
-          url: createPath({ resource, id: record.id, type: linkType })
+          url: createPath({ resource, id: record.id, type: linkType }),
         })),
-    [isLoading, data, resource, createPath]
+    [isLoading, data, resource, createPath],
   );
 
   return {
     initialDate: query.has('month') ? new Date(query.get('year'), query.get('month') - 1) : new Date(),
     events,
     datesSet,
-    eventClick
+    eventClick,
   };
 };
 

@@ -5,7 +5,7 @@ const fetchResource = async (resourceUri, config) => {
 
   let { json: data } = await httpClient(resourceUri);
 
-  if (!data) throw new Error(`Not a valid JSON: ${  resourceUri}`);
+  if (!data) throw new Error(`Not a valid JSON: ${resourceUri}`);
 
   data.id = data.id || data['@id'];
 

@@ -15,84 +15,87 @@ const useStyles = makeStyles(() => ({
     marginBottom: '1em',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 }));
 
 const LocalLoginPage = ({ hasSignup }) => {
-    const classes = useStyles();
-    const navigate = useNavigate();
-    const translate = useTranslate();
-    const [searchParams] = useSearchParams();
-    const isSignup = hasSignup && searchParams.has('signup');
-    const isResetPassword = searchParams.has('reset_password');
-    const isNewPassword = searchParams.has('new_password');
-    const isLogin = !isSignup && !isResetPassword && !isNewPassword;  
-    const redirectTo = searchParams.get('redirect');
-    const { identity, isLoading } = useGetIdentity();
-   
-    useEffect(() => {
-      if (!isLoading && identity?.id) {
-         // Already authenticated, redirect to the home page
-        if (redirectTo && redirectTo.startsWith('http')) {
-          window.location.href = redirectTo
-        } else {
-          navigate(redirectTo || '/');
-        }
-      }    
-    }, [identity, isLoading, navigate, redirectTo]);
+  const classes = useStyles();
+  const navigate = useNavigate();
+  const translate = useTranslate();
+  const [searchParams] = useSearchParams();
+  const isSignup = hasSignup && searchParams.has('signup');
+  const isResetPassword = searchParams.has('reset_password');
+  const isNewPassword = searchParams.has('new_password');
+  const isLogin = !isSignup && !isResetPassword && !isNewPassword;
+  const redirectTo = searchParams.get('redirect');
+  const { identity, isLoading } = useGetIdentity();
 
-    const [title, text] = useMemo(() => {
-      if (isSignup) {
-        return ['auth.action.signup', 'auth.helper.signup'];
-      } if (isLogin) {
-        return ['auth.action.login', 'auth.helper.login'];
-      } if (isResetPassword) {
-        return ['auth.action.reset_password', 'auth.helper.reset_password'];
-      } if (isNewPassword) {
-        return ['auth.action.set_new_password', 'auth.helper.set_new_password'];
+  useEffect(() => {
+    if (!isLoading && identity?.id) {
+      // Already authenticated, redirect to the home page
+      if (redirectTo && redirectTo.startsWith('http')) {
+        window.location.href = redirectTo;
+      } else {
+        navigate(redirectTo || '/');
       }
-    }, [isSignup, isLogin, isResetPassword, isNewPassword]);
+    }
+  }, [identity, isLoading, navigate, redirectTo]);
 
-    if (isLoading || identity?.id) return null;
+  const [title, text] = useMemo(() => {
+    if (isSignup) {
+      return ['auth.action.signup', 'auth.helper.signup'];
+    }
+    if (isLogin) {
+      return ['auth.action.login', 'auth.helper.login'];
+    }
+    if (isResetPassword) {
+      return ['auth.action.reset_password', 'auth.helper.reset_password'];
+    }
+    if (isNewPassword) {
+      return ['auth.action.set_new_password', 'auth.helper.set_new_password'];
+    }
+  }, [isSignup, isLogin, isResetPassword, isNewPassword]);
 
-    return (
-      <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
-        <Card>
-          {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />}
-          {isResetPassword && <ResetPasswordForm />}
-          {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
-          {isLogin && <LoginForm redirectTo={redirectTo} />}
-          <div className={classes.switch}>
-            {isSignup && 
-              <Link to="/login">
-                <Typography variant="body2">{translate('auth.action.login')}</Typography>
-              </Link>
-            }
-            {isLogin && 
-              <>
-                {hasSignup && 
-                  <div>
-                    <Link to="/login?signup=true">
-                      <Typography variant="body2">{translate('auth.action.signup')}</Typography>
-                    </Link>
-                  </div>
-                }
+  if (isLoading || identity?.id) return null;
+
+  return (
+    <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
+      <Card>
+        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />}
+        {isResetPassword && <ResetPasswordForm />}
+        {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
+        {isLogin && <LoginForm redirectTo={redirectTo} />}
+        <div className={classes.switch}>
+          {isSignup && (
+            <Link to="/login">
+              <Typography variant="body2">{translate('auth.action.login')}</Typography>
+            </Link>
+          )}
+          {isLogin && (
+            <>
+              {hasSignup && (
                 <div>
-                  <Link to={`/login?reset_password=true&${  searchParams.toString()}`}>
-                    <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
+                  <Link to="/login?signup=true">
+                    <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                   </Link>
                 </div>
-              </>
-            }
-          </div> 
-        </Card>
-      </SimpleBox>
-    );
+              )}
+              <div>
+                <Link to={`/login?reset_password=true&${searchParams.toString()}`}>
+                  <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
+      </Card>
+    </SimpleBox>
+  );
 };
 
 LocalLoginPage.defaultProps = {
-  hasSignup: true
+  hasSignup: true,
 };
 
 export default LocalLoginPage;
