@@ -1,1 +1,2 @@
-.gitignore
+*.cjs.js
+*.es.js
