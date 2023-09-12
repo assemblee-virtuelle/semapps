@@ -15,10 +15,10 @@ module.exports = {
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     filters: { type: 'object', optional: true },
-    jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+    jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true },
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId']
+    keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId'],
   },
   async handler(ctx) {
     const { containerUri, filters } = ctx.params;
@@ -27,7 +27,7 @@ module.exports = {
 
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
-      ...ctx.params
+      ...ctx.params,
     };
     const filtersQuery = buildFiltersQuery(filters);
 
@@ -56,29 +56,29 @@ module.exports = {
           }
         `,
         accept,
-        webId
+        webId,
       });
 
       // Request each resources
-      let resources = [];
+      const resources = [];
       if (result && result.contains) {
         for (const resourceUri of defaultToArray(result.contains)) {
           try {
             // We pass the following parameters only if they are explicit
-            let explicitProperties = ['jsonContext', 'accept'];
-            let explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
+            const explicitProperties = ['jsonContext', 'accept'];
+            const explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
               if (ctx.params[currentProperty]) {
                 accumulator[currentProperty] = ctx.params[currentProperty];
               }
               return accumulator;
             }, {});
 
-            let resource = await ctx.call('ldp.resource.get', {
+            const resource = await ctx.call('ldp.resource.get', {
               resourceUri,
               webId,
               forceSemantic: true,
               // We pass the following parameters only if they are explicit
-              ...explicitParams
+              ...explicitParams,
             });
 
             // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
@@ -103,25 +103,25 @@ module.exports = {
           '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
           'http://purl.org/dc/terms/title': result.title,
           'http://purl.org/dc/terms/description': result.description,
-          'http://www.w3.org/ns/ldp#contains': resources
+          'http://www.w3.org/ns/ldp#contains': resources,
         },
-        context: jsonContext || getPrefixJSON(this.settings.ontologies)
+        context: jsonContext || getPrefixJSON(this.settings.ontologies),
       });
 
       // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
-      const ldpContainsKey = Object.keys(result).find(key =>
-        ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
+      const ldpContainsKey = Object.keys(result).find((key) =>
+        ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key),
       );
       if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
         result[ldpContainsKey] = [result[ldpContainsKey]];
       }
 
       return result;
-    } else {
-      const blankNodesQuery = buildBlankNodesQuery();
+    }
+    const blankNodesQuery = buildBlankNodesQuery();
 
-      return await ctx.call('triplestore.query', {
-        query: `
+    return await ctx.call('triplestore.query', {
+      query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
             <${containerUri}>
@@ -140,9 +140,8 @@ module.exports = {
             }
           }
         `,
-        accept,
-        webId
-      });
-    }
-  }
+      accept,
+      webId,
+    });
+  },
 };

@@ -39,7 +39,7 @@ module.exports = {
 
     // Save the current data, to be able to send it through the event
     // If the resource does not exist, it will throw a 404 error
-    let oldData = await ctx.call('ldp.resource.get', {
+    const oldData = await ctx.call('ldp.resource.get', {
       resourceUri,
       accept: MIME_TYPES.JSON,
       webId

@@ -25,13 +25,13 @@ const containers = [
   {
     path: '/actors',
     acceptedTypes: [ACTOR_TYPES.PERSON],
-    excludeFromMirror: true
+    excludeFromMirror: true,
   },
   {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
-    excludeFromMirror: true
-  }
+    excludeFromMirror: true,
+  },
 ];
 
 const initialize = async (port, mainDataset, accountsDataset, serverToMirror) => {

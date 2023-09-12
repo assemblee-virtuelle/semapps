@@ -13,7 +13,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
-      excludeFromMirror: true,
+      excludeFromMirror: true
       // newResourcesPermissions: {}
     });
 

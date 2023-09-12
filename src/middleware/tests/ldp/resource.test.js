@@ -588,7 +588,7 @@ describe('Resource CRUD operations', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Theme',
-        label: 'Permaculture'
+        label: 'Permaculture',
       },
       contentType: MIME_TYPES.JSON,
       slug: 'Permaculture',
@@ -644,7 +644,7 @@ describe('Resource CRUD operations', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
-        label: 'SemanticApps'
+        label: 'SemanticApps',
       },
       contentType: MIME_TYPES.JSON,
       slug: 'SemApps',
@@ -690,7 +690,7 @@ describe('Resource CRUD operations', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
-        label: 'ActivityPods'
+        label: 'ActivityPods',
       },
       contentType: MIME_TYPES.JSON,
       slug: 'ActivityPods',

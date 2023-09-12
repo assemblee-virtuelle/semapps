@@ -1,9 +1,12 @@
+const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
+
 module.exports = async function post(ctx) {
   try {
     const { dataset, slugParts, ...resource } = ctx.params;
 
     const containerUri = this.getUriFromSlugParts(slugParts);
-  
+
     let resourceUri;
     const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
     if (ctx.meta.parser !== 'file') {

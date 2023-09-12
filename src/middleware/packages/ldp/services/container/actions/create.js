@@ -17,7 +17,7 @@ module.exports = {
         '@id': containerUri,
         '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
         'http://purl.org/dc/terms/title': title,
-        'http://purl.org/dc/terms/description': description,
+        'http://purl.org/dc/terms/description': description
       },
       contentType: MIME_TYPES.JSON,
       webId

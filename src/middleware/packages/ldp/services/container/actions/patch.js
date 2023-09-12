@@ -8,15 +8,15 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: {
-      type: 'string'
+      type: 'string',
     },
     sparqlUpdate: {
-      type: 'string'
+      type: 'string',
     },
     webId: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     let { containerUri, sparqlUpdate, webId } = ctx.params;
@@ -33,8 +33,8 @@ module.exports = {
       if (parsedQuery.type !== 'update')
         throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
-      let updates = { insert: [], delete: [] };
-      parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
+      const updates = { insert: [], delete: [] };
+      parsedQuery.updates.forEach((p) => updates[p.updateType].push(p[p.updateType][0]));
 
       for (const inss of updates.insert) {
         // check that the containerUri is the same as specified in the params. ignore if not.
@@ -46,19 +46,19 @@ module.exports = {
             } catch (e) {
               if (e.code === 404 && isMirror(insUri, this.settings.baseUrl)) {
                 // we need to import the remote resource
-                this.logger.info('IMPORTING ' + insUri);
+                this.logger.info(`IMPORTING ${insUri}`);
                 try {
                   await ctx.call('ldp.remote.store', {
                     resourceUri: insUri,
                     keepInSync: true,
                     mirrorGraph: true,
-                    webId
+                    webId,
                   });
 
                   // Now if the import went well, we can retry the attach
                   await ctx.call('ldp.container.attach', { containerUri, resourceUri: insUri });
                 } catch (e) {
-                  this.logger.warn('ERROR while IMPORTING ' + insUri + ' : ' + e.message);
+                  this.logger.warn(`ERROR while IMPORTING ${insUri} : ${e.message}`);
                 }
               }
             }
@@ -88,10 +88,6 @@ module.exports = {
       throw new MoleculerError(`Invalid SPARQL UPDATE content`, 400, 'BAD_REQUEST');
     }
 
-    ctx.emit(
-      'ldp.container.patched',
-      { containerUri },
-      { meta: { webId: null, dataset: null } }
-    );
-  }
+    ctx.emit('ldp.container.patched', { containerUri }, { meta: { webId: null, dataset: null } });
+  },
 };

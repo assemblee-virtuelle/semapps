@@ -1,11 +1,11 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const deleteAction = require('./actions/delete');
 const getAction = require('./actions/get');
 const headAction = require('./actions/head');
 const patchAction = require('./actions/patch');
 const postAction = require('./actions/post');
 const putAction = require('./actions/put');
-const getCatchAllRoute = require("../../routes/getCatchAllRoute");
+const getCatchAllRoute = require('../../routes/getCatchAllRoute');
 
 module.exports = {
   name: 'ldp.api',

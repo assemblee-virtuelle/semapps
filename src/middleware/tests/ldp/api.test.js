@@ -225,12 +225,12 @@ describe('CRUD Project', () => {
       .post('/resources')
       .send({
         '@context': {
-          "dc": "http://purl.org/dc/terms/",
-          "ldp": "http://www.w3.org/ns/ldp#",
+          dc: 'http://purl.org/dc/terms/',
+          ldp: 'http://www.w3.org/ns/ldp#',
         },
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation'
+        'dc:description': 'Used to test dynamic containers creation',
       })
       .set('content-type', 'application/ld+json')
       .set('slug', 'sub-resources');
@@ -250,10 +250,10 @@ describe('CRUD Project', () => {
       .post('/resources/sub-resources')
       .send({
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
-        description: 'My sub-resource'
+        description: 'My sub-resource',
       })
       .set('content-type', 'application/ld+json');
 
@@ -263,10 +263,12 @@ describe('CRUD Project', () => {
 
     // Sub-containers appear as ldp:Resource
     expect(response.body).toMatchObject({
-      'ldp:contains': [{
-        '@id': CONFIG.HOME_URL + 'resources/sub-resources',
-        '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'],
-      }]
+      'ldp:contains': [
+        {
+          '@id': `${CONFIG.HOME_URL}resources/sub-resources`,
+          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'],
+        },
+      ],
     });
 
     // The content of sub-containers is not displayed
@@ -277,11 +279,13 @@ describe('CRUD Project', () => {
     expect(response.body).toMatchObject({
       'dc:title': 'Sub-resources',
       'dc:description': 'Used to test dynamic containers creation',
-      'ldp:contains': [{
-        '@id': subResourceId,
-        '@type': 'pair:Project',
-        'pair:description': 'My sub-resource'
-      }]
+      'ldp:contains': [
+        {
+          '@id': subResourceId,
+          '@type': 'pair:Project',
+          'pair:description': 'My sub-resource',
+        },
+      ],
     });
   }, 20000);
 
@@ -289,12 +293,12 @@ describe('CRUD Project', () => {
     // Give write permission on sub-container, or we won't be able to delete it as anonymous
     await broker.call('webacl.resource.addRights', {
       webId: 'system',
-      resourceUri: CONFIG.HOME_URL + 'resources/sub-resources',
+      resourceUri: `${CONFIG.HOME_URL}resources/sub-resources`,
       additionalRights: {
         anon: {
-          write: true
-        }
-      }
+          write: true,
+        },
+      },
     });
 
     let response = await expressMocked.delete('/resources/sub-resources');

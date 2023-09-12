@@ -11,13 +11,13 @@ const ontologies = require('../ontologies');
 
 const containers = [
   {
-    path: '/resources'
+    path: '/resources',
   },
   {
-    path: '/resources2'
+    path: '/resources2',
   },
   {
-    path: '/organizations'
+    path: '/organizations',
   },
   {
     path: '/places',

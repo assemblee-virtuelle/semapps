@@ -20,8 +20,12 @@ module.exports = {
 
     // Detach the container from parent containers after deletion, otherwise the permissions may fail
     const parentContainers = await ctx.call('ldp.resource.getContainers', { resourceUri: containerUri });
-    for (let parentContainerUri of parentContainers) {
-      await ctx.call('ldp.container.detach', { containerUri: parentContainerUri, resourceUri: containerUri, webId: 'system' });
+    for (const parentContainerUri of parentContainers) {
+      await ctx.call('ldp.container.detach', {
+        containerUri: parentContainerUri,
+        resourceUri: containerUri,
+        webId: 'system'
+      });
     }
 
     const returnValues = {

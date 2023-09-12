@@ -4,27 +4,27 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: {
-      type: 'string'
+      type: 'string',
     },
     slug: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     resource: {
       type: 'object',
-      optional: true
+      optional: true,
     },
     file: {
       type: 'object',
-      optional: true
+      optional: true,
     },
     contentType: {
-      type: 'string'
+      type: 'string',
     },
     webId: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     let { resource, containerUri, slug, contentType, file } = ctx.params;
@@ -34,11 +34,7 @@ module.exports = {
 
     const containerExist = await ctx.call('ldp.container.exist', { containerUri, webId });
     if (!containerExist) {
-      throw new MoleculerError(
-        `Cannot create resource in non-existing container ${containerUri}`,
-        400,
-        'BAD_REQUEST'
-      );
+      throw new MoleculerError(`Cannot create resource in non-existing container ${containerUri}`, 400, 'BAD_REQUEST');
     }
 
     // We must add this first, so that the container's ACLs are taken into account
@@ -46,7 +42,7 @@ module.exports = {
     // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId
+      webId,
     });
 
     try {
@@ -58,8 +54,10 @@ module.exports = {
       const [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
 
       if (expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container')) {
-        if (expandedResource['@type'].includes('http://www.w3.org/ns/ldp#DirectContainer') 
-            || expandedResource['@type'].includes('http://www.w3.org/ns/ldp#IndirectContainer')) {
+        if (
+          expandedResource['@type'].includes('http://www.w3.org/ns/ldp#DirectContainer') ||
+          expandedResource['@type'].includes('http://www.w3.org/ns/ldp#IndirectContainer')
+        ) {
           throw new MoleculerError('Only LDP Basic Containers are supported by this server');
         }
 
@@ -67,7 +65,7 @@ module.exports = {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
           description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
+          webId,
         });
       } else {
         const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
@@ -85,7 +83,7 @@ module.exports = {
       // If there was an error inserting the resource, detach it from the container
       await ctx.call('triplestore.update', {
         query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`,
-        webId
+        webId,
       });
 
       // Re-throw the error so that it's displayed by the API function
@@ -97,11 +95,11 @@ module.exports = {
       {
         containerUri,
         resourceUri,
-        fromContainerPost: true
+        fromContainerPost: true,
       },
-      { meta: { webId: null, dataset: null } }
+      { meta: { webId: null, dataset: null } },
     );
 
     return resourceUri;
-  }
+  },
 };

@@ -7,7 +7,7 @@ module.exports = async function patch(ctx) {
 
     // TODO put in cache
     const containersUris = await ctx.call('ldp.container.getAll', { dataset });
-  
+
     if (containersUris.includes(uri)) {
       await ctx.call('ldp.container.delete', { containerUri: uri });
     } else {

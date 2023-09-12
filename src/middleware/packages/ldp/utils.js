@@ -20,9 +20,9 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-const buildBlankNodesQuery = depth => {
+const buildBlankNodesQuery = (depth) => {
   let construct = '';
-    let where = '';
+  let where = '';
   if (depth > 0) {
     for (let i = depth; i >= 1; i--) {
       construct += `

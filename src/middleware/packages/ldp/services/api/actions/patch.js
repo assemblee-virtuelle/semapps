@@ -5,10 +5,10 @@ module.exports = async function patch(ctx) {
     const { dataset, slugParts, body } = ctx.params;
 
     const uri = this.getUriFromSlugParts(slugParts);
-  
+
     // TODO put in cache
     const containersUris = await ctx.call('ldp.container.getAll', { dataset });
-  
+
     if (ctx.meta.parser === 'sparql') {
       if (containersUris.includes(uri)) {
         /*

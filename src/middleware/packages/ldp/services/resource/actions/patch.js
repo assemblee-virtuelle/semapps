@@ -65,13 +65,18 @@ module.exports = {
       if (parsedQuery.type !== 'update')
         throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
-      const triplesByOperation = Object.fromEntries(parsedQuery.updates
-        .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
-        .map(p => [p.updateType, p[p.updateType][0].triples])
+      const triplesByOperation = Object.fromEntries(
+        parsedQuery.updates
+          .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
+          .map(p => [p.updateType, p[p.updateType][0].triples])
       );
 
       if (Object.values(triplesByOperation).length === 0)
-        throw new MoleculerError('Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA', 400, 'BAD_REQUEST');
+        throw new MoleculerError(
+          'Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA',
+          400,
+          'BAD_REQUEST'
+        );
 
       triplesToAdd = triplesByOperation.insert;
       triplesToRemove = triplesByOperation.delete;
@@ -114,11 +119,7 @@ module.exports = {
       webId
     };
 
-    ctx.emit(
-      'ldp.resource.patched',
-      returnValues,
-      { meta: { webId: null } }
-    );
+    ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null } });
 
     return returnValues;
   }

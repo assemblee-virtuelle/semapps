@@ -1,6 +1,6 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const { buildBlankNodesQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require("../../../utils");
+const { buildBlankNodesQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',

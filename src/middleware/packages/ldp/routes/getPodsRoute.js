@@ -37,7 +37,7 @@ function getPodsRoute() {
     authentication: true,
     aliases: {
       'GET /': [...middlewares, 'ldp.api.get'],
-      'HEAD /': [transformUsernameToSlugParts, 'ldp.api.head'],
+      'HEAD /': [transformUsernameToSlugParts, 'ldp.api.head']
     }
   };
 }

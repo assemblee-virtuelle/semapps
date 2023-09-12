@@ -1,4 +1,4 @@
-const { MoleculerError } = require('moleculer').Errors;
+const { getAclUriFromResourceUri } = require('../../../utils');
 
 module.exports = async function patch(ctx) {
   try {
@@ -8,7 +8,7 @@ module.exports = async function patch(ctx) {
 
     // TODO put the following code in webacl service, but first ensure webacl are activated
     const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, uri);
-    
+
     ctx.meta.$statusCode = 200;
     ctx.meta.$statusMessage = 'OK';
     ctx.meta.$responseHeaders = {

@@ -31,7 +31,7 @@ module.exports = {
     getType: getTypeAction,
     patch: patchAction,
     put: putAction,
-    upload: uploadAction,
+    upload: uploadAction
   },
   hooks: {
     before: {
