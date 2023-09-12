@@ -52,9 +52,13 @@ const ActivityMappingService = {
 
           let emitterProfile = {};
           try {
-            emitterProfile = emitter.url ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor }) : {};
-          } catch(e) {
-            this.logger.warn(`Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`);
+            emitterProfile = emitter.url
+              ? await ctx.call('activitypub.actor.getProfile', { actorUri: activity.actor })
+              : {};
+          } catch (e) {
+            this.logger.warn(
+              `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
+            );
           }
 
           const templateParams = { activity: dereferencedActivity, emitter, emitterProfile, ...rest };

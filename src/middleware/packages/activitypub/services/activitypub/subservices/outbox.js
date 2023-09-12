@@ -1,7 +1,7 @@
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent} = require('../../../utils');
+const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 const { MIME_TYPES } = require('@semapps/mime-types');
 
@@ -19,7 +19,7 @@ const OutboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead,
+    permissions: collectionPermissionsWithAnonRead
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -34,7 +34,11 @@ const OutboxService = {
       // Ensure logged user is posting to his own outbox
       const actorUri = await ctx.call('activitypub.collection.getOwner', { collectionUri, collectionKey: 'outbox' });
       if (ctx.meta.webId && ctx.meta.webId !== 'system' && actorUri !== ctx.meta.webId) {
-        throw new MoleculerError(`Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`, 403, 'FORBIDDEN');
+        throw new MoleculerError(
+          `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
+          403,
+          'FORBIDDEN'
+        );
       }
 
       if (this.settings.podProvider) {
@@ -133,17 +137,25 @@ const OutboxService = {
         try {
           const dataset = this.settings.podProvider ? getSlugFromUri(recipientUri) : undefined;
 
-          const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
-            actorUri: recipientUri,
-            predicate: 'inbox',
-            webId: 'system'
-          }, { meta: { dataset }});
+          const recipientInbox = await this.broker.call(
+            'activitypub.actor.getCollectionUri',
+            {
+              actorUri: recipientUri,
+              predicate: 'inbox',
+              webId: 'system'
+            },
+            { meta: { dataset } }
+          );
 
           // Attach activity to the inbox of the recipient
-          await this.broker.call('activitypub.collection.attach', {
-            collectionUri: recipientInbox,
-            item: activity
-          }, { meta: { dataset }});
+          await this.broker.call(
+            'activitypub.collection.attach',
+            {
+              collectionUri: recipientInbox,
+              item: activity
+            },
+            { meta: { dataset } }
+          );
 
           if (this.settings.podProvider) {
             // Store the activity in the dataset of the recipient
@@ -155,10 +167,14 @@ const OutboxService = {
               dataset
             });
 
-            await this.broker.call('activitypub.activity.attach', {
-              resourceUri: activity.id,
-              webId: recipientUri
-            }, { meta: { dataset }});
+            await this.broker.call(
+              'activitypub.activity.attach',
+              {
+                resourceUri: activity.id,
+                webId: recipientUri
+              },
+              { meta: { dataset } }
+            );
           }
 
           success.push(recipientUri);

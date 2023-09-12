@@ -5,10 +5,7 @@ module.exports = {
   params: {
     query: {
       type: 'multi',
-      rules: [
-        { type: 'string' },
-        { type: 'object' }
-      ]
+      rules: [{ type: 'string' }, { type: 'object' }]
     },
     webId: {
       type: 'string',
@@ -26,8 +23,7 @@ module.exports = {
 
     if (!dataset) throw new Error('No dataset defined for triplestore update: ' + query);
 
-    if (typeof query === 'object')
-      query = this.generateSparqlQuery(query);
+    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];

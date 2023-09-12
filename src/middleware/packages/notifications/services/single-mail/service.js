@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const path = require('path');
 const MailService = require('moleculer-mail');
-const { getSlugFromUri } = require("@semapps/ldp");
+const { getSlugFromUri } = require('@semapps/ldp');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -37,7 +37,8 @@ const SingleMailNotificationsService = {
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
         if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
-          if (notification.actionLink) notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
+          if (notification.actionLink)
+            notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
           await this.queueMail(ctx, notification.key, {
             to: account.email,

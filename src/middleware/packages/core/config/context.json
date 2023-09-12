@@ -31,8 +31,8 @@
     "dc:modified": {
       "@type": "xsd:dateTime"
     },
-    "dc:creator" : {
-      "@type" : "@id"
+    "dc:creator": {
+      "@type": "@id"
     },
 
     "pair:image": {
@@ -738,29 +738,29 @@
     "digestValue": "sec:digestValue",
     "domain": "sec:domain",
     "encryptionKey": "sec:encryptionKey",
-    "expiration": {"@id": "sec:expiration", "@type": "xsd:dateTime"},
-    "expires": {"@id": "sec:expiration", "@type": "xsd:dateTime"},
+    "expiration": { "@id": "sec:expiration", "@type": "xsd:dateTime" },
+    "expires": { "@id": "sec:expiration", "@type": "xsd:dateTime" },
     "initializationVector": "sec:initializationVector",
     "iterationCount": "sec:iterationCount",
     "nonce": "sec:nonce",
     "normalizationAlgorithm": "sec:normalizationAlgorithm",
-    "owner": {"@id": "sec:owner", "@type": "@id"},
+    "owner": { "@id": "sec:owner", "@type": "@id" },
     "password": "sec:password",
-    "privateKey": {"@id": "sec:privateKey", "@type": "@id"},
+    "privateKey": { "@id": "sec:privateKey", "@type": "@id" },
     "privateKeyPem": "sec:privateKeyPem",
-    "publicKey": {"@id": "sec:publicKey", "@type": "@id"},
+    "publicKey": { "@id": "sec:publicKey", "@type": "@id" },
     "publicKeyBase58": "sec:publicKeyBase58",
     "publicKeyPem": "sec:publicKeyPem",
     "publicKeyWif": "sec:publicKeyWif",
-    "publicKeyService": {"@id": "sec:publicKeyService", "@type": "@id"},
-    "revoked": {"@id": "sec:revoked", "@type": "xsd:dateTime"},
+    "publicKeyService": { "@id": "sec:publicKeyService", "@type": "@id" },
+    "revoked": { "@id": "sec:revoked", "@type": "xsd:dateTime" },
     "salt": "sec:salt",
     "signature": "sec:signature",
     "signatureAlgorithm": "sec:signingAlgorithm",
     "signatureValue": "sec:signatureValue",
 
     "void:sparqlEndpoint": {
-      "@type" : "@id"
+      "@type": "@id"
     },
 
     "vcard:hasAddress": {

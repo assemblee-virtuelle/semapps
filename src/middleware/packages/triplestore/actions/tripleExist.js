@@ -26,16 +26,17 @@ module.exports = {
 
     return await ctx.call('triplestore.query', {
       query: {
-        type: "query",
-        queryType: "ASK",
-        where: [graphName
-          ? {
-              type: 'graph',
-              name: { termType: "NamedNode", value: graphName },
-              patterns: [{ type: "bgp", triples: [triple] }],
-            }
-          : { type: "bgp", triples: [triple] }
-        ],
+        type: 'query',
+        queryType: 'ASK',
+        where: [
+          graphName
+            ? {
+                type: 'graph',
+                name: { termType: 'NamedNode', value: graphName },
+                patterns: [{ type: 'bgp', triples: [triple] }]
+              }
+            : { type: 'bgp', triples: [triple] }
+        ]
       },
       accept: MIME_TYPES.JSON,
       webId,

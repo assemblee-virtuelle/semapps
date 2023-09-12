@@ -131,7 +131,8 @@ function getUserAgentSearchParam(user, groups) {
     return {
       foafAgent: true
     };
-  } if (user === 'system') {
+  }
+  if (user === 'system') {
     return {
       system: true
     };
@@ -291,9 +292,12 @@ const processRights = (rights, aclUri) => {
 };
 
 const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
-  if (podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-  return !urlJoin(uri, '/').startsWith(baseUrl)
-    || (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'));
+  if (podProvider && !dataset)
+    throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+  return (
+    !urlJoin(uri, '/').startsWith(baseUrl) ||
+    (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'))
+  );
 };
 
 module.exports = {

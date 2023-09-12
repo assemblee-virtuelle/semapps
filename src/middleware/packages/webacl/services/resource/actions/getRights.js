@@ -213,7 +213,7 @@ module.exports = {
       accept = accept || MIME_TYPES.TURTLE;
       ctx.meta.$responseType = accept;
 
-      const isContainer = !skipResourceCheck && await this.checkResourceOrContainerExists(ctx, resourceUri);
+      const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
     }

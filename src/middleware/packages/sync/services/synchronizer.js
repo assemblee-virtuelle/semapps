@@ -1,5 +1,5 @@
-const { defaultToArray } = require("@semapps/ldp");
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require("@semapps/activitypub");
+const { defaultToArray } = require('@semapps/ldp');
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
 
 const SynchronizerService = {
   name: 'synchronizer',
@@ -66,13 +66,20 @@ const SynchronizerService = {
               const container = await ctx.call('ldp.registry.getByType', { type });
               if (container) {
                 try {
-                  const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: recipientUri });
+                  const containerUri = await ctx.call('ldp.registry.getUri', {
+                    path: container.path,
+                    webId: recipientUri
+                  });
                   await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
-                } catch(e) {
-                  this.logger.warn(`Error when attaching remote resource ${resourceUri} to local container: ${e.message}`);
+                } catch (e) {
+                  this.logger.warn(
+                    `Error when attaching remote resource ${resourceUri} to local container: ${e.message}`
+                  );
                 }
               } else {
-                this.logger.warn(`Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`);
+                this.logger.warn(
+                  `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
+                );
               }
             }
           }

@@ -5,10 +5,15 @@
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
   "dependencies": {
+    "@semapps/activitypub": "^0.5.1",
     "n3": "^1.6.3",
-    "node-fetch": "^2.6.6"
+    "node-fetch": "^2.6.6",
+    "url-join": "^5.0.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }

@@ -1,6 +1,6 @@
-const sharp = require("sharp");
-const { MIME_TYPES } = require("@semapps/mime-types");
-const { defaultToArray } = require("../utils");
+const sharp = require('sharp');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../utils');
 
 const SUPPORTED_IMAGES_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -13,7 +13,7 @@ module.exports = {
         quality: 85
       },
       png: {
-        compressionLevel: 8,
+        compressionLevel: 8
       },
       webp: {
         quality: 85
@@ -59,7 +59,7 @@ module.exports = {
           const buffer = await image.toBuffer();
           await sharp(buffer).toFile(metadata.localPath);
         }
-      } catch(e) {
+      } catch (e) {
         this.logger.warn(`Image processing failed (${e.message})`);
       }
     },
@@ -79,19 +79,19 @@ module.exports = {
   },
   methods: {
     getMaxSize(width, height) {
-      const ratio = Math.min(this.settings.imageProcessor.maxWidth / width, this.settings.imageProcessor.maxHeight / height);
+      const ratio = Math.min(
+        this.settings.imageProcessor.maxWidth / width,
+        this.settings.imageProcessor.maxHeight / height
+      );
       return { width: Math.round(width * ratio), height: Math.round(height * ratio) };
     }
   },
   hooks: {
     after: {
       async create(ctx, res) {
-        await this.actions.processImage(
-          { resourceUri: res.resourceUri },
-          { parentCtx: ctx }
-        );
+        await this.actions.processImage({ resourceUri: res.resourceUri }, { parentCtx: ctx });
         return res;
       }
     }
   }
-}
+};

@@ -55,7 +55,7 @@ describe('middleware CRUD resource with perms', () => {
       };
       let webId = 'http://a/user';
       resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
-      project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
+      const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 
       let resourceRights = await broker.call('webacl.resource.hasRights', {

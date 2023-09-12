@@ -7,7 +7,11 @@ jest.setTimeout(50000);
 const NUM_USERS = 2;
 
 describe.each(['single-server', 'multi-server'])('In mode %s, posting to followers', mode => {
-  let broker, actors = [], alice, bob, followActivity;
+  let broker,
+    actors = [],
+    alice,
+    bob,
+    followActivity;
 
   beforeAll(async () => {
     if (mode === 'single-server') {
@@ -24,7 +28,8 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
       }
       const { webId } = await broker[i].call('auth.signup', require(`./data/actor${i}.json`));
       actors[i] = await broker[i].call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
-      actors[i].call = (actionName, params, options = {}) => broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId }});
+      actors[i].call = (actionName, params, options = {}) =>
+        broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
     bob = actors[1];
