@@ -13,7 +13,7 @@ module.exports = async function patch(ctx) {
     ctx.meta.$statusMessage = 'OK';
     ctx.meta.$responseHeaders = {
       Link: `<${aclUri}>; rel="acl"`,
-      'Content-Length': 0
+      'Content-Length': 0,
     };
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);

@@ -6,7 +6,7 @@ const {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta
+  saveDatasetMeta,
 } = require('@semapps/middlewares');
 
 const transformUsernameToSlugParts = (req, res, next) => {
@@ -24,7 +24,7 @@ function getPodsRoute() {
     parseTurtle,
     parseFile,
     transformUsernameToSlugParts,
-    saveDatasetMeta
+    saveDatasetMeta,
   ];
 
   return {
@@ -37,8 +37,8 @@ function getPodsRoute() {
     authentication: true,
     aliases: {
       'GET /': [...middlewares, 'ldp.api.get'],
-      'HEAD /': [transformUsernameToSlugParts, 'ldp.api.head']
-    }
+      'HEAD /': [transformUsernameToSlugParts, 'ldp.api.head'],
+    },
   };
 }
 

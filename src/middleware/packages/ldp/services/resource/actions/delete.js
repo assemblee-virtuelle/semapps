@@ -5,7 +5,7 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
@@ -22,7 +22,7 @@ module.exports = {
       resourceUri,
       accept: MIME_TYPES.JSON,
       forceSemantic: true,
-      webId
+      webId,
     });
 
     await ctx.call('triplestore.update', {
@@ -32,7 +32,7 @@ module.exports = {
           <${resourceUri}> ?p1 ?o1 .
         }
       `,
-      webId
+      webId,
     });
 
     // We must detach the resource from the containers after deletion, otherwise the permissions may fail
@@ -48,7 +48,7 @@ module.exports = {
     const returnValues = {
       resourceUri,
       oldData,
-      webId
+      webId,
     };
 
     ctx.call('triplestore.deleteOrphanBlankNodes');
@@ -56,5 +56,5 @@ module.exports = {
     ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
 
     return returnValues;
-  }
+  },
 };

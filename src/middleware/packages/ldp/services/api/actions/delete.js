@@ -18,7 +18,7 @@ module.exports = async function patch(ctx) {
     ctx.meta.$statusCode = 204;
     ctx.meta.$responseHeaders = {
       Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-      'Content-Length': 0
+      'Content-Length': 0,
     };
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);

@@ -17,7 +17,7 @@ module.exports = async function patch(ctx) {
 
         await ctx.call('ldp.container.patch', {
           containerUri: uri,
-          sparqlUpdate: body
+          sparqlUpdate: body,
         });
       } else {
         /*
@@ -28,14 +28,14 @@ module.exports = async function patch(ctx) {
 
         await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
           resourceUri: uri,
-          sparqlUpdate: body
+          sparqlUpdate: body,
         });
       }
     } else {
       throw new MoleculerError(`The content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
     }
     ctx.meta.$responseHeaders = {
-      'Content-Length': 0
+      'Content-Length': 0,
     };
     ctx.meta.$statusCode = 204;
   } catch (e) {

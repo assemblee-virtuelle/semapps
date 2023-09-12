@@ -3,7 +3,7 @@ const { defaultToArray } = require('../utils');
 
 module.exports = {
   settings: {
-    disassembly: [] // Example: [{ path: 'pair:hasLocation', container: 'http://localhost:3000/places' }]
+    disassembly: [], // Example: [{ path: 'pair:hasLocation', container: 'http://localhost:3000/places' }]
   },
   started() {
     if (this.settings.disassembly.length === 0) {
@@ -24,18 +24,18 @@ module.exports = {
           const oldData = await ctx.call('ldp.resource.get', {
             resourceUri: resource.id || resource['@id'],
             accept: MIME_TYPES.JSON,
-            webId: 'system'
+            webId: 'system',
           });
           await this.updateDisassembly(ctx, resource, oldData);
         }
-      }
+      },
     },
     after: {
       async delete(ctx, res) {
         await this.deleteDisassembly(ctx, res.oldData);
         return res;
-      }
-    }
+      },
+    },
   },
   methods: {
     async createDisassembly(ctx, newData) {
@@ -52,10 +52,10 @@ module.exports = {
               containerUri: disassemblyConfig.container,
               resource: {
                 '@context': newData['@context'],
-                ...resourceWithoutId
+                ...resourceWithoutId,
               },
               contentType: MIME_TYPES.JSON,
-              webId: 'system'
+              webId: 'system',
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
           }
@@ -73,13 +73,13 @@ module.exports = {
         const newDisassemblyValue = defaultToArray(newData[disassemblyConfig.path]) || [];
 
         const resourcesToAdd = newDisassemblyValue.filter(
-          t1 => !oldDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+          (t1) => !oldDisassemblyValue.some((t2) => (t1.id || t1['@id']) === (t2.id || t2['@id'])),
         );
         const resourcesToRemove = oldDisassemblyValue.filter(
-          t1 => !newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+          (t1) => !newDisassemblyValue.some((t2) => (t1.id || t1['@id']) === (t2.id || t2['@id'])),
         );
-        const resourcesToKeep = oldDisassemblyValue.filter(t1 =>
-          newDisassemblyValue.some(t2 => (t1.id || t1['@id']) === (t2.id || t2['@id']))
+        const resourcesToKeep = oldDisassemblyValue.filter((t1) =>
+          newDisassemblyValue.some((t2) => (t1.id || t1['@id']) === (t2.id || t2['@id'])),
         );
 
         if (resourcesToAdd) {
@@ -90,10 +90,10 @@ module.exports = {
               containerUri: disassemblyConfig.container,
               resource: {
                 '@context': newData['@context'],
-                ...resource
+                ...resource,
               },
               contentType: MIME_TYPES.JSON,
-              webId: 'system'
+              webId: 'system',
             });
             uriAdded.push({ '@id': newResourceUri, '@type': '@id' });
           }
@@ -103,14 +103,14 @@ module.exports = {
           for (const resource of resourcesToRemove) {
             await ctx.call('ldp.resource.delete', {
               resourceUri: resource['@id'] || resource.id || resource,
-              webId: 'system'
+              webId: 'system',
             });
             uriRemoved.push({ '@id': resource['@id'] || resource.id || resource, '@type': '@id' });
           }
         }
 
         if (resourcesToKeep) {
-          uriKept = resourcesToKeep.map(r => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
+          uriKept = resourcesToKeep.map((r) => ({ '@id': r['@id'] || r.id || r, '@type': '@id' }));
         }
 
         oldData[disassemblyConfig.path] = [...uriRemoved, ...uriKept];
@@ -127,11 +127,11 @@ module.exports = {
           for (const resource of disassemblyValue) {
             await ctx.call('ldp.resource.delete', {
               resourceUri: resource['@id'] || resource.id || resource,
-              webId: 'system'
+              webId: 'system',
             });
           }
         }
       }
-    }
-  }
+    },
+  },
 };

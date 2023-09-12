@@ -14,7 +14,7 @@ module.exports = async function post(ctx) {
         containerUri,
         slug: ctx.meta.headers.slug,
         resource,
-        contentType: ctx.meta.headers['content-type']
+        contentType: ctx.meta.headers['content-type'],
       });
     } else {
       if (ctx.params.files.length > 1) {
@@ -24,13 +24,13 @@ module.exports = async function post(ctx) {
         containerUri,
         slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
         file: ctx.params.files[0],
-        contentType: MIME_TYPES.JSON
+        contentType: MIME_TYPES.JSON,
       });
     }
     ctx.meta.$responseHeaders = {
       Location: resourceUri,
       Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-      'Content-Length': 0
+      'Content-Length': 0,
     };
     ctx.meta.$statusCode = 201;
   } catch (e) {
