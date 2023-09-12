@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const DbService = require('moleculer-db');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
-const { getSlugFromUri } = require("@semapps/ldp");
+const { getSlugFromUri } = require('@semapps/ldp');
 const crypto = require('crypto');
 
 module.exports = {
@@ -225,7 +225,7 @@ module.exports = {
       });
     },
     async generateResetPasswordToken() {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         crypto.randomBytes(32, function(ex, buf) {
           if (ex) {
             reject(ex);

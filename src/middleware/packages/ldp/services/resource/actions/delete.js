@@ -13,7 +13,7 @@ module.exports = {
     webId = webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
-      return await ctx.call('ldp.remote.delete', { resourceUri, webId })
+      return await ctx.call('ldp.remote.delete', { resourceUri, webId });
     }
 
     // Save the current data, to be able to send it through the event

@@ -83,7 +83,7 @@ const usePrefix = (uri, ontologies) => {
 
 // Replace a full URI with a prefix
 const useFullURI = (prefixedUri, ontologies) => {
-  if (prefixedUri.startsWith('http')) return uri; // If it is already a full URI
+  if (prefixedUri.startsWith('http')) return prefixedUri; // If it is already a full URI
   const [prefix] = prefixedUri.split(':');
   const ontology = ontologies.find(o => o.prefix === prefix);
   return prefixedUri.replace(ontology.prefix + ':', ontology.url);

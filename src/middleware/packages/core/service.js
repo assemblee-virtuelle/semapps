@@ -13,21 +13,28 @@ const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const defaultOntologies = require('./config/ontologies.json');
 
+/**
+ * @typedef {import('http').ServerResponse} ServerResponse
+ * @typedef {import('http').IncomingMessage} IncomingMessage
+ * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
+ */
+
+/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core',
   settings: {
-    baseUrl: null,
-    baseDir: null,
+    baseUrl: undefined,
+    baseDir: undefined,
     triplestore: {
-      url: null,
-      user: null,
-      password: null,
-      mainDataset: null
+      url: undefined,
+      user: undefined,
+      password: undefined,
+      mainDataset: undefined
     },
     // Optional
-    containers: null,
-    jsonContext: null,
-    ontologies: null,
+    containers: undefined,
+    jsonContext: undefined,
+    ontologies: undefined,
     // Services configurations
     activitypub: {},
     api: {},
@@ -47,6 +54,7 @@ const CoreService = {
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
+        // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
           jsonContext: jsonContext || defaultJsonContext,

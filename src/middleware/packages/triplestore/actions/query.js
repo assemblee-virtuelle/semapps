@@ -6,10 +6,7 @@ module.exports = {
   params: {
     query: {
       type: 'multi',
-      rules: [
-        { type: 'string' },
-        { type: 'object' }
-      ]
+      rules: [{ type: 'string' }, { type: 'object' }]
     },
     accept: {
       type: 'string',
@@ -29,8 +26,7 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
-    if (typeof query === 'object')
-      query = this.generateSparqlQuery(query);
+    if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     if (!dataset) throw new Error('No dataset defined for triplestore query: ' + query);
 

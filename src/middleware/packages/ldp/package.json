@@ -12,6 +12,7 @@
     "bson": "^4.0.4",
     "moleculer": "^0.14.17",
     "moleculer-schedule": "^0.2.3",
+    "node-fetch": "^3.3.1",
     "path-to-regexp": "^6.2.0",
     "rdf-parse": "^1.7.0",
     "sharp": "^0.31.2",
@@ -23,5 +24,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
+  "engines": {
+    "node": ">=14"
+  }
 }

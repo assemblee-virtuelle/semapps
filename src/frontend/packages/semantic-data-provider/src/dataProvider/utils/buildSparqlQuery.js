@@ -1,10 +1,11 @@
 import DataFactory from '@rdfjs/data-model';
+import { Generator as SparqlGenerator } from 'sparqljs';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
 import resolvePrefix from './resolvePrefix';
+
 const { literal, namedNode, triple, variable } = DataFactory;
 
-const SparqlGenerator = require('sparqljs').Generator;
 const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
@@ -14,7 +15,7 @@ const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers', '_pred
 const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicates, ontologies }) => {
   const baseQuery = buildBaseQuery(predicates, ontologies);
 
-  let sparqlJsParams = {
+  const sparqlJsParams = {
     queryType: 'CONSTRUCT',
     template: baseQuery.construct,
     where: [],
@@ -22,7 +23,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
     prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
   };
 
-  let containerWhere = [
+  const containerWhere = [
     {
       type: 'values',
       values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))

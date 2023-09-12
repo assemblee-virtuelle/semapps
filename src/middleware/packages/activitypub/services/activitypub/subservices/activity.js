@@ -86,7 +86,7 @@ const ActivityService = {
   methods: {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
-    },
+    }
   },
   hooks: {
     before: {

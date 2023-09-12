@@ -1,6 +1,12 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getAclUriFromResourceUri, convertBodyToTriples, filterTriplesForResource, FULL_AGENTCLASS_URI, FULL_FOAF_AGENT } = require('../../../utils');
+const {
+  getAclUriFromResourceUri,
+  convertBodyToTriples,
+  filterTriplesForResource,
+  FULL_AGENTCLASS_URI,
+  FULL_FOAF_AGENT
+} = require('../../../utils');
 const urlJoin = require('url-join');
 
 module.exports = {
@@ -140,11 +146,7 @@ module.exports = {
         addDefaultPublicRead,
         removeDefaultPublicRead
       };
-      ctx.emit(
-        'webacl.resource.updated',
-        returnValues,
-        { meta: { webId: null, dataset: null } }
-      );
+      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
       return returnValues;
     }
   }

@@ -1,5 +1,5 @@
 const urlJoin = require('url-join');
-const { ACTOR_TYPES } = require("@semapps/activitypub");
+const { ACTOR_TYPES } = require('@semapps/activitypub');
 
 module.exports = {
   name: 'pod',
