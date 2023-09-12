@@ -4,18 +4,18 @@ const path = require('path');
 const urlJoin = require('url-join');
 const format = require('string-template');
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
 const DatasetService = {
   name: 'triplestore.dataset',
   settings: {
     url: null,
     user: null,
-    password: null
+    password: null,
   },
   started() {
     this.headers = {
-      Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
+      Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`,
     };
   },
   actions: {
@@ -25,7 +25,7 @@ const DatasetService = {
       // Ask Fuseki to backup the given dataset
       const response = await fetch(urlJoin(this.settings.url, '$/backup', dataset), {
         method: 'POST',
-        headers: this.headers
+        headers: this.headers,
       });
 
       // Wait for backup to complete
@@ -49,7 +49,7 @@ const DatasetService = {
         response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
           method: 'POST',
           headers: { ...this.headers, 'Content-Type': 'text/turtle' },
-          body: assembler
+          body: assembler,
         });
 
         if (response.status === 200) {
@@ -64,18 +64,18 @@ const DatasetService = {
     async exist(ctx) {
       const { dataset } = ctx.params;
       const response = await fetch(urlJoin(this.settings.url, '$/datasets/', dataset), {
-        headers: this.headers
+        headers: this.headers,
       });
       return response.status === 200;
     },
     async list() {
       const response = await fetch(urlJoin(this.settings.url, '$/datasets'), {
-        headers: this.headers
+        headers: this.headers,
       });
 
       if (response.ok) {
         const json = await response.json();
-        return json.datasets.map(dataset => dataset['ds.name'].substring(1));
+        return json.datasets.map((dataset) => dataset['ds.name'].substring(1));
       }
       return [];
     },
@@ -96,15 +96,15 @@ const DatasetService = {
 
         const response = await fetch(urlJoin(this.settings.url, '$/tasks/', `${taskId}`), {
           method: 'GET',
-          headers: this.headers
+          headers: this.headers,
         });
 
         if (response.ok) {
           task = await response.json();
         }
       } while (!task || !task.finished);
-    }
-  }
+    },
+  },
 };
 
 module.exports = DatasetService;

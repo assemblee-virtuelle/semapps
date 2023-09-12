@@ -13,41 +13,41 @@ const {
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
-  getUserAgentSearchParam
+  getUserAgentSearchParam,
 } = require('../../../utils');
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
-  foaf: 'http://xmlns.com/foaf/0.1/'
+  foaf: 'http://xmlns.com/foaf/0.1/',
 };
 
 const webAclContext = {
   ...prefixes,
   'acl:accessTo': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agentClass': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agent': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agentGroup': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:default': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:mode': {
-    '@type': '@id'
-  }
+    '@type': '@id',
+  },
 };
 
 function streamToString(stream) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk) => (res += chunk));
+    stream.on('error', (err) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
@@ -56,9 +56,9 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
   const turtle = await new Promise((resolve, reject) => {
     const writer = new Writer({
       prefixes: { ...prefixes, '': `${resourceAclUri}#` },
-      format: 'Turtle'
+      format: 'Turtle',
     });
-    output.forEach(f => writer.addQuad(f.auth, f.p, f.o));
+    output.forEach((f) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
       resolve(res);
     });
@@ -68,10 +68,10 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
 
   const mySerializer = new JsonLdSerializer({
     context: webAclContext,
-    baseIRI: resourceAclUri
+    baseIRI: resourceAclUri,
   });
 
-  output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
+  output.forEach((f) => mySerializer.write(quad(f.auth, f.p, f.o)));
   mySerializer.end();
 
   const jsonLd = JSON.parse(await streamToString(mySerializer));
@@ -80,10 +80,10 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
     input: jsonLd,
     frame: {
       '@context': webAclContext,
-      '@type': 'acl:Authorization'
+      '@type': 'acl:Authorization',
     },
     // Force results to be in a @graph, even if we have a single result
-    options: { omitGraph: false }
+    options: { omitGraph: false },
   });
 
   // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
@@ -95,9 +95,9 @@ async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
 async function filterAcls(hasControl, uaSearchParam, acls) {
   if (hasControl || uaSearchParam.system) return acls;
 
-  const filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
+  const filtered = acls.filter((acl) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
-    const header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
+    const header = acls.filter((acl) => filterAgentAcl(acl, uaSearchParam, true));
     return header.concat(filtered);
   }
 
@@ -143,7 +143,7 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
       reads,
       writes,
       appends,
-      controls: containerControls
+      controls: containerControls,
     };
 
     const moreParentContainers = await findParentContainers(ctx, containerUri);
@@ -192,7 +192,7 @@ module.exports = {
 
     return await ctx.call('webacl.resource.getRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      accept: accept
+      accept: accept,
     });
   },
   action: {
@@ -201,10 +201,10 @@ module.exports = {
       resourceUri: { type: 'string' },
       accept: { type: 'string', optional: true },
       webId: { type: 'string', optional: true },
-      skipResourceCheck: { type: 'boolean', default: false }
+      skipResourceCheck: { type: 'boolean', default: false },
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'webId', '#webId']
+      keys: ['resourceUri', 'accept', 'webId', '#webId'],
     },
     async handler(ctx) {
       let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
@@ -216,6 +216,6 @@ module.exports = {
       const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
-    }
-  }
+    },
+  },
 };

@@ -7,7 +7,7 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const { resourceUri, accept } = ctx.params;
@@ -23,7 +23,7 @@ module.exports = {
         url: resourceUri,
         method: 'GET',
         headers,
-        actorUri: webId
+        actorUri: webId,
       });
       return body;
     }
@@ -35,5 +35,5 @@ module.exports = {
       return await response.text();
     }
     throw new MoleculerError(response.statusText, response.status);
-  }
+  },
 };

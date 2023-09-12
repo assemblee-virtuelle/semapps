@@ -10,15 +10,15 @@ module.exports = {
       maxWidth: 1900,
       maxHeight: 1000,
       jpeg: {
-        quality: 85
+        quality: 85,
       },
       png: {
-        compressionLevel: 8
+        compressionLevel: 8,
       },
       webp: {
-        quality: 85
-      }
-    }
+        quality: 85,
+      },
+    },
   },
   actions: {
     async processImage(ctx) {
@@ -29,7 +29,7 @@ module.exports = {
         jsonContext: { '@vocab': 'http://semapps.org/ns/core#' },
         accept: MIME_TYPES.JSON,
         forceSemantic: true,
-        webId: 'system'
+        webId: 'system',
       });
 
       try {
@@ -75,23 +75,23 @@ module.exports = {
         }
       }
       this.logger.info('Finished !');
-    }
+    },
   },
   methods: {
     getMaxSize(width, height) {
       const ratio = Math.min(
         this.settings.imageProcessor.maxWidth / width,
-        this.settings.imageProcessor.maxHeight / height
+        this.settings.imageProcessor.maxHeight / height,
       );
       return { width: Math.round(width * ratio), height: Math.round(height * ratio) };
-    }
+    },
   },
   hooks: {
     after: {
       async create(ctx, res) {
         await this.actions.processImage({ resourceUri: res.resourceUri }, { parentCtx: ctx });
         return res;
-      }
-    }
-  }
+      },
+    },
+  },
 };

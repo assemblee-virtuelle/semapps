@@ -1,7 +1,7 @@
 module.exports = {
   name: 'authorizer',
   settings: {
-    rules: []
+    rules: [],
   },
   dependencies: ['webacl.resource'],
   methods: {
@@ -11,7 +11,7 @@ module.exports = {
         return rule.match(record);
       }
       // If match is an object, go through all entries and check they match with the record
-      return Object.keys(rule.match).every(predicate => {
+      return Object.keys(rule.match).every((predicate) => {
         const value = rule.match[predicate];
         return Array.isArray(record[predicate]) ? record[predicate].includes(value) : record[predicate] === value;
       });
@@ -26,7 +26,7 @@ module.exports = {
       }
       if (!users) return [];
       return Array.isArray(users) ? users : [users];
-    }
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -40,17 +40,17 @@ module.exports = {
               additionalRights: {
                 user: {
                   uri: user,
-                  ...rule.rights
-                }
+                  ...rule.rights,
+                },
               },
-              webId: 'system'
+              webId: 'system',
             });
           }
           if (users.length > 0) {
             ctx.emit('authorizer.added', {
               resourceUri,
               users,
-              rule
+              rule,
             });
           }
         }
@@ -64,49 +64,49 @@ module.exports = {
           const newUsers = this.getUsers(rule, newData);
           const oldUsers = this.getUsers(rule, oldData);
 
-          const usersToAdd = newUsers.filter(t1 => !oldUsers.some(t2 => t1 === t2));
+          const usersToAdd = newUsers.filter((t1) => !oldUsers.some((t2) => t1 === t2));
           for (const userUri of usersToAdd) {
             await ctx.call('webacl.resource.addRights', {
               resourceUri,
               additionalRights: {
                 user: {
                   uri: userUri,
-                  ...rule.rights
-                }
+                  ...rule.rights,
+                },
               },
-              webId: 'system'
+              webId: 'system',
             });
           }
           if (usersToAdd.length > 0) {
             ctx.emit('authorizer.added', {
               resourceUri,
               users: usersToAdd,
-              rule
+              rule,
             });
           }
 
-          const usersToRemove = oldUsers.filter(t1 => !newUsers.some(t2 => t1 === t2));
+          const usersToRemove = oldUsers.filter((t1) => !newUsers.some((t2) => t1 === t2));
           for (const userUri of usersToRemove) {
             await ctx.call('webacl.resource.removeRights', {
               resourceUri,
               rights: {
                 user: {
                   uri: userUri,
-                  ...rule.rights
-                }
+                  ...rule.rights,
+                },
               },
-              webId: 'system'
+              webId: 'system',
             });
           }
           if (usersToRemove.length > 0) {
             ctx.emit('authorizer.removed', {
               resourceUri,
               users: usersToRemove,
-              rule
+              rule,
             });
           }
         }
       }
-    }
-  }
+    },
+  },
 };

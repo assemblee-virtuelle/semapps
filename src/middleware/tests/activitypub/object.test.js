@@ -24,7 +24,7 @@ describe('Create/Update/Delete objects', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien'
+      name: 'Sébastien',
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -40,7 +40,7 @@ describe('Create/Update/Delete objects', () => {
       name: 'My first article',
       attributedTo: sebastien.id,
       to: sebastien.followers,
-      content: 'My first article, I hope there is no tipo'
+      content: 'My first article, I hope there is no tipo',
     });
 
     expect(createActivity).toMatchObject({
@@ -49,9 +49,9 @@ describe('Create/Update/Delete objects', () => {
       object: {
         type: OBJECT_TYPES.ARTICLE,
         name: 'My first article',
-        content: 'My first article, I hope there is no tipo'
+        content: 'My first article, I hope there is no tipo',
       },
-      to: sebastien.followers
+      to: sebastien.followers,
     });
 
     expect(createActivity.object).toHaveProperty('id');
@@ -59,7 +59,7 @@ describe('Create/Update/Delete objects', () => {
 
     await waitForExpect(async () => {
       await expect(
-        broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id })
+        broker.call('activitypub.collection.includes', { collectionUri: sebastien.outbox, itemUri: createActivity.id }),
       ).resolves.toBeTruthy();
     });
 
@@ -68,7 +68,7 @@ describe('Create/Update/Delete objects', () => {
     // Check the object has been created in the container
     const object = await broker.call('ldp.resource.get', {
       resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
     });
     expect(object).toHaveProperty('type', OBJECT_TYPES.ARTICLE);
     expect(object).toHaveProperty('id', objectUri);
@@ -83,9 +83,9 @@ describe('Create/Update/Delete objects', () => {
       object: {
         id: objectUri,
         type: OBJECT_TYPES.ARTICLE,
-        content: 'My first article, I hope there is no typo'
+        content: 'My first article, I hope there is no typo',
       },
-      to: sebastien.followers
+      to: sebastien.followers,
     });
 
     expect(updateActivity).toMatchObject({
@@ -94,9 +94,9 @@ describe('Create/Update/Delete objects', () => {
       object: {
         id: objectUri,
         type: OBJECT_TYPES.ARTICLE,
-        content: 'My first article, I hope there is no typo'
+        content: 'My first article, I hope there is no typo',
       },
-      to: sebastien.followers
+      to: sebastien.followers,
     });
     expect(updateActivity.object).not.toHaveProperty('current');
     expect(updateActivity.object).not.toHaveProperty('name');
@@ -104,12 +104,12 @@ describe('Create/Update/Delete objects', () => {
     // Check the object has been updated
     const object = await broker.call('ldp.resource.get', {
       resourceUri: objectUri,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
     });
     expect(object).toMatchObject({
       id: objectUri,
       type: OBJECT_TYPES.ARTICLE,
-      content: 'My first article, I hope there is no typo'
+      content: 'My first article, I hope there is no typo',
     });
   });
 
@@ -118,15 +118,15 @@ describe('Create/Update/Delete objects', () => {
       collectionUri: sebastien.outbox,
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: ACTIVITY_TYPES.DELETE,
-      object: objectUri
+      object: objectUri,
     });
 
     await waitForExpect(async () => {
       await expect(
         broker.call('ldp.resource.get', {
           resourceUri: objectUri,
-          accept: MIME_TYPES.JSON
-        })
+          accept: MIME_TYPES.JSON,
+        }),
       ).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${objectUri}`);
     });
   });

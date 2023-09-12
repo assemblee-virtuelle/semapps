@@ -15,7 +15,7 @@ module.exports = {
     baseUrl: null,
     graphName: null,
     podProvider: false,
-    superAdmins: []
+    superAdmins: [],
   },
   dependencies: ['triplestore', 'webacl.resource', 'ldp.container'],
   actions: {
@@ -34,7 +34,7 @@ module.exports = {
     getMembers: getMembersAction.action,
     api_getMembers: getMembersAction.api,
     removeMember: removeMemberAction.action,
-    api_removeMember: removeMemberAction.api
+    api_removeMember: removeMemberAction.api,
   },
   async started() {
     if (this.settings.superAdmins && this.settings.superAdmins.length > 0) {
@@ -51,7 +51,7 @@ module.exports = {
 
       const rootContainerExist = await this.broker.call('ldp.container.exist', {
         containerUri: this.settings.baseUrl,
-        webId: 'system'
+        webId: 'system',
       });
 
       if (!rootContainerExist) {
@@ -67,25 +67,25 @@ module.exports = {
             uri: groupUri,
             read: true,
             write: true,
-            control: true
+            control: true,
           },
           default: {
             group: {
               uri: groupUri,
               read: true,
               write: true,
-              control: true
-            }
-          }
+              control: true,
+            },
+          },
         },
-        webId: 'system'
+        webId: 'system',
       });
 
       for (const memberUri of this.settings.superAdmins) {
         const isMember = await this.actions.isMember({
           groupUri,
           memberId: memberUri,
-          webId: 'system'
+          webId: 'system',
         });
 
         if (!isMember) {
@@ -112,7 +112,7 @@ module.exports = {
             }
           }
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };

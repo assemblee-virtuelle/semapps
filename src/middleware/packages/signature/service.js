@@ -7,15 +7,15 @@ const KeypairService = require('./services/keypair');
 const SignatureService = {
   name: 'signature',
   settings: {
-    actorsKeyPairsDir: null
+    actorsKeyPairsDir: null,
   },
   created() {
     const { actorsKeyPairsDir } = this.settings;
 
     this.broker.createService(KeypairService, {
       settings: {
-        actorsKeyPairsDir
-      }
+        actorsKeyPairsDir,
+      },
     });
   },
   actions: {
@@ -43,7 +43,7 @@ const SignatureService = {
         includeHeaders,
         keyId: actorUri,
         signature: signatureHash,
-        algorithm: 'rsa-sha256'
+        algorithm: 'rsa-sha256',
       }).substr('Signature '.length);
 
       return headers;
@@ -64,7 +64,7 @@ const SignatureService = {
       const parsedSignature = parseRequest({
         url: path || url.replace(new URL(url).origin, ''), // URL without domain name
         method,
-        headers
+        headers,
       });
 
       const { keyId } = parsedSignature.params;
@@ -83,7 +83,7 @@ const SignatureService = {
       if (req.headers.signature) {
         const { isValid, actorUri } = await this.actions.verifyHttpSignature(
           { path: req.originalUrl, method: req.method, headers: req.headers },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
         if (isValid) {
           ctx.meta.webId = actorUri;
@@ -101,7 +101,7 @@ const SignatureService = {
       if (req.headers.signature) {
         const { isValid, actorUri } = await this.actions.verifyHttpSignature(
           { path: req.originalUrl, method: req.method, headers: req.headers },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
         if (isValid) {
           ctx.meta.webId = actorUri;
@@ -112,15 +112,13 @@ const SignatureService = {
       }
       ctx.meta.webId = 'anon';
       return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
-    }
+    },
   },
   methods: {
     buildDigest(body) {
-      return `SHA-256=${createHash('sha256')
-        .update(body)
-        .digest('base64')}`;
-    }
-  }
+      return `SHA-256=${createHash('sha256').update(body).digest('base64')}`;
+    },
+  },
 };
 
 module.exports = SignatureService;

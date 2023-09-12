@@ -19,7 +19,7 @@ const OutboxService = {
     itemsPerPage: 10,
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
-    permissions: collectionPermissionsWithAnonRead
+    permissions: collectionPermissionsWithAnonRead,
   },
   dependencies: ['activitypub.object', 'activitypub.collection'],
   actions: {
@@ -37,7 +37,7 @@ const OutboxService = {
         throw new MoleculerError(
           `Forbidden to post to the outbox ${collectionUri} (webId ${ctx.meta.webId})`,
           403,
-          'FORBIDDEN'
+          'FORBIDDEN',
         );
       }
 
@@ -62,14 +62,14 @@ const OutboxService = {
       activity.published = new Date().toISOString();
 
       const activitiesContainerUri = await ctx.call('activitypub.activity.getContainerUri', {
-        webId: actorUri
+        webId: actorUri,
       });
 
       const activityUri = await ctx.call('activitypub.activity.post', {
         containerUri: activitiesContainerUri,
         resource: activity,
         contentType: MIME_TYPES.JSON,
-        webId: 'system' // Post as system since there is no write permission to the activities container
+        webId: 'system', // Post as system since there is no write permission to the activities container
       });
 
       activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
@@ -77,7 +77,7 @@ const OutboxService = {
       // Attach the newly-created activity to the outbox
       await ctx.call('activitypub.collection.attach', {
         collectionUri,
-        item: activity
+        item: activity,
       });
 
       const localRecipients = [];
@@ -116,14 +116,14 @@ const OutboxService = {
       // (They can enter into conflict with an usage of ctx.meta.$location)
       ctx.meta.$responseHeaders = {
         Location: activityUri,
-        'Content-Length': 0
+        'Content-Length': 0,
       };
 
       ctx.meta.$statusCode = 201;
 
       // TODO do not return activity when calling through API calls
       return activity;
-    }
+    },
   },
   methods: {
     isLocalActor(uri) {
@@ -142,9 +142,9 @@ const OutboxService = {
             {
               actorUri: recipientUri,
               predicate: 'inbox',
-              webId: 'system'
+              webId: 'system',
             },
-            { meta: { dataset } }
+            { meta: { dataset } },
           );
 
           // Attach activity to the inbox of the recipient
@@ -152,9 +152,9 @@ const OutboxService = {
             'activitypub.collection.attach',
             {
               collectionUri: recipientInbox,
-              item: activity
+              item: activity,
             },
-            { meta: { dataset } }
+            { meta: { dataset } },
           );
 
           if (this.settings.podProvider) {
@@ -164,16 +164,16 @@ const OutboxService = {
               mirrorGraph: false, // Store in default graph as activity may not be public
               keepInSync: false, // Activities are immutable
               webId: recipientUri,
-              dataset
+              dataset,
             });
 
             await this.broker.call(
               'activitypub.activity.attach',
               {
                 resourceUri: activity.id,
-                webId: recipientUri
+                webId: recipientUri,
               },
-              { meta: { dataset } }
+              { meta: { dataset } },
             );
           }
 
@@ -196,7 +196,7 @@ const OutboxService = {
         const recipientInbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: recipientUri,
           predicate: 'inbox',
-          webId: 'system'
+          webId: 'system',
         });
 
         if (!recipientInbox) {
@@ -210,7 +210,7 @@ const OutboxService = {
           url: recipientInbox,
           method: 'POST',
           body,
-          actorUri: activity.actor
+          actorUri: activity.actor,
         });
 
         // Post activity to the inbox of the remote actor
@@ -218,9 +218,9 @@ const OutboxService = {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            ...signatureHeaders
+            ...signatureHeaders,
           },
-          body
+          body,
         });
 
         if (response.ok) {
@@ -233,7 +233,7 @@ const OutboxService = {
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);
         return false;
       }
-    }
+    },
   },
   queues: {
     remotePost: {
@@ -249,7 +249,7 @@ const OutboxService = {
         }
 
         return { response };
-      }
+      },
     },
     localPost: {
       name: '*',
@@ -264,9 +264,9 @@ const OutboxService = {
         }
 
         return { success, failures };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 module.exports = OutboxService;

@@ -5,15 +5,15 @@ const { Parser } = require('n3');
 const streamifyString = require('streamify-string');
 const rdfParser = require('rdf-parse').default;
 
-const RESOURCE_CONTAINERS_QUERY = resource => `SELECT ?container
+const RESOURCE_CONTAINERS_QUERY = (resource) => `SELECT ?container
   WHERE { ?container ldp:contains <${resource}> . }`;
 
-const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = (str) => str.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
+const getContainerFromUri = (str) => str.match(new RegExp(`(.*)/.*`))[1];
 
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
-const getDatasetFromUri = uri => {
+const getDatasetFromUri = (uri) => {
   const path = new URL(uri).pathname;
   const parts = path.split('/');
   if (parts.length > 1) return parts[1];
@@ -25,7 +25,7 @@ const findParentContainers = async (ctx, resource) => {
   return await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.SPARQL_JSON,
-    webId: 'system'
+    webId: 'system',
   });
 };
 
@@ -55,10 +55,10 @@ const getUserGroups = async (ctx, user, graphName) => {
   const groups = await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.JSON,
-    webId: 'system'
+    webId: 'system',
   });
 
-  return groups.map(g => g.group.value);
+  return groups.map((g) => g.group.value);
 };
 
 const AUTHORIZATION_NODE_QUERY = (mode, accesToOrDefault, resource, graphName) => `SELECT ?auth ?p ?o
@@ -75,16 +75,16 @@ const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, grap
     mode,
     seachForDefault ? 'default' : 'accessTo',
     resourceUri,
-    graphName
+    graphName,
   )}`;
 
   const auths = await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.JSON,
-    webId: 'system'
+    webId: 'system',
   });
 
-  return auths.map(a => {
+  return auths.map((a) => {
     a.auth.value = `${resourceAclUri}#${seachForDefault ? 'Default' : ''}${mode}`;
     return a;
   });
@@ -132,19 +132,19 @@ const filterAgentAcl = (acl, agentSearchParam, forOutput) => {
 function getUserAgentSearchParam(user, groups) {
   if (user === 'anon') {
     return {
-      foafAgent: true
+      foafAgent: true,
     };
   }
   if (user === 'system') {
     return {
-      system: true
+      system: true,
     };
   }
   return {
     foafAgent: true,
     authAgent: true,
     webId: user,
-    groups: groups
+    groups: groups,
   };
 }
 
@@ -167,7 +167,7 @@ async function aclGroupExists(groupUri, ctx, graphName) {
         <${groupUri}> a vcard:Group .
       } }
     `,
-    webId: 'system'
+    webId: 'system',
   });
 }
 
@@ -182,7 +182,7 @@ function filterAndConvertTriple(quad, property) {
     return {
       auth: quad.subject[property],
       p: quad.predicate[property],
-      o: quad.object[property]
+      o: quad.object[property],
     };
   }
   return false;
@@ -220,13 +220,13 @@ async function convertBodyToTriples(body, contentType) {
     const res = [];
     rdfParser
       .parse(textStream, {
-        contentType: 'application/ld+json'
+        contentType: 'application/ld+json',
       })
-      .on('data', quad => {
+      .on('data', (quad) => {
         const q = filterAndConvertTriple(quad, 'value');
         if (q) res.push(q);
       })
-      .on('error', error => reject(error))
+      .on('error', (error) => reject(error))
       .on('end', () => {
         resolve(res);
       });
@@ -241,7 +241,7 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
   await ctx.call('triplestore.update', {
     query: `PREFIX acl: <http://www.w3.org/ns/auth/acl#>
       DELETE WHERE { GRAPH <${graphName}> { ?auth ${isGroup ? 'acl:agentGroup' : 'acl:agent'} <${uri}> }}`,
-    webId: 'system'
+    webId: 'system',
   });
 
   // removing the Authorizations that are now empty
@@ -254,7 +254,7 @@ async function removeAgentGroupOrAgentFromAuthorizations(uri, isGroup, graphName
         FILTER NOT EXISTS { ?auth acl:agentGroup ?z2 }
         FILTER NOT EXISTS { ?auth acl:agentClass ?z3 }
       }`,
-    webId: 'system'
+    webId: 'system',
   });
 }
 
@@ -329,5 +329,5 @@ module.exports = {
   FULL_AGENT_GROUP,
   FULL_FOAF_AGENT,
   FULL_ACL_ANYAGENT,
-  isRemoteUri
+  isRemoteUri,
 };

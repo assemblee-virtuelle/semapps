@@ -8,7 +8,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 const SignatureService = {
   name: 'signature.keypair',
   settings: {
-    actorsKeyPairsDir: null
+    actorsKeyPairsDir: null,
   },
   created() {
     this.remoteActorPublicKeyCache = {};
@@ -37,22 +37,22 @@ const SignatureService = {
             modulusLength: 4096,
             publicKeyEncoding: {
               type: 'spki',
-              format: 'pem'
+              format: 'pem',
             },
             privateKeyEncoding: {
               type: 'pkcs8',
-              format: 'pem'
-            }
+              format: 'pem',
+            },
           },
           (err, publicKey, privateKey) => {
             if (!err) {
-              fs.writeFile(privateKeyPath, privateKey, err => reject(err));
-              fs.writeFile(publicKeyPath, publicKey, err => reject(err));
+              fs.writeFile(privateKeyPath, privateKey, (err) => reject(err));
+              fs.writeFile(publicKeyPath, publicKey, (err) => reject(err));
               resolve(publicKey);
             } else {
               reject(err);
             }
-          }
+          },
         );
       });
     },
@@ -73,7 +73,7 @@ const SignatureService = {
       const actor = await ctx.call('ldp.resource.get', {
         resourceUri: actorUri,
         accept: MIME_TYPES.JSON,
-        webId: actorUri
+        webId: actorUri,
       });
 
       // Ensure a public key is not already attached
@@ -85,9 +85,9 @@ const SignatureService = {
           triplesToAdd: [
             triple(namedNode(actorUri), namedNode('https://w3id.org/security#publicKey'), blankNode('b0')),
             triple(blankNode('b0'), namedNode('https://w3id.org/security#owner'), namedNode(actorUri)),
-            triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey))
+            triple(blankNode('b0'), namedNode('https://w3id.org/security#publicKeyPem'), literal(publicKey)),
           ],
-          webId: 'system'
+          webId: 'system',
         });
       }
     },
@@ -129,15 +129,15 @@ const SignatureService = {
 
       this.remoteActorPublicKeyCache[actorUri] = actor.publicKey.publicKeyPem;
       return actor.publicKey.publicKeyPem;
-    }
+    },
   },
   events: {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       await this.actions.generate({ actorUri: webId }, { parentCtx: ctx });
       await this.actions.attachPublicKey({ actorUri: webId }, { parentCtx: ctx });
-    }
-  }
+    },
+  },
 };
 
 module.exports = SignatureService;

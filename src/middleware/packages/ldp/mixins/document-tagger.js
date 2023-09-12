@@ -5,8 +5,8 @@ module.exports = {
     documentPredicates: {
       created: 'http://purl.org/dc/terms/created',
       updated: 'http://purl.org/dc/terms/modified',
-      creator: 'http://purl.org/dc/terms/creator'
-    }
+      creator: 'http://purl.org/dc/terms/creator',
+    },
   },
   actions: {
     async tagCreatedResource(ctx) {
@@ -18,7 +18,7 @@ module.exports = {
         triples.push(
           `<${resourceUri}> <${
             this.settings.documentPredicates.created
-          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`,
         );
       }
 
@@ -26,7 +26,7 @@ module.exports = {
         triples.push(
           `<${resourceUri}> <${
             this.settings.documentPredicates.updated
-          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`,
         );
       }
 
@@ -37,7 +37,7 @@ module.exports = {
       if (triples.length > 0) {
         await ctx.call('triplestore.insert', {
           resource: triples.join('\n'),
-          webId: 'system'
+          webId: 'system',
         });
       }
     },
@@ -48,13 +48,13 @@ module.exports = {
         query: `
           DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
           INSERT { <${resourceUri}> <${
-          this.settings.documentPredicates.updated
-        }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
+            this.settings.documentPredicates.updated
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
           WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
         `,
-        webId: 'system'
+        webId: 'system',
       });
-    }
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -68,7 +68,7 @@ module.exports = {
     async 'ldp.resource.patched'(ctx) {
       const { resourceUri } = ctx.params;
       this.actions.tagUpdatedResource({ resourceUri }, { parentCtx: ctx });
-    }
+    },
   },
   hooks: {
     before: {
@@ -76,7 +76,7 @@ module.exports = {
         if (this.settings.podProvider && !ctx.meta.dataset) {
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
-      }
-    }
-  }
+      },
+    },
+  },
 };

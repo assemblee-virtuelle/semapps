@@ -10,8 +10,8 @@ module.exports = {
     strategy: {
       type: 'enum',
       values: ['cacheFirst', 'networkFirst', 'cacheOnly', 'networkOnly', 'staleWhileRevalidate'],
-      default: 'cacheFirst'
-    }
+      default: 'cacheFirst',
+    },
   },
   async handler(ctx) {
     const { resourceUri, accept, ...rest } = ctx.params;
@@ -29,7 +29,7 @@ module.exports = {
 
     switch (strategy) {
       case 'cacheFirst':
-        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx }).catch(e => {
+        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx }).catch((e) => {
           if (e.code === 404) {
             return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
           }
@@ -37,7 +37,7 @@ module.exports = {
         });
 
       case 'networkFirst':
-        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx }).catch(e => {
+        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx }).catch((e) => {
           if (e.code === 404) {
             return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
           }
@@ -53,5 +53,5 @@ module.exports = {
       case 'staleWhileRevalidate':
         throw new Error(`Strategy staleWhileRevalidate not implemented yet`);
     }
-  }
+  },
 };

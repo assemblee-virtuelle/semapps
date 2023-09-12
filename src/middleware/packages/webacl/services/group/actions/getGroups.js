@@ -5,7 +5,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      webId: { type: 'string', optional: true }
+      webId: { type: 'string', optional: true },
     },
     async handler(ctx) {
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -27,7 +27,7 @@ module.exports = {
                 acl:accessTo ?g;
                 ${agentSelector}
             } }`,
-          webId: 'system'
+          webId: 'system',
         });
 
         /// TODO: implement to find the groups the user has Read access to, via his membership of other groups (agentGroup)
@@ -37,11 +37,11 @@ module.exports = {
           query: `PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
             SELECT ?g WHERE { GRAPH <${this.settings.graphName}>
             { ?g a vcard:Group } }`,
-          webId: 'system'
+          webId: 'system',
         });
       }
 
-      return groups.map(m => m.g.value);
-    }
-  }
+      return groups.map((m) => m.g.value);
+    },
+  },
 };

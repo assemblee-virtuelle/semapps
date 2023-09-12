@@ -15,7 +15,7 @@ const AuthCASService = {
     sessionSecret: 's€m@pps',
     selectSsoData: null,
     // Cas-specific settings
-    casUrl: null
+    casUrl: null,
   },
   async created() {
     this.passportId = 'cas';
@@ -25,21 +25,21 @@ const AuthCASService = {
       return new Strategy(
         {
           casURL: this.settings.casUrl,
-          passReqToCallback: true
+          passReqToCallback: true,
         },
         (req, username, profile, done) => {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: { username, ...profile } })
-            .then(loginData => {
+            .then((loginData) => {
               done(null, loginData);
             })
-            .catch(e => {
+            .catch((e) => {
               done(new E.UnAuthorizedError(e.message), false);
             });
-        }
+        },
       );
-    }
-  }
+    },
+  },
 };
 
 module.exports = AuthCASService;

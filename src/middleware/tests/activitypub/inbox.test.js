@@ -24,7 +24,7 @@ describe('Permissions are correctly set on inbox', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien'
+      name: 'Sébastien',
     });
 
     sebastien = await broker.call('activitypub.actor.awaitCreateComplete', { actorUri: sebastienUri });
@@ -33,7 +33,7 @@ describe('Permissions are correctly set on inbox', () => {
       username: 'simonlouvet',
       email: 'simon@test.com',
       password: 'test',
-      name: 'Simon'
+      name: 'Simon',
     });
 
     simon = await broker2.call('activitypub.actor.awaitCreateComplete', { actorUri: simonUri });
@@ -46,7 +46,7 @@ describe('Permissions are correctly set on inbox', () => {
       inbox: `${sebastienUri}/inbox`,
       outbox: `${sebastienUri}/outbox`,
       followers: `${sebastienUri}/followers`,
-      following: `${sebastienUri}/following`
+      following: `${sebastienUri}/following`,
     });
   });
 
@@ -56,7 +56,7 @@ describe('Permissions are correctly set on inbox', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
       name: 'Private message to friend',
-      to: simon.id
+      to: simon.id,
     });
 
     // Get inbox as recipient
@@ -64,7 +64,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: simon.inbox,
         page: 1,
-        webId: simon.id
+        webId: simon.id,
       });
       expect(outbox.orderedItems).toHaveLength(1);
       expect(outbox.orderedItems[0]).toMatchObject({
@@ -72,8 +72,8 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to friend'
-        }
+          name: 'Private message to friend',
+        },
       });
     });
 
@@ -82,7 +82,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: simon.inbox,
         page: 1,
-        webId: sebastien.id
+        webId: sebastien.id,
       });
       expect(outbox.orderedItems).toHaveLength(1);
       expect(outbox.orderedItems[0]).toMatchObject({
@@ -90,8 +90,8 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Private message to friend'
-        }
+          name: 'Private message to friend',
+        },
       });
     });
 
@@ -100,7 +100,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: sebastien.inbox,
         page: 1,
-        webId: 'anon'
+        webId: 'anon',
       });
       expect(outbox.totalItems).toBe(0);
     });
@@ -112,7 +112,7 @@ describe('Permissions are correctly set on inbox', () => {
       '@context': 'https://www.w3.org/ns/activitystreams',
       type: OBJECT_TYPES.NOTE,
       name: 'Public message',
-      to: [PUBLIC_URI, simon.id]
+      to: [PUBLIC_URI, simon.id],
     });
 
     // Get inbox as recipient
@@ -120,7 +120,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: simon.inbox,
         page: 1,
-        webId: simon.id
+        webId: simon.id,
       });
       expect(outbox.orderedItems).toHaveLength(2);
       expect(outbox.orderedItems[0]).toMatchObject({
@@ -128,8 +128,8 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
-        }
+          name: 'Public message',
+        },
       });
     });
 
@@ -138,7 +138,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: simon.inbox,
         page: 1,
-        webId: sebastien.id
+        webId: sebastien.id,
       });
       expect(outbox.orderedItems).toHaveLength(2);
       expect(outbox.orderedItems[0]).toMatchObject({
@@ -146,8 +146,8 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
-        }
+          name: 'Public message',
+        },
       });
     });
 
@@ -156,7 +156,7 @@ describe('Permissions are correctly set on inbox', () => {
       const outbox = await broker.call('activitypub.collection.get', {
         collectionUri: simon.inbox,
         page: 1,
-        webId: 'anon'
+        webId: 'anon',
       });
       expect(outbox.orderedItems).toHaveLength(1);
       expect(outbox.orderedItems[0]).toMatchObject({
@@ -164,8 +164,8 @@ describe('Permissions are correctly set on inbox', () => {
         type: ACTIVITY_TYPES.CREATE,
         object: {
           type: OBJECT_TYPES.NOTE,
-          name: 'Public message'
-        }
+          name: 'Public message',
+        },
       });
     });
   });

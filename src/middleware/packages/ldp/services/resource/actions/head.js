@@ -10,7 +10,7 @@ module.exports = {
     ctx.meta.$statusMessage = 'OK';
     ctx.meta.$responseHeaders = {
       Link: `<${aclUri}>; rel="acl"`,
-      'Content-Length': 0
+      'Content-Length': 0,
     };
-  }
+  },
 };

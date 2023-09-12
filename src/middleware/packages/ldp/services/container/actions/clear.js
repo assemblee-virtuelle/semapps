@@ -2,7 +2,7 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     let { containerUri, webId } = ctx.params;
@@ -23,11 +23,11 @@ module.exports = {
           OPTIONAL { ?s1 ?p1 ?o1 . } 
         } 
       `,
-      webId
+      webId,
     });
 
     // TODO: emit an event that will be handled by mirror service.
 
     ctx.call('triplestore.deleteOrphanBlankNodes');
-  }
+  },
 };

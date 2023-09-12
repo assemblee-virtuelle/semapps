@@ -11,7 +11,7 @@ const rsyncCopy = (path, subDir, remoteServer) => {
 
   return new Promise((resolve, reject) => {
     console.log(`Rsync started with command: ${rsync.command()}`);
-    rsync.execute(error => {
+    rsync.execute((error) => {
       if (error) {
         reject(error);
       } else {

@@ -5,7 +5,7 @@ module.exports = {
   params: {
     containerUri: { type: 'string' },
     resourceUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     let { containerUri, resourceUri } = ctx.params;
@@ -31,7 +31,7 @@ module.exports = {
           ${isRemoteContainer ? '}' : ''}
         }
       `,
-      webId
+      webId,
     });
 
     if (!isRemoteContainer)
@@ -39,9 +39,9 @@ module.exports = {
         'ldp.container.detached',
         {
           containerUri,
-          resourceUri
+          resourceUri,
         },
-        { meta: { webId: null, dataset: null } }
+        { meta: { webId: null, dataset: null } },
       );
-  }
+  },
 };

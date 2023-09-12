@@ -6,7 +6,7 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: 'string',
-    slug: { type: 'string', optional: true }
+    slug: { type: 'string', optional: true },
   },
   async handler(ctx) {
     let { containerUri, slug } = ctx.params;
@@ -29,12 +29,12 @@ module.exports = {
         counter++;
         resourceAlreadyExists = await ctx.call('ldp.resource.exist', {
           resourceUri: preferredUri + counter,
-          webId: 'system'
+          webId: 'system',
         });
       } while (resourceAlreadyExists);
       preferredUri += counter;
     }
 
     return preferredUri;
-  }
+  },
 };

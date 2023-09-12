@@ -9,7 +9,7 @@ module.exports = {
       groupSlug: { type: 'string', optional: true, min: 1, trim: true },
       groupUri: { type: 'string', optional: true, trim: true },
       webId: { type: 'string', optional: true },
-      memberId: { type: 'string', optional: true }
+      memberId: { type: 'string', optional: true },
     },
     async handler(ctx) {
       let { groupSlug, groupUri, memberId } = ctx.params;
@@ -29,9 +29,9 @@ module.exports = {
         const groupRights = await ctx.call('webacl.resource.hasRights', {
           resourceUri: groupUri,
           rights: {
-            read: true
+            read: true,
           },
-          webId
+          webId,
         });
         if (!groupRights.read) throw new MoleculerError(`Access denied to the group ${groupUri}`, 403, 'ACCESS_DENIED');
       }
@@ -46,8 +46,8 @@ module.exports = {
             <${groupUri}> vcard:hasMember <${memberId}> .
           } }
           `,
-        webId: 'system'
+        webId: 'system',
       });
-    }
-  }
+    },
+  },
 };

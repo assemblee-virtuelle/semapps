@@ -13,37 +13,37 @@ module.exports = {
       getOneFull: null,
       headers: {
         Accept: 'application/json',
-        'User-Agent': 'SemAppsImporter'
+        'User-Agent': 'SemAppsImporter',
       },
       basicAuth: {
         user: '',
-        password: ''
+        password: '',
       },
       fetchOptions: {},
       fieldsMapping: {
         slug: null,
         created: null,
-        updated: null
-      }
+        updated: null,
+      },
     },
     dest: {
       containerUri: null,
-      predicatesToKeep: [] // Don't remove these predicates when updating data
+      predicatesToKeep: [], // Don't remove these predicates when updating data
     },
     activitypub: {
       actorUri: null,
-      activities: [ACTIVITY_TYPES.CREATE, ACTIVITY_TYPES.UPDATE, ACTIVITY_TYPES.DELETE]
+      activities: [ACTIVITY_TYPES.CREATE, ACTIVITY_TYPES.UPDATE, ACTIVITY_TYPES.DELETE],
     },
     cronJob: {
       time: null,
-      timeZone: 'Europe/Paris'
-    }
+      timeZone: 'Europe/Paris',
+    },
   },
   dependencies: ['triplestore'],
   created() {
     if (this.settings.source.basicAuth.user) {
       this.settings.source.headers.Authorization = `Basic ${Buffer.from(
-        `${this.settings.source.basicAuth.user}:${this.settings.source.basicAuth.password}`
+        `${this.settings.source.basicAuth.user}:${this.settings.source.basicAuth.password}`,
       ).toString('base64')}`;
     }
 
@@ -51,8 +51,8 @@ module.exports = {
     this.schema.queues = {
       [this.name]: {
         name: 'synchronize',
-        process: this.processSynchronize
-      }
+        process: this.processSynchronize,
+      },
     };
   },
   async started() {
@@ -67,10 +67,10 @@ module.exports = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
 
-      this.imported = Object.fromEntries(result.map(node => [node.sourceUri.value, node.id.value]));
+      this.imported = Object.fromEntries(result.map((node) => [node.sourceUri.value, node.id.value]));
     } else {
       this.imported = {};
     }
@@ -85,8 +85,8 @@ module.exports = {
           // Try again after 3 minutes and until 12 hours later
           attempts: 8,
           backoff: { type: 'exponential', delay: '180000' },
-          repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone }
-        }
+          repeat: { cron: this.settings.cronJob.time, tz: this.settings.cronJob.timeZone },
+        },
       );
     }
   },
@@ -111,7 +111,7 @@ module.exports = {
               typeof this.settings.source.getAllCompact === 'string'
                 ? this.settings.source.getAllCompact
                 : this.settings.source.getAllCompact.url
-            }...`
+            }...`,
           );
 
           for (const data of compactResults) {
@@ -125,7 +125,7 @@ module.exports = {
               typeof this.settings.source.getAllCompact === 'string'
                 ? this.settings.source.getAllCompact
                 : this.settings.source.getAllCompact.url
-            }...`
+            }...`,
           );
         }
       } else if (this.settings.source.getAllFull) {
@@ -139,7 +139,7 @@ module.exports = {
               typeof this.settings.source.getAllFull === 'string'
                 ? this.settings.source.getAllFull
                 : this.settings.source.getAllFull.url
-            }...`
+            }...`,
           );
 
           for (const data of fullResults) {
@@ -153,7 +153,7 @@ module.exports = {
               typeof this.settings.source.getAllFull === 'string'
                 ? this.settings.source.getAllFull
                 : this.settings.source.getAllFull.url
-            }...`
+            }...`,
           );
         }
       } else {
@@ -169,8 +169,8 @@ module.exports = {
         // If QueueMixin is not available, call method with fake job object
         return this.processSynchronize({
           data: {},
-          progress: number => this.logger.info(`Progress: ${number}%`),
-          log: message => this.logger.info(message)
+          progress: (number) => this.logger.info(`Progress: ${number}%`),
+          log: (message) => this.logger.info(message),
         });
       }
     },
@@ -197,7 +197,7 @@ module.exports = {
         const oldData = await ctx.call('ldp.resource.get', {
           resourceUri: destUri,
           accept: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
 
         const oldUpdatedDate = oldData['dc:modified'];
@@ -209,7 +209,7 @@ module.exports = {
           const oldDataToKeep =
             this.settings.dest.predicatesToKeep.length > 0
               ? Object.fromEntries(
-                  Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
+                  Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key)),
                 )
               : {};
 
@@ -221,10 +221,10 @@ module.exports = {
               'dc:source': sourceUri,
               'dc:created': resource['dc:created'] || this.getField('created', data),
               'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+              'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri,
             },
             contentType: MIME_TYPES.JSON,
-            webId: 'system'
+            webId: 'system',
           });
         } else {
           this.logger.info(`Skipping ${sourceUri} (not changed)...`);
@@ -245,10 +245,10 @@ module.exports = {
             'dc:source': sourceUri,
             'dc:created': resource['dc:created'] || this.getField('created', data),
             'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-            'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+            'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri,
           },
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
 
         this.logger.info(`Done! Resource URL: ${destUri}`);
@@ -263,7 +263,7 @@ module.exports = {
         // TODO also delete blank nodes attached to the resources
         await ctx.call('ldp.resource.delete', {
           resourceUri,
-          webId: 'system'
+          webId: 'system',
         });
       }
 
@@ -277,7 +277,7 @@ module.exports = {
     },
     getImported() {
       return this.imported;
-    }
+    },
   },
   methods: {
     async prepare() {
@@ -298,7 +298,7 @@ module.exports = {
         const headers = {
           ...this.settings.source.headers,
           ...this.settings.source.fetchOptions.headers,
-          ...fetchOptions.headers
+          ...fetchOptions.headers,
         };
         const response = await fetch(url, { ...this.settings.source.fetchOptions, ...fetchOptions, headers });
         if (response.ok) {
@@ -328,11 +328,11 @@ module.exports = {
       if (this.settings.activitypub.actorUri && this.settings.activitypub.activities.includes(type)) {
         const outbox = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: this.settings.activitypub.actorUri,
-          predicate: 'outbox'
+          predicate: 'outbox',
         });
         const followers = await this.broker.call('activitypub.actor.getCollectionUri', {
           actorUri: this.settings.activitypub.actorUri,
-          predicate: 'followers'
+          predicate: 'followers',
         });
 
         await this.broker.call(
@@ -341,9 +341,9 @@ module.exports = {
             collectionUri: outbox,
             type,
             object: resourceUri,
-            to: [followers, PUBLIC_URI]
+            to: [followers, PUBLIC_URI],
           },
-          { meta: { webId: this.settings.dest.actorUri } }
+          { meta: { webId: this.settings.dest.actorUri } },
         );
       }
     },
@@ -362,7 +362,7 @@ module.exports = {
       if (this.settings.cronJob.time) {
         const interval = cronParser.parseExpression(this.settings.cronJob.time, {
           currentDate: new Date((job.opts && job.opts.timestamp) || undefined),
-          tz: this.settings.cronJob.timeZone
+          tz: this.settings.cronJob.timeZone,
         });
         toDate = new Date(interval.next().toISOString());
         fromDate = new Date(interval.prev().toISOString());
@@ -391,10 +391,10 @@ module.exports = {
       const oldSourceUris = Object.keys(this.imported);
 
       if (this.settings.source.getAllCompact) {
-        newSourceUris = results.map(data => this.settings.source.getOneFull(data));
+        newSourceUris = results.map((data) => this.settings.source.getOneFull(data));
       } else {
         // If we have no compact results, put the data in an object so that we can easily use it with importOne
-        mappedFullResults = Object.fromEntries(results.map(data => [this.settings.source.getOneFull(data), data]));
+        mappedFullResults = Object.fromEntries(results.map((data) => [this.settings.source.getOneFull(data), data]));
         newSourceUris = Object.keys(mappedFullResults);
       }
 
@@ -404,13 +404,13 @@ module.exports = {
       // DELETED RESOURCES
       /// ////////////////////////////////////////
 
-      const urisToDelete = oldSourceUris.filter(uri => !newSourceUris.includes(uri));
+      const urisToDelete = oldSourceUris.filter((uri) => !newSourceUris.includes(uri));
       for (const sourceUri of urisToDelete) {
         this.logger.info(`Resource ${sourceUri} does not exist anymore, deleting it...`);
 
         await this.broker.call('ldp.resource.delete', {
           resourceUri: this.imported[sourceUri],
-          webId: 'system'
+          webId: 'system',
         });
 
         await this.postActivity(ACTIVITY_TYPES.DELETE, this.imported[sourceUri]);
@@ -427,7 +427,7 @@ module.exports = {
       // CREATED RESOURCES
       /// ////////////////////////////////////////
 
-      const urisToCreate = newSourceUris.filter(uri => !oldSourceUris.includes(uri));
+      const urisToCreate = newSourceUris.filter((uri) => !oldSourceUris.includes(uri));
       for (const sourceUri of urisToCreate) {
         this.logger.info(`Resource ${sourceUri} did not exist, importing it...`);
 
@@ -450,25 +450,25 @@ module.exports = {
       /// ////////////////////////////////////////
 
       const urisToUpdate = results
-        .filter(data => {
+        .filter((data) => {
           // If an updated field is available in compact results, filter out items outside of the time frame
           const updated = this.getField('updated', data);
           return updated ? fromDate < new Date(updated) && new Date(updated) > toDate : true;
         })
-        .map(data => this.settings.source.getOneFull(data))
-        .filter(uri => !urisToCreate.includes(uri));
+        .map((data) => this.settings.source.getOneFull(data))
+        .filter((uri) => !urisToCreate.includes(uri));
 
       for (const sourceUri of urisToUpdate) {
         const result = await this.actions.importOne({
           sourceUri,
           destUri: this.imported[sourceUri],
-          data: mappedFullResults[sourceUri]
+          data: mappedFullResults[sourceUri],
         });
 
         if (result === false) {
           await this.broker.call('ldp.resource.delete', {
             resourceUri: this.imported[sourceUri],
-            webId: 'system'
+            webId: 'system',
           });
 
           await this.postActivity(ACTIVITY_TYPES.DELETE, this.imported[sourceUri]);
@@ -491,8 +491,8 @@ module.exports = {
       return {
         deletedUris,
         createdUris,
-        updatedUris
+        updatedUris,
       };
-    }
-  }
+    },
+  },
 };

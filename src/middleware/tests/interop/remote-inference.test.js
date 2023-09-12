@@ -25,36 +25,36 @@ describe('An inference is added between server1 et server2', () => {
     resourceUri1 = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Resource',
-        label: 'My parent resource'
+        label: 'My parent resource',
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3001/resources'
+      containerUri: 'http://localhost:3001/resources',
     });
 
     resourceUri2 = await server2.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Resource',
         label: 'My child resource',
         partOf: {
-          '@id': resourceUri1
-        }
+          '@id': resourceUri1,
+        },
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3002/resources'
+      containerUri: 'http://localhost:3002/resources',
     });
 
     await waitForExpect(async () => {
       await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
+        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON }),
       ).resolves.toMatchObject({
         id: resourceUri1,
-        'pair:hasPart': resourceUri2
+        'pair:hasPart': resourceUri2,
       });
     });
   });
@@ -66,17 +66,17 @@ describe('An inference is added between server1 et server2', () => {
         triple(
           namedNode(resourceUri1),
           namedNode('http://virtual-assembly.org/ontologies/pair#hasInspired'),
-          namedNode(resourceUri2)
-        )
-      ]
+          namedNode(resourceUri2),
+        ),
+      ],
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.resource.get', { resourceUri: resourceUri2, accept: MIME_TYPES.JSON })
+        server2.call('ldp.resource.get', { resourceUri: resourceUri2, accept: MIME_TYPES.JSON }),
       ).resolves.toMatchObject({
         id: resourceUri2,
-        'pair:inspiredBy': resourceUri1
+        'pair:inspiredBy': resourceUri1,
       });
     });
   });
@@ -86,21 +86,21 @@ describe('An inference is added between server1 et server2', () => {
     await server2.call('ldp.resource.put', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@id': resourceUri2,
         '@type': 'Resource',
         label: 'My child resource',
         partOf: {
-          '@id': resourceUri1
-        }
+          '@id': resourceUri1,
+        },
       },
-      contentType: MIME_TYPES.JSON
+      contentType: MIME_TYPES.JSON,
     });
 
     await waitForExpect(async () => {
       await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
+        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON }),
       ).resolves.not.toHaveProperty('pair:hasInspired');
     });
   });
@@ -110,7 +110,7 @@ describe('An inference is added between server1 et server2', () => {
 
     await waitForExpect(async () => {
       await expect(
-        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
+        server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON }),
       ).resolves.not.toHaveProperty('pair:hasPart');
     });
   });

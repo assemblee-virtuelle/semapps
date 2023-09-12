@@ -2,7 +2,7 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const { resourceUri, webId } = ctx.params;
@@ -28,7 +28,7 @@ module.exports = {
             ${graphName ? '}' : ''}
           }
         `,
-        webId: 'system'
+        webId: 'system',
       });
 
       // Detach from all containers with the mirrored resource
@@ -38,10 +38,10 @@ module.exports = {
       }
 
       ctx.call('triplestore.deleteOrphanBlankNodes', {
-        graphName
+        graphName,
       });
 
       ctx.emit('ldp.remote.deleted', { resourceUri, webId }, { meta: { webId: null } });
     }
-  }
+  },
 };

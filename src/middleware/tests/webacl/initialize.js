@@ -16,9 +16,9 @@ const initialize = async () => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
-      }
-    }
+        level: 'error',
+      },
+    },
   });
 
   await broker.createService(CoreService, {
@@ -29,29 +29,29 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
       },
       ontologies,
       containers: ['/resources'],
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false
-    }
+      webfinger: false,
+    },
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET
-    }
+      accountsDataset: CONFIG.SETTINGS_DATASET,
+    },
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${CONFIG.HOME_URL}users`
-    }
+      usersContainer: `${CONFIG.HOME_URL}users`,
+    },
   });
 
   const app = express();
@@ -61,8 +61,8 @@ const initialize = async () => {
       server: false,
       cors: {
         origin: '*',
-        exposedHeaders: '*'
-      }
+        exposedHeaders: '*',
+      },
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -70,8 +70,8 @@ const initialize = async () => {
       },
       authorize(ctx, route, req, res) {
         return Promise.resolve(ctx);
-      }
-    }
+      },
+    },
   });
   app.use(apiGateway.express());
 

@@ -20,7 +20,7 @@ const TripleStoreService = {
     password: null,
     mainDataset: null,
     // Sub-services customization
-    dataset: {}
+    dataset: {},
   },
   dependencies: ['jsonld'],
   async created() {
@@ -33,8 +33,8 @@ const TripleStoreService = {
           url,
           user,
           password,
-          ...dataset
-        }
+          ...dataset,
+        },
       });
     }
   },
@@ -51,7 +51,7 @@ const TripleStoreService = {
     dropAll,
     countTriplesOfSubject,
     tripleExist,
-    deleteOrphanBlankNodes
+    deleteOrphanBlankNodes,
   },
   methods: {
     async fetch(url, { method = 'POST', body, headers }) {
@@ -60,8 +60,8 @@ const TripleStoreService = {
         body,
         headers: {
           ...headers,
-          Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
-        }
+          Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`,
+        },
       });
 
       if (!response.ok) {
@@ -87,8 +87,8 @@ const TripleStoreService = {
         console.error(e);
         throw new MoleculerError(`Invalid SPARQL.js object: ${JSON.stringify(query)}`, 400, 'BAD_REQUEST');
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = TripleStoreService;

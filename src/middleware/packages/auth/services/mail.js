@@ -8,11 +8,11 @@ module.exports = {
   settings: {
     defaults: {
       locale: 'en',
-      frontUrl: null
+      frontUrl: null,
     },
     templateFolder: path.join(__dirname, '../templates'),
     from: null,
-    transport: null
+    transport: null,
   },
   actions: {
     async sendResetPasswordEmail(ctx) {
@@ -25,14 +25,14 @@ module.exports = {
           locale: this.getTemplateLocale(account.preferredLocale || this.settings.defaults.locale),
           data: {
             account,
-            resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`
-          }
+            resetUrl: `${urlJoin(this.settings.defaults.frontUrl, 'login')}?new_password=true&token=${token}`,
+          },
         },
         {
-          parentCtx: ctx
-        }
+          parentCtx: ctx,
+        },
       );
-    }
+    },
   },
   methods: {
     getTemplateLocale(userLocale) {
@@ -44,6 +44,6 @@ module.exports = {
         default:
           return 'en-EN';
       }
-    }
-  }
+    },
+  },
 };

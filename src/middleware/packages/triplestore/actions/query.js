@@ -6,20 +6,20 @@ module.exports = {
   params: {
     query: {
       type: 'multi',
-      rules: [{ type: 'string' }, { type: 'object' }]
+      rules: [{ type: 'string' }, { type: 'object' }],
     },
     accept: {
       type: 'string',
-      default: MIME_TYPES.JSON
+      default: MIME_TYPES.JSON,
     },
     webId: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     dataset: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     let { accept, query } = ctx.params;
@@ -38,8 +38,8 @@ module.exports = {
       headers: {
         'Content-Type': 'application/sparql-query',
         'X-SemappsUser': webId,
-        Accept: acceptNegotiatedType.fusekiMapping
-      }
+        Accept: acceptNegotiatedType.fusekiMapping,
+      },
     });
 
     // we don't use the property ctx.meta.$responseType because we are not in a HTTP API call here
@@ -73,5 +73,5 @@ module.exports = {
       default:
         throw new Error('SPARQL Verb not supported');
     }
-  }
+  },
 };

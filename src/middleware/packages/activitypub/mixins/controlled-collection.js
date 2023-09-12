@@ -10,7 +10,7 @@ module.exports = {
     dereferenceItems: false,
     sort: { predicate: 'as:published', order: 'DESC' },
     permissions: null,
-    controlledActions: {}
+    controlledActions: {},
   },
   dependencies: ['activitypub.registry'],
   async started() {
@@ -27,8 +27,8 @@ module.exports = {
       controlledActions: {
         get: `${this.name}.get`,
         post: `${this.name}.post`,
-        ...this.settings.controlledActions
-      }
+        ...this.settings.controlledActions,
+      },
     });
   },
   actions: {
@@ -37,12 +37,12 @@ module.exports = {
     },
     post() {
       throw new E.ForbiddenError();
-    }
+    },
   },
   methods: {
     async getCollectionUri(webId) {
       // TODO make this work
       return this.broker.call('activitypub.registry.getUri', { path: this.settings.path, webId });
-    }
-  }
+    },
+  },
 };

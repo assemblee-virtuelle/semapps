@@ -7,7 +7,7 @@ const {
   filterTriplesForResource,
   processRights,
   FULL_FOAF_AGENT,
-  FULL_AGENTCLASS_URI
+  FULL_AGENTCLASS_URI,
 } = require('../../../utils');
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
 
     await ctx.call('webacl.resource.addRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      addedRights
+      addedRights,
     });
 
     ctx.meta.$statusCode = 204;
@@ -42,7 +42,7 @@ module.exports = {
       // newRights is used to add rights to a non existing resource.
       newRights: { type: 'object', optional: true },
       // additionalRights is used to add rights to an existing resource.
-      additionalRights: { type: 'object', optional: true }
+      additionalRights: { type: 'object', optional: true },
     },
     async handler(ctx) {
       let { webId, addedRights, resourceUri, newRights, additionalRights } = ctx.params;
@@ -57,7 +57,7 @@ module.exports = {
           throw new MoleculerError(
             'please use addedRights or additionalRights, none were provided',
             403,
-            'BAD_REQUEST'
+            'BAD_REQUEST',
           );
 
         isContainer = await this.checkResourceOrContainerExists(ctx, resourceUri);
@@ -68,7 +68,7 @@ module.exports = {
           const { control } = await ctx.call('webacl.resource.hasRights', {
             resourceUri,
             rights: { control: true },
-            webId
+            webId,
           });
           if (!control)
             throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
@@ -84,7 +84,7 @@ module.exports = {
           if (addedRights.length === 0) new MoleculerError('No additional permissions to add!', 400, 'BAD_REQUEST');
         } else {
           // filter out all the addedRights that are not for the resource
-          addedRights = addedRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
+          addedRights = addedRights.filter((a) => filterTriplesForResource(a, aclUri, isContainer));
           if (addedRights.length === 0)
             throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
         }
@@ -94,11 +94,13 @@ module.exports = {
           resourceUri,
           this.settings.baseUrl,
           this.settings.graphName,
-          isContainer
+          isContainer,
         );
 
         // find the difference between addedRights and currentPerms. add only what is not existant yet.
-        difference = addedRights.filter(x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p));
+        difference = addedRights.filter(
+          (x) => !currentPerms.some((y) => x.auth === y.auth && x.o === y.o && x.p === y.p),
+        );
         if (difference.length === 0) return;
 
         // compile a list of Authorization already present. if some of them don't exist, we need to create them here below
@@ -109,7 +111,7 @@ module.exports = {
           throw new MoleculerError(
             'Access denied ! only system can add permissions for a newly created resource',
             403,
-            'ACCESS_DENIED'
+            'ACCESS_DENIED',
           );
 
         // we set new rights for a non existing resource
@@ -138,7 +140,7 @@ module.exports = {
       await ctx.call('triplestore.insert', {
         resource: addRequest,
         webId: 'system',
-        graphName: this.settings.graphName
+        graphName: this.settings.graphName,
       });
 
       if (newRights) {
@@ -146,15 +148,15 @@ module.exports = {
         ctx.emit('webacl.resource.created', returnValues, { meta: { webId: null, dataset: null } });
         return returnValues;
       }
-      const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
+      const defaultRightsUpdated = isContainer && difference.some((triple) => triple.auth.includes('#Default'));
       const addPublicRead = difference.some(
-        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        (triple) => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
       );
       const addDefaultPublicRead =
         isContainer &&
         difference.some(
-          triple =>
-            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+          (triple) =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
         );
 
       const returnValues = {
@@ -164,10 +166,10 @@ module.exports = {
         isContainer,
         defaultRightsUpdated,
         addPublicRead,
-        addDefaultPublicRead
+        addDefaultPublicRead,
       };
       ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
       return returnValues;
-    }
-  }
+    },
+  },
 };

@@ -2,7 +2,7 @@ const urlJoin = require('url-join');
 const { Issuer, Strategy, custom } = require('openid-client');
 
 custom.setHttpOptionsDefaults({
-  timeout: 10000
+  timeout: 10000,
 });
 const AuthSSOMixin = require('../mixins/auth.sso');
 
@@ -21,7 +21,7 @@ const AuthOIDCService = {
     // OIDC-specific settings
     issuer: null,
     clientId: null,
-    clientSecret: null
+    clientSecret: null,
   },
   async created() {
     this.passportId = 'oidc';
@@ -34,7 +34,7 @@ const AuthOIDCService = {
         client_id: this.settings.clientId,
         client_secret: this.settings.clientSecret,
         redirect_uri: urlJoin(this.settings.baseUrl, 'auth'),
-        token_endpoint_auth_method: this.settings.clientSecret ? undefined : 'none'
+        token_endpoint_auth_method: this.settings.clientSecret ? undefined : 'none',
       });
 
       const params = {
@@ -49,22 +49,22 @@ const AuthOIDCService = {
         {
           client,
           params,
-          passReqToCallback: true
+          passReqToCallback: true,
         },
         (req, tokenset, userinfo, done) => {
           req.$ctx
             .call('auth.loginOrSignup', { ssoData: userinfo })
-            .then(loginData => {
+            .then((loginData) => {
               done(null, loginData);
             })
-            .catch(e => {
+            .catch((e) => {
               console.error(e);
               done(null, false);
             });
-        }
+        },
       );
-    }
-  }
+    },
+  },
 };
 
 module.exports = AuthOIDCService;

@@ -4,7 +4,7 @@ const { getContainerFromUri } = require('../../../utils');
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: 'string'
+    resourceUri: 'string',
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
@@ -26,9 +26,9 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId: 'system'
+      webId: 'system',
     });
 
-    return result.map(node => node.containerUri.value);
-  }
+    return result.map((node) => node.containerUri.value);
+  },
 };

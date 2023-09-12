@@ -4,20 +4,20 @@ module.exports = {
   visibility: 'public',
   params: {
     uri: {
-      type: 'string'
+      type: 'string',
     },
     webId: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     dataset: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     graphName: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -33,9 +33,9 @@ module.exports = {
       `,
       accept: MIME_TYPES.JSON,
       webId,
-      dataset
+      dataset,
     });
 
     return results.length;
-  }
+  },
 };

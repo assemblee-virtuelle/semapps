@@ -23,14 +23,14 @@ describe('middleware CRUD resource with perms', () => {
       const urlParamsPost = {
         resource: {
           '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
           },
           '@type': 'Project',
           description: 'myProject',
-          label: 'myTitle'
+          label: 'myTitle',
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: `${CONFIG.HOME_URL}resources`
+        containerUri: `${CONFIG.HOME_URL}resources`,
       };
       const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
@@ -45,14 +45,14 @@ describe('middleware CRUD resource with perms', () => {
       const urlParamsPost = {
         resource: {
           '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
           },
           '@type': 'Project',
           description: 'myProject',
-          label: 'myTitle'
+          label: 'myTitle',
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: `${CONFIG.HOME_URL}resources`
+        containerUri: `${CONFIG.HOME_URL}resources`,
       };
       const webId = 'http://a/user';
       resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
@@ -65,16 +65,16 @@ describe('middleware CRUD resource with perms', () => {
           read: true,
           write: true,
           append: true,
-          control: true
+          control: true,
         },
-        webId
+        webId,
       });
 
       expect(resourceRights).toMatchObject({
         read: true,
         write: true,
         append: false,
-        control: true
+        control: true,
       });
     } catch (e) {
       console.log(e);
@@ -86,7 +86,7 @@ describe('middleware CRUD resource with perms', () => {
     try {
       const urlParamsPost = {
         resourceUri,
-        webId: 'http://a/user'
+        webId: 'http://a/user',
       };
 
       await broker.call('ldp.resource.delete', urlParamsPost);
@@ -98,7 +98,7 @@ describe('middleware CRUD resource with perms', () => {
           FILTER (?p IN (acl:accessTo, acl:default ) )
           ?auth ?p2 ?o  } }`,
         webId: 'system',
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
       });
 
       expect(result.length).toBe(0);

@@ -9,7 +9,7 @@ const ActivitiesHandlerMixin = {
   methods: {
     matchActivity(ctx, pattern, activityOrObject) {
       return matchActivity(ctx, pattern, activityOrObject);
-    }
+    },
   },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
@@ -73,8 +73,8 @@ const ActivitiesHandlerMixin = {
           }
         }
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = ActivitiesHandlerMixin;

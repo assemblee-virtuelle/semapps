@@ -19,19 +19,19 @@ describe('LDP container tests', () => {
 
   test('Ensure container created in LdpService settings exists', async () => {
     await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}resources` })).resolves.toBe(
-      true
+      true,
     );
   });
 
   test('Create a new container', async () => {
     await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(
-      false
+      false,
     );
 
     await broker.call(
       'ldp.container.create',
       { containerUri: `${CONFIG.HOME_URL}objects` },
-      { meta: { webId: 'system' } }
+      { meta: { webId: 'system' } },
     );
 
     await expect(broker.call('ldp.container.exist', { containerUri: `${CONFIG.HOME_URL}objects` })).resolves.toBe(true);
@@ -39,11 +39,11 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}objects`,
-        accept: MIME_TYPES.JSON
-      })
+        accept: MIME_TYPES.JSON,
+      }),
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}objects`,
-      '@type': ['ldp:Container', 'ldp:BasicContainer']
+      '@type': ['ldp:Container', 'ldp:BasicContainer'],
     });
   });
 
@@ -53,18 +53,18 @@ describe('LDP container tests', () => {
       contentType: MIME_TYPES.JSON,
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
-        label: 'My project'
-      }
+        label: 'My project',
+      },
     });
 
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
-      })
+        accept: MIME_TYPES.JSON,
+      }),
     ).resolves.toMatchObject({
       '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
@@ -73,9 +73,9 @@ describe('LDP container tests', () => {
         {
           '@id': resourceUri,
           '@type': 'pair:Project',
-          'pair:label': 'My project'
-        }
-      ]
+          'pair:label': 'My project',
+        },
+      ],
     });
   });
 
@@ -86,12 +86,12 @@ describe('LDP container tests', () => {
         contentType: MIME_TYPES.JSON,
         resource: {
           '@context': {
-            '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+            '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
           },
           '@type': 'Project',
-          label: 'My project'
-        }
-      })
+          label: 'My project',
+        },
+      }),
     ).rejects.toThrow();
   });
 
@@ -99,8 +99,8 @@ describe('LDP container tests', () => {
     await expect(
       broker.call('ldp.container.attach', {
         containerUri: `${CONFIG.HOME_URL}unknownContainer`,
-        resourceUri
-      })
+        resourceUri,
+      }),
     ).rejects.toThrow('Cannot attach to a non-existing container');
   });
 
@@ -110,12 +110,12 @@ describe('LDP container tests', () => {
         containerUri: `${CONFIG.HOME_URL}resources`,
         accept: MIME_TYPES.JSON,
         jsonContext: {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
-        }
-      })
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+        },
+      }),
     ).resolves.toMatchObject({
       '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
       },
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
@@ -123,9 +123,9 @@ describe('LDP container tests', () => {
         {
           '@id': resourceUri,
           '@type': 'Project',
-          label: 'My project'
-        }
-      ]
+          label: 'My project',
+        },
+      ],
     });
   });
 
@@ -135,30 +135,30 @@ describe('LDP container tests', () => {
       contentType: MIME_TYPES.JSON,
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
-        label: 'My project 2'
-      }
+        label: 'My project 2',
+      },
     });
 
     // Get without filters param
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
-      })
+        accept: MIME_TYPES.JSON,
+      }),
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
         {
-          'pair:label': 'My project 2'
+          'pair:label': 'My project 2',
         },
         {
-          'pair:label': 'My project'
-        }
-      ]
+          'pair:label': 'My project',
+        },
+      ],
     });
 
     // Get with filters param
@@ -167,53 +167,53 @@ describe('LDP container tests', () => {
         containerUri: `${CONFIG.HOME_URL}resources`,
         accept: MIME_TYPES.JSON,
         filters: {
-          'pair:label': 'My project 2'
-        }
-      })
+          'pair:label': 'My project 2',
+        },
+      }),
     ).resolves.toMatchObject({
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
         {
-          'pair:label': 'My project 2'
-        }
-      ]
+          'pair:label': 'My project 2',
+        },
+      ],
     });
   });
 
   test('Detach a resource from a container', async () => {
     await broker.call('ldp.container.detach', {
       containerUri: `${CONFIG.HOME_URL}resources`,
-      resourceUri
+      resourceUri,
     });
 
     // Project 1 should have disappeared from the container
     await expect(
       broker.call('ldp.container.get', {
         containerUri: `${CONFIG.HOME_URL}resources`,
-        accept: MIME_TYPES.JSON
-      })
+        accept: MIME_TYPES.JSON,
+      }),
     ).resolves.toMatchObject({
       '@context': getPrefixJSON(ontologies),
       '@id': `${CONFIG.HOME_URL}resources`,
       '@type': ['ldp:Container', 'ldp:BasicContainer'],
       'ldp:contains': [
         {
-          'pair:label': 'My project 2'
-        }
-      ]
+          'pair:label': 'My project 2',
+        },
+      ],
     });
   });
 
   test('Clear container', async () => {
     await broker.call('ldp.container.clear', {
-      containerUri: `${CONFIG.HOME_URL}resources`
+      containerUri: `${CONFIG.HOME_URL}resources`,
     });
 
     // Container should now be empty
     const container = await broker.call('ldp.container.get', {
       containerUri: `${CONFIG.HOME_URL}resources`,
-      accept: MIME_TYPES.JSON
+      accept: MIME_TYPES.JSON,
     });
 
     expect(container['ldp:contains']).toHaveLength(0);
