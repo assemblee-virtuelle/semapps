@@ -12,7 +12,7 @@ const ActorService = {
     baseUri: null,
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
     selectActorData: null,
-    podProvider: false
+    podProvider: false,
   },
   // started() {
   //   this.remoteActorsCache = {};
@@ -58,7 +58,7 @@ const ActorService = {
         // Ensure at least one actor type, otherwise ActivityPub-specific properties (inbox, public key...) will not be added
         const resourceType = defaultToArray(userData.type || userData['@type']);
         const includeActorType = resourceType
-          ? resourceType.some(type => Object.values(ACTOR_TYPES).includes(type))
+          ? resourceType.some((type) => Object.values(ACTOR_TYPES).includes(type))
           : false;
         if (!includeActorType) {
           propertiesToAdd['http://www.w3.org/1999/02/22-rdf-syntax-ns#type'] = `${AS_PREFIX}Person`;
@@ -67,7 +67,7 @@ const ActorService = {
 
       if (!propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername']) {
         propertiesToAdd['https://www.w3.org/ns/activitystreams#preferredUsername'] = getSlugFromUri(
-          userData.id || userData['@id']
+          userData.id || userData['@id'],
         );
       }
 
@@ -78,10 +78,10 @@ const ActorService = {
             triple(
               namedNode(actorUri),
               namedNode(predicate),
-              typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject)
-            )
+              typeof subject === 'string' && subject.startsWith('http') ? namedNode(subject) : literal(subject),
+            ),
           ),
-          webId: 'system'
+          webId: 'system',
         });
       }
     },
@@ -104,11 +104,11 @@ const ActorService = {
                     triple(
                       namedNode(actorUri),
                       namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                      variable('endpoints')
+                      variable('endpoints'),
                     ),
-                    triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint))
-                  ]
-                }
+                    triple(variable('endpoints'), namedNode(predicate), namedNode(endpoint)),
+                  ],
+                },
               ],
               delete: [],
               where: [
@@ -121,11 +121,11 @@ const ActorService = {
                         triple(
                           namedNode(actorUri),
                           namedNode('https://www.w3.org/ns/activitystreams#endpoints'),
-                          variable('b0')
-                        )
-                      ]
-                    }
-                  ]
+                          variable('b0'),
+                        ),
+                      ],
+                    },
+                  ],
                 },
                 {
                   type: 'bind',
@@ -137,23 +137,23 @@ const ActorService = {
                       {
                         type: 'operation',
                         operator: 'bound',
-                        args: [variable('b0')]
+                        args: [variable('b0')],
                       },
                       variable('b0'),
                       {
                         type: 'operation',
                         operator: 'BNODE',
-                        args: []
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
+                        args: [],
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          ],
         },
         webId: 'system',
-        dataset
+        dataset,
       });
     },
     async awaitCreateComplete(ctx) {
@@ -163,7 +163,7 @@ const ActorService = {
       do {
         if (actor) await delay(1000);
         actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } });
-      } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
+      } while (!keysToCheck.every((key) => Object.keys(actor).includes(key)));
       return actor;
     },
     async generateMissingActorsData(ctx) {
@@ -188,8 +188,8 @@ const ActorService = {
         const { actorUri, predicate, webId } = ctx.params;
         const actor = await this.actions.get({ actorUri, webId }, { parentCtx: ctx });
         return actor && actor[predicate];
-      }
-    }
+      },
+    },
   },
   methods: {
     isRemoteUri(uri, dataset) {
@@ -200,10 +200,10 @@ const ActorService = {
       );
     },
     isActor(resource) {
-      return defaultToArray(resource['@type'] || resource.type || []).some(type =>
-        Object.values(ACTOR_TYPES).includes(type)
+      return defaultToArray(resource['@type'] || resource.type || []).some((type) =>
+        Object.values(ACTOR_TYPES).includes(type),
       );
-    }
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -223,8 +223,8 @@ const ActorService = {
     async 'auth.registered'(ctx) {
       const { webId } = ctx.params;
       await this.actions.appendActorData({ actorUri: webId }, { parentCtx: ctx });
-    }
-  }
+    },
+  },
 };
 
 module.exports = ActorService;
