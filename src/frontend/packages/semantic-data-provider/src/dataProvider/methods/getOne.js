@@ -1,6 +1,6 @@
 import fetchResource from '../utils/fetchResource';
 
-const getOneMethod = config => async (resourceId, params) => {
+const getOneMethod = (config) => async (resourceId, params) => {
   const { resources } = config;
   const dataModel = resources[resourceId];
 

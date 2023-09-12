@@ -1,6 +1,6 @@
 # SemApps
 
-SemApps (from *Sem*antic *App*lications) is a semantic web toolbox, allowing to create applications compliant with most major semantic web specifications: LDP, SPARQL, ActivityPub, WAC, WebID. 
+SemApps (from *Sem*antic *App*lications) is a semantic web toolbox, allowing to create applications compliant with most major semantic web specifications: LDP, SPARQL, ActivityPub, WAC, WebID.
 
 ## What's in the box ?
 

@@ -19,7 +19,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLoginRedirect, additionalSignupValues }) => {
+const LocalLoginPage = ({
+  hasSignup,
+  allowUsername,
+  postSignupRedirect,
+  postLoginRedirect,
+  additionalSignupValues,
+}) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const translate = useTranslate();
@@ -27,30 +33,33 @@ const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLogi
   const isSignup = hasSignup && searchParams.has('signup');
   const isResetPassword = searchParams.has('reset_password');
   const isNewPassword = searchParams.has('new_password');
-  const isLogin = !isSignup && !isResetPassword && !isNewPassword;  
+  const isLogin = !isSignup && !isResetPassword && !isNewPassword;
   const redirectTo = searchParams.get('redirect');
   const { identity, isLoading } = useGetIdentity();
-  
+
   useEffect(() => {
     if (!isLoading && identity?.id) {
       if (postLoginRedirect) {
-        navigate(`${postLoginRedirect  }?redirect=${  encodeURIComponent(redirectTo || '/')}`);
+        navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`);
       } else if (redirectTo && redirectTo.startsWith('http')) {
-          window.location.href = redirectTo
-        } else {
-          navigate(redirectTo || '/');
-        }        
-    }    
+        window.location.href = redirectTo;
+      } else {
+        navigate(redirectTo || '/');
+      }
+    }
   }, [identity, isLoading, navigate, redirectTo, postLoginRedirect]);
 
   const [title, text] = useMemo(() => {
     if (isSignup) {
       return ['auth.action.signup', 'auth.helper.signup'];
-    } if (isLogin) {
+    }
+    if (isLogin) {
       return ['auth.action.login', 'auth.helper.login'];
-    } if (isResetPassword) {
+    }
+    if (isResetPassword) {
       return ['auth.action.reset_password', 'auth.helper.reset_password'];
-    } if (isNewPassword) {
+    }
+    if (isNewPassword) {
       return ['auth.action.set_new_password', 'auth.helper.set_new_password'];
     }
   }, [isSignup, isLogin, isResetPassword, isNewPassword]);
@@ -61,33 +70,40 @@ const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLogi
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={4000} postSignupRedirect={postSignupRedirect} additionalSignupValues={additionalSignupValues} />}
+        {isSignup && (
+          <SignupForm
+            redirectTo={redirectTo}
+            delayBeforeRedirect={4000}
+            postSignupRedirect={postSignupRedirect}
+            additionalSignupValues={additionalSignupValues}
+          />
+        )}
         {isResetPassword && <ResetPasswordForm />}
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
         {isLogin && <LoginForm redirectTo={redirectTo} allowUsername={allowUsername} />}
         <div className={classes.switch}>
-          {isSignup && 
+          {isSignup && (
             <Link to="/login">
               <Typography variant="body2">{translate('auth.action.login')}</Typography>
             </Link>
-          }
-          {isLogin && 
+          )}
+          {isLogin && (
             <>
-              {hasSignup && 
+              {hasSignup && (
                 <div>
                   <Link to="/login?signup=true">
                     <Typography variant="body2">{translate('auth.action.signup')}</Typography>
                   </Link>
                 </div>
-              }
+              )}
               <div>
-                <Link to={`/login?reset_password=true&${  searchParams.toString()}`}>
+                <Link to={`/login?reset_password=true&${searchParams.toString()}`}>
                   <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
                 </Link>
               </div>
             </>
-          }
-        </div> 
+          )}
+        </div>
       </Card>
     </SimpleBox>
   );
@@ -96,7 +112,7 @@ const LocalLoginPage = ({ hasSignup, allowUsername, postSignupRedirect, postLogi
 LocalLoginPage.defaultProps = {
   hasSignup: true,
   allowUsername: false,
-  additionalSignupValues: {}
+  additionalSignupValues: {},
 };
 
 export default LocalLoginPage;

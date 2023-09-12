@@ -51,7 +51,7 @@ const Picker = ({
         slotProps={{
           textField: {
             helperText: <InputHelperText touched={isTouched} error={error} helperText={helperText} />
-          },
+          }
         }}
         {...sanitizeRestProps(rest)}
         value={field.value ? new Date(field.value) : null}
@@ -103,6 +103,5 @@ const sanitizeRestProps = ({
   labelTime,
   ...rest
 }) => rest;
-
 
 export default Picker;

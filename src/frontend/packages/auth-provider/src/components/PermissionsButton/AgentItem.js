@@ -9,7 +9,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import EditIcon from '@mui/icons-material/Edit';

@@ -20,13 +20,13 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
     template: baseQuery.construct,
     where: [],
     type: 'query',
-    prefixes: Object.fromEntries(ontologies.map(ontology => [ontology.prefix, ontology.url]))
+    prefixes: Object.fromEntries(ontologies.map((ontology) => [ontology.prefix, ontology.url])),
   };
 
   const containerWhere = [
     {
       type: 'values',
-      values: containers.map(containerUri => ({ '?containerUri': namedNode(containerUri) }))
+      values: containers.map((containerUri) => ({ '?containerUri': namedNode(containerUri) })),
     },
     triple(variable('containerUri'), namedNode('http://www.w3.org/ns/ldp#contains'), variable('s1')),
     {
@@ -34,9 +34,9 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
       expression: {
         type: 'operation',
         operator: 'isiri',
-        args: [variable('s1')]
-      }
-    }
+        args: [variable('s1')],
+      },
+    },
   ];
 
   let resourceWhere = [];
@@ -60,7 +60,7 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         }
       */
       // initialize array in case of single value :
-      [].concat(filter.sparqlWhere).forEach(sw => {
+      [].concat(filter.sparqlWhere).forEach((sw) => {
         resourceWhere.push(sw);
       });
     }
@@ -79,8 +79,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
                 expression: {
                   type: 'operation',
                   operator: 'isliteral',
-                  args: [variable('o1')]
-                }
+                  args: [variable('o1')],
+                },
               },
               {
                 type: 'filter',
@@ -95,18 +95,18 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
                         {
                           type: 'operation',
                           operator: 'str',
-                          args: [variable('o1')]
-                        }
-                      ]
+                          args: [variable('o1')],
+                        },
+                      ],
                     },
-                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string'))
-                  ]
-                }
-              }
+                    literal(filter.q.toLowerCase(), '', namedNode('http://www.w3.org/2001/XMLSchema#string')),
+                  ],
+                },
+              },
             ],
-            type: 'query'
-          }
-        ]
+            type: 'query',
+          },
+        ],
       });
     }
 
@@ -119,8 +119,8 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
           triple(
             variable('s1'),
             namedNode(resolvePrefix(predicate, ontologies)),
-            namedNode(resolvePrefix(object, ontologies))
-          )
+            namedNode(resolvePrefix(object, ontologies)),
+          ),
         );
       }
     });
@@ -143,9 +143,9 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         {
           type: 'graph',
           name: namedNode('http://semapps.org/mirror'),
-          patterns: containerWhere
-        }
-      ]
+          patterns: containerWhere,
+        },
+      ],
     },
     {
       type: 'union',
@@ -154,10 +154,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
         {
           type: 'graph',
           name: namedNode('http://semapps.org/mirror'),
-          patterns: resourceWhere
-        }
-      ]
-    }
+          patterns: resourceWhere,
+        },
+      ],
+    },
   );
 
   return generator.stringify(sparqlJsParams);

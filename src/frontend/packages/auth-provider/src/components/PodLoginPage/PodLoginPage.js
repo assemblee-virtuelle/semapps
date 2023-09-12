@@ -5,7 +5,7 @@ import { createTheme } from '@mui/material/styles';
 import { StyledEngineProvider } from '@mui/material';
 import PodLoginPageView from './PodLoginPageView';
 
-const PodLoginPage = props => {
+const PodLoginPage = (props) => {
   const muiTheme = useMemo(() => createTheme(props.theme), [props.theme]);
   return (
     <StyledEngineProvider injectFirst>

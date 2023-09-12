@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useMap } from "react-leaflet";
+import { useMap } from 'react-leaflet';
 import { useRecordContext } from 'react-admin';
 import { Drawer, Box, IconButton } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -22,7 +22,7 @@ const MobileDrawer = ({ popupContent, onClose }) => {
     if (record) {
       map.setView([record.latitude, record.longitude]);
     }
-  }, [record, map])
+  }, [record, map]);
 
   return (
     <Drawer anchor="bottom" open={!!record} onClose={onClose}>

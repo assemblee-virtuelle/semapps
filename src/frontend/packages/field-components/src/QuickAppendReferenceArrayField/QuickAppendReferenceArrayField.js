@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useRecordContext, usePermissions } from 'react-admin';
-import { ReferenceArrayField } from "../index";
+import { ReferenceArrayField } from '../index';
 import QuickAppendDialog from './QuickAppendDialog';
 
 const QuickAppendReferenceArrayField = ({ reference, source, resource, children, ...otherProps }) => {
@@ -15,12 +15,9 @@ const QuickAppendReferenceArrayField = ({ reference, source, resource, children,
 
   return (
     <>
-      <ReferenceArrayField
-        reference={reference}
-        source={source}
-        {...otherProps}
-      >
-        {React.Children.only(children) && React.cloneElement(children, { appendLink: canAppend ? () => setShowDialog(true) : undefined })}
+      <ReferenceArrayField reference={reference} source={source} {...otherProps}>
+        {React.Children.only(children) &&
+          React.cloneElement(children, { appendLink: canAppend ? () => setShowDialog(true) : undefined })}
       </ReferenceArrayField>
       {canAppend && showDialog && (
         <QuickAppendDialog

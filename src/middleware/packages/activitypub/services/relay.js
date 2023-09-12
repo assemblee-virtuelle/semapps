@@ -8,8 +8,8 @@ const RelayService = {
   settings: {
     actor: {
       username: 'relay',
-      name: 'Relay actor for instance'
-    }
+      name: 'Relay actor for instance',
+    },
   },
   dependencies: ['activitypub', 'activitypub.follow', 'auth.account', 'ldp.container', 'ldp.registry'],
   async started() {
@@ -36,9 +36,9 @@ const RelayService = {
         'auth.account.create',
         {
           username: actorSettings.username,
-          webId: actorUri
+          webId: actorUri,
         },
-        { meta: { isSystemCall: true } }
+        { meta: { isSystemCall: true } },
       );
 
       try {
@@ -55,10 +55,10 @@ const RelayService = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             type: ACTOR_TYPES.APPLICATION,
             preferredUsername: actorSettings.username,
-            name: actorSettings.name
+            name: actorSettings.name,
           },
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
       } catch (e) {
         // Delete account if resource creation failed, or it may cause problems when retrying
@@ -75,9 +75,9 @@ const RelayService = {
       visibility: 'public',
       handler() {
         return this.relayActor;
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 module.exports = RelayService;

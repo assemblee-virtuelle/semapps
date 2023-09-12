@@ -19,7 +19,7 @@ module.exports = {
     ontologies: [],
     podProvider: false,
     mirrorGraphName: null,
-    preferredViewForResource: null
+    preferredViewForResource: null,
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -38,7 +38,7 @@ module.exports = {
     delete: deleteAction.action,
     api_put: putAction.api,
     put: putAction.action,
-    api_head: headAction.api
+    api_head: headAction.api,
   },
   hooks: {
     before: {
@@ -51,8 +51,8 @@ module.exports = {
             ctx.meta.dataset = getDatasetFromUri(uri);
           }
         }
-      }
-    }
+      },
+    },
   },
-  methods
+  methods,
 };

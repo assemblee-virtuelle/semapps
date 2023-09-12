@@ -1,6 +1,15 @@
 import * as React from 'react';
 import createSlug from 'speakingurl';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLocaleState } from 'react-admin';
+import {
+  Form,
+  useTranslate,
+  useNotify,
+  useSafeSetState,
+  TextInput,
+  required,
+  email,
+  useLocaleState
+} from 'react-admin';
 import { useSignup } from '@semapps/auth-provider';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
@@ -8,10 +17,10 @@ import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
+    margin: theme.spacing(0.3)
   }
 }));
 
@@ -36,16 +45,20 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
             window.location.reload();
-            window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
+            window.location.href = postSignupRedirect
+              ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
+              : redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
           // Reload to ensure the dataServer config is reset
           window.location.reload();
-          window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
+          window.location.href = postSignupRedirect
+            ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
+            : redirectTo || '/';
           setLoading(false);
         }
-        notify('auth.message.new_user_created', {type: 'info'});
+        notify('auth.message.new_user_created', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);
@@ -55,7 +68,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
             : typeof error === 'undefined' || !error.message
             ? 'ra.auth.sign_in_error'
             : error.message,
-          { 
+          {
             type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
           }
@@ -64,11 +77,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      noValidate
-      defaultValues={{ email: searchParams.get('email') }}
-    >
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           autoFocus
@@ -78,12 +87,12 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) =>
+          format={value =>
             value
               ? createSlug(value, {
                   lang: locale || 'fr',
                   separator: '_',
-                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
                 })
               : ''
           }
@@ -105,18 +114,19 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={required()}
         />
-        <Button 
-          variant="contained" 
-          type="submit" 
-          color="primary" 
-          disabled={loading} 
+        <Button
+          variant="contained"
+          type="submit"
+          color="primary"
+          disabled={loading}
           fullWidth
           className={classes.button}
         >
-          {loading 
-            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.signup')
-          }
+          {loading ? (
+            <CircularProgress className={classes.icon} size={19} thickness={3} />
+          ) : (
+            translate('auth.action.signup')
+          )}
         </Button>
       </CardContent>
     </Form>
