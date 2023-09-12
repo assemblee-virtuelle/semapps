@@ -142,7 +142,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
                 <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
               )
             }
-            error={!!(isTouched && error /* || submitError */)}
+            error={!!((isTouched && error) /* || submitError */)}
             helperText={
               <InputHelperText touched={isTouched} error={error /* || submitError */} helperText={helperText} />
             }
