@@ -15,62 +15,62 @@ const defaultdomainMapping = {
     label: 'GitHub',
     icon: <GitHubIcon />,
     color: 'black',
-    contrastText: 'white'
+    contrastText: 'white',
   },
   'gitlab.com': {
     label: 'GitLab',
     icon: <FiGitlab />,
     color: 'orange',
-    contrastText: 'black'
+    contrastText: 'black',
   },
   'opencollective.com': {
     label: 'Open Collective',
     icon: <Avatar component="span" src="https://opencollective.com/static/images/opencollective-icon.svg" />,
     color: 'white',
-    contrastText: '#297EFF'
+    contrastText: '#297EFF',
   },
   'facebook.com': {
     label: 'Facebook',
     icon: <FacebookIcon />,
     color: '#4267B2',
-    contrastText: 'white'
+    contrastText: 'white',
   },
   'twitter.com': {
     label: 'Twitter',
     icon: <TwitterIcon />,
     color: '#00ACEE',
-    contrastText: 'white'
+    contrastText: 'white',
   },
   'instagram.com': {
     label: 'Instagram',
     icon: <InstagramIcon />,
     color: '#8a3ab9',
-    contrastText: 'white'
+    contrastText: 'white',
   },
   'youtube.com': {
     label: 'YouTube',
     icon: <YouTubeIcon />,
     color: '#FF0000',
-    contrastText: 'white'
-  }
+    contrastText: 'white',
+  },
 };
 
 const useStyles = makeStyles(() => ({
   link: {
     textDecoration: 'unset',
     '& :hover': {
-      cursor: 'pointer'
-    }
+      cursor: 'pointer',
+    },
   },
   chip: {
     paddingLeft: 5,
     paddingRight: 5,
     marginRight: 5,
-    marginBottom: 5
+    marginBottom: 5,
   },
   label: {
-    marginTop: -1
-  }
+    marginTop: -1,
+  },
 }));
 
 const MultiUrlField = ({ source, domainMapping }) => {
@@ -79,14 +79,14 @@ const MultiUrlField = ({ source, domainMapping }) => {
   const classes = useStyles();
   const urlArray = record[source] ? (Array.isArray(record[source]) ? record[source] : [record[source]]) : [];
   return urlArray.map((url, index) => {
-    if (!url.startsWith('http')) url = `https://${  url}`;
+    if (!url.startsWith('http')) url = `https://${url}`;
     const parsedUrl = new URL(url);
     if (!parsedUrl) return null;
     const chip = newDomainMapping[parsedUrl.hostname] || {
       label: 'Site web',
       icon: <LanguageIcon />,
       color: '#ea',
-      contrastText: 'black'
+      contrastText: 'black',
     };
     return (
       <a href={url} target="_blank" rel="noopener noreferrer" className={classes.link} key={index}>

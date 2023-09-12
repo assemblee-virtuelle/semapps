@@ -5,7 +5,7 @@ import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
 import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';
 
-const useCreateContainer = resourceId => {
+const useCreateContainer = (resourceId) => {
   const dataModel = useDataModel(resourceId);
   const dataServers = useDataServers();
   const [createContainer, setCreateContainer] = useState();
@@ -15,7 +15,7 @@ const useCreateContainer = resourceId => {
       if (dataModel.create?.container) {
         const [serverKey, path] = Object.entries(dataModel.create.container)[0];
         if (!serverKey || !dataServers[serverKey]) {
-          throw new Error(`Wrong key for the dataModel.create.container config of resource ${  resourceId}`);
+          throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
         }
         setCreateContainer(urlJoin(dataServers[serverKey].baseUrl, path));
       } else if (dataModel.create?.server) {

@@ -13,7 +13,7 @@ const useInbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || `${identity?.id  }/sparql`;
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || `${identity?.id}/sparql`;
     }
   }, [identity]);
 
@@ -26,7 +26,7 @@ const useInbox = () => {
 
       let filtersWhereQuery = '';
       if (filters) {
-        Object.keys(filters).forEach(predicate => {
+        Object.keys(filters).forEach((predicate) => {
           if (filters[predicate]) {
             const object = filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : filters[predicate];
             filtersWhereQuery += `?s1 ${predicate} ${object} .`;
@@ -54,17 +54,16 @@ const useInbox = () => {
         body: query,
         headers: new Headers({
           Accept: 'application/ld+json',
-          Authorization: token ? `Bearer ${token}` : undefined
-        })
+          Authorization: token ? `Bearer ${token}` : undefined,
+        }),
       });
 
       if (json['@graph']) {
         return json['@graph'];
-      } 
-        return null;
-      
+      }
+      return null;
     },
-    [sparqlEndpoint, inboxUrl]
+    [sparqlEndpoint, inboxUrl],
   );
 
   return { fetch, url: inboxUrl, owner: identity?.id };

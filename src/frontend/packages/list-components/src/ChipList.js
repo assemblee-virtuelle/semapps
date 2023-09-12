@@ -5,7 +5,7 @@ import {
   useListContext,
   sanitizeListRestProps,
   RecordContextProvider,
-  Link
+  Link,
 } from 'react-admin';
 import { LinearProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -16,36 +16,36 @@ import { useGetExternalLink } from '@semapps/semantic-data-provider';
 const useStyles = makeStyles(() => ({
   root: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   link: {
     textDecoration: 'none',
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
   chipField: {
-    maxWidth: '100%'
+    maxWidth: '100%',
   },
   addIcon: {
     cursor: 'pointer',
     fontSize: 35,
     position: 'relative',
-    top: 2
+    top: 2,
   },
   launchIcon: {
     width: 20,
     paddingRight: 6,
-    marginLeft: -10
-  }
+    marginLeft: -10,
+  },
 }));
 
-const stopPropagation = e => e.stopPropagation();
+const stopPropagation = (e) => e.stopPropagation();
 
 // Our handleClick does nothing as we wrap the children inside a Link but it is
 // required by ChipField, which uses a Chip from material-ui.
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const handleClick = () => {};
 
-const ChipList = props => {
+const ChipList = (props) => {
   const {
     classes: classesOverride,
     className,
@@ -68,7 +68,7 @@ const ChipList = props => {
 
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
-      {data.map(record => {
+      {data.map((record) => {
         if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         if (externalLink) {
@@ -94,10 +94,15 @@ const ChipList = props => {
               </a>
             </RecordContextProvider>
           );
-        } if (linkType) {
+        }
+        if (linkType) {
           return (
             <RecordContextProvider value={record} key={record.id}>
-              <Link className={classes.link} to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
+              <Link
+                className={classes.link}
+                to={createPath({ resource, id: record.id, type: linkType })}
+                onClick={stopPropagation}
+              >
                 <ChipField
                   source={primaryText}
                   className={classes.chipField}
@@ -108,19 +113,18 @@ const ChipList = props => {
               </Link>
             </RecordContextProvider>
           );
-        } 
-          return (
-            <RecordContextProvider value={record} key={record.id}>
-              <ChipField
-                source={primaryText}
-                className={classes.chipField}
-                color="secondary"
-                // Workaround to force ChipField to be clickable
-                onClick={handleClick}
-              />
-            </RecordContextProvider>
-          );
-        
+        }
+        return (
+          <RecordContextProvider value={record} key={record.id}>
+            <ChipField
+              source={primaryText}
+              className={classes.chipField}
+              color="secondary"
+              // Workaround to force ChipField to be clickable
+              onClick={handleClick}
+            />
+          </RecordContextProvider>
+        );
       })}
       {appendLink && <AddCircleIcon color="primary" className={classes.addIcon} onClick={appendLink} />}
     </Component>
