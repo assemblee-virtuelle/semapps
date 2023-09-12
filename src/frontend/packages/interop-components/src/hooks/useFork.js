@@ -10,7 +10,7 @@ const useFork = resourceId => {
     async (remoteRecordUri, stripProperties = []) => {
       const { data: remoteData } = await dataProvider.getOne(resourceId, { id: remoteRecordUri });
 
-      let strippedData = { ...remoteData };
+      const strippedData = { ...remoteData };
       strippedData['http://www.w3.org/ns/prov#wasDerivedFrom'] = strippedData.id;
       delete strippedData.id;
       delete strippedData['@context'];
@@ -20,7 +20,7 @@ const useFork = resourceId => {
 
       const { data: localData } = await dataProvider.create(resourceId, { data: strippedData });
 
-      redirect('/' + resourceId + '/' + encodeURIComponent(localData.id) + '/show');
+      redirect(`/${  resourceId  }/${  encodeURIComponent(localData.id)  }/show`);
       notify('La ressource a bien été copiée', {type: 'success'});
     },
     [resourceId, dataProvider, redirect, notify]

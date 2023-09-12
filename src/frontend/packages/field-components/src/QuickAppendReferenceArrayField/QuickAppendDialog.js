@@ -4,8 +4,8 @@ import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@m
 import makeStyles from '@mui/styles/makeStyles';
 import { useForm } from 'react-hook-form';
 import AddIcon from '@mui/icons-material/Add';
-import ResultsList from './ResultsList';
 import { useDataModel } from '@semapps/semantic-data-provider';
+import ResultsList from './ResultsList';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -87,7 +87,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
           <DialogContent className={classes.addForm}>
             <TextField
               autoFocus
-              label={'Rechercher ou créer des ' + getResourceLabel(reference, 2).toLowerCase()}
+              label={`Rechercher ou créer des ${  getResourceLabel(reference, 2).toLowerCase()}`}
               variant="filled"
               margin="dense"
               value={keyword}

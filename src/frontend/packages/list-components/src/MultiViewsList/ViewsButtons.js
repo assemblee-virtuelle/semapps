@@ -18,7 +18,7 @@ const ViewsButtons = () => {
             query.set('order', view.sort.order);
           }
           return (
-            <Link key={key} to={'?' + query.toString()}>
+            <Link key={key} to={`?${  query.toString()}`}>
               <Button onClick={() => setView(key)} label={view.label}>
                 {React.createElement(view.icon)}
               </Button>

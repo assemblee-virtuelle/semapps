@@ -7,7 +7,7 @@ import useFullCalendarProps from './useFullCalendarProps';
 const useGlobalStyles = makeStyles(theme => ({
   '@global': {
     '.fc-button': {
-      backgroundColor: theme.palette.primary.main + ' !important',
+      backgroundColor: `${theme.palette.primary.main  } !important`,
       border: 'none !important',
       opacity: '1 !important'
     }

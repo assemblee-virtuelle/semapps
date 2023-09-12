@@ -34,9 +34,9 @@ const authProvider = ({
           throw new Error('ra.auth.sign_in_error');
         }
       } else {
-        let redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        let redirectUrl = `${new URL(window.location.href).origin  }/login?login=true`;
+        if (params.redirect) redirectUrl += `&redirect=${  encodeURIComponent(params.redirect)}`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${  encodeURIComponent(redirectUrl)}`);
       }
     },
     signup: async params => {
@@ -70,8 +70,8 @@ const authProvider = ({
           }
         }
       } else {
-        const redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        const redirectUrl = `${new URL(window.location.href).origin  }/login?login=true`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${  encodeURIComponent(redirectUrl)}`);
       }
     },
     logout: async () => {
@@ -89,7 +89,7 @@ const authProvider = ({
           const baseUrl = new URL(window.location.href).origin;
           window.location.href = urlJoin(
             authServerUrl,
-            'auth/logout?redirectUrl=' + encodeURIComponent(urlJoin(baseUrl, 'login') + '?logout=true')
+            `auth/logout?redirectUrl=${  encodeURIComponent(`${urlJoin(baseUrl, 'login')  }?logout=true`)}`
           );
           break;
 
@@ -98,7 +98,7 @@ const authProvider = ({
           const { webId } = jwtDecode(token);
           // Delete token but also any other value in local storage
           localStorage.clear();
-          window.location.href = urlJoin(webId, 'openApp') + '?type=' + encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
+          window.location.href = `${urlJoin(webId, 'openApp')  }?type=${  encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration')}`;
           break;
       }
 
@@ -112,9 +112,9 @@ const authProvider = ({
     checkUser: userData => {
       if (checkUser) {
         return checkUser(userData);
-      } else {
+      } 
         return true;
-      }
+      
     },
     checkError: error => Promise.resolve(),
     getPermissions: async uri => {
@@ -142,8 +142,8 @@ const authProvider = ({
 
       const aclUri = getAclUri(uri);
 
-      let authorization = {
-        '@id': '#' + mode.replace('acl:', ''),
+      const authorization = {
+        '@id': `#${  mode.replace('acl:', '')}`,
         '@type': 'acl:Authorization',
         [predicate]: agentId,
         'acl:accessTo': uri,
@@ -165,7 +165,7 @@ const authProvider = ({
       const aclUri = getAclUri(uri);
 
       // Fetch current permissions
-      let { json } = await dataProvider.fetch(aclUri);
+      const { json } = await dataProvider.fetch(aclUri);
 
       const updatedPermissions = json['@graph']
         .filter(authorization => !authorization['@id'].includes('#Default'))

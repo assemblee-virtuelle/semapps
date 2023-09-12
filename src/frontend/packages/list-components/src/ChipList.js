@@ -69,7 +69,7 @@ const ChipList = props => {
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
       {data.map(record => {
-        if (!record || record['_error']) return null;
+        if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         if (externalLink) {
           return (
@@ -94,7 +94,7 @@ const ChipList = props => {
               </a>
             </RecordContextProvider>
           );
-        } else if (linkType) {
+        } if (linkType) {
           return (
             <RecordContextProvider value={record} key={record.id}>
               <Link className={classes.link} to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
@@ -108,7 +108,7 @@ const ChipList = props => {
               </Link>
             </RecordContextProvider>
           );
-        } else {
+        } 
           return (
             <RecordContextProvider value={record} key={record.id}>
               <ChipField
@@ -120,7 +120,7 @@ const ChipList = props => {
               />
             </RecordContextProvider>
           );
-        }
+        
       })}
       {appendLink && <AddCircleIcon color="primary" className={classes.addIcon} onClick={appendLink} />}
     </Component>

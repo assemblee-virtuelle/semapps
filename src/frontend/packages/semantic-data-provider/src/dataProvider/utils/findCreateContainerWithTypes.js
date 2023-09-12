@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 
 const findCreateContainerWithTypes = (types, createServerKey, dataServers) => {
-  let containers = [];
+  const containers = [];
 
   if (Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) {
     Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach(type => {

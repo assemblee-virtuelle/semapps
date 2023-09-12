@@ -19,11 +19,11 @@ const useStyles = makeStyles(theme => ({
 const selectOptionText = (option, optionText) => {
   if (typeof option === 'string') {
     return option;
-  } else if (option.label) {
+  } if (option.label) {
     return option.label;
-  } else if (typeof optionText === 'string') {
+  } if (typeof optionText === 'string') {
     return option[optionText];
-  } else if (typeof optionText === 'function') {
+  } if (typeof optionText === 'function') {
     return optionText(option);
   }
 };
@@ -71,9 +71,9 @@ const LexiconAutocompleteInput = forwardRef(({
     // Do not trigger search if text input is empty
     if (!keyword) {
       return undefined;
-    } else {
+    } 
       throttledFetchLexicon(keyword, results => setOptions(results));
-    }
+    
   }, [value, keyword, throttledFetchLexicon]);
 
   return (

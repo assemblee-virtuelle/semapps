@@ -96,11 +96,11 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   useEffect(() => {
     if (!keyword) {
       return undefined;
-    } else {
+    } 
       setLoading(true);
       setLoaded(false);
       search(keyword);
-    }
+    
     return () => search.cancel();
   }, [keyword, search, setLoading]);
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { List } from '@mui/material';
-import AgentItem from './AgentItem';
 import { styled } from '@mui/system';
+import AgentItem from './AgentItem';
 
 const StyledList = styled(List)(({ theme }) => ({
   width: '100%',

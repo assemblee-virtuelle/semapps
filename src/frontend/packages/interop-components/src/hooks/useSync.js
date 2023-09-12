@@ -10,7 +10,7 @@ const useSync = resourceId => {
     async remoteRecordUri => {
       await dataProvider.create(resourceId, { id: remoteRecordUri });
 
-      redirect('/' + resourceId + '/' + encodeURIComponent(remoteRecordUri) + '/show');
+      redirect(`/${  resourceId  }/${  encodeURIComponent(remoteRecordUri)  }/show`);
       notify('La ressource a bien été importée', {type: 'success'});
     },
     [dataProvider, redirect, notify]

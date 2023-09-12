@@ -7,9 +7,9 @@ const DeleteButtonWithPermissions = props => {
   const { permissions, isLoading } = usePermissions(recordId);
   if (!isLoading && permissions?.some(p => rightsToDelete.includes(p['acl:mode']))) {
     return <DeleteButton {...props} />;
-  } else {
+  } 
     return null;
-  }
+  
 };
 
 export default DeleteButtonWithPermissions;

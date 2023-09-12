@@ -4,7 +4,7 @@ import fetchSparqlEndpoints from '../utils/fetchSparqlEndpoints';
 import findContainersWithPaths from '../utils/findContainersWithPath';
 
 const getListMethod = config => async (resourceId, params = {}) => {
-  let { dataServers, resources } = config;
+  const { dataServers, resources } = config;
   const dataModel = resources[resourceId];
 
   if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
@@ -28,9 +28,9 @@ const getListMethod = config => async (resourceId, params = {}) => {
 
   if (dataModel.list?.fetchContainer) {
     return fetchContainers(containers, resourceId, params, config);
-  } else {
+  } 
     return fetchSparqlEndpoints(containers, resourceId, params, config);
-  }
+  
 };
 
 export default getListMethod;

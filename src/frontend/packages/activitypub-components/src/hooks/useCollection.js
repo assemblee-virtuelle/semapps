@@ -12,7 +12,7 @@ const useCollection = predicateOrUrl => {
     if (predicateOrUrl) {
       if (predicateOrUrl.startsWith('http')) {
         return predicateOrUrl;
-      } else if (identity?.webIdData) {
+      } if (identity?.webIdData) {
         return identity?.webIdData?.[predicateOrUrl];
       }
     }

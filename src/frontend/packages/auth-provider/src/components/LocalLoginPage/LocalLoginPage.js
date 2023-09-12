@@ -1,15 +1,14 @@
-import React from 'react';
-import { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslate, useGetIdentity } from 'react-admin';
 import { Card, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
+import makeStyles from '@mui/styles/makeStyles';
 import SignupForm from './SignupForm';
 import LoginForm from './LoginForm';
 import NewPasswordForm from './NewPasswordForm';
 import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
-import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(() => ({
   switch: {
@@ -46,11 +45,11 @@ const LocalLoginPage = ({ hasSignup }) => {
     const [title, text] = useMemo(() => {
       if (isSignup) {
         return ['auth.action.signup', 'auth.helper.signup'];
-      } else if (isLogin) {
+      } if (isLogin) {
         return ['auth.action.login', 'auth.helper.login'];
-      } else if (isResetPassword) {
+      } if (isResetPassword) {
         return ['auth.action.reset_password', 'auth.helper.reset_password'];
-      } else if (isNewPassword) {
+      } if (isNewPassword) {
         return ['auth.action.set_new_password', 'auth.helper.set_new_password'];
       }
     }, [isSignup, isLogin, isResetPassword, isNewPassword]);
@@ -80,7 +79,7 @@ const LocalLoginPage = ({ hasSignup }) => {
                   </div>
                 }
                 <div>
-                  <Link to={'/login?reset_password=true&' + searchParams.toString()}>
+                  <Link to={`/login?reset_password=true&${  searchParams.toString()}`}>
                     <Typography variant="body2">{translate('auth.action.reset_password')}</Typography>
                   </Link>
                 </div>
