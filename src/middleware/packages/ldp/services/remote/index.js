@@ -15,7 +15,7 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    mirrorGraphName: null
+    mirrorGraphName: null,
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -28,7 +28,7 @@ module.exports = {
     store: storeAction,
     runCron() {
       this.updateSingleMirroredResources();
-    } // Used by tests
+    }, // Used by tests
   },
   methods: {
     isRemoteUri(uri, webId) {
@@ -38,12 +38,12 @@ module.exports = {
           webId &&
           webId !== 'anon' &&
           webId !== 'system' &&
-          !urlJoin(uri, '/').startsWith(webId + '/'))
+          !urlJoin(uri, '/').startsWith(`${webId}/`))
       );
     },
     async proxyAvailable() {
       const services = await this.broker.call('$node.services');
-      return services.some(s => s.name === 'signature.proxy');
+      return services.some((s) => s.name === 'signature.proxy');
     },
     async updateSingleMirroredResources() {
       if (!this.settings.podProvider) {
@@ -55,15 +55,15 @@ module.exports = {
                 ?s <http://semapps.org/ns/core#singleMirroredResource> ?o 
               }
             }
-          `
+          `,
         });
 
-        for (const resourceUri of singles.map(node => node.s.value)) {
+        for (const resourceUri of singles.map((node) => node.s.value)) {
           try {
             await this.actions.store({
               resourceUri,
               keepInSync: true,
-              mirrorGraph: true
+              mirrorGraph: true,
             });
           } catch (e) {
             if (e.code === 403 || e.code === 404 || e.code === 401) {
@@ -71,17 +71,17 @@ module.exports = {
             } else {
               // Connection errors are not counted as errors that indicate the resource is gone.
               // Those error just indicate that the remote server is not responding. Can be temporary.
-              this.logger.warn('Failed to update single mirrored resource: ' + resourceUri);
+              this.logger.warn(`Failed to update single mirrored resource: ${resourceUri}`);
             }
           }
         }
       }
-    }
+    },
   },
   jobs: [
     {
       rule: '0 * * * *',
-      handler: 'updateSingleMirroredResources'
-    }
-  ]
+      handler: 'updateSingleMirroredResources',
+    },
+  ],
 };

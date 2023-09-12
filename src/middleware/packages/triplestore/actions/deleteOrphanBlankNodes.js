@@ -3,12 +3,12 @@ module.exports = {
   params: {
     dataset: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     graphName: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
@@ -18,7 +18,7 @@ module.exports = {
       await this.actions.update(
         {
           query: `
-          ${graphName ? 'WITH <' + graphName + '>' : ''}
+          ${graphName ? `WITH <${graphName}>` : ''}
           DELETE {
             ?s ?p ?o .
           }
@@ -29,10 +29,10 @@ module.exports = {
           }
         `,
           webId: 'system',
-          dataset
+          dataset,
         },
-        { parentCtx: ctx }
+        { parentCtx: ctx },
       );
     }
-  }
+  },
 };

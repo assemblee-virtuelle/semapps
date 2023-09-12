@@ -7,15 +7,15 @@ const ActivityMappingService = {
   settings: {
     mappers: [],
     handlebars: {
-      helpers: {}
+      helpers: {},
     },
-    matchAnnouncedActivities: false
+    matchAnnouncedActivities: false,
   },
   async started() {
     this.mappers = [];
 
     for (const [name, fn] of Object.entries(this.settings.handlebars.helpers)) {
-      this.logger.info('Registering handlebars helper ' + name);
+      this.logger.info(`Registering handlebars helper ${name}`);
       Handlebars.registerHelper(name, fn);
     }
 
@@ -36,7 +36,7 @@ const ActivityMappingService = {
 
         activity = {
           actor: activity.actor, // Ensure the actor is defined
-          ...announcedActivity
+          ...announcedActivity,
         };
       }
 
@@ -57,7 +57,7 @@ const ActivityMappingService = {
               : {};
           } catch (e) {
             this.logger.warn(
-              `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
+              `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`,
             );
           }
 
@@ -68,15 +68,13 @@ const ActivityMappingService = {
               // If the value is a function, it is a Handlebar template
               if (typeof value === 'function') {
                 return [key, value(templateParams)];
-              } else {
-                // If we have an object with locales mapping, look for the right locale
-                if (value[locale]) {
-                  return [key, value[locale](templateParams)];
-                } else {
-                  throw new Error(`No ${locale} locale found for key ${key}`);
-                }
               }
-            })
+              // If we have an object with locales mapping, look for the right locale
+              if (value[locale]) {
+                return [key, value[locale](templateParams)];
+              }
+              throw new Error(`No ${locale} locale found for key ${key}`);
+            }),
           );
         }
       }
@@ -89,7 +87,7 @@ const ActivityMappingService = {
       this.mappers.push({
         match,
         mapping: this.compileObject(mapping),
-        priority
+        priority,
       });
 
       // Reorder cached mappings
@@ -97,7 +95,7 @@ const ActivityMappingService = {
     },
     getMappers() {
       return this.mappers;
-    }
+    },
   },
   methods: {
     matchActivity(ctx, pattern, activityOrObject) {
@@ -113,14 +111,13 @@ const ActivityMappingService = {
           Object.entries(object).map(([key, value]) => {
             if (typeof value === 'string') {
               return [key, Handlebars.compile(value)];
-            } else {
-              return [key, this.compileObject(value)];
             }
-          })
+            return [key, this.compileObject(value)];
+          }),
         )
       );
-    }
-  }
+    },
+  },
 };
 
 module.exports = ActivityMappingService;

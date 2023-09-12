@@ -4,7 +4,7 @@ const { getContainerFromUri } = require('../../../utils');
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: 'string'
+    resourceUri: 'string',
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
@@ -13,7 +13,7 @@ module.exports = {
     // Because we have chosen not to use a common dataset for this kind of data
     // So we use the soon-deprecated getContainerFromUri to find the container
     // TODO store actors in a proper LDP container, with its own dataset ?
-    if (this.settings.podProvider && getContainerFromUri(resourceUri) + '/' === this.settings.baseUrl) {
+    if (this.settings.podProvider && `${getContainerFromUri(resourceUri)}/` === this.settings.baseUrl) {
       return [getContainerFromUri(resourceUri)];
     }
 
@@ -26,9 +26,9 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId: 'system'
+      webId: 'system',
     });
 
-    return result.map(node => node.containerUri.value);
-  }
+    return result.map((node) => node.containerUri.value);
+  },
 };

@@ -1,5 +1,5 @@
-const { ACTIVITY_TYPES } = require('../constants');
 const { defaultToArray } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('../constants');
 
 /*
  * Match an activity against a pattern
@@ -12,11 +12,11 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
   if (typeof activityOrObject === 'string') {
     if (pattern.type && Object.values(ACTIVITY_TYPES).includes(pattern.type)) {
       dereferencedActivityOrObject = await ctx.call('activitypub.activity.get', {
-        resourceUri: activityOrObject
+        resourceUri: activityOrObject,
       });
     } else {
       dereferencedActivityOrObject = await ctx.call('activitypub.object.get', {
-        objectUri: activityOrObject
+        objectUri: activityOrObject,
       });
     }
   } else {
@@ -24,17 +24,15 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
     dereferencedActivityOrObject = { ...activityOrObject };
   }
 
-  for (let key of Object.keys(pattern)) {
+  for (const key of Object.keys(pattern)) {
     if (typeof pattern[key] === 'object' && !Array.isArray(pattern[key])) {
       dereferencedActivityOrObject[key] = await matchActivity(ctx, pattern[key], dereferencedActivityOrObject[key]);
       if (!dereferencedActivityOrObject[key]) return false;
-    } else {
-      if (
-        !dereferencedActivityOrObject[key] ||
-        !defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v))
-      )
-        return false;
-    }
+    } else if (
+      !dereferencedActivityOrObject[key] ||
+      !defaultToArray(dereferencedActivityOrObject[key]).some((v) => defaultToArray(pattern[key]).includes(v))
+    )
+      return false;
   }
 
   // We have a match ! Return the dereferenced object

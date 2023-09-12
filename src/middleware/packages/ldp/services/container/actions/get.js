@@ -5,7 +5,7 @@ const {
   buildBlankNodesQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
 } = require('../../../utils');
 
 module.exports = {

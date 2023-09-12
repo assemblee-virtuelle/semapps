@@ -4,8 +4,8 @@ const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
-const collectionUri = CONFIG.HOME_URL + 'my-collection';
-const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
+const collectionUri = `${CONFIG.HOME_URL}my-collection`;
+const orderedCollectionUri = `${CONFIG.HOME_URL}my-ordered-collection`;
 let broker;
 
 beforeAll(async () => {
@@ -16,22 +16,22 @@ afterAll(async () => {
 });
 
 describe('Handle collections', () => {
-  let items = [];
+  const items = [];
 
   test('Create ressources', async () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
-          containerUri: CONFIG.HOME_URL + 'objects',
+          containerUri: `${CONFIG.HOME_URL}objects`,
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
             name: `Note #${i}`,
             content: `Contenu de ma note #${i}`,
-            published: `2021-01-0${i}T00:00:00.000Z`
+            published: `2021-01-0${i}T00:00:00.000Z`,
           },
-          contentType: MIME_TYPES.JSON
-        })
+          contentType: MIME_TYPES.JSON,
+        }),
       );
     }
     expect(items).toHaveLength(10);
@@ -41,11 +41,11 @@ describe('Handle collections', () => {
     await broker.call('activitypub.collection.create', {
       collectionUri,
       ordered: false,
-      summary: 'My non-ordered collection'
+      summary: 'My non-ordered collection',
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {
-      collectionUri
+      collectionUri,
     });
 
     expect(collectionExist).toBeTruthy();
@@ -57,7 +57,7 @@ describe('Handle collections', () => {
       type: 'Collection',
       summary: 'My non-ordered collection',
       items: [],
-      totalItems: 0
+      totalItems: 0,
     });
   });
 
@@ -65,18 +65,18 @@ describe('Handle collections', () => {
     await broker.call('activitypub.collection.create', {
       collectionUri: orderedCollectionUri,
       ordered: true,
-      summary: 'My ordered collection'
+      summary: 'My ordered collection',
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {
-      collectionUri: orderedCollectionUri
+      collectionUri: orderedCollectionUri,
     });
 
     expect(collectionExist).toBeTruthy();
 
     const collection = await broker.call('activitypub.collection.get', {
       collectionUri: orderedCollectionUri,
-      sort: { predicate: 'as:published', order: 'DESC' }
+      sort: { predicate: 'as:published', order: 'DESC' },
     });
 
     expect(collection).toMatchObject({
@@ -84,18 +84,18 @@ describe('Handle collections', () => {
       type: 'OrderedCollection',
       summary: 'My ordered collection',
       orderedItems: [],
-      totalItems: 0
+      totalItems: 0,
     });
   });
 
   test('Attach item to collection', async () => {
     await broker.call('activitypub.collection.attach', {
       collectionUri,
-      item: items[0]
+      item: items[0],
     });
 
     let collection = await broker.call('activitypub.collection.get', {
-      collectionUri
+      collectionUri,
     });
 
     expect(collection).toMatchObject({
@@ -103,12 +103,12 @@ describe('Handle collections', () => {
       type: 'Collection',
       summary: 'My non-ordered collection',
       items: [items[0]],
-      totalItems: 1
+      totalItems: 1,
     });
 
     collection = await broker.call('activitypub.collection.get', {
       collectionUri,
-      dereferenceItems: true
+      dereferenceItems: true,
     });
 
     expect(collection).toMatchObject({
@@ -120,21 +120,21 @@ describe('Handle collections', () => {
           id: items[0],
           type: 'Note',
           content: 'Contenu de ma note #0',
-          name: 'Note #0'
-        }
+          name: 'Note #0',
+        },
       ],
-      totalItems: 1
+      totalItems: 1,
     });
   });
 
   test('Detach item from collection', async () => {
     await broker.call('activitypub.collection.detach', {
       collectionUri,
-      item: items[0]
+      item: items[0],
     });
 
     const collection = await broker.call('activitypub.collection.get', {
-      collectionUri
+      collectionUri,
     });
 
     expect(collection).toMatchObject({
@@ -142,51 +142,51 @@ describe('Handle collections', () => {
       type: 'Collection',
       summary: 'My non-ordered collection',
       items: [],
-      totalItems: 0
+      totalItems: 0,
     });
   });
 
   test('Handle order', async () => {
     await broker.call('activitypub.collection.attach', {
       collectionUri: orderedCollectionUri,
-      item: items[4]
+      item: items[4],
     });
 
     await broker.call('activitypub.collection.attach', {
       collectionUri: orderedCollectionUri,
-      item: items[0]
+      item: items[0],
     });
 
     await broker.call('activitypub.collection.attach', {
       collectionUri: orderedCollectionUri,
-      item: items[2]
+      item: items[2],
     });
 
     await broker.call('activitypub.collection.attach', {
       collectionUri: orderedCollectionUri,
-      item: items[6]
+      item: items[6],
     });
 
     let collection = await broker.call('activitypub.collection.get', {
       collectionUri: orderedCollectionUri,
-      sort: { predicate: 'as:published', order: 'DESC' }
+      sort: { predicate: 'as:published', order: 'DESC' },
     });
 
     expect(collection).toMatchObject({
       id: orderedCollectionUri,
       orderedItems: [items[6], items[4], items[2], items[0]],
-      totalItems: 4
+      totalItems: 4,
     });
 
     collection = await broker.call('activitypub.collection.get', {
       collectionUri: orderedCollectionUri,
-      sort: { predicate: 'as:published', order: 'ASC' }
+      sort: { predicate: 'as:published', order: 'ASC' },
     });
 
     expect(collection).toMatchObject({
       id: orderedCollectionUri,
       orderedItems: [items[0], items[2], items[4], items[6]],
-      totalItems: 4
+      totalItems: 4,
     });
   });
 
@@ -194,35 +194,35 @@ describe('Handle collections', () => {
     for (let i = 0; i < 10; i++) {
       await broker.call('activitypub.collection.attach', {
         collectionUri,
-        item: items[i]
+        item: items[i],
       });
     }
 
     let collection = await broker.call('activitypub.collection.get', {
       collectionUri,
-      itemsPerPage: 4
+      itemsPerPage: 4,
     });
 
     expect(collection).toMatchObject({
       id: collectionUri,
-      first: collectionUri + '?page=1',
-      last: collectionUri + '?page=3',
-      totalItems: 10
+      first: `${collectionUri}?page=1`,
+      last: `${collectionUri}?page=3`,
+      totalItems: 10,
     });
 
     collection = await broker.call('activitypub.collection.get', {
       collectionUri,
       itemsPerPage: 4,
-      page: 1
+      page: 1,
     });
 
     expect(collection).toMatchObject({
-      id: collectionUri + '?page=1',
+      id: `${collectionUri}?page=1`,
       type: 'CollectionPage',
       partOf: collectionUri,
       prev: undefined,
-      next: collectionUri + '?page=2',
-      totalItems: 10
+      next: `${collectionUri}?page=2`,
+      totalItems: 10,
     });
     expect(collection.items).toHaveLength(4);
   });

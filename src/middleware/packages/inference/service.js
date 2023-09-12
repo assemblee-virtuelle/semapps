@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
+
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 const RemoteService = require('./subservices/remote');
@@ -10,7 +11,7 @@ module.exports = {
     baseUrl: null,
     acceptFromRemoteServers: false,
     offerToRemoteServers: false,
-    ontologies: []
+    ontologies: [],
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
@@ -20,14 +21,14 @@ module.exports = {
         settings: {
           baseUrl,
           acceptFromRemoteServers,
-          offerToRemoteServers
-        }
+          offerToRemoteServers,
+        },
       });
     }
   },
   async started() {
     this.inverseRelations = {};
-    for (let ontology of this.settings.ontologies) {
+    for (const ontology of this.settings.ontologies) {
       if (ontology.owl) {
         const result = await this.findInverseRelations(ontology.owl);
         this.logger.info(`Found ${Object.keys(result).length} inverse relations in ${ontology.owl}`);
@@ -40,11 +41,11 @@ module.exports = {
       const parser = new N3.Parser({ format: 'Turtle' });
       return new Promise((resolve, reject) => {
         fetch(owlFile)
-          .then(res => {
-            if (!res.ok) throw new Error('Unable to fetch ' + owlFile);
+          .then((res) => {
+            if (!res.ok) throw new Error(`Unable to fetch ${owlFile}`);
             return res.text();
           })
-          .then(body => {
+          .then((body) => {
             const rel = {};
             parser.parse(body, (err, quad) => {
               if (err) reject(err);
@@ -64,18 +65,18 @@ module.exports = {
               }
             });
           })
-          .catch(err => reject(err));
+          .catch((err) => reject(err));
       });
     },
     generateInverseTriplesFromResource(resource) {
-      let inverseTriples = [];
+      const inverseTriples = [];
       for (const property of Object.keys(resource)) {
         if (this.inverseRelations[property]) {
           for (const uri of resource[property]) {
             // uri['@id'] can be undefined if context bad configuration ("@type": "@id" not configured for property)
             if (uri['@id']) {
               inverseTriples.push(
-                triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id']))
+                triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id'])),
               );
             }
           }
@@ -84,7 +85,7 @@ module.exports = {
       return inverseTriples;
     },
     generateInverseTriples(triples) {
-      let inverseTriples = [];
+      const inverseTriples = [];
       if (triples) {
         for (const t of triples) {
           if (this.inverseRelations[t.predicate.value]) {
@@ -92,8 +93,8 @@ module.exports = {
               triple(
                 namedNode(t.object.value),
                 namedNode(this.inverseRelations[t.predicate.value]),
-                namedNode(t.subject.value)
-              )
+                namedNode(t.subject.value),
+              ),
             );
           }
         }
@@ -102,7 +103,7 @@ module.exports = {
     },
     triplesToString(triples) {
       return triples
-        .map(triple => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
+        .map((triple) => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
         .join('\n');
     },
     generateInsertQuery(triples) {
@@ -115,24 +116,24 @@ module.exports = {
     // we need to invalidate manually the cache of the affected resources
     cleanResourcesCache(ctx, triples) {
       if (this.broker.cacher) {
-        for (let triple of triples) {
+        for (const triple of triples) {
           const resourceUri = triple.subject.id;
           ctx.call('ldp.cache.invalidateResource', { resourceUri });
         }
       }
     },
     splitLocalAndRemote(triples) {
-      let locals = [];
-      let remotes = [];
-      for (let triple of triples) {
+      const locals = [];
+      const remotes = [];
+      for (const triple of triples) {
         if (triple.subject.id.startsWith(this.settings.baseUrl)) locals.push(triple);
         else remotes.push(triple);
       }
       return [locals, remotes];
     },
     async filterMissingResources(ctx, triples) {
-      let existingTriples = [];
-      for (let triple of triples) {
+      const existingTriples = [];
+      for (const triple of triples) {
         const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri: triple.subject.id, webId: 'system' });
         if (resourceExist) existingTriples.push(triple);
       }
@@ -140,8 +141,8 @@ module.exports = {
     },
     // Exclude from triples1 the triples which also exist in triples2
     getTriplesDifference(triples1, triples2) {
-      return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
-    }
+      return triples1.filter((t1) => !triples2.some((t2) => t1.equals(t2)));
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -150,7 +151,7 @@ module.exports = {
 
       let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
-      let [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
+      const [addLocals, addRemotes] = this.splitLocalAndRemote(triplesToAdd);
 
       // Avoid adding inverse link to non-existent resources
       triplesToAdd = await this.filterMissingResources(ctx, addLocals);
@@ -163,12 +164,12 @@ module.exports = {
 
       // remote data
       if (this.settings.offerToRemoteServers) {
-        for (let triple of addRemotes) {
+        for (const triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true
+            add: true,
           });
         }
       }
@@ -177,9 +178,9 @@ module.exports = {
       let { oldData } = ctx.params;
       oldData = await ctx.call('jsonld.expand', { input: oldData });
 
-      let triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
+      const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
 
-      let [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
+      const [removeLocals, removeRemotes] = this.splitLocalAndRemote(triplesToRemove);
 
       if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', { query: this.generateDeleteQuery(removeLocals), webId: 'system' });
@@ -188,12 +189,12 @@ module.exports = {
 
       // remote data
       if (this.settings.offerToRemoteServers) {
-        for (let triple of removeRemotes) {
+        for (const triple of removeRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false
+            add: false,
           });
         }
       }
@@ -203,12 +204,12 @@ module.exports = {
       oldData = await ctx.call('jsonld.expand', { input: oldData });
       newData = await ctx.call('jsonld.expand', { input: newData });
 
-      let triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
-      let triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
+      const triplesToRemove = this.generateInverseTriplesFromResource(oldData[0]);
+      const triplesToAdd = this.generateInverseTriplesFromResource(newData[0]);
 
       // Filter out triples which are removed and added at the same time
-      let filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
-      let filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
+      const filteredTriplesToAdd = this.getTriplesDifference(triplesToAdd, triplesToRemove);
+      const filteredTriplesToRemove = this.getTriplesDifference(triplesToRemove, triplesToAdd);
 
       let [addLocals, addRemotes] = this.splitLocalAndRemote(filteredTriplesToAdd);
       const [removeLocals, removeRemotes] = this.splitLocalAndRemote(filteredTriplesToRemove);
@@ -221,7 +222,7 @@ module.exports = {
       if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateDeleteQuery(removeLocals),
-          webId: 'system'
+          webId: 'system',
         });
         this.cleanResourcesCache(ctx, removeLocals);
       }
@@ -229,7 +230,7 @@ module.exports = {
       if (addLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateInsertQuery(addLocals),
-          webId: 'system'
+          webId: 'system',
         });
         this.cleanResourcesCache(ctx, addLocals);
       }
@@ -238,20 +239,20 @@ module.exports = {
 
       // remote relationships are sent to relay actor of remote server
       if (this.settings.offerToRemoteServers) {
-        for (let triple of addRemotes) {
+        for (const triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true
+            add: true,
           });
         }
-        for (let triple of removeRemotes) {
+        for (const triple of removeRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false
+            add: false,
           });
         }
       }
@@ -273,7 +274,7 @@ module.exports = {
       if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateDeleteQuery(removeLocals),
-          webId: 'system'
+          webId: 'system',
         });
         this.cleanResourcesCache(ctx, removeLocals);
       }
@@ -281,7 +282,7 @@ module.exports = {
       if (addLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateInsertQuery(addLocals),
-          webId: 'system'
+          webId: 'system',
         });
         this.cleanResourcesCache(ctx, addLocals);
       }
@@ -290,23 +291,23 @@ module.exports = {
 
       // remote relationships are sent to relay actor of remote server
       if (this.settings.offerToRemoteServers) {
-        for (let triple of addRemotes) {
+        for (const triple of addRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true
+            add: true,
           });
         }
-        for (let triple of removeRemotes) {
+        for (const triple of removeRemotes) {
           await this.broker.call('inference.remote.offerInference', {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false
+            add: false,
           });
         }
       }
-    }
-  }
+    },
+  },
 };

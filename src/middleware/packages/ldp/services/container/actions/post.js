@@ -75,10 +75,10 @@ module.exports = {
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
           resource: {
             '@id': resourceUri,
-            ...resource
+            ...resource,
           },
           contentType,
-          webId
+          webId,
         });
       }
     } catch (e) {

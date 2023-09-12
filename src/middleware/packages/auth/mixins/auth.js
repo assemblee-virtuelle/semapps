@@ -12,19 +12,19 @@ const AuthMixin = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
-    accountsDataset: 'settings'
+    accountsDataset: 'settings',
   },
   dependencies: ['api', 'webid'],
   async created() {
     const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
-      settings: { jwtPath }
+      settings: { jwtPath },
     });
 
     await this.broker.createService(AuthAccountService, {
       settings: { reservedUsernames },
-      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
+      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset }),
     });
   },
   async started() {
@@ -42,7 +42,7 @@ const AuthMixin = {
 
     this.passport.use(this.passportId, this.strategy);
 
-    for (let route of this.getApiRoutes()) {
+    for (const route of this.getApiRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
   },
@@ -58,17 +58,15 @@ const AuthMixin = {
           ctx.meta.tokenPayload = payload;
           ctx.meta.webId = payload.webId;
           return Promise.resolve(payload);
-        } else {
-          // Invalid token
-          // TODO make sure token is deleted client-side
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
-      } else {
-        // No token
+        // Invalid token
+        // TODO make sure token is deleted client-side
         ctx.meta.webId = 'anon';
-        return Promise.resolve(null);
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
+      // No token
+      ctx.meta.webId = 'anon';
+      return Promise.resolve(null);
     },
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authorization
     async authorize(ctx) {
@@ -81,23 +79,21 @@ const AuthMixin = {
           ctx.meta.tokenPayload = payload;
           ctx.meta.webId = payload.webId;
           return Promise.resolve(payload);
-        } else {
-          ctx.meta.webId = 'anon';
-          return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
         }
-      } else {
         ctx.meta.webId = 'anon';
-        return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+        return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
       }
+      ctx.meta.webId = 'anon';
+      return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
     },
     async impersonate(ctx) {
       const { webId } = ctx.params;
       return await ctx.call('auth.jwt.generateToken', {
         payload: {
-          webId
-        }
+          webId,
+        },
       });
-    }
+    },
   },
   methods: {
     getStrategy() {
@@ -108,21 +104,21 @@ const AuthMixin = {
     },
     pickWebIdData(data) {
       if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
-      } else {
-        return data;
+        return Object.fromEntries(
+          this.settings.webIdSelection.filter((key) => key in data).map((key) => [key, data[key]]),
+        );
       }
+      return data;
     },
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
         return Object.fromEntries(
-          this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
+          this.settings.accountSelection.filter((key) => key in data).map((key) => [key, data[key]]),
         );
-      } else {
-        return data || {};
       }
-    }
-  }
+      return data || {};
+    },
+  },
 };
 
 module.exports = AuthMixin;

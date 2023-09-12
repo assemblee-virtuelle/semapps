@@ -9,7 +9,7 @@ module.exports = {
     baseUrl: null,
     graphName: 'http://semapps.org/webacl',
     podProvider: false,
-    superAdmins: []
+    superAdmins: [],
   },
   dependencies: ['api'],
   async created() {
@@ -19,8 +19,8 @@ module.exports = {
       settings: {
         baseUrl,
         graphName,
-        podProvider
-      }
+        podProvider,
+      },
     });
 
     await this.broker.createService(WebAclGroupService, {
@@ -28,8 +28,8 @@ module.exports = {
         baseUrl,
         graphName,
         podProvider,
-        superAdmins
-      }
+        superAdmins,
+      },
     });
 
     // Only create this service if a cacher is defined
@@ -46,20 +46,20 @@ module.exports = {
       try {
         await this.broker.call('triplestore.query', {
           query: `ASK WHERE { GRAPH <${this.settings.graphName}> { ?s ?p ?o } }`,
-          webId: 'anon'
+          webId: 'anon',
         });
       } catch (e) {
         if (e.code === 403) hasWebAcl = true;
       }
       if (!hasWebAcl) {
         throw new Error(
-          'Error when starting the webAcl service: the main dataset is not secure. You must use the triplestore.dataset.create action with the `secure: true` param'
+          'Error when starting the webAcl service: the main dataset is not secure. You must use the triplestore.dataset.create action with the `secure: true` param',
         );
       }
     }
 
-    for (let route of getRoutes()) {
+    for (const route of getRoutes()) {
       await this.broker.call('api.addRoute', { route });
     }
-  }
+  },
 };

@@ -1,5 +1,6 @@
-const JsonLdSerializer = require('jsonld-streaming-serializer').JsonLdSerializer;
+const { JsonLdSerializer } = require('jsonld-streaming-serializer');
 const { DataFactory, Writer } = require('n3');
+
 const { quad } = DataFactory;
 const urlJoin = require('url-join');
 const { MIME_TYPES } = require('@semapps/mime-types');
@@ -12,92 +13,91 @@ const {
   findParentContainers,
   filterAgentAcl,
   getAclUriFromResourceUri,
-  getUserAgentSearchParam
+  getUserAgentSearchParam,
 } = require('../../../utils');
 
 const prefixes = {
   acl: 'http://www.w3.org/ns/auth/acl#',
-  foaf: 'http://xmlns.com/foaf/0.1/'
+  foaf: 'http://xmlns.com/foaf/0.1/',
 };
 
 const webAclContext = {
   ...prefixes,
   'acl:accessTo': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agentClass': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agent': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:agentGroup': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:default': {
-    '@type': '@id'
+    '@type': '@id',
   },
   'acl:mode': {
-    '@type': '@id'
-  }
+    '@type': '@id',
+  },
 };
 
 function streamToString(stream) {
   let res = '';
   return new Promise((resolve, reject) => {
-    stream.on('data', chunk => (res += chunk));
-    stream.on('error', err => reject(err));
+    stream.on('data', (chunk) => (res += chunk));
+    stream.on('error', (err) => reject(err));
     stream.on('end', () => resolve(res));
   });
 }
 
 async function formatOutput(ctx, output, resourceAclUri, jsonLD) {
-  let turtle = await new Promise((resolve, reject) => {
+  const turtle = await new Promise((resolve, reject) => {
     const writer = new Writer({
-      prefixes: { ...prefixes, '': resourceAclUri + '#' },
-      format: 'Turtle'
+      prefixes: { ...prefixes, '': `${resourceAclUri}#` },
+      format: 'Turtle',
     });
-    output.forEach(f => writer.addQuad(f.auth, f.p, f.o));
+    output.forEach((f) => writer.addQuad(f.auth, f.p, f.o));
     writer.end((error, res) => {
       resolve(res);
     });
   });
 
   if (!jsonLD) return turtle;
-  else {
-    const mySerializer = new JsonLdSerializer({
-      context: webAclContext,
-      baseIRI: resourceAclUri
-    });
 
-    output.forEach(f => mySerializer.write(quad(f.auth, f.p, f.o)));
-    mySerializer.end();
+  const mySerializer = new JsonLdSerializer({
+    context: webAclContext,
+    baseIRI: resourceAclUri,
+  });
 
-    let jsonLd = JSON.parse(await streamToString(mySerializer));
+  output.forEach((f) => mySerializer.write(quad(f.auth, f.p, f.o)));
+  mySerializer.end();
 
-    let compactJsonLd = await ctx.call('jsonld.frame', {
-      input: jsonLd,
-      frame: {
-        '@context': webAclContext,
-        '@type': 'acl:Authorization'
-      },
-      // Force results to be in a @graph, even if we have a single result
-      options: { omitGraph: false }
-    });
+  const jsonLd = JSON.parse(await streamToString(mySerializer));
 
-    // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
-    compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': resourceAclUri };
+  const compactJsonLd = await ctx.call('jsonld.frame', {
+    input: jsonLd,
+    frame: {
+      '@context': webAclContext,
+      '@type': 'acl:Authorization',
+    },
+    // Force results to be in a @graph, even if we have a single result
+    options: { omitGraph: false },
+  });
 
-    return compactJsonLd;
-  }
+  // Add the @base context. We did not use it in the frame operation, as we don't want URIs to become relative
+  compactJsonLd['@context'] = { ...compactJsonLd['@context'], '@base': resourceAclUri };
+
+  return compactJsonLd;
 }
 
 async function filterAcls(hasControl, uaSearchParam, acls) {
   if (hasControl || uaSearchParam.system) return acls;
 
-  let filtered = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, false));
+  const filtered = acls.filter((acl) => filterAgentAcl(acl, uaSearchParam, false));
   if (filtered.length) {
-    let header = acls.filter(acl => filterAgentAcl(acl, uaSearchParam, true));
+    const header = acls.filter((acl) => filterAgentAcl(acl, uaSearchParam, true));
     return header.concat(filtered);
   }
 
@@ -105,9 +105,9 @@ async function filterAcls(hasControl, uaSearchParam, acls) {
 }
 
 async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isContainer) {
-  let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
-  let controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
-  let uaSearchParam = getUserAgentSearchParam(user);
+  const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+  const controls = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Control', graphName);
+  const uaSearchParam = getUserAgentSearchParam(user);
   let hasControl = checkAgentPresent(controls, uaSearchParam);
   let groups;
 
@@ -121,41 +121,41 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
 
   // we continue to search for control perms, now in the parent containers (but we take everything anyway)
 
-  let parentContainers = await findParentContainers(ctx, resourceUri);
-  let containersMap = {};
+  const parentContainers = await findParentContainers(ctx, resourceUri);
+  const containersMap = {};
 
   while (parentContainers.length) {
-    let container = parentContainers.shift();
-    let containerUri = container.container.value;
-    let aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
-    let containerControls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
+    const container = parentContainers.shift();
+    const containerUri = container.container.value;
+    const aclUri = getAclUriFromResourceUri(baseUrl, containerUri);
+    const containerControls = await getAuthorizationNode(ctx, containerUri, aclUri, 'Control', graphName, true);
 
     if (!hasControl) {
       hasControl = checkAgentPresent(containerControls, uaSearchParam);
     }
 
-    let reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
-    let writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
-    let appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
+    const reads = await getAuthorizationNode(ctx, containerUri, aclUri, 'Read', graphName, true);
+    const writes = await getAuthorizationNode(ctx, containerUri, aclUri, 'Write', graphName, true);
+    const appends = await getAuthorizationNode(ctx, containerUri, aclUri, 'Append', graphName, true);
 
     // we keep all the authorization nodes we found
     containersMap[containerUri] = {
       reads,
       writes,
       appends,
-      controls: containerControls
+      controls: containerControls,
     };
 
-    let moreParentContainers = await findParentContainers(ctx, containerUri);
+    const moreParentContainers = await findParentContainers(ctx, containerUri);
     parentContainers.push(...moreParentContainers);
   }
 
   // we finish to get all the ACLs for the resource itself
-  let reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
-  let writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
-  let appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
+  const reads = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName);
+  const writes = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName);
+  const appends = await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Append', graphName);
 
-  let document = [];
+  const document = [];
 
   document.push(...(await filterAcls(hasControl, uaSearchParam, reads)));
   document.push(...(await filterAcls(hasControl, uaSearchParam, writes)));
@@ -181,18 +181,18 @@ async function getPermissions(ctx, resourceUri, baseUrl, user, graphName, isCont
 
 module.exports = {
   api: async function api(ctx) {
-    const accept = ctx.meta.headers.accept;
-    let slugParts = ctx.params.slugParts;
+    const { accept } = ctx.meta.headers;
+    let { slugParts } = ctx.params;
 
     if (accept && accept !== MIME_TYPES.JSON && accept !== MIME_TYPES.TURTLE)
-      throw new MoleculerError('Accept not supported : ' + accept, 400, 'ACCEPT_NOT_SUPPORTED');
+      throw new MoleculerError(`Accept not supported : ${accept}`, 400, 'ACCEPT_NOT_SUPPORTED');
 
     // This is the root container
     if (!slugParts || slugParts.length === 0) slugParts = ['/'];
 
     return await ctx.call('webacl.resource.getRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      accept: accept
+      accept: accept,
     });
   },
   action: {
@@ -201,10 +201,10 @@ module.exports = {
       resourceUri: { type: 'string' },
       accept: { type: 'string', optional: true },
       webId: { type: 'string', optional: true },
-      skipResourceCheck: { type: 'boolean', default: false }
+      skipResourceCheck: { type: 'boolean', default: false },
     },
     cache: {
-      keys: ['resourceUri', 'accept', 'webId', '#webId']
+      keys: ['resourceUri', 'accept', 'webId', '#webId'],
     },
     async handler(ctx) {
       let { resourceUri, webId, accept, skipResourceCheck } = ctx.params;
@@ -216,6 +216,6 @@ module.exports = {
       const isContainer = !skipResourceCheck && (await this.checkResourceOrContainerExists(ctx, resourceUri));
 
       return await getPermissions(ctx, resourceUri, this.settings.baseUrl, webId, this.settings.graphName, isContainer);
-    }
-  }
+    },
+  },
 };

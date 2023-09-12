@@ -4,7 +4,7 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -18,14 +18,14 @@ module.exports = {
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         ASK
         WHERE { 
-          ${isRemoteContainer ? 'GRAPH <' + this.settings.mirrorGraphName + '> {' : ''}
+          ${isRemoteContainer ? `GRAPH <${this.settings.mirrorGraphName}> {` : ''}
           ?container a ldp:Container .
-          FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
+          FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .
           ${isRemoteContainer ? '}' : ''}
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId
+      webId,
     });
-  }
+  },
 };

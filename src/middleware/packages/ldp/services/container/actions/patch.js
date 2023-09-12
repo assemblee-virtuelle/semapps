@@ -1,6 +1,7 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { isMirror } = require('../../../utils');
 const SparqlParser = require('sparqljs').Parser;
+
 const parser = new SparqlParser();
 
 module.exports = {

@@ -7,10 +7,10 @@ const WebIdService = {
     baseUrl: null,
     usersContainer: null,
     context: {
-      foaf: 'http://xmlns.com/foaf/0.1/'
+      foaf: 'http://xmlns.com/foaf/0.1/',
     },
     defaultAccept: 'text/turtle',
-    podProvider: false
+    podProvider: false,
   },
   dependencies: ['ldp.resource'],
   actions: {
@@ -28,14 +28,14 @@ const WebIdService = {
 
       const resource = {
         '@context': {
-          '@vocab': 'http://xmlns.com/foaf/0.1/'
+          '@vocab': 'http://xmlns.com/foaf/0.1/',
         },
         '@type': 'Person',
         nick,
         email,
         name,
         familyName,
-        homepage
+        homepage,
       };
 
       // Create profile with system webId
@@ -45,10 +45,10 @@ const WebIdService = {
         await ctx.call('ldp.resource.create', {
           resource: {
             '@id': webId,
-            ...resource
+            ...resource,
           },
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
       } else {
         if (!this.settings.usersContainer) throw new Error('The usersContainer setting is required');
@@ -57,15 +57,15 @@ const WebIdService = {
           slug: nick,
           containerUri: this.settings.usersContainer,
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
       }
 
-      let newPerson = await ctx.call('ldp.resource.get', {
+      const newPerson = await ctx.call('ldp.resource.get', {
         resourceUri: webId,
         accept: MIME_TYPES.JSON,
         jsonContext: this.settings.context,
-        webId: 'system'
+        webId: 'system',
       });
 
       ctx.emit('webid.created', newPerson, { meta: { webId: null, dataset: null } });
@@ -79,44 +79,43 @@ const WebIdService = {
           resourceUri: webId,
           accept: MIME_TYPES.JSON,
           jsonContext: this.settings.context,
-          webId
+          webId,
         });
-      } else {
-        ctx.meta.$statusCode = 404;
       }
+      ctx.meta.$statusCode = 404;
     },
     async edit(ctx) {
-      let { userId, ...profileData } = ctx.params;
+      const { userId, ...profileData } = ctx.params;
       const webId = await this.getWebId(ctx);
       return await ctx.call('ldp.resource.put', {
         resource: {
           '@context': {
-            '@vocab': 'http://xmlns.com/foaf/0.1/'
+            '@vocab': 'http://xmlns.com/foaf/0.1/',
           },
           '@type': 'Person',
           '@id': webId,
-          ...profileData
+          ...profileData,
         },
         webId,
         contentType: MIME_TYPES.JSON,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
       });
-    }
+    },
   },
   methods: {
     async getWebId(ctx) {
       if (ctx.params.userId) {
         // If an userId is specified, use it to find the webId
         return this.settings.usersContainer + ctx.params.userId;
-      } else if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
-        return ctx.meta.webId || ctx.meta.tokenPayload.webId;
-      } else {
-        throw new Error(
-          'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId'
-        );
       }
-    }
-  }
+      if (ctx.meta.webId || ctx.meta.tokenPayload.webId) {
+        return ctx.meta.webId || ctx.meta.tokenPayload.webId;
+      }
+      throw new Error(
+        'webid.getWebId have to be call with ctx.params.userId or ctx.meta.webId or ctx.meta.tokenPayload.webId',
+      );
+    },
+  },
 };
 
 module.exports = WebIdService;

@@ -3,13 +3,13 @@ const matchActivity = require('../utils/matchActivity');
 const ActivitiesHandlerMixin = {
   started() {
     if (!this.schema.activities || this.schema.activities.length === 0) {
-      throw new Error('ActivitiesHandlerMixin: no activities defined in the service ' + this.name);
+      throw new Error(`ActivitiesHandlerMixin: no activities defined in the service ${this.name}`);
     }
   },
   methods: {
     matchActivity(ctx, pattern, activityOrObject) {
       return matchActivity(ctx, pattern, activityOrObject);
-    }
+    },
   },
   events: {
     async 'activitypub.outbox.posted'(ctx) {
@@ -38,7 +38,7 @@ const ActivitiesHandlerMixin = {
             // We don't use the activitypub.inbox.received event since we have a match, and because activitypub.inbox.received is sent immediately
             if (activityHandler.onReceive) {
               const localRecipients = await ctx.call('activitypub.activity.getLocalRecipients', { activity });
-              for (let recipientUri of localRecipients) {
+              for (const recipientUri of localRecipients) {
                 ctx.meta.webId = recipientUri;
                 ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
                 this.logger.info(`Reception of activity "${key}" by ${recipientUri} detected`);
@@ -55,7 +55,7 @@ const ActivitiesHandlerMixin = {
       if (!local) {
         for (const [key, activityHandler] of Object.entries(this.schema.activities)) {
           if (activityHandler.onReceive) {
-            for (let recipientUri of recipients) {
+            for (const recipientUri of recipients) {
               ctx.meta.webId = recipientUri;
               ctx.meta.dataset = await ctx.call('auth.account.findDatasetByWebId', { webId: recipientUri });
 
@@ -73,8 +73,8 @@ const ActivitiesHandlerMixin = {
           }
         }
       }
-    }
-  }
+    },
+  },
 };
 
 module.exports = ActivitiesHandlerMixin;

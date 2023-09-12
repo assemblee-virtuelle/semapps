@@ -6,7 +6,7 @@ const ObjectService = {
   name: 'activitypub.object',
   settings: {
     baseUri: null,
-    podProvider: false
+    podProvider: false,
   },
   dependencies: ['ldp.resource'],
   actions: {
@@ -20,11 +20,11 @@ const ObjectService = {
         resourceUri: objectUri,
         webId: actorUri,
         ...rest,
-        accept: MIME_TYPES.JSON
+        accept: MIME_TYPES.JSON,
       });
     },
     async awaitCreateComplete(ctx) {
-      let { objectUri, predicates } = ctx.params;
+      const { objectUri, predicates } = ctx.params;
       let object;
       do {
         if (object) await delay(1000); // Delay only on second loop
@@ -33,28 +33,28 @@ const ObjectService = {
           {
             resourceUri: objectUri,
             accept: MIME_TYPES.JSON,
-            webId: 'system'
+            webId: 'system',
           },
-          { meta: { $cache: false } }
+          { meta: { $cache: false } },
         );
-      } while (!predicates.every(p => Object.keys(object).includes(p)));
+      } while (!predicates.every((p) => Object.keys(object).includes(p)));
       return object;
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
-      let activityType = activity.type || activity['@type'],
-        objectUri;
+      let activityType = activity.type || activity['@type'];
+      let objectUri;
 
       // If an object is passed directly, first wrap it in a Create activity
       if (Object.values(OBJECT_TYPES).includes(activityType)) {
-        let { to, '@id': id, ...object } = activity;
+        const { to, '@id': id, ...object } = activity;
         activityType = ACTIVITY_TYPES.CREATE;
         activity = {
           '@context': object['@context'],
           type: activityType,
           to,
           actor: object.attributedTo,
-          object
+          object,
         };
       }
 
@@ -64,13 +64,14 @@ const ObjectService = {
           if (typeof activity.object === 'string') break;
 
           const container = await ctx.call('ldp.registry.getByType', {
-            type: activity.object.type || activity.object['@type']
+            type: activity.object.type || activity.object['@type'],
           });
 
           if (!container)
             throw new Error(
-              `Cannot create resource of type "${activity.object.type ||
-                activity.object['@type']}", no matching containers were found!`
+              `Cannot create resource of type "${
+                activity.object.type || activity.object['@type']
+              }", no matching containers were found!`,
             );
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
@@ -80,7 +81,7 @@ const ObjectService = {
             slug: ctx.meta.headers && ctx.meta.headers.slug,
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
-            webId: actorUri
+            webId: actorUri,
           });
           break;
         }
@@ -92,7 +93,7 @@ const ObjectService = {
           await ctx.call('ldp.resource.put', {
             resource: activity.object,
             contentType: MIME_TYPES.JSON,
-            webId: actorUri
+            webId: actorUri,
           });
           objectUri = activity.object['@id'] || activity.object.id;
           break;
@@ -102,7 +103,7 @@ const ObjectService = {
           // TODO ensure that this is not an announcement (like for Update and Create)
           await ctx.call('ldp.resource.delete', {
             resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
-            webId: actorUri
+            webId: actorUri,
           });
           break;
         }
@@ -114,14 +115,14 @@ const ObjectService = {
           {
             resourceUri: objectUri,
             accept: MIME_TYPES.JSON,
-            webId: actorUri
+            webId: actorUri,
           },
-          { meta: { $cache: false } }
+          { meta: { $cache: false } },
         );
       }
 
       return activity;
-    }
+    },
     // TODO handle Tombstones, also when we post directly through the LDP protocol ?
     // async create(ctx) {
     //   // If there is already a tombstone in the desired URI,
@@ -163,8 +164,8 @@ const ObjectService = {
   methods: {
     isLocal(uri) {
       return uri.startsWith(this.settings.baseUri);
-    }
-  }
+    },
+  },
 };
 
 module.exports = ObjectService;

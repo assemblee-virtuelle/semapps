@@ -7,7 +7,7 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const { resourceUri, accept } = ctx.params;
@@ -23,20 +23,17 @@ module.exports = {
         url: resourceUri,
         method: 'GET',
         headers,
-        actorUri: webId
+        actorUri: webId,
       });
       return body;
-    } else {
-      const response = await fetch(resourceUri, { headers });
-      if (response.ok) {
-        if (accept === MIME_TYPES.JSON) {
-          return await response.json();
-        } else {
-          return await response.text();
-        }
-      } else {
-        throw new MoleculerError(response.statusText, response.status);
-      }
     }
-  }
+    const response = await fetch(resourceUri, { headers });
+    if (response.ok) {
+      if (accept === MIME_TYPES.JSON) {
+        return await response.json();
+      }
+      return await response.text();
+    }
+    throw new MoleculerError(response.statusText, response.status);
+  },
 };

@@ -10,19 +10,19 @@ const WebhooksService = {
   settings: {
     containerUri: null,
     allowedActions: [],
-    context: { '@vocab': 'http://semapps.org/ns/core#' }
+    context: { '@vocab': 'http://semapps.org/ns/core#' },
   },
   dependencies: ['api'],
   async started() {
-    this.settings.allowedActions.forEach(actionName => {
+    this.settings.allowedActions.forEach((actionName) => {
       if (!this.actions[actionName]) {
         throw new ServiceSchemaError(`Missing action "${actionName}" in service settings!`);
       }
     });
     const routes = await this.actions.getApiRoutes();
-    for (let route of routes) {
+    for (const route of routes) {
       await this.broker.call('api.addRoute', {
-        route
+        route,
       });
     }
   },
@@ -45,8 +45,8 @@ const WebhooksService = {
       }
     },
     async generate(ctx) {
-      let userUri = ctx.meta.webId || ctx.params.userUri,
-        action = ctx.params.action;
+      const userUri = ctx.meta.webId || ctx.params.userUri;
+      const { action } = ctx.params;
 
       if (!userUri || !action || !this.settings.allowedActions.includes(action)) {
         throw new MoleculerError('Bad request', 400, 'BAD_REQUEST');
@@ -56,9 +56,9 @@ const WebhooksService = {
         {
           '@type': 'Webhook',
           action,
-          user: userUri
+          user: userUri,
         },
-        { parentCtx: ctx }
+        { parentCtx: ctx },
       );
 
       return webhook['@id'];
@@ -73,8 +73,8 @@ const WebhooksService = {
           authorization: false,
           authentication: true,
           aliases: {
-            'POST /:hash': 'webhooks.process'
-          }
+            'POST /:hash': 'webhooks.process',
+          },
         },
         // Secured routes
         {
@@ -84,11 +84,11 @@ const WebhooksService = {
           authorization: true,
           authentication: false,
           aliases: {
-            'POST /': 'webhooks.generate'
-          }
-        }
+            'POST /': 'webhooks.generate',
+          },
+        },
       ];
-    }
+    },
   },
   queues: {
     webhooks: {
@@ -99,11 +99,11 @@ const WebhooksService = {
         job.progress(100);
 
         return {
-          result
+          result,
         };
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 module.exports = WebhooksService;

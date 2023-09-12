@@ -7,12 +7,12 @@ module.exports = {
   actions: {
     async generate(ctx) {
       const containersUris = await ctx.call('ldp.container.getAll');
-      for (let containerUri of containersUris) {
+      for (const containerUri of containersUris) {
         try {
           await ctx.call('ldp.container.get', { containerUri, accept: MIME_TYPES.JSON });
-          this.logger.info('Generated cache for container ' + containerUri);
+          this.logger.info(`Generated cache for container ${containerUri}`);
         } catch (e) {
-          this.logger.warn('Error when generating cache for container ' + containerUri);
+          this.logger.warn(`Error when generating cache for container ${containerUri}`);
           console.error(e);
         }
       }
@@ -32,7 +32,7 @@ module.exports = {
         const { containerUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
       }
-    }
+    },
   },
   events: {
     async 'ldp.resource.deleted'(ctx) {
@@ -83,6 +83,6 @@ module.exports = {
       } else {
         await this.actions.invalidateResource({ resourceUri: uri }, { parentCtx: ctx });
       }
-    }
-  }
+    },
+  },
 };

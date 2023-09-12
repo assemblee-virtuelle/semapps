@@ -18,9 +18,9 @@ const broker = new ServiceBroker({
   logger: {
     type: 'Console',
     options: {
-      level: 'error'
-    }
-  }
+      level: 'error',
+    },
+  },
 });
 let expressMocked = undefined;
 
@@ -33,7 +33,7 @@ beforeAll(async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
       },
       ontologies,
       jsonContext: getPrefixJSON(ontologies),
@@ -42,22 +42,22 @@ beforeAll(async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false
-    }
+      webfinger: false,
+    },
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET
-    }
+      accountsDataset: CONFIG.SETTINGS_DATASET,
+    },
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users'
-    }
+      usersContainer: `${CONFIG.HOME_URL}users`,
+    },
   });
 
   const app = express();
@@ -67,8 +67,8 @@ beforeAll(async () => {
       server: false,
       cors: {
         origin: '*',
-        exposedHeaders: '*'
-      }
+        exposedHeaders: '*',
+      },
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -76,8 +76,8 @@ beforeAll(async () => {
       },
       authorize(ctx, route, req, res) {
         return Promise.resolve(ctx);
-      }
-    }
+      },
+    },
   });
   app.use(apiGateway.express());
 
@@ -90,12 +90,12 @@ beforeAll(async () => {
   // setting some write permission on the container for anonymous user, which is the one that will be used in the tests.
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
-    resourceUri: CONFIG.HOME_URL + 'resources',
+    resourceUri: `${CONFIG.HOME_URL}resources`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   expressMocked = supertest(app);
@@ -113,15 +113,15 @@ describe('CRUD Project', () => {
       .post('/resources')
       .send({
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
         },
         '@type': 'Project',
         description: 'myProject',
-        label: 'myLabel'
+        label: 'myLabel',
       })
       .set('content-type', 'application/ld+json');
 
-    let location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
+    const location = postResponse.headers.location.replace(CONFIG.HOME_URL, '/');
     expect(location).not.toBeNull();
 
     const response = await expressMocked.get(location).set('Accept', 'application/ld+json');
@@ -146,9 +146,9 @@ describe('CRUD Project', () => {
   test('Replace resource', async () => {
     const body = {
       '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
       },
-      description: 'myProjectUpdated'
+      description: 'myProjectUpdated',
     };
 
     await expressMocked
@@ -208,7 +208,7 @@ describe('CRUD Project', () => {
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:hasLocation']).toMatchObject({
       '@type': 'pair:Place',
-      'pair:label': 'Paris'
+      'pair:label': 'Paris',
     });
     expect(response.body['pair:description']).toBe('myProjectPatched');
   }, 20000);

@@ -1,18 +1,18 @@
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebIdService } = require('@semapps/webid');
+const path = require('path');
 const CONFIG = require('../config');
 const ontologies = require('../ontologies');
-const path = require('path');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
   logger: {
     type: 'Console',
     options: {
-      level: 'error'
-    }
-  }
+      level: 'error',
+    },
+  },
 });
 
 beforeAll(async () => {
@@ -24,7 +24,7 @@ beforeAll(async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
       },
       ontologies,
       containers: ['/users'],
@@ -32,13 +32,13 @@ beforeAll(async () => {
       mirror: false,
       void: false,
       webacl: false,
-      webfinger: false
-    }
+      webfinger: false,
+    },
   });
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users/'
-    }
+      usersContainer: `${CONFIG.HOME_URL}users/`,
+    },
   });
 
   // Drop all existing triples, then restart broker so that default containers are recreated
@@ -59,10 +59,10 @@ describe('WebId user creation', () => {
       nick: 'my-nick',
       name: 'jon',
       familyName: 'do',
-      homepage: 'http://example.org/myPage'
+      homepage: 'http://example.org/myPage',
     };
 
-    let webId = await broker.call('webid.create', profileData);
+    const webId = await broker.call('webid.create', profileData);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

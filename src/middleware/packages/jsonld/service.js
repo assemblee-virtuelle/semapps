@@ -2,7 +2,7 @@ const jsonld = require('jsonld');
 const urlJoin = require('url-join');
 const fsPromises = require('fs').promises;
 const LRU = require('lru-cache');
-const JsonLdParser = require('jsonld-streaming-parser').JsonLdParser;
+const { JsonLdParser } = require('jsonld-streaming-parser');
 const streamifyString = require('streamify-string');
 
 const defaultDocumentLoader = jsonld.documentLoaders.node();
@@ -13,7 +13,7 @@ module.exports = {
   settings: {
     baseUri: null,
     localContextFiles: [],
-    remoteContextFiles: []
+    remoteContextFiles: [],
   },
   dependencies: ['api'],
   async started() {
@@ -22,11 +22,11 @@ module.exports = {
 
     this.jsonLdParser = new JsonLdParser({
       documentLoader: {
-        load: url => this.documentLoaderWithCache(url).then(context => context.document)
-      }
+        load: (url) => this.documentLoaderWithCache(url).then((context) => context.document),
+      },
     });
 
-    for (let contextFile of this.settings.localContextFiles) {
+    for (const contextFile of this.settings.localContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       const contextUri = urlJoin(this.settings.baseUri, contextFile.path);
@@ -35,15 +35,15 @@ module.exports = {
       cache.set(contextUri, {
         contextUrl: null,
         documentUrl: contextUri,
-        document: contextJson
+        document: contextJson,
       });
 
       this.broker.call('api.addRoute', {
         route: {
           path: contextFile.path,
-          name: 'context-' + contextFile.path.replace(new RegExp('/', 'g'), '-'),
+          name: `context-${contextFile.path.replace(new RegExp('/', 'g'), '-')}`,
           bodyParsers: {
-            json: true
+            json: true,
           },
           aliases: {
             'GET /': [
@@ -51,20 +51,20 @@ module.exports = {
                 req.$params.uri = contextUri;
                 next();
               },
-              'jsonld.getCachedContext'
-            ]
-          }
-        }
+              'jsonld.getCachedContext',
+            ],
+          },
+        },
       });
     }
 
-    for (let contextFile of this.settings.remoteContextFiles) {
+    for (const contextFile of this.settings.remoteContextFiles) {
       const contextFileContent = await fsPromises.readFile(contextFile.file);
       const contextJson = JSON.parse(contextFileContent);
       cache.set(contextFile.uri, {
         contextUrl: null,
         documentUrl: contextFile.uri,
-        document: contextJson
+        document: contextJson,
       });
     }
   },
@@ -114,11 +114,11 @@ module.exports = {
       return new Promise((resolve, reject) => {
         const jsonString = typeof input === 'object' ? JSON.stringify(input) : input;
         const textStream = streamifyString(jsonString);
-        let res = [];
+        const res = [];
         this.jsonLdParser
           .import(textStream)
-          .on('data', quad => res.push(quad))
-          .on('error', error => reject(error))
+          .on('data', (quad) => res.push(quad))
+          .on('error', (error) => reject(error))
           .on('end', () => resolve(res));
       });
     },
@@ -126,20 +126,19 @@ module.exports = {
       const { predicate, context } = ctx.params;
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });
       return Object.keys(result[0])[0];
-    }
+    },
   },
   methods: {
     async documentLoaderWithCache(url, options) {
       if (cache.has(url)) {
         return cache.get(url);
-      } else {
-        const context = await defaultDocumentLoader(url, options);
-        if (typeof context.document === 'string') {
-          context.document = JSON.parse(context.document);
-        }
-        cache.set(url, context);
-        return context;
       }
-    }
-  }
+      const context = await defaultDocumentLoader(url, options);
+      if (typeof context.document === 'string') {
+        context.document = JSON.parse(context.document);
+      }
+      cache.set(url, context);
+      return context;
+    },
+  },
 };

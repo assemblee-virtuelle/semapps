@@ -7,18 +7,18 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
-    file: 'object'
+    file: 'object',
   },
   async handler(ctx) {
-    let { resourceUri, file } = ctx.params;
+    const { resourceUri, file } = ctx.params;
 
     const fileName = getSlugFromUri(resourceUri);
     const containerPath = new URL(getContainerFromUri(resourceUri)).pathname;
-    const dir = path.join('./uploads' + containerPath);
+    const dir = path.join(`./uploads${containerPath}`);
     const localPath = path.join(dir, fileName);
     if (!fs.existsSync(dir)) {
       process.umask(0);
-      fs.mkdirSync(dir, { recursive: true, mode: parseInt('0777', 8) });
+      fs.mkdirSync(dir, { recursive: true, mode: 0o0777 });
     }
 
     try {
@@ -34,7 +34,7 @@ module.exports = {
       encoding: file.encoding,
       mimeType: file.mimetype,
       localPath,
-      fileName
+      fileName,
     };
-  }
+  },
 };

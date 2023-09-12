@@ -10,26 +10,26 @@ module.exports = {
       maxWidth: 1900,
       maxHeight: 1000,
       jpeg: {
-        quality: 85
+        quality: 85,
       },
       png: {
-        compressionLevel: 8
+        compressionLevel: 8,
       },
       webp: {
-        quality: 85
-      }
-    }
+        quality: 85,
+      },
+    },
   },
   actions: {
     async processImage(ctx) {
-      let { resourceUri } = ctx.params;
+      const { resourceUri } = ctx.params;
 
       const metadata = await ctx.call('ldp.resource.get', {
         resourceUri,
         jsonContext: { '@vocab': 'http://semapps.org/ns/core#' },
         accept: MIME_TYPES.JSON,
         forceSemantic: true,
-        webId: 'system'
+        webId: 'system',
       });
 
       try {
@@ -69,29 +69,29 @@ module.exports = {
       if (container['ldp:contains']) {
         const resources = defaultToArray(container['ldp:contains']);
         this.logger.info(`Processing ${resources.length} images...`);
-        for (let resource of defaultToArray(container['ldp:contains'])) {
-          this.logger.info('Processing image ' + resource.id + '...');
+        for (const resource of defaultToArray(container['ldp:contains'])) {
+          this.logger.info(`Processing image ${resource.id}...`);
           await this.actions.processImage({ resourceUri: resource.id }, { parentCtx: ctx });
         }
       }
       this.logger.info('Finished !');
-    }
+    },
   },
   methods: {
     getMaxSize(width, height) {
       const ratio = Math.min(
         this.settings.imageProcessor.maxWidth / width,
-        this.settings.imageProcessor.maxHeight / height
+        this.settings.imageProcessor.maxHeight / height,
       );
       return { width: Math.round(width * ratio), height: Math.round(height * ratio) };
-    }
+    },
   },
   hooks: {
     after: {
       async create(ctx, res) {
         await this.actions.processImage({ resourceUri: res.resourceUri }, { parentCtx: ctx });
         return res;
-      }
-    }
-  }
+      },
+    },
+  },
 };
