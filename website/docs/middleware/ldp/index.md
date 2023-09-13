@@ -17,11 +17,14 @@ This package allows you to setup [LDP](https://www.w3.org/TR/ldp-primer/) contai
 - [LdpResourceService](resource.md)
 - [LdpContainerService](container.md)
 - LdpRegistryService
+- LdpApiService
 - LdpCacheService
 
 ## Mixins
 - [ControlledContainerMixin](controlled-container)
 - [DocumentTaggerMixin](document-tagger.md)
+- [ImageProcessorMixin](image-processor.md)
+- DisassemblyMixin
 
 ## Install
 
@@ -71,9 +74,9 @@ module.exports = {
 | `containers`               | `[Object]`   | **required**                | List of containers to set up, with their options (see below)             |
 | `defaultContainerOptions`  | `[Object]`   |                             | Default options for all containers (see below)                           |
 | `mirrorGraphName`          | `String`     | "http://semapps.org/mirror" | Name of the RDF graph where to store mirrored data                       |
-| `podProvider`              | `[Boolean]`  | false                       | Set to true if your server is a POD provider                             |
+| `podProvider`              | `Boolean`  | false                       | Set to true if your server is a POD provider                             |
 | `preferredViewForResource` | `Function`   |                             | Function called to generate a redirect to the preferred view (see below) |
-
+| `resourcesWithContainerPath` | `Boolean`   | true                        | If true, the URI of all new resources will include the container path |
 
 ## Container options
 
@@ -96,15 +99,16 @@ The following options can be set for each container, or they can be set in the `
 
 These routes are automatically added to the `ApiGateway` service.
 
-| Route                            | Action called         |
-|----------------------------------|-----------------------|
-| `GET /<container>`               | `ldp.container.get`   |
-| `POST /<container>`              | `ldp.container.post`  |
-| `PATCH /<container>`             | `ldp.container.patch` |
-| `GET /<container>/<resource>`    | `ldp.resource.get`    |
-| `PATCH /<container>/<resource>`  | `ldp.resource.patch`  |
-| `PUT /<container>/<resource>`    | `ldp.resource.put`    |
-| `DELETE /<container>/<resource>` | `ldp.resource.delete` |
+| Route                            | Action called          |
+|----------------------------------|------------------------|
+| `GET /<container>`               | `ldp.container.get`    |
+| `POST /<container>`              | `ldp.container.post`   |
+| `PATCH /<container>`             | `ldp.container.patch`  |
+| `DELETE /<container>`            | `ldp.container.delete` |
+| `GET /<container>/<resource>`    | `ldp.resource.get`     |
+| `PATCH /<container>/<resource>`  | `ldp.resource.patch`   |
+| `PUT /<container>/<resource>`    | `ldp.resource.put`     |
+| `DELETE /<container>/<resource>` | `ldp.resource.delete`  |
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
 

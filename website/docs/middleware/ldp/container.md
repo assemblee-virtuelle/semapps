@@ -28,6 +28,8 @@ The following service actions are available:
 | Property       | Type     | Default      | Description                    |
 |----------------|----------|--------------|--------------------------------|
 | `containerUri` | `String` | **required** | URI of the container to create |
+| `title`        | `String` |              | Title of the container         |
+| `description`  | `String` |              | Description of the container   |
 
 
 ### `clear`
