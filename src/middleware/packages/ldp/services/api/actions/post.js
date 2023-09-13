@@ -3,9 +3,9 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = async function post(ctx) {
   try {
-    const { dataset, slugParts, ...resource } = ctx.params;
+    const { username, slugParts, ...resource } = ctx.params;
 
-    const uri = this.getUriFromSlugParts(slugParts);
+    const uri = this.getUriFromSlugParts(slugParts, username);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
@@ -19,7 +19,7 @@ module.exports = async function post(ctx) {
           containerUri: uri,
           slug: ctx.meta.headers.slug,
           resource,
-          contentType: ctx.meta.headers['content-type'],
+          contentType: ctx.meta.headers['content-type']
         });
       } else {
         if (ctx.params.files.length > 1) {
@@ -29,13 +29,13 @@ module.exports = async function post(ctx) {
           containerUri: uri,
           slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
           file: ctx.params.files[0],
-          contentType: MIME_TYPES.JSON,
+          contentType: MIME_TYPES.JSON
         });
       }
       ctx.meta.$responseHeaders = {
         Location: resourceUri,
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0,
+        'Content-Length': 0
       };
       ctx.meta.$statusCode = 201;
     } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
@@ -44,17 +44,17 @@ module.exports = async function post(ctx) {
        */
       const { controlledActions } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri: uri })),
-        ...ctx.meta.headers,
+        ...ctx.meta.headers
       };
 
       if (!controlledActions.post) {
         const activity = await ctx.call(controlledActions.post, {
-          collectionUri: uri,
+          collectionUri: uri
         });
 
         ctx.meta.$responseHeaders = {
           Location: activity.id,
-          'Content-Length': 0,
+          'Content-Length': 0
         };
 
         ctx.meta.$statusCode = 201;

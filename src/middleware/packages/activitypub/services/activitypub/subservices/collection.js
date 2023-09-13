@@ -170,8 +170,7 @@ const CollectionService = {
 
       // No persisted collection found
       if (!collection['@id']) {
-        ctx.meta.$statusCode = 404;
-        return null;
+        throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
       }
 
       if (this.isOrderedCollection(collection) && !sort) {

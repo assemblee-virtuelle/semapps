@@ -1,9 +1,9 @@
 const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = async function post(ctx) {
-  const { dataset, slugParts, body, ...resource } = ctx.params;
+  const { username, slugParts, body, ...resource } = ctx.params;
 
-  const resourceUri = this.getUriFromSlugParts(slugParts);
+  const resourceUri = this.getUriFromSlugParts(slugParts, username);
   const resourceId = resource['@id'] || resource.id;
 
   if (!resourceId) {

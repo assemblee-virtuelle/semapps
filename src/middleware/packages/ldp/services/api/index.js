@@ -11,7 +11,7 @@ module.exports = {
   name: 'ldp.api',
   settings: {
     baseUrl: null,
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['api'],
   actions: {
@@ -20,15 +20,19 @@ module.exports = {
     head: headAction,
     patch: patchAction,
     post: postAction,
-    put: putAction,
+    put: putAction
   },
   async started() {
     await this.broker.call('api.addRoute', { route: getCatchAllRoute(this.settings.podProvider) });
   },
   methods: {
-    getUriFromSlugParts(slugParts) {
+    getUriFromSlugParts(slugParts, username) {
       if (!slugParts || slugParts.length === 0) slugParts = ['/']; // Root container
-      return urlJoin(this.settings.baseUrl, ...slugParts);
-    },
-  },
+      if (this.settings.podProvider && username) {
+        return urlJoin(this.settings.baseUrl, username, 'data', ...slugParts);
+      } else {
+        return urlJoin(this.settings.baseUrl, ...slugParts);
+      }
+    }
+  }
 };

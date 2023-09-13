@@ -1,8 +1,8 @@
 module.exports = async function patch(ctx) {
   try {
-    const { dataset, slugParts } = ctx.params;
+    const { username, slugParts } = ctx.params;
 
-    const uri = this.getUriFromSlugParts(slugParts);
+    const uri = this.getUriFromSlugParts(slugParts, username);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
@@ -15,7 +15,7 @@ module.exports = async function patch(ctx) {
     ctx.meta.$statusCode = 204;
     ctx.meta.$responseHeaders = {
       Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-      'Content-Length': 0,
+      'Content-Length': 0
     };
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);

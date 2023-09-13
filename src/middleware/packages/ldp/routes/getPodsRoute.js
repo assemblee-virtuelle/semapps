@@ -6,11 +6,19 @@ const {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta,
+  saveDatasetMeta
 } = require('@semapps/middlewares');
 
-const transformUsernameToSlugParts = (req, res, next) => {
-  req.$params.slugParts = [req.$params.username];
+const transformRouteParamsToSlugParts = (req, res, next) => {
+  req.$params.slugParts = [];
+  if (req.$params.username) {
+    req.$params.slugParts.push(req.$params.username);
+    delete req.$params.username; // TODO ensure this doesn't break the saveDatasetMeta
+  }
+  if (req.$params.collection) {
+    req.$params.slugParts.push(req.$params.collection);
+    delete req.$params.collection;
+  }
   next();
 };
 
@@ -23,8 +31,8 @@ function getPodsRoute() {
     parseJson,
     parseTurtle,
     parseFile,
-    transformUsernameToSlugParts,
     saveDatasetMeta,
+    transformRouteParamsToSlugParts
   ];
 
   return {
@@ -37,8 +45,10 @@ function getPodsRoute() {
     authentication: true,
     aliases: {
       'GET /': [...middlewares, 'ldp.api.get'],
-      'HEAD /': [transformUsernameToSlugParts, 'ldp.api.head'],
-    },
+      'HEAD /': [transformRouteParamsToSlugParts, 'ldp.api.head'],
+      'GET /:collection': [...middlewares, 'ldp.api.get'],
+      'POST /:collection': [...middlewares, 'ldp.api.post']
+    }
   };
 }
 

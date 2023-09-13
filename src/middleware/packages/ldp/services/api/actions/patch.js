@@ -2,9 +2,9 @@ const { MoleculerError } = require('moleculer').Errors;
 
 module.exports = async function patch(ctx) {
   try {
-    const { dataset, slugParts, body } = ctx.params;
+    const { username, slugParts, body } = ctx.params;
 
-    const uri = this.getUriFromSlugParts(slugParts);
+    const uri = this.getUriFromSlugParts(slugParts, username);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
     if (ctx.meta.parser === 'sparql') {
@@ -15,7 +15,7 @@ module.exports = async function patch(ctx) {
 
         await ctx.call('ldp.container.patch', {
           containerUri: uri,
-          sparqlUpdate: body,
+          sparqlUpdate: body
         });
       } else {
         /*
@@ -26,14 +26,14 @@ module.exports = async function patch(ctx) {
 
         await ctx.call(controlledActions.patch || 'ldp.resource.patch', {
           resourceUri: uri,
-          sparqlUpdate: body,
+          sparqlUpdate: body
         });
       }
     } else {
       throw new MoleculerError(`The content-type should be application/sparql-update`, 400, 'BAD_REQUEST');
     }
     ctx.meta.$responseHeaders = {
-      'Content-Length': 0,
+      'Content-Length': 0
     };
     ctx.meta.$statusCode = 204;
   } catch (e) {
