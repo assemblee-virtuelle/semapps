@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, useTranslate, useNotify, useSafeSetState, useAuthProvider, TextInput, required } from 'react-admin';
 import { useLocation } from 'react-router-dom';
-import { Button, CardContent, CircularProgress } from '@mui/material';
+import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import validatePasswordStrength from './validatePasswordStrength';
+import { defaultScorer } from '../../passwordScorer';
 
 const useStyles = makeStyles(theme => ({
   icon: {
-    margin: theme.spacing(0.3),
+    margin: theme.spacing(0.3)
   }
 }));
 
-const NewPasswordForm = ({ redirectTo }) => {
+/**
+ *
+ * @param {string} redirectTo
+ * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */
+const NewPasswordForm = ({ redirectTo, passwordScorer = defaultScorer }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const token = searchParams.get('token');
@@ -22,18 +33,20 @@ const NewPasswordForm = ({ redirectTo }) => {
   const notify = useNotify();
   const classes = useStyles();
 
-  const submit = (values) => {
+  const [newPassword, setNewPassword] = useState('');
+
+  const submit = values => {
     setLoading(true);
     authProvider
       .setNewPassword({ ...values, token })
-      .then((res) => {
+      .then(res => {
         setTimeout(() => {
           window.location.href = '/login' + (redirectTo ? '?redirect=' + encodeURIComponent(redirectTo) : '');
           setLoading(false);
         }, 2000);
         notify('auth.notification.password_changed', 'info');
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -44,19 +57,15 @@ const NewPasswordForm = ({ redirectTo }) => {
           {
             type: 'warning',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-            },
+              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            }
           }
         );
       });
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      noValidate
-      defaultValues={{ email: searchParams.get('email') }}
-    >
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           autoFocus
@@ -66,18 +75,29 @@ const NewPasswordForm = ({ redirectTo }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
+        {passwordScorer && (
+          <>
+            <Typography variant="caption" style={{ marginBottom: 3 }}>
+              {translate('auth.input.password_strength')}:{' '}
+            </Typography>
+
+            <PasswordStrengthIndicator password={newPassword} scorer={passwordScorer} sx={{ width: '100%' }} />
+          </>
+        )}
         <TextInput
           autoFocus
           type="password"
           source="password"
+          value={newPassword}
           label={translate('auth.input.new_password')}
           autoComplete="current-password"
           fullWidth
           disabled={loading}
-          validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          validate={[required(), validatePasswordStrength(passwordScorer)]}
+          onChange={e => setNewPassword(e.target.value)}
+          format={value => (value ? value.toLowerCase() : '')}
         />
         <TextInput
           autoFocus
@@ -88,20 +108,21 @@ const NewPasswordForm = ({ redirectTo }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
-        <Button 
-          variant="contained" 
-          type="submit" 
-          color="primary" 
-          disabled={loading} 
+        <Button
+          variant="contained"
+          type="submit"
+          color="primary"
+          disabled={loading}
           fullWidth
           className={classes.button}
         >
-          {loading 
-            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.set_new_password')
-          }
+          {loading ? (
+            <CircularProgress className={classes.icon} size={19} thickness={3} />
+          ) : (
+            translate('auth.action.set_new_password')
+          )}
         </Button>
       </CardContent>
     </Form>

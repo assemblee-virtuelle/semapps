@@ -1,21 +1,49 @@
 import * as React from 'react';
 import createSlug from 'speakingurl';
-import { Form, useTranslate, useNotify, useSafeSetState, TextInput, required, email, useLocaleState } from 'react-admin';
+import {
+  Form,
+  useTranslate,
+  useNotify,
+  useSafeSetState,
+  TextInput,
+  required,
+  email,
+  useLocaleState,
+} from 'react-admin';
 import { useSignup } from '@semapps/auth-provider';
 import { useLocation } from 'react-router-dom';
-import { Button, CardContent, CircularProgress } from '@mui/material';
+import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import validatePasswordStrength from './validatePasswordStrength';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import { defaultScorer } from '../../passwordScorer';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   content: {
     width: 450,
   },
   icon: {
     margin: theme.spacing(0.3),
-  }
+  },
 }));
 
-const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, delayBeforeRedirect }) => {
+/**
+ * @param postSignupRedirect
+ * @param additionalSignupValues
+ * @param delayBeforeRedirect
+ * @param {string} redirectTo
+ * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */
+const SignupForm = ({
+  redirectTo,
+  passwordScorer = defaultScorer,
+  postSignupRedirect,
+  additionalSignupValues,
+  delayBeforeRedirect,
+}) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
@@ -24,30 +52,35 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [locale] = useLocaleState();
+  const [password, setPassword] = React.useState('');
 
-  const submit = values => {
+  const submit = (values) => {
     setLoading(true);
     signup({
       ...values,
-      ...additionalSignupValues
+      ...additionalSignupValues,
     })
-      .then(webId => {
+      .then((webId) => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
             window.location.reload();
-            window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
+            window.location.href = postSignupRedirect
+              ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/')
+              : redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
         } else {
           // Reload to ensure the dataServer config is reset
           window.location.reload();
-          window.location.href = postSignupRedirect ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/') : (redirectTo || '/');
+          window.location.href = postSignupRedirect
+            ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/')
+            : redirectTo || '/';
           setLoading(false);
         }
-        notify('auth.message.new_user_created', {type: 'info'});
+        notify('auth.message.new_user_created', { type: 'info' });
       })
-      .catch(error => {
+      .catch((error) => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -55,20 +88,16 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
             : typeof error === 'undefined' || !error.message
             ? 'ra.auth.sign_in_error'
             : error.message,
-          { 
+          {
             type: 'warning',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
-          }
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
+          },
         );
       });
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      noValidate
-      defaultValues={{ email: searchParams.get('email') }}
-    >
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           autoFocus
@@ -96,27 +125,38 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={[required(), email()]}
         />
+        {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
+          <>
+            <Typography variant="caption" style={{ marginBottom: 3 }}>
+              {translate('auth.input.password_strength')}:{' '}
+            </Typography>
+            <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
+          </>
+        )}
         <TextInput
           source="password"
           type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           label={translate('ra.auth.password')}
           autoComplete="new-password"
           fullWidth
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          validate={required()}
+          validate={[required(), validatePasswordStrength(passwordScorer)]}
         />
-        <Button 
-          variant="contained" 
-          type="submit" 
-          color="primary" 
-          disabled={loading} 
+        <Button
+          variant="contained"
+          type="submit"
+          color="primary"
+          disabled={loading}
           fullWidth
           className={classes.button}
         >
-          {loading 
-            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.signup')
-          }
+          {loading ? (
+            <CircularProgress className={classes.icon} size={19} thickness={3} />
+          ) : (
+            translate('auth.action.signup')
+          )}
         </Button>
       </CardContent>
     </Form>
@@ -125,7 +165,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
 
 SignupForm.defaultValues = {
   redirectTo: '/',
-  additionalSignupValues: {}
+  additionalSignupValues: {},
 };
 
 export default SignupForm;

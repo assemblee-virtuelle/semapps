@@ -6,16 +6,10 @@ const AUTH_TYPE_SSO = 'sso';
 const AUTH_TYPE_LOCAL = 'local';
 const AUTH_TYPE_POD = 'pod';
 
-const authProvider = ({
-  dataProvider,
-  authType,
-  allowAnonymous = true,
-  checkUser,
-  checkPermissions = false
-}) => {
+const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser, checkPermissions = false }) => {
   if (![AUTH_TYPE_SSO, AUTH_TYPE_LOCAL, AUTH_TYPE_POD].includes(authType))
     throw new Error('The authType parameter is missing from the auth provider');
-  return ({
+  return {
     login: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
@@ -23,7 +17,10 @@ const authProvider = ({
         try {
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
             method: 'POST',
-            body: JSON.stringify({ username: username.trim(), password: password.trim() }),
+            body: JSON.stringify({
+              username: username.trim(),
+              password: password.trim()
+            }),
             headers: new Headers({ 'Content-Type': 'application/json' })
           });
           const { token } = json;
@@ -75,7 +72,7 @@ const authProvider = ({
       }
     },
     logout: async () => {
-      switch(authType) {
+      switch (authType) {
         case AUTH_TYPE_LOCAL:
           // Delete token but also any other value in local storage
           localStorage.clear();
@@ -98,7 +95,10 @@ const authProvider = ({
           const { webId } = jwtDecode(token);
           // Delete token but also any other value in local storage
           localStorage.clear();
-          window.location.href = urlJoin(webId, 'openApp') + '?type=' + encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
+          window.location.href =
+            urlJoin(webId, 'openApp') +
+            '?type=' +
+            encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
           break;
       }
 
@@ -125,7 +125,8 @@ const authProvider = ({
       // Ignore all this until we found a way to bypass these redundant calls
       if (typeof uri === 'object') return;
 
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to getPermissions must be an URL');
+      if (!uri || !uri.startsWith('http'))
+        throw new Error('The first parameter passed to getPermissions must be an URL');
 
       const aclUri = getAclUri(uri);
 
@@ -138,7 +139,8 @@ const authProvider = ({
       }
     },
     addPermission: async (uri, agentId, predicate, mode) => {
-      if (!uri || !uri.startsWith('http')) throw new Error('The first parameter passed to addPermission must be an URL');
+      if (!uri || !uri.startsWith('http'))
+        throw new Error('The first parameter passed to addPermission must be an URL');
 
       const aclUri = getAclUri(uri);
 
@@ -196,7 +198,11 @@ const authProvider = ({
 
         return {
           id: webId,
-          fullName: profileData?.['vcard:given-name'] || profileData?.['pair:label'] || webIdData['foaf:name'] || webIdData['pair:label'],
+          fullName:
+            profileData?.['vcard:given-name'] ||
+            profileData?.['pair:label'] ||
+            webIdData['foaf:name'] ||
+            webIdData['pair:label'],
           profileData,
           webIdData
         };
@@ -244,7 +250,11 @@ const authProvider = ({
 
         await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'), {
           method: 'POST',
-          body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
+          body: JSON.stringify({
+            currentPassword,
+            email: email?.trim(),
+            newPassword
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
       } catch (e) {
@@ -255,7 +265,7 @@ const authProvider = ({
         throw new Error('auth.notification.update_settings_error');
       }
     }
-  });
-}
+  };
+};
 
 export default authProvider;
