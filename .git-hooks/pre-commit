@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script runs the linter and prettier for staged files
+# in the middleware and frontend packages.
 
 if [ "$SKIP_PRECOMMIT_CHECKS" = true ] || [ "$SKIP_PRECOMMIT_CHECKS" = 1 ] ; then
     echo "=== Skipping pre-commit prettier run ==="
@@ -17,8 +19,8 @@ echo "======================"
 echo "=== Running linter ==="
 echo "======================"
 
-MIDDLEWARE_FILES="$(echo "$FILES" | grep -E "src/middleware" | xargs realpath)"
-FRONTEND_FILES="$(echo "$FILES" | grep -E "src/frontend" | xargs realpath)"
+MIDDLEWARE_FILES="$(echo "$FILES" | grep -E "src/middleware" | xargs -r realpath)"
+FRONTEND_FILES="$(echo "$FILES" | grep -E "src/frontend" | xargs -r realpath)"
 
 LINT_FILE_TYPES="js|jsx|ts|tsx"
 LINT_MIDDLEWARE_FILES=$(echo "$MIDDLEWARE_FILES" | grep -E "\.($LINT_FILE_TYPES)$")
@@ -57,7 +59,11 @@ echo "=== Running prettier ==="
 echo "========================"
 
 # Run prettier on all staged files.
-echo "$FILES" | xargs npx prettier --write --ignore-unknown
+cd "$ROOT_DIR"/src/middleware
+echo "$MIDDLEWARE_FILES" | xargs npx prettier --write --ignore-unknown
+cd "$ROOT_DIR"/src/frontend
+echo "$FRONTEND_FILES" | xargs npx prettier --write --ignore-unknown
+cd "$ROOT_DIR"
 
 if [ $? != 0 ]; then
     echo "========================================================================"
@@ -70,6 +76,6 @@ fi
 echo "=== Prettier done ==="
 
 # Add back the modified/prettified files to staging
-xargs git add "$FILES"
+echo "$FILES" | xargs -r git add
 
 exit 0

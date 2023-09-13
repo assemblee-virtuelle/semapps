@@ -123,7 +123,7 @@
     "prefer-destructuring": "warn",
     "prefer-numeric-literals": "warn",
     "prefer-promise-reject-errors": "warn",
-    "prefer-regex-literals": "warn",
+    "prefer-regex-literals": "off",
     "prefer-template": "warn",
     "radix": "off",
     "spaced-comment": "warn",
