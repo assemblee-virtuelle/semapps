@@ -6,7 +6,7 @@ const deleteAction = require('./actions/delete');
 const existAction = require('./actions/exist');
 const generateIdAction = require('./actions/generateId');
 const getContainersAction = require('./actions/getContainers');
-const getTypeAction = require('./actions/getTypes');
+const getTypesAction = require('./actions/getTypes');
 const uploadAction = require('./actions/upload');
 const methods = require('./methods');
 const { getDatasetFromUri } = require('../../utils');
@@ -18,7 +18,7 @@ module.exports = {
     ontologies: [],
     podProvider: false,
     mirrorGraphName: null,
-    preferredViewForResource: null,
+    preferredViewForResource: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -28,10 +28,10 @@ module.exports = {
     generateId: generateIdAction,
     get: getAction,
     getContainers: getContainersAction,
-    getType: getTypeAction,
+    getTypes: getTypesAction,
     patch: patchAction,
     put: putAction,
-    upload: uploadAction,
+    upload: uploadAction
   },
   hooks: {
     before: {
@@ -44,8 +44,8 @@ module.exports = {
             ctx.meta.dataset = getDatasetFromUri(uri);
           }
         }
-      },
-    },
+      }
+    }
   },
-  methods,
+  methods
 };

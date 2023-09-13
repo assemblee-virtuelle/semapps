@@ -5,7 +5,7 @@ const CollectionService = {
   name: 'activitypub.collection',
   settings: {
     jsonContext: ['https://www.w3.org/ns/activitystreams', 'https://w3id.org/security/v1'],
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['triplestore', 'ldp.resource'],
   actions: {
@@ -15,20 +15,17 @@ const CollectionService = {
      * @param summary An optional description of the collection
      */
     async create(ctx) {
-      const { collectionUri } = ctx.params;
-      const { ordered, summary } = {
-        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params,
-      };
+      const { collectionUri, config } = ctx.params;
+      const { ordered, summary } = config;
       await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',
           id: collectionUri,
           type: ordered ? ['Collection', 'OrderedCollection'] : 'Collection',
-          summary,
+          summary
         },
         contentType: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -47,7 +44,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -67,7 +64,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
       return Number(res[0].count.value) === 0;
     },
@@ -90,7 +87,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -114,7 +111,7 @@ const CollectionService = {
 
       await ctx.call('triplestore.insert', {
         resource: `<${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}>`,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -136,7 +133,7 @@ const CollectionService = {
           WHERE
           { <${collectionUri}> <https://www.w3.org/ns/activitystreams#items> <${itemUri}> }
         `,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -152,7 +149,7 @@ const CollectionService = {
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
-        ...ctx.params,
+        ...ctx.params
       };
 
       const collection = await ctx.call('triplestore.query', {
@@ -168,7 +165,7 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId,
+        webId
       });
 
       // No persisted collection found
@@ -196,10 +193,10 @@ const CollectionService = {
           ${sort ? `ORDER BY ${sort.order}( ?order )` : ''}
         `,
         accept: MIME_TYPES.JSON,
-        webId,
+        webId
       });
 
-      const allItems = result.filter((node) => node.itemUri).map((node) => node.itemUri.value);
+      const allItems = result.filter(node => node.itemUri).map(node => node.itemUri.value);
       const numPages = !itemsPerPage ? 1 : allItems.length > 0 ? Math.ceil(allItems.length / itemsPerPage) : 0;
       let returnData = null;
 
@@ -215,7 +212,7 @@ const CollectionService = {
           summary: collection.summary,
           first: numPages > 0 ? `${collectionUri}?page=1` : undefined,
           last: numPages > 0 ? `${collectionUri}?page=${numPages}` : undefined,
-          totalItems: allItems ? allItems.length : 0,
+          totalItems: allItems ? allItems.length : 0
         };
       } else {
         let selectedItemsUris = allItems;
@@ -235,8 +232,8 @@ const CollectionService = {
                 await ctx.call('activitypub.object.get', {
                   objectUri: itemUri,
                   actorUri: webId,
-                  jsonContext: this.settings.jsonContext,
-                }),
+                  jsonContext: this.settings.jsonContext
+                })
               );
             } catch (e) {
               if (e.code === 404 || e.code === 403) {
@@ -263,7 +260,7 @@ const CollectionService = {
             prev: page > 1 ? `${collectionUri}?page=${parseInt(page) - 1}` : undefined,
             next: page < numPages ? `${collectionUri}?page=${parseInt(page) + 1}` : undefined,
             [itemsProp]: selectedItems,
-            totalItems: allItems ? allItems.length : 0,
+            totalItems: allItems ? allItems.length : 0
           };
         } else {
           // No pagination, return the collection
@@ -273,7 +270,7 @@ const CollectionService = {
             type: this.isOrderedCollection(collection) ? 'OrderedCollection' : 'Collection',
             summary: collection.summary,
             [itemsProp]: selectedItems,
-            totalItems: allItems ? allItems.length : 0,
+            totalItems: allItems ? allItems.length : 0
           };
         }
       }
@@ -298,7 +295,7 @@ const CollectionService = {
             ?s1 ?p1 ?o1 .
           } 
         `,
-        webId: 'system',
+        webId: 'system'
       });
     },
     /*
@@ -319,7 +316,7 @@ const CollectionService = {
             ?s1 ?p1 ?o1 .
           }
         `,
-        webId: 'system',
+        webId: 'system'
       });
     },
     async getOwner(ctx) {
@@ -338,11 +335,11 @@ const CollectionService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
 
       return results.length > 0 ? results[0].actorUri.value : null;
-    },
+    }
   },
   hooks: {
     before: {
@@ -355,8 +352,8 @@ const CollectionService = {
             ctx.meta.dataset = parts[1];
           }
         }
-      },
-    },
+      }
+    }
   },
   methods: {
     isOrderedCollection(collection) {
@@ -364,8 +361,8 @@ const CollectionService = {
         collection['@type'] === 'as:OrderedCollection' ||
         (Array.isArray(collection['@type']) && collection['@type'].includes('as:OrderedCollection'))
       );
-    },
-  },
+    }
+  }
 };
 
 module.exports = CollectionService;
