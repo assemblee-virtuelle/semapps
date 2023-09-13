@@ -4,7 +4,7 @@ module.exports = async function get(ctx) {
 
     const uri = this.getUriFromSlugParts(slugParts);
     const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
-    
+
     if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       /*
        * LDP CONTAINER
@@ -32,14 +32,14 @@ module.exports = async function get(ctx) {
       };
 
       const res = await ctx.call(controlledActions.get || 'activitypub.collection.get', {
-        collectionUri: uri
+        collectionUri: uri,
       });
       ctx.meta.$responseType = 'application/ld+json';
       return res;
     } else {
       /*
-      * LDP RESOURCE
-      */
+       * LDP RESOURCE
+       */
       const { accept, controlledActions, preferredView } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri: uri })),
         ...ctx.meta.headers,

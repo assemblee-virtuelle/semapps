@@ -60,12 +60,14 @@ const RegistryService = {
           }
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system'
+        webId: 'system',
       });
-  
+
       return {
         ...this.settings.defaultCollectionOptions,
-        ...this.registeredCollections.find((collection) => result.some(node => collection.attachPredicate === node.predicate.value)),
+        ...this.registeredCollections.find((collection) =>
+          result.some((node) => collection.attachPredicate === node.predicate.value),
+        ),
       };
     },
     async createAndAttachCollection(ctx) {

@@ -49,17 +49,16 @@ module.exports = async function post(ctx) {
 
       if (!controlledActions.post) {
         const activity = await ctx.call(controlledActions.post, {
-          collectionUri: uri
+          collectionUri: uri,
         });
-  
+
         ctx.meta.$responseHeaders = {
           Location: activity.id,
           'Content-Length': 0,
         };
-  
+
         ctx.meta.$statusCode = 201;
       }
-      
     }
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);
