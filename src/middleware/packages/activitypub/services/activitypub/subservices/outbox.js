@@ -121,7 +121,6 @@ const OutboxService = {
 
       ctx.meta.$statusCode = 201;
 
-      // TODO do not return activity when calling through API calls
       return activity;
     },
   },

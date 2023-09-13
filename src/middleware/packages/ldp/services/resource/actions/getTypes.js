@@ -5,6 +5,7 @@ module.exports = {
   params: {
     resourceUri: 'string'
   },
+  cache: true,
   async handler(ctx) {
     const { resourceUri } = ctx.params;
 

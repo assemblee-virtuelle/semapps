@@ -1,3 +1,4 @@
+const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 
 const CollectionService = {
@@ -203,11 +204,8 @@ const CollectionService = {
       let returnData = null;
 
       if (page > 1 && page > numPages) {
-        // The collection page does not exist
-        ctx.meta.$statusCode = 404;
-        return;
-      }
-      if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
+        throw new MoleculerError('Collection Not found', 404, 'NOT_FOUND');
+      } else if ((itemsPerPage && !page) || (page === 1 && allItems.length === 0)) {
         // Pagination is enabled but no page is selected, return the collection
         // OR the first page is selected but there is no item, return an empty page
         returnData = {
@@ -280,7 +278,6 @@ const CollectionService = {
         }
       }
 
-      ctx.meta.$responseType = 'application/ld+json';
       return returnData;
     },
     /*

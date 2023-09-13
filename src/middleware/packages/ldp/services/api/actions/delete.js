@@ -1,14 +1,11 @@
-const { MoleculerError } = require('moleculer').Errors;
-
 module.exports = async function patch(ctx) {
   try {
     const { dataset, slugParts } = ctx.params;
+
     const uri = this.getUriFromSlugParts(slugParts);
+    const types = await ctx.call('ldp.resource.getTypes', { resourceUri: uri });
 
-    // TODO put in cache
-    const containersUris = await ctx.call('ldp.container.getAll', { dataset });
-
-    if (containersUris.includes(uri)) {
+    if (types.includes('http://www.w3.org/ns/ldp#Container')) {
       await ctx.call('ldp.container.delete', { containerUri: uri });
     } else {
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { resourceUri: uri });
