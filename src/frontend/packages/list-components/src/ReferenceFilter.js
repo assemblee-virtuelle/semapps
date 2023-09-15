@@ -5,7 +5,7 @@ import {
   useGetList,
   useResourceContext,
   useListContext,
-  useResourceDefinition,
+  useResourceDefinition
 } from 'react-admin';
 import { useContainers, useDataModel } from '@semapps/semantic-data-provider';
 
@@ -30,7 +30,7 @@ const ReferenceFilterCounter = ({ source, id }) => {
       &nbsp;
       {!isLoading && (
         <span className="filter-count">{`(${
-          Object.values(data).filter((d) => [].concat(d[source]).includes(id)).length
+          Object.values(data).filter(d => [].concat(d[source]).includes(id)).length
         })`}</span>
       )}
     </>
@@ -54,7 +54,7 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     }
   }, []);
 
-  const itemIsUsed = (itemData) => {
+  const itemIsUsed = itemData => {
     if (!inverseSource) {
       return true;
     }
@@ -62,9 +62,9 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
       return false;
     }
     let itemIsUsed = false;
-    Object.values(resourceContextContainers).forEach((value) => {
-      value.forEach((containerUrl) => {
-        [].concat(itemData[inverseSource]).forEach((inverseSourceData) => {
+    Object.values(resourceContextContainers).forEach(value => {
+      value.forEach(containerUrl => {
+        [].concat(itemData[inverseSource]).forEach(inverseSourceData => {
           if (inverseSourceData?.startsWith(containerUrl)) {
             itemIsUsed = true;
           }
@@ -81,8 +81,8 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
     >
       {data &&
         data
-          .filter((itemData) => itemIsUsed(itemData))
-          .map((itemData) => (
+          .filter(itemData => itemIsUsed(itemData))
+          .map(itemData => (
             <FilterListItem
               key={itemData.id}
               label={
@@ -100,7 +100,7 @@ const ReferenceFilter = ({ reference, source, inverseSource, limit, sort, filter
 
 ReferenceFilter.defaultProps = {
   limit: 25,
-  showCounters: true,
+  showCounters: true
 };
 
 export default ReferenceFilter;

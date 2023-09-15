@@ -29,7 +29,7 @@ module.exports = {
           await ctx.call('webacl.resource.hasRights', {
             resourceUri,
             rights: { read: true },
-            webId,
+            webId
           });
         }
       }
@@ -40,14 +40,14 @@ module.exports = {
       for (const webId of users) {
         await this.actions.generateForUser({ webId }, { parentCtx: ctx });
       }
-    },
+    }
   },
   events: {
     async 'webacl.resource.updated'(ctx) {
       const { uri, isContainer, defaultRightsUpdated } = ctx.params;
       await this.actions.invalidateResourceRights(
         { uri, specificUriOnly: !isContainer || !defaultRightsUpdated },
-        { parentCtx: ctx },
+        { parentCtx: ctx }
       );
     },
     async 'webacl.resource.deleted'(ctx) {
@@ -63,6 +63,6 @@ module.exports = {
       const { groupUri, memberUri } = ctx.params;
       await this.actions.invalidateResourceRights({ uri: groupUri, specificUriOnly: true }, { parentCtx: ctx });
       await this.actions.invalidateAllUserRights({ uri: memberUri }, { parentCtx: ctx });
-    },
-  },
+    }
+  }
 };

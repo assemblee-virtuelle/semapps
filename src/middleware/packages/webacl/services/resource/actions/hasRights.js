@@ -5,14 +5,14 @@ const {
   getUserGroups,
   findParentContainers,
   getUserAgentSearchParam,
-  getAclUriFromResourceUri,
+  getAclUriFromResourceUri
 } = require('../../../utils');
 
 const perms = {
   read: 'Read',
   write: 'Write',
   append: 'Append',
-  control: 'Control',
+  control: 'Control'
 };
 
 async function checkRights(
@@ -23,7 +23,7 @@ async function checkRights(
   resourceAclUri,
   uaSearchParam,
   graphName,
-  isContainerDefault,
+  isContainerDefault
 ) {
   for (const [p1, p2] of Object.entries(perms)) {
     if (askedRights[p1] && !resultRights[p1]) {
@@ -33,7 +33,7 @@ async function checkRights(
         resourceAclUri,
         p2,
         graphName,
-        isContainerDefault,
+        isContainerDefault
       );
       const hasPerm = checkAgentPresent(permTuples, uaSearchParam);
       if (hasPerm) resultRights[p1] = hasPerm;
@@ -89,7 +89,7 @@ module.exports = {
     return await ctx.call('webacl.resource.hasRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
       rights: ctx.params.rights,
-      webId: ctx.meta.webId,
+      webId: ctx.meta.webId
     });
   },
   action: {
@@ -104,17 +104,17 @@ module.exports = {
           read: { type: 'boolean', optional: true },
           write: { type: 'boolean', optional: true },
           append: { type: 'boolean', optional: true },
-          control: { type: 'boolean', optional: true },
-        },
+          control: { type: 'boolean', optional: true }
+        }
       },
-      webId: { type: 'string', optional: true },
+      webId: { type: 'string', optional: true }
     },
     cache: {
       enabled(ctx) {
         // Do not cache remote resources as we have no mecanism to clear this cache
         return ctx.params.resourceUri.startsWith(this.settings.baseUrl);
       },
-      keys: ['resourceUri', 'rights', 'webId'],
+      keys: ['resourceUri', 'rights', 'webId']
     },
     async handler(ctx) {
       let { resourceUri, webId, rights } = ctx.params;
@@ -124,6 +124,6 @@ module.exports = {
 
       await this.checkResourceOrContainerExists(ctx, resourceUri);
       return await hasPermissions(ctx, resourceUri, rights, this.settings.baseUrl, webId, this.settings.graphName);
-    },
-  },
+    }
+  }
 };

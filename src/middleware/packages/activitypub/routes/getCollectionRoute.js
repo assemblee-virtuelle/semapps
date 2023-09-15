@@ -1,6 +1,6 @@
 const { parseHeader, parseJson, saveDatasetMeta } = require('@semapps/middlewares');
 
-const addCollectionUriMiddleware = (collectionUri) => (req, res, next) => {
+const addCollectionUriMiddleware = collectionUri => (req, res, next) => {
   let fullCollectionUri = collectionUri;
   // TODO find a tool to parse this automatically
   if (collectionUri.includes('/:username')) {
@@ -25,8 +25,8 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
     'GET /': [
       ...middlewares,
       addCollectionUriMiddleware(collectionUri),
-      (controlledActions && controlledActions.get) || 'activitypub.collection.get',
-    ],
+      (controlledActions && controlledActions.get) || 'activitypub.collection.get'
+    ]
   };
   if (controlledActions && controlledActions.post) {
     aliases['POST /'] = [...middlewares, addCollectionUriMiddleware(collectionUri), controlledActions.post];
@@ -38,7 +38,7 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
     authorization: false,
     authentication: true,
     bodyParsers: false,
-    aliases,
+    aliases
   };
 };
 

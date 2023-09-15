@@ -5,7 +5,7 @@ import useDataServers from './useDataServers';
 import findCreateContainerWithTypes from '../dataProvider/utils/findCreateContainerWithTypes';
 import getServerKeyFromType from '../dataProvider/utils/getServerKeyFromType';
 
-const useCreateContainer = (resourceId) => {
+const useCreateContainer = resourceId => {
   const dataModel = useDataModel(resourceId);
   const dataServers = useDataServers();
   const [createContainer, setCreateContainer] = useState();

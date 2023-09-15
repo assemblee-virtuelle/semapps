@@ -7,7 +7,7 @@ const ExpoPushNotificationService = {
   mixins: [DbService],
   adapter: new TripleStoreAdapter({ type: 'PushNotification', dataset: 'settings' }),
   settings: {
-    idField: '@id',
+    idField: '@id'
   },
   started() {
     this.expo = new Expo();
@@ -25,7 +25,7 @@ const ExpoPushNotificationService = {
       const { to, message, data } = ctx.params;
 
       const devices = await ctx.call('push.device.findUsersDevices', {
-        users: Array.isArray(to) ? to : [to],
+        users: Array.isArray(to) ? to : [to]
       });
 
       for (const device of devices) {
@@ -37,10 +37,10 @@ const ExpoPushNotificationService = {
             message: JSON.stringify({
               to: device.pushToken,
               body: message,
-              data,
-            }),
+              data
+            })
           },
-          { parentCtx: ctx },
+          { parentCtx: ctx }
         );
       }
     },
@@ -62,9 +62,9 @@ const ExpoPushNotificationService = {
               {
                 '@id': notification['@id'],
                 status: 'processed',
-                receiptId: receipt[0].id,
+                receiptId: receipt[0].id
               },
-              { parentCtx: ctx },
+              { parentCtx: ctx }
             );
           } else {
             // NOTE: If a ticket contains an error code in ticket.details.error, you
@@ -81,7 +81,7 @@ const ExpoPushNotificationService = {
 
       if (notifications) {
         const receiptIdChunks = this.expo.chunkPushNotificationReceiptIds(
-          notifications.map((notification) => notification['semapps:receiptId']),
+          notifications.map(notification => notification['semapps:receiptId'])
         );
 
         // Like sending notifications, there are different strategies you could use
@@ -94,16 +94,16 @@ const ExpoPushNotificationService = {
             // notification and information about an error, if one occurred.
             for (const receiptId in receipts) {
               let { status, message, details } = receipts[receiptId];
-              const notificationId = notifications.find((notification) => notification.receiptId === receiptId)['@id'];
+              const notificationId = notifications.find(notification => notification.receiptId === receiptId)['@id'];
 
               if (status === 'ok') {
                 await this.actions.update(
                   {
                     '@id': notificationId,
                     status: 'checked',
-                    receiptStatus: status,
+                    receiptStatus: status
                   },
-                  { parentCtx: ctx },
+                  { parentCtx: ctx }
                 );
               } else if (status === 'error') {
                 // Append the error code to the message for easier debug
@@ -121,15 +121,15 @@ const ExpoPushNotificationService = {
           }
         }
       }
-    },
+    }
   },
   methods: {
     async findByStatus(status, ctx) {
       const collection = await this.actions.find(
         {
-          query: { status },
+          query: { status }
         },
-        { parentCtx: ctx },
+        { parentCtx: ctx }
       );
       return collection['ldp:contains'] || [];
     },
@@ -138,18 +138,18 @@ const ExpoPushNotificationService = {
         {
           '@id': notificationId,
           status: 'error',
-          errorMessage: message,
+          errorMessage: message
         },
-        { parentCtx: ctx },
+        { parentCtx: ctx }
       );
 
       // Also mark device as error
       await ctx.call('push.device.update', {
         '@id': notification.deviceId,
-        errorMessage: message,
+        errorMessage: message
       });
-    },
-  },
+    }
+  }
 };
 
 module.exports = ExpoPushNotificationService;

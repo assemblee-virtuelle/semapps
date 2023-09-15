@@ -11,7 +11,7 @@ module.exports = {
   name: 'mirror',
   settings: {
     graphName: 'http://semapps.org/mirror',
-    servers: [],
+    servers: []
   },
   dependencies: [
     'triplestore',
@@ -20,7 +20,7 @@ module.exports = {
     'activitypub.relay',
     'auth.account',
     'ldp.container',
-    'ldp.registry',
+    'ldp.registry'
   ],
   created() {
     this.broker.createService(SynchronizerService, {
@@ -28,8 +28,8 @@ module.exports = {
         podProvider: false,
         mirrorGraph: true,
         synchronizeContainers: true,
-        attachToLocalContainers: false,
-      },
+        attachToLocalContainers: false
+      }
     });
   },
   async started() {
@@ -39,7 +39,7 @@ module.exports = {
         // Do not await because we don't want to block the startup of the services.
         this.actions
           .mirror({ serverUrl })
-          .catch((e) => this.logger.warn(`Mirroring failed for ${serverUrl} : ${e.message}`));
+          .catch(e => this.logger.warn(`Mirroring failed for ${serverUrl} : ${e.message}`));
       }
     }
   },
@@ -47,7 +47,7 @@ module.exports = {
     mirror: {
       visibility: 'public',
       params: {
-        serverUrl: { type: 'string', optional: false },
+        serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
         const { serverUrl } = ctx.params;
@@ -59,7 +59,7 @@ module.exports = {
 
         const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
           follower: this.relayActor.id,
-          following: remoteRelayActorUri,
+          following: remoteRelayActorUri
         });
 
         if (alreadyFollowing) {
@@ -76,8 +76,8 @@ module.exports = {
         const response = await fetch(voidUrl, {
           method: 'GET',
           headers: {
-            Accept: 'application/ld+json',
-          },
+            Accept: 'application/ld+json'
+          }
         });
 
         if (!response.ok) throw new MoleculerError(`No VOID endpoint on the server ${serverUrl}`, 404, 'NOT_FOUND');
@@ -92,7 +92,7 @@ module.exports = {
           throw new MoleculerError(
             `The VOID answer does not contain valid information for ${serverUrl}`,
             400,
-            'INVALID',
+            'INVALID'
           );
 
         // We mirror only the relevant server, meaning, not the mirrored data of the remote server.
@@ -109,8 +109,8 @@ module.exports = {
             const rep = await fetch(p['void:uriSpace'], {
               method: 'GET',
               headers: {
-                Accept: 'text/turtle',
-              },
+                Accept: 'text/turtle'
+              }
             });
 
             if (rep.ok) {
@@ -136,7 +136,7 @@ module.exports = {
         const singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
           GRAPH <${this.settings.graphName}> { 
-          ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`,
+          ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
         });
 
         for (const single of singles) {
@@ -145,7 +145,7 @@ module.exports = {
             await this.broker.call('triplestore.update', {
               webId: 'system',
               query: `DELETE WHERE { GRAPH <${this.settings.graphName}> { 
-              <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`,
+              <${resourceUri}> <http://semapps.org/ns/core#singleMirroredResource> ?q. } }`
             });
           } catch (e) {
             // fail silently
@@ -164,11 +164,11 @@ module.exports = {
           actor: this.relayActor.id,
           type: ACTIVITY_TYPES.FOLLOW,
           object: remoteRelayActorUri,
-          to: [remoteRelayActorUri],
+          to: [remoteRelayActorUri]
         });
 
         return remoteRelayActorUri;
-      },
-    },
-  },
+      }
+    }
+  }
 };

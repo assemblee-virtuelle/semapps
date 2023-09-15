@@ -2,7 +2,7 @@ import jwtDecode from 'jwt-decode';
 import urlJoin from 'url-join';
 import getServerKeyFromType from './getServerKeyFromType';
 
-const fetchUserConfig = async (config) => {
+const fetchUserConfig = async config => {
   const { dataServers, httpClient } = config;
   const token = localStorage.getItem('token');
   const podKey = getServerKeyFromType('pod', dataServers);

@@ -12,11 +12,11 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
   if (typeof activityOrObject === 'string') {
     if (pattern.type && Object.values(ACTIVITY_TYPES).includes(pattern.type)) {
       dereferencedActivityOrObject = await ctx.call('activitypub.activity.get', {
-        resourceUri: activityOrObject,
+        resourceUri: activityOrObject
       });
     } else {
       dereferencedActivityOrObject = await ctx.call('activitypub.object.get', {
-        objectUri: activityOrObject,
+        objectUri: activityOrObject
       });
     }
   } else {
@@ -30,7 +30,7 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
       if (!dereferencedActivityOrObject[key]) return false;
     } else if (
       !dereferencedActivityOrObject[key] ||
-      !defaultToArray(dereferencedActivityOrObject[key]).some((v) => defaultToArray(pattern[key]).includes(v))
+      !defaultToArray(dereferencedActivityOrObject[key]).some(v => defaultToArray(pattern[key]).includes(v))
     )
       return false;
   }

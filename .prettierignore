@@ -1,14 +1,2 @@
-/deploy/certbot/
-/data
-node_modules
-yarn-error.log
-lerna-debug.log
-.DS_Store
-/.idea
-/data
-*.swp
-.classpath
-.project
-.settings
-# conflict
-*.orig
+*.cjs.js
+*.es.js

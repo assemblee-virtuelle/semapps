@@ -9,19 +9,19 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     marginLeft: -20,
     marginBottom: -20,
-    width: 'auto',
+    width: 'auto'
   },
   column: {
     paddingLeft: 20,
-    backgroundClip: 'padding-box',
+    backgroundClip: 'padding-box'
   },
   card: {
-    marginBottom: 20,
+    marginBottom: 20
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
+    paddingTop: '56.25%' // 16:9
+  }
 }));
 
 /**
@@ -45,7 +45,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
   const createPath = useCreatePath();
   return (
     <Masonry breakpointCols={breakpointCols} className={classes.grid} columnClassName={classes.column}>
-      {data.map((record) => {
+      {data.map(record => {
         if (!record || record._error) return null;
         const imageUrl = typeof image === 'function' ? image(record) : image;
         return (
@@ -57,7 +57,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
                   {content && <CardContent>{content(record)}</CardContent>}
                 </CardActionArea>
               </Link>
-              {actions && <CardActions>{actions.map((action) => React.createElement(action))}</CardActions>}
+              {actions && <CardActions>{actions.map(action => React.createElement(action))}</CardActions>}
             </Card>
           </RecordContextProvider>
         );
@@ -68,7 +68,7 @@ const MasonryList = ({ image, content, actions, breakpointCols, linkType }) => {
 
 MasonryList.defaultProps = {
   breakpointCols: { default: 3, 1050: 2, 700: 1 },
-  linkType: 'edit',
+  linkType: 'edit'
 };
 
 export default MasonryList;

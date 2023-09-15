@@ -3,7 +3,7 @@ const path = require('path');
 const MailService = require('moleculer-mail');
 const { getSlugFromUri } = require('@semapps/ldp');
 
-const delay = (t) => new Promise((resolve) => setTimeout(resolve, t));
+const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 const SingleMailNotificationsService = {
   name: 'notifications.single-mail',
@@ -17,7 +17,7 @@ const SingleMailNotificationsService = {
     templateFolder: path.join(__dirname, '../../templates'),
     from: null,
     transport: null,
-    data: {},
+    data: {}
   },
   events: {
     async 'activitypub.inbox.received'(ctx) {
@@ -48,12 +48,12 @@ const SingleMailNotificationsService = {
               color: this.settings.color,
               descriptionWithBr: notification.description
                 ? notification.description.replace(/\r\n|\r|\n/g, '<br />')
-                : undefined,
-            },
+                : undefined
+            }
           });
         }
       }
-    },
+    }
   },
   methods: {
     // Optional method called for each notification
@@ -75,7 +75,7 @@ const SingleMailNotificationsService = {
         return this.createJob('sendMail', key, payload);
       }
       await this.actions.send(payload, { parentCtx: ctx });
-    },
+    }
   },
   queues: {
     sendMail: {
@@ -85,9 +85,9 @@ const SingleMailNotificationsService = {
         const result = await this.actions.send(job.data);
         job.progress(100);
         return result;
-      },
-    },
-  },
+      }
+    }
+  }
 };
 
 module.exports = SingleMailNotificationsService;

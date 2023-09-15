@@ -7,9 +7,9 @@ const ActivityMappingService = {
   settings: {
     mappers: [],
     handlebars: {
-      helpers: {},
+      helpers: {}
     },
-    matchAnnouncedActivities: false,
+    matchAnnouncedActivities: false
   },
   async started() {
     this.mappers = [];
@@ -36,7 +36,7 @@ const ActivityMappingService = {
 
         activity = {
           actor: activity.actor, // Ensure the actor is defined
-          ...announcedActivity,
+          ...announcedActivity
         };
       }
 
@@ -57,7 +57,7 @@ const ActivityMappingService = {
               : {};
           } catch (e) {
             this.logger.warn(
-              `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`,
+              `Could not get profile of actor ${activity.actor} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`
             );
           }
 
@@ -74,7 +74,7 @@ const ActivityMappingService = {
                 return [key, value[locale](templateParams)];
               }
               throw new Error(`No ${locale} locale found for key ${key}`);
-            }),
+            })
           );
         }
       }
@@ -87,7 +87,7 @@ const ActivityMappingService = {
       this.mappers.push({
         match,
         mapping: this.compileObject(mapping),
-        priority,
+        priority
       });
 
       // Reorder cached mappings
@@ -95,7 +95,7 @@ const ActivityMappingService = {
     },
     getMappers() {
       return this.mappers;
-    },
+    }
   },
   methods: {
     matchActivity(ctx, pattern, activityOrObject) {
@@ -113,11 +113,11 @@ const ActivityMappingService = {
               return [key, Handlebars.compile(value)];
             }
             return [key, this.compileObject(value)];
-          }),
+          })
         )
       );
-    },
-  },
+    }
+  }
 };
 
 module.exports = ActivityMappingService;

@@ -5,7 +5,7 @@ import {
   useCreatePath,
   useGetResourceLabel,
   useResourceDefinition,
-  useTranslate,
+  useTranslate
 } from 'react-admin';
 import debounce from 'lodash.debounce';
 import {
@@ -17,7 +17,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Avatar,
-  CircularProgress,
+  CircularProgress
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
@@ -25,25 +25,25 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useDataServers, useDataModel } from '@semapps/semantic-data-provider';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     maxWidth: '100%',
     backgroundColor: theme.palette.background.paper,
     paddingTop: 0,
-    paddingBottom: 0,
+    paddingBottom: 0
   },
   primaryText: {
-    width: '30%',
+    width: '30%'
   },
   secondaryText: {
     fontStyle: 'italic',
-    color: 'grey',
-  },
+    color: 'grey'
+  }
 }));
 
 const getServerName = (resourceUri, dataServers) => {
-  const server = dataServers && Object.values(dataServers).find((server) => resourceUri.startsWith(server.baseUrl));
+  const server = dataServers && Object.values(dataServers).find(server => resourceUri.startsWith(server.baseUrl));
   return server ? server.name : 'Inconnu';
 };
 
@@ -68,12 +68,12 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
 
   const search = useMemo(
     () =>
-      debounce((keyword) => {
+      debounce(keyword => {
         dataProvider
           .getList(reference, {
             pagination: { page: 1, perPage: 100 },
             sort: { field: dataModel?.fieldsMapping?.title, order: 'ASC' },
-            filter: { q: keyword, _predicates: [dataModel.fieldsMapping.title], _servers: '@all' },
+            filter: { q: keyword, _predicates: [dataModel.fieldsMapping.title], _servers: '@all' }
           })
           .then(({ data }) => {
             const existingLinks = record[source]
@@ -81,16 +81,16 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
                 ? record[source]
                 : [record[source]]
               : [];
-            const newLinks = data.filter((record) => !existingLinks.includes(record.id));
+            const newLinks = data.filter(record => !existingLinks.includes(record.id));
             setResults(newLinks);
             setLoaded(true);
             setLoading(false);
           })
-          .catch((e) => {
+          .catch(e => {
             setLoading(false);
           });
       }, 700),
-    [dataProvider, dataModel, record, source, reference, setResults, setLoading, setLoaded],
+    [dataProvider, dataModel, record, source, reference, setResults, setLoading, setLoaded]
   );
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   return (
     <List dense className={classes.root}>
       {loaded &&
-        results.map((resource) => (
+        results.map(resource => (
           <ListItem key={resource.id} button onClick={() => appendLink(resource.id)}>
             <ListItemAvatar>
               <Avatar>{React.createElement(referenceDefinition.icon)}</Avatar>

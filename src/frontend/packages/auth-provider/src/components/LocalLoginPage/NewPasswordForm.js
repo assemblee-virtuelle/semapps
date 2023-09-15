@@ -4,10 +4,10 @@ import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 const NewPasswordForm = ({ redirectTo }) => {
@@ -22,18 +22,18 @@ const NewPasswordForm = ({ redirectTo }) => {
   const notify = useNotify();
   const classes = useStyles();
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     authProvider
       .setNewPassword({ ...values, token })
-      .then((res) => {
+      .then(res => {
         setTimeout(() => {
           window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`;
           setLoading(false);
         }, 2000);
         notify('auth.notification.password_changed', 'info');
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -44,9 +44,9 @@ const NewPasswordForm = ({ redirectTo }) => {
           {
             type: 'warning',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-            },
-          },
+              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            }
+          }
         );
       });
   };
@@ -62,7 +62,7 @@ const NewPasswordForm = ({ redirectTo }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
         <TextInput
           autoFocus
@@ -73,7 +73,7 @@ const NewPasswordForm = ({ redirectTo }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
         <TextInput
           autoFocus
@@ -84,7 +84,7 @@ const NewPasswordForm = ({ redirectTo }) => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
         <Button
           variant="contained"

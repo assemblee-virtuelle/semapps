@@ -4,13 +4,13 @@ import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 const LoginForm = ({ redirectTo, allowUsername }) => {
@@ -22,13 +22,13 @@ const LoginForm = ({ redirectTo, allowUsername }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     login(values, redirectTo)
       .then(() => {
         setLoading(false);
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -39,9 +39,9 @@ const LoginForm = ({ redirectTo, allowUsername }) => {
           {
             type: 'warning',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-            },
-          },
+              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            }
+          }
         );
       });
   };
@@ -55,7 +55,7 @@ const LoginForm = ({ redirectTo, allowUsername }) => {
           autoComplete="email"
           fullWidth
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
           validate={allowUsername ? [required()] : [required(), email()]}
         />
         <TextInput
@@ -88,7 +88,7 @@ const LoginForm = ({ redirectTo, allowUsername }) => {
 
 LoginForm.defaultValues = {
   redirectTo: '/',
-  allowUsername: false,
+  allowUsername: false
 };
 
 export default LoginForm;

@@ -15,7 +15,7 @@ module.exports = {
             await ctx.call('auth.account.create', {
               email: user[emailPredicate],
               username: usernamePredicate ? user[usernamePredicate] : getSlugFromUri(user.id),
-              webId: user.id,
+              webId: user.id
             });
           } catch (e) {
             console.log(`Unable to create account for user ${user.id}. Error message: ${e.message}`);
@@ -24,6 +24,6 @@ module.exports = {
           console.log(`No email found for user ${user.id}`);
         }
       }
-    },
-  },
+    }
+  }
 };

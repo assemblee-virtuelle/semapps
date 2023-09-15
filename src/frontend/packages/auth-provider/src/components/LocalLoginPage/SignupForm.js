@@ -8,20 +8,20 @@ import {
   TextInput,
   required,
   email,
-  useLocaleState,
+  useLocaleState
 } from 'react-admin';
 import { useSignup } from '@semapps/auth-provider';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, delayBeforeRedirect }) => {
@@ -34,13 +34,13 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
   const searchParams = new URLSearchParams(location.search);
   const [locale] = useLocaleState();
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     signup({
       ...values,
-      ...additionalSignupValues,
+      ...additionalSignupValues
     })
-      .then((webId) => {
+      .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
@@ -60,7 +60,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
         }
         notify('auth.message.new_user_created', { type: 'info' });
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -70,8 +70,8 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
             : error.message,
           {
             type: 'warning',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-          },
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+          }
         );
       });
   };
@@ -87,12 +87,12 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) =>
+          format={value =>
             value
               ? createSlug(value, {
                   lang: locale || 'fr',
                   separator: '_',
-                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
                 })
               : ''
           }
@@ -135,7 +135,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
 
 SignupForm.defaultValues = {
   redirectTo: '/',
-  additionalSignupValues: {},
+  additionalSignupValues: {}
 };
 
 export default SignupForm;

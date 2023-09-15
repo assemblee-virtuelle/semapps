@@ -23,9 +23,9 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
         },
         overrides: {
           h1: LabelComponent,
-          ...overrides,
+          ...overrides
         },
-        ...rest,
+        ...rest
       }}
     >
       {get(record, source)}
@@ -34,7 +34,7 @@ const MarkdownField = ({ source, LabelComponent, overrides = {}, ...rest }) => {
 };
 
 MarkdownField.defaultProps = {
-  LabelComponent: 'h2',
+  LabelComponent: 'h2'
 };
 
 export default MarkdownField;

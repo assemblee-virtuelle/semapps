@@ -6,7 +6,7 @@ import AgentItem from './AgentItem';
 const StyledList = styled(List)(({ theme }) => ({
   width: '100%',
   maxWidth: '100%',
-  backgroundColor: theme.palette.background.paper,
+  backgroundColor: theme.palette.background.paper
 }));
 
 const EditPermissionsForm = ({ isContainer, agents, addPermission, removePermission }) => {

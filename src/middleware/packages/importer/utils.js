@@ -2,7 +2,7 @@ const sanitizeHtml = require('sanitize-html');
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-const convertToIsoString = (str) => str && new Date(str).toISOString();
+const convertToIsoString = str => str && new Date(str).toISOString();
 
 const formatPhoneNumber = (number, countryCode) => {
   if (number && countryCode) {
@@ -16,7 +16,7 @@ const formatPhoneNumber = (number, countryCode) => {
   }
 };
 
-const frenchAddressSearch = async (query) => {
+const frenchAddressSearch = async query => {
   const url = new URL('https://api-adresse.data.gouv.fr/search/');
   url.searchParams.set('q', query);
   const response = await fetch(url.toString());
@@ -41,12 +41,12 @@ const frenchAddressReverseSearch = async (lat, lon) => {
   return false;
 };
 
-const removeHtmlTags = (text) => sanitizeHtml(text, { allowedTags: [] }).trim();
+const removeHtmlTags = text => sanitizeHtml(text, { allowedTags: [] }).trim();
 
 module.exports = {
   convertToIsoString,
   formatPhoneNumber,
   frenchAddressSearch,
   frenchAddressReverseSearch,
-  removeHtmlTags,
+  removeHtmlTags
 };

@@ -7,7 +7,7 @@ const {
   parseTurtle,
   parseFile,
   addContainerUriMiddleware,
-  saveDatasetMeta,
+  saveDatasetMeta
 } = require('@semapps/middlewares');
 
 function getContainerRoute(containerUri, readOnly = false) {
@@ -22,20 +22,20 @@ function getContainerRoute(containerUri, readOnly = false) {
     parseTurtle,
     parseFile,
     addContainerUriMiddleware(containerUri),
-    saveDatasetMeta,
+    saveDatasetMeta
   ];
 
   // Container aliases
   let aliases = {
     'GET /': [...middlewares, 'ldp.container.api_get'],
-    'HEAD /': [addContainerUriMiddleware(containerUri), 'ldp.container.api_head'],
+    'HEAD /': [addContainerUriMiddleware(containerUri), 'ldp.container.api_head']
   };
 
   if (!readOnly) {
     aliases = {
       ...aliases,
       'POST /': [...middlewares, 'ldp.container.api_post'],
-      'PATCH /': [...middlewares, 'ldp.container.api_patch'],
+      'PATCH /': [...middlewares, 'ldp.container.api_patch']
     };
   }
 
@@ -44,7 +44,7 @@ function getContainerRoute(containerUri, readOnly = false) {
     aliases = {
       ...aliases,
       'GET /:id': [...middlewares, 'ldp.resource.api_get'],
-      'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head'],
+      'HEAD /:id': [addContainerUriMiddleware(containerUri), 'ldp.resource.api_head']
     };
 
     if (!readOnly) {
@@ -52,7 +52,7 @@ function getContainerRoute(containerUri, readOnly = false) {
         ...aliases,
         'PUT /:id': [...middlewares, 'ldp.resource.api_put'],
         'PATCH /:id': [...middlewares, 'ldp.resource.api_patch'],
-        'DELETE /:id': [...middlewares, 'ldp.resource.api_delete'],
+        'DELETE /:id': [...middlewares, 'ldp.resource.api_delete']
       };
     }
   }
@@ -65,7 +65,7 @@ function getContainerRoute(containerUri, readOnly = false) {
     bodyParsers: false,
     authorization: false,
     authentication: true,
-    aliases,
+    aliases
   };
 }
 

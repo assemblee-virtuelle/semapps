@@ -9,11 +9,11 @@ import { USER_AGENT, ACL_READ } from '../../constants';
 const useStyles = makeStyles(() => ({
   list: {
     padding: 0,
-    width: '100%',
+    width: '100%'
   },
   option: {
-    padding: 0,
-  },
+    padding: 0
+  }
 }));
 
 const AddPermissionsForm = ({ agents, addPermission }) => {
@@ -28,11 +28,11 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
     {
       pagination: { page: 1, perPage: 100 },
       sort: { field: 'pair:label', order: 'ASC' },
-      filter: { q: inputValue },
+      filter: { q: inputValue }
     },
     {
-      enabled: inputValue.length > 0,
-    },
+      enabled: inputValue.length > 0
+    }
   );
 
   useEffect(() => {
@@ -42,9 +42,9 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
   return (
     <Autocomplete
       classes={{ option: classes.option }}
-      getOptionLabel={(option) => option['pair:label']}
+      getOptionLabel={option => option['pair:label']}
       // Do not return agents which have already been added
-      filterOptions={(x) => x.filter((agent) => !Object.keys(agents).includes(agent.id))}
+      filterOptions={x => x.filter(agent => !Object.keys(agents).includes(agent.id))}
       options={options}
       noOptionsText={translate('ra.navigation.no_results')}
       autoComplete
@@ -61,7 +61,7 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
-      renderInput={(params) => (
+      renderInput={params => (
         <TextField {...params} label={translate('auth.input.agent_select')} variant="filled" margin="dense" fullWidth />
       )}
       renderOption={(props, option) => (

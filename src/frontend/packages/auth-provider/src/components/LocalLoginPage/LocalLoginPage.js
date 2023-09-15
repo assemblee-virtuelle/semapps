@@ -15,8 +15,8 @@ const useStyles = makeStyles(() => ({
     marginBottom: '1em',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 }));
 
 const LocalLoginPage = ({
@@ -24,7 +24,7 @@ const LocalLoginPage = ({
   allowUsername,
   postSignupRedirect,
   postLoginRedirect,
-  additionalSignupValues,
+  additionalSignupValues
 }) => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -112,7 +112,7 @@ const LocalLoginPage = ({
 LocalLoginPage.defaultProps = {
   hasSignup: true,
   allowUsername: false,
-  additionalSignupValues: {},
+  additionalSignupValues: {}
 };
 
 export default LocalLoginPage;

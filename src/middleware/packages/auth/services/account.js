@@ -10,7 +10,7 @@ module.exports = {
   adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: 'settings' }),
   settings: {
     idField: '@id',
-    reservedUsernames: ['relay'],
+    reservedUsernames: ['relay']
   },
   dependencies: ['triplestore'],
   actions: {
@@ -49,7 +49,7 @@ module.exports = {
         username,
         email,
         hashedPassword,
-        webId,
+        webId
       });
     },
     async attachWebId(ctx) {
@@ -57,7 +57,7 @@ module.exports = {
 
       return await this._update(ctx, {
         '@id': accountUri,
-        webId,
+        webId
       });
     },
     async verify(ctx) {
@@ -105,7 +105,7 @@ module.exports = {
 
       return await this._update(ctx, {
         '@id': account['@id'],
-        hashedPassword,
+        hashedPassword
       });
     },
     async setNewPassword(ctx) {
@@ -120,7 +120,7 @@ module.exports = {
       return await this._update(ctx, {
         '@id': account['@id'],
         hashedPassword,
-        resetPasswordToken: undefined,
+        resetPasswordToken: undefined
       });
     },
     async generateResetPasswordToken(ctx) {
@@ -130,7 +130,7 @@ module.exports = {
 
       await this._update(ctx, {
         '@id': account['@id'],
-        resetPasswordToken,
+        resetPasswordToken
       });
 
       return resetPasswordToken;
@@ -147,7 +147,7 @@ module.exports = {
 
       return {
         email: account.email,
-        preferredLocale: account.preferredLocale,
+        preferredLocale: account.preferredLocale
       };
     },
     async updateAccountSettings(ctx) {
@@ -177,9 +177,9 @@ module.exports = {
 
       return await this._update(ctx, {
         '@id': account['@id'],
-        ...params,
+        ...params
       });
-    },
+    }
   },
   methods: {
     async isValidUsername(ctx, username) {
@@ -213,7 +213,7 @@ module.exports = {
       });
     },
     async comparePassword(password, hash) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         bcrypt.compare(password, hash, (err, res) => {
           if (res === true) {
             resolve(true);
@@ -232,6 +232,6 @@ module.exports = {
           resolve(buf.toString('hex'));
         });
       });
-    },
-  },
+    }
+  }
 };

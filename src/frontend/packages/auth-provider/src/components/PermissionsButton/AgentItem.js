@@ -9,7 +9,7 @@ import {
   ListItemSecondaryAction,
   IconButton,
   Menu,
-  MenuItem,
+  MenuItem
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,20 +20,20 @@ import AgentIcon from './AgentIcon';
 const useStyles = makeStyles(() => ({
   listItem: {
     paddingLeft: 4,
-    paddingRight: 36,
+    paddingRight: 36
   },
   primaryText: {
     width: '30%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    textOverflow: 'ellipsis'
   },
   secondaryText: {
     textAlign: 'center',
     width: '60%',
     fontStyle: 'italic',
-    color: 'grey',
-  },
+    color: 'grey'
+  }
 }));
 
 const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
@@ -53,7 +53,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
           setUser(data);
           setLoading(false);
         })
-        .catch((error) => {
+        .catch(error => {
           setError(error);
           setLoading(false);
         });
@@ -65,7 +65,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
   // For now, do not display groups
   if (agent.predicate === GROUP_AGENT) return null;
 
-  const openMenu = (event) => setAnchorEl(event.currentTarget);
+  const openMenu = event => setAnchorEl(event.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
   const labels = isContainer ? containerRightsLabels : resourceRightsLabels;
@@ -90,7 +90,7 @@ const AgentItem = ({ isContainer, agent, addPermission, removePermission }) => {
       />
       <ListItemText
         className={classes.secondaryText}
-        primary={agent.permissions && agent.permissions.map((p) => translate(labels[p])).join(', ')}
+        primary={agent.permissions && agent.permissions.map(p => translate(labels[p])).join(', ')}
       />
       <ListItemSecondaryAction>
         <IconButton onClick={openMenu} size="large">

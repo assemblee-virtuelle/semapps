@@ -7,14 +7,14 @@ module.exports = {
     source: {
       gogocarto: {
         baseUrl: null,
-        type: 'elements',
+        type: 'elements'
       },
       fieldsMapping: {
         slug: 'name',
         created: 'createdAt',
-        updated: 'updatedAt',
-      },
-    },
+        updated: 'updatedAt'
+      }
+    }
   },
   created() {
     if (this.settings.source.gogocarto.type === 'elements') {
@@ -23,9 +23,9 @@ module.exports = {
       this.settings.source.getAllCompact = `${urlJoin(
         this.settings.source.gogocarto.baseUrl,
         'api',
-        'elements',
+        'elements'
       )}?ontology=gogosync`;
-      this.settings.source.getOneFull = (data) =>
+      this.settings.source.getOneFull = data =>
         urlJoin(this.settings.source.gogocarto.baseUrl, 'api', 'elements', `${data.id}`);
     } else {
       throw new Error('The GoGoCartoMixin can only import elements for now');
@@ -39,6 +39,6 @@ module.exports = {
     async getOne(url) {
       const result = await this.fetch(url);
       return result.data;
-    },
-  },
+    }
+  }
 };

@@ -7,7 +7,7 @@ import {
   useLocale,
   useRecordContext,
   useResourceContext,
-  useTheme,
+  useTheme
 } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -19,7 +19,7 @@ import { styled } from '@mui/system';
 
 const StyledLocationOnIcon = styled(LocationOnIcon)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  marginRight: theme.spacing(2),
+  marginRight: theme.spacing(2)
 }));
 
 const selectOptionText = (option, optionText) => {
@@ -54,7 +54,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
   const {
     field: { value, onChange, onBlur /* , onFocus */ },
     isRequired,
-    fieldState: { error, /* submitError, */ isTouched },
+    fieldState: { error, /* submitError, */ isTouched }
   } = useInput({ resource, source, ...rest });
 
   const fetchMapbox = useMemo(
@@ -76,10 +76,10 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
         });
 
         fetch(fetchUrl.toString())
-          .then((res) => res.json())
-          .then((json) => callback(json));
+          .then(res => res.json())
+          .then(json => callback(json));
       }, 200),
-    [mapboxConfig, locale],
+    [mapboxConfig, locale]
   );
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
     if (!keyword || keyword === selectOptionText(value, optionText)) {
       return undefined;
     }
-    fetchMapbox(keyword, (results) => setOptions(results.features));
+    fetchMapbox(keyword, results => setOptions(results.features));
   }, [value, keyword, fetchMapbox]);
 
   return (
@@ -100,8 +100,8 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
       // Do not show the current value as an option (this would break renderOptions)
       filterSelectedOptions
       // For some reasons, this prop has to be passed
-      filterOptions={(x) => x}
-      getOptionLabel={(option) => selectOptionText(option, optionText)}
+      filterOptions={x => x}
+      getOptionLabel={option => selectOptionText(option, optionText)}
       isOptionEqualToValue={(option, value) =>
         selectOptionText(option, optionText) === selectOptionText(value, optionText)
       }
@@ -114,7 +114,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
       }}
       onInputChange={(event, newKeyword) => setKeyword(newKeyword)}
       noOptionsText={translate('ra.navigation.no_results')}
-      renderInput={(params) => {
+      renderInput={params => {
         // Autocomplete=off doesn't work anymore in modern browsers
         // https://stackoverflow.com/a/40791726/7900695
         params.inputProps.autoComplete = 'new-password';
@@ -123,7 +123,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
             {...params}
             inputProps={{
               ...params.inputProps,
-              onBlur: (e) => {
+              onBlur: e => {
                 onBlur(e);
                 if (params.inputProps.onBlur) {
                   params.inputProps.onBlur(e);
@@ -134,7 +134,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
                 if (params.inputProps.onFocus) {
                   params.inputProps.onFocus(e);
                 }
-              } */,
+              } */
             }}
             label={
               label !== '' &&
@@ -183,7 +183,7 @@ const LocationInput = ({ mapboxConfig, source, label, parse, optionText, helperT
 
 LocationInput.defaultProps = {
   variant: 'outlined',
-  size: 'small',
+  size: 'small'
 };
 
 export default LocationInput;

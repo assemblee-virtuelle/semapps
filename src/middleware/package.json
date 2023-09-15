@@ -27,7 +27,7 @@
     "eslint-plugin-prettier": "^5.0.0",
     "lerna": "^3.19.0",
     "nx": "16.5.1",
-    "prettier": "^1.19.1",
+    "prettier": "^3.0.3",
     "typescript": "^5.1.6"
   },
   "workspaces": [

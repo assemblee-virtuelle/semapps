@@ -12,7 +12,7 @@
     "bson": "^4.0.4",
     "moleculer": "^0.14.17",
     "moleculer-schedule": "^0.2.3",
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^2.6.6",
     "path-to-regexp": "^6.2.0",
     "rdf-parse": "^1.7.0",
     "sharp": "^0.31.2",

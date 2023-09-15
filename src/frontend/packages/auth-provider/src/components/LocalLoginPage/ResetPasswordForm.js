@@ -3,10 +3,10 @@ import { Form, TextInput, required, useTranslate, useNotify, useSafeSetState, us
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 const ResetPasswordForm = () => {
@@ -16,15 +16,15 @@ const ResetPasswordForm = () => {
   const notify = useNotify();
   const classes = useStyles();
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     authProvider
       .resetPassword({ ...values })
-      .then((res) => {
+      .then(res => {
         setLoading(false);
         notify('auth.notification.reset_password_submitted', 'info');
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -35,9 +35,9 @@ const ResetPasswordForm = () => {
           {
             type: 'warning',
             messageArgs: {
-              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-            },
-          },
+              _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+            }
+          }
         );
       });
   };
@@ -53,7 +53,7 @@ const ResetPasswordForm = () => {
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) => (value ? value.toLowerCase() : '')}
+          format={value => (value ? value.toLowerCase() : '')}
         />
         <Button
           variant="contained"

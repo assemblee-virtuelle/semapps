@@ -6,7 +6,7 @@ const {
   convertBodyToTriples,
   filterTriplesForResource,
   FULL_AGENTCLASS_URI,
-  FULL_FOAF_AGENT,
+  FULL_FOAF_AGENT
 } = require('../../../utils');
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
 
     await ctx.call('webacl.resource.setRights', {
       resourceUri: urlJoin(this.settings.baseUrl, ...slugParts),
-      newRights,
+      newRights
     });
 
     ctx.meta.$statusCode = 204;
@@ -36,7 +36,7 @@ module.exports = {
       resourceUri: { type: 'string' },
       webId: { type: 'string', optional: true },
       // newRights is an array of objects of the form { auth: 'http://localhost:3000/_acl/container29#Control',  p: 'http://www.w3.org/ns/auth/acl#agent',  o: 'https://data.virtual-assembly.org/users/sebastien.rosset' }
-      newRights: { type: 'array', optional: false, min: 1 },
+      newRights: { type: 'array', optional: false, min: 1 }
       // minimum is one right : We cannot leave a resource without rights.
     },
     async handler(ctx) {
@@ -50,13 +50,13 @@ module.exports = {
       const { control } = await ctx.call('webacl.resource.hasRights', {
         resourceUri,
         rights: { control: true },
-        webId,
+        webId
       });
       if (!control) throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
 
       // filter out all the newRights that are not for the resource
       const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
-      newRights = newRights.filter((a) => filterTriplesForResource(a, aclUri, isContainer));
+      newRights = newRights.filter(a => filterTriplesForResource(a, aclUri, isContainer));
 
       if (newRights.length === 0)
         throw new MoleculerError('The rights cannot be changed because they are incorrect', 400, 'BAD_REQUEST');
@@ -66,15 +66,15 @@ module.exports = {
         resourceUri,
         this.settings.baseUrl,
         this.settings.graphName,
-        isContainer,
+        isContainer
       );
 
       // find the difference between newRights and currentPerms. add only what is not existent yet. and remove those that are not needed anymore
       const differenceAdd = newRights.filter(
-        (x) => !currentPerms.some((y) => x.auth === y.auth && x.o === y.o && x.p === y.p),
+        x => !currentPerms.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
       const differenceDelete = currentPerms.filter(
-        (x) => !newRights.some((y) => x.auth === y.auth && x.o === y.o && x.p === y.p),
+        x => !newRights.some(y => x.auth === y.auth && x.o === y.o && x.p === y.p)
       );
 
       if (differenceAdd.length === 0 && differenceDelete.length === 0) return;
@@ -108,31 +108,31 @@ module.exports = {
       // we do the 2 calls in one, so it is in the same transaction, and will rollback in case of failure.
       await ctx.call('triplestore.update', {
         query: `INSERT DATA { GRAPH <${this.settings.graphName}> { ${addRequest} } }; DELETE DATA { GRAPH <${this.settings.graphName}> { ${deleteRequest} } }`,
-        webId: 'system',
+        webId: 'system'
       });
 
       const defaultRightsUpdated =
         isContainer &&
-        (differenceAdd.some((triple) => triple.auth.includes('#Default')) ||
-          differenceDelete.some((triple) => triple.auth.includes('#Default')));
+        (differenceAdd.some(triple => triple.auth.includes('#Default')) ||
+          differenceDelete.some(triple => triple.auth.includes('#Default')));
 
       const addPublicRead = differenceAdd.some(
-        (triple) => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
       const removePublicRead = differenceDelete.some(
-        (triple) => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
       );
       const addDefaultPublicRead =
         isContainer &&
         differenceAdd.some(
-          (triple) =>
-            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
         );
       const removeDefaultPublicRead =
         isContainer &&
         differenceDelete.some(
-          (triple) =>
-            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT,
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
         );
 
       const returnValues = {
@@ -144,10 +144,10 @@ module.exports = {
         addPublicRead,
         removePublicRead,
         addDefaultPublicRead,
-        removeDefaultPublicRead,
+        removeDefaultPublicRead
       };
       ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
       return returnValues;
-    },
-  },
+    }
+  }
 };

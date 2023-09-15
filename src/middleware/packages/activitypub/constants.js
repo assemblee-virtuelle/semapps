@@ -1,5 +1,4 @@
-const appendPrefix = (types) =>
-  Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
+const appendPrefix = types => Object.fromEntries(Object.entries(types).map(([key, value]) => [key, AS_PREFIX + value]));
 
 const AS_PREFIX = 'https://www.w3.org/ns/activitystreams#';
 
@@ -33,7 +32,7 @@ const ACTIVITY_TYPES = {
   TRAVAL: 'Travel',
   UNDO: 'Undo',
   UPDATE: 'Update',
-  VIEW: 'View',
+  VIEW: 'View'
 };
 
 const ACTOR_TYPES = {
@@ -41,7 +40,7 @@ const ACTOR_TYPES = {
   GROUP: 'Group',
   ORGANIZATION: 'Organization',
   PERSON: 'Person',
-  SERVICE: 'Service',
+  SERVICE: 'Service'
 };
 
 const OBJECT_TYPES = {
@@ -56,7 +55,7 @@ const OBJECT_TYPES = {
   PROFILE: 'Profile',
   RELATIONSHIP: 'Relationship',
   TOMBSTONE: 'Tombstone',
-  VIDEO: 'Video',
+  VIDEO: 'Video'
 };
 
 module.exports = {
@@ -67,5 +66,5 @@ module.exports = {
   OBJECT_TYPES,
   FULL_ACTIVITY_TYPES: appendPrefix(ACTIVITY_TYPES),
   FULL_ACTOR_TYPES: appendPrefix(ACTOR_TYPES),
-  FULL_OBJECT_TYPES: appendPrefix(OBJECT_TYPES),
+  FULL_OBJECT_TYPES: appendPrefix(OBJECT_TYPES)
 };

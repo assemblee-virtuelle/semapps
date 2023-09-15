@@ -9,7 +9,7 @@
     "@semapps/mime-types": "0.5.1",
     "cron-parser": "^4.2.1",
     "google-libphonenumber": "^3.2.26",
-    "node-fetch": "2.6.1",
+    "node-fetch": "^2.6.6",
     "sanitize-html": "^2.6.1",
     "url-join": "^4.0.1"
   },
