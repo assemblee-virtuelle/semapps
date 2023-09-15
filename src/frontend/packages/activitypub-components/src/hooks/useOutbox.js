@@ -19,26 +19,26 @@ const useOutbox = () => {
 
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
-    async (activity) => {
+    async activity => {
       if (!outboxUrl)
         throw new Error(
-          'Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox',
+          'Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox'
         );
       const token = localStorage.getItem('token');
       const { headers } = await fetchUtils.fetchJson(outboxUrl, {
         method: 'POST',
         body: JSON.stringify({
           '@context': 'https://www.w3.org/ns/activitystreams',
-          ...activity,
+          ...activity
         }),
         headers: new Headers({
           'Content-Type': 'application/ld+json',
-          Authorization: `Bearer ${token}`,
-        }),
+          Authorization: `Bearer ${token}`
+        })
       });
       return headers.get('Location');
     },
-    [outboxUrl],
+    [outboxUrl]
   );
 
   const fetch = useCallback(async () => {
@@ -65,8 +65,8 @@ const useOutbox = () => {
       body: query,
       headers: new Headers({
         Accept: 'application/ld+json',
-        Authorization: token ? `Bearer ${token}` : undefined,
-      }),
+        Authorization: token ? `Bearer ${token}` : undefined
+      })
     });
 
     if (json['@graph']) {

@@ -15,8 +15,8 @@ const useStyles = makeStyles(() => ({
     marginBottom: '1em',
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-  },
+    alignItems: 'center'
+  }
 }));
 
 const LocalLoginPage = ({ hasSignup }) => {
@@ -95,7 +95,7 @@ const LocalLoginPage = ({ hasSignup }) => {
 };
 
 LocalLoginPage.defaultProps = {
-  hasSignup: true,
+  hasSignup: true
 };
 
 export default LocalLoginPage;

@@ -4,17 +4,17 @@ import listPlugin from '@fullcalendar/list';
 import makeStyles from '@mui/styles/makeStyles';
 import useFullCalendarProps from './useFullCalendarProps';
 
-const useGlobalStyles = makeStyles((theme) => ({
+const useGlobalStyles = makeStyles(theme => ({
   '@global': {
     '.fc-button': {
       backgroundColor: `${theme.palette.primary.main} !important`,
       border: 'none !important',
-      opacity: '1 !important',
-    },
-  },
+      opacity: '1 !important'
+    }
+  }
 }));
 
-const DaysList = (props) => {
+const DaysList = props => {
   const fullCalendarProps = useFullCalendarProps(props);
   useGlobalStyles();
 
@@ -22,7 +22,7 @@ const DaysList = (props) => {
 };
 
 DaysList.defaultProps = {
-  linkType: 'edit',
+  linkType: 'edit'
 };
 
 export default DaysList;

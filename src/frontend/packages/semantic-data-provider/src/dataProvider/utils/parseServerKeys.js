@@ -20,7 +20,7 @@ const parseServerKeys = (serverKeys, dataServers) => {
     if (serverKeys.includes('@all')) {
       return Object.keys(dataServers);
     }
-    return serverKeys.map((serverKey) => parseServerKey(serverKey, dataServers));
+    return serverKeys.map(serverKey => parseServerKey(serverKey, dataServers));
   }
   if (typeof serverKeys === 'string') {
     if (serverKeys === '@all') {
@@ -28,7 +28,7 @@ const parseServerKeys = (serverKeys, dataServers) => {
     }
     if (serverKeys === '@remote') {
       const defaultServerKey = getServerKeyFromType('default', dataServers);
-      return Object.keys(dataServers).filter((serverKey) => serverKey !== defaultServerKey);
+      return Object.keys(dataServers).filter(serverKey => serverKey !== defaultServerKey);
     }
     return [parseServerKey(serverKeys, dataServers)];
   }

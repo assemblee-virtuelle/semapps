@@ -31,12 +31,7 @@ const ListActionsWithViews = ({
         })}
       {resourceDefinition.hasCreate && <CreateButton />}
       {!xs && exporter !== false && (
-        <ExportButton
-          disabled={total === 0}
-          sort={sort}
-          filter={filterValues}
-          exporter={exporter}
-        />
+        <ExportButton disabled={total === 0} sort={sort} filter={filterValues} exporter={exporter} />
       )}
       {bulkActions &&
         React.cloneElement(bulkActions, {

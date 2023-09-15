@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { useGetIdentity, fetchUtils } from 'react-admin';
 
-const useCollection = (predicateOrUrl) => {
+const useCollection = predicateOrUrl => {
   const { identity, isLoading: identityLoading } = useGetIdentity();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -62,19 +62,17 @@ const useCollection = (predicateOrUrl) => {
   }, [fetch, identityLoading, loading, loaded, error]);
 
   const addItem = useCallback(
-    (item) => {
-      setItems((oldItems) => [...oldItems, item]);
+    item => {
+      setItems(oldItems => [...oldItems, item]);
     },
-    [setItems],
+    [setItems]
   );
 
   const removeItem = useCallback(
-    (itemId) => {
-      setItems((oldItems) =>
-        oldItems.filter((item) => (typeof item === 'string' ? item !== itemId : item.id !== itemId)),
-      );
+    itemId => {
+      setItems(oldItems => oldItems.filter(item => (typeof item === 'string' ? item !== itemId : item.id !== itemId)));
     },
-    [setItems],
+    [setItems]
   );
 
   return { items, loading, loaded, error, refetch: fetch, addItem, removeItem, url: collectionUrl };

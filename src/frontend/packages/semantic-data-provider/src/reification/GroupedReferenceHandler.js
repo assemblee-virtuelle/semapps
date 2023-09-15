@@ -73,7 +73,7 @@ const GroupedReferenceHandler = ({
 }) => {
   const { data } = useGetList({
     resource: groupReference,
-    payload: {},
+    payload: {}
   });
 
   return (

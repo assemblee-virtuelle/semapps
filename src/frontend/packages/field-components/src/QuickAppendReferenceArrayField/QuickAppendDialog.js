@@ -6,7 +6,7 @@ import {
   useRefresh,
   useNotify,
   useGetResourceLabel,
-  useShowContext,
+  useShowContext
 } from 'react-admin';
 import { Dialog, DialogTitle, TextField, DialogContent, DialogActions } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -17,21 +17,21 @@ import ResultsList from './ResultsList';
 
 const useStyles = makeStyles(() => ({
   title: {
-    paddingBottom: 8,
+    paddingBottom: 8
   },
   actions: {
-    padding: 15,
+    padding: 15
   },
   addForm: {
-    paddingTop: 0,
+    paddingTop: 0
   },
   listForm: {
     paddingLeft: 8,
     paddingRight: 8,
     paddingTop: 0,
     paddingBottom: 0,
-    maxHeight: 210,
-  },
+    maxHeight: 210
+  }
 }));
 
 const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => {
@@ -48,7 +48,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
   const { register, setValue, handleSubmit } = useForm();
 
   const appendLink = useCallback(
-    async (objectUri) => {
+    async objectUri => {
       // Get the freshest data so that the put operation doesn't overwrite anything
       const { data } = await dataProvider.getOne(resource, { id: subjectUri });
 
@@ -60,31 +60,31 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
             ? Array.isArray(data[source])
               ? [...data[source], objectUri]
               : [data[source], objectUri]
-            : objectUri,
+            : objectUri
         },
-        previousData: data,
+        previousData: data
       });
 
       refresh();
 
       onClose();
     },
-    [dataProvider, subjectUri, resource, source, refresh, onClose],
+    [dataProvider, subjectUri, resource, source, refresh, onClose]
   );
 
   const create = useCallback(
-    async (values) => {
+    async values => {
       const { data } = await dataProvider.create(reference, {
         data: {
-          [dataModel.fieldsMapping.title]: values.title,
-        },
+          [dataModel.fieldsMapping.title]: values.title
+        }
       });
 
       await appendLink(data.id);
 
       notify(`La resource "${values.title}" a été créée`, { type: 'success' });
     },
-    [dataProvider, dataModel, appendLink, reference, notify],
+    [dataProvider, dataModel, appendLink, reference, notify]
   );
 
   return (
@@ -99,7 +99,7 @@ const QuickAppendDialog = ({ open, onClose, subjectUri, source, reference }) => 
               variant="filled"
               margin="dense"
               value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
+              onChange={e => setKeyword(e.target.value)}
               fullWidth
             />
           </DialogContent>

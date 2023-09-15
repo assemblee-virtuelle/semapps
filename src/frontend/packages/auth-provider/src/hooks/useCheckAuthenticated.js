@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useGetIdentity, useNotify, useRedirect } from 'react-admin';
 import { useLocation } from 'react-router-dom';
 
-const useCheckAuthenticated = (message) => {
+const useCheckAuthenticated = message => {
   const { identity, isLoading } = useGetIdentity();
   const notify = useNotify();
   const redirect = useRedirect();

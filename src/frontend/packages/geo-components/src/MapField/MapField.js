@@ -9,7 +9,7 @@ const MapField = ({ latitude, longitude, address, height, typographyProps, ...re
   const position = [latitude(record), longitude(record)];
 
   // Do not display the component if it has no latitude or longitude
-  
+
   if (!position[0] || !position[1]) return null;
 
   return (
