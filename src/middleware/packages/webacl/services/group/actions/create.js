@@ -8,7 +8,7 @@ module.exports = {
     if (!ctx.params.slug) throw new MoleculerError('needs a slug in your POST (json)', 400, 'BAD_REQUEST');
 
     await ctx.call('webacl.group.create', {
-      groupSlug: ctx.params.slug,
+      groupSlug: ctx.params.slug
     });
 
     ctx.meta.$statusCode = 204;
@@ -18,7 +18,7 @@ module.exports = {
     params: {
       groupUri: { type: 'string', optional: true },
       groupSlug: { type: 'string', optional: true, min: 1, trim: true },
-      webId: { type: 'string', optional: true },
+      webId: { type: 'string', optional: true }
     },
     async handler(ctx) {
       let { groupUri, groupSlug } = ctx.params;
@@ -39,24 +39,24 @@ module.exports = {
       if (webId === 'anon') {
         newRights.anon = {
           read: true,
-          write: true,
+          write: true
         };
       } else if (webId === 'system') {
         newRights.anon = {
-          read: true,
+          read: true
         };
       } else {
         newRights.user = {
           uri: webId,
           read: true,
           write: true,
-          control: true,
+          control: true
         };
       }
       await ctx.call('webacl.resource.addRights', {
         webId: 'system',
         resourceUri: groupUri,
-        newRights,
+        newRights
       });
 
       await ctx.call('triplestore.update', {
@@ -64,12 +64,12 @@ module.exports = {
           PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
           INSERT DATA { GRAPH <${this.settings.graphName}>
           { <${groupUri}> a vcard:Group } }`,
-        webId: 'system',
+        webId: 'system'
       });
 
       // ctx.meta.$statusCode = 200;
       // ctx.meta.$responseType = 'application/json'
       return { groupUri };
-    },
-  },
+    }
+  }
 };

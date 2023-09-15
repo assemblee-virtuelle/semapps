@@ -4,7 +4,7 @@ module.exports = {
   visibility: 'public',
   params: {
     path: { type: 'string' },
-    webId: { type: 'string', optional: true },
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { path, webId } = ctx.params;
@@ -15,5 +15,5 @@ module.exports = {
       return urlJoin(account.podUri, path);
     }
     return urlJoin(this.settings.baseUrl, path);
-  },
+  }
 };

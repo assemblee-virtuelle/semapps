@@ -19,18 +19,18 @@ const negotiateContentType = (req, res, next) => {
     }
   } else if (req.$params.body) {
     next(
-      new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED'),
+      new MoleculerError('Content-Type has to be specified for a non-empty body ', 400, 'CONTENT_TYPE_NOT_SPECIFIED')
     );
   } else {
     next();
   }
 };
 
-const throw403 = (msg) => {
+const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };
 
-const throw500 = (msg) => {
+const throw500 = msg => {
   throw new MoleculerError(msg, 500, 'INTERNAL_SERVER_ERROR', { status: 'Server Error', text: msg });
 };
 
@@ -53,10 +53,10 @@ const negotiateAccept = (req, res, next) => {
   }
 };
 
-const getRawBody = (req) => {
+const getRawBody = req => {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', (chunk) => {
+    req.on('data', chunk => {
       data += chunk;
     });
     req.on('end', () => {
@@ -121,13 +121,13 @@ const parseFile = (req, res, next) => {
       const files = [];
       busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
         const readableStream = new streams.ReadableStream();
-        file.on('data', (data) => readableStream.push(data));
+        file.on('data', data => readableStream.push(data));
         files.push({
           fieldname,
           readableStream,
           filename,
           encoding,
-          mimetype,
+          mimetype
         });
       });
       busboy.on('field', (fieldname, val) => {
@@ -143,8 +143,8 @@ const parseFile = (req, res, next) => {
       req.$params.files = [
         {
           readableStream: req,
-          mimetype: req.headers['content-type'],
-        },
+          mimetype: req.headers['content-type']
+        }
       ];
       req.$ctx.meta.parser = 'file';
       next();
@@ -154,7 +154,7 @@ const parseFile = (req, res, next) => {
   }
 };
 
-const addContainerUriMiddleware = (containerUri) => (req, res, next) => {
+const addContainerUriMiddleware = containerUri => (req, res, next) => {
   if (containerUri.includes('/:username')) {
     req.$params.containerUri = containerUri.replace(':username', req.$params.username).replace(/\/$/, '');
   } else {
@@ -179,5 +179,5 @@ module.exports = {
   addContainerUriMiddleware,
   saveDatasetMeta,
   throw403,
-  throw500,
+  throw500
 };

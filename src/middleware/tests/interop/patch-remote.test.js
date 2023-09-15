@@ -24,18 +24,18 @@ describe('Server2 imports a single resource from server1', () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Resource',
-        label: 'My resource',
+        label: 'My resource'
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: 'http://localhost:3001/resources',
+      containerUri: 'http://localhost:3001/resources'
     });
 
     await waitForExpect(async () => {
       await expect(
-        server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri }),
+        server1.call('ldp.container.includes', { containerUri: 'http://localhost:3001/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
   });
@@ -46,12 +46,12 @@ describe('Server2 imports a single resource from server1', () => {
       sparqlUpdate: `
         PREFIX ldp: <http://www.w3.org/ns/ldp#>
         INSERT DATA { <http://localhost:3002/resources> ldp:contains <${resourceUri}>. };
-      `,
+      `
     });
 
     await waitForExpect(async () => {
       await expect(
-        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri }),
+        server2.call('ldp.container.includes', { containerUri: 'http://localhost:3002/resources', resourceUri })
       ).resolves.toBeTruthy();
     });
 
@@ -60,7 +60,7 @@ describe('Server2 imports a single resource from server1', () => {
         id: resourceUri,
         type: 'pair:Resource',
         'pair:label': 'My resource',
-        'semapps:singleMirroredResource': 'http://localhost:3001',
+        'semapps:singleMirroredResource': 'http://localhost:3001'
       });
     });
   });
@@ -69,13 +69,13 @@ describe('Server2 imports a single resource from server1', () => {
     await server1.call('ldp.resource.put', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@id': resourceUri,
         '@type': 'Resource',
-        label: 'My resource updated',
+        label: 'My resource updated'
       },
-      contentType: MIME_TYPES.JSON,
+      contentType: MIME_TYPES.JSON
     });
 
     // Force call of updateSingleMirroredResources
@@ -86,7 +86,7 @@ describe('Server2 imports a single resource from server1', () => {
         id: resourceUri,
         type: 'pair:Resource',
         'pair:label': 'My resource updated',
-        'semapps:singleMirroredResource': 'http://localhost:3001',
+        'semapps:singleMirroredResource': 'http://localhost:3001'
       });
     });
   });

@@ -7,8 +7,8 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
@@ -30,7 +30,7 @@ module.exports = {
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
       webId,
-      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined,
+      graphName: isRemoteContainer ? this.settings.mirrorGraphName : undefined
     });
 
     if (!isRemoteContainer)
@@ -38,15 +38,15 @@ module.exports = {
         'ldp.container.attached',
         {
           containerUri,
-          resourceUri,
+          resourceUri
         },
-        { meta: { webId: null } },
+        { meta: { webId: null } }
       );
 
     return {
       containerUri,
       resourceUri,
-      webId,
+      webId
     };
-  },
+  }
 };

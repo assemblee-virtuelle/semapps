@@ -4,7 +4,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string', optional: false },
+      resourceUri: { type: 'string', optional: false }
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
@@ -20,10 +20,10 @@ module.exports = {
             FILTER (?p IN (acl:accessTo, acl:default ) )
             ?auth ?p2 ?o  }
         `,
-        webId: 'system',
+        webId: 'system'
       });
 
       ctx.emit('webacl.resource.deleted', { uri: resourceUri, isContainer }, { meta: { webId: null, dataset: null } });
-    },
-  },
+    }
+  }
 };

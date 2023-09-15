@@ -18,12 +18,12 @@ const DigestNotificationsService = {
     from: null,
     transport: null,
     // Data available in all templates
-    data: {},
+    data: {}
   },
   dependencies: ['digest.subscription'],
   created() {
     this.broker.createService(DigestSubscriptionService, {
-      adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset }),
+      adapter: new TripleStoreAdapter({ type: 'DigestSubscription', dataset: this.settings.subscriptionsDataset })
     });
   },
   async started() {
@@ -45,7 +45,7 @@ const DigestNotificationsService = {
 
       const interval = cronParser.parseExpression(this.settings.frequencies[frequency], {
         currentDate,
-        tz: this.settings.timeZone,
+        tz: this.settings.timeZone
       });
 
       const previousDate = new Date(interval.prev().toISOString());
@@ -59,7 +59,7 @@ const DigestNotificationsService = {
           const newActivities = await ctx.call('activitypub.inbox.getByDates', {
             collectionUri: subscriber.inbox,
             fromDate: previousDate,
-            toDate: currentDate,
+            toDate: currentDate
           });
 
           if (newActivities.length > 0) {
@@ -70,7 +70,7 @@ const DigestNotificationsService = {
             for (const activity of newActivities) {
               const notification = await ctx.call('activity-mapping.map', {
                 activity,
-                locale: subscription.locale || account.locale,
+                locale: subscription.locale || account.locale
               });
               if (notification && (await this.filterNotification(notification, subscription, notifications))) {
                 notifications.push(notification);
@@ -78,7 +78,7 @@ const DigestNotificationsService = {
                   if (!notificationsByCategories[notification.category])
                     notificationsByCategories[notification.category] = {
                       category: notification.category,
-                      notifications: [],
+                      notifications: []
                     };
                   notificationsByCategories[notification.category].notifications.push(notification);
                 }
@@ -97,12 +97,12 @@ const DigestNotificationsService = {
                     notificationsByCategories,
                     subscription,
                     subscriber,
-                    account,
-                  },
+                    account
+                  }
                 },
                 {
-                  parentCtx: ctx,
-                },
+                  parentCtx: ctx
+                }
               );
 
               success.push({
@@ -110,28 +110,28 @@ const DigestNotificationsService = {
                 locale: subscription.locale || account.locale,
                 numNotifications: notifications.length,
                 categories: Object.keys(notificationsByCategories),
-                notificationsIds: notifications.map((n) => n.id),
-                subscription,
+                notificationsIds: notifications.map(n => n.id),
+                subscription
               });
             }
           }
         } catch (e) {
           failures.push({
             error: e.message,
-            subscription,
+            subscription
           });
         }
       }
 
       return { failures, success };
-    },
+    }
   },
   methods: {
     // Optional method called for each notification
     // Return true if you want the notification to be included in the digest
     async filterNotification(notification, subscription) {
       return true;
-    },
+    }
   },
   queues: {
     build: [
@@ -139,10 +139,10 @@ const DigestNotificationsService = {
         name: '*',
         process(job) {
           return this.actions.build({ frequency: job.name, timestamp: job.opts.prevMillis });
-        },
-      },
-    ],
-  },
+        }
+      }
+    ]
+  }
 };
 
 module.exports = DigestNotificationsService;

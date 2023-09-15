@@ -18,9 +18,9 @@ const broker = new ServiceBroker({
   logger: {
     type: 'Console',
     options: {
-      level: 'error',
-    },
-  },
+      level: 'error'
+    }
+  }
 });
 let expressMocked = undefined;
 
@@ -33,7 +33,7 @@ beforeAll(async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
+        mainDataset: CONFIG.MAIN_DATASET
       },
       ontologies,
       jsonContext: getPrefixJSON(ontologies),
@@ -42,22 +42,22 @@ beforeAll(async () => {
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false,
-    },
+      webfinger: false
+    }
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET,
-    },
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${CONFIG.HOME_URL}users`,
-    },
+      usersContainer: `${CONFIG.HOME_URL}users`
+    }
   });
 
   const app = express();
@@ -67,8 +67,8 @@ beforeAll(async () => {
       server: false,
       cors: {
         origin: '*',
-        exposedHeaders: '*',
-      },
+        exposedHeaders: '*'
+      }
     },
     methods: {
       authenticate(ctx, route, req, res) {
@@ -76,8 +76,8 @@ beforeAll(async () => {
       },
       authorize(ctx, route, req, res) {
         return Promise.resolve(ctx);
-      },
-    },
+      }
+    }
   });
   app.use(apiGateway.express());
 
@@ -93,9 +93,9 @@ beforeAll(async () => {
     resourceUri: `${CONFIG.HOME_URL}resources`,
     additionalRights: {
       anon: {
-        write: true,
-      },
-    },
+        write: true
+      }
+    }
   });
 
   expressMocked = supertest(app);
@@ -113,11 +113,11 @@ describe('CRUD Project', () => {
       .post('/resources')
       .send({
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
         description: 'myProject',
-        label: 'myLabel',
+        label: 'myLabel'
       })
       .set('content-type', 'application/ld+json');
 
@@ -146,9 +146,9 @@ describe('CRUD Project', () => {
   test('Replace resource', async () => {
     const body = {
       '@context': {
-        '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+        '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
-      description: 'myProjectUpdated',
+      description: 'myProjectUpdated'
     };
 
     await expressMocked
@@ -208,7 +208,7 @@ describe('CRUD Project', () => {
       .set('Accept', 'application/ld+json');
     expect(response.body['pair:hasLocation']).toMatchObject({
       '@type': 'pair:Place',
-      'pair:label': 'Paris',
+      'pair:label': 'Paris'
     });
     expect(response.body['pair:description']).toBe('myProjectPatched');
   }, 20000);
@@ -226,11 +226,11 @@ describe('CRUD Project', () => {
       .send({
         '@context': {
           dc: 'http://purl.org/dc/terms/',
-          ldp: 'http://www.w3.org/ns/ldp#',
+          ldp: 'http://www.w3.org/ns/ldp#'
         },
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation',
+        'dc:description': 'Used to test dynamic containers creation'
       })
       .set('content-type', 'application/ld+json')
       .set('slug', 'sub-resources');
@@ -250,10 +250,10 @@ describe('CRUD Project', () => {
       .post('/resources/sub-resources')
       .send({
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
-        description: 'My sub-resource',
+        description: 'My sub-resource'
       })
       .set('content-type', 'application/ld+json');
 
@@ -266,9 +266,9 @@ describe('CRUD Project', () => {
       'ldp:contains': [
         {
           '@id': `${CONFIG.HOME_URL}resources/sub-resources`,
-          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'],
-        },
-      ],
+          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+        }
+      ]
     });
 
     // The content of sub-containers is not displayed
@@ -283,9 +283,9 @@ describe('CRUD Project', () => {
         {
           '@id': subResourceId,
           '@type': 'pair:Project',
-          'pair:description': 'My sub-resource',
-        },
-      ],
+          'pair:description': 'My sub-resource'
+        }
+      ]
     });
   }, 20000);
 
@@ -296,9 +296,9 @@ describe('CRUD Project', () => {
       resourceUri: `${CONFIG.HOME_URL}resources/sub-resources`,
       additionalRights: {
         anon: {
-          write: true,
-        },
-      },
+          write: true
+        }
+      }
     });
 
     let response = await expressMocked.delete('/resources/sub-resources');

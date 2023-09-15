@@ -13,7 +13,7 @@ module.exports = {
   settings: {
     baseUri: null,
     localContextFiles: [],
-    remoteContextFiles: [],
+    remoteContextFiles: []
   },
   dependencies: ['api'],
   async started() {
@@ -22,8 +22,8 @@ module.exports = {
 
     this.jsonLdParser = new JsonLdParser({
       documentLoader: {
-        load: (url) => this.documentLoaderWithCache(url).then((context) => context.document),
-      },
+        load: url => this.documentLoaderWithCache(url).then(context => context.document)
+      }
     });
 
     for (const contextFile of this.settings.localContextFiles) {
@@ -35,7 +35,7 @@ module.exports = {
       cache.set(contextUri, {
         contextUrl: null,
         documentUrl: contextUri,
-        document: contextJson,
+        document: contextJson
       });
 
       this.broker.call('api.addRoute', {
@@ -43,7 +43,7 @@ module.exports = {
           path: contextFile.path,
           name: `context-${contextFile.path.replace(new RegExp('/', 'g'), '-')}`,
           bodyParsers: {
-            json: true,
+            json: true
           },
           aliases: {
             'GET /': [
@@ -51,10 +51,10 @@ module.exports = {
                 req.$params.uri = contextUri;
                 next();
               },
-              'jsonld.getCachedContext',
-            ],
-          },
-        },
+              'jsonld.getCachedContext'
+            ]
+          }
+        }
       });
     }
 
@@ -64,7 +64,7 @@ module.exports = {
       cache.set(contextFile.uri, {
         contextUrl: null,
         documentUrl: contextFile.uri,
-        document: contextJson,
+        document: contextJson
       });
     }
   },
@@ -117,8 +117,8 @@ module.exports = {
         const res = [];
         this.jsonLdParser
           .import(textStream)
-          .on('data', (quad) => res.push(quad))
-          .on('error', (error) => reject(error))
+          .on('data', quad => res.push(quad))
+          .on('error', error => reject(error))
           .on('end', () => resolve(res));
       });
     },
@@ -126,7 +126,7 @@ module.exports = {
       const { predicate, context } = ctx.params;
       const result = await this.actions.expand({ input: { '@context': context, [predicate]: '' } }, { parentCtx: ctx });
       return Object.keys(result[0])[0];
-    },
+    }
   },
   methods: {
     async documentLoaderWithCache(url, options) {
@@ -139,6 +139,6 @@ module.exports = {
       }
       cache.set(url, context);
       return context;
-    },
-  },
+    }
+  }
 };

@@ -11,7 +11,10 @@ module.exports = {
   async streamToFile(inputStream, filePath) {
     return new Promise((resolve, reject) => {
       const fileWriteStream = fs.createWriteStream(filePath);
-      inputStream.pipe(fileWriteStream).on('finish', resolve).on('error', reject);
+      inputStream
+        .pipe(fileWriteStream)
+        .on('finish', resolve)
+        .on('error', reject);
     });
   },
   async bodyToTriples(body, contentType) {
@@ -24,20 +27,18 @@ module.exports = {
       const res = [];
       rdfParser
         .parse(textStream, { contentType })
-        .on('data', (quad) => res.push(quad))
-        .on('error', (error) => reject(error))
+        .on('data', quad => res.push(quad))
+        .on('error', error => reject(error))
         .on('end', () => resolve(res));
     });
   },
   // Filter out triples whose subject is not the resource itself
   // We don't want to update or delete resources with IDs
   filterOtherNamedNodes(triples, resourceUri) {
-    return triples.filter(
-      (triple) => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri),
-    );
+    return triples.filter(triple => !(triple.subject.termType === 'NamedNode' && triple.subject.value !== resourceUri));
   },
   convertBlankNodesToVars(triples, blankNodesVarsMap) {
-    return triples.map((triple) => {
+    return triples.map(triple => {
       if (triple.subject.termType === 'BlankNode') {
         triple.subject = variable(triple.subject.value);
       }
@@ -49,7 +50,7 @@ module.exports = {
   },
   // Exclude from triples1 the triples which also exist in triples2
   getTriplesDifference(triples1, triples2) {
-    return triples1.filter((t1) => !triples2.some((t2) => t1.equals(t2)));
+    return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
   },
   nodeToString(node) {
     switch (node.termType) {
@@ -70,7 +71,7 @@ module.exports = {
     }
   },
   buildJsonVariable(identifier, triples) {
-    const blankVariables = triples.filter((t) => t.subject.value.localeCompare(identifier) === 0);
+    const blankVariables = triples.filter(t => t.subject.value.localeCompare(identifier) === 0);
     const json = {};
     let allIdentifiers = [identifier];
     for (const blankVariable of blankVariables) {
@@ -85,10 +86,10 @@ module.exports = {
     return { json, allIdentifiers };
   },
   removeDuplicatedVariables(triples) {
-    const roots = triples.filter((n) => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
+    const roots = triples.filter(n => n.object.termType === 'Variable' && n.subject.termType !== 'Variable');
     const rootsIdentifiers = roots.reduce((previousValue, currentValue) => {
       const result = previousValue;
-      if (!result.find((i) => i.localeCompare(currentValue.object.value) === 0)) {
+      if (!result.find(i => i.localeCompare(currentValue.object.value) === 0)) {
         result.push(currentValue.object.value);
       }
       return result;
@@ -99,34 +100,34 @@ module.exports = {
       rootsJson.push({
         rootIdentifier,
         stringified: JSON.stringify(jsonVariable.json),
-        allIdentifiers: jsonVariable.allIdentifiers,
+        allIdentifiers: jsonVariable.allIdentifiers
       });
     }
     const keepVariables = [];
     const duplicatedVariables = [];
     for (var rootJson of rootsJson) {
-      if (keepVariables.find((kp) => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
+      if (keepVariables.find(kp => kp.stringified.localeCompare(rootJson.stringified) === 0)) {
         duplicatedVariables.push(rootJson);
       } else {
         keepVariables.push(rootJson);
       }
     }
-    const allRemovedIdentifiers = duplicatedVariables.map((dv) => dv.allIdentifiers).flat();
+    const allRemovedIdentifiers = duplicatedVariables.map(dv => dv.allIdentifiers).flat();
     const removedDuplicatedVariables = triples.filter(
-      (t) => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value),
+      t => !allRemovedIdentifiers.includes(t.object.value) && !allRemovedIdentifiers.includes(t.subject.value)
     );
     return removedDuplicatedVariables;
   },
   triplesToString(triples) {
     return triples
       .map(
-        (triple) =>
-          `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`,
+        triple =>
+          `${this.nodeToString(triple.subject)} <${triple.predicate.value}> ${this.nodeToString(triple.object)} .`
       )
       .join('\n');
   },
   bindNewBlankNodes(triples) {
-    return triples.map((triple) => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
+    return triples.map(triple => `BIND (BNODE() AS ?${triple.object.value}) .`).join('\n');
   },
   isRemoteUri(uri, dataset) {
     if (this.settings.podProvider && !dataset)
@@ -135,5 +136,5 @@ module.exports = {
       !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
       (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
     );
-  },
+  }
 };

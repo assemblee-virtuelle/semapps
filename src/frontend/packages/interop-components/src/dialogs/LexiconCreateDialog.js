@@ -12,27 +12,24 @@ const LexiconCreateDialog = ({ fetchLexicon, selectData }) => {
   const onClose = useCallback(() => {
     setValue('');
     onCancel();
-  }, [setValue, onCancel])
+  }, [setValue, onCancel]);
 
-  const onSubmit = useCallback(
-    () => {
-      // If we have no URI, it means we are creating a new definition
-      // Delete the summary as it is "Ajouter XXX au dictionaire"
-      if (!value.uri) delete value.summary;
-      create(
-        resource,
-        { data: selectData(value) },
-        {
-          onSuccess: (data) => {
-            console.log('onSuccess', data);
-            setValue('');
-            onCreate(data);
-          }
+  const onSubmit = useCallback(() => {
+    // If we have no URI, it means we are creating a new definition
+    // Delete the summary as it is "Ajouter XXX au dictionaire"
+    if (!value.uri) delete value.summary;
+    create(
+      resource,
+      { data: selectData(value) },
+      {
+        onSuccess: data => {
+          console.log('onSuccess', data);
+          setValue('');
+          onCreate(data);
         }
-      );
-    },
-    [create, onCreate, selectData, value, setValue, resource]
-  );
+      }
+    );
+  }, [create, onCreate, selectData, value, setValue, resource]);
 
   return (
     <Dialog open onClose={onClose} fullWidth maxWidth="sm">

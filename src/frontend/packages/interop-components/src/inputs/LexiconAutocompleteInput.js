@@ -6,7 +6,7 @@ import {
   useLocale,
   useNotify,
   useResourceContext,
-  InputHelperText,
+  InputHelperText
 } from 'react-admin';
 import { TextField, Typography, Grid } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
@@ -17,11 +17,11 @@ import { default as highlightMatch } from 'autosuggest-highlight/match';
 import { default as highlightParse } from 'autosuggest-highlight/parse';
 import throttle from 'lodash.throttle';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   icon: {
     color: theme.palette.text.secondary,
-    marginRight: theme.spacing(2),
-  },
+    marginRight: theme.spacing(2)
+  }
 }));
 
 const selectOptionText = (option, optionText) => {
@@ -39,7 +39,7 @@ const selectOptionText = (option, optionText) => {
   }
 };
 
-const capitalizeFirstLetter = (string) => string && string.charAt(0).toUpperCase() + string.slice(1);
+const capitalizeFirstLetter = string => string && string.charAt(0).toUpperCase() + string.slice(1);
 
 const LexiconAutocompleteInput = forwardRef(
   ({ fetchLexicon, source, defaultValue, label, parse, optionText, helperText, ...rest }, ref) => {
@@ -54,7 +54,7 @@ const LexiconAutocompleteInput = forwardRef(
       field: { value, onChange, onBlur },
       fieldState: { isTouched, error },
       formState: { submitError },
-      isRequired,
+      isRequired
     } = useInput({ source, defaultValue, ...rest });
 
     const [keyword, setKeyword] = useState(defaultValue); // Typed keywords
@@ -64,10 +64,10 @@ const LexiconAutocompleteInput = forwardRef(
       () =>
         throttle((keyword, callback) => {
           fetchLexicon({ keyword, locale })
-            .then((data) => callback(data))
-            .catch((e) => notify(e.message, { type: 'error' }));
+            .then(data => callback(data))
+            .catch(e => notify(e.message, { type: 'error' }));
         }, 200),
-      [locale, fetchLexicon, notify],
+      [locale, fetchLexicon, notify]
     );
 
     useEffect(() => {
@@ -75,7 +75,7 @@ const LexiconAutocompleteInput = forwardRef(
       if (!keyword) {
         return undefined;
       }
-      throttledFetchLexicon(keyword, (results) => setOptions(results));
+      throttledFetchLexicon(keyword, results => setOptions(results));
     }, [value, keyword, throttledFetchLexicon]);
 
     return (
@@ -98,7 +98,7 @@ const LexiconAutocompleteInput = forwardRef(
             options.push({
               label: capitalizeFirstLetter(keyword),
               summary: `Ajouter "${capitalizeFirstLetter(keyword)}" au dictionnaire`,
-              icon: AddIcon,
+              icon: AddIcon
             });
           }
           return options;
@@ -106,7 +106,7 @@ const LexiconAutocompleteInput = forwardRef(
         clearOnBlur // Recommended for https://v4.mui.com/components/autocomplete/#creatable
         selectOnFocus // Recommended for https://v4.mui.com/components/autocomplete/#creatable
         handleHomeEndKeys // Recommended for https://v4.mui.com/components/autocomplete/#creatable
-        getOptionLabel={(option) => selectOptionText(option, optionText)}
+        getOptionLabel={option => selectOptionText(option, optionText)}
         isOptionEqualToValue={(option, value) =>
           selectOptionText(option, optionText) === selectOptionText(value, optionText)
         }
@@ -119,7 +119,7 @@ const LexiconAutocompleteInput = forwardRef(
         }}
         onInputChange={(event, newKeyword) => setKeyword(newKeyword)}
         noOptionsText={translate('ra.navigation.no_results')}
-        renderInput={(params) => {
+        renderInput={params => {
           // Autocomplete=off doesn't work anymore in modern browsers
           // https://stackoverflow.com/a/40791726/7900695
           params.inputProps.autoComplete = 'new-password';
@@ -129,17 +129,17 @@ const LexiconAutocompleteInput = forwardRef(
               autoFocus
               inputProps={{
                 ...params.inputProps,
-                onBlur: (e) => {
+                onBlur: e => {
                   onBlur(e);
                   if (params.inputProps.onBlur) {
                     params.inputProps.onBlur(e);
                   }
                 },
-                onFocus: (e) => {
+                onFocus: e => {
                   if (params.inputProps.onFocus) {
                     params.inputProps.onFocus(e);
                   }
-                },
+                }
               }}
               label={
                 label !== '' &&
@@ -175,11 +175,11 @@ const LexiconAutocompleteInput = forwardRef(
         }}
       />
     );
-  },
+  }
 );
 
 LexiconAutocompleteInput.defaultProps = {
-  optionText: 'label',
+  optionText: 'label'
 };
 
 export default LexiconAutocompleteInput;

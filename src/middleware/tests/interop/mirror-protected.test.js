@@ -17,7 +17,7 @@ beforeAll(async () => {
 
   // Wait for Relay actor creation, or server2 won't be able to mirror server1
   await server1.call('activitypub.actor.awaitCreateComplete', {
-    actorUri: relay1,
+    actorUri: relay1
   });
 
   server2 = await initialize(3002, 'testData2', 'settings2', 'http://localhost:3001');
@@ -36,8 +36,8 @@ describe('Resource on server1 is shared with user on server2', () => {
       await expect(
         server1.call('activitypub.collection.includes', {
           collectionUri: urlJoin(relay1, 'followers'),
-          itemUri: relay2,
-        }),
+          itemUri: relay2
+        })
       ).resolves.toBeTruthy();
     });
   });
@@ -47,7 +47,7 @@ describe('Resource on server1 is shared with user on server2', () => {
       username: 'srosset81',
       email: 'sebastien@test.com',
       password: 'test',
-      name: 'Sébastien',
+      name: 'Sébastien'
     });
 
     user2 = await server2.call('activitypub.actor.awaitCreateComplete', { actorUri: webId });
@@ -55,14 +55,14 @@ describe('Resource on server1 is shared with user on server2', () => {
     resourceUri = await server1.call('ldp.container.post', {
       resource: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Resource',
-        label: 'My protected resource',
+        label: 'My protected resource'
       },
       contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/protected-resources',
-      webId: 'system',
+      webId: 'system'
     });
 
     await server1.call('webacl.resource.addRights', {
@@ -70,17 +70,17 @@ describe('Resource on server1 is shared with user on server2', () => {
       additionalRights: {
         user: {
           uri: user2.id,
-          read: true,
-        },
+          read: true
+        }
       },
-      webId: 'system',
+      webId: 'system'
     });
 
     await waitForExpect(async () => {
       const inbox = await server1.call('activitypub.collection.get', {
         collectionUri: `${relay1}/outbox`,
         page: 1,
-        webId: relay1,
+        webId: relay1
       });
 
       expect(inbox).not.toBeNull();
@@ -89,9 +89,9 @@ describe('Resource on server1 is shared with user on server2', () => {
         actor: relay1,
         object: {
           type: ACTIVITY_TYPES.CREATE,
-          object: resourceUri,
+          object: resourceUri
         },
-        to: user2.id,
+        to: user2.id
       });
     });
   });
@@ -102,17 +102,17 @@ describe('Resource on server1 is shared with user on server2', () => {
       rights: {
         user: {
           uri: user2.id,
-          read: true,
-        },
+          read: true
+        }
       },
-      webId: 'system',
+      webId: 'system'
     });
 
     await waitForExpect(async () => {
       const inbox = await server1.call('activitypub.collection.get', {
         collectionUri: `${relay1}/outbox`,
         page: 1,
-        webId: relay1,
+        webId: relay1
       });
 
       expect(inbox).not.toBeNull();
@@ -121,9 +121,9 @@ describe('Resource on server1 is shared with user on server2', () => {
         actor: relay1,
         object: {
           type: ACTIVITY_TYPES.DELETE,
-          object: resourceUri,
+          object: resourceUri
         },
-        to: user2.id,
+        to: user2.id
       });
     });
   });

@@ -8,10 +8,10 @@ import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
+    margin: theme.spacing(0.3)
   }
 }));
 
@@ -41,7 +41,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           window.location.href = redirectTo || '/';
           setLoading(false);
         }
-        notify('auth.message.new_user_created', {type: 'info'});
+        notify('auth.message.new_user_created', { type: 'info' });
       })
       .catch(error => {
         setLoading(false);
@@ -51,7 +51,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
             : typeof error === 'undefined' || !error.message
             ? 'ra.auth.sign_in_error'
             : error.message,
-          { 
+          {
             type: 'warning',
             _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
           }
@@ -60,11 +60,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   };
 
   return (
-    <Form
-      onSubmit={submit}
-      noValidate
-      defaultValues={{ email: searchParams.get('email') }}
-    >
+    <Form onSubmit={submit} noValidate defaultValues={{ email: searchParams.get('email') }}>
       <CardContent className={classes.content}>
         <TextInput
           autoFocus
@@ -92,18 +88,19 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={required()}
         />
-        <Button 
-          variant="contained" 
-          type="submit" 
-          color="primary" 
-          disabled={loading} 
+        <Button
+          variant="contained"
+          type="submit"
+          color="primary"
+          disabled={loading}
           fullWidth
           className={classes.button}
         >
-          {loading 
-            ? <CircularProgress className={classes.icon} size={19} thickness={3} />
-            : translate('auth.action.signup')
-          }
+          {loading ? (
+            <CircularProgress className={classes.icon} size={19} thickness={3} />
+          ) : (
+            translate('auth.action.signup')
+          )}
         </Button>
       </CardContent>
     </Form>

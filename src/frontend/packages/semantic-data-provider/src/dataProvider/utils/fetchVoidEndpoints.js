@@ -1,18 +1,18 @@
-const defaultToArray = (value) => (!value ? undefined : Array.isArray(value) ? value : [value]);
+const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
-const fetchVoidEndpoints = async (config) => {
+const fetchVoidEndpoints = async config => {
   const fetchPromises = Object.entries(config.dataServers)
     .filter(([key, server]) => server.pod !== true)
     .map(([key, server]) =>
       config
         .httpClient(new URL('/.well-known/void', server.baseUrl).toString())
-        .then((result) => ({ key, datasets: result.json['@graph'] }))
-        .catch((e) => {
+        .then(result => ({ key, datasets: result.json['@graph'] }))
+        .catch(e => {
           if (e.status === 404 || e.status === 401) {
             return { key, error: e };
           }
           throw e;
-        }),
+        })
     );
 
   let results = [];
@@ -31,7 +31,7 @@ const fetchVoidEndpoints = async (config) => {
     if (result.datasets) {
       for (const dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
-          (key) => dataset['void:uriSpace'] === config.dataServers[key].baseUrl,
+          key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl
         );
 
         // If the dataset is not part of a server mapped in the dataServers, ignore it
@@ -62,7 +62,7 @@ const fetchVoidEndpoints = async (config) => {
               const blankNodes = defaultToArray(partition['semapps:blankNodes']);
               if (blankNodes) {
                 config.dataServers[result.key].blankNodes[partition['void:uriSpace']] = defaultToArray(
-                  partition['semapps:blankNodes'],
+                  partition['semapps:blankNodes']
                 );
               }
             }

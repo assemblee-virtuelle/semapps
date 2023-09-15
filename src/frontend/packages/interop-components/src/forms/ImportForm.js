@@ -29,7 +29,7 @@ const ImportFormInputs = () => {
 
   if (!dataModel) return null;
 
-  return(
+  return (
     <>
       {containers && Object.keys(containers).length > 0 && (
         <ReferenceInput
@@ -48,11 +48,7 @@ const ImportFormInputs = () => {
           />
         </ReferenceInput>
       )}
-      <TextInput 
-        source="plainUri" 
-        label="URL de la ressource distante" 
-        fullWidth 
-      />
+      <TextInput source="plainUri" label="URL de la ressource distante" fullWidth />
       <RadioButtonGroupInput
         source="method"
         label="Méthode d'importation"
@@ -62,8 +58,8 @@ const ImportFormInputs = () => {
         ]}
       />
     </>
-  )
-}
+  );
+};
 
 const ImportForm = ({ stripProperties }) => {
   const resource = useResourceContext();

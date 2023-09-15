@@ -20,7 +20,7 @@ module.exports = {
     baseUrl: null,
     ontologies: [],
     podProvider: false,
-    mirrorGraphName: null,
+    mirrorGraphName: null
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -36,7 +36,7 @@ module.exports = {
     includes: includesAction,
     isEmpty: isEmptyAction,
     post: postAction,
-    patch: patchAction,
+    patch: patchAction
   },
   methods: {
     isRemoteUri(uri, dataset) {
@@ -46,7 +46,7 @@ module.exports = {
         !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
         (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
       );
-    },
+    }
   },
   hooks: {
     before: {
@@ -60,7 +60,7 @@ module.exports = {
           // this.logger.warn(`No dataset found when calling ${ctx.action.name} with URI ${ctx.params.containerUri}`);
           ctx.meta.dataset = getDatasetFromUri(ctx.params.containerUri);
         }
-      },
-    },
-  },
+      }
+    }
+  }
 };

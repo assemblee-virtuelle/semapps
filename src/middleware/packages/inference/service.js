@@ -11,7 +11,7 @@ module.exports = {
     baseUrl: null,
     acceptFromRemoteServers: false,
     offerToRemoteServers: false,
-    ontologies: [],
+    ontologies: []
   },
   dependencies: ['triplestore', 'ldp', 'jsonld'],
   created() {
@@ -21,8 +21,8 @@ module.exports = {
         settings: {
           baseUrl,
           acceptFromRemoteServers,
-          offerToRemoteServers,
-        },
+          offerToRemoteServers
+        }
       });
     }
   },
@@ -41,11 +41,11 @@ module.exports = {
       const parser = new N3.Parser({ format: 'Turtle' });
       return new Promise((resolve, reject) => {
         fetch(owlFile)
-          .then((res) => {
+          .then(res => {
             if (!res.ok) throw new Error(`Unable to fetch ${owlFile}`);
             return res.text();
           })
-          .then((body) => {
+          .then(body => {
             const rel = {};
             parser.parse(body, (err, quad) => {
               if (err) reject(err);
@@ -65,7 +65,7 @@ module.exports = {
               }
             });
           })
-          .catch((err) => reject(err));
+          .catch(err => reject(err));
       });
     },
     generateInverseTriplesFromResource(resource) {
@@ -76,7 +76,7 @@ module.exports = {
             // uri['@id'] can be undefined if context bad configuration ("@type": "@id" not configured for property)
             if (uri['@id']) {
               inverseTriples.push(
-                triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id'])),
+                triple(namedNode(uri['@id']), namedNode(this.inverseRelations[property]), namedNode(resource['@id']))
               );
             }
           }
@@ -93,8 +93,8 @@ module.exports = {
               triple(
                 namedNode(t.object.value),
                 namedNode(this.inverseRelations[t.predicate.value]),
-                namedNode(t.subject.value),
-              ),
+                namedNode(t.subject.value)
+              )
             );
           }
         }
@@ -103,7 +103,7 @@ module.exports = {
     },
     triplesToString(triples) {
       return triples
-        .map((triple) => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
+        .map(triple => `<${triple.subject.id}> <${triple.predicate.id}> <${triple.object.id}> .`)
         .join('\n');
     },
     generateInsertQuery(triples) {
@@ -141,8 +141,8 @@ module.exports = {
     },
     // Exclude from triples1 the triples which also exist in triples2
     getTriplesDifference(triples1, triples2) {
-      return triples1.filter((t1) => !triples2.some((t2) => t1.equals(t2)));
-    },
+      return triples1.filter(t1 => !triples2.some(t2 => t1.equals(t2)));
+    }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -169,7 +169,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true,
+            add: true
           });
         }
       }
@@ -194,7 +194,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false,
+            add: false
           });
         }
       }
@@ -222,7 +222,7 @@ module.exports = {
       if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateDeleteQuery(removeLocals),
-          webId: 'system',
+          webId: 'system'
         });
         this.cleanResourcesCache(ctx, removeLocals);
       }
@@ -230,7 +230,7 @@ module.exports = {
       if (addLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateInsertQuery(addLocals),
-          webId: 'system',
+          webId: 'system'
         });
         this.cleanResourcesCache(ctx, addLocals);
       }
@@ -244,7 +244,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true,
+            add: true
           });
         }
         for (const triple of removeRemotes) {
@@ -252,7 +252,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false,
+            add: false
           });
         }
       }
@@ -274,7 +274,7 @@ module.exports = {
       if (removeLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateDeleteQuery(removeLocals),
-          webId: 'system',
+          webId: 'system'
         });
         this.cleanResourcesCache(ctx, removeLocals);
       }
@@ -282,7 +282,7 @@ module.exports = {
       if (addLocals.length > 0) {
         await ctx.call('triplestore.update', {
           query: this.generateInsertQuery(addLocals),
-          webId: 'system',
+          webId: 'system'
         });
         this.cleanResourcesCache(ctx, addLocals);
       }
@@ -296,7 +296,7 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: true,
+            add: true
           });
         }
         for (const triple of removeRemotes) {
@@ -304,10 +304,10 @@ module.exports = {
             subject: triple.subject.id,
             predicate: triple.predicate.id,
             object: triple.object.id,
-            add: false,
+            add: false
           });
         }
       }
-    },
-  },
+    }
+  }
 };

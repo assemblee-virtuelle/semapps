@@ -17,7 +17,7 @@ const InboxService = {
     dereferenceItems: true,
     sort: { predicate: 'as:published', order: 'DESC' },
     permissions: collectionPermissionsWithAnonRead,
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['activitypub.collection', 'triplestore'],
   actions: {
@@ -46,13 +46,13 @@ const InboxService = {
       if (!ctx.meta.skipSignatureValidation) {
         const validDigest = await ctx.call('signature.verifyDigest', {
           body: ctx.meta.rawBody, // Stored by parseJson middleware
-          headers: ctx.meta.headers,
+          headers: ctx.meta.headers
         });
 
         const { isValid: validSignature } = await ctx.call('signature.verifyHttpSignature', {
           url: collectionUri,
           method: 'POST',
-          headers: ctx.meta.headers,
+          headers: ctx.meta.headers
         });
 
         if (!validDigest || !validSignature) {
@@ -68,19 +68,19 @@ const InboxService = {
         resource: objectIdToCurrent(activity),
         mirrorGraph: false, // Store in default graph as activity may not be public
         keepInSync: false, // Activities are immutable
-        webId: actorUri,
+        webId: actorUri
       });
 
       // Attach the activity to the activities container, in order to use the container options
       await ctx.call('activitypub.activity.attach', {
         resourceUri: activity.id,
-        webId: this.settings.podProvider ? actorUri : 'system',
+        webId: this.settings.podProvider ? actorUri : 'system'
       });
 
       // Attach the activity to the inbox
       await ctx.call('activitypub.collection.attach', {
         collectionUri,
-        item: activity,
+        item: activity
       });
 
       ctx.emit(
@@ -88,9 +88,9 @@ const InboxService = {
         {
           activity,
           recipients: [actorUri],
-          local: false,
+          local: false
         },
-        { meta: { webId: null, dataset: null } },
+        { meta: { webId: null, dataset: null } }
       );
 
       ctx.meta.$statusCode = 202;
@@ -116,19 +116,19 @@ const InboxService = {
           ORDER BY ?published
         `,
         accept: MIME_TYPES.JSON,
-        webId: 'system',
+        webId: 'system'
       });
 
       const activities = [];
 
-      for (const activityUri of results.filter((node) => node.activityUri).map((node) => node.activityUri.value)) {
+      for (const activityUri of results.filter(node => node.activityUri).map(node => node.activityUri.value)) {
         const activity = await ctx.call('activitypub.activity.get', { resourceUri: activityUri, webId: 'system' });
         activities.push(activity);
       }
 
       return activities;
-    },
-  },
+    }
+  }
 };
 
 module.exports = InboxService;

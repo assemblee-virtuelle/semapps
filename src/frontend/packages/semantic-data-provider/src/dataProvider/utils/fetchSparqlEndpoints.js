@@ -20,7 +20,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   const dataModel = resources[resourceId];
 
   const sparqlQueryPromises = Object.keys(containers).map(
-    (serverKey) =>
+    serverKey =>
       new Promise((resolve, reject) => {
         const blankNodes =
           params.filter?.blankNodes ||
@@ -41,12 +41,12 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
           params: { ...params, filter: { ...dataModel.list?.filter, ...params.filter } },
           blankNodes,
           predicates,
-          ontologies,
+          ontologies
         });
 
         httpClient(dataServers[serverKey].sparqlEndpoint, {
           method: 'POST',
-          body: sparqlQuery,
+          body: sparqlQuery
         })
           .then(({ json }) => {
             // By default, embed only the blank nodes we explicitly asked to dereference
@@ -58,28 +58,28 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
                     '@context': jsonContext,
                     '@type': dataModel.types,
                     '@embed': '@never',
-                    ...getEmbedFrame(blankNodes),
+                    ...getEmbedFrame(blankNodes)
                   }
                 : {
                     '@context': jsonContext,
-                    '@type': dataModel.types,
+                    '@type': dataModel.types
                   };
 
             // omitGraph option force results to be in a @graph, even if we have a single result
             return jsonld.frame(json, frame, { omitGraph: false });
           })
-          .then((compactJson) => {
+          .then(compactJson => {
             if (compactJson['@id']) {
               const { '@context': context, ...rest } = compactJson;
               compactJson = {
                 '@context': context,
-                '@graph': [rest],
+                '@graph': [rest]
               };
             }
             resolve(compactJson['@graph'] || []);
           })
-          .catch((e) => reject(e));
-      }),
+          .catch(e => reject(e));
+      })
   );
 
   // Run simultaneous SPARQL queries
@@ -92,7 +92,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   results = [].concat(...results);
 
   // Add id in addition to @id, as this is what React-Admin expects
-  let returnData = results.map((item) => {
+  let returnData = results.map(item => {
     item.id = item.id || item['@id'];
     return item;
   });
@@ -112,7 +112,7 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
   if (params.pagination) {
     returnData = returnData.slice(
       (params.pagination.page - 1) * params.pagination.perPage,
-      params.pagination.page * params.pagination.perPage,
+      params.pagination.page * params.pagination.perPage
     );
   }
 

@@ -9,7 +9,7 @@ const resolvePrefix = (item, ontologies) => {
   }
   const [prefix, value] = item.split(':');
   if (value) {
-    const ontology = ontologies.find((ontology) => ontology.prefix === prefix);
+    const ontology = ontologies.find(ontology => ontology.prefix === prefix);
     if (ontology) {
       return ontology.url + value;
     }

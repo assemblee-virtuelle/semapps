@@ -12,19 +12,19 @@ const AuthMixin = {
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
-    accountsDataset: 'settings',
+    accountsDataset: 'settings'
   },
   dependencies: ['api', 'webid'],
   async created() {
     const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
 
     await this.broker.createService(AuthJWTService, {
-      settings: { jwtPath },
+      settings: { jwtPath }
     });
 
     await this.broker.createService(AuthAccountService, {
       settings: { reservedUsernames },
-      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset }),
+      adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
   },
   async started() {
@@ -90,10 +90,10 @@ const AuthMixin = {
       const { webId } = ctx.params;
       return await ctx.call('auth.jwt.generateToken', {
         payload: {
-          webId,
-        },
+          webId
+        }
       });
-    },
+    }
   },
   methods: {
     getStrategy() {
@@ -104,21 +104,19 @@ const AuthMixin = {
     },
     pickWebIdData(data) {
       if (this.settings.webIdSelection.length > 0) {
-        return Object.fromEntries(
-          this.settings.webIdSelection.filter((key) => key in data).map((key) => [key, data[key]]),
-        );
+        return Object.fromEntries(this.settings.webIdSelection.filter(key => key in data).map(key => [key, data[key]]));
       }
       return data;
     },
     pickAccountData(data) {
       if (this.settings.accountSelection.length > 0) {
         return Object.fromEntries(
-          this.settings.accountSelection.filter((key) => key in data).map((key) => [key, data[key]]),
+          this.settings.accountSelection.filter(key => key in data).map(key => [key, data[key]])
         );
       }
       return data || {};
-    },
-  },
+    }
+  }
 };
 
 module.exports = AuthMixin;

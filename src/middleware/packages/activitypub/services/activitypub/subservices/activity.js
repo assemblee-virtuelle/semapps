@@ -21,8 +21,8 @@ const ActivityService = {
       // Activities shouldn't be handled manually
       patch: 'activitypub.activity.forbidden',
       put: 'activitypub.activity.forbidden',
-      delete: 'activitypub.activity.forbidden',
-    },
+      delete: 'activitypub.activity.forbidden'
+    }
   },
   dependencies: ['ldp.container'],
   actions: {
@@ -52,7 +52,7 @@ const ActivityService = {
                 if (recipient.startsWith(this.settings.baseUri)) {
                   const collection = await ctx.call('activitypub.collection.get', {
                     collectionUri: recipient,
-                    webId: activity.actor,
+                    webId: activity.actor
                   });
                   if (collection && collection.items) output.push(...defaultToArray(collection.items));
                 }
@@ -72,21 +72,21 @@ const ActivityService = {
     async getLocalRecipients(ctx) {
       const { activity } = ctx.params;
       const recipients = await this.actions.getRecipients({ activity }, { parentCtx: ctx });
-      return recipients.filter((recipientUri) => this.isLocalActor(recipientUri));
+      return recipients.filter(recipientUri => this.isLocalActor(recipientUri));
     },
     isPublic(ctx) {
       const { activity } = ctx.params;
       // We accept all three representations, as required by https://www.w3.org/TR/activitypub/#public-addressing
       const publicRepresentations = [PUBLIC_URI, 'Public', 'as:Public'];
       return defaultToArray(activity.to)
-        ? defaultToArray(activity.to).some((r) => publicRepresentations.includes(r))
+        ? defaultToArray(activity.to).some(r => publicRepresentations.includes(r))
         : false;
-    },
+    }
   },
   methods: {
     isLocalActor(uri) {
       return uri.startsWith(this.settings.baseUri);
-    },
+    }
   },
   hooks: {
     before: {
@@ -97,14 +97,14 @@ const ActivityService = {
       },
       create(ctx) {
         ctx.params.resource = objectIdToCurrent(ctx.params.resource);
-      },
+      }
     },
     after: {
       get(ctx, res) {
         return objectCurrentToId(res);
-      },
-    },
-  },
+      }
+    }
+  }
 };
 
 module.exports = ActivityService;
