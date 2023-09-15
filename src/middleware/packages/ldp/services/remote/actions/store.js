@@ -8,7 +8,7 @@ module.exports = {
     keepInSync: { type: 'boolean', default: false },
     mirrorGraph: { type: 'boolean', default: false },
     webId: { type: 'string', optional: true },
-    dataset: { type: 'string', optional: true },
+    dataset: { type: 'string', optional: true }
   },
   async handler(ctx) {
     let { resourceUri, resource, keepInSync, mirrorGraph, webId, dataset } = ctx.params;
@@ -50,12 +50,12 @@ module.exports = {
         }
       `,
       webId,
-      dataset,
+      dataset
     });
 
     ctx.call('triplestore.deleteOrphanBlankNodes', {
       dataset,
-      graphName,
+      graphName
     });
 
     if (keepInSync) {
@@ -67,15 +67,15 @@ module.exports = {
       graphName,
       contentType: MIME_TYPES.JSON,
       webId: 'system',
-      dataset,
+      dataset
     });
 
     ctx.emit(
       'ldp.remote.stored',
       { resourceUri, resource, mirrorGraph, keepInSync, webId },
-      { meta: { webId: null, dataset: null } },
+      { meta: { webId: null, dataset: null } }
     );
 
     return resource;
-  },
+  }
 };

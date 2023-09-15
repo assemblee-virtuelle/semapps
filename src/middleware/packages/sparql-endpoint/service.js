@@ -7,7 +7,7 @@ const SparqlEndpointService = {
   settings: {
     defaultAccept: 'text/turtle',
     ignoreAcl: false,
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['triplestore', 'api'],
   async started() {
@@ -33,7 +33,7 @@ const SparqlEndpointService = {
         accept,
         dataset: ctx.params.username,
         // In POD provider config, query as system as we are searching our own data
-        webId: this.settings.ignoreAcl || this.settings.podProvider ? 'system' : ctx.meta.webId,
+        webId: this.settings.ignoreAcl || this.settings.podProvider ? 'system' : ctx.meta.webId
       });
 
       if (ctx.meta.$responseType === undefined) {
@@ -41,7 +41,7 @@ const SparqlEndpointService = {
       }
 
       return response;
-    },
+    }
   },
   events: {
     async 'auth.registered'(ctx) {
@@ -50,11 +50,11 @@ const SparqlEndpointService = {
         await ctx.call('activitypub.actor.addEndpoint', {
           actorUri: webId,
           predicate: 'http://rdfs.org/ns/void#sparqlEndpoint',
-          endpoint: urlJoin(webId, 'sparql'),
+          endpoint: urlJoin(webId, 'sparql')
         });
       }
-    },
-  },
+    }
+  }
 };
 
 module.exports = SparqlEndpointService;

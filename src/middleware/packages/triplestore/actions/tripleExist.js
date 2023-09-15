@@ -4,20 +4,20 @@ module.exports = {
   visibility: 'public',
   params: {
     triple: {
-      type: 'object',
+      type: 'object'
     },
     webId: {
       type: 'string',
-      optional: true,
+      optional: true
     },
     dataset: {
       type: 'string',
-      optional: true,
+      optional: true
     },
     graphName: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     const { triple, graphName } = ctx.params;
@@ -33,14 +33,14 @@ module.exports = {
             ? {
                 type: 'graph',
                 name: { termType: 'NamedNode', value: graphName },
-                patterns: [{ type: 'bgp', triples: [triple] }],
+                patterns: [{ type: 'bgp', triples: [triple] }]
               }
-            : { type: 'bgp', triples: [triple] },
-        ],
+            : { type: 'bgp', triples: [triple] }
+        ]
       },
       accept: MIME_TYPES.JSON,
       webId,
-      dataset,
+      dataset
     });
-  },
+  }
 };
