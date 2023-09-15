@@ -1,3 +1,5 @@
+const { Errors: E } = require('moleculer-web');
+
 module.exports = {
   settings: {
     path: null,
@@ -23,8 +25,8 @@ module.exports = {
       sort: this.settings.sort,
       permissions: this.settings.permissions,
       controlledActions: {
-        get: this.name + '.get',
-        post: this.name + '.post',
+        get: `${this.name}.get`,
+        post: `${this.name}.post`,
         ...this.settings.controlledActions
       }
     });

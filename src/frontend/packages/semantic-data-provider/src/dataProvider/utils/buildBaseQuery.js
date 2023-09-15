@@ -14,19 +14,18 @@ const buildBaseQuery = (predicates, ontologies) => {
   let baseTriples;
   if (predicates) {
     baseTriples = defaultToArray(predicates).map((predicate, i) =>
-      triple(variable('s1'), namedNode(resolvePrefix(predicate, ontologies)), variable('o' + (i + 1)))
+      triple(variable('s1'), namedNode(resolvePrefix(predicate, ontologies)), variable(`o${i + 1}`))
     );
     return {
       construct: [typeQuery, ...baseTriples],
       where: [typeQuery, ...baseTriples.map(triple => ({ type: 'optional', patterns: [triple] }))]
     };
-  } else {
-    baseTriples = [triple(variable('s1'), variable('p1'), variable('o1'))];
-    return {
-      construct: baseTriples,
-      where: baseTriples
-    };
   }
+  baseTriples = [triple(variable('s1'), variable('p1'), variable('o1'))];
+  return {
+    construct: baseTriples,
+    where: baseTriples
+  };
 };
 
 export default buildBaseQuery;

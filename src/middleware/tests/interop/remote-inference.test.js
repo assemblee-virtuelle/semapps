@@ -5,7 +5,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');
@@ -17,7 +18,8 @@ afterAll(async () => {
 });
 
 describe('An inference is added between server1 et server2', () => {
-  let resourceUri1, resourceUri2;
+  let resourceUri1;
+  let resourceUri2;
 
   test('An remote relationship is added on create', async () => {
     resourceUri1 = await server1.call('ldp.container.post', {
@@ -26,7 +28,7 @@ describe('An inference is added between server1 et server2', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Resource',
-        label: 'My parent resource',
+        label: 'My parent resource'
       },
       contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
@@ -41,7 +43,7 @@ describe('An inference is added between server1 et server2', () => {
         label: 'My child resource',
         partOf: {
           '@id': resourceUri1
-        },
+        }
       },
       contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3002/resources'
@@ -51,7 +53,7 @@ describe('An inference is added between server1 et server2', () => {
       await expect(
         server1.call('ldp.resource.get', { resourceUri: resourceUri1, accept: MIME_TYPES.JSON })
       ).resolves.toMatchObject({
-        'id': resourceUri1,
+        id: resourceUri1,
         'pair:hasPart': resourceUri2
       });
     });
@@ -61,7 +63,11 @@ describe('An inference is added between server1 et server2', () => {
     await server1.call('ldp.resource.patch', {
       resourceUri: resourceUri1,
       triplesToAdd: [
-        triple(namedNode(resourceUri1), namedNode('http://virtual-assembly.org/ontologies/pair#hasInspired'), namedNode(resourceUri2))
+        triple(
+          namedNode(resourceUri1),
+          namedNode('http://virtual-assembly.org/ontologies/pair#hasInspired'),
+          namedNode(resourceUri2)
+        )
       ]
     });
 
@@ -69,7 +75,7 @@ describe('An inference is added between server1 et server2', () => {
       await expect(
         server2.call('ldp.resource.get', { resourceUri: resourceUri2, accept: MIME_TYPES.JSON })
       ).resolves.toMatchObject({
-        'id': resourceUri2,
+        id: resourceUri2,
         'pair:inspiredBy': resourceUri1
       });
     });
@@ -87,7 +93,7 @@ describe('An inference is added between server1 et server2', () => {
         label: 'My child resource',
         partOf: {
           '@id': resourceUri1
-        },
+        }
       },
       contentType: MIME_TYPES.JSON
     });

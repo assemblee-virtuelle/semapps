@@ -3,7 +3,9 @@ import { ReferenceArrayInput as RaReferenceArrayInput } from 'react-admin';
 import { useController } from 'react-hook-form';
 
 const ReferenceArrayInput = props => {
-  const { field: { value, onChange }} = useController({ name: props.source });
+  const {
+    field: { value, onChange }
+  } = useController({ name: props.source });
 
   useEffect(() => {
     if (value && !Array.isArray(value)) {

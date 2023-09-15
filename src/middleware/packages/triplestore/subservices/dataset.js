@@ -15,7 +15,7 @@ const DatasetService = {
   },
   started() {
     this.headers = {
-      Authorization: 'Basic ' + Buffer.from(this.settings.user + ':' + this.settings.password).toString('base64')
+      Authorization: `Basic ${Buffer.from(`${this.settings.user}:${this.settings.password}`).toString('base64')}`
     };
   },
   actions: {
@@ -76,9 +76,8 @@ const DatasetService = {
       if (response.ok) {
         const json = await response.json();
         return json.datasets.map(dataset => dataset['ds.name'].substring(1));
-      } else {
-        return [];
       }
+      return [];
     },
     async waitForCreation(ctx) {
       const { dataset } = ctx.params;

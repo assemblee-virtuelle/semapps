@@ -35,7 +35,7 @@ module.exports = {
       webId = webId || ctx.meta.webId || 'anon';
 
       if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
-        return await ctx.call('ldp.remote.delete', { resourceUri, webId })
+        return await ctx.call('ldp.remote.delete', { resourceUri, webId });
       }
 
       const { disassembly } = {
@@ -45,7 +45,7 @@ module.exports = {
 
       // Save the current data, to be able to send it through the event
       // If the resource does not exist, it will throw a 404 error
-      let oldData = await ctx.call('ldp.resource.get', {
+      const oldData = await ctx.call('ldp.resource.get', {
         resourceUri,
         accept: MIME_TYPES.JSON,
         forceSemantic: true,
@@ -68,7 +68,7 @@ module.exports = {
 
       // We must detach the resource from the containers after deletion, otherwise the permissions may fail
       const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      for (let containerUri of containers) {
+      for (const containerUri of containers) {
         await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
       }
 

@@ -67,7 +67,7 @@ module.exports = {
       await ctx.broker.waitForServices(['ldp.container', 'ldp.resource']);
 
       if (resourceUri.startsWith(urlJoin(this.settings.baseUrl, '_groups'))) {
-        let exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
+        const exists = await aclGroupExists(resourceUri, ctx, this.settings.graphName);
         if (!exists)
           throw new MoleculerError(`Cannot get permissions of non-existing ACL group ${resourceUri}`, 404, 'NOT_FOUND');
         return false; // it is never a container
@@ -85,12 +85,13 @@ module.exports = {
           );
         }
         return false;
-      } else return true;
+      }
+      return true;
     },
     async getExistingPerms(ctx, resourceUri, baseUrl, graphName, isContainer) {
-      let resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
+      const resourceAclUri = getAclUriFromResourceUri(baseUrl, resourceUri);
 
-      let document = [];
+      const document = [];
 
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Read', graphName)));
       document.push(...(await getAuthorizationNode(ctx, resourceUri, resourceAclUri, 'Write', graphName)));
@@ -111,17 +112,17 @@ module.exports = {
         });
     },
     compileAuthorizationNodesMap(nodes) {
-      let result = {};
+      const result = {};
       for (const node of nodes) {
         result[node.auth] = result[node.auth] ? result[node.auth] + 1 : 1;
       }
       return result;
     },
     generateNewAuthNode(auth) {
-      let split = auth.split('#');
-      let resUrl = split[0].replace('/_acl', '');
-      let defaultAcl = split[1].startsWith('Default');
-      let mode = defaultAcl ? split[1].replace('Default', '') : split[1];
+      const split = auth.split('#');
+      const resUrl = split[0].replace('/_acl', '');
+      const defaultAcl = split[1].startsWith('Default');
+      const mode = defaultAcl ? split[1].replace('Default', '') : split[1];
       let cmd = `<${auth}> <${FULL_TYPE_URI}> <${ACL_NS}Authorization>.\n`;
       cmd += `<${auth}> <${FULL_MODE_URI}> <${ACL_NS}${mode}>.\n`;
       cmd += `<${auth}> <${defaultAcl ? FULL_DEFAULT_URI : FULL_ACCESSTO_URI}> <${resUrl}>.\n`;

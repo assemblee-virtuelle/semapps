@@ -1,8 +1,8 @@
 const { ACTIVITY_TYPES, OBJECT_TYPES } = require('@semapps/activitypub');
 const { MIME_TYPES } = require('@semapps/mime-types');
+const waitForExpect = require('wait-for-expect');
 const initialize = require('./initialize');
 const CONFIG = require('../config');
-const waitForExpect = require('wait-for-expect');
 
 jest.setTimeout(50000);
 
@@ -16,7 +16,8 @@ afterAll(async () => {
 });
 
 describe('Create/Update/Delete objects', () => {
-  let sebastien, objectUri;
+  let sebastien;
+  let objectUri;
 
   test('Create actor', async () => {
     const { webId: sebastienUri } = await broker.call('auth.signup', {
@@ -126,7 +127,7 @@ describe('Create/Update/Delete objects', () => {
           resourceUri: objectUri,
           accept: MIME_TYPES.JSON
         })
-      ).rejects.toThrow('Cannot get permissions of non-existing container or resource ' + objectUri);
+      ).rejects.toThrow(`Cannot get permissions of non-existing container or resource ${objectUri}`);
     });
   });
 });

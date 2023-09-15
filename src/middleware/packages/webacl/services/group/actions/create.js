@@ -22,7 +22,7 @@ module.exports = {
     },
     async handler(ctx) {
       let { groupUri, groupSlug } = ctx.params;
-      let webId = ctx.params.webId || ctx.meta.webId || 'anon';
+      const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
       if (!groupUri) {
         groupSlug = createSlug(groupSlug, { lang: 'fr', custom: { '.': '.', '/': '/' } });
@@ -35,7 +35,7 @@ module.exports = {
         throw new MoleculerError('Group already exists', 400, 'BAD_REQUEST');
       }
 
-      let newRights = {};
+      const newRights = {};
       if (webId === 'anon') {
         newRights.anon = {
           read: true,

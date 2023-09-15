@@ -16,18 +16,18 @@ class LdpAdapter {
   async connect() {
     if (!this.service.schema.settings.containerUri) {
       throw new ServiceSchemaError(
-        'Missing `containerUri` definition in settings of service ' + this.service.schema.name
+        `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`
       );
     }
 
     await this.broker.waitForServices([this.resourceService, this.containerService], 120000);
 
-    const containerUri = this.service.schema.settings.containerUri;
-    const exists = await this.broker.call(this.containerService + '.exist', { containerUri, webId: 'system' });
+    const { containerUri } = this.service.schema.settings;
+    const exists = await this.broker.call(`${this.containerService}.exist`, { containerUri, webId: 'system' });
 
     if (!exists) {
       console.log(`Container ${containerUri} doesn't exist, creating it...`);
-      await this.broker.call(this.containerService + '.create', { containerUri });
+      await this.broker.call(`${this.containerService}.create`, { containerUri });
     }
   }
 
@@ -47,7 +47,7 @@ class LdpAdapter {
    *  - query
    */
   find(filters) {
-    return this.broker.call(this.containerService + '.get', {
+    return this.broker.call(`${this.containerService}.get`, {
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
       jsonContext: this.service.schema.settings.context,
@@ -69,7 +69,7 @@ class LdpAdapter {
     if (!_id.startsWith('http')) {
       _id = urlJoin(this.service.schema.settings.containerUri, _id);
     }
-    return this.broker.call(this.resourceService + '.get', {
+    return this.broker.call(`${this.resourceService}.get`, {
       resourceUri: _id,
       jsonContext: this.service.schema.settings.context,
       accept: MIME_TYPES.JSON
@@ -102,8 +102,8 @@ class LdpAdapter {
     const { slug, ...resource } = entity;
 
     return this.broker
-      .call(this.resourceService + '.post', {
-        containerUri: containerUri || this.service.schema.settings.containerUri,
+      .call(`${this.resourceService}.post`, {
+        containerUri: this.service.schema.settings.containerUri,
         resource: {
           '@context': this.service.schema.settings.context,
           ...resource
@@ -112,7 +112,7 @@ class LdpAdapter {
         contentType: MIME_TYPES.JSON
       })
       .then(resourceUri => {
-        this.broker.call(this.containerService + '.attach', {
+        this.broker.call(`${this.containerService}.attach`, {
           containerUri: this.service.schema.settings.containerUri,
           resourceUri
         });
@@ -139,7 +139,7 @@ class LdpAdapter {
    * Update an entity by ID
    */
   updateById(_id, update) {
-    const { id, '@id': arobaseId, ...resource } = update['$set'];
+    const { id, '@id': arobaseId, ...resource } = update.$set;
 
     // Check ID and transform it to URI if necessary
     _id = _id || id || arobaseId;
@@ -147,7 +147,7 @@ class LdpAdapter {
     if (!_id.startsWith('http')) _id = urlJoin(this.service.schema.settings.containerUri, _id);
 
     return this.broker
-      .call(this.resourceService + '.put', {
+      .call(`${this.resourceService}.put`, {
         resource: {
           '@context': this.service.schema.settings.context,
           '@id': _id,
@@ -170,7 +170,7 @@ class LdpAdapter {
    */
   removeById(_id) {
     return this.broker
-      .call(this.resourceService + '.delete', {
+      .call(`${this.resourceService}.delete`, {
         resourceUri: _id
       })
       .then(() => {
@@ -184,7 +184,7 @@ class LdpAdapter {
    * Clear all entities from the container
    */
   clear() {
-    return this.broker.call(this.containerService + '.clear', {
+    return this.broker.call(`${this.containerService}.clear`, {
       containerUri: this.service.schema.settings.containerUri
     });
   }

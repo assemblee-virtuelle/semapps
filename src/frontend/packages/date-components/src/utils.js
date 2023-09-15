@@ -7,7 +7,7 @@ const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
 
 /**
  * @param {Date} value value to convert
- * @returns {String} A standardized datetime (yyyy-MM-ddThh:mm), to be passed to an <input type="datetime-local" />
+ * @returns {string} A standardized datetime (yyyy-MM-ddThh:mm), to be passed to an <input type="datetime-local" />
  */
 const convertDateToString = value => {
   if (!(value instanceof Date) || isNaN(value.getDate())) {
@@ -25,8 +25,7 @@ const convertDateToString = value => {
 /**
  * Converts a date from the Redux store, with timezone, to a date string
  * without timezone for use in an <input type="datetime-local" />.
- *
- * @param {Date | String} value date string or object
+ * @param {Date | string} value date string or object
  */
 export const dateTimeFormatter = value => {
   // null, undefined and empty string values should not go through convertDateToString
@@ -50,8 +49,7 @@ export const dateTimeFormatter = value => {
 /**
  * Converts a datetime string without timezone to a date object
  * with timezone, using the browser timezone.
- *
- * @param {String} value Date string, formatted as yyyy-MM-ddThh:mm
- * @return {Date}
+ * @param {string} value Date string, formatted as yyyy-MM-ddThh:mm
+ * @returns {Date}
  */
 export const dateTimeParser = value => (value ? new Date(value) : '');

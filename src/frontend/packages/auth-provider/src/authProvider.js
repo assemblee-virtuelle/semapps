@@ -31,9 +31,9 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
           throw new Error('ra.auth.sign_in_error');
         }
       } else {
-        let redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        if (params.redirect) redirectUrl += '&redirect=' + encodeURIComponent(params.redirect);
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
     signup: async params => {
@@ -67,8 +67,8 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
           }
         }
       } else {
-        const redirectUrl = new URL(window.location.href).origin + '/login?login=true';
-        window.location.href = urlJoin(authServerUrl, 'auth?redirectUrl=' + encodeURIComponent(redirectUrl));
+        const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+        window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
     logout: async () => {
@@ -86,7 +86,7 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
           const baseUrl = new URL(window.location.href).origin;
           window.location.href = urlJoin(
             authServerUrl,
-            'auth/logout?redirectUrl=' + encodeURIComponent(urlJoin(baseUrl, 'login') + '?logout=true')
+            `auth/logout?redirectUrl=${encodeURIComponent(`${urlJoin(baseUrl, 'login')}?logout=true`)}`
           );
           break;
 
@@ -112,9 +112,8 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
     checkUser: userData => {
       if (checkUser) {
         return checkUser(userData);
-      } else {
-        return true;
       }
+      return true;
     },
     checkError: error => Promise.resolve(),
     getPermissions: async uri => {
@@ -144,8 +143,8 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
 
       const aclUri = getAclUri(uri);
 
-      let authorization = {
-        '@id': '#' + mode.replace('acl:', ''),
+      const authorization = {
+        '@id': `#${mode.replace('acl:', '')}`,
         '@type': 'acl:Authorization',
         [predicate]: agentId,
         'acl:accessTo': uri,
@@ -167,7 +166,7 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
       const aclUri = getAclUri(uri);
 
       // Fetch current permissions
-      let { json } = await dataProvider.fetch(aclUri);
+      const { json } = await dataProvider.fetch(aclUri);
 
       const updatedPermissions = json['@graph']
         .filter(authorization => !authorization['@id'].includes('#Default'))

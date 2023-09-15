@@ -1,8 +1,8 @@
-const urlJoin = require("url-join");
-const fetch = require("node-fetch");
+const urlJoin = require('url-join');
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const { createFragmentURL, defaultToArray } = require("@semapps/ldp");
-const { ACTIVITY_TYPES } = require("@semapps/activitypub");
+const { createFragmentURL, defaultToArray } = require('@semapps/ldp');
+const { ACTIVITY_TYPES } = require('@semapps/activitypub');
 const SynchronizerService = require('./synchronizer');
 
 const regexPrefix = new RegExp('^@prefix ([\\w-]*: +<.*>) .', 'gm');
@@ -35,10 +35,11 @@ module.exports = {
   async started() {
     this.relayActor = await this.broker.call('activitypub.relay.getActor');
     if (this.settings.servers.length > 0) {
-      for (let serverUrl of this.settings.servers) {
+      for (const serverUrl of this.settings.servers) {
         // Do not await because we don't want to block the startup of the services.
-        this.actions.mirror({ serverUrl })
-          .catch(e => this.logger.warn('Mirroring failed for ' + serverUrl + ' : ' + e.message));
+        this.actions
+          .mirror({ serverUrl })
+          .catch(e => this.logger.warn(`Mirroring failed for ${serverUrl} : ${e.message}`));
       }
     }
   },
@@ -49,12 +50,12 @@ module.exports = {
         serverUrl: { type: 'string', optional: false }
       },
       async handler(ctx) {
-        let { serverUrl } = ctx.params;
+        const { serverUrl } = ctx.params;
 
         // Check if the server is already followed, in which case, we already did the mirror, we can skip.
 
         const serverDomainName = new URL(serverUrl).host;
-        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
+        const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: `relay@${serverDomainName}` });
 
         const alreadyFollowing = await ctx.call('activitypub.follow.isFollowing', {
           follower: this.relayActor.id,
@@ -62,13 +63,13 @@ module.exports = {
         });
 
         if (alreadyFollowing) {
-          this.logger.info('Already mirrored and following: ' + serverUrl);
+          this.logger.info(`Already mirrored and following: ${serverUrl}`);
           return remoteRelayActorUri;
         }
 
         // If not, we will now mirror and then follow the remote relay actor
 
-        this.logger.info('Mirroring ' + serverUrl);
+        this.logger.info(`Mirroring ${serverUrl}`);
 
         const voidUrl = urlJoin(serverUrl, '/.well-known/void');
 
@@ -79,17 +80,17 @@ module.exports = {
           }
         });
 
-        if (!response.ok) throw new MoleculerError('No VOID endpoint on the server ' + serverUrl, 404, 'NOT_FOUND');
+        if (!response.ok) throw new MoleculerError(`No VOID endpoint on the server ${serverUrl}`, 404, 'NOT_FOUND');
 
         const json = await response.json();
-        let mapServers = {};
-        for (let s of json['@graph']) {
+        const mapServers = {};
+        for (const s of json['@graph']) {
           mapServers[s['@id']] = s;
         }
         const server = mapServers[createFragmentURL('', serverUrl)];
         if (!server)
           throw new MoleculerError(
-            'The VOID answer does not contain valid information for ' + serverUrl,
+            `The VOID answer does not contain valid information for ${serverUrl}`,
             400,
             'INVALID'
           );
@@ -113,26 +114,26 @@ module.exports = {
             });
 
             if (rep.ok) {
-              let container = await rep.text();
+              const container = await rep.text();
 
               const prefixes = [...container.matchAll(regexPrefix)];
 
               let sparqlQuery = '';
               for (const pref of prefixes) {
-                sparqlQuery += 'PREFIX ' + pref[1] + '\n';
+                sparqlQuery += `PREFIX ${pref[1]}\n`;
               }
               sparqlQuery += `INSERT DATA { GRAPH <${this.settings.graphName}> { \n`;
               sparqlQuery += container.replace(regexPrefix, '');
               sparqlQuery += '} }';
 
-              await ctx.call('triplestore.update', {query: sparqlQuery});
+              await ctx.call('triplestore.update', { query: sparqlQuery });
             }
           }
         }
 
         // Unmark any single mirrored resources that belong to this server we just mirrored
         // because we don't need to periodically watch them anymore
-        let singles = await this.broker.call('triplestore.query', {
+        const singles = await this.broker.call('triplestore.query', {
           query: `SELECT DISTINCT ?s WHERE { 
           GRAPH <${this.settings.graphName}> { 
           ?s <http://semapps.org/ns/core#singleMirroredResource> <${serverUrl}> } }`
@@ -155,7 +156,7 @@ module.exports = {
 
         // Now subscribing to the Relay actor in order to receive updates
 
-        this.logger.info('Following remote relay actor ' + remoteRelayActorUri);
+        this.logger.info(`Following remote relay actor ${remoteRelayActorUri}`);
 
         await ctx.call('activitypub.outbox.post', {
           collectionUri: this.relayActor.outbox,

@@ -1,7 +1,7 @@
-const CONFIG = require('../config');
 const { MIME_TYPES } = require('@semapps/mime-types');
-const initialize = require('./initialize');
 const { quad, namedNode, blankNode, literal } = require('rdf-data-model');
+const CONFIG = require('../config');
+const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 let broker;
@@ -40,7 +40,7 @@ describe('Resource CRUD operations', () => {
         }
       },
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources'
+      containerUri: `${CONFIG.HOME_URL}resources`
     });
 
     project1 = await broker.call('ldp.resource.get', {
@@ -125,7 +125,7 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   test('Put resource with multiple blank nodes including same values', async () => {
-    let resourceUpdated = {
+    const resourceUpdated = {
       '@context': {
         petr: 'https://data.petr-msb.data-players.com/ontology#',
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -172,7 +172,7 @@ describe('Resource CRUD operations', () => {
     expect(updatedProject['pair:label']).toBeUndefined();
     expect(updatedProject['pair:hasLocation']['pair:description']).toBeUndefined();
 
-    resourceUpdated['hasLocation'] = [
+    resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
       }
@@ -199,7 +199,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    resourceUpdated['hasLocation'] = [
+    resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
       },
@@ -240,7 +240,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
-    resourceUpdated['hasLocation'] = [
+    resourceUpdated.hasLocation = [
       {
         label: 'Compiegne'
       },
@@ -273,7 +273,7 @@ describe('Resource CRUD operations', () => {
       }
     });
 
-    resourceUpdated['hasLocation'] = [
+    resourceUpdated.hasLocation = [
       {
         label: 'Compiegne',
         description: 'the place to be'
@@ -312,7 +312,7 @@ describe('Resource CRUD operations', () => {
       ]
     });
 
-    resourceUpdated['hasLocation'] = undefined;
+    resourceUpdated.hasLocation = undefined;
 
     await broker.call('ldp.resource.put', {
       resource: resourceUpdated,
@@ -376,7 +376,7 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   test('Post resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
-    let resourceToPost = {
+    const resourceToPost = {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
@@ -394,7 +394,7 @@ describe('Resource CRUD operations', () => {
     const resourceUri = await broker.call('ldp.container.post', {
       resource: resourceToPost,
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources2'
+      containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
     project2 = await broker.call('ldp.resource.get', {
@@ -429,7 +429,7 @@ describe('Resource CRUD operations', () => {
     const resourceUri3 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources2'
+      containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
     const project3 = await broker.call('ldp.resource.get', {
@@ -472,7 +472,7 @@ describe('Resource CRUD operations', () => {
     const resourceUri4 = await broker.call('ldp.container.post', {
       resource: resourceToPost,
       contentType: MIME_TYPES.JSON,
-      containerUri: CONFIG.HOME_URL + 'resources2'
+      containerUri: `${CONFIG.HOME_URL}resources2`
     });
 
     const project4 = await broker.call('ldp.resource.get', {
@@ -491,7 +491,7 @@ describe('Resource CRUD operations', () => {
   }, 20000);
 
   test('Put resource with multiple blank nodes with 2 imbrications blank nodes', async () => {
-    let resourceUpdated = {
+    const resourceUpdated = {
       '@context': {
         '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
       },
@@ -638,7 +638,7 @@ describe('Resource CRUD operations', () => {
 
   test('PATCH resource', async () => {
     const projectUri = await broker.call('ldp.container.post', {
-      containerUri: CONFIG.HOME_URL + 'resources',
+      containerUri: `${CONFIG.HOME_URL}resources`,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -654,10 +654,18 @@ describe('Resource CRUD operations', () => {
       resourceUri: projectUri,
       triplesToAdd: [
         quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemApps')),
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#comment'), literal('An open source toolbox to help you easily build semantic web applications'))
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#comment'),
+          literal('An open source toolbox to help you easily build semantic web applications')
+        )
       ],
       triplesToRemove: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('SemanticApps'))
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#label'),
+          literal('SemanticApps')
+        )
       ],
       contentType: MIME_TYPES.JSON
     });
@@ -676,7 +684,7 @@ describe('Resource CRUD operations', () => {
 
   test('PATCH resource with blank nodes', async () => {
     const projectUri = await broker.call('ldp.container.post', {
-      containerUri: CONFIG.HOME_URL + 'resources',
+      containerUri: `${CONFIG.HOME_URL}resources`,
       resource: {
         '@context': {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
@@ -691,9 +699,17 @@ describe('Resource CRUD operations', () => {
     await broker.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
-        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris')),
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          blankNode('b_0')
+        ),
+        quad(
+          blankNode('b_0'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        ),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Paris'))
       ],
       contentType: MIME_TYPES.JSON
     });
@@ -715,9 +731,17 @@ describe('Resource CRUD operations', () => {
     await broker.call('ldp.resource.patch', {
       resourceUri: projectUri,
       triplesToAdd: [
-        quad(namedNode(projectUri), namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'), blankNode('b_0')),
-        quad(blankNode('b_0'), namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), namedNode('http://virtual-assembly.org/ontologies/pair#Place')),
-        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne')),
+        quad(
+          namedNode(projectUri),
+          namedNode('http://virtual-assembly.org/ontologies/pair#hasLocation'),
+          blankNode('b_0')
+        ),
+        quad(
+          blankNode('b_0'),
+          namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+          namedNode('http://virtual-assembly.org/ontologies/pair#Place')
+        ),
+        quad(blankNode('b_0'), namedNode('http://virtual-assembly.org/ontologies/pair#label'), literal('Compiègne'))
       ],
       contentType: MIME_TYPES.JSON
     });
@@ -748,7 +772,7 @@ describe('Resource CRUD operations', () => {
       resourceUri: project1['@id']
     });
 
-    expect(
+    await expect(
       broker.call('ldp.resource.get', {
         resourceUri: project1['@id'],
         accept: MIME_TYPES.JSON

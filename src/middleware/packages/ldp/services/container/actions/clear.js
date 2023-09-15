@@ -18,7 +18,7 @@ module.exports = {
           ?s1 ?p1 ?o1 .
         }
         WHERE { 
-          FILTER(?container IN (<${containerUri}>, <${containerUri + '/'}>)) .
+          FILTER(?container IN (<${containerUri}>, <${`${containerUri}/`}>)) .
           ?container ldp:contains ?s1 .
           OPTIONAL { ?s1 ?p1 ?o1 . } 
         } 

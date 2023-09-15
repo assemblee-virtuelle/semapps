@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
-import getServerKeyFromType from './getServerKeyFromType';
 import urlJoin from 'url-join';
+import getServerKeyFromType from './getServerKeyFromType';
 
 const fetchUserConfig = async config => {
   const { dataServers, httpClient } = config;
@@ -39,11 +39,9 @@ const fetchUserConfig = async config => {
       // We must modify the config object directly
       config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
     }
-  } else {
-    if (podKey) {
-      // If the user is not logged in, ignore the POD server
-      delete config.dataServers[podKey];
-    }
+  } else if (podKey) {
+    // If the user is not logged in, ignore the POD server
+    delete config.dataServers[podKey];
   }
 };
 

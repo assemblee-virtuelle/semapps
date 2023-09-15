@@ -69,7 +69,7 @@ const ChipList = props => {
   return (
     <Component className={classes.root} {...sanitizeListRestProps(rest)}>
       {data.map(record => {
-        if (!record || record['_error']) return null;
+        if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         if (externalLink) {
           return (
@@ -94,10 +94,15 @@ const ChipList = props => {
               </a>
             </RecordContextProvider>
           );
-        } else if (linkType) {
+        }
+        if (linkType) {
           return (
             <RecordContextProvider value={record} key={record.id}>
-              <Link className={classes.link} to={createPath({ resource, id: record.id, type: linkType })} onClick={stopPropagation}>
+              <Link
+                className={classes.link}
+                to={createPath({ resource, id: record.id, type: linkType })}
+                onClick={stopPropagation}
+              >
                 <ChipField
                   source={primaryText}
                   className={classes.chipField}
@@ -108,19 +113,18 @@ const ChipList = props => {
               </Link>
             </RecordContextProvider>
           );
-        } else {
-          return (
-            <RecordContextProvider value={record} key={record.id}>
-              <ChipField
-                source={primaryText}
-                className={classes.chipField}
-                color="secondary"
-                // Workaround to force ChipField to be clickable
-                onClick={handleClick}
-              />
-            </RecordContextProvider>
-          );
         }
+        return (
+          <RecordContextProvider value={record} key={record.id}>
+            <ChipField
+              source={primaryText}
+              className={classes.chipField}
+              color="secondary"
+              // Workaround to force ChipField to be clickable
+              onClick={handleClick}
+            />
+          </RecordContextProvider>
+        );
       })}
       {appendLink && <AddCircleIcon color="primary" className={classes.addIcon} onClick={appendLink} />}
     </Component>

@@ -28,10 +28,10 @@ const AddPermissionsForm = ({ agents, addPermission }) => {
     {
       pagination: { page: 1, perPage: 100 },
       sort: { field: 'pair:label', order: 'ASC' },
-      filter: { q: inputValue },
+      filter: { q: inputValue }
     },
-    { 
-      enabled: inputValue.length > 0 
+    {
+      enabled: inputValue.length > 0
     }
   );
 

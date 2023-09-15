@@ -87,7 +87,7 @@ module.exports = {
       // We want to add user's containers only in POD provider config
       if (this.settings.podProvider) {
         // Go through each registered containers
-        for (let container of Object.values(this.registeredContainers)) {
+        for (const container of Object.values(this.registeredContainers)) {
           const containerUri = urlJoin(accountData.podUri, container.path);
           await this.createAndAttachContainer(ctx, containerUri, container.path);
         }

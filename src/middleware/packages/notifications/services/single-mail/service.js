@@ -1,7 +1,7 @@
 const urlJoin = require('url-join');
 const path = require('path');
 const MailService = require('moleculer-mail');
-const { getSlugFromUri } = require("@semapps/ldp");
+const { getSlugFromUri } = require('@semapps/ldp');
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
@@ -27,7 +27,7 @@ const SingleMailNotificationsService = {
         await delay(this.settings.delay);
       }
 
-      for (let recipientUri of recipients) {
+      for (const recipientUri of recipients) {
         const account = await ctx.call('auth.account.findByWebId', { webId: recipientUri });
 
         ctx.meta.webId = recipientUri;
@@ -37,7 +37,8 @@ const SingleMailNotificationsService = {
         const notification = await ctx.call('activity-mapping.map', { activity, locale });
 
         if (notification && (await this.filterNotification(notification, activity, recipientUri))) {
-          if (notification.actionLink) notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
+          if (notification.actionLink)
+            notification.actionLink = await this.formatLink(notification.actionLink, recipientUri);
 
           await this.queueMail(ctx, notification.key, {
             to: account.email,
@@ -65,17 +66,15 @@ const SingleMailNotificationsService = {
     async formatLink(link, recipientUri) {
       if (link && !link.startsWith('http')) {
         return urlJoin(this.settings.defaultFrontUrl, link);
-      } else {
-        return link;
       }
+      return link;
     },
     async queueMail(ctx, key, payload) {
       payload.template = 'single-mail';
       if (this.createJob) {
         return this.createJob('sendMail', key, payload);
-      } else {
-        await this.actions.send(payload, { parentCtx: ctx });
       }
+      await this.actions.send(payload, { parentCtx: ctx });
     }
   },
   queues: {

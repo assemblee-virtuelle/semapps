@@ -4,8 +4,8 @@ const CONFIG = require('../config');
 
 jest.setTimeout(50000);
 
-const collectionUri = CONFIG.HOME_URL + 'my-collection';
-const orderedCollectionUri = CONFIG.HOME_URL + 'my-ordered-collection';
+const collectionUri = `${CONFIG.HOME_URL}my-collection`;
+const orderedCollectionUri = `${CONFIG.HOME_URL}my-ordered-collection`;
 let broker;
 
 beforeAll(async () => {
@@ -16,13 +16,13 @@ afterAll(async () => {
 });
 
 describe('Handle collections', () => {
-  let items = [];
+  const items = [];
 
   test('Create ressources', async () => {
     for (let i = 0; i < 10; i++) {
       items.push(
         await broker.call('ldp.container.post', {
-          containerUri: CONFIG.HOME_URL + 'objects',
+          containerUri: `${CONFIG.HOME_URL}objects`,
           resource: {
             '@context': 'https://www.w3.org/ns/activitystreams',
             '@type': 'Note',
@@ -205,8 +205,8 @@ describe('Handle collections', () => {
 
     expect(collection).toMatchObject({
       id: collectionUri,
-      first: collectionUri + '?page=1',
-      last: collectionUri + '?page=3',
+      first: `${collectionUri}?page=1`,
+      last: `${collectionUri}?page=3`,
       totalItems: 10
     });
 
@@ -217,11 +217,11 @@ describe('Handle collections', () => {
     });
 
     expect(collection).toMatchObject({
-      id: collectionUri + '?page=1',
+      id: `${collectionUri}?page=1`,
       type: 'CollectionPage',
       partOf: collectionUri,
       prev: undefined,
-      next: collectionUri + '?page=2',
+      next: `${collectionUri}?page=2`,
       totalItems: 10
     });
     expect(collection.items).toHaveLength(4);

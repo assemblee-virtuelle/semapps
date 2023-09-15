@@ -1,5 +1,5 @@
 const createSlug = require('speakingurl');
-const ObjectID = require('bson').ObjectID;
+const { ObjectID } = require('bson');
 const urlJoin = require('url-join');
 
 module.exports = {
@@ -32,7 +32,7 @@ module.exports = {
           webId: 'system'
         });
       } while (resourceAlreadyExists);
-      preferredUri = preferredUri + counter;
+      preferredUri += counter;
     }
 
     return preferredUri;

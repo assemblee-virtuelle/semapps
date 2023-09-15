@@ -12,7 +12,8 @@ const useCollection = predicateOrUrl => {
     if (predicateOrUrl) {
       if (predicateOrUrl.startsWith('http')) {
         return predicateOrUrl;
-      } else if (identity?.webIdData) {
+      }
+      if (identity?.webIdData) {
         return identity?.webIdData?.[predicateOrUrl];
       }
     }
@@ -26,11 +27,11 @@ const useCollection = predicateOrUrl => {
     const headers = new Headers({ Accept: 'application/ld+json' });
 
     // Add authorization token if it is set and if the user is on the same server as the collection
-    const identityOrigin = identity.id && (new URL(identity.id)).origin;
-    const collectionOrigin = (new URL(collectionUrl)).origin;
+    const identityOrigin = identity.id && new URL(identity.id).origin;
+    const collectionOrigin = new URL(collectionUrl).origin;
     const token = localStorage.getItem('token');
     if (identityOrigin === collectionOrigin && token) {
-      headers.set('Authorization', `Bearer ${token}`)
+      headers.set('Authorization', `Bearer ${token}`);
     }
 
     fetchUtils

@@ -2,7 +2,7 @@ module.exports = {
   action: {
     visibility: 'public',
     params: {
-      resourceUri: { type: 'string' },
+      resourceUri: { type: 'string' }
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;

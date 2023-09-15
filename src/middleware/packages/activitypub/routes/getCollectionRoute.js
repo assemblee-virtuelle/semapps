@@ -21,7 +21,7 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   // Use custom middlewares to handle uncommon JSON content types (application/activity+json, application/ld+json)
   const middlewares = [parseHeader, parseJson, saveDatasetMeta];
 
-  let aliases = {
+  const aliases = {
     'GET /': [
       ...middlewares,
       addCollectionUriMiddleware(collectionUri),
@@ -33,7 +33,7 @@ const getCollectionRoute = (collectionUri, controlledActions) => {
   }
 
   return {
-    name: 'collection' + collectionPath.replace(new RegExp('/', 'g'), '-'),
+    name: `collection${collectionPath.replace(new RegExp('/', 'g'), '-')}`,
     path: collectionPath,
     authorization: false,
     authentication: true,

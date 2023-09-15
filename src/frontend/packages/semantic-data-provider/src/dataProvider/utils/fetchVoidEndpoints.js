@@ -10,9 +10,8 @@ const fetchVoidEndpoints = async config => {
         .catch(e => {
           if (e.status === 404 || e.status === 401) {
             return { key, error: e };
-          } else {
-            throw e;
           }
+          throw e;
         })
     );
 
@@ -24,13 +23,13 @@ const fetchVoidEndpoints = async config => {
     // Do not throw error if no endpoint found
   }
 
-  for (let result of results) {
+  for (const result of results) {
     config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
     config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
 
     // Ignore unfetchable endpoints
     if (result.datasets) {
-      for (let dataset of result.datasets) {
+      for (const dataset of result.datasets) {
         const datasetServerKey = Object.keys(config.dataServers).find(
           key => dataset['void:uriSpace'] === config.dataServers[key].baseUrl
         );
@@ -49,8 +48,8 @@ const fetchVoidEndpoints = async config => {
           config.dataServers[result.key].containers[datasetServerKey] =
             config.dataServers[result.key].containers[datasetServerKey] || {};
 
-          for (let partition of defaultToArray(dataset['void:classPartition'])) {
-            for (let type of defaultToArray(partition['void:class'])) {
+          for (const partition of defaultToArray(dataset['void:classPartition'])) {
+            for (const type of defaultToArray(partition['void:class'])) {
               // Set containers by type
               const path = partition['void:uriSpace'].replace(dataset['void:uriSpace'], '/');
               if (config.dataServers[result.key].containers[datasetServerKey][type]) {

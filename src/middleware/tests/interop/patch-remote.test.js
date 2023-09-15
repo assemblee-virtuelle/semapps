@@ -5,7 +5,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(50000);
 
-let server1, server2;
+let server1;
+let server2;
 
 beforeAll(async () => {
   server1 = await initialize(3001, 'testData', 'settings');
@@ -26,7 +27,7 @@ describe('Server2 imports a single resource from server1', () => {
           '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Resource',
-        label: 'My resource',
+        label: 'My resource'
       },
       contentType: MIME_TYPES.JSON,
       containerUri: 'http://localhost:3001/resources'
@@ -55,11 +56,9 @@ describe('Server2 imports a single resource from server1', () => {
     });
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource',
         'semapps:singleMirroredResource': 'http://localhost:3001'
       });
@@ -74,7 +73,7 @@ describe('Server2 imports a single resource from server1', () => {
         },
         '@id': resourceUri,
         '@type': 'Resource',
-        label: 'My resource updated',
+        label: 'My resource updated'
       },
       contentType: MIME_TYPES.JSON
     });
@@ -83,11 +82,9 @@ describe('Server2 imports a single resource from server1', () => {
     await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).resolves.toMatchObject({
-        'id': resourceUri,
-        'type': 'pair:Resource',
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource updated',
         'semapps:singleMirroredResource': 'http://localhost:3001'
       });
@@ -101,9 +98,7 @@ describe('Server2 imports a single resource from server1', () => {
     await server2.call('ldp.remote.runCron');
 
     await waitForExpect(async () => {
-      await expect(
-        server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })
-      ).rejects.toThrow();
+      await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).rejects.toThrow();
     });
   });
 });

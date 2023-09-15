@@ -20,12 +20,12 @@ module.exports = {
     if (!resourceExists) {
       const childContainerExists = await this.actions.exist({ containerUri: resourceUri, webId }, { parentCtx: ctx });
       if (!childContainerExists) {
-        throw new MoleculerError('Cannot attach non-existing resource or container: ' + resourceUri, 404, 'NOT_FOUND');
+        throw new MoleculerError(`Cannot attach non-existing resource or container: ${resourceUri}`, 404, 'NOT_FOUND');
       }
     }
 
     const containerExists = await this.actions.exist({ containerUri, webId }, { parentCtx: ctx });
-    if (!containerExists) throw new Error('Cannot attach to a non-existing container: ' + containerUri);
+    if (!containerExists) throw new Error(`Cannot attach to a non-existing container: ${containerUri}`);
 
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,

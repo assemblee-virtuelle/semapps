@@ -36,7 +36,7 @@ const MarkdownInput = props => {
   } = useInput(props);
 
   return (
-    <StyledFormControl fullWidth className={`ra-input-mde ${ invalid ? 'validationError' : ''}`}>
+    <StyledFormControl fullWidth className={`ra-input-mde ${invalid ? 'validationError' : ''}`}>
       <Labeled {...props} isRequired={isRequired}>
         <ReactMde
           value={value}
@@ -48,7 +48,11 @@ const MarkdownInput = props => {
         />
       </Labeled>
       <FormHelperText error={isDirty && invalid} margin="dense" variant="outlined">
-        <InputHelperText error={isDirty && invalid && error} helperText={props.helperText} touched={error || isTouched} />
+        <InputHelperText
+          error={isDirty && invalid && error}
+          helperText={props.helperText}
+          touched={error || isTouched}
+        />
       </FormHelperText>
     </StyledFormControl>
   );

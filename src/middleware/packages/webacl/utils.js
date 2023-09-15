@@ -20,7 +20,7 @@ const getDatasetFromUri = uri => {
 };
 
 const findParentContainers = async (ctx, resource) => {
-  let query = 'PREFIX ldp: <http://www.w3.org/ns/ldp#>\n' + RESOURCE_CONTAINERS_QUERY(resource);
+  const query = `PREFIX ldp: <http://www.w3.org/ns/ldp#>\n${RESOURCE_CONTAINERS_QUERY(resource)}`;
 
   return await ctx.call('triplestore.query', {
     query,
@@ -50,9 +50,9 @@ const PREFIXES =
   'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n';
 
 const getUserGroups = async (ctx, user, graphName) => {
-  let query = PREFIXES + USER_GROUPS_QUERY(user, graphName);
+  const query = PREFIXES + USER_GROUPS_QUERY(user, graphName);
 
-  let groups = await ctx.call('triplestore.query', {
+  const groups = await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.JSON,
     webId: 'system'
@@ -71,18 +71,21 @@ WHERE { GRAPH <${graphName}> {
 } }`;
 
 const getAuthorizationNode = async (ctx, resourceUri, resourceAclUri, mode, graphName, seachForDefault) => {
-  let query =
-    'PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n' +
-    AUTHORIZATION_NODE_QUERY(mode, seachForDefault ? 'default' : 'accessTo', resourceUri, graphName);
+  const query = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nPREFIX acl: <http://www.w3.org/ns/auth/acl#>\n${AUTHORIZATION_NODE_QUERY(
+    mode,
+    seachForDefault ? 'default' : 'accessTo',
+    resourceUri,
+    graphName
+  )}`;
 
-  let auths = await ctx.call('triplestore.query', {
+  const auths = await ctx.call('triplestore.query', {
     query,
     accept: MIME_TYPES.JSON,
     webId: 'system'
   });
 
   return auths.map(a => {
-    a.auth.value = resourceAclUri + '#' + (seachForDefault ? 'Default' : '') + mode;
+    a.auth.value = `${resourceAclUri}#${seachForDefault ? 'Default' : ''}${mode}`;
     return a;
   });
 };
@@ -131,23 +134,23 @@ function getUserAgentSearchParam(user, groups) {
     return {
       foafAgent: true
     };
-  } if (user === 'system') {
+  }
+  if (user === 'system') {
     return {
       system: true
     };
-  } else {
-    return {
-      foafAgent: true,
-      authAgent: true,
-      webId: user,
-      groups: groups
-    };
   }
+  return {
+    foafAgent: true,
+    authAgent: true,
+    webId: user,
+    groups: groups
+  };
 }
 
 const checkAgentPresent = (acls, agentSearchParam) => {
   for (const acl of acls) {
-    let res = filterAgentAcl(acl, agentSearchParam);
+    const res = filterAgentAcl(acl, agentSearchParam);
     if (res) return true;
   }
   return false;
@@ -190,7 +193,7 @@ const AuthorizationSuffixes = ['Read', 'Write', 'Append', 'Control'];
 const AuthorizationDefaultSuffixes = ['DefaultRead', 'DefaultWrite', 'DefaultAppend', 'DefaultControl'];
 
 function filterTriplesForResource(triple, resourceAclUri, allowDefault) {
-  let split = triple.auth.split('#');
+  const split = triple.auth.split('#');
   if (split[0] !== resourceAclUri) return false;
   if (AuthorizationSuffixes.includes(split[1])) return true;
   if (allowDefault && AuthorizationDefaultSuffixes.includes(split[1])) return true;
@@ -201,34 +204,33 @@ async function convertBodyToTriples(body, contentType) {
   if (contentType === MIME_TYPES.TURTLE) {
     return new Promise((resolve, reject) => {
       const parser = new Parser({ format: 'turtle' });
-      let res = [];
+      const res = [];
       parser.parse(body, (error, quad, prefixes) => {
         if (error) reject(error);
         else if (quad) {
-          let q = filterAndConvertTriple(quad, 'id');
+          const q = filterAndConvertTriple(quad, 'id');
           if (q) res.push(q);
         } else resolve(res);
       });
     });
-  } else {
-    // TODO use jsonld.toQuads actions ?
-    return new Promise((resolve, reject) => {
-      const textStream = streamifyString(body);
-      let res = [];
-      rdfParser
-        .parse(textStream, {
-          contentType: 'application/ld+json'
-        })
-        .on('data', quad => {
-          let q = filterAndConvertTriple(quad, 'value');
-          if (q) res.push(q);
-        })
-        .on('error', error => reject(error))
-        .on('end', () => {
-          resolve(res);
-        });
-    });
   }
+  // TODO use jsonld.toQuads actions ?
+  return new Promise((resolve, reject) => {
+    const textStream = streamifyString(body);
+    const res = [];
+    rdfParser
+      .parse(textStream, {
+        contentType: 'application/ld+json'
+      })
+      .on('data', quad => {
+        const q = filterAndConvertTriple(quad, 'value');
+        if (q) res.push(q);
+      })
+      .on('error', error => reject(error))
+      .on('end', () => {
+        resolve(res);
+      });
+  });
 }
 
 // TODO: if one day you code a delete Profile action (probably in webid service)
@@ -262,38 +264,41 @@ async function sanitizeSPARQL(text) {
 }
 
 const processRights = (rights, aclUri) => {
-  let list = [];
+  const list = [];
   if (rights.anon) {
-    if (rights.anon.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
-    if (rights.anon.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
-    if (rights.anon.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
-    if (rights.anon.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
+    if (rights.anon.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENTCLASS_URI, o: FULL_FOAF_AGENT });
   }
   if (rights.user && rights.user.uri) {
-    if (rights.user.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENT_URI, o: rights.user.uri });
-    if (rights.user.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_URI, o: rights.user.uri });
+    if (rights.user.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_URI, o: rights.user.uri });
   }
   if (rights.anyUser) {
-    if (rights.anyUser.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
-    if (rights.anyUser.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
-    if (rights.anyUser.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
-    if (rights.anyUser.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
+    if (rights.anyUser.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENTCLASS_URI, o: FULL_ACL_ANYAGENT });
   }
   if (rights.group && rights.group.uri) {
-    if (rights.group.read) list.push({ auth: aclUri + 'Read', p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.write) list.push({ auth: aclUri + 'Write', p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.append) list.push({ auth: aclUri + 'Append', p: FULL_AGENT_GROUP, o: rights.group.uri });
-    if (rights.group.control) list.push({ auth: aclUri + 'Control', p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.read) list.push({ auth: `${aclUri}Read`, p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.write) list.push({ auth: `${aclUri}Write`, p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.append) list.push({ auth: `${aclUri}Append`, p: FULL_AGENT_GROUP, o: rights.group.uri });
+    if (rights.group.control) list.push({ auth: `${aclUri}Control`, p: FULL_AGENT_GROUP, o: rights.group.uri });
   }
   return list;
 };
 
 const isRemoteUri = (uri, dataset, { baseUrl, podProvider }) => {
-  if (podProvider && !dataset) throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
-  return !urlJoin(uri, '/').startsWith(baseUrl)
-    || (podProvider && !urlJoin(uri, '/').startsWith(urlJoin(baseUrl, dataset) + '/'));
+  if (podProvider && !dataset)
+    throw new Error(`Unable to know if ${uri} is remote. In Pod provider config, the dataset must be provided`);
+  return (
+    !urlJoin(uri, '/').startsWith(baseUrl) ||
+    (podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(baseUrl, dataset)}/`))
+  );
 };
 
 module.exports = {

@@ -15,17 +15,15 @@ module.exports = {
 
     if (exist) {
       return undefined; // Default graph
-    } else {
-      exist = await ctx.call('triplestore.tripleExist', {
-        triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
-        graphName: this.settings.mirrorGraphName,
-      });
-
-      if (exist) {
-        return this.settings.mirrorGraphName;
-      } else {
-        return false;
-      }
     }
+    exist = await ctx.call('triplestore.tripleExist', {
+      triple: triple(namedNode(resourceUri), variable('p'), variable('s')),
+      graphName: this.settings.mirrorGraphName
+    });
+
+    if (exist) {
+      return this.settings.mirrorGraphName;
+    }
+    return false;
   }
 };

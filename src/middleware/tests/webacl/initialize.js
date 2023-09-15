@@ -3,12 +3,12 @@ const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
-const CONFIG = require('../config');
-const ontologies = require('../ontologies');
 const path = require('path');
 const express = require('express');
 const ApiGatewayService = require('moleculer-web');
 const supertest = require('supertest');
+const ontologies = require('../ontologies');
+const CONFIG = require('../config');
 
 const initialize = async () => {
   const broker = new ServiceBroker({
@@ -50,7 +50,7 @@ const initialize = async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: CONFIG.HOME_URL + 'users'
+      usersContainer: `${CONFIG.HOME_URL}users`
     }
   });
 

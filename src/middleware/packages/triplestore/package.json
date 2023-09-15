@@ -8,6 +8,7 @@
     "@semapps/middlewares": "0.5.1",
     "@semapps/mime-types": "0.5.1",
     "bson": "^4.0.4",
+    "moleculer": "^0.14.29",
     "negotiator": "^0.6.2",
     "node-fetch": "^2.6.6",
     "sparqljs": "^3.5.2",
@@ -18,5 +19,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439"
+  "gitHead": "06cb2decdab424e8686a5d77cc3364fbf1912439",
+  "engines": {
+    "node": ">=14"
+  }
 }

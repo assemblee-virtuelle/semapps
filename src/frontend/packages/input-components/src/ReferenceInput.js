@@ -10,11 +10,7 @@ const format = value => {
 
 const ReferenceInput = ({ children, ...rest }) => {
   const child = React.Children.only(children);
-  return (
-    <RaReferenceInput {...rest}>
-      {React.cloneElement(child, { format })}
-    </RaReferenceInput>
-  );
+  return <RaReferenceInput {...rest}>{React.cloneElement(child, { format })}</RaReferenceInput>;
 };
 
 export default ReferenceInput;

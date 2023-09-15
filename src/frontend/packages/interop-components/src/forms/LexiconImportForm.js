@@ -23,12 +23,7 @@ const LexiconImportForm = ({ fetchLexicon, selectData }) => {
 
   return (
     <SimpleForm onSubmit={onSubmit}>
-      <LexiconAutocompleteInput
-        label="Titre"
-        source="lexicon"
-        fetchLexicon={fetchLexicon}
-        validate={required()}
-      />
+      <LexiconAutocompleteInput label="Titre" source="lexicon" fetchLexicon={fetchLexicon} validate={required()} />
     </SimpleForm>
   );
 };

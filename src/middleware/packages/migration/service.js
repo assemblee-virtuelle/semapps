@@ -16,9 +16,9 @@ module.exports = {
       const { oldPredicate, newPredicate, dataset } = ctx.params;
 
       if (!oldPredicate.startsWith('http'))
-        throw new Error('oldPredicate must be a full URI. Received: ' + oldPredicate);
+        throw new Error(`oldPredicate must be a full URI. Received: ${oldPredicate}`);
       if (!newPredicate.startsWith('http'))
-        throw new Error('newPredicate must be a full URI. Received: ' + oldPredicate);
+        throw new Error(`newPredicate must be a full URI. Received: ${oldPredicate}`);
 
       this.logger.info(`Replacing predicate ${oldPredicate} with ${newPredicate}...`);
 
@@ -119,9 +119,9 @@ module.exports = {
     async moveAclRights(ctx) {
       const { oldResourceUri, newResourceUri, dataset } = ctx.params;
 
-      for (let right of ['Read', 'Append', 'Write', 'Control']) {
-        const oldResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri) + '#' + right;
-        const newResourceAclUri = getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri) + '#' + right;
+      for (const right of ['Read', 'Append', 'Write', 'Control']) {
+        const oldResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, oldResourceUri)}#${right}`;
+        const newResourceAclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, newResourceUri)}#${right}`;
 
         this.logger.info(`Moving ACL rights ${oldResourceAclUri} to ${newResourceAclUri}...`);
 

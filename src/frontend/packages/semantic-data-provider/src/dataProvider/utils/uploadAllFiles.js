@@ -3,15 +3,15 @@ import urlJoin from 'url-join';
 
 export const getSlugWithExtension = fileName => {
   let fileExtension = '';
-  let splitFileName = fileName.split('.');
+  const splitFileName = fileName.split('.');
   if (splitFileName.length > 1) {
     fileExtension = splitFileName.pop();
     fileName = splitFileName.join('.');
   }
-  return createSlug(fileName, { lang: 'fr' }) + '.' + fileExtension;
+  return `${createSlug(fileName, { lang: 'fr' })}.${fileExtension}`;
 };
 
-export const isFile = o => o && o.rawFile && o.rawFile instanceof File;
+export const isFile = o => o?.rawFile && o.rawFile instanceof File;
 
 const getUploadsContainerUri = config => {
   const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
@@ -46,18 +46,16 @@ const uploadFile = async (rawFile, config) => {
  * If there are any, upload them and replace the file by its URL.
  */
 const uploadAllFiles = async (record, config) => {
-  for (let property in record) {
-    if (record.hasOwnProperty(property)) {
+  for (const property in record) {
+    if (Object.prototype.hasOwnProperty.call(record, property)) {
       if (Array.isArray(record[property])) {
         for (let i = 0; i < record[property].length; i++) {
           if (isFile(record[property][i])) {
             record[property][i] = await uploadFile(record[property][i].rawFile, config);
           }
         }
-      } else {
-        if (isFile(record[property])) {
-          record[property] = await uploadFile(record[property].rawFile, config);
-        }
+      } else if (isFile(record[property])) {
+        record[property] = await uploadFile(record[property].rawFile, config);
       }
     }
   }

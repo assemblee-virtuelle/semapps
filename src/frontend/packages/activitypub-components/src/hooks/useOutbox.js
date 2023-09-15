@@ -13,14 +13,17 @@ const useOutbox = () => {
 
   const sparqlEndpoint = useMemo(() => {
     if (identity?.webIdData) {
-      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || identity?.id + '/sparql';
+      return identity?.webIdData?.endpoints?.['void:sparqlEndpoint'] || `${identity?.id}/sparql`;
     }
   }, [identity]);
 
   // Post an activity to the logged user's outbox and return its URI
   const post = useCallback(
     async activity => {
-      if (!outboxUrl) throw new Error('Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox');
+      if (!outboxUrl)
+        throw new Error(
+          'Cannot post to outbox before user identity is loaded. Please use the loaded argument of useOutbox'
+        );
       const token = localStorage.getItem('token');
       const { headers } = await fetchUtils.fetchJson(outboxUrl, {
         method: 'POST',
@@ -68,9 +71,8 @@ const useOutbox = () => {
 
     if (json['@graph']) {
       return json['@graph'];
-    } else {
-      return null;
     }
+    return null;
   }, [sparqlEndpoint, outboxUrl]);
 
   return { post, fetch, url: outboxUrl, loaded: !!outboxUrl, owner: identity?.id };

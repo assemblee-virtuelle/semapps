@@ -9,8 +9,8 @@ module.exports = {
     handler(ctx) {
       const { resourceUri, webId, timeout } = ctx.params;
       return new Promise(resolve => {
-        let i = 0,
-          interval;
+        let i = 0;
+        let interval;
         const checkRights = () => {
           ctx
             .call('webacl.resource.hasRights', {

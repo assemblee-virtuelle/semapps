@@ -60,9 +60,9 @@ const ExpoPushDeviceService = {
       return device;
     },
     async findUsersDevices(ctx) {
-      let devices = [];
+      const devices = [];
 
-      for (let userUri of ctx.params.users) {
+      for (const userUri of ctx.params.users) {
         const container = await this.actions.find(
           {
             query: {

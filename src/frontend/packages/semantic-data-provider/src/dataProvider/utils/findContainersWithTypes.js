@@ -2,8 +2,8 @@ import urlJoin from 'url-join';
 import parseServerKeys from './parseServerKeys';
 
 const findContainersWithTypes = (types, serverKeys, dataServers) => {
-  let containers = {};
-  let existingContainers = [];
+  const containers = {};
+  const existingContainers = [];
 
   serverKeys = parseServerKeys(serverKeys, dataServers);
 

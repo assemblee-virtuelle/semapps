@@ -1,7 +1,8 @@
 const fetch = require('node-fetch');
 const N3 = require('n3');
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require("@semapps/activitypub");
-const urlJoin = require("url-join");
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
+const urlJoin = require('url-join');
+
 const { DataFactory } = N3;
 const { triple, namedNode } = DataFactory;
 
@@ -29,7 +30,9 @@ module.exports = {
       async handler(ctx) {
         if (this.settings.offerToRemoteServers) {
           const serverDomainName = new URL(ctx.params.subject).host;
-          const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', { account: 'relay@' + serverDomainName });
+          const remoteRelayActorUri = await ctx.call('webfinger.getRemoteUri', {
+            account: `relay@${serverDomainName}`
+          });
 
           if (remoteRelayActorUri) {
             await ctx.call('activitypub.outbox.post', {
@@ -63,7 +66,7 @@ module.exports = {
                 if (ctx.params.add) {
                   json[ctx.params.predicate] = { id: ctx.params.object };
                 } else {
-                  let expanded_resource = await ctx.call('jsonld.expand', { input: json });
+                  const expanded_resource = await ctx.call('jsonld.expand', { input: json });
                   delete expanded_resource[0]?.[ctx.params.predicate];
                   json = await ctx.call('jsonld.compact', { input: expanded_resource, context: json['@context'] });
                 }
@@ -76,7 +79,9 @@ module.exports = {
                 });
               }
             } catch (e) {
-              this.logger.warn(`Error while connecting to remove server for offering inverse relationship: ${e.message}`);
+              this.logger.warn(
+                `Error while connecting to remove server for offering inverse relationship: ${e.message}`
+              );
             }
           }
         }
@@ -92,7 +97,7 @@ module.exports = {
     offerInference: {
       async match(ctx, activity) {
         return (
-          await this.matchActivity(
+          (await this.matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -104,9 +109,8 @@ module.exports = {
               }
             },
             activity
-          )
-        ) || (
-          await this.matchActivity(
+          )) ||
+          (await this.matchActivity(
             ctx,
             {
               type: ACTIVITY_TYPES.OFFER,
@@ -118,12 +122,12 @@ module.exports = {
               }
             },
             activity
-          )
+          ))
         );
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.acceptFromRemoteServers && recipientUri === this.relayActor.id) {
-          let relationship = activity.object.object;
+          const relationship = activity.object.object;
           if (relationship.subject && relationship.relationship && relationship.object) {
             if (this.isRemoteUri(relationship.subject)) {
               this.logger.warn('Attempt at offering an inverse relationship on a remote resource. Aborting...');
@@ -131,11 +135,20 @@ module.exports = {
             }
 
             // Remove prefix from predicate if it exists
-            relationship.relationship = await ctx.call('jsonld.expandPredicate', { predicate: relationship.relationship, context: activity['@context'] });
+            relationship.relationship = await ctx.call('jsonld.expandPredicate', {
+              predicate: relationship.relationship,
+              context: activity['@context']
+            });
 
             // TODO ensure that the object exist and has a remote relationship
 
-            const triples = [triple(namedNode(relationship.subject), namedNode(relationship.relationship), namedNode(relationship.object))];
+            const triples = [
+              triple(
+                namedNode(relationship.subject),
+                namedNode(relationship.relationship),
+                namedNode(relationship.object)
+              )
+            ];
 
             await ctx.call('ldp.resource.patch', {
               resourceUri: relationship.subject,

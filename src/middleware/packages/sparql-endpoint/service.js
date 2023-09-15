@@ -1,4 +1,4 @@
-const urlJoin = require("url-join");
+const urlJoin = require('url-join');
 const { Errors: E } = require('moleculer-web');
 const getRoute = require('./getRoute');
 

@@ -4,9 +4,9 @@ import resolvePrefix from './resolvePrefix';
 
 // Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
 const extractNodes = blankNodes => {
-  let nodes = [];
+  const nodes = [];
   if (blankNodes) {
-    for (let predicate of blankNodes) {
+    for (const predicate of blankNodes) {
       if (predicate.includes('/')) {
         const nodeNames = predicate.split('/');
         for (let i = 1; i <= nodeNames.length; i++) {
@@ -40,19 +40,19 @@ const buildUnionQuery = queries =>
   });
 
 const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
-  let queries = [];
+  const queries = [];
   const nodes = extractNodes(blankNodes);
 
   if (nodes && ontologies && ontologies.length > 0) {
-    for (let node of nodes) {
+    for (const node of nodes) {
       const parentNode = getParentNode(node);
       const predicate = getPredicate(node);
       const varName = generateSparqlVarName(node);
       const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
 
       const query = [
-        triple(variable('s' + parentVarName), namedNode(resolvePrefix(predicate, ontologies)), variable('s' + varName)),
-        triple(variable('s' + varName), variable('p' + varName), variable('o' + varName))
+        triple(variable(`s${parentVarName}`), namedNode(resolvePrefix(predicate, ontologies)), variable(`s${varName}`)),
+        triple(variable(`s${varName}`), variable(`p${varName}`), variable(`o${varName}`))
       ];
 
       queries.push({
@@ -70,12 +70,11 @@ const buildBlankNodesQuery = (blankNodes, baseQuery, ontologies) => {
         patterns: [baseQuery.where, ...buildUnionQuery(queries)]
       }
     };
-  } else {
-    return {
-      construct: '',
-      where: ''
-    };
   }
+  return {
+    construct: '',
+    where: ''
+  };
 };
 
 export default buildBlankNodesQuery;

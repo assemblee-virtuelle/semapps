@@ -18,10 +18,10 @@ module.exports = {
 
     if (containerUri) {
       const path = new URL(containerUri).pathname;
-      const containerOptions = Object.values(this.registeredContainers).find(container => container.pathRegex.test(path)) || {};
+      const containerOptions =
+        Object.values(this.registeredContainers).find(container => container.pathRegex.test(path)) || {};
       return { ...this.settings.defaultOptions, ...containerOptions };
-    } else {
-      return this.settings.defaultOptions;
     }
+    return this.settings.defaultOptions;
   }
 };

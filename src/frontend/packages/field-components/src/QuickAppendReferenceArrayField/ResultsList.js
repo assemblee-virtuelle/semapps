@@ -17,7 +17,7 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Avatar,
-  CircularProgress,
+  CircularProgress
 } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import AddIcon from '@mui/icons-material/Add';
@@ -58,7 +58,7 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   const record = useRecordContext();
   const createPath = useCreatePath();
 
-  const referenceDefinition = useResourceDefinition({resource: reference});
+  const referenceDefinition = useResourceDefinition({ resource: reference });
   const getResourceLabel = useGetResourceLabel();
   const dataModel = useDataModel(reference);
 
@@ -96,11 +96,11 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
   useEffect(() => {
     if (!keyword) {
       return undefined;
-    } else {
-      setLoading(true);
-      setLoaded(false);
-      search(keyword);
     }
+    setLoading(true);
+    setLoaded(false);
+    search(keyword);
+
     return () => search.cancel();
   }, [keyword, search, setLoading]);
 
@@ -117,7 +117,11 @@ const ResultsList = ({ keyword, source, reference, appendLink, switchToCreate })
             <ListItemText className={classes.primaryText} primary={resource[dataModel.fieldsMapping.title]} />
             <ListItemText className={classes.secondaryText} primary={getServerName(resource.id, dataServers)} />
             <ListItemSecondaryAction>
-              <a href={createPath({ resource: reference, id: resource.id, type: 'show' })} target="_blank" rel="noopener noreferrer">
+              <a
+                href={createPath({ resource: reference, id: resource.id, type: 'show' })}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <IconButton edge="end" size="large">
                   <VisibilityIcon />
                 </IconButton>

@@ -4,7 +4,8 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-let expressMocked, broker;
+let expressMocked;
+let broker;
 
 beforeAll(async () => {
   ({ broker, expressMocked } = await initialize());
@@ -29,7 +30,7 @@ describe('middleware CRUD resource with perms', () => {
           label: 'myTitle'
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: CONFIG.HOME_URL + 'resources'
+        containerUri: `${CONFIG.HOME_URL}resources`
       };
       const resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId: 'anon' } });
     } catch (e) {
@@ -51,14 +52,14 @@ describe('middleware CRUD resource with perms', () => {
           label: 'myTitle'
         },
         contentType: MIME_TYPES.JSON,
-        containerUri: CONFIG.HOME_URL + 'resources'
+        containerUri: `${CONFIG.HOME_URL}resources`
       };
-      let webId = 'http://a/user';
+      const webId = 'http://a/user';
       resourceUri = await broker.call('ldp.container.post', urlParamsPost, { meta: { webId } });
-      project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
+      const project1 = await broker.call('ldp.resource.get', { resourceUri, accept: MIME_TYPES.JSON, webId });
       expect(project1['pair:description']).toBe('myProject');
 
-      let resourceRights = await broker.call('webacl.resource.hasRights', {
+      const resourceRights = await broker.call('webacl.resource.hasRights', {
         resourceUri,
         rights: {
           read: true,

@@ -7,9 +7,9 @@ const { Errors: E } = require('moleculer-web');
 const stream2buffer = stream => {
   return new Promise((resolve, reject) => {
     const _buf = [];
-    stream.on("data", (chunk) => _buf.push(chunk));
-    stream.on("end", () => resolve(Buffer.concat(_buf)));
-    stream.on("error", (err) => reject(err));
+    stream.on('data', chunk => _buf.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(_buf)));
+    stream.on('error', err => reject(err));
   });
 };
 
@@ -42,9 +42,10 @@ const ProxyService = {
       const headers = JSON.parse(ctx.params.headers) || { accept: 'application/json' };
 
       // If a file is uploaded, convert it to a Buffer
-      const body = ctx.params.files && ctx.params.files.length > 0
-        ? await stream2buffer(ctx.params.files[0].readableStream)
-        : ctx.params.body;
+      const body =
+        ctx.params.files && ctx.params.files.length > 0
+          ? await stream2buffer(ctx.params.files[0].readableStream)
+          : ctx.params.body;
 
       const actorUri = ctx.meta.webId;
 
@@ -105,7 +106,7 @@ const ProxyService = {
         let body = await response.text();
         try {
           body = JSON.parse(body);
-        } catch(e) {
+        } catch (e) {
           // Do nothing if body is not JSON
         }
 
@@ -118,11 +119,10 @@ const ProxyService = {
           headers: Object.fromEntries(response.headers.entries()),
           status: response.status,
           statusText: response.statusText
-        }
-      } else {
-        this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
-        throw new MoleculerError(response.statusText, response.status);
+        };
       }
+      this.logger.warn(`Could not fetch ${url} through proxy of ${actorUri}`);
+      throw new MoleculerError(response.statusText, response.status);
     }
   },
   events: {

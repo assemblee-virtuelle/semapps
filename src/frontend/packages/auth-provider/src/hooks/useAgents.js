@@ -10,7 +10,7 @@ const useAgents = uri => {
 
   // Format list of authorized agents, based on the permissions returned for the resource
   useEffect(() => {
-    let result = {
+    const result = {
       [ANONYMOUS_AGENT]: {
         id: ANONYMOUS_AGENT,
         predicate: CLASS_AGENT,
@@ -36,7 +36,7 @@ const useAgents = uri => {
     };
 
     if (permissions) {
-      for (let p of permissions) {
+      for (const p of permissions) {
         if (p[CLASS_AGENT]) {
           defaultToArray(p[CLASS_AGENT]).forEach(agentId => appendPermission(agentId, CLASS_AGENT, p['acl:mode']));
         }

@@ -9,7 +9,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import MarkerClusterGroup from './MarkerClusterGroup';
 import DefaultPopupContent from './DefaultPopupContent';
 import QueryStringUpdater from './QueryStringUpdater';
-import MobileDrawer from "./MobileDrawer";
+import MobileDrawer from './MobileDrawer';
 
 const useStyles = makeStyles(() => ({
   isLoading: {
@@ -55,14 +55,14 @@ const MapList = ({
   const records = isLoading
     ? []
     : data
-      .map(record => ({
-        ...record,
-        latitude: latitude && latitude(record),
-        longitude: longitude && longitude(record),
-        label: label && label(record),
-        description: description && description(record)
-      }))
-      .filter(record => record.latitude && record.longitude);
+        .map(record => ({
+          ...record,
+          latitude: latitude && latitude(record),
+          longitude: longitude && longitude(record),
+          label: label && label(record),
+          description: description && description(record)
+        }))
+        .filter(record => record.latitude && record.longitude);
 
   const bounds =
     boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
@@ -83,13 +83,11 @@ const MapList = ({
               : undefined
           }
         >
-          {!xs && 
+          {!xs && (
             <Popup>
-              <RecordContextProvider value={record}>
-                {React.createElement(popupContent)}
-              </RecordContextProvider>
+              <RecordContextProvider value={record}>{React.createElement(popupContent)}</RecordContextProvider>
             </Popup>
-          }
+          )}
         </Marker>
         {connectMarkers && previousRecord && (
           <Polyline
@@ -128,10 +126,7 @@ const MapList = ({
       {groupClusters ? <MarkerClusterGroup showCoverageOnHover={false}>{markers}</MarkerClusterGroup> : markers}
       <QueryStringUpdater />
       <RecordContextProvider value={drawerRecord}>
-        <MobileDrawer
-          popupContent={popupContent}
-          onClose={() => setDrawerRecord(null)}
-        />
+        <MobileDrawer popupContent={popupContent} onClose={() => setDrawerRecord(null)} />
       </RecordContextProvider>
     </MapContainer>
   );

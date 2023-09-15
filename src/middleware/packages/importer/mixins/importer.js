@@ -42,11 +42,9 @@ module.exports = {
   dependencies: ['triplestore'],
   created() {
     if (this.settings.source.basicAuth.user) {
-      this.settings.source.headers.Authorization =
-        'Basic ' +
-        Buffer.from(this.settings.source.basicAuth.user + ':' + this.settings.source.basicAuth.password).toString(
-          'base64'
-        );
+      this.settings.source.headers.Authorization = `Basic ${Buffer.from(
+        `${this.settings.source.basicAuth.user}:${this.settings.source.basicAuth.password}`
+      ).toString('base64')}`;
     }
 
     // Configure the queue here so that the queue can be named after the service name
@@ -116,7 +114,7 @@ module.exports = {
             }...`
           );
 
-          for (let data of compactResults) {
+          for (const data of compactResults) {
             const sourceUri = this.settings.source.getOneFull(data);
             const destUri = await this.actions.importOne({ sourceUri }, { parentCtx: ctx });
             if (destUri) this.imported[sourceUri] = destUri;
@@ -144,7 +142,7 @@ module.exports = {
             }...`
           );
 
-          for (let data of fullResults) {
+          for (const data of fullResults) {
             const sourceUri = this.settings.source.getOneFull && this.settings.source.getOneFull(data);
             const destUri = await this.actions.importOne({ sourceUri, data }, { parentCtx: ctx });
             if (destUri) this.imported[sourceUri] = destUri;
@@ -183,7 +181,7 @@ module.exports = {
         data = await this.getOne(sourceUri);
 
         if (!data) {
-          this.logger.warn('Invalid ' + sourceUri + '...');
+          this.logger.warn(`Invalid ${sourceUri}...`);
           return false; // False = delete resource if it exists
         }
       }
@@ -192,58 +190,34 @@ module.exports = {
 
       // If resource is false, it means it is not published
       if (!resource) {
-        this.logger.info('Skipping ' + sourceUri + ' (not published)...');
+        this.logger.info(`Skipping ${sourceUri} (not published)...`);
         return false; // False = delete resource if it exists
-      } else {
-        if (destUri) {
-          const oldData = await ctx.call('ldp.resource.get', {
-            resourceUri: destUri,
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          });
+      }
+      if (destUri) {
+        const oldData = await ctx.call('ldp.resource.get', {
+          resourceUri: destUri,
+          accept: MIME_TYPES.JSON,
+          webId: 'system'
+        });
 
-          const oldUpdatedDate = oldData['dc:modified'];
-          const newUpdatedDate = this.getField('updated', data);
+        const oldUpdatedDate = oldData['dc:modified'];
+        const newUpdatedDate = this.getField('updated', data);
 
-          if (!oldUpdatedDate || !newUpdatedDate || new Date(newUpdatedDate) > new Date(oldUpdatedDate)) {
-            this.logger.info('Reimporting ' + sourceUri + '...');
+        if (!oldUpdatedDate || !newUpdatedDate || new Date(newUpdatedDate) > new Date(oldUpdatedDate)) {
+          this.logger.info(`Reimporting ${sourceUri}...`);
 
-            const oldDataToKeep =
-              this.settings.dest.predicatesToKeep.length > 0
-                ? Object.fromEntries(
-                    Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
-                  )
-                : {};
+          const oldDataToKeep =
+            this.settings.dest.predicatesToKeep.length > 0
+              ? Object.fromEntries(
+                  Object.entries(oldData).filter(([key]) => this.settings.dest.predicatesToKeep.includes(key))
+                )
+              : {};
 
-            await ctx.call('ldp.resource.put', {
-              resource: {
-                '@id': destUri,
-                ...resource,
-                ...oldDataToKeep,
-                'dc:source': sourceUri,
-                'dc:created': resource['dc:created'] || this.getField('created', data),
-                'dc:modified': resource['dc:modified'] || this.getField('updated', data),
-                'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
-              },
-              contentType: MIME_TYPES.JSON,
-              webId: 'system'
-            });
-          } else {
-            this.logger.info('Skipping ' + sourceUri + ' (not changed)...');
-            return true; // True = skipping
-          }
-        } else {
-          this.logger.info('Importing ' + sourceUri + '...');
-
-          if (!this.settings.dest.containerUri) {
-            throw new Error(`Cannot import as dest.containerUri setting is not defined`);
-          }
-
-          destUri = await ctx.call('ldp.container.post', {
-            containerUri: this.settings.dest.containerUri,
-            slug: this.getField('slug', data),
+          await ctx.call('ldp.resource.put', {
             resource: {
+              '@id': destUri,
               ...resource,
+              ...oldDataToKeep,
               'dc:source': sourceUri,
               'dc:created': resource['dc:created'] || this.getField('created', data),
               'dc:modified': resource['dc:modified'] || this.getField('updated', data),
@@ -252,12 +226,35 @@ module.exports = {
             contentType: MIME_TYPES.JSON,
             webId: 'system'
           });
+        } else {
+          this.logger.info(`Skipping ${sourceUri} (not changed)...`);
+          return true; // True = skipping
+        }
+      } else {
+        this.logger.info(`Importing ${sourceUri}...`);
 
-          this.logger.info('Done! Resource URL: ' + destUri);
+        if (!this.settings.dest.containerUri) {
+          throw new Error(`Cannot import as dest.containerUri setting is not defined`);
         }
 
-        return destUri;
+        destUri = await ctx.call('ldp.container.post', {
+          containerUri: this.settings.dest.containerUri,
+          slug: this.getField('slug', data),
+          resource: {
+            ...resource,
+            'dc:source': sourceUri,
+            'dc:created': resource['dc:created'] || this.getField('created', data),
+            'dc:modified': resource['dc:modified'] || this.getField('updated', data),
+            'dc:creator': resource['dc:creator'] || this.settings.dest.actorUri
+          },
+          contentType: MIME_TYPES.JSON,
+          webId: 'system'
+        });
+
+        this.logger.info(`Done! Resource URL: ${destUri}`);
       }
+
+      return destUri;
     },
     async deleteImported(ctx) {
       for (const resourceUri of Object.values(this.imported)) {
@@ -306,27 +303,25 @@ module.exports = {
         const response = await fetch(url, { ...this.settings.source.fetchOptions, ...fetchOptions, headers });
         if (response.ok) {
           return await response.json();
-        } else {
-          return false;
         }
-      } else if (param.startsWith('http')) {
+        return false;
+      }
+      if (param.startsWith('http')) {
         // Parameter is an URL
         const headers = { ...this.settings.source.headers, ...this.settings.source.fetchOptions.headers };
         const response = await fetch(param, { ...this.settings.source.fetchOptions, headers });
         if (response.ok) {
           return await response.json();
-        } else {
-          return false;
         }
-      } else {
-        // Parameter is a file
-        try {
-          const file = await fsPromises.readFile(param);
-          return JSON.parse(file.toString());
-        } catch (e) {
-          this.logger.warn('Could not read file ' + param);
-          return false;
-        }
+        return false;
+      }
+      // Parameter is a file
+      try {
+        const file = await fsPromises.readFile(param);
+        return JSON.parse(file.toString());
+      } catch (e) {
+        this.logger.warn(`Could not read file ${param}`);
+        return false;
       }
     },
     async postActivity(type, resourceUri) {
@@ -359,7 +354,8 @@ module.exports = {
       }
     },
     async processSynchronize(job) {
-      let fromDate, toDate;
+      let fromDate;
+      let toDate;
 
       await this.prepare();
 
@@ -375,18 +371,18 @@ module.exports = {
         fromDate = new Date(Date.now() - 86400 * 1000);
       }
 
-      job.log('Looking for updates from ' + fromDate.toString() + ' to ' + toDate.toString());
+      job.log(`Looking for updates from ${fromDate.toString()} to ${toDate.toString()}`);
 
-      let deletedUris = {},
-        createdUris = {},
-        updatedUris = {},
-        newSourceUris = [],
-        mappedFullResults = {};
+      const deletedUris = {};
+      const createdUris = {};
+      const updatedUris = {};
+      let newSourceUris = [];
+      let mappedFullResults = {};
 
       const results = await this.list(this.settings.source.getAllCompact || this.settings.source.getAllFull);
 
       if (!results) {
-        job.moveToFailed('Unable to fetch ' + (this.settings.source.getAllCompact || this.settings.source.getAllFull));
+        job.moveToFailed(`Unable to fetch ${this.settings.source.getAllCompact || this.settings.source.getAllFull}`);
         return;
       }
 
@@ -404,13 +400,13 @@ module.exports = {
 
       job.progress(10);
 
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
       // DELETED RESOURCES
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
 
       const urisToDelete = oldSourceUris.filter(uri => !newSourceUris.includes(uri));
-      for (let sourceUri of urisToDelete) {
-        this.logger.info('Resource ' + sourceUri + ' does not exist anymore, deleting it...');
+      for (const sourceUri of urisToDelete) {
+        this.logger.info(`Resource ${sourceUri} does not exist anymore, deleting it...`);
 
         await this.broker.call('ldp.resource.delete', {
           resourceUri: this.imported[sourceUri],
@@ -427,13 +423,13 @@ module.exports = {
 
       job.progress(40);
 
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
       // CREATED RESOURCES
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
 
       const urisToCreate = newSourceUris.filter(uri => !oldSourceUris.includes(uri));
-      for (let sourceUri of urisToCreate) {
-        this.logger.info('Resource ' + sourceUri + ' did not exist, importing it...');
+      for (const sourceUri of urisToCreate) {
+        this.logger.info(`Resource ${sourceUri} did not exist, importing it...`);
 
         const destUri = await this.actions.importOne({ sourceUri, data: mappedFullResults[sourceUri] });
 
@@ -449,9 +445,9 @@ module.exports = {
 
       job.progress(70);
 
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
       // UPDATED RESOURCES
-      ///////////////////////////////////////////
+      /// ////////////////////////////////////////
 
       const urisToUpdate = results
         .filter(data => {
@@ -462,7 +458,7 @@ module.exports = {
         .map(data => this.settings.source.getOneFull(data))
         .filter(uri => !urisToCreate.includes(uri));
 
-      for (let sourceUri of urisToUpdate) {
+      for (const sourceUri of urisToUpdate) {
         const result = await this.actions.importOne({
           sourceUri,
           destUri: this.imported[sourceUri],

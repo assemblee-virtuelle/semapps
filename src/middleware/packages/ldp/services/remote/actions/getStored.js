@@ -1,6 +1,6 @@
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const { buildDereferenceQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require("../../../utils");
+const { buildDereferenceQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -62,10 +62,7 @@ module.exports = {
       }
 
       return result;
-    } else {
-      throw new MoleculerError('Resource Not found ' + resourceUri + ' in dataset ' + ctx.meta.dataset, 404, 'NOT_FOUND');
     }
+    throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
   }
 };
-
-

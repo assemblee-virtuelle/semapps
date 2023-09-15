@@ -1,5 +1,5 @@
-const { defaultToArray } = require("@semapps/ldp");
-const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require("@semapps/activitypub");
+const { defaultToArray } = require('@semapps/ldp');
+const { ACTIVITY_TYPES, OBJECT_TYPES, ActivitiesHandlerMixin } = require('@semapps/activitypub');
 
 const SynchronizerService = {
   name: 'synchronizer',
@@ -21,16 +21,15 @@ const SynchronizerService = {
       if (this.settings.podProvider) {
         // TODO Check that emitter is in contacts ?
         return true;
-      } else {
-        // Check that the recipient is the relay actor
-        if (recipient !== this.relayActor.id) return false;
-
-        // Check that the activity emitter is being followed by the relay actor
-        return await this.broker.call('activitypub.follow.isFollowing', {
-          follower: recipient,
-          following: activity.actor
-        });
       }
+      // Check that the recipient is the relay actor
+      if (recipient !== this.relayActor.id) return false;
+
+      // Check that the activity emitter is being followed by the relay actor
+      return await this.broker.call('activitypub.follow.isFollowing', {
+        follower: recipient,
+        following: activity.actor
+      });
     }
   },
   activities: {
@@ -43,7 +42,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (let resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object.object)) {
             const object = await ctx.call('ldp.remote.store', {
               resourceUri,
               mirrorGraph: this.settings.mirrorGraph,
@@ -51,7 +50,7 @@ const SynchronizerService = {
             });
 
             if (activity.object.target && this.settings.synchronizeContainers) {
-              for (let containerUri of defaultToArray(activity.object.target)) {
+              for (const containerUri of defaultToArray(activity.object.target)) {
                 await ctx.call('ldp.container.attach', {
                   containerUri,
                   resourceUri,
@@ -66,13 +65,20 @@ const SynchronizerService = {
               const container = await ctx.call('ldp.registry.getByType', { type });
               if (container) {
                 try {
-                  const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: recipientUri });
+                  const containerUri = await ctx.call('ldp.registry.getUri', {
+                    path: container.path,
+                    webId: recipientUri
+                  });
                   await ctx.call('ldp.container.attach', { containerUri, resourceUri, webId: recipientUri });
-                } catch(e) {
-                  this.logger.warn(`Error when attaching remote resource ${resourceUri} to local container: ${e.message}`);
+                } catch (e) {
+                  this.logger.warn(
+                    `Error when attaching remote resource ${resourceUri} to local container: ${e.message}`
+                  );
                 }
               } else {
-                this.logger.warn(`Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`);
+                this.logger.warn(
+                  `Cannot attach resource ${resourceUri} of type "${type}", no matching local containers were found`
+                );
               }
             }
           }
@@ -88,7 +94,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (let resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object.object)) {
             await ctx.call('ldp.remote.store', {
               resourceUri,
               mirrorGraph: this.settings.mirrorGraph,
@@ -107,7 +113,7 @@ const SynchronizerService = {
       },
       async onReceive(ctx, activity, recipientUri) {
         if (await this.isValid(activity, recipientUri)) {
-          for (let resourceUri of defaultToArray(activity.object.object)) {
+          for (const resourceUri of defaultToArray(activity.object.object)) {
             // If the remote resource is attached to a local container, it will be automatically detached
             await ctx.call('ldp.remote.delete', {
               resourceUri,
@@ -115,7 +121,7 @@ const SynchronizerService = {
             });
 
             if (activity.object.target && this.settings.synchronizeContainers) {
-              for (let containerUri of defaultToArray(activity.object.target)) {
+              for (const containerUri of defaultToArray(activity.object.target)) {
                 await ctx.call('ldp.container.detach', {
                   containerUri,
                   resourceUri,

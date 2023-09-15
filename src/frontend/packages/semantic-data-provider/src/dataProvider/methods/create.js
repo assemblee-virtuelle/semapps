@@ -11,7 +11,8 @@ const createMethod = config => async (resourceId, params) => {
 
   const headers = new Headers();
 
-  let containerUri, serverKey;
+  let containerUri;
+  let serverKey;
   if (dataModel.create?.container) {
     serverKey = Object.keys(dataModel.create.container)[0];
     containerUri = urlJoin(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
@@ -57,7 +58,8 @@ const createMethod = config => async (resourceId, params) => {
     // Retrieve newly-created resource
     const resourceUri = responseHeaders.get('Location');
     return await getOne(config)(resourceId, { id: resourceUri });
-  } else if (params.id) {
+  }
+  if (params.id) {
     headers.set('Content-Type', 'application/sparql-update');
 
     await httpClient(containerUri, {

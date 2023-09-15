@@ -19,9 +19,8 @@ const fetchESCO = (apiUrl = 'https://ec.europa.eu/esco/api', type = 'skill') => 
       label: capitalize(r.title.replace('’', "'")),
       icon: StarBorderIcon
     }));
-  } else {
-    throw new Error('Failed to fetch ESCO server');
   }
+  throw new Error('Failed to fetch ESCO server');
 };
 
 export default fetchESCO;

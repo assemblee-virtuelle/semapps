@@ -1,6 +1,6 @@
-const fetch = require("node-fetch");
+const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
-const { MIME_TYPES } = require("@semapps/mime-types");
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
@@ -26,17 +26,14 @@ module.exports = {
         actorUri: webId
       });
       return body;
-    } else {
-      const response = await fetch(resourceUri, { headers });
-      if (response.ok) {
-        if (accept === MIME_TYPES.JSON) {
-          return await response.json();
-        } else {
-          return await response.text();
-        }
-      } else {
-        throw new MoleculerError(response.statusText, response.status);
-      }
     }
+    const response = await fetch(resourceUri, { headers });
+    if (response.ok) {
+      if (accept === MIME_TYPES.JSON) {
+        return await response.json();
+      }
+      return await response.text();
+    }
+    throw new MoleculerError(response.statusText, response.status);
   }
 };

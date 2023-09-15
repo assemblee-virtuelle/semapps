@@ -58,7 +58,7 @@ function getContainerRoute(containerUri, readOnly = false) {
   }
 
   return {
-    name: 'container' + containerPath.replace(new RegExp('/', 'g'), '-'),
+    name: `container${containerPath.replace(new RegExp('/', 'g'), '-')}`,
     path: containerPath,
     // Disable the body parsers so that we can parse the body ourselves
     // (Moleculer-web doesn't handle non-JSON bodies, so we must do it)

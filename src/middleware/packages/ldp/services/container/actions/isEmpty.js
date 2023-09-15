@@ -10,7 +10,7 @@ module.exports = {
   async handler(ctx) {
     const { containerUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.meta.dataset;
+    const { dataset } = ctx.meta;
 
     const res = await ctx.call('triplestore.query', {
       query: `SELECT (COUNT (?o) as ?count) { <${containerUri}> <http://www.w3.org/ns/ldp#contains> ?o }`,

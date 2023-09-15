@@ -8,7 +8,7 @@ import {
   TextInput,
   required,
   email,
-  useLocaleState,
+  useLocaleState
 } from 'react-admin';
 import { useSignup } from '@semapps/auth-provider';
 import { useLocation } from 'react-router-dom';
@@ -18,13 +18,13 @@ import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 /**
@@ -42,7 +42,7 @@ const SignupForm = ({
   passwordScorer = defaultScorer,
   postSignupRedirect,
   additionalSignupValues,
-  delayBeforeRedirect,
+  delayBeforeRedirect
 }) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
@@ -54,13 +54,13 @@ const SignupForm = ({
   const [locale] = useLocaleState();
   const [password, setPassword] = React.useState('');
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     signup({
       ...values,
-      ...additionalSignupValues,
+      ...additionalSignupValues
     })
-      .then((webId) => {
+      .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
@@ -80,7 +80,7 @@ const SignupForm = ({
         }
         notify('auth.message.new_user_created', { type: 'info' });
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -90,8 +90,8 @@ const SignupForm = ({
             : error.message,
           {
             type: 'warning',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-          },
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+          }
         );
       });
   };
@@ -107,12 +107,12 @@ const SignupForm = ({
           fullWidth
           disabled={loading}
           validate={required()}
-          format={(value) =>
+          format={value =>
             value
               ? createSlug(value, {
                   lang: locale || 'fr',
                   separator: '_',
-                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+                  custom: ['.', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
                 })
               : ''
           }
@@ -137,7 +137,7 @@ const SignupForm = ({
           source="password"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={e => setPassword(e.target.value)}
           label={translate('ra.auth.password')}
           autoComplete="new-password"
           fullWidth
@@ -165,7 +165,7 @@ const SignupForm = ({
 
 SignupForm.defaultValues = {
   redirectTo: '/',
-  additionalSignupValues: {},
+  additionalSignupValues: {}
 };
 
 export default SignupForm;

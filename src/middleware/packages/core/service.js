@@ -13,21 +13,35 @@ const { WebAclService } = require('@semapps/webacl');
 const { WebfingerService } = require('@semapps/webfinger');
 const defaultOntologies = require('./config/ontologies.json');
 
+const botsContainer = {
+  path: '/bots',
+  acceptedTypes: ['Application'],
+  dereference: ['sec:publicKey'],
+  readOnly: true
+};
+
+/**
+ * @typedef {import('http').ServerResponse} ServerResponse
+ * @typedef {import('http').IncomingMessage} IncomingMessage
+ * @typedef {import('./serviceTypes').CoreServiceSettings} CoreServiceSettings
+ */
+
+/** @type {import('moleculer').ServiceSchema<CoreServiceSettings>} */
 const CoreService = {
   name: 'core',
   settings: {
-    baseUrl: null,
-    baseDir: null,
+    baseUrl: undefined,
+    baseDir: undefined,
     triplestore: {
-      url: null,
-      user: null,
-      password: null,
-      mainDataset: null
+      url: undefined,
+      user: undefined,
+      password: undefined,
+      mainDataset: undefined
     },
     // Optional
-    containers: null,
-    jsonContext: null,
-    ontologies: null,
+    containers: undefined,
+    jsonContext: undefined,
+    ontologies: undefined,
     // Services configurations
     activitypub: {},
     api: {},
@@ -40,13 +54,14 @@ const CoreService = {
     webfinger: {}
   },
   created() {
-    let { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
+    const { baseUrl, baseDir, triplestore, containers, jsonContext, ontologies } = this.settings;
 
     // If an external JSON context is not provided, we will use a local one
     const defaultJsonContext = urlJoin(baseUrl, 'context.json');
 
     if (this.settings.activitypub !== false) {
       this.broker.createService(ActivityPubService, {
+        // Type support for settings could be given, once moleculer type definitions improve...
         settings: {
           baseUri: baseUrl,
           jsonContext: jsonContext || defaultJsonContext,
@@ -70,22 +85,22 @@ const CoreService = {
           authenticate(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authenticate', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authenticate', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.resolve(null);
             }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authenticate', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.resolve(null);
           },
           authorize(ctx, route, req, res) {
             if (req.headers.signature) {
               return ctx.call('signature.authorize', { route, req, res });
-            } else if (req.headers.authorization) {
-              return ctx.call('auth.authorize', { route, req, res });
-            } else {
-              ctx.meta.webId = 'anon';
-              return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
             }
+            if (req.headers.authorization) {
+              return ctx.call('auth.authorize', { route, req, res });
+            }
+            ctx.meta.webId = 'anon';
+            return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
           }
         }
       });

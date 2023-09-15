@@ -1,5 +1,6 @@
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
+const urlJoin = require('url-join');
 const {
   getAclUriFromResourceUri,
   convertBodyToTriples,
@@ -8,17 +9,16 @@ const {
   FULL_FOAF_AGENT,
   FULL_AGENTCLASS_URI
 } = require('../../../utils');
-const urlJoin = require('url-join');
 
 module.exports = {
   api: async function api(ctx) {
     const contentType = ctx.meta.headers['content-type'];
-    let slugParts = ctx.params.slugParts;
+    let { slugParts } = ctx.params;
 
     if (!contentType || (contentType !== MIME_TYPES.JSON && contentType !== MIME_TYPES.TURTLE))
-      throw new MoleculerError('Content type not supported : ' + contentType, 400, 'BAD_REQUEST');
+      throw new MoleculerError(`Content type not supported : ${contentType}`, 400, 'BAD_REQUEST');
 
-    let addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
+    const addedRights = await convertBodyToTriples(ctx.meta.body, contentType);
     if (addedRights.length === 0) throw new MoleculerError('Nothing to add', 400, 'BAD_REQUEST');
 
     // This is the root container
@@ -65,7 +65,7 @@ module.exports = {
         // check that the user has Control perm.
         // bypass this check if user is 'system'
         if (webId !== 'system') {
-          let { control } = await ctx.call('webacl.resource.hasRights', {
+          const { control } = await ctx.call('webacl.resource.hasRights', {
             resourceUri,
             rights: { control: true },
             webId
@@ -74,13 +74,13 @@ module.exports = {
             throw new MoleculerError('Access denied ! user must have Control permission', 403, 'ACCESS_DENIED');
         }
 
-        let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
+        const aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri);
 
         if (!addedRights) {
           // we process additionalRights only if addedRights was not set.
-          addedRights = processRights(additionalRights, aclUri + '#');
+          addedRights = processRights(additionalRights, `${aclUri}#`);
           if (isContainer && additionalRights.default)
-            addedRights = addedRights.concat(processRights(additionalRights.default, aclUri + '#Default'));
+            addedRights = addedRights.concat(processRights(additionalRights.default, `${aclUri}#Default`));
           if (addedRights.length === 0) new MoleculerError('No additional permissions to add!', 400, 'BAD_REQUEST');
         } else {
           // filter out all the addedRights that are not for the resource
@@ -89,7 +89,7 @@ module.exports = {
             throw new MoleculerError('The rights cannot be added because they are incorrect', 400, 'BAD_REQUEST');
         }
 
-        let currentPerms = await this.getExistingPerms(
+        const currentPerms = await this.getExistingPerms(
           ctx,
           resourceUri,
           this.settings.baseUrl,
@@ -113,13 +113,13 @@ module.exports = {
           );
 
         // we set new rights for a non existing resource
-        let aclUri = getAclUriFromResourceUri(this.settings.baseUrl, resourceUri) + '#';
+        const aclUri = `${getAclUriFromResourceUri(this.settings.baseUrl, resourceUri)}#`;
         difference = processRights(newRights, aclUri);
         // we do add default container permissions if any is set in newRights. but we cannot know for sure
         // that the resource that will be created will be a container. we don't want to add default permissions on a resource !
         // please be careful, as programmers, not to call newRights with 'default' perms for a resource.
         // it should only be used for containers
-        if (newRights.default) difference = difference.concat(processRights(newRights.default, aclUri + 'Default'));
+        if (newRights.default) difference = difference.concat(processRights(newRights.default, `${aclUri}Default`));
         currentAuths = {};
 
         if (difference.length === 0)
@@ -145,22 +145,29 @@ module.exports = {
         const returnValues = { uri: resourceUri, created: true, isContainer };
         ctx.emit('webacl.resource.created', returnValues, { meta: { webId: null, dataset: null } });
         return returnValues;
-      } else {
-        const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
-        const addPublicRead = difference.some(
-          triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
-        );
-        const addDefaultPublicRead =
-          isContainer &&
-          difference.some(
-            triple =>
-              triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
-          );
-
-        const returnValues = { uri: resourceUri, webId, created: false, isContainer, defaultRightsUpdated, addPublicRead, addDefaultPublicRead };
-        ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
-        return returnValues;
       }
+      const defaultRightsUpdated = isContainer && difference.some(triple => triple.auth.includes('#Default'));
+      const addPublicRead = difference.some(
+        triple => triple.auth.includes('#Read') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+      );
+      const addDefaultPublicRead =
+        isContainer &&
+        difference.some(
+          triple =>
+            triple.auth.includes('#DefaultRead') && triple.p === FULL_AGENTCLASS_URI && triple.o === FULL_FOAF_AGENT
+        );
+
+      const returnValues = {
+        uri: resourceUri,
+        webId,
+        created: false,
+        isContainer,
+        defaultRightsUpdated,
+        addPublicRead,
+        addDefaultPublicRead
+      };
+      ctx.emit('webacl.resource.updated', returnValues, { meta: { webId: null, dataset: null } });
+      return returnValues;
     }
   }
 };

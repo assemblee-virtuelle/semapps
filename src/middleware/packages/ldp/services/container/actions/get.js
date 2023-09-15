@@ -35,7 +35,11 @@ module.exports = {
       accept: { type: 'string', optional: true },
       filters: { type: 'object', optional: true },
       dereference: { type: 'array', optional: true },
-      jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+      jsonContext: {
+        type: 'multi',
+        rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+        optional: true
+      }
     },
     cache: {
       keys: ['containerUri', 'accept', 'filters', 'dereference', 'jsonContext', 'webId', '#webId']
@@ -76,20 +80,20 @@ module.exports = {
         });
 
         // Request each resources
-        let resources = [];
+        const resources = [];
         if (result && result.contains) {
           for (const resourceUri of defaultToArray(result.contains)) {
             try {
               // We pass the following parameters only if they are explicit
-              let explicitProperties = ['dereference', 'jsonContext', 'accept'];
-              let explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
+              const explicitProperties = ['dereference', 'jsonContext', 'accept'];
+              const explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
                 if (ctx.params[currentProperty]) {
                   accumulator[currentProperty] = ctx.params[currentProperty];
                 }
                 return accumulator;
               }, {});
 
-              let resource = await ctx.call('ldp.resource.get', {
+              const resource = await ctx.call('ldp.resource.get', {
                 resourceUri,
                 webId,
                 forceSemantic: true,
@@ -131,11 +135,11 @@ module.exports = {
         }
 
         return result;
-      } else {
-        const dereferenceQuery = buildDereferenceQuery(dereference);
+      }
+      const dereferenceQuery = buildDereferenceQuery(dereference);
 
-        return await ctx.call('triplestore.query', {
-          query: `
+      return await ctx.call('triplestore.query', {
+        query: `
             ${getPrefixRdf(this.settings.ontologies)}
             CONSTRUCT  {
               <${containerUri}>
@@ -154,10 +158,9 @@ module.exports = {
               }
             }
           `,
-          accept,
-          webId
-        });
-      }
+        accept,
+        webId
+      });
     }
   }
 };

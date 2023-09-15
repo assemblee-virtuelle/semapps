@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   api: async function api(ctx) {
-    let { containerUri, ...resource } = ctx.params;
+    const { containerUri, ...resource } = ctx.params;
     try {
       let resourceUri;
       const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });

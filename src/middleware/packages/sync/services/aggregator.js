@@ -1,5 +1,5 @@
+const { ActivitiesHandlerMixin, ACTIVITY_TYPES } = require('@semapps/activitypub');
 const SynchronizerService = require('./synchronizer');
-const { ActivitiesHandlerMixin, ACTIVITY_TYPES } = require("@semapps/activitypub");
 
 module.exports = {
   name: 'aggregator',

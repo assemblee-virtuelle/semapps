@@ -33,23 +33,15 @@ module.exports = {
 
       // Detach from all containers with the mirrored resource
       const containers = await ctx.call('ldp.resource.getContainers', { resourceUri });
-      for (let containerUri of containers) {
-        await ctx.call(
-          'ldp.container.detach',
-          { containerUri, resourceUri, webId: 'system' }
-        );
+      for (const containerUri of containers) {
+        await ctx.call('ldp.container.detach', { containerUri, resourceUri, webId: 'system' });
       }
 
       ctx.call('triplestore.deleteOrphanBlankNodes', {
         graphName
       });
 
-      ctx.emit(
-        'ldp.remote.deleted',
-        { resourceUri, webId },
-        { meta: { webId: null } }
-      );
+      ctx.emit('ldp.remote.deleted', { resourceUri, webId }, { meta: { webId: null } });
     }
   }
 };
-

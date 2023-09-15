@@ -19,7 +19,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
   return (
     <Grid container spacing={spacing}>
       {data.map(record => {
-        if (!record || record['_error']) return null;
+        if (!record || record._error) return null;
         const externalLink = getExternalLink(record);
         let child;
 
@@ -48,9 +48,7 @@ const GridList = ({ children, linkType, externalLinks, spacing, xs, sm, md, lg, 
 
         return (
           <Grid item key={record.id} xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
-            <RecordContextProvider value={record}>
-              {child}
-            </RecordContextProvider>
+            <RecordContextProvider value={record}>{child}</RecordContextProvider>
           </Grid>
         );
       })}

@@ -1,7 +1,7 @@
+import jsonld from 'jsonld';
 import getEmbedFrame from './getEmbedFrame';
 import buildSparqlQuery from './buildSparqlQuery';
 import getBlankNodesFromDataServers from './getBlankNodesFromDataServers';
-import jsonld from 'jsonld';
 
 const compare = (a, b) => {
   switch (typeof a) {
@@ -87,39 +87,36 @@ const fetchSparqlEndpoints = async (containers, resourceId, params, config) => {
 
   if (results.length === 0) {
     return { data: [], total: 0 };
-  } else {
-    // Merge all results in one array
-    results = [].concat(...results);
-
-    // Add id in addition to @id, as this is what React-Admin expects
-    let returnData = results.map(item => {
-      item.id = item.id || item['@id'];
-      return item;
-    });
-
-    // TODO sort and paginate the results in the SPARQL query to improve performances
-    if (params.sort) {
-      returnData = returnData.sort((a, b) => {
-        if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
-          if (params.sort.order === 'ASC') {
-            return compare(a[params.sort.field], b[params.sort.field]);
-          } else {
-            return compare(b[params.sort.field], a[params.sort.field]);
-          }
-        } else {
-          return 0;
-        }
-      });
-    }
-    if (params.pagination) {
-      returnData = returnData.slice(
-        (params.pagination.page - 1) * params.pagination.perPage,
-        params.pagination.page * params.pagination.perPage
-      );
-    }
-
-    return { data: returnData, total: results.length };
   }
+  // Merge all results in one array
+  results = [].concat(...results);
+
+  // Add id in addition to @id, as this is what React-Admin expects
+  let returnData = results.map(item => {
+    item.id = item.id || item['@id'];
+    return item;
+  });
+
+  // TODO sort and paginate the results in the SPARQL query to improve performances
+  if (params.sort) {
+    returnData = returnData.sort((a, b) => {
+      if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
+        if (params.sort.order === 'ASC') {
+          return compare(a[params.sort.field], b[params.sort.field]);
+        }
+        return compare(b[params.sort.field], a[params.sort.field]);
+      }
+      return 0;
+    });
+  }
+  if (params.pagination) {
+    returnData = returnData.slice(
+      (params.pagination.page - 1) * params.pagination.perPage,
+      params.pagination.page * params.pagination.perPage
+    );
+  }
+
+  return { data: returnData, total: results.length };
 };
 
 export default fetchSparqlEndpoints;
