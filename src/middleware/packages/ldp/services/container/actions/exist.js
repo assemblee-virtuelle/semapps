@@ -4,7 +4,7 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: { type: 'string' },
-    webId: { type: 'string', optional: true },
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
@@ -25,7 +25,7 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId,
+      webId
     });
-  },
+  }
 };

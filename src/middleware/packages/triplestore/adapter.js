@@ -19,7 +19,7 @@ class TripleStoreAdapter {
 
     await this.broker.call('triplestore.dataset.create', {
       dataset: this.dataset,
-      secure: false,
+      secure: false
     });
   }
 
@@ -52,24 +52,24 @@ class TripleStoreAdapter {
             ${
               query
                 ? Object.keys(query)
-                    .map((predicate) => `?s <${this.ontology + predicate}> "${query[predicate]}"`)
+                    .map(predicate => `?s <${this.ontology + predicate}> "${query[predicate]}"`)
                     .join(' . ')
                 : ''
             }
           }
         `,
         accept: MIME_TYPES.JSON,
-        dataset: this.dataset,
+        dataset: this.dataset
       })
-      .then((result) => {
+      .then(result => {
         return this.broker.call('jsonld.frame', {
           input: result,
           frame: {
-            '@context': { '@vocab': this.ontology },
-          },
+            '@context': { '@vocab': this.ontology }
+          }
         });
       })
-      .then((result) => {
+      .then(result => {
         if (result['@graph']) {
           // Several results
           return result['@graph'];
@@ -103,15 +103,15 @@ class TripleStoreAdapter {
           }
         `,
         accept: MIME_TYPES.JSON,
-        dataset: this.dataset,
+        dataset: this.dataset
       })
-      .then((result) => {
+      .then(result => {
         return this.broker.call('jsonld.frame', {
           input: result,
           frame: {
             '@context': { '@vocab': this.ontology },
-            '@id': _id,
-          },
+            '@id': _id
+          }
         });
       });
   }
@@ -120,7 +120,7 @@ class TripleStoreAdapter {
    * Find all entities by IDs
    */
   findByIds(ids) {
-    return Promise.all(ids.map((id) => this.findById(id)));
+    return Promise.all(ids.map(id => this.findById(id)));
   }
 
   /**
@@ -132,7 +132,7 @@ class TripleStoreAdapter {
    *  - query
    */
   count(filters = {}) {
-    return this.find(filters).then((result) => result.length);
+    return this.find(filters).then(result => result.length);
   }
 
   /**
@@ -147,10 +147,10 @@ class TripleStoreAdapter {
         resource: {
           '@context': { '@vocab': this.ontology },
           '@type': this.type,
-          ...resource,
+          ...resource
         },
         contentType: MIME_TYPES.JSON,
-        dataset: this.dataset,
+        dataset: this.dataset
       })
       .then(() => this.findById(resource['@id']));
   }
@@ -180,7 +180,7 @@ class TripleStoreAdapter {
     if (!_id) throw new Error('An ID must be specified to update resources');
 
     return this.findById(_id)
-      .then((oldData) => {
+      .then(oldData => {
         newData = { ...oldData, ...newData, '@id': null, '@type': null, '@context': null };
         return this.broker.call('triplestore.update', {
           query: `
@@ -192,8 +192,8 @@ class TripleStoreAdapter {
               ${
                 newData
                   ? Object.keys(newData)
-                      .filter((predicate) => newData[predicate])
-                      .map((predicate) => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`)
+                      .filter(predicate => newData[predicate])
+                      .map(predicate => `<${_id}> <${this.ontology + predicate}> "${newData[predicate]}"`)
                       .join(' . ')
                   : ''
               }
@@ -203,7 +203,7 @@ class TripleStoreAdapter {
             }
           `,
           contentType: MIME_TYPES.JSON,
-          dataset: this.dataset,
+          dataset: this.dataset
         });
       })
       .then(() => newData);
@@ -223,7 +223,7 @@ class TripleStoreAdapter {
     return this.broker
       .call('triplestore.update', {
         query: `DELETE WHERE { <${_id}> ?p ?o . }`,
-        dataset: this.dataset,
+        dataset: this.dataset
       })
       .then(() => {
         // We must return the number of deleted resource

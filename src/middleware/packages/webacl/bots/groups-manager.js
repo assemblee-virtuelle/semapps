@@ -4,7 +4,7 @@ module.exports = {
   name: 'groups-manager',
   settings: {
     usersContainer: null,
-    rules: [],
+    rules: []
   },
   dependencies: ['webacl.group'],
   async started() {
@@ -22,14 +22,14 @@ module.exports = {
         return rule.match(record);
       }
       // If match is an object, go through all entries and check they match with the record
-      return Object.keys(rule.match).every((predicate) => {
+      return Object.keys(rule.match).every(predicate => {
         const value = rule.match[predicate];
         return Array.isArray(record[predicate]) ? record[predicate].includes(value) : record[predicate] === value;
       });
     },
     isUser(resourceUri) {
       return getContainerFromUri(resourceUri) === this.settings.usersContainer;
-    },
+    }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -40,7 +40,7 @@ module.exports = {
             await ctx.call('webacl.group.addMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
-              webId: 'system',
+              webId: 'system'
             });
           }
         }
@@ -54,13 +54,13 @@ module.exports = {
             await ctx.call('webacl.group.addMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
-              webId: 'system',
+              webId: 'system'
             });
           } else {
             await ctx.call('webacl.group.removeMember', {
               groupSlug: rule.groupSlug,
               memberUri: resourceUri,
-              webId: 'system',
+              webId: 'system'
             });
           }
         }
@@ -73,10 +73,10 @@ module.exports = {
           await ctx.call('webacl.group.removeMember', {
             groupSlug: rule.groupSlug,
             memberUri: resourceUri,
-            webId: 'system',
+            webId: 'system'
           });
         }
       }
-    },
-  },
+    }
+  }
 };

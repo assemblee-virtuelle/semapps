@@ -5,16 +5,16 @@ module.exports = {
   params: {
     query: {
       type: 'multi',
-      rules: [{ type: 'string' }, { type: 'object' }],
+      rules: [{ type: 'string' }, { type: 'object' }]
     },
     webId: {
       type: 'string',
-      optional: true,
+      optional: true
     },
     dataset: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     let { query } = ctx.params;
@@ -34,9 +34,9 @@ module.exports = {
         body: query,
         headers: {
           'Content-Type': 'application/sparql-update',
-          'X-SemappsUser': webId,
-        },
+          'X-SemappsUser': webId
+        }
       });
     }
-  },
+  }
 };

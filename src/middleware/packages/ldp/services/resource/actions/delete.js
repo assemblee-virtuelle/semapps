@@ -9,12 +9,12 @@ module.exports = {
 
     try {
       await ctx.call(controlledActions.delete || 'ldp.resource.delete', {
-        resourceUri,
+        resourceUri
       });
       ctx.meta.$statusCode = 204;
       ctx.meta.$responseHeaders = {
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0,
+        'Content-Length': 0
       };
     } catch (e) {
       console.error(e);
@@ -27,7 +27,7 @@ module.exports = {
     params: {
       resourceUri: 'string',
       webId: { type: 'string', optional: true },
-      disassembly: { type: 'array', optional: true },
+      disassembly: { type: 'array', optional: true }
     },
     async handler(ctx) {
       const { resourceUri } = ctx.params;
@@ -40,7 +40,7 @@ module.exports = {
 
       const { disassembly } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-        ...ctx.params,
+        ...ctx.params
       };
 
       // Save the current data, to be able to send it through the event
@@ -49,7 +49,7 @@ module.exports = {
         resourceUri,
         accept: MIME_TYPES.JSON,
         forceSemantic: true,
-        webId,
+        webId
       });
 
       if (disassembly) {
@@ -63,7 +63,7 @@ module.exports = {
             <${resourceUri}> ?p1 ?o1 .
           }
         `,
-        webId,
+        webId
       });
 
       // We must detach the resource from the containers after deletion, otherwise the permissions may fail
@@ -79,7 +79,7 @@ module.exports = {
       const returnValues = {
         resourceUri,
         oldData,
-        webId,
+        webId
       };
 
       ctx.call('triplestore.deleteOrphanBlankNodes');
@@ -87,6 +87,6 @@ module.exports = {
       ctx.emit('ldp.resource.deleted', returnValues, { meta: { webId: null } });
 
       return returnValues;
-    },
-  },
+    }
+  }
 };

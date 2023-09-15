@@ -4,7 +4,7 @@ const { convertToIsoString } = require('../utils');
 
 const allowedTypes = ['user', 'space', 'calendar', 'post'];
 
-const getSlugByUrl = (url) => {
+const getSlugByUrl = url => {
   if (url) {
     const splitUrl = url.split('/');
     let slug = splitUrl.pop();
@@ -21,11 +21,11 @@ module.exports = {
       humhub: {
         baseUrl: null,
         jwtToken: null,
-        type: null, // 'user', 'space', 'calendar', 'post'
+        type: null // 'user', 'space', 'calendar', 'post'
       },
       fieldsMapping: {
         // We don't use arrow function as we need to have access to this.settings
-        slug: function (data) {
+        slug: function(data) {
           switch (this.settings.source.humhub.type) {
             case 'user':
             case 'space':
@@ -35,22 +35,22 @@ module.exports = {
               return data.content.metadata.guid;
           }
         },
-        created: function (data) {
+        created: function(data) {
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
           }
         },
-        updated: function (data) {
+        updated: function(data) {
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.updated_at);
           }
-        },
-      },
-    },
+        }
+      }
+    }
   },
   created() {
     const { baseUrl, jwtToken, type } = this.settings.source.humhub;
@@ -66,9 +66,9 @@ module.exports = {
     this.settings.source.getAllFull = this.settings.source.apiUrl;
 
     if (type === 'calendar') {
-      this.settings.source.getOneFull = (data) => `${this.settings.source.apiUrl}/entry/${data.id}`;
+      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/entry/${data.id}`;
     } else {
-      this.settings.source.getOneFull = (data) => `${this.settings.source.apiUrl}/${data.id}`;
+      this.settings.source.getOneFull = data => `${this.settings.source.apiUrl}/${data.id}`;
     }
   },
   methods: {
@@ -107,6 +107,6 @@ module.exports = {
       }
 
       return results;
-    },
-  },
+    }
+  }
 };

@@ -5,8 +5,8 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     const { containerUri, resourceUri } = ctx.params;
@@ -22,7 +22,7 @@ module.exports = {
           ${isRemoteContainer ? '}' : ''}
         }
       `,
-      webId,
+      webId
     });
-  },
+  }
 };

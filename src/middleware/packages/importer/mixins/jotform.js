@@ -7,21 +7,21 @@ module.exports = {
     source: {
       jotform: {
         apiKey: null,
-        type: 'submissions',
+        type: 'submissions'
       },
       fieldsMapping: {
         slug: 'id',
-        created: (data) => convertToIsoString(data.created_at),
-        updated: (data) => convertToIsoString(data.updated_at),
-      },
-    },
+        created: data => convertToIsoString(data.created_at),
+        updated: data => convertToIsoString(data.updated_at)
+      }
+    }
   },
   created() {
     if (this.settings.source.jotform.type === 'submissions') {
       this.settings.source.apiUrl = 'https://eu-api.jotform.com';
       this.settings.source.headers = { apikey: this.settings.source.jotform.apiKey };
       this.settings.source.getAllCompact = 'https://eu-api.jotform.com/user/forms';
-      this.settings.source.getOneFull = (data) => `https://eu-api.jotform.com/submission/${data.id}`;
+      this.settings.source.getOneFull = data => `https://eu-api.jotform.com/submission/${data.id}`;
     } else {
       throw new Error('The JotformImporterMixin can only import submissions for now');
     }
@@ -48,6 +48,6 @@ module.exports = {
         return result.content;
       }
       return false;
-    },
-  },
+    }
+  }
 };

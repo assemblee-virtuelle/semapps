@@ -14,7 +14,7 @@ const AuthSSOMixin = {
     webIdSelection: [],
     // SSO-specific settings
     sessionSecret: 's€m@pps',
-    selectSsoData: null,
+    selectSsoData: null
   },
   actions: {
     async loginOrSignup(ctx) {
@@ -45,7 +45,7 @@ const AuthSSOMixin = {
         accountData = await ctx.call('auth.account.create', {
           uuid: profileData.uuid,
           email: profileData.email,
-          username: profileData.username,
+          username: profileData.username
         });
         webId = await ctx.call('webid.create', this.pickWebIdData({ nick: accountData.username, ...profileData }));
         newUser = true;
@@ -56,14 +56,14 @@ const AuthSSOMixin = {
         ctx.emit(
           'auth.registered',
           { webId, profileData, accountData, ssoData },
-          { meta: { webId: null, dataset: null } },
+          { meta: { webId: null, dataset: null } }
         );
       }
 
       const token = await ctx.call('auth.jwt.generateToken', { payload: { webId } });
 
       return { token, newUser };
-    },
+    }
   },
   methods: {
     getApiRoutes() {
@@ -74,24 +74,20 @@ const AuthSSOMixin = {
           name: 'auth',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
-            'GET /': [
-              saveRedirectUrl,
-              this.passport.authenticate(this.passportId, { session: false }),
-              redirectToFront,
-            ],
-          },
+            'GET /': [saveRedirectUrl, this.passport.authenticate(this.passportId, { session: false }), redirectToFront]
+          }
         },
         {
           path: '/auth/logout',
           name: 'auth-logout',
           use: [sessionMiddleware, this.passport.initialize(), this.passport.session()],
           aliases: {
-            'GET /': [saveRedirectUrl, localLogout, redirectToFront],
-          },
-        },
+            'GET /': [saveRedirectUrl, localLogout, redirectToFront]
+          }
+        }
       ];
-    },
-  },
+    }
+  }
 };
 
 module.exports = AuthSSOMixin;

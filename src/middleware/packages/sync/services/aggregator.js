@@ -6,7 +6,7 @@ module.exports = {
   mixins: [ActivitiesHandlerMixin],
   settings: {
     acceptFollowOffers: true,
-    mirrorGraph: true,
+    mirrorGraph: true
   },
   dependencies: ['activitypub.relay'],
   created() {
@@ -15,8 +15,8 @@ module.exports = {
         podProvider: false,
         mirrorGraph: this.settings.mirrorGraph,
         synchronizeContainers: false,
-        attachToLocalContainers: true,
-      },
+        attachToLocalContainers: true
+      }
     });
   },
   async started() {
@@ -27,8 +27,8 @@ module.exports = {
       match: {
         type: ACTIVITY_TYPES.OFFER,
         object: {
-          type: ACTIVITY_TYPES.FOLLOW,
-        },
+          type: ACTIVITY_TYPES.FOLLOW
+        }
       },
       async onReceive(ctx, activity, recipientUri) {
         if (this.settings.acceptFollowOffers && recipientUri === this.relayActor.id) {
@@ -38,10 +38,10 @@ module.exports = {
             actor: this.relayActor.id,
             type: ACTIVITY_TYPES.FOLLOW,
             object: activity.actor,
-            to: activity.actor,
+            to: activity.actor
           });
         }
-      },
-    },
-  },
+      }
+    }
+  }
 };

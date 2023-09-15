@@ -16,7 +16,7 @@ class LdpAdapter {
   async connect() {
     if (!this.service.schema.settings.containerUri) {
       throw new ServiceSchemaError(
-        `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`,
+        `Missing \`containerUri\` definition in settings of service ${this.service.schema.name}`
       );
     }
 
@@ -51,7 +51,7 @@ class LdpAdapter {
       containerUri: this.service.schema.settings.containerUri,
       filters: filters.query,
       jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON,
+      accept: MIME_TYPES.JSON
     });
   }
 
@@ -72,7 +72,7 @@ class LdpAdapter {
     return this.broker.call(`${this.resourceService}.get`, {
       resourceUri: _id,
       jsonContext: this.service.schema.settings.context,
-      accept: MIME_TYPES.JSON,
+      accept: MIME_TYPES.JSON
     });
   }
 
@@ -80,7 +80,7 @@ class LdpAdapter {
    * Find all entities by IDs
    */
   findByIds(ids) {
-    return Promise.all(ids.map((id) => this.findById(id)));
+    return Promise.all(ids.map(id => this.findById(id)));
   }
 
   /**
@@ -92,7 +92,7 @@ class LdpAdapter {
    *  - query
    */
   count(filters = {}) {
-    return this.find(filters).then((result) => result['ldp:contains'].length);
+    return this.find(filters).then(result => result['ldp:contains'].length);
   }
 
   /**
@@ -106,15 +106,15 @@ class LdpAdapter {
         containerUri: this.service.schema.settings.containerUri,
         resource: {
           '@context': this.service.schema.settings.context,
-          ...resource,
+          ...resource
         },
         slug,
-        contentType: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       })
-      .then((resourceUri) => {
+      .then(resourceUri => {
         this.broker.call(`${this.containerService}.attach`, {
           containerUri: this.service.schema.settings.containerUri,
-          resourceUri,
+          resourceUri
         });
 
         return this.findById(resourceUri);
@@ -151,11 +151,11 @@ class LdpAdapter {
         resource: {
           '@context': this.service.schema.settings.context,
           '@id': _id,
-          ...resource,
+          ...resource
         },
-        contentType: MIME_TYPES.JSON,
+        contentType: MIME_TYPES.JSON
       })
-      .then((resourceUri) => this.findById(resourceUri));
+      .then(resourceUri => this.findById(resourceUri));
   }
 
   /**
@@ -171,7 +171,7 @@ class LdpAdapter {
   removeById(_id) {
     return this.broker
       .call(`${this.resourceService}.delete`, {
-        resourceUri: _id,
+        resourceUri: _id
       })
       .then(() => {
         // We must return the number of deleted resource
@@ -185,7 +185,7 @@ class LdpAdapter {
    */
   clear() {
     return this.broker.call(`${this.containerService}.clear`, {
-      containerUri: this.service.schema.settings.containerUri,
+      containerUri: this.service.schema.settings.containerUri
     });
   }
 
