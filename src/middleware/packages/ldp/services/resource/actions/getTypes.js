@@ -3,7 +3,7 @@ const { MIME_TYPES } = require('@semapps/mime-types');
 module.exports = {
   visibility: 'public',
   params: {
-    resourceUri: 'string',
+    resourceUri: 'string'
   },
   cache: true,
   async handler(ctx) {
@@ -17,9 +17,9 @@ module.exports = {
         }
       `,
       accept: MIME_TYPES.JSON,
-      webId: 'system',
+      webId: 'system'
     });
 
-    return result.map((node) => node.type.value);
-  },
+    return result.map(node => node.type.value);
+  }
 };

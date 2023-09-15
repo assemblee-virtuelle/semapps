@@ -7,7 +7,7 @@ module.exports = {
   params: {
     containerUri: 'string',
     slug: { type: 'string', optional: true },
-    isContainer: { type: 'boolean', default: false },
+    isContainer: { type: 'boolean', default: false }
   },
   async handler(ctx) {
     let { containerUri, slug, isContainer } = ctx.params;
@@ -30,14 +30,14 @@ module.exports = {
 
     let resourceAlreadyExists = await ctx.call('ldp.resource.exist', {
       resourceUri: urlJoin(containerUri, slug || uuid),
-      webId: 'system',
+      webId: 'system'
     });
 
     let counter = 0;
     if (resourceAlreadyExists) {
       if (isContainer) {
         throw new Error(
-          `Invalid slug for container. A resource with URI ${urlJoin(containerUri, slug || uuid)} already exists`,
+          `Invalid slug for container. A resource with URI ${urlJoin(containerUri, slug || uuid)} already exists`
         );
       }
 
@@ -52,11 +52,11 @@ module.exports = {
         }
         resourceAlreadyExists = await ctx.call('ldp.resource.exist', {
           resourceUri: urlJoin(containerUri, slug || uuid),
-          webId: 'system',
+          webId: 'system'
         });
       } while (resourceAlreadyExists);
     }
 
     return urlJoin(containerUri, slug || uuid);
-  },
+  }
 };

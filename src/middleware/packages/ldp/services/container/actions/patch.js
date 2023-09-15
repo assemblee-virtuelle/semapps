@@ -8,15 +8,15 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: {
-      type: 'string',
+      type: 'string'
     },
     sparqlUpdate: {
-      type: 'string',
+      type: 'string'
     },
     webId: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     let { containerUri, sparqlUpdate, webId } = ctx.params;
@@ -34,7 +34,7 @@ module.exports = {
         throw new MoleculerError('Invalid SPARQL. Must be an Update', 400, 'BAD_REQUEST');
 
       const updates = { insert: [], delete: [] };
-      parsedQuery.updates.forEach((p) => updates[p.updateType].push(p[p.updateType][0]));
+      parsedQuery.updates.forEach(p => updates[p.updateType].push(p[p.updateType][0]));
 
       for (const inss of updates.insert) {
         // check that the containerUri is the same as specified in the params. ignore if not.
@@ -52,7 +52,7 @@ module.exports = {
                     resourceUri: insUri,
                     keepInSync: true,
                     mirrorGraph: true,
-                    webId,
+                    webId
                   });
 
                   // Now if the import went well, we can retry the attach
@@ -89,5 +89,5 @@ module.exports = {
     }
 
     ctx.emit('ldp.container.patched', { containerUri }, { meta: { webId: null, dataset: null } });
-  },
+  }
 };

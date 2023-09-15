@@ -15,7 +15,7 @@ module.exports = {
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
     preferredViewForResource: null,
-    resourcesWithContainerPath: true,
+    resourcesWithContainerPath: true
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
@@ -27,7 +27,7 @@ module.exports = {
       defaultContainerOptions,
       mirrorGraphName,
       preferredViewForResource,
-      resourcesWithContainerPath,
+      resourcesWithContainerPath
     } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
@@ -35,9 +35,9 @@ module.exports = {
         baseUrl,
         ontologies,
         podProvider,
-        mirrorGraphName,
+        mirrorGraphName
       },
-      hooks: this.schema.hooksContainer || {},
+      hooks: this.schema.hooksContainer || {}
     });
 
     await this.broker.createService(LdpResourceService, {
@@ -47,9 +47,9 @@ module.exports = {
         podProvider,
         mirrorGraphName,
         preferredViewForResource,
-        resourcesWithContainerPath,
+        resourcesWithContainerPath
       },
-      hooks: this.schema.hooksResource || {},
+      hooks: this.schema.hooksResource || {}
     });
 
     await this.broker.createService(LdpRemoteService, {
@@ -57,8 +57,8 @@ module.exports = {
         baseUrl,
         ontologies,
         podProvider,
-        mirrorGraphName,
-      },
+        mirrorGraphName
+      }
     });
 
     await this.broker.createService(LdpRegistryService, {
@@ -66,20 +66,20 @@ module.exports = {
         baseUrl,
         containers,
         defaultOptions: defaultContainerOptions,
-        podProvider,
-      },
+        podProvider
+      }
     });
 
     await this.broker.createService(LdpApiService, {
       settings: {
         baseUrl,
-        podProvider,
-      },
+        podProvider
+      }
     });
 
     // Only create this service if a cacher is defined
     if (this.broker.cacher) {
       await this.broker.createService(LdpCacheService);
     }
-  },
+  }
 };

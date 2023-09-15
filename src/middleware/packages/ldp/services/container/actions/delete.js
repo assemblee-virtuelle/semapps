@@ -2,7 +2,7 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: 'string',
-    webId: { type: 'string', optional: true },
+    webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { containerUri } = ctx.params;
@@ -15,7 +15,7 @@ module.exports = {
           <${containerUri}> ?p1 ?o1 .
         }
       `,
-      webId,
+      webId
     });
 
     // Detach the container from parent containers after deletion, otherwise the permissions may fail
@@ -24,17 +24,17 @@ module.exports = {
       await ctx.call('ldp.container.detach', {
         containerUri: parentContainerUri,
         resourceUri: containerUri,
-        webId: 'system',
+        webId: 'system'
       });
     }
 
     const returnValues = {
       containerUri,
-      webId,
+      webId
     };
 
     ctx.emit('ldp.container.deleted', returnValues, { meta: { webId: null } });
 
     return returnValues;
-  },
+  }
 };

@@ -24,24 +24,24 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: {
-      type: 'string',
+      type: 'string'
     },
     sparqlUpdate: {
       type: 'string',
-      optional: true,
+      optional: true
     },
     triplesToAdd: {
       type: 'array',
-      optional: true,
+      optional: true
     },
     triplesToRemove: {
       type: 'array',
-      optional: true,
+      optional: true
     },
     webId: {
       type: 'string',
-      optional: true,
-    },
+      optional: true
+    }
   },
   async handler(ctx) {
     let { resourceUri, sparqlUpdate, triplesToAdd, triplesToRemove, webId } = ctx.params;
@@ -67,15 +67,15 @@ module.exports = {
 
       const triplesByOperation = Object.fromEntries(
         parsedQuery.updates
-          .filter((p) => ACCEPTED_OPERATIONS.includes(p.updateType))
-          .map((p) => [p.updateType, p[p.updateType][0].triples]),
+          .filter(p => ACCEPTED_OPERATIONS.includes(p.updateType))
+          .map(p => [p.updateType, p[p.updateType][0].triples])
       );
 
       if (Object.values(triplesByOperation).length === 0)
         throw new MoleculerError(
           'Invalid SPARQL operation. Must be INSERT DATA and/or DELETE DATA',
           400,
-          'BAD_REQUEST',
+          'BAD_REQUEST'
         );
 
       triplesToAdd = triplesByOperation.insert;
@@ -88,14 +88,14 @@ module.exports = {
     // Rebuild the sparql update to reduce security risks
     sparqlUpdate = {
       type: 'update',
-      updates: [],
+      updates: []
     };
 
     if (triplesToAdd) {
       checkTriplesSubjectIsResource(triplesToAdd, resourceUri);
       sparqlUpdate.updates.push({
         updateType: 'insert',
-        insert: [{ type: 'bgp', triples: triplesToAdd }],
+        insert: [{ type: 'bgp', triples: triplesToAdd }]
       });
     }
 
@@ -103,24 +103,24 @@ module.exports = {
       checkTriplesSubjectIsResource(triplesToRemove, resourceUri);
       sparqlUpdate.updates.push({
         updateType: 'delete',
-        delete: [{ type: 'bgp', triples: triplesToRemove }],
+        delete: [{ type: 'bgp', triples: triplesToRemove }]
       });
     }
 
     await ctx.call('triplestore.update', {
       query: sparqlUpdate,
-      webId,
+      webId
     });
 
     const returnValues = {
       resourceUri,
       triplesAdded: triplesToAdd,
       triplesRemoved: triplesToRemove,
-      webId,
+      webId
     };
 
     ctx.emit('ldp.resource.patched', returnValues, { meta: { webId: null } });
 
     return returnValues;
-  },
+  }
 };
