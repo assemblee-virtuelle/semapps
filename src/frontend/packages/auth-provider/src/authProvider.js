@@ -87,10 +87,19 @@ const authProvider = ({
         case AUTH_TYPE_SSO:
           const authServerUrl = await getAuthServerUrl(dataProvider);
           const baseUrl = new URL(window.location.href).origin;
-          window.location.href = urlJoin(
-            authServerUrl,
-            'auth/logout?redirectUrl=' + encodeURIComponent(urlJoin(baseUrl, 'login') + '?logout=true')
-          );
+          if (!allowAnonymous) {
+            window.location.href = urlJoin(
+              authServerUrl,
+              "auth/logout?redirectUrl=" + encodeURIComponent(urlJoin(baseUrl, "login"))
+            );
+          } else {
+            // Redirect to login page after disconnecting from SSO
+            // The login page will remove the token, display a notification and redirect to the homepage
+            window.location.href = urlJoin(
+              authServerUrl,
+              "auth/logout?redirectUrl=" + encodeURIComponent(urlJoin(baseUrl, "login") + "?logout=true")
+            );
+          }
           break;
 
         case AUTH_TYPE_POD:
