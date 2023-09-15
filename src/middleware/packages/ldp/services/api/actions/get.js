@@ -10,9 +10,16 @@ module.exports = async function get(ctx) {
        * LDP CONTAINER
        */
 
-      const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri: uri });
-      const res = await ctx.call(controlledActions?.list || 'ldp.container.get', { containerUri: uri });
-      ctx.meta.$responseType = ctx.meta.$responseType || ctx.meta.headers.accept;
+      const { accept, controlledActions } = {
+        ...(await ctx.call('ldp.registry.getByUri', { containerUri: uri })),
+        ...ctx.meta.headers
+      };
+
+      const res = await ctx.call(controlledActions?.list || 'ldp.container.get', {
+        containerUri: uri,
+        accept
+      });
+      ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return res;
     } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
       /*

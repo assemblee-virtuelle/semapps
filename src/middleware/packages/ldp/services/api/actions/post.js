@@ -42,22 +42,14 @@ module.exports = async function post(ctx) {
       /*
        * AS COLLECTION
        */
-      const { controlledActions } = {
-        ...(await ctx.call('activitypub.registry.getByUri', { collectionUri: uri })),
-        ...ctx.meta.headers
-      };
+      const { controlledActions } = await ctx.call('activitypub.registry.getByUri', { collectionUri: uri });
 
       if (!controlledActions.post) {
-        const activity = await ctx.call(controlledActions.post, {
+        await ctx.call(controlledActions.post, {
           collectionUri: uri
         });
-
-        ctx.meta.$responseHeaders = {
-          Location: activity.id,
-          'Content-Length': 0
-        };
-
-        ctx.meta.$statusCode = 201;
+      } else {
+        ctx.meta.$statusCode = 404;
       }
     }
   } catch (e) {

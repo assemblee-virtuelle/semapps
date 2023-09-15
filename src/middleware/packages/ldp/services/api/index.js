@@ -27,10 +27,11 @@ module.exports = {
   },
   methods: {
     getUriFromSlugParts(slugParts, username) {
-      if (!slugParts || slugParts.length === 0) slugParts = ['/']; // Root container
       if (this.settings.podProvider && username) {
+        if (!slugParts) slugParts = []; // Root container on pods doesn't have a trailing slash
         return urlJoin(this.settings.baseUrl, username, 'data', ...slugParts);
       } else {
+        if (!slugParts || slugParts.length === 0) slugParts = ['/']; // Root container has a trailing slash
         return urlJoin(this.settings.baseUrl, ...slugParts);
       }
     }
