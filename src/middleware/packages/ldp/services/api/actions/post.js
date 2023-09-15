@@ -44,11 +44,13 @@ module.exports = async function post(ctx) {
        */
       const { controlledActions } = await ctx.call('activitypub.registry.getByUri', { collectionUri: uri });
 
-      if (!controlledActions.post) {
+      if (controlledActions.post) {
         await ctx.call(controlledActions.post, {
-          collectionUri: uri
+          collectionUri: uri,
+          ...resource
         });
       } else {
+        // The collection endpoint is not available for POSTing
         ctx.meta.$statusCode = 404;
       }
     }
