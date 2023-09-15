@@ -33,7 +33,7 @@ const MapField = ({ latitude, longitude, address, height, typographyProps, ...re
 
 MapField.defaultProps = {
   height: 400,
-  zoom: 11,
+  zoom: 11
 };
 
 export default MapField;

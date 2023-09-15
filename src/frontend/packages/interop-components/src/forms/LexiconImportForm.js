@@ -18,7 +18,7 @@ const LexiconImportForm = ({ fetchLexicon, selectData }) => {
 
       await save(selectData(lexicon));
     },
-    [selectData, save],
+    [selectData, save]
   );
 
   return (

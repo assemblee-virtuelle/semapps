@@ -6,20 +6,20 @@ const QueryStringUpdater = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useMapEvents({
-    moveend: (test) => {
-      setSearchParams((params) => ({
+    moveend: test => {
+      setSearchParams(params => ({
         ...Object.fromEntries(params),
         lat: test.target.getCenter().lat,
         lng: test.target.getCenter().lng,
-        zoom: test.target.getZoom(),
+        zoom: test.target.getZoom()
       }));
     },
-    zoomend: (test) => {
-      setSearchParams((params) => ({
+    zoomend: test => {
+      setSearchParams(params => ({
         ...Object.fromEntries(params),
-        zoom: test.target.getZoom(),
+        zoom: test.target.getZoom()
       }));
-    },
+    }
   });
 
   return null;

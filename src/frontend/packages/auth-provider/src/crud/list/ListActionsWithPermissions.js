@@ -5,7 +5,7 @@ import {
   useResourceDefinition,
   TopToolbar,
   usePermissions,
-  useResourceContext,
+  useResourceContext
 } from 'react-admin';
 import { useMediaQuery } from '@mui/material';
 import { useCreateContainer } from '@semapps/semantic-data-provider';
@@ -23,10 +23,10 @@ const ListActionsWithPermissions = ({
   onUnselectItems,
   selectedIds,
   showFilter,
-  total,
+  total
 }) => {
   const resource = useResourceContext();
-  const xs = useMediaQuery((theme) => theme.breakpoints.down('xs'));
+  const xs = useMediaQuery(theme => theme.breakpoints.down('xs'));
   const resourceDefinition = useResourceDefinition();
   const createContainerUri = useCreateContainer(resource);
   const { permissions } = usePermissions(createContainerUri);
@@ -37,12 +37,12 @@ const ListActionsWithPermissions = ({
           showFilter,
           displayedFilters,
           filterValues,
-          context: 'button',
+          context: 'button'
         })}
-      {resourceDefinition.hasCreate &&
-        permissions &&
-        permissions.some((p) => rightsToCreate.includes(p['acl:mode'])) && <CreateButton />}
-      {permissions && permissions.some((p) => rightsToControl.includes(p['acl:mode'])) && (
+      {resourceDefinition.hasCreate && permissions && permissions.some(p => rightsToCreate.includes(p['acl:mode'])) && (
+        <CreateButton />
+      )}
+      {permissions && permissions.some(p => rightsToControl.includes(p['acl:mode'])) && (
         <PermissionsButton isContainer />
       )}
       {!xs && exporter !== false && (
@@ -52,7 +52,7 @@ const ListActionsWithPermissions = ({
         React.cloneElement(bulkActions, {
           filterValues,
           selectedIds,
-          onUnselectItems,
+          onUnselectItems
         })}
     </TopToolbar>
   );

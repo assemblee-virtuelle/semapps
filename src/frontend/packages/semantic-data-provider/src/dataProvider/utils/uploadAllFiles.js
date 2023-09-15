@@ -1,7 +1,7 @@
 import createSlug from 'speakingurl';
 import urlJoin from 'url-join';
 
-export const getSlugWithExtension = (fileName) => {
+export const getSlugWithExtension = fileName => {
   let fileExtension = '';
   const splitFileName = fileName.split('.');
   if (splitFileName.length > 1) {
@@ -11,10 +11,10 @@ export const getSlugWithExtension = (fileName) => {
   return `${createSlug(fileName, { lang: 'fr' })}.${fileExtension}`;
 };
 
-export const isFile = (o) => o?.rawFile && o.rawFile instanceof File;
+export const isFile = o => o?.rawFile && o.rawFile instanceof File;
 
-const getUploadsContainerUri = (config) => {
-  const serverKey = Object.keys(config.dataServers).find((key) => config.dataServers[key].uploadsContainer);
+const getUploadsContainerUri = config => {
+  const serverKey = Object.keys(config.dataServers).find(key => config.dataServers[key].uploadsContainer);
   if (serverKey) {
     return urlJoin(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
   }
@@ -32,8 +32,8 @@ const uploadFile = async (rawFile, config) => {
       // However we keep the extension apart (if it exists) so that it is not replaced with a -
       // TODO let the middleware guess the extension based on the content type
       Slug: getSlugWithExtension(rawFile.name),
-      'Content-Type': rawFile.type,
-    }),
+      'Content-Type': rawFile.type
+    })
   });
 
   if (response.status === 201) {

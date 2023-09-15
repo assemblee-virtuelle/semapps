@@ -3,7 +3,7 @@ import { useRecordContext } from 'react-admin';
 
 const OptionRenderer = ({ optionText, dataServers }) => {
   const record = useRecordContext();
-  const server = dataServers && Object.values(dataServers).find((server) => record.id.startsWith(server.baseUrl));
+  const server = dataServers && Object.values(dataServers).find(server => record.id.startsWith(server.baseUrl));
   return (
     <span>
       {record[optionText]}

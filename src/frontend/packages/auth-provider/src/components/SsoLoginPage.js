@@ -6,7 +6,7 @@ import { Card, Avatar, Typography, Button, CardActions } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LockIcon from '@mui/icons-material/Lock';
 
-const delay = async (t) => new Promise((resolve) => setTimeout(resolve, t));
+const delay = async t => new Promise(resolve => setTimeout(resolve, t));
 
 // Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
 const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, propertiesExist, text, ...rest }) => {
@@ -47,12 +47,12 @@ const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, proper
           ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
 
           if (propertiesExist.length > 0) {
-            let allPropertiesExist = propertiesExist.every((p) => userData[p]);
+            let allPropertiesExist = propertiesExist.every(p => userData[p]);
             while (!allPropertiesExist) {
               console.log('Waiting for all properties to have been created', propertiesExist);
               await delay(500);
               ({ data: userData } = await dataProvider.getOne(userResource, { id: webId }));
-              allPropertiesExist = propertiesExist.every((p) => userData[p]);
+              allPropertiesExist = propertiesExist.every(p => userData[p]);
             }
           }
 
@@ -121,7 +121,7 @@ const SsoLoginPage = ({ children, backgroundImage, buttons, userResource, proper
               fullWidth: true,
               variant: 'outlined',
               type: 'submit',
-              onClick: () => login({}, '/login'),
+              onClick: () => login({}, '/login')
             })}
           </CardActions>
         ))}
@@ -136,12 +136,12 @@ export const SsoLoginPageClasses = {
   card: `${PREFIX}-card`,
   avatar: `${PREFIX}-avatar`,
   icon: `${PREFIX}-icon`,
-  switch: `${PREFIX}-switch`,
+  switch: `${PREFIX}-switch`
 };
 
 const Root = styled('div', {
   name: PREFIX,
-  overridesResolver: (props, styles) => styles.root,
+  overridesResolver: (props, styles) => styles.root
 })(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -154,28 +154,28 @@ const Root = styled('div', {
   backgroundImage: 'radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)',
   [`& .${SsoLoginPageClasses.card}`]: {
     minWidth: 300,
-    marginTop: '6em',
+    marginTop: '6em'
   },
   [`& .${SsoLoginPageClasses.avatar}`]: {
     margin: '1em',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   [`& .${SsoLoginPageClasses.icon}`]: {
-    backgroundColor: theme.palette.secondary[500],
+    backgroundColor: theme.palette.secondary[500]
   },
   [`& .${SsoLoginPageClasses.switch}`]: {
     marginBottom: '1em',
     display: 'flex',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 }));
 
 SsoLoginPage.defaultProps = {
   propertiesExist: [],
   // TODO deprecate this
   buttons: [<Button startIcon={<Avatar src="/lescommuns.jpg" />}>Les Communs</Button>],
-  userResource: 'Person',
+  userResource: 'Person'
 };
 
 export default SsoLoginPage;

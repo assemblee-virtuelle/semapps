@@ -21,8 +21,8 @@ const useStyles = makeStyles(() => ({
     bottom: 0,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 }));
 
 const MapList = ({
@@ -40,7 +40,7 @@ const MapList = ({
   ...otherProps
 }) => {
   const { data, isLoading } = useListContext();
-  const xs = useMediaQuery((theme) => theme.breakpoints.down('sm'), { noSsr: true });
+  const xs = useMediaQuery(theme => theme.breakpoints.down('sm'), { noSsr: true });
   const [drawerRecord, setDrawerRecord] = useState(null);
   const classes = useStyles();
 
@@ -55,17 +55,17 @@ const MapList = ({
   const records = isLoading
     ? []
     : data
-        .map((record) => ({
+        .map(record => ({
           ...record,
           latitude: latitude && latitude(record),
           longitude: longitude && longitude(record),
           label: label && label(record),
-          description: description && description(record),
+          description: description && description(record)
         }))
-        .filter((record) => record.latitude && record.longitude);
+        .filter(record => record.latitude && record.longitude);
 
   const bounds =
-    boundToMarkers && records.length > 0 ? records.map((record) => [record.latitude, record.longitude]) : undefined;
+    boundToMarkers && records.length > 0 ? records.map(record => [record.latitude, record.longitude]) : undefined;
 
   // Do not display anything if the bounds are not ready, otherwise the MapContainer will not be initialized correctly
   if (boundToMarkers && !bounds) return null;
@@ -78,7 +78,7 @@ const MapList = ({
           eventHandlers={
             xs
               ? {
-                  click: () => setDrawerRecord(record),
+                  click: () => setDrawerRecord(record)
                 }
               : undefined
           }
@@ -93,7 +93,7 @@ const MapList = ({
           <Polyline
             positions={[
               [previousRecord.latitude, previousRecord.longitude],
-              [record.latitude, record.longitude],
+              [record.latitude, record.longitude]
             ]}
           />
         )}
@@ -139,7 +139,7 @@ MapList.defaultProps = {
   groupClusters: true,
   connectMarkers: false,
   scrollWheelZoom: false,
-  popupContent: DefaultPopupContent,
+  popupContent: DefaultPopupContent
 };
 
 export default MapList;
