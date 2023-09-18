@@ -12,11 +12,12 @@ const CollectionService = {
     /*
      * Create a persisted collection
      * @param collectionUri The full URI of the collection
-     * @param summary An optional description of the collection
+     * @param config.ordered If true, an OrderedCollection will be created
+     * @param config.summary An optional description of the collection
      */
     async create(ctx) {
       const { collectionUri, config } = ctx.params;
-      const { ordered, summary } = config;
+      const { ordered, summary } = config || {};
       await ctx.call('triplestore.insert', {
         resource: {
           '@context': 'https://www.w3.org/ns/activitystreams',

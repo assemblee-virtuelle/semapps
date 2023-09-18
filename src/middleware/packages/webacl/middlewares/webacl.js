@@ -176,7 +176,7 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
           }
 
           case 'activitypub.collection.create': {
-            const { permissions } = ctx.params.config;
+            const { permissions } = ctx.params?.config || {};
             const collectionRights = typeof permissions === 'function' ? permissions(webId) : permissions;
 
             // We must add the permissions before inserting the collection
