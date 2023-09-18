@@ -36,7 +36,10 @@ function getCatchAllRoute(podProvider) {
       'PUT /': [...middlewares, 'ldp.api.put'],
       'PATCH /': [...middlewares, 'ldp.api.patch'],
       'DELETE /': [...middlewares, 'ldp.api.delete']
-    }
+    },
+    // Handle this route after other routes. Requires a modification of the ApiGateway.
+    // See https://github.com/moleculerjs/moleculer-web/issues/335
+    catchAll: true
   };
 }
 

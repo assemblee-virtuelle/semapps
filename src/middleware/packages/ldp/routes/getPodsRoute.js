@@ -48,7 +48,10 @@ function getPodsRoute() {
       'HEAD /': [transformRouteParamsToSlugParts, 'ldp.api.head'],
       'GET /:collection': [...middlewares, 'ldp.api.get'],
       'POST /:collection': [...middlewares, 'ldp.api.post']
-    }
+    },
+    // Handle this route after other routes. Requires a modification of the ApiGateway.
+    // See https://github.com/moleculerjs/moleculer-web/issues/335
+    catchAll: true
   };
 }
 
