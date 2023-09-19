@@ -1,5 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
-const { getContainerFromUri, isRemoteUri, getSlugFromUri } = require('../utils');
+const { isRemoteUri, getSlugFromUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
 const modifyActions = [
@@ -53,41 +53,10 @@ const addRightsToNewUser = async (ctx, userUri) => {
   });
 };
 
-// List of containers with default anon read, so that we can bypass permissions check for the resources it contains
-// TODO invalidate this cache when default permissions are changed
-const containersWithDefaultAnonRead = [];
-
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
-  async started(broker) {
+  async started() {
     if (!baseUrl) throw new Error('The baseUrl config is missing for the WebACL middleware');
-    if (!podProvider) {
-      await broker.waitForServices(['ldp.container', 'triplestore']);
-      const containers = await broker.call('ldp.container.getAll');
-      for (const containerUri of containers) {
-        const authorizations = await broker.call('triplestore.query', {
-          query: `
-            PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            PREFIX acl: <http://www.w3.org/ns/auth/acl#>
-            PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-            SELECT ?auth
-            WHERE {
-              GRAPH <${graphName}> {
-                ?auth a acl:Authorization ;
-                  acl:default <${containerUri}> ;
-                  acl:agentClass foaf:Agent ;
-                  acl:mode acl:Read .
-              }
-            }
-          `,
-          webId: 'system'
-        });
-
-        if (authorizations.length > 0) {
-          containersWithDefaultAnonRead.push(containerUri);
-        }
-      }
-    }
   },
   localAction: (next, action) => {
     if (action.name === 'ldp.resource.get') {
@@ -120,11 +89,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         // If the logged user is fetching is own POD, bypass ACL check
         // End with a trailing slash, otherwise "bob" will have access to the pod of "bobby" !
         if (podProvider && resourceUri.startsWith(`${webId}/`)) {
-          return bypass();
-        }
-
-        const containerUri = getContainerFromUri(resourceUri);
-        if (containersWithDefaultAnonRead.includes(containerUri)) {
           return bypass();
         }
 
