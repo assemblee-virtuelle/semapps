@@ -29,7 +29,7 @@ module.exports = {
       //   ? { ...this.settings.defaultOptions, ...containerOptions }
       //   : this.settings.defaultOptions;
 
-      const blankNodesQuery = buildBlankNodesQuery();
+      const blankNodesQuery = buildBlankNodesQuery(4);
 
       let result = await ctx.call('triplestore.query', {
         query: `

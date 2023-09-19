@@ -1,4 +1,5 @@
 const { MoleculerError } = require('moleculer').Errors;
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 module.exports = {
   visibility: 'public',
@@ -29,6 +30,21 @@ module.exports = {
   async handler(ctx) {
     let { resource, containerUri, slug, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+
+    // Adds the default context, if it is missing
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      const { jsonContext } = await ctx.call('ldp.registry.getByUri', { containerUri });
+      if (jsonContext) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
+      } else {
+        this.logger.warn(
+          `JSON-LD context was missing when posting to ${containerUri} but no default context was found on LDP registry`
+        );
+      }
+    }
 
     const [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
     const isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');

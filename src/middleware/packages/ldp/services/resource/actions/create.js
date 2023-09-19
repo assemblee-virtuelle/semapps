@@ -32,11 +32,17 @@ module.exports = {
     }
 
     // Adds the default context, if it is missing
-    if (jsonContext && contentType === MIME_TYPES.JSON && !resource['@context']) {
-      resource = {
-        '@context': jsonContext,
-        ...resource
-      };
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      if (jsonContext) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
+      } else {
+        this.logger.warn(
+          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`
+        );
+      }
     }
 
     if (contentType !== MIME_TYPES.JSON && !resource.body)
@@ -68,6 +74,7 @@ module.exports = {
       webId
     });
 
+    // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {

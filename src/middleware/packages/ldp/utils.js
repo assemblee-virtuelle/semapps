@@ -25,6 +25,7 @@ const isMirror = (resourceUri, baseUrl) => {
 };
 
 const buildBlankNodesQuery = depth => {
+  if (depth === undefined) throw new Error('Depth should be defined');
   let construct = '';
   let where = '';
   if (depth > 0) {
