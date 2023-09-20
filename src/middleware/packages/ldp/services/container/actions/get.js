@@ -5,7 +5,7 @@ const {
   buildBlankNodesQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
 } = require('../../../utils');
 
 module.exports = {
@@ -15,10 +15,10 @@ module.exports = {
     webId: { type: 'string', optional: true },
     accept: { type: 'string', optional: true },
     filters: { type: 'object', optional: true },
-    jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true }
+    jsonContext: { type: 'multi', rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }], optional: true },
   },
   cache: {
-    keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId']
+    keys: ['containerUri', 'accept', 'filters', 'jsonContext', 'webId', '#webId'],
   },
   async handler(ctx) {
     const { containerUri, filters } = ctx.params;
@@ -27,7 +27,7 @@ module.exports = {
 
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { containerUri })),
-      ...ctx.params
+      ...ctx.params,
     };
     const filtersQuery = buildFiltersQuery(filters);
 
@@ -56,7 +56,7 @@ module.exports = {
           }
         `,
         accept,
-        webId
+        webId,
       });
 
       // Request each resources
@@ -76,9 +76,8 @@ module.exports = {
             const resource = await ctx.call('ldp.resource.get', {
               resourceUri,
               webId,
-              forceSemantic: true,
               // We pass the following parameters only if they are explicit
-              ...explicitParams
+              ...explicitParams,
             });
 
             // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
@@ -104,45 +103,46 @@ module.exports = {
           '@type': ['http://www.w3.org/ns/ldp#Container', 'http://www.w3.org/ns/ldp#BasicContainer'],
           'http://purl.org/dc/terms/title': result.title,
           'http://purl.org/dc/terms/description': result.description,
-          'http://www.w3.org/ns/ldp#contains': resources
+          'http://www.w3.org/ns/ldp#contains': resources,
         },
-        context: jsonContext || getPrefixJSON(this.settings.ontologies)
+        context: jsonContext || getPrefixJSON(this.settings.ontologies),
       });
 
       // If the ldp:contains is a single object, wrap it in an array for easier handling on the front side
-      const ldpContainsKey = Object.keys(result).find(key =>
-        ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key)
+      const ldpContainsKey = Object.keys(result).find((key) =>
+        ['http://www.w3.org/ns/ldp#contains', 'ldp:contains', 'contains'].includes(key),
       );
       if (ldpContainsKey && !Array.isArray(result[ldpContainsKey])) {
         result[ldpContainsKey] = [result[ldpContainsKey]];
       }
 
       return result;
-    }
-    const blankNodesQuery = buildBlankNodesQuery();
+    } else {
+      const blankNodesQuery = buildBlankNodesQuery(4);
 
-    return await ctx.call('triplestore.query', {
-      query: `
-          ${getPrefixRdf(this.settings.ontologies)}
-          CONSTRUCT  {
-            <${containerUri}>
-              a ?containerType ;
-              ldp:contains ?s1 .
-            ?s1 ?p1 ?o1 .
-            ${blankNodesQuery.construct}
-          }
-          WHERE {
-            <${containerUri}> a ldp:Container, ?containerType .
-            OPTIONAL {
-              <${containerUri}> ldp:contains ?s1 .
+      return await ctx.call('triplestore.query', {
+        query: `
+            ${getPrefixRdf(this.settings.ontologies)}
+            CONSTRUCT  {
+              <${containerUri}>
+                a ?containerType ;
+                ldp:contains ?s1 .
               ?s1 ?p1 ?o1 .
-              ${blankNodesQuery.where}
-              ${filtersQuery.where}
+              ${blankNodesQuery.construct}
             }
-          }
-        `,
-      accept,
-      webId
-    });
-  }
+            WHERE {
+              <${containerUri}> a ldp:Container, ?containerType .
+              OPTIONAL {
+                <${containerUri}> ldp:contains ?s1 .
+                ?s1 ?p1 ?o1 .
+                ${blankNodesQuery.where}
+                ${filtersQuery.where}
+              }
+            }
+          `,
+        accept,
+        webId,
+      });
+    }
+  },
 };

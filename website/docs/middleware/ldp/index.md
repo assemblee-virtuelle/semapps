@@ -99,18 +99,15 @@ The following options can be set for each container, or they can be set in the `
 
 ## API routes
 
-These routes are automatically added to the `ApiGateway` service.
+These catch-all routes are automatically added to the `ApiGateway` service.
 
-| Route                            | Action called          |
-| -------------------------------- | ---------------------- |
-| `GET /<container>`               | `ldp.container.get`    |
-| `POST /<container>`              | `ldp.container.post`   |
-| `PATCH /<container>`             | `ldp.container.patch`  |
-| `DELETE /<container>`            | `ldp.container.delete` |
-| `GET /<container>/<resource>`    | `ldp.resource.get`     |
-| `PATCH /<container>/<resource>`  | `ldp.resource.patch`   |
-| `PUT /<container>/<resource>`    | `ldp.resource.put`     |
-| `DELETE /<container>/<resource>` | `ldp.resource.delete`  |
+| Method     | LDP resource          | LDP container          | ActivityStreams collection                |
+| ---------- | --------------------- | ---------------------- | ----------------------------------------- |
+| `GET *`    | `ldp.resource.get`    | `ldp.container.get`    | `activitypub.collection.get`              |
+| `POST *`   | `ldp.resource.post`   | `ldp.container.post`   | (If defined by ControlledCollectionMixin) |
+| `PUT *`    | `ldp.resource.put`    | `ldp.container.put`    | -                                         |
+| `PATCH *`  | `ldp.resource.patch`  | -                      | -                                         |
+| `DELETE *` | `ldp.resource.delete` | `ldp.container.delete` | -                                         |
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.
 

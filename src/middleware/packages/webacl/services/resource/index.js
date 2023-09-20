@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const { MoleculerError } = require('moleculer').Errors;
 const addRights = require('./actions/addRights');
 const awaitReadRight = require('./actions/awaitReadRight');
 const getRights = require('./actions/getRights');
@@ -9,7 +10,6 @@ const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
 const deleteAllRights = require('./actions/deleteAllRights');
 const refreshContainersRights = require('./actions/refreshContainersRights');
 const removeRights = require('./actions/removeRights');
-const { MoleculerError } = require('moleculer').Errors;
 const {
   getAuthorizationNode,
   getAclUriFromResourceUri,
@@ -20,17 +20,17 @@ const {
   FULL_MODE_URI,
   FULL_TYPE_URI,
   ACL_NS,
-  getDatasetFromUri
+  getDatasetFromUri,
 } = require('../../utils');
 
-const filterAclsOnlyAgent = acl => agentPredicates.includes(acl.p.value);
+const filterAclsOnlyAgent = (acl) => agentPredicates.includes(acl.p.value);
 
 module.exports = {
   name: 'webacl.resource',
   settings: {
     baseUrl: null,
     graphName: null,
-    podProvider: false
+    podProvider: false,
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
@@ -48,7 +48,7 @@ module.exports = {
     api_addRights: addRights.api,
     api_hasRights: hasRights.api,
     api_getRights: getRights.api,
-    api_setRights: setRights.api
+    api_setRights: setRights.api,
   },
   hooks: {
     before: {
@@ -56,8 +56,8 @@ module.exports = {
         if (this.settings.podProvider && !ctx.meta.dataset && ctx.params.resourceUri) {
           ctx.meta.dataset = getDatasetFromUri(ctx.params.resourceUri);
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     // will return true if it is a container, false otherwise
@@ -81,7 +81,7 @@ module.exports = {
           throw new MoleculerError(
             `Cannot get permissions of non-existing container or resource ${resourceUri} (webId ${ctx.meta.webId} / dataset ${ctx.meta.dataset})`,
             404,
-            'NOT_FOUND'
+            'NOT_FOUND',
           );
         }
         return false;
@@ -106,8 +106,8 @@ module.exports = {
       }
 
       return document
-        .filter(a => filterAclsOnlyAgent(a))
-        .map(a => {
+        .filter((a) => filterAclsOnlyAgent(a))
+        .map((a) => {
           return { auth: a.auth.value, p: a.p.value, o: a.o.value };
         });
     },
@@ -127,6 +127,6 @@ module.exports = {
       cmd += `<${auth}> <${FULL_MODE_URI}> <${ACL_NS}${mode}>.\n`;
       cmd += `<${auth}> <${defaultAcl ? FULL_DEFAULT_URI : FULL_ACCESSTO_URI}> <${resUrl}>.\n`;
       return cmd;
-    }
-  }
+    },
+  },
 };

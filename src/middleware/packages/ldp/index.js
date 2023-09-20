@@ -5,10 +5,9 @@ module.exports = {
   LdpContainerService: require('./services/container'),
   LdpRegistryService: require('./services/registry'),
   LdpResourceService: require('./services/resource'),
-  ResourcesWatcherBot: require('./bots/resources-watcher'),
   ControlledContainerMixin: require('./mixins/controlled-container'),
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   LdpAdapter: require('./adapter'),
-  ...utils
+  ...utils,
 };

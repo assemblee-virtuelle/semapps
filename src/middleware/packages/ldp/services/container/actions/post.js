@@ -5,56 +5,60 @@ module.exports = {
   visibility: 'public',
   params: {
     containerUri: {
-      type: 'string'
+      type: 'string',
     },
     slug: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     resource: {
       type: 'object',
-      optional: true
+      optional: true,
     },
     file: {
       type: 'object',
-      optional: true
+      optional: true,
     },
     contentType: {
-      type: 'string'
+      type: 'string',
     },
     webId: {
       type: 'string',
-      optional: true
-    }
+      optional: true,
+    },
   },
   async handler(ctx) {
     let { resource, containerUri, slug, contentType, file } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
+    let isContainer = false;
+    let expandedResource;
 
-    // Adds the default context, if it is missing
-    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
-      const { jsonContext } = await ctx.call('ldp.registry.getByUri', { containerUri });
-      if (jsonContext) {
-        resource = {
-          '@context': jsonContext,
-          ...resource
-        };
-      } else {
-        this.logger.warn(
-          `JSON-LD context was missing when posting to ${containerUri} but no default context was found on LDP registry`
-        );
+    if (!file) {
+      // Adds the default context, if it is missing
+      if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+        const { jsonContext } = await ctx.call('ldp.registry.getByUri', { containerUri });
+        if (jsonContext) {
+          resource = {
+            '@context': jsonContext,
+            ...resource,
+          };
+        } else {
+          this.logger.warn(
+            `JSON-LD context was missing when posting to ${containerUri} but no default context was found on LDP registry`,
+          );
+        }
       }
-    }
 
-    const [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
-    const isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');
+      [expandedResource] = await ctx.call('jsonld.expand', { input: resource });
+      isContainer = expandedResource['@type'].includes('http://www.w3.org/ns/ldp#Container');
 
-    if (isContainer) {
-      if (
-        expandedResource['@type'].includes('http://www.w3.org/ns/ldp#DirectContainer') ||
-        expandedResource['@type'].includes('http://www.w3.org/ns/ldp#IndirectContainer')
-      ) {
-        throw new MoleculerError('Only LDP Basic Containers can be created on this server');
+      if (isContainer) {
+        if (
+          expandedResource['@type'].includes('http://www.w3.org/ns/ldp#DirectContainer') ||
+          expandedResource['@type'].includes('http://www.w3.org/ns/ldp#IndirectContainer')
+        ) {
+          throw new MoleculerError('Only LDP Basic Containers can be created on this server');
+        }
       }
     }
 
@@ -70,7 +74,7 @@ module.exports = {
     // TODO Add temporary ACLs to the resource so that it can be created, then link it to the container ?
     await ctx.call('triplestore.insert', {
       resource: `<${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}>`,
-      webId
+      webId,
     });
 
     try {
@@ -83,24 +87,24 @@ module.exports = {
           containerUri: resourceUri,
           title: expandedResource['http://purl.org/dc/terms/title']?.[0]['@value'],
           description: expandedResource['http://purl.org/dc/terms/description']?.[0]['@value'],
-          webId
+          webId,
         });
       } else {
         const { controlledActions } = await ctx.call('ldp.registry.getByUri', { containerUri });
         await ctx.call(controlledActions.create || 'ldp.resource.create', {
           resource: {
             '@id': resourceUri,
-            ...resource
+            ...resource,
           },
           contentType,
-          webId
+          webId,
         });
       }
     } catch (e) {
       // If there was an error inserting the resource, detach it from the container
       await ctx.call('triplestore.update', {
         query: `DELETE WHERE { <${containerUri}> <http://www.w3.org/ns/ldp#contains> <${resourceUri}> }`,
-        webId
+        webId,
       });
 
       // Re-throw the error so that it's displayed by the API function
@@ -112,11 +116,11 @@ module.exports = {
       {
         containerUri,
         resourceUri,
-        fromContainerPost: true
+        fromContainerPost: true,
       },
-      { meta: { webId: null, dataset: null } }
+      { meta: { webId: null, dataset: null } },
     );
 
     return resourceUri;
-  }
+  },
 };

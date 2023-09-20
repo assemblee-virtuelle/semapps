@@ -1,3 +1,6 @@
+const fs = require('fs');
+const { MoleculerError } = require('moleculer').Errors;
+
 module.exports = async function get(ctx) {
   try {
     const { username, slugParts } = ctx.params;
@@ -12,12 +15,12 @@ module.exports = async function get(ctx) {
 
       const { accept, controlledActions } = {
         ...(await ctx.call('ldp.registry.getByUri', { containerUri: uri })),
-        ...ctx.meta.headers
+        ...ctx.meta.headers,
       };
 
       const res = await ctx.call(controlledActions?.list || 'ldp.container.get', {
         containerUri: uri,
-        accept
+        accept,
       });
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return res;
@@ -30,7 +33,7 @@ module.exports = async function get(ctx) {
 
       const res = await ctx.call(controlledActions?.get || 'activitypub.collection.get', {
         collectionUri: uri,
-        page: ctx.params.page
+        page: ctx.params.page,
       });
       ctx.meta.$responseType = 'application/ld+json';
       return res;
@@ -40,7 +43,7 @@ module.exports = async function get(ctx) {
        */
       const { accept, controlledActions, preferredView } = {
         ...(await ctx.call('ldp.registry.getByUri', { resourceUri: uri })),
-        ...ctx.meta.headers
+        ...ctx.meta.headers,
       };
 
       if (ctx.meta.accepts && ctx.meta.accepts.includes('text/html') && this.settings.preferredViewForResource) {
@@ -52,19 +55,35 @@ module.exports = async function get(ctx) {
             ctx.meta.$statusCode = 302;
             ctx.meta.$location = redirect;
             ctx.meta.$responseHeaders = {
-              'Content-Length': 0
+              'Content-Length': 0,
             };
             return;
           }
         }
       }
 
-      const res = await ctx.call(controlledActions.get || 'ldp.resource.get', {
+      const resource = await ctx.call(controlledActions.get || 'ldp.resource.get', {
         resourceUri: uri,
-        accept
+        accept,
       });
-      ctx.meta.$responseType = ctx.meta.$responseType || accept;
-      return res;
+
+      if (types.includes('http://semapps.org/ns/core#File')) {
+        try {
+          const file = fs.readFileSync(resource['semapps:localPath']);
+          ctx.meta.$responseType = resource['semapps:mimeType'];
+          // Since files are currently immutable, we set a maximum browser cache age
+          // We do that after the file is read, otherwise the error 404 will be cached by the browser
+          ctx.meta.$responseHeaders = {
+            'Cache-Control': 'public, max-age=31536000',
+          };
+          return file;
+        } catch (e) {
+          throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
+        }
+      } else {
+        ctx.meta.$responseType = ctx.meta.$responseType || accept;
+        return resource;
+      }
     }
   } catch (e) {
     if (e.code !== 404 && e.code !== 403) console.error(e);

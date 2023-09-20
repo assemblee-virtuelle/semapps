@@ -1,13 +1,6 @@
-const fs = require('fs');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
-const {
-  getPrefixRdf,
-  getPrefixJSON,
-  getContainerFromUri,
-  getSlugFromUri,
-  buildBlankNodesQuery
-} = require('../../../utils');
+const { getPrefixRdf, getPrefixJSON, buildBlankNodesQuery } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -18,24 +11,19 @@ module.exports = {
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
-      optional: true
+      optional: true,
     },
-    forceSemantic: { type: 'boolean', optional: true },
-    aclVerified: { type: 'boolean', optional: true }
+    aclVerified: { type: 'boolean', optional: true },
   },
   cache: {
     enabled(ctx) {
       // Do not cache remote resources as we have no mecanism to clear this cache
-      if (!ctx.params.resourceUri.startsWith(this.settings.baseUrl)) return false;
-      // Check if container URI is a file, disable cache in this case
-      const containerUri = getContainerFromUri(ctx.params.resourceUri);
-      const containerSlug = getSlugFromUri(containerUri);
-      return containerSlug !== 'files';
+      return !this.isRemoteUri(ctx.params.resourceUri, ctx.meta.dataset);
     },
-    keys: ['resourceUri', 'accept', 'jsonContext', 'forceSemantic']
+    keys: ['resourceUri', 'accept', 'jsonContext'],
   },
   async handler(ctx) {
-    const { resourceUri, forceSemantic, aclVerified } = ctx.params;
+    const { resourceUri, aclVerified } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset)) {
@@ -44,7 +32,7 @@ module.exports = {
 
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
+      ...ctx.params,
     };
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
@@ -69,7 +57,7 @@ module.exports = {
         // Increase performance by using the 'system' bypass if ACL have already been verified
         // TODO simply set meta.webId to "system", it will be taken into account in the triplestore.query action
         // The problem is we need to know the real webid for the permissions, but we can remember it in the WebACL middleware
-        webId: aclVerified ? 'system' : webId
+        webId: aclVerified ? 'system' : webId,
       });
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
@@ -78,30 +66,14 @@ module.exports = {
           input: result,
           frame: {
             '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-            '@id': resourceUri
-          }
+            '@id': resourceUri,
+          },
         });
       }
 
-      if ((result['@type'] === 'semapps:File' || result.type === 'semapps:File') && !forceSemantic) {
-        try {
-          const file = fs.readFileSync(result['semapps:localPath']);
-          // Overwrite response type set by the api action
-          ctx.meta.$responseType = result['semapps:mimeType'];
-          // Since files are currently immutable, we set a maximum browser cache age
-          // We do that after the file is read, otherwise the error 404 will be cached by the browser
-          ctx.meta.$responseHeaders = {
-            'Cache-Control': 'public, max-age=31536000'
-          };
-          return file;
-        } catch (e) {
-          throw new MoleculerError('File Not found', 404, 'NOT_FOUND');
-        }
-      } else {
-        return result;
-      }
+      return result;
     } else {
       throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
     }
-  }
+  },
 };

@@ -14,7 +14,7 @@ module.exports = {
     excludeFromMirror: { type: 'boolean', optional: true },
     newResourcesPermissions: { type: 'multi', rules: [{ type: 'object' }, { type: 'function' }], optional: true },
     controlledActions: { type: 'object', optional: true },
-    readOnly: { type: 'boolean', optional: true }
+    readOnly: { type: 'boolean', optional: true },
   },
   async handler(ctx) {
     let { path, fullPath, name, podsContainer, ...options } = ctx.params;
@@ -22,7 +22,7 @@ module.exports = {
     if (!name) name = path;
 
     // Ignore undefined options
-    Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
+    Object.keys(options).forEach((key) => (options[key] === undefined || options[key] === null) && delete options[key]);
 
     if (this.settings.podProvider && podsContainer === true) {
       // TODO put this on the pod service ??
@@ -35,7 +35,7 @@ module.exports = {
         if (!account.podUri) throw new Error(`The podUri is not defined for account ${account.username}`);
         ctx.meta.dataset = account.username;
         const containerUri = urlJoin(account.podUri, path);
-        await this.createAndAttachContainer(ctx, containerUri, path);
+        await this.createAndAttachContainer(ctx, containerUri, path, options);
       }
 
       // TODO see if we can base ourselves on a general config for the POD data path
@@ -43,7 +43,7 @@ module.exports = {
     } else {
       // Ensure the container has been created
       const containerUri = urlJoin(this.settings.baseUrl, path);
-      await this.createAndAttachContainer(ctx, containerUri, path);
+      await this.createAndAttachContainer(ctx, containerUri, path, options);
     }
 
     const pathRegex = pathToRegexp(fullPath);
@@ -54,7 +54,7 @@ module.exports = {
     ctx.emit(
       'ldp.registry.registered',
       { container: this.registeredContainers[name] },
-      { meta: { webId: null, dataset: null } }
+      { meta: { webId: null, dataset: null } },
     );
-  }
+  },
 };

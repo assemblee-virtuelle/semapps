@@ -43,5 +43,10 @@
     "prefix": "dc",
     "owl": "",
     "url": "http://purl.org/dc/terms/"
+  },
+  {
+    "prefix": "semapps",
+    "owl": "",
+    "url": "http://semapps.org/ns/core#"
   }
 ]

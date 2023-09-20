@@ -1,21 +1,25 @@
+const urlJoin = require('url-join');
+const path = require('path');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebIdService } = require('@semapps/webid');
-const path = require('path');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
+const ontologies = require('../ontologies.json');
+const { clearDataset } = require('../utils');
 
 jest.setTimeout(20000);
 const broker = new ServiceBroker({
   logger: {
     type: 'Console',
     options: {
-      level: 'error'
-    }
-  }
+      level: 'warn',
+    },
+  },
 });
 
 beforeAll(async () => {
+  await clearDataset(CONFIG.MAIN_DATASET);
+
   await broker.createService(CoreService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
@@ -24,7 +28,7 @@ beforeAll(async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET
+        mainDataset: CONFIG.MAIN_DATASET,
       },
       ontologies,
       containers: ['/users'],
@@ -32,19 +36,16 @@ beforeAll(async () => {
       mirror: false,
       void: false,
       webacl: false,
-      webfinger: false
-    }
-  });
-  broker.createService(WebIdService, {
-    settings: {
-      usersContainer: `${CONFIG.HOME_URL}users/`
-    }
+      webfinger: false,
+    },
   });
 
-  // Drop all existing triples, then restart broker so that default containers are recreated
-  await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.stop();
+  broker.createService(WebIdService, {
+    settings: {
+      usersContainer: urlJoin(CONFIG.HOME_URL, 'users'),
+    },
+  });
+
   await broker.start();
 });
 
@@ -59,10 +60,11 @@ describe('WebId user creation', () => {
       nick: 'my-nick',
       name: 'jon',
       familyName: 'do',
-      homepage: 'http://example.org/myPage'
+      homepage: 'http://example.org/myPage',
     };
 
     const webId = await broker.call('webid.create', profileData);
+    console.log('after create', webId);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

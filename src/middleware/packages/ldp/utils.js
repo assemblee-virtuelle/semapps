@@ -11,11 +11,7 @@ const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 function createFragmentURL(baseUrl, serverUrl) {
   let fragment = 'me';
   const res = serverUrl.match(regexProtocolAndHostAndPort);
-  if (res)
-    fragment = res[2]
-      .replace('-', '_')
-      .replace('.', '_')
-      .replace(':', '_');
+  if (res) fragment = res[2].replace('-', '_').replace('.', '_').replace(':', '_');
 
   return urlJoin(baseUrl, `#${fragment}`);
 }
@@ -24,7 +20,7 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-const buildBlankNodesQuery = depth => {
+const buildBlankNodesQuery = (depth) => {
   if (depth === undefined) throw new Error('Depth should be defined');
   let construct = '';
   let where = '';
@@ -45,15 +41,15 @@ const buildBlankNodesQuery = depth => {
   return { construct, where };
 };
 
-const buildFiltersQuery = filters => {
+const buildFiltersQuery = (filters) => {
   let where = '';
   if (filters) {
     Object.keys(filters).forEach((predicate, i) => {
       if (filters[predicate]) {
         where += `
           FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
-          filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-        } } .
+            filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+          } } .
         `;
       } else {
         where += `
@@ -65,20 +61,20 @@ const buildFiltersQuery = filters => {
   return { where };
 };
 
-const getPrefixRdf = ontologies => {
-  return ontologies.map(ontology => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
+const getPrefixRdf = (ontologies) => {
+  return ontologies.map((ontology) => `PREFIX ${ontology.prefix}: <${ontology.url}>`).join('\n');
 };
 
-const getPrefixJSON = ontologies => {
+const getPrefixJSON = (ontologies) => {
   const pattern = {};
-  ontologies.forEach(ontology => (pattern[ontology.prefix] = ontology.url));
+  ontologies.forEach((ontology) => (pattern[ontology.prefix] = ontology.url));
   return pattern;
 };
 
 // Replace a full URI with a prefix
 const usePrefix = (uri, ontologies) => {
   if (!uri.startsWith('http')) return uri; // If it is already prefixed
-  const ontology = ontologies.find(o => uri.startsWith(o.url));
+  const ontology = ontologies.find((o) => uri.startsWith(o.url));
   return uri.replace(ontology.url, `${ontology.prefix}:`);
 };
 
@@ -86,16 +82,19 @@ const usePrefix = (uri, ontologies) => {
 const useFullURI = (prefixedUri, ontologies) => {
   if (prefixedUri.startsWith('http')) return prefixedUri; // If it is already a full URI
   const [prefix] = prefixedUri.split(':');
-  const ontology = ontologies.find(o => o.prefix === prefix);
+  const ontology = ontologies.find((o) => o.prefix === prefix);
   return prefixedUri.replace(`${ontology.prefix}:`, ontology.url);
 };
 
-const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
+const getSlugFromUri = (uri) => uri.match(new RegExp(`.*/(.*)`))[1];
 
-const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+/** @deprecated Use the ldp.resource.getContainers action instead */
+const getContainerFromUri = (uri) => uri.match(new RegExp(`(.*)/.*`))[1];
+
+const getParentContainerUri = (uri) => uri.match(new RegExp(`(.*)/.*`))[1];
 
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
-const getDatasetFromUri = uri => {
+const getDatasetFromUri = (uri) => {
   const path = new URL(uri).pathname;
   const parts = path.split('/');
   if (parts.length > 1) return parts[1];
@@ -106,11 +105,11 @@ const hasType = (resource, type) => {
   return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
 };
 
-const isContainer = resource => hasType(resource, 'ldp:Container');
+const isContainer = (resource) => hasType(resource, 'ldp:Container');
 
-const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? value : [value]);
+const defaultToArray = (value) => (!value ? undefined : Array.isArray(value) ? value : [value]);
 
-const delay = t => new Promise(resolve => setTimeout(resolve, t));
+const delay = (t) => new Promise((resolve) => setTimeout(resolve, t));
 
 module.exports = {
   buildBlankNodesQuery,
@@ -121,6 +120,7 @@ module.exports = {
   useFullURI,
   getSlugFromUri,
   getContainerFromUri,
+  getParentContainerUri,
   getDatasetFromUri,
   hasType,
   isContainer,
@@ -130,5 +130,5 @@ module.exports = {
   isMirror,
   createFragmentURL,
   regexPrefix,
-  regexProtocolAndHostAndPort
+  regexProtocolAndHostAndPort,
 };
