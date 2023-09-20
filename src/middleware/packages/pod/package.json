@@ -6,6 +6,7 @@
   "author": "Virtual Assembly",
   "dependencies": {
     "@semapps/activitypub": "0.5.1",
+    "@semapps/middlewares": "0.5.1",
     "url-join": "^4.0.1"
   },
   "publishConfig": {

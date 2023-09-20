@@ -105,8 +105,8 @@ These catch-all routes are automatically added to the `ApiGateway` service.
 | ---------- | --------------------- | ---------------------- | ----------------------------------------- |
 | `GET *`    | `ldp.resource.get`    | `ldp.container.get`    | `activitypub.collection.get`              |
 | `POST *`   | `ldp.resource.post`   | `ldp.container.post`   | (If defined by ControlledCollectionMixin) |
-| `PUT *`    | `ldp.resource.put`    | `ldp.container.put`    | -                                         |
-| `PATCH *`  | `ldp.resource.patch`  | -                      | -                                         |
+| `PUT *`    | `ldp.resource.put`    | -                      | -                                         |
+| `PATCH *`  | `ldp.resource.patch`  | `ldp.container.patch`  | -                                         |
 | `DELETE *` | `ldp.resource.delete` | `ldp.container.delete` | -                                         |
 
 > Note: If the `readOnly` container option is set (see above), only `GET` routes are added.

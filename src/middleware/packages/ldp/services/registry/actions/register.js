@@ -1,7 +1,6 @@
 const urlJoin = require('url-join');
 const pathJoin = require('path').join;
 const { pathToRegexp } = require('path-to-regexp');
-const getPodsRoute = require('../../../routes/getPodsRoute');
 
 module.exports = {
   visibility: 'public',
@@ -24,10 +23,8 @@ module.exports = {
     // Ignore undefined options
     Object.keys(options).forEach((key) => (options[key] === undefined || options[key] === null) && delete options[key]);
 
-    if (this.settings.podProvider && podsContainer === true) {
-      // TODO put this on the pod service ??
-      name = 'actors';
-      await this.broker.call('api.addRoute', { route: getPodsRoute() });
+    if (podsContainer === true) {
+      // Skip container creation for the root PODs container (it is not a real LDP container since no dataset have these data)
     } else if (this.settings.podProvider) {
       // 1. Ensure the container has been created for each user
       const accounts = await ctx.call('auth.account.find');
