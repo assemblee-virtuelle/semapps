@@ -135,8 +135,8 @@ module.exports = {
               OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
                 ?s1 ?p1 ?o1 .
-                ${blankNodesQuery.where}
                 ${filtersQuery.where}
+                ${blankNodesQuery.where}
               }
             }
           `,
