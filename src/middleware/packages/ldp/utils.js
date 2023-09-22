@@ -21,22 +21,25 @@ const isMirror = (resourceUri, baseUrl) => {
 };
 
 const buildBlankNodesQuery = (depth) => {
-  if (depth === undefined) throw new Error('Depth should be defined');
-  let construct = '';
+  const BASE_QUERY = '?s1 ?p1 ?o1 .';
+  let construct = BASE_QUERY;
   let where = '';
   if (depth > 0) {
-    for (let i = depth; i >= 1; i--) {
-      construct += `
-        ?o${i} ?p${i + 1} ?o${i + 1} .
-      `;
-      where = `
-        OPTIONAL {
-          FILTER((isBLANK(?o${i}))) .
-          ?o${i} ?p${i + 1} ?o${i + 1} .
-          ${where}
-        }
-      `;
+    let whereQueries = [];
+    whereQueries.push([BASE_QUERY]);
+    for (let i = 1; i <= depth; i++) {
+      construct += `\r\n?o${i} ?p${i + 1} ?o${i + 1} .`;
+      whereQueries.push([
+        ...whereQueries[whereQueries.length - 1],
+        `FILTER((isBLANK(?o${i}))) .`,
+        `?o${i} ?p${i + 1} ?o${i + 1} .`,
+      ]);
     }
+    where = `{\r\n${whereQueries.map((q1) => q1.join('\r\n')).join('\r\n} UNION {\r\n')}\r\n}`;
+  } else if (depth === 0) {
+    where = BASE_QUERY;
+  } else {
+    throw new Error('The depth of buildBlankNodesQuery should be 0 or more');
   }
   return { construct, where };
 };

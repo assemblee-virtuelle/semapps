@@ -64,7 +64,6 @@ describe('WebId user creation', () => {
     };
 
     const webId = await broker.call('webid.create', profileData);
-    console.log('after create', webId);
     expect(webId).toBe(`${CONFIG.HOME_URL}users/${profileData.nick}`);
   }, 20000);
 });

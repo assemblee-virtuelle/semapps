@@ -1,13 +1,13 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { MoleculerError } = require('moleculer').Errors;
-const { buildBlankNodesQuery, getPrefixRdf, getPrefixJSON, getDatasetFromUri } = require('../../../utils');
+const { buildBlankNodesQuery, getPrefixRdf, getPrefixJSON } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
-    webId: { type: 'string', optional: true }
+    webId: { type: 'string', optional: true },
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
@@ -15,7 +15,7 @@ module.exports = {
 
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
+      ...ctx.params,
     };
 
     const graphName = await this.actions.getGraph({ resourceUri, webId }, { parentCtx: ctx });
@@ -35,19 +35,17 @@ module.exports = {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
-            ?s1 ?p1 ?o1 .
             ${blankNodesQuery.construct}
           }
           WHERE {
             ${graphName ? `GRAPH <${graphName}> {` : ''}
               BIND(<${resourceUri}> AS ?s1) .
-              ?s1 ?p1 ?o1 .
               ${blankNodesQuery.where}
             ${graphName ? '}' : ''}
           }
         `,
         accept,
-        webId
+        webId,
       });
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
@@ -56,13 +54,13 @@ module.exports = {
           input: result,
           frame: {
             '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-            '@id': resourceUri
-          }
+            '@id': resourceUri,
+          },
         });
       }
 
       return result;
     }
     throw new MoleculerError(`Resource Not found ${resourceUri} in dataset ${ctx.meta.dataset}`, 404, 'NOT_FOUND');
-  }
+  },
 };

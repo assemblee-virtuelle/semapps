@@ -44,12 +44,10 @@ module.exports = {
         query: `
           ${getPrefixRdf(this.settings.ontologies)}
           CONSTRUCT  {
-            ?s1 ?p1 ?o1 .
             ${blankNodesQuery.construct}
           }
           WHERE {
             BIND(<${resourceUri}> AS ?s1) .
-            ?s1 ?p1 ?o1 .
             ${blankNodesQuery.where}
           }
         `,

@@ -127,16 +127,14 @@ module.exports = {
               <${containerUri}>
                 a ?containerType ;
                 ldp:contains ?s1 .
-              ?s1 ?p1 ?o1 .
               ${blankNodesQuery.construct}
             }
             WHERE {
               <${containerUri}> a ldp:Container, ?containerType .
               OPTIONAL {
                 <${containerUri}> ldp:contains ?s1 .
-                ?s1 ?p1 ?o1 .
-                ${filtersQuery.where}
                 ${blankNodesQuery.where}
+                ${filtersQuery.where}
               }
             }
           `,
