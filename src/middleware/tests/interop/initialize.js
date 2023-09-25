@@ -1,5 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
@@ -14,26 +15,24 @@ const { clearDataset } = require('../utils');
 const containers = [
   {
     path: '/resources',
-    acceptedTypes: ['pair:Resource']
+    acceptedTypes: ['pair:Resource'],
   },
   {
     path: '/protected-resources',
     acceptedTypes: ['pair:Resource'],
     permissions: {},
-    newResourcesPermissions: {}
+    newResourcesPermissions: {},
   },
   {
     path: '/actors',
     acceptedTypes: [ACTOR_TYPES.PERSON],
     excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
   },
   {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
     excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
-  }
+  },
 ];
 
 const initialize = async (port, mainDataset, accountsDataset, serverToMirror) => {
@@ -52,9 +51,9 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     logger: {
       type: 'Console',
       options: {
-        level: 'warn'
-      }
-    }
+        level: 'warn',
+      },
+    },
   });
 
   await broker.createService(CoreService, {
@@ -65,14 +64,14 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
       },
       containers,
       api: {
-        port
+        port,
       },
-      mirror: serverToMirror ? { servers: [serverToMirror] } : true
-    }
+      mirror: serverToMirror ? { servers: [serverToMirror] } : true,
+    },
   });
 
   await broker.createService(RelayService);
@@ -80,8 +79,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
   if (serverToMirror) {
     await broker.createService(MirrorService, {
       settings: {
-        servers: [serverToMirror]
-      }
+        servers: [serverToMirror],
+      },
     });
   }
 
@@ -89,14 +88,14 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset
-    }
+      accountsDataset,
+    },
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${baseUrl}actors/`
-    }
+      usersContainer: urlJoin(baseUrl, 'actors'),
+    },
   });
 
   await broker.createService(InferenceService, {
@@ -104,8 +103,8 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
       baseUrl,
       acceptFromRemoteServers: true,
       offerToRemoteServers: true,
-      ontologies: defaultOntologies
-    }
+      ontologies: defaultOntologies,
+    },
   });
 
   await broker.start();
@@ -117,9 +116,9 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     additionalRights: {
       anon: {
         read: true,
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   await broker.call('webacl.resource.addRights', {
@@ -128,9 +127,9 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
     additionalRights: {
       anon: {
         read: true,
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   return broker;

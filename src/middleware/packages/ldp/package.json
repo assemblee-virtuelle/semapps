@@ -9,7 +9,6 @@
     "@semapps/middlewares": "0.5.1",
     "@semapps/mime-types": "0.5.1",
     "@semapps/triplestore": "0.5.1",
-    "bson": "^4.0.4",
     "moleculer": "^0.14.17",
     "moleculer-schedule": "^0.2.3",
     "node-fetch": "^2.6.6",
@@ -19,7 +18,8 @@
     "sparqljs": "^3.5.2",
     "speakingurl": "^14.0.1",
     "streamify-string": "^1.0.1",
-    "url-join": "^4.0.1"
+    "url-join": "^4.0.1",
+    "uuid": "^9.0.1"
   },
   "publishConfig": {
     "access": "public"

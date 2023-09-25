@@ -1,5 +1,5 @@
 const { defaultToArray } = require('@semapps/ldp');
-const { ACTIVITY_TYPES } = require('../constants');
+const { MIME_TYPES } = require('@semapps/mime-types');
 
 /*
  * Match an activity against a pattern
@@ -10,15 +10,10 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
 
   // Check if we need to dereference the activity or object
   if (typeof activityOrObject === 'string') {
-    if (pattern.type && Object.values(ACTIVITY_TYPES).includes(pattern.type)) {
-      dereferencedActivityOrObject = await ctx.call('activitypub.activity.get', {
-        resourceUri: activityOrObject
-      });
-    } else {
-      dereferencedActivityOrObject = await ctx.call('activitypub.object.get', {
-        objectUri: activityOrObject
-      });
-    }
+    dereferencedActivityOrObject = await ctx.call('ldp.resource.get', {
+      resourceUri: activityOrObject,
+      accept: MIME_TYPES.JSON
+    });
   } else {
     // Copy the object to a new object
     dereferencedActivityOrObject = { ...activityOrObject };

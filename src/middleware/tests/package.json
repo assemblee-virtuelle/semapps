@@ -19,16 +19,13 @@
     "@semapps/webid": "0.5.1",
     "@semapps/webacl": "0.5.1",
     "dotenv-flow": "^3.1.0",
-    "express": "^4.17.1",
     "fs-extra": "^9.0.1",
     "moleculer": "^0.14.17",
-    "moleculer-db-adapter-mongo": "^0.4.7",
     "moleculer-web": "^0.10.0-beta1",
     "node-fetch": "^2.6.6",
     "rdf-data-model": "^1.0.0",
     "url-join": "^4.0.1",
-    "wait-for-expect": "^3.0.2",
-    "supertest": "^4.0.2"
+    "wait-for-expect": "^3.0.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.3",

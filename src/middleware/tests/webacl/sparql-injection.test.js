@@ -4,11 +4,10 @@ const initialize = require('./initialize');
 
 jest.setTimeout(20000);
 
-let expressMocked;
 let broker;
 
 beforeAll(async () => {
-  ({ broker, expressMocked } = await initialize());
+  broker = await initialize();
 });
 
 afterAll(async () => {
@@ -23,12 +22,12 @@ describe('pentest for the ACL groups API', () => {
 
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',
-        memberUri: 'http://localhost:3000/users/info1'
+        memberUri: 'http://localhost:3000/users/info1',
       });
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',
         memberUri:
-          'http://localhost:3000/users/info2> } };CLEAR ALL;INSERT DATA{  GRAPH <http://semapps.org/webacl> { <http://test/injection> <http://you/have/been/hackedby> <http://anon'
+          'http://localhost:3000/users/info2> } };CLEAR ALL;INSERT DATA{  GRAPH <http://semapps.org/webacl> { <http://test/injection> <http://you/have/been/hackedby> <http://anon',
       });
 
       try {
@@ -57,12 +56,12 @@ describe('pentest for the ACL groups API', () => {
 
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',
-        memberUri: 'http://localhost:3000/users/info1'
+        memberUri: 'http://localhost:3000/users/info1',
       });
       await broker.call('webacl.group.addMember', {
         groupSlug: 'mygroup1',
         memberUri:
-          'http://localhost:3000/users/info2\\x3C } };CLEAR ALL;INSERT DATA{  GRAPH <http://semapps.org/webacl> { <http://test/injection> <http://you/have/been/hackedby> <http://anon'
+          'http://localhost:3000/users/info2\\x3C } };CLEAR ALL;INSERT DATA{  GRAPH <http://semapps.org/webacl> { <http://test/injection> <http://you/have/been/hackedby> <http://anon',
       });
 
       try {

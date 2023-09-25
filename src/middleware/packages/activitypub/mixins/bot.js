@@ -8,15 +8,15 @@ const BotMixin = {
     actor: {
       uri: null,
       username: null,
-      name: null
-    }
+      name: null,
+    },
   },
   dependencies: [
     'activitypub',
     'activitypub.follow', // Ensure the /followers and /following collection are registered
     'auth.account',
     'ldp.container',
-    'ldp.registry'
+    'ldp.registry',
   ],
   async started() {
     // Ensure LDP sub-services have been started
@@ -28,19 +28,19 @@ const BotMixin = {
     }
 
     const actorExist = await this.broker.call('ldp.resource.exist', {
-      resourceUri: actorSettings.uri
+      resourceUri: actorSettings.uri,
     });
 
     if (!actorExist) {
-      console.log(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
+      this.logger.info(`BotService > Actor ${actorSettings.name} does not exist yet, creating it...`);
 
       const account = await this.broker.call(
         'auth.account.create',
         {
           username: actorSettings.username,
-          webId: actorSettings.uri
+          webId: actorSettings.uri,
         },
-        { meta: { isSystemCall: true } }
+        { meta: { isSystemCall: true } },
       );
 
       try {
@@ -51,10 +51,10 @@ const BotMixin = {
             '@context': 'https://www.w3.org/ns/activitystreams',
             type: ACTOR_TYPES.APPLICATION,
             preferredUsername: actorSettings.username,
-            name: actorSettings.name
+            name: actorSettings.name,
           },
           contentType: MIME_TYPES.JSON,
-          webId: 'system'
+          webId: 'system',
         });
       } catch (e) {
         // Delete account if resource creation failed, or it may cause problems when retrying
@@ -71,7 +71,7 @@ const BotMixin = {
   actions: {
     getUri() {
       return this.settings.actor.uri;
-    }
+    },
   },
   events: {
     'activitypub.inbox.received'(ctx) {
@@ -80,16 +80,16 @@ const BotMixin = {
           this.inboxReceived(ctx.params.activity);
         }
       }
-    }
+    },
   },
   methods: {
     async getFollowers() {
       const result = await this.broker.call('activitypub.follow.listFollowers', {
-        collectionUri: urlJoin(this.settings.actor.uri, 'followers')
+        collectionUri: urlJoin(this.settings.actor.uri, 'followers'),
       });
       return result ? defaultToArray(result.items) : [];
-    }
-  }
+    },
+  },
 };
 
 module.exports = BotMixin;

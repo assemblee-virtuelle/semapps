@@ -1,8 +1,7 @@
 const urlJoin = require('url-join');
-const pathJoin = require('path').join;
 const { quad, namedNode } = require('@rdfjs/data-model');
-const getCollectionRoute = require('../../../routes/getCollectionRoute');
-const { defaultToArray, getSlugFromUri } = require('../../../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const RegistryService = {
@@ -17,8 +16,8 @@ const RegistryService = {
       ordered: false,
       itemsPerPage: null,
       dereferenceItems: false,
-      sort: { predicate: 'as:published', order: 'DESC' }
-    }
+      sort: { predicate: 'as:published', order: 'DESC' },
+    },
   },
   dependencies: ['triplestore', 'ldp'],
   async started() {
@@ -32,32 +31,12 @@ const RegistryService = {
       if (!name) name = path;
 
       // Ignore undefined options
-      Object.keys(options).forEach(key => (options[key] === undefined || options[key] === null) && delete options[key]);
+      Object.keys(options).forEach(
+        (key) => (options[key] === undefined || options[key] === null) && delete options[key],
+      );
 
       // Save the collection locally
       this.registeredCollections.push({ path, name, attachToTypes, ...options });
-
-      // Find all containers where we want to attach this collection
-      const containers = this.getContainersByType(attachToTypes);
-
-      if (containers) {
-        // Go through each container
-        for (const container of Object.values(containers)) {
-          // Add a corresponding API route
-          await this.actions.addApiRoute({ collection: ctx.params, container }, { parentCtx: ctx });
-        }
-      }
-    },
-    async addApiRoute(ctx) {
-      const { container, collection } = ctx.params;
-
-      const collectionPath = pathJoin(container.fullPath, ':objectId', collection.path);
-      const collectionUri = urlJoin(this.settings.baseUri, collectionPath);
-
-      // TODO ensure it's not a problem if the same route is added twice
-      await this.broker.call('api.addRoute', {
-        route: getCollectionRoute(collectionUri, collection.controlledActions)
-      });
     },
     list() {
       return this.registeredCollections;
@@ -72,12 +51,23 @@ const RegistryService = {
         throw new Error('The param collectionUri must be provided to activitypub.registry.getByUri');
       }
 
-      // Get last part of the URI (eg. /followers)
-      const path = `/${getSlugFromUri(collectionUri)}`;
+      // TODO put in cache
+      const result = await ctx.call('triplestore.query', {
+        query: `
+          SELECT ?predicate
+          WHERE {
+            ?resource ?predicate <${collectionUri}> .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system',
+      });
 
       return {
         ...this.settings.defaultCollectionOptions,
-        ...this.registeredCollections.find(collection => collection.path === path)
+        ...this.registeredCollections.find((collection) =>
+          result.some((node) => collection.attachPredicate === node.predicate.value),
+        ),
       };
     },
     async createAndAttachCollection(ctx) {
@@ -90,17 +80,22 @@ const RegistryService = {
         this.collectionsInCreation.push(collectionUri);
 
         // Create the collection
-        await ctx.call('activitypub.collection.create', { collectionUri, webId });
+        await ctx.call('activitypub.collection.create', {
+          collectionUri,
+          config: { ordered: collection?.ordered, summary: collection?.summary },
+          options: collection, // Used by WebACL middleware if it exists
+          webId,
+        });
 
         // Attach it to the object
         await ctx.call('ldp.resource.patch', {
           resourceUri: objectUri,
           triplesToAdd: [quad(namedNode(objectUri), namedNode(collection.attachPredicate), namedNode(collectionUri))],
-          webId: 'system'
+          webId: 'system',
         });
 
         // Now the collection has been created, we can remove it (this way we don't use too much memory)
-        this.collectionsInCreation = this.collectionsInCreation.filter(c => c !== collectionUri);
+        this.collectionsInCreation = this.collectionsInCreation.filter((c) => c !== collectionUri);
       }
     },
     async deleteCollection(ctx) {
@@ -129,15 +124,15 @@ const RegistryService = {
                 {
                   objectUri: resourceUri,
                   collection,
-                  webId: 'system'
+                  webId: 'system',
                 },
-                { parentCtx: ctx }
+                { parentCtx: ctx },
               );
             }
           }
         }
       }
-    }
+    },
     // async getUri(ctx) {
     //   const { path, webId } = ctx.params;
     //
@@ -154,36 +149,36 @@ const RegistryService = {
     getCollectionsByType(types) {
       types = defaultToArray(types);
       return types
-        ? this.registeredCollections.filter(collection =>
+        ? this.registeredCollections.filter((collection) =>
             types
-              .map(type => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
-              .some(type =>
+              .map((type) => type.replace(AS_PREFIX, '')) // Remove AS prefix if it is set
+              .some((type) =>
                 Array.isArray(collection.attachToTypes)
                   ? collection.attachToTypes.includes(type)
-                  : collection.attachToTypes === type
-              )
+                  : collection.attachToTypes === type,
+              ),
           )
         : [];
     },
     // Get the containers with resources of the given type
     // Same action as ldp.registry.getByType, but search through locally registered containers to avoid race conditions
     getContainersByType(types) {
-      return Object.values(this.registeredContainers).filter(container =>
-        defaultToArray(types).some(type =>
+      return Object.values(this.registeredContainers).filter((container) =>
+        defaultToArray(types).some((type) =>
           Array.isArray(container.acceptedTypes)
             ? container.acceptedTypes.includes(type)
-            : container.acceptedTypes === type
-        )
+            : container.acceptedTypes === type,
+        ),
       );
     },
     isActor(types) {
-      return defaultToArray(types).some(type =>
-        [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type)
+      return defaultToArray(types).some((type) =>
+        [...Object.values(ACTOR_TYPES), ...Object.values(FULL_ACTOR_TYPES)].includes(type),
       );
     },
     hasTypeChanged(oldData, newData) {
       return JSON.stringify(newData.type || newData['@type']) !== JSON.stringify(oldData.type || oldData['@type']);
-    }
+    },
   },
   events: {
     async 'ldp.resource.created'(ctx) {
@@ -194,12 +189,12 @@ const RegistryService = {
           // If the resource is an actor, use the resource URI as the webId
           await this.actions.createAndAttachCollection(
             { objectUri: resourceUri, collection, webId: resourceUri },
-            { parentCtx: ctx }
+            { parentCtx: ctx },
           );
         } else {
           await this.actions.createAndAttachCollection(
             { objectUri: resourceUri, collection, webId },
-            { parentCtx: ctx }
+            { parentCtx: ctx },
           );
         }
       }
@@ -214,12 +209,12 @@ const RegistryService = {
             // If the resource is an actor, use the resource URI as the webId
             await this.actions.createAndAttachCollection(
               { objectUri: resourceUri, collection, webId: resourceUri },
-              { parentCtx: ctx }
+              { parentCtx: ctx },
             );
           } else {
             await this.actions.createAndAttachCollection(
               { objectUri: resourceUri, collection, webId },
-              { parentCtx: ctx }
+              { parentCtx: ctx },
             );
           }
         }
@@ -235,12 +230,12 @@ const RegistryService = {
               // If the resource is an actor, use the resource URI as the webId
               await this.actions.createAndAttachCollection(
                 { objectUri: resourceUri, collection, webId: resourceUri },
-                { parentCtx: ctx }
+                { parentCtx: ctx },
               );
             } else {
               await this.actions.createAndAttachCollection(
                 { objectUri: resourceUri, collection, webId },
-                { parentCtx: ctx }
+                { parentCtx: ctx },
               );
             }
           }
@@ -253,7 +248,7 @@ const RegistryService = {
       for (const collection of collections) {
         await this.actions.deleteCollection(
           { objectUri: oldData.id || oldData['@id'], collection },
-          { parentCtx: ctx }
+          { parentCtx: ctx },
         );
       }
     },
@@ -263,16 +258,8 @@ const RegistryService = {
       // Register the container locally
       // Avoid race conditions, if this event is called while the register action is still running
       this.registeredContainers[container.name] = container;
-
-      // Find the collections that must be attached to the container's resources
-      const collections = this.getCollectionsByType(container.acceptedTypes);
-
-      // Go through each collection and add a corresponding API route
-      for (const collection of collections) {
-        await this.actions.addApiRoute({ collection, container }, { parentCtx: ctx });
-      }
-    }
-  }
+    },
+  },
 };
 
 module.exports = RegistryService;

@@ -7,15 +7,11 @@ module.exports = {
     resource: 'object',
     webId: {
       type: 'string',
-      optional: true
+      optional: true,
     },
     contentType: {
-      type: 'string'
+      type: 'string',
     },
-    disassembly: {
-      type: 'array',
-      optional: true
-    }
   },
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
@@ -25,9 +21,9 @@ module.exports = {
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
-    const { disassembly, jsonContext, controlledActions } = {
+    const { jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params
+      ...ctx.params,
     };
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
@@ -36,15 +32,17 @@ module.exports = {
     }
 
     // Adds the default context, if it is missing
-    if (jsonContext && contentType === MIME_TYPES.JSON && !resource['@context']) {
-      resource = {
-        '@context': jsonContext,
-        ...resource
-      };
-    }
-
-    if (disassembly && contentType === MIME_TYPES.JSON) {
-      await this.createDisassembly(ctx, disassembly, resource);
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      if (jsonContext) {
+        resource = {
+          '@context': jsonContext,
+          ...resource,
+        };
+      } else {
+        this.logger.warn(
+          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`,
+        );
+      }
     }
 
     if (contentType !== MIME_TYPES.JSON && !resource.body)
@@ -60,7 +58,7 @@ module.exports = {
 
     const triplesToAdd = newTriples.reverse();
 
-    const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
+    const newBlankNodes = newTriples.filter((triple) => triple.object.termType === 'Variable');
 
     // Generate the query
     let query = '';
@@ -73,28 +71,28 @@ module.exports = {
 
     await ctx.call('triplestore.update', {
       query,
-      webId
+      webId,
     });
 
+    // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        forceSemantic: true,
-        webId
+        webId,
       },
-      { meta: { $cache: false } }
+      { meta: { $cache: false } },
     );
 
     const returnValues = {
       resourceUri,
       newData,
-      webId
+      webId,
     };
 
     ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null } });
 
     return returnValues;
-  }
+  },
 };

@@ -1,5 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
@@ -8,8 +9,12 @@ const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
+const { clearDataset } = require('../utils');
 
 const initialize = async (port, mainDataset, accountsDataset) => {
+  await clearDataset(mainDataset);
+  await clearDataset(accountsDataset);
+
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
@@ -17,9 +22,9 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
-      }
-    }
+        level: 'error',
+      },
+    },
   });
 
   // Remove all actors keys
@@ -33,36 +38,31 @@ const initialize = async (port, mainDataset, accountsDataset) => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset
+        mainDataset,
       },
       containers,
       void: false,
       mirror: false,
       api: {
-        port
-      }
-    }
+        port,
+      },
+    },
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset
-    }
+      accountsDataset,
+    },
   });
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${baseUrl}actors/`
-    }
+      usersContainer: urlJoin(baseUrl, 'actors'),
+    },
   });
 
-  // Drop all existing triples, then restart broker so that default containers are recreated
-  await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.call('triplestore.dropAll', { dataset: accountsDataset, webId: 'system' });
-  await broker.stop();
   await broker.start();
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.
@@ -71,27 +71,27 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     resourceUri: `${baseUrl}objects`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: `${baseUrl}actors`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: `${baseUrl}activities`,
     additionalRights: {
       anon: {
-        write: true
-      }
-    }
+        write: true,
+      },
+    },
   });
 
   return broker;

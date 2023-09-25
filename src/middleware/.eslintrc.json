@@ -94,7 +94,7 @@
     "no-await-in-loop": "off",
     "no-case-declarations": "warn",
     "no-continue": "off",
-    "no-else-return": "warn",
+    "no-else-return": "off",
     "no-lonely-if": "warn",
     "no-loop-func": "warn",
     "no-nested-ternary": "warn",

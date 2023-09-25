@@ -1,5 +1,4 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { getContainerFromUri } = require('../../utils');
 
 module.exports = {
   name: 'ldp.cache',
@@ -23,8 +22,10 @@ module.exports = {
         await this.broker.cacher.clean(`ldp.resource.get:${resourceUri}**`);
 
         // Also clean the containers containing the resource
-        const containerUri = getContainerFromUri(resourceUri);
-        await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+        // For deleted resources, no container will be found (containers will be invalidated through the ldp.resource.detached event)
+        for (const containerUri of await ctx.call('ldp.resource.getContainers', { resourceUri })) {
+          await this.actions.invalidateContainer({ containerUri }, { parentCtx: ctx });
+        }
       }
     },
     async invalidateContainer(ctx) {
@@ -32,7 +33,7 @@ module.exports = {
         const { containerUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
       }
-    }
+    },
   },
   events: {
     async 'ldp.resource.deleted'(ctx) {
@@ -83,6 +84,6 @@ module.exports = {
       } else {
         await this.actions.invalidateResource({ resourceUri: uri }, { parentCtx: ctx });
       }
-    }
-  }
+    },
+  },
 };

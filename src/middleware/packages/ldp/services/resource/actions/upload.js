@@ -1,13 +1,13 @@
 const path = require('path');
 const fs = require('fs');
-const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
-    file: 'object'
+    file: 'object',
   },
   async handler(ctx) {
     const { resourceUri, file } = ctx.params;
@@ -34,7 +34,7 @@ module.exports = {
       encoding: file.encoding,
       mimeType: file.mimetype,
       localPath,
-      fileName
+      fileName,
     };
-  }
+  },
 };
