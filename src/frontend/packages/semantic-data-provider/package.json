@@ -4,16 +4,18 @@
   "description": "React-Admin data provider for LDP servers",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
+  "source": "src/index.js",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "pre-publish": "rollup --sourcemap --config",
-    "dev": "rollup --watch --sourcemap --config"
+    "build": "parcel build",
+    "watch": "parcel watch"
   },
   "dependencies": {
+    "@mui/styles": "^5.13.1",
     "@rdfjs/data-model": "^1.3.4",
     "crypto-js": "^4.1.1",
     "isobject": "^4.0.0",
@@ -31,16 +33,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
-    "@babel/preset-react": "^7.9.4",
-    "rollup": "^2.7.6",
-    "rollup-pluginutils": "^2.8.2",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0",
-    "rollup-plugin-terser": "^5.3.0"
+    "parcel": "^2.9.3"
   },
   "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
 }
