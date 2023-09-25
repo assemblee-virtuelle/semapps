@@ -8,12 +8,9 @@ import $7bWYI$cryptojsmd5 from "crypto-js/md5";
 import $7bWYI$jwtdecode from "jwt-decode";
 import {fetchUtils as $7bWYI$fetchUtils, DataProviderContext as $7bWYI$DataProviderContext, useGetList as $7bWYI$useGetList, ArrayInput as $7bWYI$ArrayInput, SimpleFormIterator as $7bWYI$SimpleFormIterator, TextInput as $7bWYI$TextInput} from "react-admin";
 import $7bWYI$react, {useContext as $7bWYI$useContext, useMemo as $7bWYI$useMemo, useCallback as $7bWYI$useCallback, useState as $7bWYI$useState, useEffect as $7bWYI$useEffect} from "react";
-import {jsxDEV as $7bWYI$jsxDEV, Fragment as $7bWYI$Fragment} from "react/jsx-dev-runtime";
+import {jsx as $7bWYI$jsx, Fragment as $7bWYI$Fragment, jsxs as $7bWYI$jsxs} from "react/jsx-runtime";
 import $7bWYI$muistylesmakeStyles from "@mui/styles/makeStyles";
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
 
 
 const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
@@ -490,7 +487,7 @@ const $865f630cc944e818$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
                 node: node,
                 parentNode: parentNode,
                 query: query,
-                filter: ""
+                filter: "" // `FILTER(isBLANK(?s${varName})) .`
             });
         }
         return {
@@ -1282,7 +1279,7 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
         source,
         filter
     ]);
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
         children: (0, $7bWYI$react).Children.map(children, (child, i)=>{
             return /*#__PURE__*/ (0, $7bWYI$react).cloneElement(child, {
                 ...otherProps,
@@ -1290,14 +1287,11 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
                 source: source
             });
         })
-    }, void 0, false);
+    });
 };
 var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandler;
 
 
-var $1d8c1cbe606a94ae$exports = {};
-
-$parcel$export($1d8c1cbe606a94ae$exports, "default", () => $1d8c1cbe606a94ae$export$2e2bcd8739ae039);
 
 
 
@@ -1367,37 +1361,30 @@ $parcel$export($1d8c1cbe606a94ae$exports, "default", () => $1d8c1cbe606a94ae$exp
         resource: groupReference,
         payload: {}
     });
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
             filter[filterProperty] = data.id;
-            return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+            return /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $7bWYI$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
                         ...otherProps,
                         filter: filter,
                         label: data[groupLabel],
                         children: children
-                    }, void 0, false, {
-                        fileName: "packages/semantic-data-provider/src/reification/GroupedReferenceHandler.js",
-                        lineNumber: 87,
-                        columnNumber: 13
-                    }, undefined)
+                    })
                 ]
-            }, void 0, true);
+            });
         })
-    }, void 0, false);
+    });
 };
 var $1d8c1cbe606a94ae$export$2e2bcd8739ae039 = $1d8c1cbe606a94ae$var$GroupedReferenceHandler;
 
 
-var $6844bbce0ad66151$exports = {};
-
-$parcel$export($6844bbce0ad66151$exports, "default", () => $6844bbce0ad66151$export$2e2bcd8739ae039);
 
 
 
@@ -1419,9 +1406,9 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $6844bbce0ad66151$var$useReferenceInputStyles();
     const hideInputStyles = $6844bbce0ad66151$var$useHideInputStyles();
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$ArrayInput), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$ArrayInput), {
         ...otherProps,
-        children: /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$SimpleFormIterator), {
+        children: /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
@@ -1431,26 +1418,14 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
                         className: flexFormClasses.input
                     });
                 }),
-                /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$TextInput), {
+                /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
                     initialValue: reificationClass
-                }, void 0, false, {
-                    fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-                    lineNumber: 33,
-                    columnNumber: 9
-                }, undefined)
+                })
             ]
-        }, void 0, true, {
-            fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-            lineNumber: 27,
-            columnNumber: 7
-        }, undefined)
-    }, void 0, false, {
-        fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-        lineNumber: 26,
-        columnNumber: 5
-    }, undefined);
+        })
+    });
 };
 var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$ReificationArrayInput;
 

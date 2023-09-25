@@ -8,7 +8,7 @@ var $3pVuQ$cryptojsmd5 = require("crypto-js/md5");
 var $3pVuQ$jwtdecode = require("jwt-decode");
 var $3pVuQ$reactadmin = require("react-admin");
 var $3pVuQ$react = require("react");
-var $3pVuQ$reactjsxdevruntime = require("react/jsx-dev-runtime");
+var $3pVuQ$reactjsxruntime = require("react/jsx-runtime");
 var $3pVuQ$muistylesmakeStyles = require("@mui/styles/makeStyles");
 
 function $parcel$export(e, n, v, s) {
@@ -28,8 +28,8 @@ $parcel$export(module.exports, "useDataModel", () => $404991bb01c2ceff$export$2e
 $parcel$export(module.exports, "useDataModels", () => $8d622cbd05acb834$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $9b817943cd488c90$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$exports.default);
-$parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$exports.default);
+$parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
 
 
 const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
@@ -506,7 +506,7 @@ const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontol
                 node: node,
                 parentNode: parentNode,
                 query: query,
-                filter: ""
+                filter: "" // `FILTER(isBLANK(?s${varName})) .`
             });
         }
         return {
@@ -1298,7 +1298,7 @@ var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataMode
         source,
         filter
     ]);
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
         children: (0, ($parcel$interopDefault($3pVuQ$react))).Children.map(children, (child, i)=>{
             return /*#__PURE__*/ (0, ($parcel$interopDefault($3pVuQ$react))).cloneElement(child, {
                 ...otherProps,
@@ -1306,14 +1306,11 @@ var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataMode
                 source: source
             });
         })
-    }, void 0, false);
+    });
 };
 var $f763906f9b20f2d8$export$2e2bcd8739ae039 = $f763906f9b20f2d8$var$FilterHandler;
 
 
-var $b4703fef6d6af456$exports = {};
-
-$parcel$export($b4703fef6d6af456$exports, "default", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
 
 
 
@@ -1383,37 +1380,30 @@ $parcel$export($b4703fef6d6af456$exports, "default", () => $b4703fef6d6af456$exp
         resource: groupReference,
         payload: {}
     });
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
             filter[filterProperty] = data.id;
-            return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+            return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactjsxruntime.Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
                         ...otherProps,
                         filter: filter,
                         label: data[groupLabel],
                         children: children
-                    }, void 0, false, {
-                        fileName: "packages/semantic-data-provider/src/reification/GroupedReferenceHandler.js",
-                        lineNumber: 87,
-                        columnNumber: 13
-                    }, undefined)
+                    })
                 ]
-            }, void 0, true);
+            });
         })
-    }, void 0, false);
+    });
 };
 var $b4703fef6d6af456$export$2e2bcd8739ae039 = $b4703fef6d6af456$var$GroupedReferenceHandler;
 
 
-var $030f1232f6810456$exports = {};
-
-$parcel$export($030f1232f6810456$exports, "default", () => $030f1232f6810456$export$2e2bcd8739ae039);
 
 
 
@@ -1435,9 +1425,9 @@ const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $030f1232f6810456$var$useReferenceInputStyles();
     const hideInputStyles = $030f1232f6810456$var$useHideInputStyles();
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.ArrayInput), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.ArrayInput), {
         ...otherProps,
-        children: /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.SimpleFormIterator), {
+        children: /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactadmin.SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
@@ -1447,26 +1437,14 @@ const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
                         className: flexFormClasses.input
                     });
                 }),
-                /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
                     initialValue: reificationClass
-                }, void 0, false, {
-                    fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-                    lineNumber: 33,
-                    columnNumber: 9
-                }, undefined)
+                })
             ]
-        }, void 0, true, {
-            fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-            lineNumber: 27,
-            columnNumber: 7
-        }, undefined)
-    }, void 0, false, {
-        fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-        lineNumber: 26,
-        columnNumber: 5
-    }, undefined);
+        })
+    });
 };
 var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$ReificationArrayInput;
 
