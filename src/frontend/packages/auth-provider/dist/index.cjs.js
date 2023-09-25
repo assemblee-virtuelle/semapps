@@ -1,4 +1,2471 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-admin"),r=require("@semapps/semantic-data-provider"),n=require("@mui/icons-material/Share"),a=require("@mui/material"),o=require("@mui/styles/makeStyles"),i=require("@mui/material/Autocomplete"),s=require("@mui/icons-material/Person"),u=require("@mui/system"),c=require("@mui/icons-material/Edit"),l=require("@mui/icons-material/Check"),d=require("@mui/icons-material/Public"),f=require("@mui/icons-material/VpnLock"),p=require("@mui/icons-material/Group"),m=require("react-router-dom"),h=require("@mui/material/styles"),g=require("@mui/icons-material/Lock"),v=require("@mui/icons-material/Storage"),y=require("@mui/icons-material/AccountCircle");function w(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}function b(e){if(e&&e.__esModule)return e;var t=Object.create(null);return e&&Object.keys(e).forEach((function(r){if("default"!==r){var n=Object.getOwnPropertyDescriptor(e,r);Object.defineProperty(t,r,n.get?n:{enumerable:!0,get:function(){return e[r]}})}})),t.default=e,Object.freeze(t)}var _=w(e),E=b(e),x=w(n),k=w(o),j=w(i),P=w(s),C=w(c),S=w(l),O=w(d),T=w(f),A=w(p),I=w(g),L=w(v),R=w(y);function N(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function U(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?N(Object(r),!0).forEach((function(t){q(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):N(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function W(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-W=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},a=n.iterator||"@@iterator",o=n.asyncIterator||"@@asyncIterator",i=n.toStringTag||"@@toStringTag";function s(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{s({},"")}catch(e){s=function(e,t,r){return e[t]=r}}function u(e,t,r,n){var a=t&&t.prototype instanceof d?t:d,o=Object.create(a.prototype),i=new x(n||[]);return o._invoke=function(e,t,r){var n="suspendedStart";return function(a,o){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===a)throw o;return j()}for(r.method=a,r.arg=o;;){var i=r.delegate;if(i){var s=b(i,r);if(s){if(s===l)continue;return s}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var u=c(e,t,r);if("normal"===u.type){if(n=r.done?"completed":"suspendedYield",u.arg===l)continue;return{value:u.arg,done:r.done}}"throw"===u.type&&(n="completed",r.method="throw",r.arg=u.arg)}}}(e,r,i),o}function c(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=u;var l={};function d(){}function f(){}function p(){}var m={};s(m,a,(function(){return this}));var h=Object.getPrototypeOf,g=h&&h(h(k([])));g&&g!==t&&r.call(g,a)&&(m=g);var v=p.prototype=d.prototype=Object.create(m);function y(e){["next","throw","return"].forEach((function(t){s(e,t,(function(e){return this._invoke(t,e)}))}))}function w(e,t){var n;this._invoke=function(a,o){function i(){return new t((function(n,i){!function n(a,o,i,s){var u=c(e[a],e,o);if("throw"!==u.type){var l=u.arg,d=l.value;return d&&"object"==typeof d&&r.call(d,"__await")?t.resolve(d.__await).then((function(e){n("next",e,i,s)}),(function(e){n("throw",e,i,s)})):t.resolve(d).then((function(e){l.value=e,i(l)}),(function(e){return n("throw",e,i,s)}))}s(u.arg)}(a,o,n,i)}))}return n=n?n.then(i,i):i()}}function b(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,b(e,t),"throw"===t.method))return l;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return l}var n=c(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,l;var a=n.arg;return a?a.done?(t[e.resultName]=a.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,l):a:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,l)}function _(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function E(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function x(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(_,this),this.reset(!0)}function k(e){if(e){var t=e[a];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,o=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return o.next=o}}return{next:j}}function j(){return{value:void 0,done:!0}}return f.prototype=p,s(v,"constructor",p),s(p,"constructor",f),f.displayName=s(p,i,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===f||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,p):(e.__proto__=p,s(e,i,"GeneratorFunction")),e.prototype=Object.create(v),e},e.awrap=function(e){return{__await:e}},y(w.prototype),s(w.prototype,o,(function(){return this})),e.AsyncIterator=w,e.async=function(t,r,n,a,o){void 0===o&&(o=Promise);var i=new w(u(t,r,n,a),o);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},y(v),s(v,i,"Generator"),s(v,a,(function(){return this})),s(v,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=k,x.prototype={constructor:x,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(E),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return i.type="throw",i.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var a=this.tryEntries.length-1;a>=0;--a){var o=this.tryEntries[a],i=o.completion;if("root"===o.tryLoc)return n("end");if(o.tryLoc<=this.prev){var s=r.call(o,"catchLoc"),u=r.call(o,"finallyLoc");if(s&&u){if(this.prev<o.catchLoc)return n(o.catchLoc,!0);if(this.prev<o.finallyLoc)return n(o.finallyLoc)}else if(s){if(this.prev<o.catchLoc)return n(o.catchLoc,!0)}else{if(!u)throw new Error("try statement without catch or finally");if(this.prev<o.finallyLoc)return n(o.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var a=this.tryEntries[n];if(a.tryLoc<=this.prev&&r.call(a,"finallyLoc")&&this.prev<a.finallyLoc){var o=a;break}}o&&("break"===e||"continue"===e)&&o.tryLoc<=t&&t<=o.finallyLoc&&(o=null);var i=o?o.completion:{};return i.type=e,i.arg=t,o?(this.method="next",this.next=o.finallyLoc,l):this.complete(i)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),l},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),E(r),l}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var a=n.arg;E(r)}return a}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:k(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),l}},e}function D(e){return(D="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function z(e,t,r,n,a,o,i){try{var s=e[o](i),u=s.value}catch(e){return void r(e)}s.done?t(u):Promise.resolve(u).then(n,a)}function B(e){return function(){var t=this,r=arguments;return new Promise((function(n,a){var o=e.apply(t,r);function i(e){z(o,n,a,i,s,"next",e)}function s(e){z(o,n,a,i,s,"throw",e)}i(void 0)}))}}function q(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function F(){return(F=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function V(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function M(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,a,o=[],i=!0,s=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(o.push(n.value),!t||o.length!==t);i=!0);}catch(e){s=!0,a=e}finally{try{i||null==r.return||r.return()}finally{if(s)throw a}}return o}(e,t)||Y(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function G(e){return function(e){if(Array.isArray(e))return $(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||Y(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function Y(e,t){if(e){if("string"==typeof e)return $(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?$(e,t):void 0}}function $(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}function H(e){this.message=e}H.prototype=new Error,H.prototype.name="InvalidCharacterError";var J="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(e){var t=String(e).replace(/=+$/,"");if(t.length%4==1)throw new H("'atob' failed: The string to be decoded is not correctly encoded.");for(var r,n,a=0,o=0,i="";n=t.charAt(o++);~n&&(r=a%4?64*r+n:n,a++%4)?i+=String.fromCharCode(255&r>>(-2*a&6)):0)n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(n);return i};function Q(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(J(e).replace(/(.)/g,(function(e,t){var r=t.charCodeAt(0).toString(16).toUpperCase();return r.length<2&&(r="0"+r),"%"+r})))}(t)}catch(e){return J(t)}}function K(e){this.message=e}function X(e,t){if("string"!=typeof e)throw new K("Invalid token specified");var r=!0===(t=t||{}).header?0:1;try{return JSON.parse(Q(e.split(".")[r]))}catch(e){throw new K("Invalid token specified: "+e.message)}}K.prototype=new Error,K.prototype.name="InvalidTokenError";var Z="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function ee(e,t){return e(t={exports:{}},t.exports),t.exports}var te,re,ne=ee((function(e){var t,r;t=Z,r=function(){function e(e){var t=[];if(0===e.length)return"";if("string"!=typeof e[0])throw new TypeError("Url must be a string. Received "+e[0]);if(e[0].match(/^[^/:]+:\/*$/)&&e.length>1){var r=e.shift();e[0]=r+e[0]}e[0].match(/^file:\/\/\//)?e[0]=e[0].replace(/^([^/:]+):\/*/,"$1:///"):e[0]=e[0].replace(/^([^/:]+):\/*/,"$1://");for(var n=0;n<e.length;n++){var a=e[n];if("string"!=typeof a)throw new TypeError("Url must be a string. Received "+a);""!==a&&(n>0&&(a=a.replace(/^[\/]+/,"")),a=n<e.length-1?a.replace(/[\/]+$/,""):a.replace(/[\/]+$/,"/"),t.push(a))}var o=t.join("/"),i=(o=o.replace(/\/(\?|&|#[^!])/g,"$1")).split("?");return o=i.shift()+(i.length>0?"?":"")+i.join("&")}return function(){return e("object"==typeof arguments[0]?arguments[0]:[].slice.call(arguments))}},e.exports?e.exports=r():t.urljoin=r()})),ae=function(e){return e?Array.isArray(e)?e:[e]:void 0},oe=function(e){var t=new URL(e);return ne(t.origin,"_acl",t.pathname)},ie=function(e){return{"@base":e,acl:"http://www.w3.org/ns/auth/acl#",foaf:"http://xmlns.com/foaf/0.1/","acl:agent":{"@type":"@id"},"acl:agentGroup":{"@type":"@id"},"acl:agentClass":{"@type":"@id"},"acl:mode":{"@type":"@id"},"acl:accessTo":{"@type":"@id"}}},se=function(){var e=B(W().mark((function e(t){var r,n;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,t.getDataServers();case 2:if(r=e.sent,n=Object.values(r).find((function(e){return!0===e.authServer}))){e.next=6;break}throw new Error("Could not find a server with authServer: true. Check your dataServers config.");case 6:return e.abrupt("return",n.pod?new URL(n.baseUrl).origin:n.baseUrl);case 7:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),ue=["username","email","password","domain"],ce="sso",le="local",de="pod",fe="acl:agentClass",pe=["acl:Append","acl:Write","acl:Control"],me=["acl:Append","acl:Write","acl:Control"],he=["acl:Write","acl:Control"],ge=["acl:Control"],ve={show:["acl:Read","acl:Append","acl:Write","acl:Control"],list:["acl:Read","acl:Append","acl:Write","acl:Control"],create:pe,edit:me,delete:he,control:ge},ye={show:"auth.message.resource_show_forbidden",edit:"auth.message.resource_edit_forbidden",delete:"auth.message.resource_delete_forbidden",control:"auth.message.resource_control_forbidden",list:"auth.message.container_list_forbidden",create:"auth.message.container_create_forbidden"},we=(q(te={},"acl:Read","auth.right.resource.read"),q(te,"acl:Append","auth.right.resource.append"),q(te,"acl:Write","auth.right.resource.write"),q(te,"acl:Control","auth.right.resource.control"),te),be=(q(re={},"acl:Read","auth.right.container.read"),q(re,"acl:Write","auth.right.container.write"),q(re,"acl:Control","auth.right.container.control"),re),_e=function(r,n){var a=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"/",o=t.useGetIdentity(),i=o.identity,s=o.isLoading,u=t.usePermissions(r),c=u.permissions,l=t.useNotify(),d=t.useRedirect();return e.useEffect((function(){!s&&i&&c&&!c.some((function(e){return ve[n].includes(e["acl:mode"])}))&&(l(ye[n],{type:"error"}),d(a))}),[c,i,d,l,s]),c},Ee=function(e){var n=t.useResourceContext(),a=r.useCreateContainer(n);return _e(a,"create"),_.default.createElement(t.Create,e)};Ee.defaultProps={actions:_.default.createElement(t.CreateActions,null)};var xe=k.default((function(){return{list:{padding:0,width:"100%"},option:{padding:0}}})),ke=function(r){var n=r.agents,o=r.addPermission,i=xe(),s=t.useTranslate(),u=M(e.useState(null),2),c=u[0],l=u[1],d=M(e.useState(""),2),f=d[0],p=d[1],m=M(e.useState([]),2),h=m[0],g=m[1],v=t.useGetList("Person",{pagination:{page:1,perPage:100},sort:{field:"pair:label",order:"ASC"},filter:{q:f}},{enabled:f.length>0}).data;return e.useEffect((function(){g((null==v?void 0:v.length)>0?Object.values(v):[])}),[v]),_.default.createElement(j.default,{classes:{option:i.option},getOptionLabel:function(e){return e["pair:label"]},filterOptions:function(e){return e.filter((function(e){return!Object.keys(n).includes(e.id)}))},options:h,noOptionsText:s("ra.navigation.no_results"),autoComplete:!0,blurOnSelect:!0,clearOnBlur:!0,disableClearable:!0,value:c,onChange:function(e,t){o(t.id||t["@id"],"acl:agent","acl:Read"),l(null),p(""),g([])},onInputChange:function(e,t){p(t)},renderInput:function(e){return _.default.createElement(a.TextField,F({},e,{label:s("auth.input.agent_select"),variant:"filled",margin:"dense",fullWidth:!0}))},renderOption:function(e,t){return _.default.createElement(a.List,F({dense:!0,className:i.list},e),_.default.createElement(a.ListItem,{button:!0},_.default.createElement(a.ListItemAvatar,null,_.default.createElement(a.Avatar,{src:t.image},_.default.createElement(P.default,null))),_.default.createElement(a.ListItemText,{primary:t["pair:label"]})))}})},je=function(e){var t=e.agent;switch(t.predicate){case fe:return"foaf:Agent"===t.id?_.default.createElement(O.default,null):_.default.createElement(T.default,null);case"acl:agent":return _.default.createElement(P.default,null);case"acl:agentGroup":return _.default.createElement(A.default,null);default:throw new Error("Unknown agent predicate: ".concat(t.predicate))}},Pe=k.default((function(){return{listItem:{paddingLeft:4,paddingRight:36},primaryText:{width:"30%",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"},secondaryText:{textAlign:"center",width:"60%",fontStyle:"italic",color:"grey"}}})),Ce=function(r){var n=r.isContainer,o=r.agent,i=r.addPermission,s=r.removePermission,u=Pe(),c=t.useTranslate(),l=t.useDataProvider(),d=M(_.default.useState(null),2),f=d[0],p=d[1],m=M(e.useState(),2),h=m[0],g=m[1],v=M(e.useState(!0),2),y=v[0],w=v[1],b=M(e.useState(),2),E=b[0],x=b[1];if(e.useEffect((function(){"acl:agent"===o.predicate?l.getOne("Person",{id:o.id}).then((function(e){var t=e.data;g(t),w(!1)})).catch((function(e){x(e),w(!1)})):w(!1)}),[o.id,o.predicate]),"acl:agentGroup"===o.predicate)return null;var k=function(){return p(null)},j=n?be:we;return y?_.default.createElement(t.Loading,null):E?_.default.createElement(t.Error,null):_.default.createElement(a.ListItem,{className:u.listItem},_.default.createElement(a.ListItemAvatar,null,_.default.createElement(a.Avatar,{src:null==h?void 0:h.image},_.default.createElement(je,{agent:o}))),_.default.createElement(a.ListItemText,{className:u.primaryText,primary:h?h["pair:label"]:c("foaf:Agent"===o.id?"auth.agent.anonymous":"auth.agent.authenticated")}),_.default.createElement(a.ListItemText,{className:u.secondaryText,primary:o.permissions&&o.permissions.map((function(e){return c(j[e])})).join(", ")}),_.default.createElement(a.ListItemSecondaryAction,null,_.default.createElement(a.IconButton,{onClick:function(e){return p(e.currentTarget)},size:"large"},_.default.createElement(C.default,null)),_.default.createElement(a.Menu,{anchorEl:f,keepMounted:!0,open:Boolean(f),onClose:k},Object.entries(j).map((function(e){var t=M(e,2),r=t[0],n=t[1],u=o.permissions&&o.permissions.includes(r);return _.default.createElement(a.MenuItem,{key:r,onClick:function(){u?s(o.id,o.predicate,r):i(o.id,o.predicate,r),k()}},_.default.createElement(a.ListItemIcon,null,u?_.default.createElement(S.default,null):null),_.default.createElement(a.ListItemText,{primary:c(n)}))})))))},Se=u.styled(a.List)((function(e){return{width:"100%",maxWidth:"100%",backgroundColor:e.theme.palette.background.paper}})),Oe=function(e){var t=e.isContainer,r=e.agents,n=e.addPermission,a=e.removePermission;return _.default.createElement(Se,{dense:!0},Object.entries(r).map((function(e){var r=M(e,2),o=r[0],i=r[1];return _.default.createElement(Ce,{key:o,isContainer:t,agent:i,addPermission:n,removePermission:a})})))},Te=function(r){var n=t.usePermissions(r).permissions,a=t.useAuthProvider(),o=M(e.useState({}),2),i=o[0],s=o[1];e.useEffect((function(){var e,t=(q(e={},"foaf:Agent",{id:"foaf:Agent",predicate:fe,permissions:[]}),q(e,"acl:AuthenticatedAgent",{id:"acl:AuthenticatedAgent",predicate:fe,permissions:[]}),e),r=function(e,r,n){t[e]?t[e].permissions.push(n):t[e]={id:e,predicate:r,permissions:[n]}};if(n){var a,o=function(e,t){var r="undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(!r){if(Array.isArray(e)||(r=Y(e))||t&&e&&"number"==typeof e.length){r&&(e=r);var n=0,a=function(){};return{s:a,n:function(){return n>=e.length?{done:!0}:{done:!1,value:e[n++]}},e:function(e){throw e},f:a}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var o,i=!0,s=!1;return{s:function(){r=r.call(e)},n:function(){var e=r.next();return i=e.done,e},e:function(e){s=!0,o=e},f:function(){try{i||null==r.return||r.return()}finally{if(s)throw o}}}}(n);try{var i=function(){var e=a.value;e[fe]&&ae(e[fe]).forEach((function(t){return r(t,fe,e["acl:mode"])})),e["acl:agent"]&&ae(e["acl:agent"]).forEach((function(t){return r(t,"acl:agent",e["acl:mode"])})),e["acl:agentGroup"]&&ae(e["acl:agentGroup"]).forEach((function(t){return r(t,"acl:agentGroup",e["acl:mode"])}))};for(o.s();!(a=o.n()).done;)i()}catch(e){o.e(e)}finally{o.f()}s(t)}}),[n]);var u=e.useCallback((function(e,t,n){var o,u=U({},i);s(U(U({},i),{},q({},e,{id:e,predicate:t,permissions:i[e]?[].concat(G(null===(o=i[e])||void 0===o?void 0:o.permissions),[n]):[n]}))),a.addPermission(r,e,t,n).catch((function(e){s(u)}))}),[i,s,r,a]),c=e.useCallback((function(e,t,n){var o=U({},i);s(Object.fromEntries(Object.entries(i).map((function(t){var r=M(t,2),a=r[0],o=r[1];return o.id===e&&(o.permissions=o.permissions.filter((function(e){return e!==n}))),[a,o]})).filter((function(e){var t=M(e,2);t[0];var r=t[1];return r.predicate===fe||r.permissions.length>0})))),a.removePermission(r,e,t,n).catch((function(e){s(o)}))}),[i,s,r,a]);return{agents:i,addPermission:u,removePermission:c}},Ae=k.default((function(){return{title:{paddingBottom:8},actions:{padding:15},addForm:{paddingTop:0},listForm:{paddingTop:0,paddingBottom:0,paddingRight:0,maxHeight:210}}})),Ie=function(e){var r=e.open,n=e.onClose,o=e.uri,i=e.isContainer,s=Ae(),u=t.useTranslate(),c=Te(o),l=c.agents,d=c.addPermission,f=c.removePermission;return _.default.createElement(a.Dialog,{fullWidth:!0,open:r,onClose:n},_.default.createElement(a.DialogTitle,{className:s.title},u(i?"auth.dialog.container_permissions":"auth.dialog.resource_permissions")),_.default.createElement(a.DialogContent,{className:s.addForm},_.default.createElement(ke,{agents:l,addPermission:d})),_.default.createElement(a.DialogContent,{className:s.listForm},_.default.createElement(Oe,{isContainer:i,agents:l,addPermission:d,removePermission:f})),_.default.createElement(a.DialogActions,{className:s.actions},_.default.createElement(t.Button,{label:"ra.action.close",variant:"text",onClick:n})))},Le=function(n){var a=n.isContainer,o=t.useRecordContext(),i=t.useResourceContext(),s=M(e.useState(!1),2),u=s[0],c=s[1],l=r.useCreateContainer(i),d=a?l:o.id||o["@id"];return _.default.createElement(_.default.Fragment,null,_.default.createElement(t.Button,{label:"auth.action.permissions",onClick:function(){return c(!0)}},_.default.createElement(x.default,null)),_.default.createElement(Ie,{uri:d,isContainer:a,open:u,onClose:function(){return c(!1)}}))};Le.defaultProps={isContainer:!1};var Re=function(){var e=t.useResourceDefinition(),r=e.hasList,n=e.hasShow,a=t.useRecordContext(),o=t.usePermissionsOptimized(null==a?void 0:a.id).permissions;return _.default.createElement(t.TopToolbar,null,r&&_.default.createElement(t.ListButton,null),n&&_.default.createElement(t.ShowButton,null),!!o&&o.some((function(e){return ge.includes(e["acl:mode"])}))&&_.default.createElement(Le,null))},Ne=function(e){var r=t.useGetRecordId(),n=t.usePermissions(r),a=n.permissions;return!n.isLoading&&null!=a&&a.some((function(e){return he.includes(e["acl:mode"])}))?_.default.createElement(t.DeleteButton,e):null},Ue=k.default((function(){return{toolbar:{flex:1,display:"flex",justifyContent:"space-between"}}})),We=function(e){var r=Ue();return _.default.createElement(t.Toolbar,F({},e,{className:r.toolbar}),_.default.createElement(t.SaveButton,null),_.default.createElement(Ne,{mutationMode:"undoable"}))},De=function(e){var r=t.useGetRecordId();return _e(r,"edit"),_.default.createElement(t.Edit,e,_.default.cloneElement(e.children,U({toolbar:_.default.createElement(We,null)},e.children.props)))};De.defaultProps={actions:_.default.createElement(Re,null)};var ze=function(e){var n=e.bulkActions,o=e.sort,i=e.displayedFilters,s=e.exporter,u=e.filters,c=e.filterValues,l=e.onUnselectItems,d=e.selectedIds,f=e.showFilter,p=e.total,m=t.useResourceContext(),h=a.useMediaQuery((function(e){return e.breakpoints.down("xs")})),g=t.useResourceDefinition(),v=r.useCreateContainer(m),y=t.usePermissions(v).permissions;return _.default.createElement(t.TopToolbar,null,u&&_.default.cloneElement(u,{showFilter:f,displayedFilters:i,filterValues:c,context:"button"}),g.hasCreate&&y&&y.some((function(e){return pe.includes(e["acl:mode"])}))&&_.default.createElement(t.CreateButton,null),y&&y.some((function(e){return ge.includes(e["acl:mode"])}))&&_.default.createElement(Le,{isContainer:!0}),!h&&!1!==s&&_.default.createElement(t.ExportButton,{disabled:0===p,sort:o,filter:c,exporter:s}),n&&_.default.cloneElement(n,{filterValues:c,selectedIds:d,onUnselectItems:l}))},Be=function(e){return _.default.createElement(t.List,e)};Be.defaultProps={actions:_.default.createElement(ze,null)};var qe=function(){var e=t.useResourceDefinition(),r=e.hasList,n=e.hasEdit,a=t.useRecordContext(),o=t.usePermissions(null==a?void 0:a.id).permissions;return _.default.createElement(t.TopToolbar,null,r&&_.default.createElement(t.ListButton,null),n&&o&&o.some((function(e){return me.includes(e["acl:mode"])}))&&_.default.createElement(t.EditButton,null),o&&o.some((function(e){return ge.includes(e["acl:mode"])}))&&_.default.createElement(Le,null))},Fe=function(e){var r=t.useGetRecordId();return _e(r,"show"),_.default.createElement(t.Show,e)};Fe.defaultProps={actions:_.default.createElement(qe,null)};var Ve=["open","onClose","title","message","redirect"],Me=function(e){var r=e.open,n=e.onClose,o=e.title,i=e.message,s=e.redirect,u=V(e,Ve),c=t.useLogin(),l=t.useTranslate();return _.default.createElement(a.Dialog,F({open:r,onClose:n},u),_.default.createElement(a.DialogTitle,null,l(o)),_.default.createElement(a.DialogContent,null,_.default.createElement(a.DialogContentText,null,l(i))),_.default.createElement(a.DialogActions,null,_.default.createElement(a.Button,{onClick:n},l("ra.action.cancel")),_.default.createElement(a.Button,{onClick:function(){return c({redirect:s||window.location.pathname+window.location.search})},color:"primary",variant:"contained"},l("auth.action.login"))))};Me.defaultProps={title:"auth.dialog.login_required",message:"auth.message.login_to_continue"};var Ge=["children","backgroundImage","buttons","userResource","propertiesExist","text"],Ye=function(){var e=B(W().mark((function e(t){return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.abrupt("return",new Promise((function(e){return setTimeout(e,t)})));case 1:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),$e=function(r){r.children;var n=r.backgroundImage,o=r.buttons,i=r.userResource,s=r.propertiesExist,u=r.text,c=V(r,Ge),l=e.useRef(),d=!1,f=m.useNavigate(),p=M(m.useSearchParams(),1)[0],h=t.useGetIdentity(),g=h.identity,v=h.isLoading,y=t.useNotify(),w=t.useLogin(),b=t.useDataProvider(),E=t.useAuthProvider();e.useEffect((function(){!v&&null!=g&&g.id&&f(p.get("redirect")||"/")}),[g,v,f,p]),e.useEffect((function(){B(W().mark((function e(){return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(!p.has("login")){e.next=7;break}if(!p.has("error")){e.next=5;break}"registration.not-allowed"===p.get("error")?y("auth.message.user_email_not_found",{type:"error"}):y("auth.message.bad_request",{type:"error",error:p.get("error")}),e.next=7;break;case 5:if(!p.has("token")){e.next=7;break}return e.delegateYield(W().mark((function e(){var t,r,n,a,o,u,c;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return t=p.get("token"),r=X(t),n=r.webId,localStorage.setItem("token",t),e.next=5,b.getOne(i,{id:n});case 5:if(o=e.sent,a=o.data,!(s.length>0)){e.next=20;break}u=s.every((function(e){return a[e]}));case 9:if(u){e.next=20;break}return console.log("Waiting for all properties to have been created",s),e.next=13,Ye(500);case 13:return e.next=15,b.getOne(i,{id:n});case 15:c=e.sent,a=c.data,u=s.every((function(e){return a[e]})),e.next=9;break;case 20:E.checkUser(a)?p.has("redirect")?(y("auth.message.user_connected",{type:"info"}),window.location.href=p.get("redirect")):p.has("new")&&"true"===p.get("new")?(y("auth.message.new_user_created",{type:"info"}),window.location.href="/".concat(i,"/").concat(encodeURIComponent(n))):(y("auth.message.user_connected",{type:"info"}),window.location.href="/"):(localStorage.removeItem("token"),y("auth.message.user_not_allowed_to_login",{type:"error"}),f.replace("/login"));case 21:case"end":return e.stop()}}),e)}))(),"t0",7);case 7:p.has("logout")&&(localStorage.clear(),y("auth.message.user_disconnected",{type:"info"}),f("/"));case 8:case"end":return e.stop()}}),e)})))()}),[p,f,y,i]);var x=function(){!d&&l.current&&(l.current.style.backgroundImage="url(".concat(n,")"),d=!0)};return e.useEffect((function(){d||function(){if(n){var e=new Image;e.onload=x,e.src=n}}()})),v?null:_.default.createElement(Qe,F({},c,{ref:l}),_.default.createElement(a.Card,{className:Je.card},_.default.createElement("div",{className:Je.avatar},_.default.createElement(a.Avatar,{className:Je.icon},_.default.createElement(I.default,null))),u&&_.default.createElement(a.Typography,{variant:"body2"},u),null==o?void 0:o.map((function(e,t){return _.default.createElement(a.CardActions,{key:t},_.default.cloneElement(e,{fullWidth:!0,variant:"outlined",type:"submit",onClick:function(){return w({},"/login")}}))}))))},He="SsoLoginPage",Je={card:"".concat(He,"-card"),avatar:"".concat(He,"-avatar"),icon:"".concat(He,"-icon"),switch:"".concat(He,"-switch")},Qe=h.styled("div",{name:He,overridesResolver:function(e,t){return t.root}})((function(e){var t,r=e.theme;return q(t={display:"flex",flexDirection:"column",minHeight:"100vh",height:"1px",alignItems:"center",justifyContent:"flex-start",backgroundRepeat:"no-repeat",backgroundSize:"cover",backgroundImage:"radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)"},"& .".concat(Je.card),{minWidth:300,marginTop:"6em"}),q(t,"& .".concat(Je.avatar),{margin:"1em",display:"flex",justifyContent:"center"}),q(t,"& .".concat(Je.icon),{backgroundColor:r.palette.secondary[500]}),q(t,"& .".concat(Je.switch),{marginBottom:"1em",display:"flex",justifyContent:"center"}),t}));$e.defaultProps={propertiesExist:[],buttons:[_.default.createElement(a.Button,{startIcon:_.default.createElement(a.Avatar,{src:"/lescommuns.jpg"})},"Les Communs")],userResource:"Person"};var Ke=k.default((function(e){return{"@global":{body:{backgroundColor:e.palette.primary.main}},text:{textAlign:"center",padding:"4px 8px 8px"},card:q({minWidth:300,maxWidth:350,marginTop:"6em"},e.breakpoints.down("sm"),{margin:"1em"}),lockIconAvatar:{margin:"1em",display:"flex",justifyContent:"center"},lockIcon:{backgroundColor:e.palette.grey[500]},list:{paddingTop:0,paddingBottom:0},listItem:{paddingTop:5,paddingBottom:5}}})),Xe=function(r){var n=r.history,o=r.location,i=r.text,s=r.customPodProviders,u=Ke(),c=t.useNotify(),l=t.useLocale(),d=t.useTranslate(),f=t.useAuthProvider(),p=t.useDataProvider(),m=M(e.useState(s||[]),2),h=m[0],g=m[1],v=new URLSearchParams(o.search);return e.useEffect((function(){B(W().mark((function e(){var t,r,n;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(0!==h.length){e.next=13;break}return e.next=3,fetch("https://data.activitypods.org/pod-providers",{headers:{Accept:"application/ld+json"}});case 3:if(!(t=e.sent).ok){e.next=12;break}return e.next=7,t.json();case 7:r=e.sent,n=r["ldp:contains"].filter((function(e){return Array.isArray(e["apods:locales"])?e["apods:locales"].includes(l):e["apods:locales"]===l})),g(n),e.next=13;break;case 12:c("auth.message.pod_providers_not_loaded","error");case 13:case"end":return e.stop()}}),e)})))()}),[h,g,c,l]),e.useEffect((function(){B(W().mark((function e(){var t,r,a,o,i;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(!v.has("token")){e.next=16;break}return t=v.get("token"),r=X(t),a=r.webId,e.next=5,fetch(a,{headers:{Accept:"application/json"}});case 5:if((o=e.sent).ok){e.next=10;break}c("auth.message.unable_to_fetch_user_data","error"),e.next=14;break;case 10:return e.next=12,o.json();case 12:i=e.sent,f.checkUser(i)?(localStorage.setItem("token",t),c("auth.message.user_connected","info"),window.location.reload(),window.location.href="/?addUser=true"):(c("auth.message.user_not_allowed_to_login","error"),n.replace("/login"));case 14:e.next=17;break;case 16:v.has("logout")&&(localStorage.clear(),c("auth.message.user_disconnected","info"),n.push("/"));case 17:case"end":return e.stop()}}),e)})))()}),[v,p]),v.has("token")||v.has("addUser")||v.has("logout")?null:_.default.createElement(a.Box,{display:"flex",flexDirection:"column",alignItems:"center"},_.default.createElement(a.Card,{className:u.card},_.default.createElement("div",{className:u.lockIconAvatar},_.default.createElement(a.Avatar,{className:u.lockIcon},_.default.createElement(I.default,null))),_.default.createElement(a.Box,{pl:2,pr:2},_.default.createElement(a.Typography,{variant:"body2",className:u.text},i||d("auth.message.choose_pod_provider"))),_.default.createElement(a.Box,{m:2},_.default.createElement(a.List,{className:u.list},h.map((function(e,t){var r=new URL("/auth",(e["apods:domainName"].includes(":")?"http://":"https://")+e["apods:domainName"]);return v.has("signup")&&r.searchParams.set("signup","true"),r.searchParams.set("redirect",window.location.href),_.default.createElement(_.default.Fragment,{key:t},_.default.createElement(a.Divider,null),_.default.createElement(a.ListItem,{key:t,button:!0,onClick:function(){return window.location.href=r.toString()},className:u.listItem},_.default.createElement(a.ListItemAvatar,null,_.default.createElement(a.Avatar,null,_.default.createElement(L.default,null))),_.default.createElement(a.ListItemText,{primary:e["apods:domainName"],secondary:e["apods:area"]})))}))))))};function Ze(){}function et(){}et.resetWarningCache=Ze;var tt=function(){function e(e,t,r,n,a,o){if("SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED"!==o){var i=new Error("Calling PropTypes validators directly is not supported by the `prop-types` package. Use PropTypes.checkPropTypes() to call them. Read more at http://fb.me/use-check-prop-types");throw i.name="Invariant Violation",i}}function t(){return e}e.isRequired=e;var r={array:e,bigint:e,bool:e,func:e,number:e,object:e,string:e,symbol:e,any:e,arrayOf:t,element:e,elementType:e,instanceOf:t,node:e,objectOf:t,oneOf:t,oneOfType:t,shape:t,exact:t,checkPropTypes:et,resetWarningCache:Ze};return r.PropTypes=r,r},rt=ee((function(e){e.exports=tt()})),nt=function(){var r=t.useAuthProvider();return e.useCallback((function(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};return r.signup(e)}),[r])},at=k.default((function(e){return{content:{width:450},icon:{margin:e.spacing(.3)}}})),ot=function(e){var r=e.redirectTo,n=e.delayBeforeRedirect,o=M(t.useSafeSetState(!1),2),i=o[0],s=o[1],u=nt(),c=t.useTranslate(),l=t.useNotify(),d=at(),f=m.useLocation(),p=new URLSearchParams(f.search);return E.createElement(t.Form,{onSubmit:function(e){s(!0),u(e).then((function(e){n?setTimeout((function(){window.location.reload(),window.location.href=r||"/",s(!1)}),n):(window.location.reload(),window.location.href=r||"/",s(!1)),l("auth.message.new_user_created",{type:"info"})})).catch((function(e){s(!1),l("string"==typeof e?e:void 0!==e&&e.message?e.message:"ra.auth.sign_in_error",{type:"warning",_:"string"==typeof e?e:e&&e.message?e.message:void 0})}))},noValidate:!0,defaultValues:{email:p.get("email")}},E.createElement(a.CardContent,{className:d.content},E.createElement(t.TextInput,{autoFocus:!0,source:"username",label:c("auth.input.username"),autoComplete:"username",fullWidth:!0,disabled:i,validate:t.required()}),E.createElement(t.TextInput,{source:"email",label:c("auth.input.email"),autoComplete:"email",fullWidth:!0,disabled:i||p.has("email")&&p.has("force-email"),validate:[t.required(),t.email()]}),E.createElement(t.TextInput,{source:"password",type:"password",label:c("ra.auth.password"),autoComplete:"new-password",fullWidth:!0,disabled:i||p.has("email")&&p.has("force-email"),validate:t.required()}),E.createElement(a.Button,{variant:"contained",type:"submit",color:"primary",disabled:i,fullWidth:!0,className:d.button},i?E.createElement(a.CircularProgress,{className:d.icon,size:19,thickness:3}):c("auth.action.signup"))))};ot.propTypes={redirectTo:rt.string};var it=k.default((function(e){return{content:{width:450},icon:{margin:e.spacing(.3)}}})),st=function(e){var r=e.redirectTo,n=M(t.useSafeSetState(!1),2),o=n[0],i=n[1],s=t.useLogin(),u=t.useTranslate(),c=t.useNotify(),l=it(),d=m.useLocation(),f=new URLSearchParams(d.search);return E.createElement(t.Form,{onSubmit:function(e){i(!0),s(e,r).then((function(){i(!1)})).catch((function(e){i(!1),c("string"==typeof e?e:void 0!==e&&e.message?e.message:"ra.auth.sign_in_error",{type:"warning",messageArgs:{_:"string"==typeof e?e:e&&e.message?e.message:void 0}})}))},noValidate:!0,defaultValues:{email:f.get("email")}},E.createElement(a.CardContent,{className:l.content},E.createElement(t.TextInput,{source:"username",label:u("auth.input.email"),autoComplete:"email",fullWidth:!0,disabled:o||f.has("email")&&f.has("force-email"),validate:[t.required(),t.email()]}),E.createElement(t.TextInput,{source:"password",type:"password",label:u("ra.auth.password"),autoComplete:"current-password",fullWidth:!0,disabled:o||f.has("email")&&f.has("force-email"),validate:t.required()}),E.createElement(a.Button,{variant:"contained",type:"submit",color:"primary",disabled:o,fullWidth:!0,className:l.button},o?E.createElement(a.CircularProgress,{className:l.icon,size:19,thickness:3}):u("auth.action.login"))))};st.propTypes={redirectTo:rt.string};var ut=k.default((function(e){return{icon:{margin:e.spacing(.3)}}})),ct=function(e){var r=e.redirectTo,n=m.useLocation(),o=new URLSearchParams(n.search),i=o.get("token"),s=M(t.useSafeSetState(!1),2),u=s[0],c=s[1],l=t.useAuthProvider(),d=t.useTranslate(),f=t.useNotify(),p=ut();return _.default.createElement(t.Form,{onSubmit:function(e){c(!0),l.setNewPassword(U(U({},e),{},{token:i})).then((function(e){setTimeout((function(){window.location.href="/login".concat(r?"?redirect=".concat(encodeURIComponent(r)):""),c(!1)}),2e3),f("auth.notification.password_changed","info")})).catch((function(e){c(!1),f("string"==typeof e?e:void 0!==e&&e.message?e.message:"auth.notification.reset_password_error",{type:"warning",messageArgs:{_:"string"==typeof e?e:e&&e.message?e.message:void 0}})}))},noValidate:!0,defaultValues:{email:o.get("email")}},_.default.createElement(a.CardContent,{className:p.content},_.default.createElement(t.TextInput,{autoFocus:!0,source:"email",label:d("auth.input.email"),autoComplete:"email",fullWidth:!0,disabled:u,validate:t.required(),format:function(e){return e?e.toLowerCase():""}}),_.default.createElement(t.TextInput,{autoFocus:!0,type:"password",source:"password",label:d("auth.input.new_password"),autoComplete:"current-password",fullWidth:!0,disabled:u,validate:t.required(),format:function(e){return e?e.toLowerCase():""}}),_.default.createElement(t.TextInput,{autoFocus:!0,type:"password",source:"confirm-password",label:d("auth.input.confirm_new_password"),autoComplete:"current-password",fullWidth:!0,disabled:u,validate:t.required(),format:function(e){return e?e.toLowerCase():""}}),_.default.createElement(a.Button,{variant:"contained",type:"submit",color:"primary",disabled:u,fullWidth:!0,className:p.button},u?_.default.createElement(a.CircularProgress,{className:p.icon,size:19,thickness:3}):d("auth.action.set_new_password"))))},lt=k.default((function(e){return{icon:{margin:e.spacing(.3)}}})),dt=function(){var e=M(t.useSafeSetState(!1),2),r=e[0],n=e[1],o=t.useAuthProvider(),i=t.useTranslate(),s=t.useNotify(),u=lt();return _.default.createElement(t.Form,{onSubmit:function(e){n(!0),o.resetPassword(U({},e)).then((function(e){n(!1),s("auth.notification.reset_password_submitted","info")})).catch((function(e){n(!1),s("string"==typeof e?e:void 0!==e&&e.message?e.message:"auth.notification.reset_password_error",{type:"warning",messageArgs:{_:"string"==typeof e?e:e&&e.message?e.message:void 0}})}))}},_.default.createElement(a.CardContent,{className:u.content},_.default.createElement(t.TextInput,{autoFocus:!0,source:"email",label:i("auth.input.email"),autoComplete:"email",fullWidth:!0,disabled:r,validate:t.required(),format:function(e){return e?e.toLowerCase():""}}),_.default.createElement(a.Button,{variant:"contained",type:"submit",color:"primary",disabled:r,fullWidth:!0,className:u.button},r?_.default.createElement(a.CircularProgress,{className:u.icon,size:19,thickness:3}):i("auth.action.reset_password"))))},ft=k.default((function(e){return{"@global":{body:{backgroundColor:e.palette.secondary.main}},root:{backgroundColor:e.palette.secondary.main},card:q({minWidth:300,maxWidth:500,marginTop:"6em"},e.breakpoints.down("sm"),{margin:"1em"}),icon:{marginTop:5,marginRight:5},title:q({},e.breakpoints.down("sm"),{fontWeight:"bold",marginTop:12})}})),pt=function(e){var r=e.title,n=e.icon,o=e.text,i=e.children,s=ft();return _.default.createElement(a.Box,{display:"flex",flexDirection:"column",alignItems:"center",className:s.root},_.default.createElement(a.Card,{className:s.card},_.default.createElement(a.Box,{p:2,display:"flex",justifyContent:"start"},n&&_.default.cloneElement(n,{fontSize:"large",className:s.icon}),_.default.createElement(a.Typography,{variant:"h4",className:s.title},r)),_.default.createElement(a.Box,{pl:2,pr:2},_.default.createElement(a.Typography,{variant:"body1"},o)),i),_.default.createElement(t.Notification,null))},mt=k.default((function(){return{switch:{marginBottom:"1em",display:"flex",flexDirection:"column",alignItems:"center"}}})),ht=function(r){var n=r.hasSignup,o=mt(),i=m.useNavigate(),s=t.useTranslate(),u=M(m.useSearchParams(),1)[0],c=n&&u.has("signup"),l=u.has("reset_password"),d=u.has("new_password"),f=!c&&!l&&!d,p=u.get("redirect"),h=t.useGetIdentity(),g=h.identity,v=h.isLoading;e.useEffect((function(){!v&&null!=g&&g.id&&(p&&p.startsWith("http")?window.location.href=p:i(p||"/"))}),[g,v,i,p]);var y=M(e.useMemo((function(){return c?["auth.action.signup","auth.helper.signup"]:f?["auth.action.login","auth.helper.login"]:l?["auth.action.reset_password","auth.helper.reset_password"]:d?["auth.action.set_new_password","auth.helper.set_new_password"]:void 0}),[c,f,l,d]),2),w=y[0],b=y[1];return v||null!=g&&g.id?null:_.default.createElement(pt,{title:s(w),text:s(b),icon:_.default.createElement(I.default,null)},_.default.createElement(a.Card,null,c&&_.default.createElement(ot,{redirectTo:p,delayBeforeRedirect:3e3}),l&&_.default.createElement(dt,null),d&&_.default.createElement(ct,{redirectTo:p}),f&&_.default.createElement(st,{redirectTo:p}),_.default.createElement("div",{className:o.switch},c&&_.default.createElement(m.Link,{to:"/login"},_.default.createElement(a.Typography,{variant:"body2"},s("auth.action.login"))),f&&_.default.createElement(_.default.Fragment,null,n&&_.default.createElement("div",null,_.default.createElement(m.Link,{to:"/login?signup=true"},_.default.createElement(a.Typography,{variant:"body2"},s("auth.action.signup")))),_.default.createElement("div",null,_.default.createElement(m.Link,{to:"/login?reset_password=true&".concat(u.toString())},_.default.createElement(a.Typography,{variant:"body2"},s("auth.action.reset_password"))))))))};ht.defaultProps={hasSignup:!0};var gt=["name","create"],vt=["label","icon","to"],yt=["logout","profileResource"],wt=e.forwardRef((function(r,n){var o=r.label,i=r.icon,s=r.to,u=V(r,vt),c=t.useUserMenu().onClose,l=t.useTranslate(),d=m.useNavigate(),f=e.useCallback((function(){d(s),c()}),[s,c,d]);return _.default.createElement(a.MenuItem,F({onClick:f,ref:n},u),i&&_.default.createElement(a.ListItemIcon,null,_.default.cloneElement(i,{fontSize:"small"})),_.default.createElement(a.ListItemText,null,l(o)))})),bt=function(e){var r,n,a=e.logout,o=e.profileResource,i=V(e,yt),s=t.useGetIdentity().identity;return _.default.createElement(t.UserMenu,i,s&&""!==s.id?[_.default.createElement(wt,{key:"view",label:"auth.action.view_my_profile",icon:_.default.createElement(R.default,null),to:"/".concat(o,"/").concat(encodeURIComponent((null==s||null===(r=s.profileData)||void 0===r?void 0:r.id)||s.id),"/show")}),_.default.createElement(wt,{key:"edit",label:"auth.action.edit_my_profile",icon:_.default.createElement(C.default,null),to:"/".concat(o,"/").concat(encodeURIComponent((null==s||null===(n=s.profileData)||void 0===n?void 0:n.id)||s.id))}),_.default.cloneElement(a,{key:"logout"})]:[_.default.createElement(wt,{key:"signup",label:"auth.action.signup",to:"/login?signup=true"}),_.default.createElement(wt,{key:"login",label:"auth.action.login",to:"/login"})])};bt.defaultProps={logout:_.default.createElement(t.Logout,null),profileResource:"Person"};var _t=function(){this.__data__=[],this.size=0};var Et=function(e,t){return e===t||e!=e&&t!=t};var xt=function(e,t){for(var r=e.length;r--;)if(Et(e[r][0],t))return r;return-1},kt=Array.prototype.splice;var jt=function(e){var t=this.__data__,r=xt(t,e);return!(r<0)&&(r==t.length-1?t.pop():kt.call(t,r,1),--this.size,!0)};var Pt=function(e){var t=this.__data__,r=xt(t,e);return r<0?void 0:t[r][1]};var Ct=function(e){return xt(this.__data__,e)>-1};var St=function(e,t){var r=this.__data__,n=xt(r,e);return n<0?(++this.size,r.push([e,t])):r[n][1]=t,this};function Ot(e){var t=-1,r=null==e?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}Ot.prototype.clear=_t,Ot.prototype.delete=jt,Ot.prototype.get=Pt,Ot.prototype.has=Ct,Ot.prototype.set=St;var Tt=Ot;var At=function(){this.__data__=new Tt,this.size=0};var It=function(e){var t=this.__data__,r=t.delete(e);return this.size=t.size,r};var Lt=function(e){return this.__data__.get(e)};var Rt=function(e){return this.__data__.has(e)},Nt="object"==typeof Z&&Z&&Z.Object===Object&&Z,Ut="object"==typeof self&&self&&self.Object===Object&&self,Wt=Nt||Ut||Function("return this")(),Dt=Wt.Symbol,zt=Object.prototype,Bt=zt.hasOwnProperty,qt=zt.toString,Ft=Dt?Dt.toStringTag:void 0;var Vt=function(e){var t=Bt.call(e,Ft),r=e[Ft];try{e[Ft]=void 0;var n=!0}catch(e){}var a=qt.call(e);return n&&(t?e[Ft]=r:delete e[Ft]),a},Mt=Object.prototype.toString;var Gt=function(e){return Mt.call(e)},Yt=Dt?Dt.toStringTag:void 0;var $t=function(e){return null==e?void 0===e?"[object Undefined]":"[object Null]":Yt&&Yt in Object(e)?Vt(e):Gt(e)};var Ht=function(e){var t=typeof e;return null!=e&&("object"==t||"function"==t)};var Jt,Qt=function(e){if(!Ht(e))return!1;var t=$t(e);return"[object Function]"==t||"[object GeneratorFunction]"==t||"[object AsyncFunction]"==t||"[object Proxy]"==t},Kt=Wt["__core-js_shared__"],Xt=(Jt=/[^.]+$/.exec(Kt&&Kt.keys&&Kt.keys.IE_PROTO||""))?"Symbol(src)_1."+Jt:"";var Zt=function(e){return!!Xt&&Xt in e},er=Function.prototype.toString;var tr=function(e){if(null!=e){try{return er.call(e)}catch(e){}try{return e+""}catch(e){}}return""},rr=/^\[object .+?Constructor\]$/,nr=Function.prototype,ar=Object.prototype,or=nr.toString,ir=ar.hasOwnProperty,sr=RegExp("^"+or.call(ir).replace(/[\\^$.*+?()[\]{}|]/g,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$");var ur=function(e){return!(!Ht(e)||Zt(e))&&(Qt(e)?sr:rr).test(tr(e))};var cr=function(e,t){return null==e?void 0:e[t]};var lr=function(e,t){var r=cr(e,t);return ur(r)?r:void 0},dr=lr(Wt,"Map"),fr=lr(Object,"create");var pr=function(){this.__data__=fr?fr(null):{},this.size=0};var mr=function(e){var t=this.has(e)&&delete this.__data__[e];return this.size-=t?1:0,t},hr=Object.prototype.hasOwnProperty;var gr=function(e){var t=this.__data__;if(fr){var r=t[e];return"__lodash_hash_undefined__"===r?void 0:r}return hr.call(t,e)?t[e]:void 0},vr=Object.prototype.hasOwnProperty;var yr=function(e){var t=this.__data__;return fr?void 0!==t[e]:vr.call(t,e)};var wr=function(e,t){var r=this.__data__;return this.size+=this.has(e)?0:1,r[e]=fr&&void 0===t?"__lodash_hash_undefined__":t,this};function br(e){var t=-1,r=null==e?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}br.prototype.clear=pr,br.prototype.delete=mr,br.prototype.get=gr,br.prototype.has=yr,br.prototype.set=wr;var _r=br;var Er=function(){this.size=0,this.__data__={hash:new _r,map:new(dr||Tt),string:new _r}};var xr=function(e){var t=typeof e;return"string"==t||"number"==t||"symbol"==t||"boolean"==t?"__proto__"!==e:null===e};var kr=function(e,t){var r=e.__data__;return xr(t)?r["string"==typeof t?"string":"hash"]:r.map};var jr=function(e){var t=kr(this,e).delete(e);return this.size-=t?1:0,t};var Pr=function(e){return kr(this,e).get(e)};var Cr=function(e){return kr(this,e).has(e)};var Sr=function(e,t){var r=kr(this,e),n=r.size;return r.set(e,t),this.size+=r.size==n?0:1,this};function Or(e){var t=-1,r=null==e?0:e.length;for(this.clear();++t<r;){var n=e[t];this.set(n[0],n[1])}}Or.prototype.clear=Er,Or.prototype.delete=jr,Or.prototype.get=Pr,Or.prototype.has=Cr,Or.prototype.set=Sr;var Tr=Or;var Ar=function(e,t){var r=this.__data__;if(r instanceof Tt){var n=r.__data__;if(!dr||n.length<199)return n.push([e,t]),this.size=++r.size,this;r=this.__data__=new Tr(n)}return r.set(e,t),this.size=r.size,this};function Ir(e){var t=this.__data__=new Tt(e);this.size=t.size}Ir.prototype.clear=At,Ir.prototype.delete=It,Ir.prototype.get=Lt,Ir.prototype.has=Rt,Ir.prototype.set=Ar;var Lr=Ir;var Rr=function(e){return this.__data__.set(e,"__lodash_hash_undefined__"),this};var Nr=function(e){return this.__data__.has(e)};function Ur(e){var t=-1,r=null==e?0:e.length;for(this.__data__=new Tr;++t<r;)this.add(e[t])}Ur.prototype.add=Ur.prototype.push=Rr,Ur.prototype.has=Nr;var Wr=Ur;var Dr=function(e,t){for(var r=-1,n=null==e?0:e.length;++r<n;)if(t(e[r],r,e))return!0;return!1};var zr=function(e,t){return e.has(t)};var Br=function(e,t,r,n,a,o){var i=1&r,s=e.length,u=t.length;if(s!=u&&!(i&&u>s))return!1;var c=o.get(e),l=o.get(t);if(c&&l)return c==t&&l==e;var d=-1,f=!0,p=2&r?new Wr:void 0;for(o.set(e,t),o.set(t,e);++d<s;){var m=e[d],h=t[d];if(n)var g=i?n(h,m,d,t,e,o):n(m,h,d,e,t,o);if(void 0!==g){if(g)continue;f=!1;break}if(p){if(!Dr(t,(function(e,t){if(!zr(p,t)&&(m===e||a(m,e,r,n,o)))return p.push(t)}))){f=!1;break}}else if(m!==h&&!a(m,h,r,n,o)){f=!1;break}}return o.delete(e),o.delete(t),f},qr=Wt.Uint8Array;var Fr=function(e){var t=-1,r=Array(e.size);return e.forEach((function(e,n){r[++t]=[n,e]})),r};var Vr=function(e){var t=-1,r=Array(e.size);return e.forEach((function(e){r[++t]=e})),r},Mr=Dt?Dt.prototype:void 0,Gr=Mr?Mr.valueOf:void 0;var Yr=function(e,t,r,n,a,o,i){switch(r){case"[object DataView]":if(e.byteLength!=t.byteLength||e.byteOffset!=t.byteOffset)return!1;e=e.buffer,t=t.buffer;case"[object ArrayBuffer]":return!(e.byteLength!=t.byteLength||!o(new qr(e),new qr(t)));case"[object Boolean]":case"[object Date]":case"[object Number]":return Et(+e,+t);case"[object Error]":return e.name==t.name&&e.message==t.message;case"[object RegExp]":case"[object String]":return e==t+"";case"[object Map]":var s=Fr;case"[object Set]":var u=1&n;if(s||(s=Vr),e.size!=t.size&&!u)return!1;var c=i.get(e);if(c)return c==t;n|=2,i.set(e,t);var l=Br(s(e),s(t),n,a,o,i);return i.delete(e),l;case"[object Symbol]":if(Gr)return Gr.call(e)==Gr.call(t)}return!1};var $r=function(e,t){for(var r=-1,n=t.length,a=e.length;++r<n;)e[a+r]=t[r];return e},Hr=Array.isArray;var Jr=function(e,t,r){var n=t(e);return Hr(e)?n:$r(n,r(e))};var Qr=function(e,t){for(var r=-1,n=null==e?0:e.length,a=0,o=[];++r<n;){var i=e[r];t(i,r,e)&&(o[a++]=i)}return o};var Kr=function(){return[]},Xr=Object.prototype.propertyIsEnumerable,Zr=Object.getOwnPropertySymbols,en=Zr?function(e){return null==e?[]:(e=Object(e),Qr(Zr(e),(function(t){return Xr.call(e,t)})))}:Kr;var tn=function(e,t){for(var r=-1,n=Array(e);++r<e;)n[r]=t(r);return n};var rn=function(e){return null!=e&&"object"==typeof e};var nn=function(e){return rn(e)&&"[object Arguments]"==$t(e)},an=Object.prototype,on=an.hasOwnProperty,sn=an.propertyIsEnumerable,un=nn(function(){return arguments}())?nn:function(e){return rn(e)&&on.call(e,"callee")&&!sn.call(e,"callee")};var cn=function(){return!1},ln=ee((function(e,t){var r=t&&!t.nodeType&&t,n=r&&e&&!e.nodeType&&e,a=n&&n.exports===r?Wt.Buffer:void 0,o=(a?a.isBuffer:void 0)||cn;e.exports=o})),dn=/^(?:0|[1-9]\d*)$/;var fn=function(e,t){var r=typeof e;return!!(t=null==t?9007199254740991:t)&&("number"==r||"symbol"!=r&&dn.test(e))&&e>-1&&e%1==0&&e<t};var pn=function(e){return"number"==typeof e&&e>-1&&e%1==0&&e<=9007199254740991},mn={};mn["[object Float32Array]"]=mn["[object Float64Array]"]=mn["[object Int8Array]"]=mn["[object Int16Array]"]=mn["[object Int32Array]"]=mn["[object Uint8Array]"]=mn["[object Uint8ClampedArray]"]=mn["[object Uint16Array]"]=mn["[object Uint32Array]"]=!0,mn["[object Arguments]"]=mn["[object Array]"]=mn["[object ArrayBuffer]"]=mn["[object Boolean]"]=mn["[object DataView]"]=mn["[object Date]"]=mn["[object Error]"]=mn["[object Function]"]=mn["[object Map]"]=mn["[object Number]"]=mn["[object Object]"]=mn["[object RegExp]"]=mn["[object Set]"]=mn["[object String]"]=mn["[object WeakMap]"]=!1;var hn=function(e){return rn(e)&&pn(e.length)&&!!mn[$t(e)]};var gn=function(e){return function(t){return e(t)}},vn=ee((function(e,t){var r=t&&!t.nodeType&&t,n=r&&e&&!e.nodeType&&e,a=n&&n.exports===r&&Nt.process,o=function(){try{var e=n&&n.require&&n.require("util").types;return e||a&&a.binding&&a.binding("util")}catch(e){}}();e.exports=o})),yn=vn&&vn.isTypedArray,wn=yn?gn(yn):hn,bn=Object.prototype.hasOwnProperty;var _n=function(e,t){var r=Hr(e),n=!r&&un(e),a=!r&&!n&&ln(e),o=!r&&!n&&!a&&wn(e),i=r||n||a||o,s=i?tn(e.length,String):[],u=s.length;for(var c in e)!t&&!bn.call(e,c)||i&&("length"==c||a&&("offset"==c||"parent"==c)||o&&("buffer"==c||"byteLength"==c||"byteOffset"==c)||fn(c,u))||s.push(c);return s},En=Object.prototype;var xn=function(e){var t=e&&e.constructor;return e===("function"==typeof t&&t.prototype||En)};var kn=function(e,t){return function(r){return e(t(r))}}(Object.keys,Object),jn=Object.prototype.hasOwnProperty;var Pn=function(e){if(!xn(e))return kn(e);var t=[];for(var r in Object(e))jn.call(e,r)&&"constructor"!=r&&t.push(r);return t};var Cn=function(e){return null!=e&&pn(e.length)&&!Qt(e)};var Sn=function(e){return Cn(e)?_n(e):Pn(e)};var On=function(e){return Jr(e,Sn,en)},Tn=Object.prototype.hasOwnProperty;var An=function(e,t,r,n,a,o){var i=1&r,s=On(e),u=s.length;if(u!=On(t).length&&!i)return!1;for(var c=u;c--;){var l=s[c];if(!(i?l in t:Tn.call(t,l)))return!1}var d=o.get(e),f=o.get(t);if(d&&f)return d==t&&f==e;var p=!0;o.set(e,t),o.set(t,e);for(var m=i;++c<u;){var h=e[l=s[c]],g=t[l];if(n)var v=i?n(g,h,l,t,e,o):n(h,g,l,e,t,o);if(!(void 0===v?h===g||a(h,g,r,n,o):v)){p=!1;break}m||(m="constructor"==l)}if(p&&!m){var y=e.constructor,w=t.constructor;y==w||!("constructor"in e)||!("constructor"in t)||"function"==typeof y&&y instanceof y&&"function"==typeof w&&w instanceof w||(p=!1)}return o.delete(e),o.delete(t),p},In=lr(Wt,"DataView"),Ln=lr(Wt,"Promise"),Rn=lr(Wt,"Set"),Nn=lr(Wt,"WeakMap"),Un=tr(In),Wn=tr(dr),Dn=tr(Ln),zn=tr(Rn),Bn=tr(Nn),qn=$t;(In&&"[object DataView]"!=qn(new In(new ArrayBuffer(1)))||dr&&"[object Map]"!=qn(new dr)||Ln&&"[object Promise]"!=qn(Ln.resolve())||Rn&&"[object Set]"!=qn(new Rn)||Nn&&"[object WeakMap]"!=qn(new Nn))&&(qn=function(e){var t=$t(e),r="[object Object]"==t?e.constructor:void 0,n=r?tr(r):"";if(n)switch(n){case Un:return"[object DataView]";case Wn:return"[object Map]";case Dn:return"[object Promise]";case zn:return"[object Set]";case Bn:return"[object WeakMap]"}return t});var Fn=qn,Vn="[object Object]",Mn=Object.prototype.hasOwnProperty;var Gn=function(e,t,r,n,a,o){var i=Hr(e),s=Hr(t),u=i?"[object Array]":Fn(e),c=s?"[object Array]":Fn(t),l=(u="[object Arguments]"==u?Vn:u)==Vn,d=(c="[object Arguments]"==c?Vn:c)==Vn,f=u==c;if(f&&ln(e)){if(!ln(t))return!1;i=!0,l=!1}if(f&&!l)return o||(o=new Lr),i||wn(e)?Br(e,t,r,n,a,o):Yr(e,t,u,r,n,a,o);if(!(1&r)){var p=l&&Mn.call(e,"__wrapped__"),m=d&&Mn.call(t,"__wrapped__");if(p||m){var h=p?e.value():e,g=m?t.value():t;return o||(o=new Lr),a(h,g,r,n,o)}}return!!f&&(o||(o=new Lr),An(e,t,r,n,a,o))};var Yn=function e(t,r,n,a,o){return t===r||(null==t||null==r||!rn(t)&&!rn(r)?t!=t&&r!=r:Gn(t,r,n,a,e,o))};var $n=function(e,t){return Yn(e,t)},Hn={},Jn={"{}":void 0};exports.AuthDialog=Me,exports.CreateWithPermissions=Ee,exports.DeleteButtonWithPermissions=Ne,exports.EditActionsWithPermissions=Re,exports.EditButtonWithPermissions=function(e){var r=t.useGetRecordId(),n=t.usePermissions(r),a=n.permissions;return!n.isLoading&&null!=a&&a.some((function(e){return me.includes(e["acl:mode"])}))?_.default.createElement(t.EditButton,e):null},exports.EditToolbarWithPermissions=We,exports.EditWithPermissions=De,exports.ListActionsWithPermissions=ze,exports.ListWithPermissions=Be,exports.LocalLoginPage=ht,exports.LoginPage=$e,exports.PermissionsButton=Le,exports.PodLoginPage=function(r){var n=e.useMemo((function(){return h.createTheme(r.theme)}),[r.theme]);return _.default.createElement(a.StyledEngineProvider,{injectFirst:!0},_.default.createElement(u.ThemeProvider,{theme:n},_.default.createElement(Xe,r),_.default.createElement(t.Notification,null)))},exports.ResourceWithPermissions=function(e){var n=e.name,a=e.create,o=V(e,gt),i=r.useCreateContainer(n),s=t.usePermissions(i).permissions;return _.default.createElement(t.Resource,F({},o,{name:n,create:s&&s.some((function(e){return pe.includes(e["acl:mode"])}))?a:void 0}))},exports.ShowActionsWithPermissions=qe,exports.ShowWithPermissions=Fe,exports.SsoLoginPage=$e,exports.UserMenu=bt,exports.authProvider=function(e){var t,r,n,a,o,i,s,u,c,l,d,f,p=e.dataProvider,m=e.authType,h=e.allowAnonymous,g=void 0===h||h,v=e.checkUser,y=e.checkPermissions,w=void 0!==y&&y;if(![ce,le,de].includes(m))throw new Error("The authType parameter is missing from the auth provider");return{login:(f=B(W().mark((function e(t){var r,n,a,o,i,s,u;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,se(p);case 2:if(r=e.sent,m!==le){e.next=20;break}return n=t.username,a=t.password,e.prev=5,e.next=8,p.fetch(ne(r,"auth/login"),{method:"POST",body:JSON.stringify({username:n.trim(),password:a.trim()}),headers:new Headers({"Content-Type":"application/json"})});case 8:o=e.sent,i=o.json,s=i.token,localStorage.setItem("token",s),window.location.reload(),e.next=18;break;case 15:throw e.prev=15,e.t0=e.catch(5),new Error("ra.auth.sign_in_error");case 18:e.next=23;break;case 20:u="".concat(new URL(window.location.href).origin,"/login?login=true"),t.redirect&&(u+="&redirect=".concat(encodeURIComponent(t.redirect))),window.location.href=ne(r,"auth?redirectUrl=".concat(encodeURIComponent(u)));case 23:case"end":return e.stop()}}),e,null,[[5,15]])}))),function(e){return f.apply(this,arguments)}),signup:(d=B(W().mark((function e(t){var r,n,a,o,i,s,u,c,l,d,f;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,se(p);case 2:if(r=e.sent,m!==le){e.next=33;break}return n=t.username,a=t.email,o=t.password,t.domain,i=V(t,ue),e.prev=5,e.next=8,p.fetch(ne(r,"auth/signup"),{method:"POST",body:JSON.stringify(U({username:n.trim(),email:a.trim(),password:o.trim()},i)),headers:new Headers({"Content-Type":"application/json"})});case 8:return s=e.sent,u=s.json,c=u.token,localStorage.setItem("token",c),l=X(c),d=l.webId,e.abrupt("return",d);case 16:if(e.prev=16,e.t0=e.catch(5),"email.already.exists"!==e.t0.message){e.next=22;break}throw new Error("auth.message.user_email_exist");case 22:if("username.already.exists"!==e.t0.message){e.next=26;break}throw new Error("auth.message.username_exist");case 26:if("username.invalid"!==e.t0.message){e.next=30;break}throw new Error("auth.message.username_invalid");case 30:throw new Error(e.t0.message||"ra.auth.sign_in_error");case 31:e.next=35;break;case 33:f="".concat(new URL(window.location.href).origin,"/login?login=true"),window.location.href=ne(r,"auth?redirectUrl=".concat(encodeURIComponent(f)));case 35:case"end":return e.stop()}}),e,null,[[5,16]])}))),function(e){return d.apply(this,arguments)}),logout:(l=B(W().mark((function e(){var t,r,n,a,o;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:e.t0=m,e.next=e.t0===le?3:e.t0===ce?7:e.t0===de?13:18;break;case 3:return localStorage.clear(),window.location.reload(),window.location.href="/",e.abrupt("break",18);case 7:return e.next=9,se(p);case 9:return t=e.sent,r=new URL(window.location.href).origin,window.location.href=ne(t,"auth/logout?redirectUrl=".concat(encodeURIComponent("".concat(ne(r,"login"),"?logout=true")))),e.abrupt("break",18);case 13:return n=localStorage.getItem("token"),a=X(n),o=a.webId,localStorage.clear(),window.location.href="".concat(ne(o,"openApp"),"?type=").concat(encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")),e.abrupt("break",18);case 18:return e.abrupt("return","/");case 19:case"end":return e.stop()}}),e)}))),function(){return l.apply(this,arguments)}),checkAuth:(c=B(W().mark((function e(){return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(localStorage.getItem("token")||g){e.next=3;break}throw new Error;case 3:case"end":return e.stop()}}),e)}))),function(){return c.apply(this,arguments)}),checkUser:function(e){return!v||v(e)},checkError:function(e){return Promise.resolve()},getPermissions:(u=B(W().mark((function e(t){var r,n,a;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(w){e.next=2;break}return e.abrupt("return");case 2:if("object"!==D(t)){e.next=4;break}return e.abrupt("return");case 4:if(t&&t.startsWith("http")){e.next=6;break}throw new Error("The first parameter passed to getPermissions must be an URL");case 6:return r=oe(t),e.prev=7,e.next=10,p.fetch(r);case 10:return n=e.sent,a=n.json,e.abrupt("return",a["@graph"]);case 15:return e.prev=15,e.t0=e.catch(7),console.warn("Could not fetch ACL URI ".concat(t)),e.abrupt("return",[]);case 19:case"end":return e.stop()}}),e,null,[[7,15]])}))),function(e){return u.apply(this,arguments)}),addPermission:(s=B(W().mark((function e(t,r,n,a){var o,i,s;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(t&&t.startsWith("http")){e.next=2;break}throw new Error("The first parameter passed to addPermission must be an URL");case 2:return i=oe(t),q(o={"@id":"#".concat(a.replace("acl:","")),"@type":"acl:Authorization"},n,r),q(o,"acl:accessTo",t),q(o,"acl:mode",a),s=o,e.next=6,p.fetch(i,{method:"PATCH",body:JSON.stringify({"@context":ie(i),"@graph":[s]})});case 6:case"end":return e.stop()}}),e)}))),function(e,t,r,n){return s.apply(this,arguments)}),removePermission:(i=B(W().mark((function e(t,r,n,a){var o,i,s,u;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(t&&t.startsWith("http")){e.next=2;break}throw new Error("The first parameter passed to removePermission must be an URL");case 2:return o=oe(t),e.next=5,p.fetch(o);case 5:return i=e.sent,s=i.json,u=s["@graph"].filter((function(e){return!e["@id"].includes("#Default")})).map((function(e){var t=ae(e["acl:mode"]),o=ae(e[n]);return a&&t.includes(a)&&o&&o.includes(r)&&(o=o.filter((function(e){return e!==r}))),U(U({},e),{},q({},n,o))})),e.next=10,p.fetch(o,{method:"PUT",body:JSON.stringify({"@context":ie(o),"@graph":u})});case 10:case"end":return e.stop()}}),e)}))),function(e,t,r,n){return i.apply(this,arguments)}),getIdentity:(o=B(W().mark((function e(){var t,r,n,a,o,i,s;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(!(t=localStorage.getItem("token"))){e.next=17;break}return r=X(t),n=r.webId,e.next=5,p.fetch(n);case 5:if(a=e.sent,!(o=a.json).url){e.next=13;break}return e.next=10,p.fetch(o.url);case 10:e.t0=e.sent,e.next=14;break;case 13:e.t0={};case 14:return i=e.t0,s=i.json,e.abrupt("return",{id:n,fullName:(null==s?void 0:s["vcard:given-name"])||(null==s?void 0:s["pair:label"])||o["foaf:name"]||o["pair:label"],profileData:s,webIdData:o});case 17:case"end":return e.stop()}}),e)}))),function(){return o.apply(this,arguments)}),resetPassword:(a=B(W().mark((function e(t){var r,n;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return r=t.email,e.next=3,se(p);case 3:return n=e.sent,e.prev=4,e.next=7,p.fetch(ne(n,"auth/reset_password"),{method:"POST",body:JSON.stringify({email:r.trim()}),headers:new Headers({"Content-Type":"application/json"})});case 7:e.next=12;break;case 9:throw e.prev=9,e.t0=e.catch(4),new Error("auth.notification.reset_password_error");case 12:case"end":return e.stop()}}),e,null,[[4,9]])}))),function(e){return a.apply(this,arguments)}),setNewPassword:(n=B(W().mark((function e(t){var r,n,a,o;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return r=t.email,n=t.token,a=t.password,e.next=3,se(p);case 3:return o=e.sent,e.prev=4,e.next=7,p.fetch(ne(o,"auth/new_password"),{method:"POST",body:JSON.stringify({email:r.trim(),token:n,password:a}),headers:new Headers({"Content-Type":"application/json"})});case 7:e.next=12;break;case 9:throw e.prev=9,e.t0=e.catch(4),new Error("auth.notification.new_password_error");case 12:case"end":return e.stop()}}),e,null,[[4,9]])}))),function(e){return n.apply(this,arguments)}),getAccountSettings:(r=B(W().mark((function e(t){var r,n,a;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,se(p);case 2:return r=e.sent,e.prev=3,e.next=6,p.fetch(ne(r,"auth/account"));case 6:return n=e.sent,a=n.json,e.abrupt("return",a);case 11:throw e.prev=11,e.t0=e.catch(3),new Error("auth.notification.get_settings_error");case 14:case"end":return e.stop()}}),e,null,[[3,11]])}))),function(e){return r.apply(this,arguments)}),updateAccountSettings:(t=B(W().mark((function e(t){var r,n,a,o;return W().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,se(p);case 2:return r=e.sent,e.prev=3,n=t.email,a=t.currentPassword,o=t.newPassword,e.next=7,p.fetch(ne(r,"auth/account"),{method:"POST",body:JSON.stringify({currentPassword:a,email:n.trim(),newPassword:o}),headers:new Headers({"Content-Type":"application/json"})});case 7:e.next=14;break;case 9:if(e.prev=9,e.t0=e.catch(3),"auth.account.invalid_password"!==e.t0.message){e.next=13;break}throw new Error("auth.notification.invalid_password");case 13:throw new Error("auth.notification.update_settings_error");case 14:case"end":return e.stop()}}),e,null,[[3,9]])}))),function(e){return t.apply(this,arguments)})}},exports.englishMessages={auth:{dialog:{container_permissions:"Container permissions",resource_permissions:"Resource permissions",login_required:"Login required"},action:{permissions:"Permissions",signup:"Signup",reset_password:"Reset password",set_new_password:"Set new password",logout:"Logout",login:"Login",view_my_profile:"View my profile",edit_my_profile:"Edit my profile"},right:{resource:{read:"Read",append:"Append",write:"Write",control:"Control"},container:{read:"List",append:"Add",write:"Add",control:"Control"}},agent:{anonymous:"All users",authenticated:"Connected users"},input:{agent_select:"Add an user...",name:"Surname",username:"User ID",email:"Email address",username_or_email:"User ID or email address",current_password:"Current password",new_password:"New password",confirm_new_password:"Confirm new password"},helper:{login:"Sign in to your account",signup:"Create your account",reset_password:"Enter your email address below and we will send you a link to reset your password",set_new_password:"Please enter your email address and a new password below"},message:{resource_show_forbidden:"You are not allowed to view this resource",resource_edit_forbidden:"You are not allowed to edit this resource",resource_delete_forbidden:"You are not allowed to delete this resource",resource_control_forbidden:"You are not allowed to control this resource",container_create_forbidden:"You are not allowed to create new resource",container_list_forbidden:"You are not allowed to list these resources",user_not_allowed_to_login:"You are not allowed to login with this account",user_email_not_found:"No account found with this email address",user_email_exist:"An account already exist with this email address",username_exist:"An account already exist with this user ID",username_invalid:"This username is invalid. Only lowercase characters, numbers, dots and hyphens are authorized",new_user_created:"Your account has been successfully created",user_connected:"You are now connected",user_disconnected:"You are now disconnected",bad_request:"Bad request (Error message returned by the server: %{error})",account_settings_updated:"Your account settings have been successfully updated",login_to_continue:"Please login to continue",choose_pod_provider:"Please choose a POD provider in the list below. All application data will be saved on your POD."},notification:{reset_password_submitted:"An email has been sent with reset password instructions",reset_password_error:"An error occurred",password_changed:"Password changed successfully",new_password_error:"An error occurred",invalid_password:"Invalid password",get_settings_error:"An error occurred",update_settings_error:"An error occurred"}}},exports.frenchMessages={auth:{dialog:{container_permissions:"Permissions sur le container",resource_permissions:"Permissions sur la ressource",login_required:"Connexion requise"},action:{permissions:"Permissions",signup:"S'inscrire",reset_password:"Mot de passe oublié ?",set_new_password:"Définir le mot de passe",logout:"Se déconnecter",login:"Se connecter",view_my_profile:"Voir mon profil",edit_my_profile:"Éditer mon profil"},right:{resource:{read:"Lire",append:"Enrichir",write:"Modifier",control:"Administrer"},container:{read:"Lister",append:"Ajouter",write:"Ajouter",control:"Administrer"}},agent:{anonymous:"Tous les utilisateurs",authenticated:"Utilisateurs connectés"},input:{agent_select:"Ajouter un utilisateur...",name:"Prénom",username:"Identifiant unique",email:"Adresse e-mail",username_or_email:"Identifiant ou adresse e-mail",current_password:"Mot de passe actuel",new_password:"Nouveau mot de passe",confirm_new_password:"Confirmer le nouveau mot de passe"},helper:{login:"Connectez-vous à votre compte.",signup:"Créez votre compte",reset_password:"Entrez votre adresse mail ci-dessous et nous vous enverrons un lien pour réinitialiser votre mot de passe",set_new_password:"Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous"},message:{resource_show_forbidden:"Vous n'avez pas la permission de voir cette ressource",resource_edit_forbidden:"Vous n'avez pas la permission d'éditer cette ressource",resource_delete_forbidden:"Vous n'avez pas la permission d'effacer cette ressource",resource_control_forbidden:"Vous n'avez pas la permission d'administrer cette ressource",container_create_forbidden:"Vous n'avez pas la permission de créer des ressources",container_list_forbidden:"Vous n'avez pas la permission de voir ces ressources",user_not_allowed_to_login:"Vous n'avez pas le droit de vous connecter avec ce compte",user_email_not_found:"Aucun compte trouvé avec cette adresse mail",user_email_exist:"Un compte existe déjà avec cette adresse mail",username_exist:"Un compte existe déjà avec cet identifiant",username_invalid:"Cet identifiant n'est pas valide. Seuls les lettres minuscules, les chiffres, les points et les tirets sont autorisés",new_user_created:"Votre compte a été créé avec succès",user_connected:"Vous êtes maintenant connecté",user_disconnected:"Vous êtes maintenant déconnecté",bad_request:"Requête erronée (Message d'erreur renvoyé par le serveur: %{error})",account_settings_updated:"Les paramètres de votre compte ont été mis à jour avec succès",login_to_continue:"Veuillez vous connecter pour continuer",choose_pod_provider:"Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les données de l'application seront enregistrées sur votre POD."},notification:{reset_password_submitted:"Un e-mail a été envoyé avec les instructions de réinitialisation du mot de passe",reset_password_error:"Une erreur s'est produite",password_changed:"Le mot de passe a été changé avec succès",new_password_error:"Une erreur s'est produite",invalid_password:"Mot de passe incorrect",get_settings_error:"Une erreur s'est produite",update_settings_error:"Une erreur s'est produite"}}},exports.useAgents=Te,exports.useCheckAuthenticated=function(r){var n=t.useGetIdentity(),a=n.identity,o=n.isLoading,i=t.useNotify(),s=t.useRedirect(),u=m.useLocation();return e.useEffect((function(){o||null!=a&&a.id||(i(r||"ra.auth.auth_check_error",{type:"error"}),s("/login?redirect=".concat(encodeURIComponent(u.pathname+u.search))))}),[o,a,s,i,u]),{identity:a,isLoading:o}},exports.useCheckPermissions=_e,exports.usePermissionsWithRefetch=function(){var r=arguments.length>0&&void 0!==arguments[0]?arguments[0]:Hn,n=JSON.stringify(r),a=t.useSafeSetState({permissions:Jn[n]}),o=M(a,2),i=o[0],s=o[1],u=t.useGetPermissions(),c=e.useCallback((function(){return u(r).then((function(e){$n(e,i.permissions)||(Jn[n]=e,s({permissions:e}))})).catch((function(e){s({error:e})}))}),[n,r,u]);return e.useEffect((function(){c()}),[n]),U(U({},i),{},{refetch:c})},exports.useSignup=nt;
+var $2O4Ek$jwtdecode = require("jwt-decode");
+var $2O4Ek$urljoin = require("url-join");
+var $2O4Ek$reactjsxruntime = require("react/jsx-runtime");
+var $2O4Ek$react = require("react");
+var $2O4Ek$reactadmin = require("react-admin");
+var $2O4Ek$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $2O4Ek$muiiconsmaterialShare = require("@mui/icons-material/Share");
+var $2O4Ek$muimaterial = require("@mui/material");
+var $2O4Ek$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $2O4Ek$muimaterialAutocomplete = require("@mui/material/Autocomplete");
+var $2O4Ek$muiiconsmaterialPerson = require("@mui/icons-material/Person");
+var $2O4Ek$muisystem = require("@mui/system");
+var $2O4Ek$muiiconsmaterialEdit = require("@mui/icons-material/Edit");
+var $2O4Ek$muiiconsmaterialCheck = require("@mui/icons-material/Check");
+var $2O4Ek$muiiconsmaterialPublic = require("@mui/icons-material/Public");
+var $2O4Ek$muiiconsmaterialVpnLock = require("@mui/icons-material/VpnLock");
+var $2O4Ek$muiiconsmaterialGroup = require("@mui/icons-material/Group");
+var $2O4Ek$reactrouterdom = require("react-router-dom");
+var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
+var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
+var $2O4Ek$muiiconsmaterialStorage = require("@mui/icons-material/Storage");
+var $2O4Ek$proptypes = require("prop-types");
+var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
+var $2O4Ek$lodashisEqual = require("lodash/isEqual");
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditActionsWithPermissions", () => $4076d0aea1b9e239$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditToolbarWithPermissions", () => $f1baa8bd5325fac3$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ListActionsWithPermissions", () => $6452f20f9b47ebd6$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ShowWithPermissions", () => $773eb052716d0fa7$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ShowActionsWithPermissions", () => $83b0bd683a7f3aa8$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "PodLoginPage", () => $2b9a1c186b0ca88b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useAgents", () => $780e01b2b2982de2$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCheckAuthenticated", () => $84db3891236a263f$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCheckPermissions", () => $673a0cc190160362$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "usePermissionsWithRefetch", () => $80da6dcda9baa28b$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useSignup", () => $19e4629c708b7a3e$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "englishMessages", () => $be2fdde9f3e3137d$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$2e2bcd8739ae039);
+
+
+
+const $2d06940433ec0c6c$export$dca4f48302963835 = (value)=>!value ? undefined : Array.isArray(value) ? value : [
+        value
+    ];
+const $2d06940433ec0c6c$export$4450a74bced1b745 = (resourceUri)=>{
+    const parsedUrl = new URL(resourceUri);
+    return (0, ($parcel$interopDefault($2O4Ek$urljoin)))(parsedUrl.origin, "_acl", parsedUrl.pathname);
+};
+const $2d06940433ec0c6c$export$4d54b642c3d13c34 = (baseUri)=>({
+        "@base": baseUri,
+        acl: "http://www.w3.org/ns/auth/acl#",
+        foaf: "http://xmlns.com/foaf/0.1/",
+        "acl:agent": {
+            "@type": "@id"
+        },
+        "acl:agentGroup": {
+            "@type": "@id"
+        },
+        "acl:agentClass": {
+            "@type": "@id"
+        },
+        "acl:mode": {
+            "@type": "@id"
+        },
+        "acl:accessTo": {
+            "@type": "@id"
+        }
+    });
+const $2d06940433ec0c6c$export$274217e117cdbc7b = async (dataProvider)=>{
+    const dataServers = await dataProvider.getDataServers();
+    const authServer = Object.values(dataServers).find((server)=>server.authServer === true);
+    if (!authServer) throw new Error("Could not find a server with authServer: true. Check your dataServers config.");
+    // If the server is a POD, return the root URL instead of https://domain.com/user/data
+    return authServer.pod ? new URL(authServer.baseUrl).origin : authServer.baseUrl;
+};
+
+
+const $6a92eb32301846ac$var$AUTH_TYPE_SSO = "sso";
+const $6a92eb32301846ac$var$AUTH_TYPE_LOCAL = "local";
+const $6a92eb32301846ac$var$AUTH_TYPE_POD = "pod";
+const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authType: authType, allowAnonymous: allowAnonymous = true, checkUser: checkUser, checkPermissions: checkPermissions = false })=>{
+    if (![
+        $6a92eb32301846ac$var$AUTH_TYPE_SSO,
+        $6a92eb32301846ac$var$AUTH_TYPE_LOCAL,
+        $6a92eb32301846ac$var$AUTH_TYPE_POD
+    ].includes(authType)) throw new Error("The authType parameter is missing from the auth provider");
+    return {
+        login: async (params)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
+                const { username: username, password: password } = params;
+                try {
+                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/login"), {
+                        method: "POST",
+                        body: JSON.stringify({
+                            username: username.trim(),
+                            password: password.trim()
+                        }),
+                        headers: new Headers({
+                            "Content-Type": "application/json"
+                        })
+                    });
+                    const { token: token } = json;
+                    localStorage.setItem("token", token);
+                    // Reload to ensure the dataServer config is reset
+                    window.location.reload();
+                } catch (e) {
+                    throw new Error("ra.auth.sign_in_error");
+                }
+            } else {
+                let redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+                if (params.redirect) redirectUrl += `&redirect=${encodeURIComponent(params.redirect)}`;
+                window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+            }
+        },
+        signup: async (params)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
+                const { username: username, email: email, password: password, domain: domain, ...profileData } = params;
+                try {
+                    const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/signup"), {
+                        method: "POST",
+                        body: JSON.stringify({
+                            username: username.trim(),
+                            email: email.trim(),
+                            password: password.trim(),
+                            ...profileData
+                        }),
+                        headers: new Headers({
+                            "Content-Type": "application/json"
+                        })
+                    });
+                    const { token: token } = json;
+                    localStorage.setItem("token", token);
+                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                    return webId;
+                } catch (e) {
+                    if (e.message === "email.already.exists") throw new Error("auth.message.user_email_exist");
+                    else if (e.message === "username.already.exists") throw new Error("auth.message.username_exist");
+                    else if (e.message === "username.invalid") throw new Error("auth.message.username_invalid");
+                    else throw new Error(e.message || "ra.auth.sign_in_error");
+                }
+            } else {
+                const redirectUrl = `${new URL(window.location.href).origin}/login?login=true`;
+                window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
+            }
+        },
+        logout: async ()=>{
+            switch(authType){
+                case $6a92eb32301846ac$var$AUTH_TYPE_LOCAL:
+                    // Delete token but also any other value in local storage
+                    localStorage.clear();
+                    // Reload to ensure the dataServer config is reset
+                    window.location.reload();
+                    window.location.href = "/";
+                    break;
+                case $6a92eb32301846ac$var$AUTH_TYPE_SSO:
+                    const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+                    const baseUrl = new URL(window.location.href).origin;
+                    window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(baseUrl, "login")}?logout=true`)}`);
+                    break;
+                case $6a92eb32301846ac$var$AUTH_TYPE_POD:
+                    const token = localStorage.getItem("token");
+                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                    // Delete token but also any other value in local storage
+                    localStorage.clear();
+                    window.location.href = `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                    break;
+            }
+            // Avoid displaying immediately the login page
+            return "/";
+        },
+        checkAuth: async ()=>{
+            const token = localStorage.getItem("token");
+            if (!token && !allowAnonymous) throw new Error();
+        },
+        checkUser: (userData)=>{
+            if (checkUser) return checkUser(userData);
+            return true;
+        },
+        checkError: (error)=>Promise.resolve(),
+        getPermissions: async (uri)=>{
+            if (!checkPermissions) return;
+            // React-admin calls getPermissions with an empty object on every page refresh
+            // It also passes an object `{ params: { route: 'dashboard' } }` on the Dashboard
+            // Ignore all this until we found a way to bypass these redundant calls
+            if (typeof uri === "object") return;
+            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to getPermissions must be an URL");
+            const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
+            try {
+                const { json: json } = await dataProvider.fetch(aclUri);
+                return json["@graph"];
+            } catch (e) {
+                console.warn(`Could not fetch ACL URI ${uri}`);
+                return [];
+            }
+        },
+        addPermission: async (uri, agentId, predicate, mode)=>{
+            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to addPermission must be an URL");
+            const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
+            const authorization = {
+                "@id": `#${mode.replace("acl:", "")}`,
+                "@type": "acl:Authorization",
+                [predicate]: agentId,
+                "acl:accessTo": uri,
+                "acl:mode": mode
+            };
+            await dataProvider.fetch(aclUri, {
+                method: "PATCH",
+                body: JSON.stringify({
+                    "@context": (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
+                    "@graph": [
+                        authorization
+                    ]
+                })
+            });
+        },
+        removePermission: async (uri, agentId, predicate, mode)=>{
+            if (!uri || !uri.startsWith("http")) throw new Error("The first parameter passed to removePermission must be an URL");
+            const aclUri = (0, $2d06940433ec0c6c$export$4450a74bced1b745)(uri);
+            // Fetch current permissions
+            const { json: json } = await dataProvider.fetch(aclUri);
+            const updatedPermissions = json["@graph"].filter((authorization)=>!authorization["@id"].includes("#Default")).map((authorization)=>{
+                const modes = (0, $2d06940433ec0c6c$export$dca4f48302963835)(authorization["acl:mode"]);
+                let agents = (0, $2d06940433ec0c6c$export$dca4f48302963835)(authorization[predicate]);
+                if (mode && modes.includes(mode) && agents && agents.includes(agentId)) agents = agents.filter((agent)=>agent !== agentId);
+                return {
+                    ...authorization,
+                    [predicate]: agents
+                };
+            });
+            await dataProvider.fetch(aclUri, {
+                method: "PUT",
+                body: JSON.stringify({
+                    "@context": (0, $2d06940433ec0c6c$export$4d54b642c3d13c34)(aclUri),
+                    "@graph": updatedPermissions
+                })
+            });
+        },
+        getIdentity: async ()=>{
+            const token = localStorage.getItem("token");
+            if (token) {
+                const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                const { json: webIdData } = await dataProvider.fetch(webId);
+                const { json: profileData } = webIdData.url ? await dataProvider.fetch(webIdData.url) : {};
+                return {
+                    id: webId,
+                    fullName: profileData?.["vcard:given-name"] || profileData?.["pair:label"] || webIdData["foaf:name"] || webIdData["pair:label"],
+                    profileData: profileData,
+                    webIdData: webIdData
+                };
+            }
+        },
+        resetPassword: async (params)=>{
+            const { email: email } = params;
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            try {
+                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/reset_password"), {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email: email.trim()
+                    }),
+                    headers: new Headers({
+                        "Content-Type": "application/json"
+                    })
+                });
+            } catch (e) {
+                throw new Error("auth.notification.reset_password_error");
+            }
+        },
+        setNewPassword: async (params)=>{
+            const { email: email, token: token, password: password } = params;
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            try {
+                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/new_password"), {
+                    method: "POST",
+                    body: JSON.stringify({
+                        email: email.trim(),
+                        token: token,
+                        password: password
+                    }),
+                    headers: new Headers({
+                        "Content-Type": "application/json"
+                    })
+                });
+            } catch (e) {
+                throw new Error("auth.notification.new_password_error");
+            }
+        },
+        getAccountSettings: async (params)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            try {
+                const { json: json } = await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/account"));
+                return json;
+            } catch (e) {
+                throw new Error("auth.notification.get_settings_error");
+            }
+        },
+        updateAccountSettings: async (params)=>{
+            const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+            try {
+                const { email: email, currentPassword: currentPassword, newPassword: newPassword } = params;
+                await dataProvider.fetch((0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, "auth/account"), {
+                    method: "POST",
+                    body: JSON.stringify({
+                        currentPassword: currentPassword,
+                        email: email.trim(),
+                        newPassword: newPassword
+                    }),
+                    headers: new Headers({
+                        "Content-Type": "application/json"
+                    })
+                });
+            } catch (e) {
+                if (e.message === "auth.account.invalid_password") throw new Error("auth.notification.invalid_password");
+                throw new Error("auth.notification.update_settings_error");
+            }
+        }
+    };
+};
+var $6a92eb32301846ac$export$2e2bcd8739ae039 = $6a92eb32301846ac$var$authProvider;
+
+
+
+
+
+
+
+
+const $09162138eadab4b9$export$66a34090010a35b3 = "acl:Read";
+const $09162138eadab4b9$export$7c883503ccedfe0e = "acl:Append";
+const $09162138eadab4b9$export$2e56ecf100ca4ba6 = "acl:Write";
+const $09162138eadab4b9$export$5581cb2c55de143a = "acl:Control";
+const $09162138eadab4b9$export$97a08a1bb7ee0545 = "acl:agent";
+const $09162138eadab4b9$export$f07ccbe0773f2c7 = "acl:agentGroup";
+const $09162138eadab4b9$export$2703254089a859eb = "acl:agentClass";
+const $09162138eadab4b9$export$83ae1bc0992a6335 = "foaf:Agent";
+const $09162138eadab4b9$export$546c01a3ffdabe3a = "acl:AuthenticatedAgent";
+const $09162138eadab4b9$export$d37f0098bcf84c55 = [
+    $09162138eadab4b9$export$66a34090010a35b3,
+    $09162138eadab4b9$export$7c883503ccedfe0e,
+    $09162138eadab4b9$export$2e56ecf100ca4ba6,
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$dc3840a4e2a72b8c = [
+    $09162138eadab4b9$export$66a34090010a35b3,
+    $09162138eadab4b9$export$7c883503ccedfe0e,
+    $09162138eadab4b9$export$2e56ecf100ca4ba6,
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$65615a101bd6f5ca = [
+    $09162138eadab4b9$export$7c883503ccedfe0e,
+    $09162138eadab4b9$export$2e56ecf100ca4ba6,
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$b9d0f5f3ab5e453b = [
+    $09162138eadab4b9$export$7c883503ccedfe0e,
+    $09162138eadab4b9$export$2e56ecf100ca4ba6,
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$ac7b0367c0f9031e = [
+    $09162138eadab4b9$export$2e56ecf100ca4ba6,
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$22242524f7d0624 = [
+    $09162138eadab4b9$export$5581cb2c55de143a
+];
+const $09162138eadab4b9$export$cae945d60b6cbe50 = {
+    show: $09162138eadab4b9$export$d37f0098bcf84c55,
+    list: $09162138eadab4b9$export$dc3840a4e2a72b8c,
+    create: $09162138eadab4b9$export$65615a101bd6f5ca,
+    edit: $09162138eadab4b9$export$b9d0f5f3ab5e453b,
+    delete: $09162138eadab4b9$export$ac7b0367c0f9031e,
+    control: $09162138eadab4b9$export$22242524f7d0624
+};
+const $09162138eadab4b9$export$12e6e8e71d10a4bb = {
+    show: "auth.message.resource_show_forbidden",
+    edit: "auth.message.resource_edit_forbidden",
+    delete: "auth.message.resource_delete_forbidden",
+    control: "auth.message.resource_control_forbidden",
+    list: "auth.message.container_list_forbidden",
+    create: "auth.message.container_create_forbidden"
+};
+const $09162138eadab4b9$export$2e9571c4ccdeb6a9 = {
+    [$09162138eadab4b9$export$66a34090010a35b3]: "auth.right.resource.read",
+    [$09162138eadab4b9$export$7c883503ccedfe0e]: "auth.right.resource.append",
+    [$09162138eadab4b9$export$2e56ecf100ca4ba6]: "auth.right.resource.write",
+    [$09162138eadab4b9$export$5581cb2c55de143a]: "auth.right.resource.control"
+};
+const $09162138eadab4b9$export$edca379024d80309 = {
+    [$09162138eadab4b9$export$66a34090010a35b3]: "auth.right.container.read",
+    [$09162138eadab4b9$export$2e56ecf100ca4ba6]: "auth.right.container.write",
+    [$09162138eadab4b9$export$5581cb2c55de143a]: "auth.right.container.control"
+};
+
+
+const $673a0cc190160362$var$useCheckPermissions = (uri, mode, redirectUrl = "/")=>{
+    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(uri);
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const redirect = (0, $2O4Ek$reactadmin.useRedirect)();
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (!isLoading && identity && permissions && !permissions.some((p)=>(0, $09162138eadab4b9$export$cae945d60b6cbe50)[mode].includes(p["acl:mode"]))) {
+            notify((0, $09162138eadab4b9$export$12e6e8e71d10a4bb)[mode], {
+                type: "error"
+            });
+            redirect(redirectUrl);
+        }
+    }, [
+        permissions,
+        identity,
+        redirect,
+        notify,
+        isLoading
+    ]);
+    return permissions;
+};
+var $673a0cc190160362$export$2e2bcd8739ae039 = $673a0cc190160362$var$useCheckPermissions;
+
+
+const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
+    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
+    const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
+    (0, $673a0cc190160362$export$2e2bcd8739ae039)(createContainerUri, "create");
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Create), {
+        ...props
+    });
+};
+$7c87aa71409e289a$var$CreateWithPermissions.defaultProps = {
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateActions), {})
+};
+var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithPermissions;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $a613ad42a03b1bc4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+        list: {
+            padding: 0,
+            width: "100%"
+        },
+        option: {
+            padding: 0
+        }
+    }));
+const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermission: addPermission })=>{
+    const classes = $a613ad42a03b1bc4$var$useStyles();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const [value, setValue] = (0, $2O4Ek$react.useState)(null);
+    const [inputValue, setInputValue] = (0, $2O4Ek$react.useState)("");
+    const [options, setOptions] = (0, $2O4Ek$react.useState)([]);
+    const { data: data } = (0, $2O4Ek$reactadmin.useGetList)("Person", {
+        pagination: {
+            page: 1,
+            perPage: 100
+        },
+        sort: {
+            field: "pair:label",
+            order: "ASC"
+        },
+        filter: {
+            q: inputValue
+        }
+    }, {
+        enabled: inputValue.length > 0
+    });
+    (0, $2O4Ek$react.useEffect)(()=>{
+        setOptions(data?.length > 0 ? Object.values(data) : []);
+    }, [
+        data
+    ]);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muimaterialAutocomplete))), {
+        classes: {
+            option: classes.option
+        },
+        getOptionLabel: (option)=>option["pair:label"],
+        // Do not return agents which have already been added
+        filterOptions: (x)=>x.filter((agent)=>!Object.keys(agents).includes(agent.id)),
+        options: options,
+        noOptionsText: translate("ra.navigation.no_results"),
+        autoComplete: true,
+        blurOnSelect: true,
+        clearOnBlur: true,
+        disableClearable: true,
+        value: value,
+        onChange: (event, record)=>{
+            addPermission(record.id || record["@id"], (0, $09162138eadab4b9$export$97a08a1bb7ee0545), (0, $09162138eadab4b9$export$66a34090010a35b3));
+            setValue(null);
+            setInputValue("");
+            setOptions([]);
+        },
+        onInputChange: (event, newInputValue)=>{
+            setInputValue(newInputValue);
+        },
+        renderInput: (params)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.TextField), {
+                ...params,
+                label: translate("auth.input.agent_select"),
+                variant: "filled",
+                margin: "dense",
+                fullWidth: true
+            }),
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
+                dense: true,
+                className: classes.list,
+                ...props,
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+                    button: true,
+                    children: [
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                                src: option.image,
+                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {})
+                            })
+                        }),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                            primary: option["pair:label"]
+                        })
+                    ]
+                })
+            })
+    });
+};
+var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissionsForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
+    switch(agent.predicate){
+        case 0, $09162138eadab4b9$export$2703254089a859eb:
+            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialVpnLock))), {});
+        case 0, $09162138eadab4b9$export$97a08a1bb7ee0545:
+            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {});
+        case 0, $09162138eadab4b9$export$f07ccbe0773f2c7:
+            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialGroup))), {});
+        default:
+            throw new Error(`Unknown agent predicate: ${agent.predicate}`);
+    }
+};
+var $9f58b72d42a695d9$export$2e2bcd8739ae039 = $9f58b72d42a695d9$var$AgentIcon;
+
+
+const $7a8c6187e6c69fdd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+        listItem: {
+            paddingLeft: 4,
+            paddingRight: 36
+        },
+        primaryText: {
+            width: "30%",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis"
+        },
+        secondaryText: {
+            textAlign: "center",
+            width: "60%",
+            fontStyle: "italic",
+            color: "grey"
+        }
+    }));
+const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agent, addPermission: addPermission, removePermission: removePermission })=>{
+    const classes = $7a8c6187e6c69fdd$var$useStyles();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
+    const [anchorEl, setAnchorEl] = (0, ($parcel$interopDefault($2O4Ek$react))).useState(null);
+    const [user, setUser] = (0, $2O4Ek$react.useState)();
+    const [loading, setLoading] = (0, $2O4Ek$react.useState)(true);
+    const [error, setError] = (0, $2O4Ek$react.useState)();
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (agent.predicate === (0, $09162138eadab4b9$export$97a08a1bb7ee0545)) dataProvider.getOne("Person", {
+            id: agent.id
+        }).then(({ data: data })=>{
+            setUser(data);
+            setLoading(false);
+        }).catch((error)=>{
+            setError(error);
+            setLoading(false);
+        });
+        else setLoading(false);
+    }, [
+        agent.id,
+        agent.predicate
+    ]);
+    // For now, do not display groups
+    if (agent.predicate === (0, $09162138eadab4b9$export$f07ccbe0773f2c7)) return null;
+    const openMenu = (event)=>setAnchorEl(event.currentTarget);
+    const closeMenu = ()=>setAnchorEl(null);
+    const labels = isContainer ? (0, $09162138eadab4b9$export$edca379024d80309) : (0, $09162138eadab4b9$export$2e9571c4ccdeb6a9);
+    if (loading) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Loading), {});
+    if (error) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Error), {});
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+        className: classes.listItem,
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                    src: user?.image,
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
+                        agent: agent
+                    })
+                })
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                className: classes.primaryText,
+                primary: user ? user["pair:label"] : translate(agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                className: classes.secondaryText,
+                primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItemSecondaryAction), {
+                children: [
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.IconButton), {
+                        onClick: openMenu,
+                        size: "large",
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {})
+                    }),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Menu), {
+                        anchorEl: anchorEl,
+                        keepMounted: true,
+                        open: Boolean(anchorEl),
+                        onClose: closeMenu,
+                        children: Object.entries(labels).map(([rightKey, rightLabel])=>{
+                            const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
+                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+                                onClick: ()=>{
+                                    if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
+                                    else addPermission(agent.id, agent.predicate, rightKey);
+                                    closeMenu();
+                                },
+                                children: [
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
+                                        children: hasPermission ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialCheck))), {}) : null
+                                    }),
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                        primary: translate(rightLabel)
+                                    })
+                                ]
+                            }, rightKey);
+                        })
+                    })
+                ]
+            })
+        ]
+    });
+};
+var $7a8c6187e6c69fdd$export$2e2bcd8739ae039 = $7a8c6187e6c69fdd$var$AgentItem;
+
+
+const $6bcadc28bc94109b$var$StyledList = (0, $2O4Ek$muisystem.styled)((0, $2O4Ek$muimaterial.List))(({ theme: theme })=>({
+        width: "100%",
+        maxWidth: "100%",
+        backgroundColor: theme.palette.background.paper
+    }));
+const $6bcadc28bc94109b$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($6bcadc28bc94109b$var$StyledList, {
+        dense: true,
+        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $7a8c6187e6c69fdd$export$2e2bcd8739ae039), {
+                isContainer: isContainer,
+                agent: agent,
+                addPermission: addPermission,
+                removePermission: removePermission
+            }, agentId))
+    });
+};
+var $6bcadc28bc94109b$export$2e2bcd8739ae039 = $6bcadc28bc94109b$var$EditPermissionsForm;
+
+
+
+
+
+
+const $780e01b2b2982de2$var$useAgents = (uri)=>{
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(uri);
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    const [agents, setAgents] = (0, $2O4Ek$react.useState)({});
+    // Format list of authorized agents, based on the permissions returned for the resource
+    (0, $2O4Ek$react.useEffect)(()=>{
+        const result = {
+            [(0, $09162138eadab4b9$export$83ae1bc0992a6335)]: {
+                id: (0, $09162138eadab4b9$export$83ae1bc0992a6335),
+                predicate: (0, $09162138eadab4b9$export$2703254089a859eb),
+                permissions: []
+            },
+            [(0, $09162138eadab4b9$export$546c01a3ffdabe3a)]: {
+                id: (0, $09162138eadab4b9$export$546c01a3ffdabe3a),
+                predicate: (0, $09162138eadab4b9$export$2703254089a859eb),
+                permissions: []
+            }
+        };
+        const appendPermission = (agentId, predicate, mode)=>{
+            if (result[agentId]) result[agentId].permissions.push(mode);
+            else result[agentId] = {
+                id: agentId,
+                predicate: predicate,
+                permissions: [
+                    mode
+                ]
+            };
+        };
+        if (permissions) {
+            for (const p of permissions){
+                if (p[0, $09162138eadab4b9$export$2703254089a859eb]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$2703254089a859eb]).forEach((agentId)=>appendPermission(agentId, (0, $09162138eadab4b9$export$2703254089a859eb), p["acl:mode"]));
+                if (p[0, $09162138eadab4b9$export$97a08a1bb7ee0545]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$97a08a1bb7ee0545]).forEach((userUri)=>appendPermission(userUri, (0, $09162138eadab4b9$export$97a08a1bb7ee0545), p["acl:mode"]));
+                if (p[0, $09162138eadab4b9$export$f07ccbe0773f2c7]) (0, $2d06940433ec0c6c$export$dca4f48302963835)(p[0, $09162138eadab4b9$export$f07ccbe0773f2c7]).forEach((groupUri)=>appendPermission(groupUri, (0, $09162138eadab4b9$export$f07ccbe0773f2c7), p["acl:mode"]));
+            }
+            setAgents(result);
+        }
+    }, [
+        permissions
+    ]);
+    const addPermission = (0, $2O4Ek$react.useCallback)((agentId, predicate, mode)=>{
+        const prevAgents = {
+            ...agents
+        };
+        setAgents({
+            ...agents,
+            [agentId]: {
+                id: agentId,
+                predicate: predicate,
+                permissions: agents[agentId] ? [
+                    ...agents[agentId]?.permissions,
+                    mode
+                ] : [
+                    mode
+                ]
+            }
+        });
+        authProvider.addPermission(uri, agentId, predicate, mode).catch((e)=>{
+            // If there was an error, revert the optimistic update
+            setAgents(prevAgents);
+        });
+    }, [
+        agents,
+        setAgents,
+        uri,
+        authProvider
+    ]);
+    const removePermission = (0, $2O4Ek$react.useCallback)((agentId, predicate, mode)=>{
+        const prevAgents = {
+            ...agents
+        };
+        setAgents(Object.fromEntries(Object.entries(agents).map(([key, agent])=>{
+            if (agent.id === agentId) agent.permissions = agent.permissions.filter((m)=>m !== mode);
+            return [
+                key,
+                agent
+            ];
+        })// Remove agents if they have no permissions (except if they are class agents)
+        .filter(([_, agent])=>agent.predicate === (0, $09162138eadab4b9$export$2703254089a859eb) || agent.permissions.length > 0)));
+        authProvider.removePermission(uri, agentId, predicate, mode).catch((e)=>{
+            // If there was an error, revert the optimistic update
+            setAgents(prevAgents);
+        });
+    }, [
+        agents,
+        setAgents,
+        uri,
+        authProvider
+    ]);
+    return {
+        agents: agents,
+        addPermission: addPermission,
+        removePermission: removePermission
+    };
+};
+var $780e01b2b2982de2$export$2e2bcd8739ae039 = $780e01b2b2982de2$var$useAgents;
+
+
+const $eb7f8a6f7bf44740$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+        title: {
+            paddingBottom: 8
+        },
+        actions: {
+            padding: 15
+        },
+        addForm: {
+            paddingTop: 0
+        },
+        listForm: {
+            paddingTop: 0,
+            paddingBottom: 0,
+            paddingRight: 0,
+            maxHeight: 210
+        }
+    }));
+const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose, uri: uri, isContainer: isContainer })=>{
+    const classes = $eb7f8a6f7bf44740$var$useStyles();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $780e01b2b2982de2$export$2e2bcd8739ae039)(uri);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+        fullWidth: true,
+        open: open,
+        onClose: onClose,
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+                className: classes.title,
+                children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+                className: classes.addForm,
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a613ad42a03b1bc4$export$2e2bcd8739ae039), {
+                    agents: agents,
+                    addPermission: addPermission
+                })
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+                className: classes.listForm,
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6bcadc28bc94109b$export$2e2bcd8739ae039), {
+                    isContainer: isContainer,
+                    agents: agents,
+                    addPermission: addPermission,
+                    removePermission: removePermission
+                })
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogActions), {
+                className: classes.actions,
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+                    label: "ra.action.close",
+                    variant: "text",
+                    onClick: onClose
+                })
+            })
+        ]
+    });
+};
+var $eb7f8a6f7bf44740$export$2e2bcd8739ae039 = $eb7f8a6f7bf44740$var$PermissionsDialog;
+
+
+const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>{
+    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
+    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
+    const [showDialog, setShowDialog] = (0, $2O4Ek$react.useState)(false);
+    const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
+    const uri = isContainer ? createContainer : record.id || record["@id"];
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+                label: "auth.action.permissions",
+                onClick: ()=>setShowDialog(true),
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialShare))), {})
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $eb7f8a6f7bf44740$export$2e2bcd8739ae039), {
+                uri: uri,
+                isContainer: isContainer,
+                open: showDialog,
+                onClose: ()=>setShowDialog(false)
+            })
+        ]
+    });
+};
+$49d4f2fbe6f28cfd$var$PermissionsButton.defaultProps = {
+    isContainer: false
+};
+var $49d4f2fbe6f28cfd$export$2e2bcd8739ae039 = $49d4f2fbe6f28cfd$var$PermissionsButton;
+
+
+
+const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
+    const { hasList: hasList, hasShow: hasShow } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
+    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissionsOptimized)(record?.id);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+        children: [
+            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
+            hasShow && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ShowButton), {}),
+            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+        ]
+    });
+};
+var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActionsWithPermissions;
+
+
+
+
+
+
+
+
+
+
+const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
+    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.DeleteButton), {
+        ...props
+    });
+    return null;
+};
+var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButtonWithPermissions;
+
+
+const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+        toolbar: {
+            flex: 1,
+            display: "flex",
+            justifyContent: "space-between"
+        }
+    }));
+const $f1baa8bd5325fac3$var$EditToolbarWithPermissions = (props)=>{
+    const classes = $f1baa8bd5325fac3$var$useStyles();
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.Toolbar), {
+        ...props,
+        className: classes.toolbar,
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.SaveButton), {}),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {
+                mutationMode: "undoable"
+            })
+        ]
+    });
+};
+var $f1baa8bd5325fac3$export$2e2bcd8739ae039 = $f1baa8bd5325fac3$var$EditToolbarWithPermissions;
+
+
+
+const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
+    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "edit");
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Edit), {
+        ...props,
+        children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(props.children, {
+            toolbar: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $f1baa8bd5325fac3$export$2e2bcd8739ae039), {}),
+            // Allow to override toolbar
+            ...props.children.props
+        })
+    });
+};
+$6f1389d03e4735d1$var$EditWithPermissions.defaultProps = {
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $4076d0aea1b9e239$export$2e2bcd8739ae039), {})
+};
+var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPermissions;
+
+
+
+
+
+
+
+
+const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
+    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {
+        ...props
+    });
+    return null;
+};
+var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonWithPermissions;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Do not show Export and Refresh buttons on mobile
+const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkActions, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total })=>{
+    const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
+    const xs = (0, $2O4Ek$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("xs"));
+    const resourceDefinition = (0, $2O4Ek$reactadmin.useResourceDefinition)();
+    const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainerUri);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+        children: [
+            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(filters, {
+                showFilter: showFilter,
+                displayedFilters: displayedFilters,
+                filterValues: filterValues,
+                context: "button"
+            }),
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateButton), {}),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+                isContainer: true
+            }),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ExportButton), {
+                disabled: total === 0,
+                sort: sort,
+                filter: filterValues,
+                exporter: exporter
+            }),
+            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(bulkActions, {
+                filterValues: filterValues,
+                selectedIds: selectedIds,
+                onUnselectItems: onUnselectItems
+            })
+        ]
+    });
+};
+var $6452f20f9b47ebd6$export$2e2bcd8739ae039 = $6452f20f9b47ebd6$var$ListActionsWithPermissions;
+
+
+const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.List), {
+        ...props
+    });
+$15811bcd3a3eb59f$var$ListWithPermissions.defaultProps = {
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6452f20f9b47ebd6$export$2e2bcd8739ae039), {})
+};
+var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPermissions;
+
+
+
+
+
+
+
+
+
+
+
+const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
+    const { hasList: hasList, hasEdit: hasEdit } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
+    const record = (0, $2O4Ek$reactadmin.useRecordContext)();
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(record?.id);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+        children: [
+            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
+            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {}),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+        ]
+    });
+};
+var $83b0bd683a7f3aa8$export$2e2bcd8739ae039 = $83b0bd683a7f3aa8$var$ShowActionsWithPermissions;
+
+
+
+const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
+    const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
+    (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "show");
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Show), {
+        ...props
+    });
+};
+$773eb052716d0fa7$var$ShowWithPermissions.defaultProps = {
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $83b0bd683a7f3aa8$export$2e2bcd8739ae039), {})
+};
+var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPermissions;
+
+
+
+
+
+
+
+
+const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
+    const login = (0, $2O4Ek$reactadmin.useLogin)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+        open: open,
+        onClose: onClose,
+        ...rest,
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+                children: translate(title)
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContentText), {
+                    children: translate(message)
+                })
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.DialogActions), {
+                children: [
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                        onClick: onClose,
+                        children: translate("ra.action.cancel")
+                    }),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                        onClick: ()=>login({
+                                redirect: redirect || window.location.pathname + window.location.search
+                            }),
+                        color: "primary",
+                        variant: "contained",
+                        children: translate("auth.action.login")
+                    })
+                ]
+            })
+        ]
+    });
+};
+$4e0bf9be00aaa242$var$AuthDialog.defaultProps = {
+    title: "auth.dialog.login_required",
+    message: "auth.message.login_to_continue"
+};
+var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
+
+
+
+
+
+
+
+
+
+
+const $0af8eee27f6a6e9f$var$delay = async (t)=>new Promise((resolve)=>setTimeout(resolve, t));
+// Inspired from https://github.com/marmelab/react-admin/blob/master/packages/ra-ui-materialui/src/auth/Login.tsx
+const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImage: backgroundImage, buttons: buttons, userResource: userResource, propertiesExist: propertiesExist, text: text, ...rest })=>{
+    const containerRef = (0, $2O4Ek$react.useRef)();
+    let backgroundImageLoaded = false;
+    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
+    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
+    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const login = (0, $2O4Ek$reactadmin.useLogin)();
+    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (!isLoading && identity?.id) // Already authenticated, redirect to the home page
+        navigate(searchParams.get("redirect") || "/");
+    }, [
+        identity,
+        isLoading,
+        navigate,
+        searchParams
+    ]);
+    (0, $2O4Ek$react.useEffect)(()=>{
+        (async ()=>{
+            if (searchParams.has("login")) {
+                if (searchParams.has("error")) {
+                    if (searchParams.get("error") === "registration.not-allowed") notify("auth.message.user_email_not_found", {
+                        type: "error"
+                    });
+                    else notify("auth.message.bad_request", {
+                        type: "error",
+                        error: searchParams.get("error")
+                    });
+                } else if (searchParams.has("token")) {
+                    const token = searchParams.get("token");
+                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                    localStorage.setItem("token", token);
+                    let userData;
+                    ({ data: userData } = await dataProvider.getOne(userResource, {
+                        id: webId
+                    }));
+                    if (propertiesExist.length > 0) {
+                        let allPropertiesExist = propertiesExist.every((p)=>userData[p]);
+                        while(!allPropertiesExist){
+                            console.log("Waiting for all properties to have been created", propertiesExist);
+                            await $0af8eee27f6a6e9f$var$delay(500);
+                            ({ data: userData } = await dataProvider.getOne(userResource, {
+                                id: webId
+                            }));
+                            allPropertiesExist = propertiesExist.every((p)=>userData[p]);
+                        }
+                    }
+                    if (!authProvider.checkUser(userData)) {
+                        localStorage.removeItem("token");
+                        notify("auth.message.user_not_allowed_to_login", {
+                            type: "error"
+                        });
+                        navigate.replace("/login");
+                    } else if (searchParams.has("redirect")) {
+                        notify("auth.message.user_connected", {
+                            type: "info"
+                        });
+                        window.location.href = searchParams.get("redirect");
+                    } else if (searchParams.has("new") && searchParams.get("new") === "true") {
+                        notify("auth.message.new_user_created", {
+                            type: "info"
+                        });
+                        window.location.href = `/${userResource}/${encodeURIComponent(webId)}`;
+                    } else {
+                        notify("auth.message.user_connected", {
+                            type: "info"
+                        });
+                        window.location.href = "/";
+                    }
+                }
+            }
+            if (searchParams.has("logout")) {
+                // Delete token and any other value in local storage
+                localStorage.clear();
+                notify("auth.message.user_disconnected", {
+                    type: "info"
+                });
+                navigate("/");
+            }
+        })();
+    }, [
+        searchParams,
+        navigate,
+        notify,
+        userResource
+    ]);
+    const updateBackgroundImage = ()=>{
+        if (!backgroundImageLoaded && containerRef.current) {
+            containerRef.current.style.backgroundImage = `url(${backgroundImage})`;
+            backgroundImageLoaded = true;
+        }
+    };
+    // Load background image asynchronously to speed up time to interactive
+    const lazyLoadBackgroundImage = ()=>{
+        if (backgroundImage) {
+            const img = new Image();
+            img.onload = updateBackgroundImage;
+            img.src = backgroundImage;
+        }
+    };
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (!backgroundImageLoaded) lazyLoadBackgroundImage();
+    });
+    if (isLoading) return null;
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
+        ...rest,
+        ref: containerRef,
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+            className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.card,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                    className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar,
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                        className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.icon,
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
+                    })
+                }),
+                text && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                    variant: "body2" /* className={classes.text} */ ,
+                    children: text
+                }),
+                buttons?.map((button, i)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CardActions), {
+                        children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(button, {
+                            fullWidth: true,
+                            variant: "outlined",
+                            type: "submit",
+                            onClick: ()=>login({}, "/login")
+                        })
+                    }, i))
+            ]
+        })
+    });
+};
+const $0af8eee27f6a6e9f$var$PREFIX = "SsoLoginPage";
+const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
+    card: `${$0af8eee27f6a6e9f$var$PREFIX}-card`,
+    avatar: `${$0af8eee27f6a6e9f$var$PREFIX}-avatar`,
+    icon: `${$0af8eee27f6a6e9f$var$PREFIX}-icon`,
+    switch: `${$0af8eee27f6a6e9f$var$PREFIX}-switch`
+};
+const $0af8eee27f6a6e9f$var$Root = (0, $2O4Ek$muimaterialstyles.styled)("div", {
+    name: $0af8eee27f6a6e9f$var$PREFIX,
+    overridesResolver: (props, styles)=>styles.root
+})(({ theme: theme })=>({
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+        height: "1px",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundImage: "radial-gradient(circle at 50% 14em, #313264 0%, #00023b 60%, #00023b 100%)",
+        [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.card}`]: {
+            minWidth: 300,
+            marginTop: "6em"
+        },
+        [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar}`]: {
+            margin: "1em",
+            display: "flex",
+            justifyContent: "center"
+        },
+        [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.icon}`]: {
+            backgroundColor: theme.palette.secondary[500]
+        },
+        [`& .${$0af8eee27f6a6e9f$export$388de65c72fa74b4.switch}`]: {
+            marginBottom: "1em",
+            display: "flex",
+            justifyContent: "center"
+        }
+    }));
+$0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
+    propertiesExist: [],
+    // TODO deprecate this
+    buttons: [
+        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+            startIcon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                src: "/lescommuns.jpg"
+            }),
+            children: "Les Communs"
+        })
+    ],
+    userResource: "Person"
+};
+var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $58ba431c466c0ccd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        "@global": {
+            body: {
+                backgroundColor: theme.palette.primary.main
+            }
+        },
+        text: {
+            textAlign: "center",
+            padding: "4px 8px 8px"
+        },
+        card: {
+            minWidth: 300,
+            maxWidth: 350,
+            marginTop: "6em",
+            [theme.breakpoints.down("sm")]: {
+                margin: "1em"
+            }
+        },
+        lockIconAvatar: {
+            margin: "1em",
+            display: "flex",
+            justifyContent: "center"
+        },
+        lockIcon: {
+            backgroundColor: theme.palette.grey["500"]
+        },
+        list: {
+            paddingTop: 0,
+            paddingBottom: 0
+        },
+        listItem: {
+            paddingTop: 5,
+            paddingBottom: 5
+        }
+    }));
+const $58ba431c466c0ccd$var$PodLoginPageView = ({ history: history, location: location, text: text, customPodProviders: customPodProviders })=>{
+    const classes = $58ba431c466c0ccd$var$useStyles();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const locale = (0, $2O4Ek$reactadmin.useLocale)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
+    const [podProviders, setPodProviders] = (0, $2O4Ek$react.useState)(customPodProviders || []);
+    const searchParams = new URLSearchParams(location.search);
+    (0, $2O4Ek$react.useEffect)(()=>{
+        (async ()=>{
+            if (podProviders.length === 0) {
+                const results = await fetch("https://data.activitypods.org/pod-providers", {
+                    headers: {
+                        Accept: "application/ld+json"
+                    }
+                });
+                if (results.ok) {
+                    const json = await results.json();
+                    // Filter POD providers by available locales
+                    const podProviders = json["ldp:contains"].filter((provider)=>Array.isArray(provider["apods:locales"]) ? provider["apods:locales"].includes(locale) : provider["apods:locales"] === locale);
+                    setPodProviders(podProviders);
+                } else notify("auth.message.pod_providers_not_loaded", "error");
+            }
+        })();
+    }, [
+        podProviders,
+        setPodProviders,
+        notify,
+        locale
+    ]);
+    (0, $2O4Ek$react.useEffect)(()=>{
+        (async ()=>{
+            if (searchParams.has("token")) {
+                const token = searchParams.get("token");
+                const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                const response = await fetch(webId, {
+                    headers: {
+                        Accept: "application/json"
+                    }
+                });
+                if (!response.ok) notify("auth.message.unable_to_fetch_user_data", "error");
+                else {
+                    const data = await response.json();
+                    if (!authProvider.checkUser(data)) {
+                        notify("auth.message.user_not_allowed_to_login", "error");
+                        history.replace("/login");
+                    } else {
+                        localStorage.setItem("token", token);
+                        notify("auth.message.user_connected", "info");
+                        // Reload to ensure the dataServers config is reset
+                        window.location.reload();
+                        window.location.href = "/?addUser=true";
+                    }
+                }
+            } else if (searchParams.has("logout")) {
+                // Delete token and any other value in local storage
+                localStorage.clear();
+                notify("auth.message.user_disconnected", "info");
+                history.push("/");
+            }
+        })();
+    }, [
+        searchParams,
+        dataProvider
+    ]);
+    if (searchParams.has("token") || searchParams.has("addUser") || searchParams.has("logout")) return null;
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+            className: classes.card,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                    className: classes.lockIconAvatar,
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                        className: classes.lockIcon,
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
+                    })
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                    pl: 2,
+                    pr: 2,
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                        variant: "body2",
+                        className: classes.text,
+                        children: text || translate("auth.message.choose_pod_provider")
+                    })
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                    m: 2,
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
+                        className: classes.list,
+                        children: podProviders.map((podProvider, i)=>{
+                            const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
+                            if (searchParams.has("signup")) url.searchParams.set("signup", "true");
+                            url.searchParams.set("redirect", window.location.href);
+                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($2O4Ek$react))).Fragment, {
+                                children: [
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Divider), {}),
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+                                        button: true,
+                                        onClick: ()=>window.location.href = url.toString(),
+                                        className: classes.listItem,
+                                        children: [
+                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialStorage))), {})
+                                                })
+                                            }),
+                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                                primary: podProvider["apods:domainName"],
+                                                secondary: podProvider["apods:area"]
+                                            })
+                                        ]
+                                    }, i)
+                                ]
+                            }, i);
+                        })
+                    })
+                })
+            ]
+        })
+    });
+};
+var $58ba431c466c0ccd$export$2e2bcd8739ae039 = $58ba431c466c0ccd$var$PodLoginPageView;
+
+
+const $2b9a1c186b0ca88b$var$PodLoginPage = (props)=>{
+    const muiTheme = (0, $2O4Ek$react.useMemo)(()=>(0, $2O4Ek$muimaterialstyles.createTheme)(props.theme), [
+        props.theme
+    ]);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.StyledEngineProvider), {
+        injectFirst: true,
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muisystem.ThemeProvider), {
+            theme: muiTheme,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $58ba431c466c0ccd$export$2e2bcd8739ae039), {
+                    ...props
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
+            ]
+        })
+    });
+};
+var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $19e4629c708b7a3e$var$useSignup = ()=>{
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    return (0, $2O4Ek$react.useCallback)((params = {})=>authProvider.signup(params), [
+        authProvider
+    ]);
+};
+var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
+
+
+
+
+
+const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        content: {
+            width: 450
+        },
+        icon: {
+            margin: theme.spacing(0.3)
+        }
+    }));
+const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeRedirect: delayBeforeRedirect })=>{
+    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
+    const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const classes = $5f70c240e5b0340c$var$useStyles();
+    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const searchParams = new URLSearchParams(location.search);
+    const submit = (values)=>{
+        setLoading(true);
+        signup(values).then((webId)=>{
+            if (delayBeforeRedirect) setTimeout(()=>{
+                // Reload to ensure the dataServer config is reset
+                window.location.reload();
+                window.location.href = redirectTo || "/";
+                setLoading(false);
+            }, delayBeforeRedirect);
+            else {
+                // Reload to ensure the dataServer config is reset
+                window.location.reload();
+                window.location.href = redirectTo || "/";
+                setLoading(false);
+            }
+            notify("auth.message.new_user_created", {
+                type: "info"
+            });
+        }).catch((error)=>{
+            setLoading(false);
+            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                type: "warning",
+                _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+            });
+        });
+    };
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+        onSubmit: submit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+            className: classes.content,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "username",
+                    label: translate("auth.input.username"),
+                    autoComplete: "username",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: (0, $2O4Ek$reactadmin.required)()
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    source: "email",
+                    label: translate("auth.input.email"),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                    validate: [
+                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $2O4Ek$reactadmin.email)()
+                    ]
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    source: "password",
+                    type: "password",
+                    label: translate("ra.auth.password"),
+                    autoComplete: "new-password",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                    validate: (0, $2O4Ek$reactadmin.required)()
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    className: classes.button,
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                        className: classes.icon,
+                        size: 19,
+                        thickness: 3
+                    }) : translate("auth.action.signup")
+                })
+            ]
+        })
+    });
+};
+$5f70c240e5b0340c$var$SignupForm.propTypes = {
+    redirectTo: (0, ($parcel$interopDefault($2O4Ek$proptypes))).string
+};
+var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
+
+
+
+
+
+
+
+
+
+const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        content: {
+            width: 450
+        },
+        icon: {
+            margin: theme.spacing(0.3)
+        }
+    }));
+const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo })=>{
+    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
+    const login = (0, $2O4Ek$reactadmin.useLogin)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const classes = $8a2df01c9f2675bb$var$useStyles();
+    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const searchParams = new URLSearchParams(location.search);
+    const submit = (values)=>{
+        setLoading(true);
+        login(values, redirectTo).then(()=>{
+            setLoading(false);
+        }).catch((error)=>{
+            setLoading(false);
+            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "ra.auth.sign_in_error" : error.message, {
+                type: "warning",
+                messageArgs: {
+                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                }
+            });
+        });
+    };
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+        onSubmit: submit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+            className: classes.content,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    source: "username",
+                    label: translate("auth.input.email"),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                    validate: [
+                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $2O4Ek$reactadmin.email)()
+                    ]
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    source: "password",
+                    type: "password",
+                    label: translate("ra.auth.password"),
+                    autoComplete: "current-password",
+                    fullWidth: true,
+                    disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
+                    validate: (0, $2O4Ek$reactadmin.required)()
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    className: classes.button,
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                        className: classes.icon,
+                        size: 19,
+                        thickness: 3
+                    }) : translate("auth.action.login")
+                })
+            ]
+        })
+    });
+};
+$8a2df01c9f2675bb$var$LoginForm.propTypes = {
+    redirectTo: (0, ($parcel$interopDefault($2O4Ek$proptypes))).string
+};
+var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
+
+
+
+
+
+
+
+
+const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        icon: {
+            margin: theme.spacing(0.3)
+        }
+    }));
+const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo })=>{
+    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const searchParams = new URLSearchParams(location.search);
+    const token = searchParams.get("token");
+    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const classes = $176df6bd8edc5f4d$var$useStyles();
+    const submit = (values)=>{
+        setLoading(true);
+        authProvider.setNewPassword({
+            ...values,
+            token: token
+        }).then((res)=>{
+            setTimeout(()=>{
+                window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`;
+                setLoading(false);
+            }, 2000);
+            notify("auth.notification.password_changed", "info");
+        }).catch((error)=>{
+            setLoading(false);
+            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                type: "warning",
+                messageArgs: {
+                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                }
+            });
+        });
+    };
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+        onSubmit: submit,
+        noValidate: true,
+        defaultValues: {
+            email: searchParams.get("email")
+        },
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+            className: classes.content,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "email",
+                    label: translate("auth.input.email"),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    format: (value)=>value ? value.toLowerCase() : ""
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    autoFocus: true,
+                    type: "password",
+                    source: "password",
+                    label: translate("auth.input.new_password"),
+                    autoComplete: "current-password",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    format: (value)=>value ? value.toLowerCase() : ""
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    autoFocus: true,
+                    type: "password",
+                    source: "confirm-password",
+                    label: translate("auth.input.confirm_new_password"),
+                    autoComplete: "current-password",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    format: (value)=>value ? value.toLowerCase() : ""
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    className: classes.button,
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                        className: classes.icon,
+                        size: 19,
+                        thickness: 3
+                    }) : translate("auth.action.set_new_password")
+                })
+            ]
+        })
+    });
+};
+var $176df6bd8edc5f4d$export$2e2bcd8739ae039 = $176df6bd8edc5f4d$var$NewPasswordForm;
+
+
+
+
+
+
+
+const $a04debd4e4af2a01$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        icon: {
+            margin: theme.spacing(0.3)
+        }
+    }));
+const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
+    const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
+    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const classes = $a04debd4e4af2a01$var$useStyles();
+    const submit = (values)=>{
+        setLoading(true);
+        authProvider.resetPassword({
+            ...values
+        }).then((res)=>{
+            setLoading(false);
+            notify("auth.notification.reset_password_submitted", "info");
+        }).catch((error)=>{
+            setLoading(false);
+            notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
+                type: "warning",
+                messageArgs: {
+                    _: typeof error === "string" ? error : error && error.message ? error.message : undefined
+                }
+            });
+        });
+    };
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+        onSubmit: submit,
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+            className: classes.content,
+            children: [
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                    autoFocus: true,
+                    source: "email",
+                    label: translate("auth.input.email"),
+                    autoComplete: "email",
+                    fullWidth: true,
+                    disabled: loading,
+                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    format: (value)=>value ? value.toLowerCase() : ""
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    variant: "contained",
+                    type: "submit",
+                    color: "primary",
+                    disabled: loading,
+                    fullWidth: true,
+                    className: classes.button,
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                        className: classes.icon,
+                        size: 19,
+                        thickness: 3
+                    }) : translate("auth.action.reset_password")
+                })
+            ]
+        })
+    });
+};
+var $a04debd4e4af2a01$export$2e2bcd8739ae039 = $a04debd4e4af2a01$var$ResetPasswordForm;
+
+
+
+
+
+
+
+const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
+        "@global": {
+            body: {
+                backgroundColor: theme.palette.secondary.main
+            }
+        },
+        root: {
+            backgroundColor: theme.palette.secondary.main
+        },
+        card: {
+            minWidth: 300,
+            maxWidth: 500,
+            marginTop: "6em",
+            [theme.breakpoints.down("sm")]: {
+                margin: "1em"
+            }
+        },
+        icon: {
+            marginTop: 5,
+            marginRight: 5
+        },
+        title: {
+            [theme.breakpoints.down("sm")]: {
+                fontWeight: "bold",
+                marginTop: 12
+            }
+        }
+    }));
+const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
+    const classes = $d6b5c702311394c4$var$useStyles();
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        className: classes.root,
+        children: [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+                className: classes.card,
+                children: [
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+                        p: 2,
+                        display: "flex",
+                        justifyContent: "start",
+                        children: [
+                            icon && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(icon, {
+                                fontSize: "large",
+                                className: classes.icon
+                            }),
+                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                variant: "h4",
+                                className: classes.title,
+                                children: title
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                        pl: 2,
+                        pr: 2,
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                            variant: "body1",
+                            children: text
+                        })
+                    }),
+                    children
+                ]
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
+        ]
+    });
+};
+var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
+
+
+const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
+        switch: {
+            marginBottom: "1em",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+        }
+    }));
+const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
+    const classes = $4c56dbfbda0fa20c$var$useStyles();
+    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
+    const isSignup = hasSignup && searchParams.has("signup");
+    const isResetPassword = searchParams.has("reset_password");
+    const isNewPassword = searchParams.has("new_password");
+    const isLogin = !isSignup && !isResetPassword && !isNewPassword;
+    const redirectTo = searchParams.get("redirect");
+    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (!isLoading && identity?.id) {
+            // Already authenticated, redirect to the home page
+            if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+            else navigate(redirectTo || "/");
+        }
+    }, [
+        identity,
+        isLoading,
+        navigate,
+        redirectTo
+    ]);
+    const [title, text] = (0, $2O4Ek$react.useMemo)(()=>{
+        if (isSignup) return [
+            "auth.action.signup",
+            "auth.helper.signup"
+        ];
+        if (isLogin) return [
+            "auth.action.login",
+            "auth.helper.login"
+        ];
+        if (isResetPassword) return [
+            "auth.action.reset_password",
+            "auth.helper.reset_password"
+        ];
+        if (isNewPassword) return [
+            "auth.action.set_new_password",
+            "auth.helper.set_new_password"
+        ];
+    }, [
+        isSignup,
+        isLogin,
+        isResetPassword,
+        isNewPassword
+    ]);
+    if (isLoading || identity?.id) return null;
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
+        title: translate(title),
+        text: translate(text),
+        icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}),
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+            children: [
+                isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
+                    redirectTo: redirectTo,
+                    delayBeforeRedirect: 3000
+                }),
+                isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
+                isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
+                    redirectTo: redirectTo
+                }),
+                isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                    redirectTo: redirectTo
+                }),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)("div", {
+                    className: classes.switch,
+                    children: [
+                        isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                            to: "/login",
+                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                variant: "body2",
+                                children: translate("auth.action.login")
+                            })
+                        }),
+                        isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                            children: [
+                                hasSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                                        to: "/login?signup=true",
+                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                            variant: "body2",
+                                            children: translate("auth.action.signup")
+                                        })
+                                    })
+                                }),
+                                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                                        to: `/login?reset_password=true&${searchParams.toString()}`,
+                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                            variant: "body2",
+                                            children: translate("auth.action.reset_password")
+                                        })
+                                    })
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+};
+$4c56dbfbda0fa20c$var$LocalLoginPage.defaultProps = {
+    hasSignup: true
+};
+var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginPage;
+
+
+
+
+
+
+
+// Not used for now. The ListWithPermissions component will handle the conditional display of the Create button.
+const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
+    const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(name);
+    const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainer);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Resource), {
+        ...rest,
+        name: name,
+        create: permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
+    });
+};
+var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWithPermission;
+
+
+
+
+
+
+
+
+
+// It's important to pass the ref to allow Material UI to manage the keyboard navigation
+const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $2O4Ek$react.forwardRef)(({ label: label, icon: icon, to: to, ...rest }, ref)=>{
+    const { onClose: onClose } = (0, $2O4Ek$reactadmin.useUserMenu)();
+    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
+    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
+    const onClick = (0, $2O4Ek$react.useCallback)(()=>{
+        navigate(to);
+        onClose();
+    }, [
+        to,
+        onClose,
+        navigate
+    ]);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+        onClick: onClick,
+        ref: ref,
+        ...rest,
+        children: [
+            icon && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
+                children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(icon, {
+                    fontSize: "small"
+                })
+            }),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                children: translate(label)
+            })
+        ]
+    });
+});
+const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
+    const { identity: identity } = (0, $2O4Ek$reactadmin.useGetIdentity)();
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.UserMenu), {
+        ...otherProps,
+        children: identity && identity.id !== "" ? [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+                label: "auth.action.view_my_profile",
+                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialAccountCircle))), {}),
+                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
+            }, "view"),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+                label: "auth.action.edit_my_profile",
+                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {}),
+                to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
+            }, "edit"),
+            /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(logout, {
+                key: "logout"
+            })
+        ] : [
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+                label: "auth.action.signup",
+                to: "/login?signup=true"
+            }, "signup"),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+                label: "auth.action.login",
+                to: "/login"
+            }, "login")
+        ]
+    });
+};
+$9734e84907c0d5dd$var$UserMenu.defaultProps = {
+    logout: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Logout), {}),
+    profileResource: "Person"
+};
+var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;
+
+
+
+
+
+
+const $84db3891236a263f$var$useCheckAuthenticated = (message)=>{
+    const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
+    const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const redirect = (0, $2O4Ek$reactadmin.useRedirect)();
+    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    (0, $2O4Ek$react.useEffect)(()=>{
+        if (!isLoading && !identity?.id) {
+            notify(message || "ra.auth.auth_check_error", {
+                type: "error"
+            });
+            redirect(`/login?redirect=${encodeURIComponent(location.pathname + location.search)}`);
+        }
+    }, [
+        isLoading,
+        identity,
+        redirect,
+        notify,
+        location
+    ]);
+    return {
+        identity: identity,
+        isLoading: isLoading
+    };
+};
+var $84db3891236a263f$export$2e2bcd8739ae039 = $84db3891236a263f$var$useCheckAuthenticated;
+
+
+
+
+
+
+const $80da6dcda9baa28b$var$emptyParams = {};
+// keep a cache of already fetched permissions to initialize state for new
+// components and avoid a useless rerender if the permissions haven't changed
+const $80da6dcda9baa28b$var$alreadyFetchedPermissions = {
+    "{}": undefined
+};
+// Fork of usePermissionsOptimized, with a refetch option
+const $80da6dcda9baa28b$var$usePermissionsWithRefetch = (params = $80da6dcda9baa28b$var$emptyParams)=>{
+    const key = JSON.stringify(params);
+    const [state, setState] = (0, $2O4Ek$reactadmin.useSafeSetState)({
+        permissions: $80da6dcda9baa28b$var$alreadyFetchedPermissions[key]
+    });
+    const getPermissions = (0, $2O4Ek$reactadmin.useGetPermissions)();
+    const fetchPermissions = (0, $2O4Ek$react.useCallback)(()=>getPermissions(params).then((permissions)=>{
+            if (!(0, ($parcel$interopDefault($2O4Ek$lodashisEqual)))(permissions, state.permissions)) {
+                $80da6dcda9baa28b$var$alreadyFetchedPermissions[key] = permissions;
+                setState({
+                    permissions: permissions
+                });
+            }
+        }).catch((error)=>{
+            setState({
+                error: error
+            });
+        }), [
+        key,
+        params,
+        getPermissions
+    ]);
+    (0, $2O4Ek$react.useEffect)(()=>{
+        fetchPermissions();
+    }, [
+        key
+    ]);
+    return {
+        ...state,
+        refetch: fetchPermissions
+    };
+};
+var $80da6dcda9baa28b$export$2e2bcd8739ae039 = $80da6dcda9baa28b$var$usePermissionsWithRefetch;
+
+
+
+const $be2fdde9f3e3137d$var$englishMessages = {
+    auth: {
+        dialog: {
+            container_permissions: "Container permissions",
+            resource_permissions: "Resource permissions",
+            login_required: "Login required"
+        },
+        action: {
+            permissions: "Permissions",
+            signup: "Signup",
+            reset_password: "Reset password",
+            set_new_password: "Set new password",
+            logout: "Logout",
+            login: "Login",
+            view_my_profile: "View my profile",
+            edit_my_profile: "Edit my profile"
+        },
+        right: {
+            resource: {
+                read: "Read",
+                append: "Append",
+                write: "Write",
+                control: "Control"
+            },
+            container: {
+                read: "List",
+                append: "Add",
+                write: "Add",
+                control: "Control"
+            }
+        },
+        agent: {
+            anonymous: "All users",
+            authenticated: "Connected users"
+        },
+        input: {
+            agent_select: "Add an user...",
+            name: "Surname",
+            username: "User ID",
+            email: "Email address",
+            username_or_email: "User ID or email address",
+            current_password: "Current password",
+            new_password: "New password",
+            confirm_new_password: "Confirm new password"
+        },
+        helper: {
+            login: "Sign in to your account",
+            signup: "Create your account",
+            reset_password: "Enter your email address below and we will send you a link to reset your password",
+            set_new_password: "Please enter your email address and a new password below"
+        },
+        message: {
+            resource_show_forbidden: "You are not allowed to view this resource",
+            resource_edit_forbidden: "You are not allowed to edit this resource",
+            resource_delete_forbidden: "You are not allowed to delete this resource",
+            resource_control_forbidden: "You are not allowed to control this resource",
+            container_create_forbidden: "You are not allowed to create new resource",
+            container_list_forbidden: "You are not allowed to list these resources",
+            user_not_allowed_to_login: "You are not allowed to login with this account",
+            user_email_not_found: "No account found with this email address",
+            user_email_exist: "An account already exist with this email address",
+            username_exist: "An account already exist with this user ID",
+            username_invalid: "This username is invalid. Only lowercase characters, numbers, dots and hyphens are authorized",
+            new_user_created: "Your account has been successfully created",
+            user_connected: "You are now connected",
+            user_disconnected: "You are now disconnected",
+            bad_request: "Bad request (Error message returned by the server: %{error})",
+            account_settings_updated: "Your account settings have been successfully updated",
+            login_to_continue: "Please login to continue",
+            choose_pod_provider: "Please choose a POD provider in the list below. All application data will be saved on your POD."
+        },
+        notification: {
+            reset_password_submitted: "An email has been sent with reset password instructions",
+            reset_password_error: "An error occurred",
+            password_changed: "Password changed successfully",
+            new_password_error: "An error occurred",
+            invalid_password: "Invalid password",
+            get_settings_error: "An error occurred",
+            update_settings_error: "An error occurred"
+        }
+    }
+};
+var $be2fdde9f3e3137d$export$2e2bcd8739ae039 = $be2fdde9f3e3137d$var$englishMessages;
+
+
+const $6dbc362c3d93e01d$var$frenchMessages = {
+    auth: {
+        dialog: {
+            container_permissions: "Permissions sur le container",
+            resource_permissions: "Permissions sur la ressource",
+            login_required: "Connexion requise"
+        },
+        action: {
+            permissions: "Permissions",
+            signup: "S'inscrire",
+            reset_password: "Mot de passe oubli\xe9 ?",
+            set_new_password: "D\xe9finir le mot de passe",
+            logout: "Se d\xe9connecter",
+            login: "Se connecter",
+            view_my_profile: "Voir mon profil",
+            edit_my_profile: "\xc9diter mon profil"
+        },
+        right: {
+            resource: {
+                read: "Lire",
+                append: "Enrichir",
+                write: "Modifier",
+                control: "Administrer"
+            },
+            container: {
+                read: "Lister",
+                append: "Ajouter",
+                write: "Ajouter",
+                control: "Administrer"
+            }
+        },
+        agent: {
+            anonymous: "Tous les utilisateurs",
+            authenticated: "Utilisateurs connect\xe9s"
+        },
+        input: {
+            agent_select: "Ajouter un utilisateur...",
+            name: "Pr\xe9nom",
+            username: "Identifiant unique",
+            email: "Adresse e-mail",
+            username_or_email: "Identifiant ou adresse e-mail",
+            current_password: "Mot de passe actuel",
+            new_password: "Nouveau mot de passe",
+            confirm_new_password: "Confirmer le nouveau mot de passe"
+        },
+        helper: {
+            login: "Connectez-vous \xe0 votre compte.",
+            signup: "Cr\xe9ez votre compte",
+            reset_password: "Entrez votre adresse mail ci-dessous et nous vous enverrons un lien pour r\xe9initialiser votre mot de passe",
+            set_new_password: "Veuillez entrer votre adresse mail et un nouveau mot de passe ci-dessous"
+        },
+        message: {
+            resource_show_forbidden: "Vous n'avez pas la permission de voir cette ressource",
+            resource_edit_forbidden: "Vous n'avez pas la permission d'\xe9diter cette ressource",
+            resource_delete_forbidden: "Vous n'avez pas la permission d'effacer cette ressource",
+            resource_control_forbidden: "Vous n'avez pas la permission d'administrer cette ressource",
+            container_create_forbidden: "Vous n'avez pas la permission de cr\xe9er des ressources",
+            container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
+            user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
+            user_email_not_found: "Aucun compte trouv\xe9 avec cette adresse mail",
+            user_email_exist: "Un compte existe d\xe9j\xe0 avec cette adresse mail",
+            username_exist: "Un compte existe d\xe9j\xe0 avec cet identifiant",
+            username_invalid: "Cet identifiant n'est pas valide. Seuls les lettres minuscules, les chiffres, les points et les tirets sont autoris\xe9s",
+            new_user_created: "Votre compte a \xe9t\xe9 cr\xe9\xe9 avec succ\xe8s",
+            user_connected: "Vous \xeates maintenant connect\xe9",
+            user_disconnected: "Vous \xeates maintenant d\xe9connect\xe9",
+            bad_request: "Requ\xeate erron\xe9e (Message d'erreur renvoy\xe9 par le serveur: %{error})",
+            account_settings_updated: "Les param\xe8tres de votre compte ont \xe9t\xe9 mis \xe0 jour avec succ\xe8s",
+            login_to_continue: "Veuillez vous connecter pour continuer",
+            choose_pod_provider: "Veuillez choisir un fournisseur de PODs dans la liste ci-dessous. Toutes les donn\xe9es de l'application seront enregistr\xe9es sur votre POD."
+        },
+        notification: {
+            reset_password_submitted: "Un e-mail a \xe9t\xe9 envoy\xe9 avec les instructions de r\xe9initialisation du mot de passe",
+            reset_password_error: "Une erreur s'est produite",
+            password_changed: "Le mot de passe a \xe9t\xe9 chang\xe9 avec succ\xe8s",
+            new_password_error: "Une erreur s'est produite",
+            invalid_password: "Mot de passe incorrect",
+            get_settings_error: "Une erreur s'est produite",
+            update_settings_error: "Une erreur s'est produite"
+        }
+    }
+};
+var $6dbc362c3d93e01d$export$2e2bcd8739ae039 = $6dbc362c3d93e01d$var$frenchMessages;
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map

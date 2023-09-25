@@ -1,2 +1,178 @@
-import r,{useCallback as t,useEffect as e}from"react";import{ImageInput as n,useRecordContext as o,AutocompleteArrayInput as a,AutocompleteInput as i,TextInput as c,ReferenceArrayInput as u,ReferenceInput as f}from"react-admin";import{useDataServers as l}from"@semapps/semantic-data-provider";import{useController as s}from"react-hook-form";function m(r){return(m="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(r){return typeof r}:function(r){return r&&"function"==typeof Symbol&&r.constructor===Symbol&&r!==Symbol.prototype?"symbol":typeof r})(r)}function p(){return(p=Object.assign?Object.assign.bind():function(r){for(var t=1;t<arguments.length;t++){var e=arguments[t];for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&(r[n]=e[n])}return r}).apply(this,arguments)}function y(r,t){if(null==r)return{};var e,n,o=function(r,t){if(null==r)return{};var e,n,o={},a=Object.keys(r);for(n=0;n<a.length;n++)e=a[n],t.indexOf(e)>=0||(o[e]=r[e]);return o}(r,t);if(Object.getOwnPropertySymbols){var a=Object.getOwnPropertySymbols(r);for(n=0;n<a.length;n++)e=a[n],t.indexOf(e)>=0||Object.prototype.propertyIsEnumerable.call(r,e)&&(o[e]=r[e])}return o}var b=function(r){return"string"==typeof r?{src:r}:Array.isArray(r)?r.map((function(r){return"string"==typeof r?{src:r}:r})):r},v=function r(t){return t instanceof File?{rawFile:e=t,src:URL.createObjectURL(e),title:e.name}:t&&t.src&&!t.rawFile?t.src:Array.isArray(t)?t.map((function(t){return r(t)})):t;var e},d=function(t){return r.createElement(n,p({},t,{format:b,parse:v}))},O=function(t){var e=t.optionText,n=t.dataServers,a=o(),i=n&&Object.values(n).find((function(r){return a.id.startsWith(r.baseUrl)}));return r.createElement("span",null,a[e],i&&r.createElement("em",{className:"serverName",style:{color:"grey"}}," (",i.name,")"))},g=["optionText"],h=function(e){var n=e.optionText,o=y(e,g),i=l(),c=t((function(r,t){return t[n].toLowerCase().match(r.toLowerCase())}),[n]);return r.createElement(a,p({matchSuggestion:c,optionText:r.createElement(O,{optionText:n,dataServers:i}),inputText:function(r){return r[n]}},o))},j=["optionText"],x=function(e){var n=e.optionText,o=y(e,j),a=l(),c=t((function(r){if(r&&a){var t=Object.values(a).find((function(t){return r.id.startsWith(t.baseUrl)}));return r[n]+(t?" (".concat(t.name,")"):"")}}),[n,a]);return r.createElement(i,p({optionText:c},o))},A=function(t){return r.createElement(c,p({multiline:!0,minRows:2,format:function(r){return r?Array.isArray(r)?r.join("\n"):r:""},parse:function(r){return r.split(/\r?\n/)}},t))},E=function(t){var n=s({name:t.source}).field,o=n.value,a=n.onChange;return e((function(){o&&!Array.isArray(o)&&a([o])}),[o,a]),o&&!Array.isArray(o)?null:r.createElement(u,t)},S=["children"],T=function(r){return r&&"object"===m(r)?r.id||r["@id"]:r},w=function(t){var e=t.children,n=y(t,S),o=r.Children.only(e);return r.createElement(f,n,r.cloneElement(o,{format:T}))};export{d as ImageInput,A as MultiLinesInput,h as MultiServerAutocompleteArrayInput,x as MultiServerAutocompleteInput,E as ReferenceArrayInput,w as ReferenceInput};
+import {jsx as $kvH6Q$jsx, jsxs as $kvH6Q$jsxs} from "react/jsx-runtime";
+import $kvH6Q$react, {useCallback as $kvH6Q$useCallback, useEffect as $kvH6Q$useEffect} from "react";
+import {ImageInput as $kvH6Q$ImageInput, AutocompleteArrayInput as $kvH6Q$AutocompleteArrayInput, useRecordContext as $kvH6Q$useRecordContext, AutocompleteInput as $kvH6Q$AutocompleteInput, TextInput as $kvH6Q$TextInput, ReferenceArrayInput as $kvH6Q$ReferenceArrayInput, ReferenceInput as $kvH6Q$ReferenceInput} from "react-admin";
+import {useDataServers as $kvH6Q$useDataServers} from "@semapps/semantic-data-provider";
+import {useController as $kvH6Q$useController} from "react-hook-form";
+
+
+
+
+// Since we overwrite FileInput default parse, we must transform the file
+// See https://github.com/marmelab/react-admin/blob/2d6a1982981b0f1882e52dd1a974a60eef333e59/packages/ra-ui-materialui/src/input/FileInput.tsx#L57
+const $00df5ecaefd5b71e$var$transformFile = (file)=>{
+    const preview = URL.createObjectURL(file);
+    return {
+        rawFile: file,
+        src: preview,
+        title: file.name
+    };
+};
+const $00df5ecaefd5b71e$var$format = (v)=>{
+    if (typeof v === "string") return {
+        src: v
+    };
+    if (Array.isArray(v)) return v.map((e)=>typeof e === "string" ? {
+            src: e
+        } : e);
+    return v;
+};
+const $00df5ecaefd5b71e$var$parse = (v)=>{
+    if (v instanceof File) return $00df5ecaefd5b71e$var$transformFile(v);
+    if (v && v.src && !v.rawFile) return v.src;
+    if (Array.isArray(v)) return v.map((e)=>$00df5ecaefd5b71e$var$parse(e));
+    return v;
+};
+const $00df5ecaefd5b71e$var$ImageInput = (props)=>/*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$ImageInput), {
+        ...props,
+        format: $00df5ecaefd5b71e$var$format,
+        parse: $00df5ecaefd5b71e$var$parse
+    });
+var $00df5ecaefd5b71e$export$2e2bcd8739ae039 = $00df5ecaefd5b71e$var$ImageInput;
+
+
+
+
+
+
+
+
+
+const $c87f07c114e8d06d$var$OptionRenderer = ({ optionText: optionText, dataServers: dataServers })=>{
+    const record = (0, $kvH6Q$useRecordContext)();
+    const server = dataServers && Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
+    return /*#__PURE__*/ (0, $kvH6Q$jsxs)("span", {
+        children: [
+            record[optionText],
+            server && /*#__PURE__*/ (0, $kvH6Q$jsxs)("em", {
+                className: "serverName",
+                style: {
+                    color: "grey"
+                },
+                children: [
+                    "\xa0(",
+                    server.name,
+                    ")"
+                ]
+            })
+        ]
+    });
+};
+var $c87f07c114e8d06d$export$2e2bcd8739ae039 = $c87f07c114e8d06d$var$OptionRenderer;
+
+
+const $6339f423cc6c3ee3$var$MultiServerAutocompleteArrayInput = ({ optionText: optionText, ...rest })=>{
+    const dataServers = (0, $kvH6Q$useDataServers)();
+    const matchSuggestion = (0, $kvH6Q$useCallback)((filterValue, choice)=>choice[optionText].toLowerCase().match(filterValue.toLowerCase()), [
+        optionText
+    ]);
+    return /*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$AutocompleteArrayInput), {
+        matchSuggestion: matchSuggestion,
+        optionText: /*#__PURE__*/ (0, $kvH6Q$jsx)((0, $c87f07c114e8d06d$export$2e2bcd8739ae039), {
+            optionText: optionText,
+            dataServers: dataServers
+        }),
+        inputText: (choice)=>choice[optionText],
+        ...rest
+    });
+};
+var $6339f423cc6c3ee3$export$2e2bcd8739ae039 = $6339f423cc6c3ee3$var$MultiServerAutocompleteArrayInput;
+
+
+
+
+
+
+const $b0f28d60b9360e4c$var$MultiServerAutocompleteInput = ({ optionText: optionText, ...rest })=>{
+    const dataServers = (0, $kvH6Q$useDataServers)();
+    // We cannot use OptionRenderer like MultiServerAutocompleteArrayInput because there is a bug with AutocompleteInput
+    const optionTextWithServerName = (0, $kvH6Q$useCallback)((record)=>{
+        if (record && dataServers) {
+            const server = Object.values(dataServers).find((server)=>record.id.startsWith(server.baseUrl));
+            return record[optionText] + (server ? ` (${server.name})` : "");
+        }
+    }, [
+        optionText,
+        dataServers
+    ]);
+    return /*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$AutocompleteInput), {
+        optionText: optionTextWithServerName,
+        ...rest
+    });
+};
+var $b0f28d60b9360e4c$export$2e2bcd8739ae039 = $b0f28d60b9360e4c$var$MultiServerAutocompleteInput;
+
+
+
+
+
+const $5caa484b443e2e14$var$MultiLinesInput = (props)=>/*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$TextInput), {
+        multiline: true,
+        minRows: 2,
+        format: (value)=>value ? Array.isArray(value) ? value.join("\n") : value : "",
+        parse: (value)=>value.split(/\r?\n/),
+        ...props
+    });
+var $5caa484b443e2e14$export$2e2bcd8739ae039 = $5caa484b443e2e14$var$MultiLinesInput;
+
+
+
+
+
+
+const $0a220aa421897b42$var$ReferenceArrayInput = (props)=>{
+    const { field: { value: value, onChange: onChange } } = (0, $kvH6Q$useController)({
+        name: props.source
+    });
+    (0, $kvH6Q$useEffect)(()=>{
+        if (value && !Array.isArray(value)) onChange([
+            value
+        ]);
+    }, [
+        value,
+        onChange
+    ]);
+    // Wait for change to be effective before rendering component
+    // Otherwise it will be wrongly initialized and it won't work
+    if (value && !Array.isArray(value)) return null;
+    return /*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$ReferenceArrayInput), {
+        ...props
+    });
+};
+var $0a220aa421897b42$export$2e2bcd8739ae039 = $0a220aa421897b42$var$ReferenceArrayInput;
+
+
+
+
+
+const $4dc5aebf6fd9ab50$var$format = (value)=>{
+    // If there is no value, return immediately
+    if (!value) return value;
+    // If the value is an object with an @id field, return the uri
+    return typeof value === "object" ? value.id || value["@id"] : value;
+};
+const $4dc5aebf6fd9ab50$var$ReferenceInput = ({ children: children, ...rest })=>{
+    const child = (0, $kvH6Q$react).Children.only(children);
+    return /*#__PURE__*/ (0, $kvH6Q$jsx)((0, $kvH6Q$ReferenceInput), {
+        ...rest,
+        children: /*#__PURE__*/ (0, $kvH6Q$react).cloneElement(child, {
+            format: $4dc5aebf6fd9ab50$var$format
+        })
+    });
+};
+var $4dc5aebf6fd9ab50$export$2e2bcd8739ae039 = $4dc5aebf6fd9ab50$var$ReferenceInput;
+
+
+
+
+export {$00df5ecaefd5b71e$export$2e2bcd8739ae039 as ImageInput, $6339f423cc6c3ee3$export$2e2bcd8739ae039 as MultiServerAutocompleteArrayInput, $b0f28d60b9360e4c$export$2e2bcd8739ae039 as MultiServerAutocompleteInput, $5caa484b443e2e14$export$2e2bcd8739ae039 as MultiLinesInput, $0a220aa421897b42$export$2e2bcd8739ae039 as ReferenceArrayInput, $4dc5aebf6fd9ab50$export$2e2bcd8739ae039 as ReferenceInput};
 //# sourceMappingURL=index.es.js.map
