@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import ReactMde from 'react-mde';
-import Markdown from 'markdown-to-jsx';
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react/require-default-props */
+import { useState, FunctionComponent } from 'react';
+import ReactMde, { ReactMdeProps } from 'react-mde';
+import Markdown, { MarkdownToJSX } from 'markdown-to-jsx';
 import { useInput, InputHelperText, useTranslateLabel, TextInputProps } from 'react-admin';
 import { FormControl, FormHelperText } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -86,9 +88,14 @@ const StyledFormControl = styled(FormControl)(({ theme }) => ({
   }
 }));
 
-const MarkdownInput = props => {
+type Props = TextInputProps & {
+  overrides?: MarkdownToJSX.Overrides;
+  reactMdeProps?: ReactMdeProps;
+};
+
+const MarkdownInput: FunctionComponent<Props> = props => {
   const { label, source, helperText, fullWidth, validate, overrides, reactMdeProps } = props;
-  const [tab, setTab] = useState('write');
+  const [tab, setTab] = useState<'write' | 'preview'>('write');
   const {
     field: { value, onChange },
     fieldState: { isDirty, invalid, error, isTouched },
@@ -108,12 +115,13 @@ const MarkdownInput = props => {
         <legend>{translatedLabel}</legend>
         <ReactMde
           value={value}
-          onChange={value => onChange(value)}
-          onTabChange={tab => setTab(tab)}
+          onChange={val => onChange(val)}
+          onTabChange={newTab => setTab(newTab)}
+          /* eslint-disable-next-line react/no-unstable-nested-components */
           generateMarkdownPreview={async markdown => (
             <Markdown
               options={{
-                overrides
+                overrides: overrides || {}
               }}
             >
               {markdown}
@@ -121,12 +129,7 @@ const MarkdownInput = props => {
           )}
           selectedTab={tab}
           childProps={{ textArea: { placeholder: translatedLabel } }}
-          l18n={{
-            write: 'Saisie',
-            preview: 'Prévisualisation',
-            uploadingImage: "Upload de l'image en cours...",
-            pasteDropSelect: 'Ajoutez des fichiers en les glissant dans la zone de saisie'
-          }}
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...reactMdeProps}
         />
       </fieldset>

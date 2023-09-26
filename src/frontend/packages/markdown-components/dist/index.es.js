@@ -1,11 +1,11 @@
-import {jsx as $lL6sH$jsx, jsxs as $lL6sH$jsxs, Fragment as $lL6sH$Fragment} from "react/jsx-runtime";
-import $lL6sH$react, {useState as $lL6sH$useState} from "react";
-import {useRecordContext as $lL6sH$useRecordContext, useInput as $lL6sH$useInput, useTranslateLabel as $lL6sH$useTranslateLabel, InputHelperText as $lL6sH$InputHelperText, useDataProvider as $lL6sH$useDataProvider, useTranslate as $lL6sH$useTranslate} from "react-admin";
-import $lL6sH$markdowntojsx from "markdown-to-jsx";
-import $lL6sH$lodashget from "lodash/get";
-import $lL6sH$reactmde from "react-mde";
-import {FormControl as $lL6sH$FormControl, FormHelperText as $lL6sH$FormHelperText} from "@mui/material";
-import {styled as $lL6sH$styled} from "@mui/material/styles";
+import {jsx as $kkR1A$jsx, jsxs as $kkR1A$jsxs, Fragment as $kkR1A$Fragment} from "react/jsx-runtime";
+import $kkR1A$react, {useState as $kkR1A$useState} from "react";
+import {useRecordContext as $kkR1A$useRecordContext, useInput as $kkR1A$useInput, useTranslateLabel as $kkR1A$useTranslateLabel, InputHelperText as $kkR1A$InputHelperText, useDataProvider as $kkR1A$useDataProvider, useTranslate as $kkR1A$useTranslate} from "react-admin";
+import $kkR1A$markdowntojsx from "markdown-to-jsx";
+import $kkR1A$lodashget from "lodash/get";
+import $kkR1A$reactmde from "react-mde";
+import {FormControl as $kkR1A$FormControl, FormHelperText as $kkR1A$FormHelperText} from "@mui/material";
+import {styled as $kkR1A$styled} from "@mui/material/styles";
 
 
 
@@ -13,20 +13,20 @@ import {styled as $lL6sH$styled} from "@mui/material/styles";
 
 
 const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: LabelComponent, overrides: overrides = {}, ...rest })=>{
-    const record = (0, $lL6sH$useRecordContext)();
-    if (!record || !(0, $lL6sH$lodashget)(record, source)) return null;
-    return /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$markdowntojsx), {
+    const record = (0, $kkR1A$useRecordContext)();
+    if (!record || !(0, $kkR1A$lodashget)(record, source)) return null;
+    return /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$markdowntojsx), {
         options: {
             createElement (type, props, children) {
-                if (props.label) return /*#__PURE__*/ (0, $lL6sH$jsxs)((0, $lL6sH$Fragment), {
+                if (props.label) return /*#__PURE__*/ (0, $kkR1A$jsxs)((0, $kkR1A$Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $lL6sH$jsx)(LabelComponent, {
+                        /*#__PURE__*/ (0, $kkR1A$jsx)(LabelComponent, {
                             children: props.label
                         }),
-                        /*#__PURE__*/ (0, $lL6sH$react).createElement(type, props, children)
+                        /*#__PURE__*/ (0, $kkR1A$react).createElement(type, props, children)
                     ]
                 });
-                return /*#__PURE__*/ (0, $lL6sH$react).createElement(type, props, children);
+                return /*#__PURE__*/ (0, $kkR1A$react).createElement(type, props, children);
             },
             overrides: {
                 h1: LabelComponent,
@@ -34,7 +34,7 @@ const $cf6ed0ef7f5d4af7$var$MarkdownField = ({ source: source, LabelComponent: L
             },
             ...rest
         },
-        children: (0, $lL6sH$lodashget)(record, source)
+        children: (0, $kkR1A$lodashget)(record, source)
     });
 };
 $cf6ed0ef7f5d4af7$var$MarkdownField.defaultProps = {
@@ -43,14 +43,14 @@ $cf6ed0ef7f5d4af7$var$MarkdownField.defaultProps = {
 var $cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 = $cf6ed0ef7f5d4af7$var$MarkdownField;
 
 
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
 
 
 
 
 
 
-
-const $ccc6163e3bb48ca3$var$StyledFormControl = (0, $lL6sH$styled)((0, $lL6sH$FormControl))(({ theme: theme })=>({
+const $ece2092e88263cda$var$StyledFormControl = (0, $kkR1A$styled)((0, $kkR1A$FormControl))(({ theme: theme })=>({
         "& > fieldset": {
             borderWidth: 1,
             borderStyle: "solid",
@@ -120,34 +120,34 @@ const $ccc6163e3bb48ca3$var$StyledFormControl = (0, $lL6sH$styled)((0, $lL6sH$Fo
             }
         }
     }));
-const $ccc6163e3bb48ca3$var$MarkdownInput = (props)=>{
+const $ece2092e88263cda$var$MarkdownInput = (props)=>{
     const { label: label, source: source, helperText: helperText, fullWidth: fullWidth, validate: validate, overrides: overrides, reactMdeProps: reactMdeProps } = props;
-    const [tab, setTab] = (0, $lL6sH$useState) < "write" | false;
-    const { field: { value: value, onChange: onChange }, fieldState: { isDirty: isDirty, invalid: invalid, error: error, isTouched: isTouched }, formState: { isSubmitted: isSubmitted }, isRequired: isRequired } = (0, $lL6sH$useInput)({
+    const [tab, setTab] = (0, $kkR1A$useState)("write");
+    const { field: { value: value, onChange: onChange }, fieldState: { isDirty: isDirty, invalid: invalid, error: error, isTouched: isTouched }, formState: { isSubmitted: isSubmitted }, isRequired: isRequired } = (0, $kkR1A$useInput)({
         source: source,
         validate: validate
     });
-    const translateLabel = (0, $lL6sH$useTranslateLabel)();
+    const translateLabel = (0, $kkR1A$useTranslateLabel)();
     const translatedLabel = `${translateLabel({
         label: label,
         source: source
     })}${isRequired ? "*" : ""}`;
-    return /*#__PURE__*/ (0, $lL6sH$jsxs)($ccc6163e3bb48ca3$var$StyledFormControl, {
+    return /*#__PURE__*/ (0, $kkR1A$jsxs)($ece2092e88263cda$var$StyledFormControl, {
         fullWidth: fullWidth,
         className: `${invalid ? "validationError" : ""} ${value === "" ? "empty" : ""}`,
         children: [
-            /*#__PURE__*/ (0, $lL6sH$jsxs)("fieldset", {
+            /*#__PURE__*/ (0, $kkR1A$jsxs)("fieldset", {
                 children: [
-                    /*#__PURE__*/ (0, $lL6sH$jsx)("legend", {
+                    /*#__PURE__*/ (0, $kkR1A$jsx)("legend", {
                         children: translatedLabel
                     }),
-                    /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$reactmde), {
+                    /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$reactmde), {
                         value: value,
-                        onChange: (value)=>onChange(value),
-                        onTabChange: (tab)=>setTab(tab),
-                        generateMarkdownPreview: async (markdown)=>/*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$markdowntojsx), {
+                        onChange: (val)=>onChange(val),
+                        onTabChange: (newTab)=>setTab(newTab),
+                        /* eslint-disable-next-line react/no-unstable-nested-components */ generateMarkdownPreview: async (markdown)=>/*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$markdowntojsx), {
                                 options: {
-                                    overrides: overrides
+                                    overrides: overrides || {}
                                 },
                                 children: markdown
                             }),
@@ -157,21 +157,15 @@ const $ccc6163e3bb48ca3$var$MarkdownInput = (props)=>{
                                 placeholder: translatedLabel
                             }
                         },
-                        l18n: {
-                            write: "Saisie",
-                            preview: "Pr\xe9visualisation",
-                            uploadingImage: "Upload de l'image en cours...",
-                            pasteDropSelect: "Ajoutez des fichiers en les glissant dans la zone de saisie"
-                        },
                         ...reactMdeProps
                     })
                 ]
             }),
-            /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$FormHelperText), {
+            /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$FormHelperText), {
                 error: isDirty && invalid,
                 margin: "dense",
                 variant: "outlined",
-                children: /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$InputHelperText), {
+                children: /*#__PURE__*/ (0, $kkR1A$jsx)((0, $kkR1A$InputHelperText), {
                     error: error?.message,
                     helperText: helperText,
                     touched: isTouched || isSubmitted
@@ -180,13 +174,13 @@ const $ccc6163e3bb48ca3$var$MarkdownInput = (props)=>{
         ]
     });
 };
-var $ccc6163e3bb48ca3$export$2e2bcd8739ae039 = $ccc6163e3bb48ca3$var$MarkdownInput;
+var $ece2092e88263cda$export$2e2bcd8739ae039 = $ece2092e88263cda$var$MarkdownInput;
 
 
 
 const $c57f5824f8ba8f82$var$useLoadLinks = (resourceType, labelProp)=>{
-    const dataProvider = (0, $lL6sH$useDataProvider)();
-    const translate = (0, $lL6sH$useTranslate)();
+    const dataProvider = (0, $kkR1A$useDataProvider)();
+    const translate = (0, $kkR1A$useTranslate)();
     return async (keyword)=>{
         if (keyword) {
             const results = await dataProvider.getList(resourceType, {
@@ -222,5 +216,5 @@ var $c57f5824f8ba8f82$export$2e2bcd8739ae039 = $c57f5824f8ba8f82$var$useLoadLink
 
 
 
-export {$cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 as MarkdownField, $ccc6163e3bb48ca3$export$2e2bcd8739ae039 as MarkdownInput, $c57f5824f8ba8f82$export$2e2bcd8739ae039 as useLoadLinks};
+export {$cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 as MarkdownField, $ece2092e88263cda$export$2e2bcd8739ae039 as MarkdownInput, $c57f5824f8ba8f82$export$2e2bcd8739ae039 as useLoadLinks};
 //# sourceMappingURL=index.es.js.map
