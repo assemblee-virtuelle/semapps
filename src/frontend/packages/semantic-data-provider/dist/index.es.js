@@ -559,13 +559,14 @@ const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     "q",
     "sparqlWhere",
     "blankNodes",
+    "blankNodesDepth",
     "_servers",
     "_predicates"
 ];
 const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params: params, dataModel: dataModel, ontologies: ontologies })=>{
     const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
     const predicates = params.filter?._predicates || dataModel.list?.predicates;
-    const blankNodesQueryDepth = dataModel.list?.blankNodesQueryDepth || 2;
+    const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
     const filter = {
         ...dataModel.list?.filter,
         ...params.filter
@@ -676,7 +677,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params
         });
     }
     // Blank nodes
-    const blankNodesQuery = blankNodes ? (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $efbe3fa6f1479c06$export$2e2bcd8739ae039)(blankNodesQueryDepth, baseQuery);
+    const blankNodesQuery = blankNodes ? (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $efbe3fa6f1479c06$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
     if (blankNodesQuery && blankNodesQuery.construct) {
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
