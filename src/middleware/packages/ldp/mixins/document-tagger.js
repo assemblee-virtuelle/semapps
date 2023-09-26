@@ -48,8 +48,8 @@ module.exports = {
         query: `
           DELETE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
           INSERT { <${resourceUri}> <${
-          this.settings.documentPredicates.updated
-        }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
+            this.settings.documentPredicates.updated
+          }> "${now.toISOString()}"^^<http://www.w3.org/2001/XMLSchema#dateTime> }
           WHERE { <${resourceUri}> <${this.settings.documentPredicates.updated}> ?updated }
         `,
         webId: 'system'

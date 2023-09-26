@@ -27,11 +27,13 @@ const dataProvider = config => {
   const fetchUserConfigPromise = fetchUserConfig(config);
   const fetchVoidEndpointsPromise = fetchVoidEndpoints(config);
 
-  const waitForVoidEndpoints = method => async (...arg) => {
-    await fetchUserConfigPromise;
-    await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
-    return await method(...arg);
-  };
+  const waitForVoidEndpoints =
+    method =>
+    async (...arg) => {
+      await fetchUserConfigPromise;
+      await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
+      return await method(...arg);
+    };
 
   return {
     getList: waitForVoidEndpoints(getListMethod(config)),

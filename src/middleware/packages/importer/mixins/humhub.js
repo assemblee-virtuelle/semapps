@@ -25,7 +25,7 @@ module.exports = {
       },
       fieldsMapping: {
         // We don't use arrow function as we need to have access to this.settings
-        slug: function(data) {
+        slug: function (data) {
           switch (this.settings.source.humhub.type) {
             case 'user':
             case 'space':
@@ -35,14 +35,14 @@ module.exports = {
               return data.content.metadata.guid;
           }
         },
-        created: function(data) {
+        created: function (data) {
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
               return convertToIsoString(data.content.metadata.created_at);
           }
         },
-        updated: function(data) {
+        updated: function (data) {
           switch (this.settings.source.humhub.type) {
             case 'calendar':
             case 'post':
