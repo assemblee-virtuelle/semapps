@@ -12,11 +12,7 @@ const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 function createFragmentURL(baseUrl, serverUrl) {
   let fragment = 'me';
   const res = serverUrl.match(regexProtocolAndHostAndPort);
-  if (res)
-    fragment = res[2]
-      .replace('-', '_')
-      .replace('.', '_')
-      .replace(':', '_');
+  if (res) fragment = res[2].replace('-', '_').replace('.', '_').replace(':', '_');
 
   return urlJoin(baseUrl, `#${fragment}`);
 }
@@ -43,11 +39,7 @@ const extractNodes = predicates => {
   return nodes;
 };
 
-const generateSparqlVarName = node =>
-  crypto
-    .createHash('md5')
-    .update(node)
-    .digest('hex');
+const generateSparqlVarName = node => crypto.createHash('md5').update(node).digest('hex');
 
 const getParentNode = node => node.includes('/') && node.split('/')[0];
 
@@ -104,8 +96,8 @@ const buildFiltersQuery = filters => {
       if (filters[predicate]) {
         where += `
           FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
-          filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-        } } .
+            filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+          } } .
         `;
       } else {
         where += `

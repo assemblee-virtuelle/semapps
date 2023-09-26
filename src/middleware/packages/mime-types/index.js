@@ -2,7 +2,7 @@ const Negotiator = require('negotiator');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES, TYPES_REPO } = require('./constants');
 
-const negotiateType = function(incomingType) {
+const negotiateType = function (incomingType) {
   const availableMediaTypes = [];
   const negotiatorType = incomingType;
   TYPES_REPO.forEach(trSupported => {
@@ -20,15 +20,15 @@ const negotiateType = function(incomingType) {
   throw new MoleculerError(`Type not supported : ${incomingType}`, 400, 'TYPE_NOT_SUPPORTED');
 };
 
-const negotiateTypeMime = function(incomingType) {
+const negotiateTypeMime = function (incomingType) {
   return negotiateType(incomingType).mime;
 };
 
-const negotiateTypeN3 = function(incomingType) {
+const negotiateTypeN3 = function (incomingType) {
   return negotiateType(incomingType).N3Mapping;
 };
 
-const negotiateTypeFuseki = function(incomingType) {
+const negotiateTypeFuseki = function (incomingType) {
   return negotiateType(incomingType).fusekiMapping;
 };
 

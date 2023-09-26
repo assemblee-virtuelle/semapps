@@ -6,13 +6,13 @@ import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   content: {
-    width: 450,
+    width: 450
   },
   icon: {
-    margin: theme.spacing(0.3),
-  },
+    margin: theme.spacing(0.3)
+  }
 }));
 
 const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
@@ -24,10 +24,10 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
-  const submit = (values) => {
+  const submit = values => {
     setLoading(true);
     signup(values)
-      .then((webId) => {
+      .then(webId => {
         if (delayBeforeRedirect) {
           setTimeout(() => {
             // Reload to ensure the dataServer config is reset
@@ -43,7 +43,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
         }
         notify('auth.message.new_user_created', { type: 'info' });
       })
-      .catch((error) => {
+      .catch(error => {
         setLoading(false);
         notify(
           typeof error === 'string'
@@ -53,8 +53,8 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
             : error.message,
           {
             type: 'warning',
-            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined,
-          },
+            _: typeof error === 'string' ? error : error && error.message ? error.message : undefined
+          }
         );
       });
   };
@@ -108,7 +108,7 @@ const SignupForm = ({ redirectTo, delayBeforeRedirect }) => {
 };
 
 SignupForm.propTypes = {
-  redirectTo: PropTypes.string,
+  redirectTo: PropTypes.string
 };
 
 export default SignupForm;

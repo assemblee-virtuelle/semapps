@@ -69,8 +69,9 @@ const ObjectService = {
 
           if (!container)
             throw new Error(
-              `Cannot create resource of type "${activity.object.type ||
-                activity.object['@type']}", no matching containers were found!`
+              `Cannot create resource of type "${
+                activity.object.type || activity.object['@type']
+              }", no matching containers were found!`
             );
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
