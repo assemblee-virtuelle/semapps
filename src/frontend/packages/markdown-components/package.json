@@ -1,6 +1,6 @@
 {
   "name": "@semapps/markdown-components",
-  "version": "0.5.3",
+  "version": "0.6.0-alpha.0",
   "description": "React-Admin component for markdown display and input",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,8 +15,8 @@
     "watch": "parcel watch"
   },
   "dependencies": {
-    "markdown-to-jsx": "^7.1.3",
     "lodash": "^4.17.21",
+    "markdown-to-jsx": "^7.1.3",
     "react-mde": "^11.5.0"
   },
   "peerDependencies": {
