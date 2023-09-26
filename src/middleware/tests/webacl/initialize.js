@@ -14,9 +14,9 @@ const initialize = async () => {
     logger: {
       type: 'Console',
       options: {
-        level: 'warn',
-      },
-    },
+        level: 'warn'
+      }
+    }
   });
 
   await broker.createService(CoreService, {
@@ -27,29 +27,29 @@ const initialize = async () => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset: CONFIG.MAIN_DATASET,
+        mainDataset: CONFIG.MAIN_DATASET
       },
       ontologies,
       containers: ['/resources'],
       activitypub: false,
       mirror: false,
       void: false,
-      webfinger: false,
-    },
+      webfinger: false
+    }
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl: CONFIG.HOME_URL,
       jwtPath: path.resolve(__dirname, '../jwt'),
-      accountsDataset: CONFIG.SETTINGS_DATASET,
-    },
+      accountsDataset: CONFIG.SETTINGS_DATASET
+    }
   });
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(CONFIG.HOME_URL, 'users'),
-    },
+      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
+    }
   });
 
   await broker.start();

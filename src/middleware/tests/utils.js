@@ -5,26 +5,26 @@ const CONFIG = require('./config');
 const listDatasets = async () => {
   const response = await fetch(`${CONFIG.SPARQL_ENDPOINT}$/datasets`, {
     headers: {
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`,
-    },
+      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
+    }
   });
 
   if (response.ok) {
     const json = await response.json();
-    return json.datasets.map((dataset) => dataset['ds.name'].substring(1));
+    return json.datasets.map(dataset => dataset['ds.name'].substring(1));
   } else {
     return [];
   }
 };
 
-const clearDataset = (dataset) =>
+const clearDataset = dataset =>
   fetch(urlJoin(CONFIG.SPARQL_ENDPOINT, dataset, 'update'), {
     method: 'POST',
     body: 'update=CLEAR+ALL', // DROP+ALL is not working with WebACL datasets !
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`,
-    },
+      Authorization: `Basic ${Buffer.from(`${CONFIG.JENA_USER}:${CONFIG.JENA_PASSWORD}`).toString('base64')}`
+    }
   });
 
 const fetchServer = (url, options = {}) => {
@@ -53,15 +53,15 @@ const fetchServer = (url, options = {}) => {
   return fetch(url, {
     method: options.method || 'GET',
     body: options.body,
-    headers: options.headers,
+    headers: options.headers
   })
-    .then((response) =>
-      response.text().then((text) => ({
+    .then(response =>
+      response.text().then(text => ({
         status: response.status,
         statusText: response.statusText,
         headers: response.headers,
-        body: text,
-      })),
+        body: text
+      }))
     )
     .then(({ status, statusText, headers, body }) => {
       let json;
@@ -77,5 +77,5 @@ const fetchServer = (url, options = {}) => {
 module.exports = {
   clearDataset,
   listDatasets,
-  fetchServer,
+  fetchServer
 };

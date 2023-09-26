@@ -9,5 +9,5 @@ module.exports = {
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
   LdpAdapter: require('./adapter'),
-  ...utils,
+  ...utils
 };

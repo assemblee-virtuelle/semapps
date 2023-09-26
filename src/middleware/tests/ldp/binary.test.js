@@ -28,8 +28,8 @@ describe('Binary handling of LDP server', () => {
       body: readStream,
       headers: new fetch.Headers({
         Slug: 'av-icon.png',
-        'Content-Type': 'image/png',
-      }),
+        'Content-Type': 'image/png'
+      })
     });
 
     fileUri = headers.get('Location');
@@ -48,10 +48,10 @@ describe('Binary handling of LDP server', () => {
             '@type': 'semapps:File',
             'semapps:fileName': 'av-icon.png',
             'semapps:localPath': 'uploads/files/av-icon.png',
-            'semapps:mimeType': 'image/png',
-          },
-        ],
-      },
+            'semapps:mimeType': 'image/png'
+          }
+        ]
+      }
     });
   });
 
@@ -69,37 +69,37 @@ describe('Binary handling of LDP server', () => {
     await expect(
       broker.call('ldp.resource.get', {
         resourceUri: fileUri,
-        accept: MIME_TYPES.JSON,
-      }),
+        accept: MIME_TYPES.JSON
+      })
     ).resolves.toMatchObject({
       '@id': fileUri,
       '@type': 'semapps:File',
       'semapps:fileName': 'av-icon.png',
       'semapps:localPath': 'uploads/files/av-icon.png',
-      'semapps:mimeType': 'image/png',
+      'semapps:mimeType': 'image/png'
     });
   });
 
   test('Delete image', async () => {
     await expect(
       fetchServer(fileUri, {
-        method: 'DELETE',
-      }),
+        method: 'DELETE'
+      })
     ).resolves.toMatchObject({
-      status: 204,
+      status: 204
     });
 
     expect(fs.existsSync(pathJoin(__dirname, '../uploads/files/av-icon.png'))).toBeFalsy();
 
     await expect(fetchServer(fileUri)).resolves.toMatchObject({
-      status: 404,
+      status: 404
     });
 
     await expect(fetchServer(urlJoin(CONFIG.HOME_URL, 'files'))).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': [],
-      },
+        'ldp:contains': []
+      }
     });
   });
 });

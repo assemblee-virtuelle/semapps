@@ -7,11 +7,11 @@ module.exports = {
     resource: 'object',
     webId: {
       type: 'string',
-      optional: true,
+      optional: true
     },
     contentType: {
-      type: 'string',
-    },
+      type: 'string'
+    }
   },
   async handler(ctx) {
     let { resource, contentType, body } = ctx.params;
@@ -23,7 +23,7 @@ module.exports = {
 
     const { jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params,
+      ...ctx.params
     };
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
@@ -36,11 +36,11 @@ module.exports = {
       if (jsonContext) {
         resource = {
           '@context': jsonContext,
-          ...resource,
+          ...resource
         };
       } else {
         this.logger.warn(
-          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`,
+          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`
         );
       }
     }
@@ -58,7 +58,7 @@ module.exports = {
 
     const triplesToAdd = newTriples.reverse();
 
-    const newBlankNodes = newTriples.filter((triple) => triple.object.termType === 'Variable');
+    const newBlankNodes = newTriples.filter(triple => triple.object.termType === 'Variable');
 
     // Generate the query
     let query = '';
@@ -71,7 +71,7 @@ module.exports = {
 
     await ctx.call('triplestore.update', {
       query,
-      webId,
+      webId
     });
 
     // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
@@ -80,19 +80,19 @@ module.exports = {
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        webId,
+        webId
       },
-      { meta: { $cache: false } },
+      { meta: { $cache: false } }
     );
 
     const returnValues = {
       resourceUri,
       newData,
-      webId,
+      webId
     };
 
     ctx.emit('ldp.resource.created', returnValues, { meta: { webId: null } });
 
     return returnValues;
-  },
+  }
 };

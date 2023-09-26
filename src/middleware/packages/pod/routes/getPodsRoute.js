@@ -6,7 +6,7 @@ const {
   parseJson,
   parseTurtle,
   parseFile,
-  saveDatasetMeta,
+  saveDatasetMeta
 } = require('@semapps/middlewares');
 
 const transformRouteParamsToSlugParts = (req, res, next) => {
@@ -32,7 +32,7 @@ function getPodsRoute() {
     parseTurtle,
     parseFile,
     saveDatasetMeta,
-    transformRouteParamsToSlugParts,
+    transformRouteParamsToSlugParts
   ];
 
   return {
@@ -47,11 +47,11 @@ function getPodsRoute() {
       'GET /': [...middlewares, 'ldp.api.get'],
       'HEAD /': [transformRouteParamsToSlugParts, 'ldp.api.head'],
       'GET /:collection': [...middlewares, 'ldp.api.get'],
-      'POST /:collection': [...middlewares, 'ldp.api.post'],
+      'POST /:collection': [...middlewares, 'ldp.api.post']
     },
     // Handle this route after other routes. Requires a modification of the ApiGateway.
     // See https://github.com/moleculerjs/moleculer-web/issues/335
-    catchAll: true,
+    catchAll: true
   };
 }
 

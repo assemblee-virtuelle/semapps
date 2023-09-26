@@ -19,7 +19,7 @@ module.exports = async function post(ctx) {
           containerUri: uri,
           slug: ctx.meta.headers.slug,
           resource,
-          contentType: ctx.meta.headers['content-type'],
+          contentType: ctx.meta.headers['content-type']
         });
       } else {
         if (ctx.params.files.length > 1) {
@@ -29,13 +29,13 @@ module.exports = async function post(ctx) {
           containerUri: uri,
           slug: ctx.meta.headers.slug || ctx.params.files[0].filename,
           file: ctx.params.files[0],
-          contentType: MIME_TYPES.JSON,
+          contentType: MIME_TYPES.JSON
         });
       }
       ctx.meta.$responseHeaders = {
         Location: resourceUri,
         Link: '<http://www.w3.org/ns/ldp#Resource>; rel="type"',
-        'Content-Length': 0,
+        'Content-Length': 0
       };
       // We need to set this also here (in addition to above) or we get a Moleculer warning
       ctx.meta.$location = resourceUri;
@@ -49,7 +49,7 @@ module.exports = async function post(ctx) {
       if (controlledActions.post) {
         await ctx.call(controlledActions.post, {
           collectionUri: uri,
-          ...resource,
+          ...resource
         });
       } else {
         // The collection endpoint is not available for POSTing

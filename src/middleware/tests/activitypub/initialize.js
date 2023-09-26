@@ -22,9 +22,9 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error',
-      },
-    },
+        level: 'error'
+      }
+    }
   });
 
   // Remove all actors keys
@@ -38,29 +38,29 @@ const initialize = async (port, mainDataset, accountsDataset) => {
         url: CONFIG.SPARQL_ENDPOINT,
         user: CONFIG.JENA_USER,
         password: CONFIG.JENA_PASSWORD,
-        mainDataset,
+        mainDataset
       },
       containers,
       void: false,
       mirror: false,
       api: {
-        port,
-      },
-    },
+        port
+      }
+    }
   });
 
   await broker.createService(AuthLocalService, {
     settings: {
       baseUrl,
       jwtPath: path.resolve(__dirname, './jwt'),
-      accountsDataset,
-    },
+      accountsDataset
+    }
   });
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: urlJoin(baseUrl, 'actors'),
-    },
+      usersContainer: urlJoin(baseUrl, 'actors')
+    }
   });
 
   await broker.start();
@@ -71,27 +71,27 @@ const initialize = async (port, mainDataset, accountsDataset) => {
     resourceUri: `${baseUrl}objects`,
     additionalRights: {
       anon: {
-        write: true,
-      },
-    },
+        write: true
+      }
+    }
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: `${baseUrl}actors`,
     additionalRights: {
       anon: {
-        write: true,
-      },
-    },
+        write: true
+      }
+    }
   });
   await broker.call('webacl.resource.addRights', {
     webId: 'system',
     resourceUri: `${baseUrl}activities`,
     additionalRights: {
       anon: {
-        write: true,
-      },
-    },
+        write: true
+      }
+    }
   });
 
   return broker;

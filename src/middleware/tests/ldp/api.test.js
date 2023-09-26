@@ -26,12 +26,12 @@ describe('LDP handling through API', () => {
       method: 'POST',
       body: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
         description: 'myProject',
-        label: 'myLabel',
-      },
+        label: 'myLabel'
+      }
     });
 
     resourceUri = headers.get('Location');
@@ -44,8 +44,8 @@ describe('LDP handling through API', () => {
       json: {
         '@type': 'pair:Project',
         'pair:description': 'myProject',
-        'pair:label': 'myLabel',
-      },
+        'pair:label': 'myLabel'
+      }
     });
   });
 
@@ -55,10 +55,10 @@ describe('LDP handling through API', () => {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': [
           {
-            '@id': resourceUri,
-          },
-        ],
-      },
+            '@id': resourceUri
+          }
+        ]
+      }
     });
   });
 
@@ -67,18 +67,18 @@ describe('LDP handling through API', () => {
       method: 'PUT',
       body: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
-        description: 'myProjectUpdated',
-      },
+        description: 'myProjectUpdated'
+      }
     });
 
     const { json } = await fetchServer(resourceUri);
 
     expect(json).toMatchObject({
       '@type': 'pair:Project',
-      'pair:description': 'myProjectUpdated',
+      'pair:description': 'myProjectUpdated'
     });
 
     expect(json['pair:label']).toBeUndefined();
@@ -98,16 +98,16 @@ describe('LDP handling through API', () => {
         }
       `,
       headers: new fetch.Headers({
-        'Content-Type': 'application/sparql-update',
-      }),
+        'Content-Type': 'application/sparql-update'
+      })
     });
 
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
       json: {
         '@type': 'pair:Project',
         'pair:description': 'myProjectPatched',
-        'pair:label': 'myLabel',
-      },
+        'pair:label': 'myLabel'
+      }
     });
   });
 
@@ -124,8 +124,8 @@ describe('LDP handling through API', () => {
         }
       `,
       headers: new fetch.Headers({
-        'Content-Type': 'application/sparql-update',
-      }),
+        'Content-Type': 'application/sparql-update'
+      })
     });
 
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
@@ -135,30 +135,30 @@ describe('LDP handling through API', () => {
         'pair:label': 'myLabel',
         'pair:hasLocation': {
           '@type': 'pair:Place',
-          'pair:label': 'Paris',
-        },
-      },
+          'pair:label': 'Paris'
+        }
+      }
     });
   });
 
   test('Delete resource', async () => {
     await expect(
       fetchServer(resourceUri, {
-        method: 'DELETE',
-      }),
+        method: 'DELETE'
+      })
     ).resolves.toMatchObject({
-      status: 204,
+      status: 204
     });
 
     await expect(fetchServer(resourceUri)).resolves.toMatchObject({
-      status: 404,
+      status: 404
     });
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': [],
-      },
+        'ldp:contains': []
+      }
     });
   });
 
@@ -168,15 +168,15 @@ describe('LDP handling through API', () => {
       body: {
         '@context': {
           dc: 'http://purl.org/dc/terms/',
-          ldp: 'http://www.w3.org/ns/ldp#',
+          ldp: 'http://www.w3.org/ns/ldp#'
         },
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation',
+        'dc:description': 'Used to test dynamic containers creation'
       },
       headers: new fetch.Headers({
-        Slug: 'sub-resources',
-      }),
+        Slug: 'sub-resources'
+      })
     });
 
     subContainerUri = headers.get('Location');
@@ -187,8 +187,8 @@ describe('LDP handling through API', () => {
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'dc:title': 'Sub-resources',
-        'dc:description': 'Used to test dynamic containers creation',
-      },
+        'dc:description': 'Used to test dynamic containers creation'
+      }
     });
   });
 
@@ -197,11 +197,11 @@ describe('LDP handling through API', () => {
       method: 'POST',
       body: {
         '@context': {
-          '@vocab': 'http://virtual-assembly.org/ontologies/pair#',
+          '@vocab': 'http://virtual-assembly.org/ontologies/pair#'
         },
         '@type': 'Project',
-        description: 'My sub-resource',
-      },
+        description: 'My sub-resource'
+      }
     });
 
     subResourceUri = headers.get('Location');
@@ -213,9 +213,9 @@ describe('LDP handling through API', () => {
       'ldp:contains': [
         {
           '@id': subContainerUri,
-          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource'],
-        },
-      ],
+          '@type': ['ldp:Container', 'ldp:BasicContainer', 'ldp:Resource']
+        }
+      ]
     });
 
     // The content of sub-containers is not displayed
@@ -229,10 +229,10 @@ describe('LDP handling through API', () => {
           {
             '@id': subResourceUri,
             '@type': 'pair:Project',
-            'pair:description': 'My sub-resource',
-          },
-        ],
-      },
+            'pair:description': 'My sub-resource'
+          }
+        ]
+      }
     });
   });
 
@@ -243,36 +243,36 @@ describe('LDP handling through API', () => {
       resourceUri: subContainerUri,
       additionalRights: {
         anon: {
-          write: true,
-        },
-      },
+          write: true
+        }
+      }
     });
 
     await expect(
       fetchServer(subContainerUri, {
-        method: 'DELETE',
-      }),
+        method: 'DELETE'
+      })
     ).resolves.toMatchObject({
-      status: 204,
+      status: 204
     });
 
     await expect(fetchServer(subContainerUri)).resolves.toMatchObject({
-      status: 404,
+      status: 404
     });
 
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
-        'ldp:contains': [],
-      },
+        'ldp:contains': []
+      }
     });
 
     // Sub-resource should NOT be deleted with the sub-container
     await expect(fetchServer(subResourceUri)).resolves.toMatchObject({
       json: {
         '@type': 'pair:Project',
-        'pair:description': 'My sub-resource',
-      },
+        'pair:description': 'My sub-resource'
+      }
     });
   });
 });

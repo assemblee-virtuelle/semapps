@@ -5,7 +5,7 @@ const getPodsRoute = require('./routes/getPodsRoute');
 module.exports = {
   name: 'pod',
   settings: {
-    baseUrl: null,
+    baseUrl: null
   },
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
   async started() {
@@ -16,7 +16,7 @@ module.exports = {
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
-      excludeFromMirror: true,
+      excludeFromMirror: true
     });
 
     // API routes to actors (and their collections) are added manually
@@ -27,11 +27,11 @@ module.exports = {
       path: '/',
       excludeFromMirror: true,
       permissions: {},
-      newResourcesPermissions: {},
+      newResourcesPermissions: {}
     });
 
     const accounts = await this.broker.call('auth.account.find');
-    this.registeredPods = accounts.map((account) => account.username);
+    this.registeredPods = accounts.map(account => account.username);
   },
   actions: {
     async create(ctx) {
@@ -40,7 +40,7 @@ module.exports = {
 
       await ctx.call('triplestore.dataset.create', {
         dataset: username,
-        secure: true,
+        secure: true
       });
 
       ctx.meta.dataset = username;
@@ -54,14 +54,14 @@ module.exports = {
 
       await ctx.call('auth.account.update', {
         id: accounts[0]['@id'],
-        podUri,
+        podUri
       });
 
       this.registeredPods.push(username);
     },
     list() {
       return this.registeredPods;
-    },
+    }
   },
   events: {
     async 'auth.registered'(ctx) {
@@ -76,18 +76,18 @@ module.exports = {
             uri: webId,
             read: true,
             write: true,
-            control: true,
+            control: true
           },
           default: {
             user: {
               uri: webId,
               read: true,
               write: true,
-              control: true,
-            },
-          },
+              control: true
+            }
+          }
         },
-        webId: 'system',
+        webId: 'system'
       });
 
       // TODO Does not work, this is done in the webacl middleware. Good ?
@@ -107,6 +107,6 @@ module.exports = {
       //   },
       //   webId: 'system'
       // });
-    },
-  },
+    }
+  }
 };

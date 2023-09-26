@@ -11,16 +11,16 @@ module.exports = {
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
-      optional: true,
+      optional: true
     },
-    aclVerified: { type: 'boolean', optional: true },
+    aclVerified: { type: 'boolean', optional: true }
   },
   cache: {
     enabled(ctx) {
       // Do not cache remote resources as we have no mecanism to clear this cache
       return !this.isRemoteUri(ctx.params.resourceUri, ctx.meta.dataset);
     },
-    keys: ['resourceUri', 'accept', 'jsonContext'],
+    keys: ['resourceUri', 'accept', 'jsonContext']
   },
   async handler(ctx) {
     const { resourceUri, aclVerified } = ctx.params;
@@ -32,7 +32,7 @@ module.exports = {
 
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
-      ...ctx.params,
+      ...ctx.params
     };
 
     const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
@@ -55,7 +55,7 @@ module.exports = {
         // Increase performance by using the 'system' bypass if ACL have already been verified
         // TODO simply set meta.webId to "system", it will be taken into account in the triplestore.query action
         // The problem is we need to know the real webid for the permissions, but we can remember it in the WebACL middleware
-        webId: aclVerified ? 'system' : webId,
+        webId: aclVerified ? 'system' : webId
       });
 
       // If we asked for JSON-LD, frame it using the correct context in order to have clean, consistent results
@@ -64,8 +64,8 @@ module.exports = {
           input: result,
           frame: {
             '@context': jsonContext || getPrefixJSON(this.settings.ontologies),
-            '@id': resourceUri,
-          },
+            '@id': resourceUri
+          }
         });
       }
 
@@ -73,5 +73,5 @@ module.exports = {
     } else {
       throw new MoleculerError('Resource Not found', 404, 'NOT_FOUND');
     }
-  },
+  }
 };

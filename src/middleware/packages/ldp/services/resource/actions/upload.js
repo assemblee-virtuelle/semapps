@@ -7,7 +7,7 @@ module.exports = {
   visibility: 'public',
   params: {
     resourceUri: 'string',
-    file: 'object',
+    file: 'object'
   },
   async handler(ctx) {
     const { resourceUri, file } = ctx.params;
@@ -34,7 +34,7 @@ module.exports = {
       encoding: file.encoding,
       mimeType: file.mimetype,
       localPath,
-      fileName,
+      fileName
     };
-  },
+  }
 };

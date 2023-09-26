@@ -33,7 +33,7 @@ module.exports = {
         const { containerUri } = ctx.params;
         await this.broker.cacher.clean(`ldp.container.get:${containerUri}**`);
       }
-    },
+    }
   },
   events: {
     async 'ldp.resource.deleted'(ctx) {
@@ -84,6 +84,6 @@ module.exports = {
       } else {
         await this.actions.invalidateResource({ resourceUri: uri }, { parentCtx: ctx });
       }
-    },
-  },
+    }
+  }
 };

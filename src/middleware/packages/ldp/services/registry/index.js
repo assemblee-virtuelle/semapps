@@ -13,7 +13,7 @@ module.exports = {
     baseUrl: null,
     containers: [],
     defaultOptions,
-    podProvider: false,
+    podProvider: false
   },
   dependencies: ['ldp.container', 'api'],
   actions: {
@@ -21,7 +21,7 @@ module.exports = {
     getByUri: getByUriAction,
     getUri: getUriAction,
     list: listAction,
-    register: registerAction,
+    register: registerAction
   },
   async started() {
     this.registeredContainers = {};
@@ -44,7 +44,7 @@ module.exports = {
         await ctx.call('ldp.container.create', {
           containerUri,
           options, // Used by WebACL middleware if it exists
-          webId: 'system',
+          webId: 'system'
         });
 
         // First attach the container to its parent container
@@ -58,18 +58,18 @@ module.exports = {
 
           const parentExists = await ctx.call('ldp.container.exist', {
             containerUri: parentContainerUri,
-            webId: 'system',
+            webId: 'system'
           });
           if (parentExists) {
             await ctx.call('ldp.container.attach', {
               containerUri: parentContainerUri,
               resourceUri: containerUri,
-              webId: 'system',
+              webId: 'system'
             });
           }
         }
       }
-    },
+    }
   },
   events: {
     async 'auth.registered'(ctx) {
@@ -82,6 +82,6 @@ module.exports = {
           await this.createAndAttachContainer(ctx, containerUri, container.path);
         }
       }
-    },
-  },
+    }
+  }
 };

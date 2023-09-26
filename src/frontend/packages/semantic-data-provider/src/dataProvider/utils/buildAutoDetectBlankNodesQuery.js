@@ -15,15 +15,15 @@ const buildAutoDetectBlankNodesQuery = (depth, baseQuery) => {
           expression: {
             type: 'operation',
             operator: 'isblank',
-            args: [variable(`o${i}`)],
-          },
+            args: [variable(`o${i}`)]
+          }
         },
-        triple(variable(`o${i}`), variable(`p${i + 1}`), variable(`o${i + 1}`)),
+        triple(variable(`o${i}`), variable(`p${i + 1}`), variable(`o${i + 1}`))
       ]);
     }
     where = {
       type: 'union',
-      patterns: whereQueries,
+      patterns: whereQueries
     };
   } else if (depth === 0) {
     where = baseQuery.where;
