@@ -1,11 +1,11 @@
 import {jsx as $lL6sH$jsx, jsxs as $lL6sH$jsxs, Fragment as $lL6sH$Fragment} from "react/jsx-runtime";
-import $lL6sH$react, {useMemo as $lL6sH$useMemo, useState as $lL6sH$useState} from "react";
-import {useRecordContext as $lL6sH$useRecordContext, required as $lL6sH$required, useInput as $lL6sH$useInput, Labeled as $lL6sH$Labeled, InputHelperText as $lL6sH$InputHelperText, useDataProvider as $lL6sH$useDataProvider, useTranslate as $lL6sH$useTranslate} from "react-admin";
+import $lL6sH$react, {useState as $lL6sH$useState} from "react";
+import {useRecordContext as $lL6sH$useRecordContext, useInput as $lL6sH$useInput, useTranslateLabel as $lL6sH$useTranslateLabel, InputHelperText as $lL6sH$InputHelperText, useDataProvider as $lL6sH$useDataProvider, useTranslate as $lL6sH$useTranslate} from "react-admin";
 import $lL6sH$markdowntojsx from "markdown-to-jsx";
 import $lL6sH$lodashget from "lodash/get";
 import $lL6sH$reactmde from "react-mde";
 import {FormControl as $lL6sH$FormControl, FormHelperText as $lL6sH$FormHelperText} from "@mui/material";
-import {styled as $lL6sH$styled} from "@mui/system";
+import {styled as $lL6sH$styled} from "@mui/material/styles";
 
 
 
@@ -51,16 +51,69 @@ var $cf6ed0ef7f5d4af7$export$2e2bcd8739ae039 = $cf6ed0ef7f5d4af7$var$MarkdownFie
 
 
 const $ccc6163e3bb48ca3$var$StyledFormControl = (0, $lL6sH$styled)((0, $lL6sH$FormControl))(({ theme: theme })=>({
+        "& > fieldset": {
+            borderWidth: 1,
+            borderStyle: "solid",
+            padding: 0,
+            borderRadius: theme.shape.borderRadius,
+            margin: 1
+        },
+        "& > fieldset:hover": {
+            borderColor: theme.palette.text.primary
+        },
+        "& > fieldset:focus-within": {
+            borderColor: theme.palette.primary.main,
+            borderWidth: 2,
+            marginLeft: 0
+        },
+        "& > fieldset > legend": {
+            color: theme.palette.text.secondary,
+            marginLeft: 10,
+            fontSize: theme.typography.caption.fontSize
+        },
+        "& > fieldset:focus-within > legend": {
+            color: theme.palette.primary.main
+        },
+        "& .react-mde": {
+            borderWidth: 0,
+            borderRadius: theme.shape.borderRadius,
+            marginTop: -5
+        },
+        "& .mde-header": {
+            background: "transparent"
+        },
+        "& .mde-text:focus": {
+            outline: "none"
+        },
+        "& .mde-text:focus::placeholder": {
+            color: "transparent"
+        },
+        "&.empty": {
+            "& > fieldset": {
+                paddingTop: 10,
+                marginTop: 9
+            },
+            "& > fieldset:focus-within": {
+                paddingTop: 0,
+                margin: 0,
+                marginTop: 1
+            },
+            "& > fieldset > legend": {
+                display: "none"
+            },
+            "& > fieldset:focus-within > legend": {
+                display: "block"
+            }
+        },
         "&.validationError": {
-            "& p": {
+            "& > fieldset": {
+                borderColor: theme.palette.error.main
+            },
+            "& > fieldset > legend, & .mde-text::placeholder": {
                 color: theme.palette.error.main
             },
-            "& .mde-text": {
-                outline: "-webkit-focus-ring-color auto 1px",
-                outlineOffset: 0,
-                outlineColor: theme.palette.error.main,
-                outlineStyle: "auto",
-                outlineWidth: 1
+            "& .mde-text:focus::placeholder": {
+                color: "transparent"
             },
             "& p.MuiFormHelperText-root": {
                 color: theme.palette.error.main
@@ -68,38 +121,60 @@ const $ccc6163e3bb48ca3$var$StyledFormControl = (0, $lL6sH$styled)((0, $lL6sH$Fo
         }
     }));
 const $ccc6163e3bb48ca3$var$MarkdownInput = (props)=>{
-    const { validate: validate } = props;
-    const isRequired = (0, $lL6sH$useMemo)(()=>!!validate && !![].concat(validate).find((v)=>v.toString() === (0, $lL6sH$required)().toString()), [
-        validate
-    ]);
-    const [tab, setTab] = (0, $lL6sH$useState)("write");
-    const { field: { value: value, onChange: onChange }, fieldState: { isDirty: isDirty, invalid: invalid, error: error, isTouched: isTouched } } = (0, $lL6sH$useInput)(props);
+    const { label: label, source: source, helperText: helperText, fullWidth: fullWidth, validate: validate, overrides: overrides, reactMdeProps: reactMdeProps } = props;
+    const [tab, setTab] = (0, $lL6sH$useState) < "write" | false;
+    const { field: { value: value, onChange: onChange }, fieldState: { isDirty: isDirty, invalid: invalid, error: error, isTouched: isTouched }, formState: { isSubmitted: isSubmitted }, isRequired: isRequired } = (0, $lL6sH$useInput)({
+        source: source,
+        validate: validate
+    });
+    const translateLabel = (0, $lL6sH$useTranslateLabel)();
+    const translatedLabel = `${translateLabel({
+        label: label,
+        source: source
+    })}${isRequired ? "*" : ""}`;
     return /*#__PURE__*/ (0, $lL6sH$jsxs)($ccc6163e3bb48ca3$var$StyledFormControl, {
-        fullWidth: true,
-        className: `ra-input-mde ${invalid ? "validationError" : ""}`,
+        fullWidth: fullWidth,
+        className: `${invalid ? "validationError" : ""} ${value === "" ? "empty" : ""}`,
         children: [
-            /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$Labeled), {
-                ...props,
-                isRequired: isRequired,
-                children: /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$reactmde), {
-                    value: value,
-                    onChange: (value)=>onChange(value),
-                    onTabChange: (tab)=>setTab(tab),
-                    generateMarkdownPreview: async (markdown)=>/*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$markdowntojsx), {
-                            children: markdown
-                        }),
-                    selectedTab: tab,
-                    ...props
-                })
+            /*#__PURE__*/ (0, $lL6sH$jsxs)("fieldset", {
+                children: [
+                    /*#__PURE__*/ (0, $lL6sH$jsx)("legend", {
+                        children: translatedLabel
+                    }),
+                    /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$reactmde), {
+                        value: value,
+                        onChange: (value)=>onChange(value),
+                        onTabChange: (tab)=>setTab(tab),
+                        generateMarkdownPreview: async (markdown)=>/*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$markdowntojsx), {
+                                options: {
+                                    overrides: overrides
+                                },
+                                children: markdown
+                            }),
+                        selectedTab: tab,
+                        childProps: {
+                            textArea: {
+                                placeholder: translatedLabel
+                            }
+                        },
+                        l18n: {
+                            write: "Saisie",
+                            preview: "Pr\xe9visualisation",
+                            uploadingImage: "Upload de l'image en cours...",
+                            pasteDropSelect: "Ajoutez des fichiers en les glissant dans la zone de saisie"
+                        },
+                        ...reactMdeProps
+                    })
+                ]
             }),
             /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$FormHelperText), {
                 error: isDirty && invalid,
                 margin: "dense",
                 variant: "outlined",
                 children: /*#__PURE__*/ (0, $lL6sH$jsx)((0, $lL6sH$InputHelperText), {
-                    error: isDirty && invalid && error,
-                    helperText: props.helperText,
-                    touched: error || isTouched
+                    error: error?.message,
+                    helperText: helperText,
+                    touched: isTouched || isSubmitted
                 })
             })
         ]
