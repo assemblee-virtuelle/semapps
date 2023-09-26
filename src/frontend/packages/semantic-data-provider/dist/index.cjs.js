@@ -8,7 +8,7 @@ var $3pVuQ$cryptojsmd5 = require("crypto-js/md5");
 var $3pVuQ$jwtdecode = require("jwt-decode");
 var $3pVuQ$reactadmin = require("react-admin");
 var $3pVuQ$react = require("react");
-var $3pVuQ$reactjsxdevruntime = require("react/jsx-dev-runtime");
+var $3pVuQ$reactjsxruntime = require("react/jsx-runtime");
 var $3pVuQ$muistylesmakeStyles = require("@mui/styles/makeStyles");
 
 function $parcel$export(e, n, v, s) {
@@ -28,8 +28,8 @@ $parcel$export(module.exports, "useDataModel", () => $404991bb01c2ceff$export$2e
 $parcel$export(module.exports, "useDataModels", () => $8d622cbd05acb834$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useDataServers", () => $9b817943cd488c90$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$exports.default);
-$parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$exports.default);
+$parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
 
 
 const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
@@ -529,6 +529,48 @@ var $64d4ce40c79d1509$export$2e2bcd8739ae039 = $64d4ce40c79d1509$var$buildBlankN
 
 
 
+const $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
+    const construct = [
+        ...baseQuery.construct
+    ];
+    let where = {};
+    if (depth > 0) {
+        const whereQueries = [];
+        whereQueries.push([
+            baseQuery.where
+        ]);
+        for(let i = 1; i <= depth; i++){
+            construct.push((0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`p${i + 1}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i + 1}`)));
+            whereQueries.push([
+                ...whereQueries[whereQueries.length - 1],
+                {
+                    type: "filter",
+                    expression: {
+                        type: "operation",
+                        operator: "isblank",
+                        args: [
+                            (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`)
+                        ]
+                    }
+                },
+                (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`p${i + 1}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i + 1}`))
+            ]);
+        }
+        where = {
+            type: "union",
+            patterns: whereQueries
+        };
+    } else if (depth === 0) where = baseQuery.where;
+    else throw new Error("The depth of buildAutoDetectBlankNodesQuery should be 0 or more");
+    return {
+        construct: construct,
+        where: where
+    };
+};
+var $3b137d792e8838ac$export$2e2bcd8739ae039 = $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery;
+
+
+
 const { literal: $33c37185da3771a9$var$literal, namedNode: $33c37185da3771a9$var$namedNode, triple: $33c37185da3771a9$var$triple, variable: $33c37185da3771a9$var$variable } = (0, ($parcel$interopDefault($3pVuQ$rdfjsdatamodel)));
 const $33c37185da3771a9$var$generator = new (0, $3pVuQ$sparqljs.Generator)({
 });
@@ -536,10 +578,18 @@ const $33c37185da3771a9$var$reservedFilterKeys = [
     "q",
     "sparqlWhere",
     "blankNodes",
+    "blankNodesDepth",
     "_servers",
     "_predicates"
 ];
-const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params: { filter: filter }, blankNodes: blankNodes, predicates: predicates, ontologies: ontologies })=>{
+const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params: params, dataModel: dataModel, ontologies: ontologies })=>{
+    const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+    const predicates = params.filter?._predicates || dataModel.list?.predicates;
+    const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
+    const filter = {
+        ...dataModel.list?.filter,
+        ...params.filter
+    };
     const baseQuery = (0, $51d7c29cc84f802b$export$2e2bcd8739ae039)(predicates, ontologies);
     const sparqlJsParams = {
         queryType: "CONSTRUCT",
@@ -646,7 +696,7 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
         });
     }
     // Blank nodes
-    const blankNodesQuery = (0, $64d4ce40c79d1509$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies);
+    const blankNodesQuery = blankNodes ? (0, $64d4ce40c79d1509$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $3b137d792e8838ac$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
     if (blankNodesQuery && blankNodesQuery.construct) {
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
@@ -677,20 +727,6 @@ const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params
 var $33c37185da3771a9$export$2e2bcd8739ae039 = $33c37185da3771a9$var$buildSparqlQuery;
 
 
-// Based on the dataServers config, returns the blank nodes for the given containers
-const $9bdcbc2f4376803f$var$getBlankNodesFromDataServers = (containers, dataServers)=>{
-    const blankNodes = [];
-    for (const serverKey of Object.keys(dataServers))if (dataServers[serverKey].blankNodes) {
-        for (const containerUri of Object.keys(dataServers[serverKey].blankNodes))if (containers.includes(containerUri)) blankNodes.push(...dataServers[serverKey].blankNodes[containerUri]);
-    }
-    // Remove duplicates
-    return [
-        ...new Set(blankNodes)
-    ];
-};
-var $9bdcbc2f4376803f$export$2e2bcd8739ae039 = $9bdcbc2f4376803f$var$getBlankNodesFromDataServers;
-
-
 const $1e7a94d745f8597b$var$compare = (a, b)=>{
     switch(typeof a){
         case "string":
@@ -706,21 +742,13 @@ const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId
     const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
     const dataModel = resources[resourceId];
     const sparqlQueryPromises = Object.keys(containers).map((serverKey)=>new Promise((resolve, reject)=>{
-            const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes || (0, $9bdcbc2f4376803f$export$2e2bcd8739ae039)(containers[serverKey], dataServers);
-            const predicates = params.filter?._predicates || dataModel.list?.predicates;
+            const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
             // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
             if (params.filter?.sparqlWhere && (typeof params.filter.sparqlWhere === "string" || params.filter.sparqlWhere instanceof String)) params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
             const sparqlQuery = (0, $33c37185da3771a9$export$2e2bcd8739ae039)({
                 containers: containers[serverKey],
-                params: {
-                    ...params,
-                    filter: {
-                        ...dataModel.list?.filter,
-                        ...params.filter
-                    }
-                },
-                blankNodes: blankNodes,
-                predicates: predicates,
+                params: params,
+                dataModel: dataModel,
                 ontologies: ontologies
             });
             httpClient(dataServers[serverKey].sparqlEndpoint, {
@@ -956,9 +984,6 @@ const $915df908e0942746$var$fetchVoidEndpoints = async (config)=>{
                     else config.dataServers[result.key].containers[datasetServerKey][type] = [
                         path
                     ];
-                    // Set blank nodes by containers
-                    const blankNodes = $915df908e0942746$var$defaultToArray(partition["semapps:blankNodes"]);
-                    if (blankNodes) config.dataServers[result.key].blankNodes[partition["void:uriSpace"]] = $915df908e0942746$var$defaultToArray(partition["semapps:blankNodes"]);
                 }
             }
         }
@@ -1274,7 +1299,7 @@ var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataMode
         source,
         filter
     ]);
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
         children: (0, ($parcel$interopDefault($3pVuQ$react))).Children.map(children, (child, i)=>{
             return /*#__PURE__*/ (0, ($parcel$interopDefault($3pVuQ$react))).cloneElement(child, {
                 ...otherProps,
@@ -1282,14 +1307,11 @@ var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataMode
                 source: source
             });
         })
-    }, void 0, false);
+    });
 };
 var $f763906f9b20f2d8$export$2e2bcd8739ae039 = $f763906f9b20f2d8$var$FilterHandler;
 
 
-var $b4703fef6d6af456$exports = {};
-
-$parcel$export($b4703fef6d6af456$exports, "default", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
 
 
 
@@ -1359,37 +1381,30 @@ $parcel$export($b4703fef6d6af456$exports, "default", () => $b4703fef6d6af456$exp
         resource: groupReference,
         payload: {}
     });
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
             filter[filterProperty] = data.id;
-            return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactjsxdevruntime.Fragment), {
+            return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactjsxruntime.Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
                         ...otherProps,
                         filter: filter,
                         label: data[groupLabel],
                         children: children
-                    }, void 0, false, {
-                        fileName: "packages/semantic-data-provider/src/reification/GroupedReferenceHandler.js",
-                        lineNumber: 87,
-                        columnNumber: 13
-                    }, undefined)
+                    })
                 ]
-            }, void 0, true);
+            });
         })
-    }, void 0, false);
+    });
 };
 var $b4703fef6d6af456$export$2e2bcd8739ae039 = $b4703fef6d6af456$var$GroupedReferenceHandler;
 
 
-var $030f1232f6810456$exports = {};
-
-$parcel$export($030f1232f6810456$exports, "default", () => $030f1232f6810456$export$2e2bcd8739ae039);
 
 
 
@@ -1411,9 +1426,9 @@ const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $030f1232f6810456$var$useReferenceInputStyles();
     const hideInputStyles = $030f1232f6810456$var$useHideInputStyles();
-    return /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.ArrayInput), {
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.ArrayInput), {
         ...otherProps,
-        children: /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.SimpleFormIterator), {
+        children: /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactadmin.SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
@@ -1423,26 +1438,14 @@ const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
                         className: flexFormClasses.input
                     });
                 }),
-                /*#__PURE__*/ (0, $3pVuQ$reactjsxdevruntime.jsxDEV)((0, $3pVuQ$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
                     initialValue: reificationClass
-                }, void 0, false, {
-                    fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-                    lineNumber: 33,
-                    columnNumber: 9
-                }, undefined)
+                })
             ]
-        }, void 0, true, {
-            fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-            lineNumber: 27,
-            columnNumber: 7
-        }, undefined)
-    }, void 0, false, {
-        fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-        lineNumber: 26,
-        columnNumber: 5
-    }, undefined);
+        })
+    });
 };
 var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$ReificationArrayInput;
 

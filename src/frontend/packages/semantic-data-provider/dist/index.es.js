@@ -8,12 +8,9 @@ import $7bWYI$cryptojsmd5 from "crypto-js/md5";
 import $7bWYI$jwtdecode from "jwt-decode";
 import {fetchUtils as $7bWYI$fetchUtils, DataProviderContext as $7bWYI$DataProviderContext, useGetList as $7bWYI$useGetList, ArrayInput as $7bWYI$ArrayInput, SimpleFormIterator as $7bWYI$SimpleFormIterator, TextInput as $7bWYI$TextInput} from "react-admin";
 import $7bWYI$react, {useContext as $7bWYI$useContext, useMemo as $7bWYI$useMemo, useCallback as $7bWYI$useCallback, useState as $7bWYI$useState, useEffect as $7bWYI$useEffect} from "react";
-import {jsxDEV as $7bWYI$jsxDEV, Fragment as $7bWYI$Fragment} from "react/jsx-dev-runtime";
+import {jsx as $7bWYI$jsx, Fragment as $7bWYI$Fragment, jsxs as $7bWYI$jsxs} from "react/jsx-runtime";
 import $7bWYI$muistylesmakeStyles from "@mui/styles/makeStyles";
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
 
 
 const $336b7edf722fe53e$var$fetchResource = async (resourceUri, config)=>{
@@ -513,6 +510,48 @@ var $865f630cc944e818$export$2e2bcd8739ae039 = $865f630cc944e818$var$buildBlankN
 
 
 
+const $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
+    const construct = [
+        ...baseQuery.construct
+    ];
+    let where = {};
+    if (depth > 0) {
+        const whereQueries = [];
+        whereQueries.push([
+            baseQuery.where
+        ]);
+        for(let i = 1; i <= depth; i++){
+            construct.push((0, $7bWYI$triple)((0, $7bWYI$variable)(`o${i}`), (0, $7bWYI$variable)(`p${i + 1}`), (0, $7bWYI$variable)(`o${i + 1}`)));
+            whereQueries.push([
+                ...whereQueries[whereQueries.length - 1],
+                {
+                    type: "filter",
+                    expression: {
+                        type: "operation",
+                        operator: "isblank",
+                        args: [
+                            (0, $7bWYI$variable)(`o${i}`)
+                        ]
+                    }
+                },
+                (0, $7bWYI$triple)((0, $7bWYI$variable)(`o${i}`), (0, $7bWYI$variable)(`p${i + 1}`), (0, $7bWYI$variable)(`o${i + 1}`))
+            ]);
+        }
+        where = {
+            type: "union",
+            patterns: whereQueries
+        };
+    } else if (depth === 0) where = baseQuery.where;
+    else throw new Error("The depth of buildAutoDetectBlankNodesQuery should be 0 or more");
+    return {
+        construct: construct,
+        where: where
+    };
+};
+var $efbe3fa6f1479c06$export$2e2bcd8739ae039 = $efbe3fa6f1479c06$var$buildAutoDetectBlankNodesQuery;
+
+
+
 const { literal: $6cde9a8fbbde3ffb$var$literal, namedNode: $6cde9a8fbbde3ffb$var$namedNode, triple: $6cde9a8fbbde3ffb$var$triple, variable: $6cde9a8fbbde3ffb$var$variable } = (0, $7bWYI$rdfjsdatamodel);
 const $6cde9a8fbbde3ffb$var$generator = new (0, $7bWYI$Generator)({
 });
@@ -520,10 +559,18 @@ const $6cde9a8fbbde3ffb$var$reservedFilterKeys = [
     "q",
     "sparqlWhere",
     "blankNodes",
+    "blankNodesDepth",
     "_servers",
     "_predicates"
 ];
-const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params: { filter: filter }, blankNodes: blankNodes, predicates: predicates, ontologies: ontologies })=>{
+const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params: params, dataModel: dataModel, ontologies: ontologies })=>{
+    const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+    const predicates = params.filter?._predicates || dataModel.list?.predicates;
+    const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
+    const filter = {
+        ...dataModel.list?.filter,
+        ...params.filter
+    };
     const baseQuery = (0, $47d734d7812e6861$export$2e2bcd8739ae039)(predicates, ontologies);
     const sparqlJsParams = {
         queryType: "CONSTRUCT",
@@ -630,7 +677,7 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params
         });
     }
     // Blank nodes
-    const blankNodesQuery = (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies);
+    const blankNodesQuery = blankNodes ? (0, $865f630cc944e818$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $efbe3fa6f1479c06$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
     if (blankNodesQuery && blankNodesQuery.construct) {
         resourceWhere = resourceWhere.concat(blankNodesQuery.where);
         sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
@@ -661,20 +708,6 @@ const $6cde9a8fbbde3ffb$var$buildSparqlQuery = ({ containers: containers, params
 var $6cde9a8fbbde3ffb$export$2e2bcd8739ae039 = $6cde9a8fbbde3ffb$var$buildSparqlQuery;
 
 
-// Based on the dataServers config, returns the blank nodes for the given containers
-const $1b1f97f9c8b782e3$var$getBlankNodesFromDataServers = (containers, dataServers)=>{
-    const blankNodes = [];
-    for (const serverKey of Object.keys(dataServers))if (dataServers[serverKey].blankNodes) {
-        for (const containerUri of Object.keys(dataServers[serverKey].blankNodes))if (containers.includes(containerUri)) blankNodes.push(...dataServers[serverKey].blankNodes[containerUri]);
-    }
-    // Remove duplicates
-    return [
-        ...new Set(blankNodes)
-    ];
-};
-var $1b1f97f9c8b782e3$export$2e2bcd8739ae039 = $1b1f97f9c8b782e3$var$getBlankNodesFromDataServers;
-
-
 const $05a1b4063d50f1b7$var$compare = (a, b)=>{
     switch(typeof a){
         case "string":
@@ -690,21 +723,13 @@ const $05a1b4063d50f1b7$var$fetchSparqlEndpoints = async (containers, resourceId
     const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
     const dataModel = resources[resourceId];
     const sparqlQueryPromises = Object.keys(containers).map((serverKey)=>new Promise((resolve, reject)=>{
-            const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes || (0, $1b1f97f9c8b782e3$export$2e2bcd8739ae039)(containers[serverKey], dataServers);
-            const predicates = params.filter?._predicates || dataModel.list?.predicates;
+            const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
             // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
             if (params.filter?.sparqlWhere && (typeof params.filter.sparqlWhere === "string" || params.filter.sparqlWhere instanceof String)) params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
             const sparqlQuery = (0, $6cde9a8fbbde3ffb$export$2e2bcd8739ae039)({
                 containers: containers[serverKey],
-                params: {
-                    ...params,
-                    filter: {
-                        ...dataModel.list?.filter,
-                        ...params.filter
-                    }
-                },
-                blankNodes: blankNodes,
-                predicates: predicates,
+                params: params,
+                dataModel: dataModel,
                 ontologies: ontologies
             });
             httpClient(dataServers[serverKey].sparqlEndpoint, {
@@ -940,9 +965,6 @@ const $31a4627920feab4a$var$fetchVoidEndpoints = async (config)=>{
                     else config.dataServers[result.key].containers[datasetServerKey][type] = [
                         path
                     ];
-                    // Set blank nodes by containers
-                    const blankNodes = $31a4627920feab4a$var$defaultToArray(partition["semapps:blankNodes"]);
-                    if (blankNodes) config.dataServers[result.key].blankNodes[partition["void:uriSpace"]] = $31a4627920feab4a$var$defaultToArray(partition["semapps:blankNodes"]);
                 }
             }
         }
@@ -1258,7 +1280,7 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
         source,
         filter
     ]);
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
         children: (0, $7bWYI$react).Children.map(children, (child, i)=>{
             return /*#__PURE__*/ (0, $7bWYI$react).cloneElement(child, {
                 ...otherProps,
@@ -1266,14 +1288,11 @@ var $349fed82907088e5$export$2e2bcd8739ae039 = $349fed82907088e5$var$useDataMode
                 source: source
             });
         })
-    }, void 0, false);
+    });
 };
 var $406574efa35ec6f1$export$2e2bcd8739ae039 = $406574efa35ec6f1$var$FilterHandler;
 
 
-var $1d8c1cbe606a94ae$exports = {};
-
-$parcel$export($1d8c1cbe606a94ae$exports, "default", () => $1d8c1cbe606a94ae$export$2e2bcd8739ae039);
 
 
 
@@ -1343,37 +1362,30 @@ $parcel$export($1d8c1cbe606a94ae$exports, "default", () => $1d8c1cbe606a94ae$exp
         resource: groupReference,
         payload: {}
     });
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$Fragment), {
         children: data?.map((data, index)=>{
             const filter = {};
             filter[filterProperty] = data.id;
-            return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$Fragment), {
+            return /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$Fragment), {
                 children: [
                     groupHeader && groupHeader({
                         ...otherProps,
                         group: data
                     }),
-                    /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
+                    /*#__PURE__*/ (0, $7bWYI$jsx)((0, $406574efa35ec6f1$export$2e2bcd8739ae039), {
                         ...otherProps,
                         filter: filter,
                         label: data[groupLabel],
                         children: children
-                    }, void 0, false, {
-                        fileName: "packages/semantic-data-provider/src/reification/GroupedReferenceHandler.js",
-                        lineNumber: 87,
-                        columnNumber: 13
-                    }, undefined)
+                    })
                 ]
-            }, void 0, true);
+            });
         })
-    }, void 0, false);
+    });
 };
 var $1d8c1cbe606a94ae$export$2e2bcd8739ae039 = $1d8c1cbe606a94ae$var$GroupedReferenceHandler;
 
 
-var $6844bbce0ad66151$exports = {};
-
-$parcel$export($6844bbce0ad66151$exports, "default", () => $6844bbce0ad66151$export$2e2bcd8739ae039);
 
 
 
@@ -1395,9 +1407,9 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
     const { reificationClass: reificationClass, children: children, ...otherProps } = props;
     const flexFormClasses = $6844bbce0ad66151$var$useReferenceInputStyles();
     const hideInputStyles = $6844bbce0ad66151$var$useHideInputStyles();
-    return /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$ArrayInput), {
+    return /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$ArrayInput), {
         ...otherProps,
-        children: /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$SimpleFormIterator), {
+        children: /*#__PURE__*/ (0, $7bWYI$jsxs)((0, $7bWYI$SimpleFormIterator), {
             classes: {
                 form: flexFormClasses.form
             },
@@ -1407,26 +1419,14 @@ const $6844bbce0ad66151$var$ReificationArrayInput = (props)=>{
                         className: flexFormClasses.input
                     });
                 }),
-                /*#__PURE__*/ (0, $7bWYI$jsxDEV)((0, $7bWYI$TextInput), {
+                /*#__PURE__*/ (0, $7bWYI$jsx)((0, $7bWYI$TextInput), {
                     className: hideInputStyles.root,
                     source: "type",
                     initialValue: reificationClass
-                }, void 0, false, {
-                    fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-                    lineNumber: 33,
-                    columnNumber: 9
-                }, undefined)
+                })
             ]
-        }, void 0, true, {
-            fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-            lineNumber: 27,
-            columnNumber: 7
-        }, undefined)
-    }, void 0, false, {
-        fileName: "packages/semantic-data-provider/src/reification/ReificationArrayInput.js",
-        lineNumber: 26,
-        columnNumber: 5
-    }, undefined);
+        })
+    });
 };
 var $6844bbce0ad66151$export$2e2bcd8739ae039 = $6844bbce0ad66151$var$ReificationArrayInput;
 
