@@ -1,3 +1,4 @@
+const LdpApiService = require('./services/api');
 const LdpContainerService = require('./services/container');
 const LdpCacheService = require('./services/cache');
 const LdpRegistryService = require('./services/registry');
@@ -13,7 +14,8 @@ module.exports = {
     podProvider: false,
     mirrorGraphName: 'http://semapps.org/mirror',
     defaultContainerOptions: {},
-    preferredViewForResource: null
+    preferredViewForResource: null,
+    resourcesWithContainerPath: true
   },
   dependencies: ['ldp.container', 'ldp.resource', 'ldp.registry'],
   async created() {
@@ -24,7 +26,8 @@ module.exports = {
       podProvider,
       defaultContainerOptions,
       mirrorGraphName,
-      preferredViewForResource
+      preferredViewForResource,
+      resourcesWithContainerPath
     } = this.settings;
 
     await this.broker.createService(LdpContainerService, {
@@ -43,7 +46,8 @@ module.exports = {
         ontologies,
         podProvider,
         mirrorGraphName,
-        preferredViewForResource
+        preferredViewForResource,
+        resourcesWithContainerPath
       },
       hooks: this.schema.hooksResource || {}
     });
@@ -62,6 +66,13 @@ module.exports = {
         baseUrl,
         containers,
         defaultOptions: defaultContainerOptions,
+        podProvider
+      }
+    });
+
+    await this.broker.createService(LdpApiService, {
+      settings: {
+        baseUrl,
         podProvider
       }
     });

@@ -1,7 +1,7 @@
 const { getPrefixJSON } = require('@semapps/ldp');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const CONFIG = require('../config');
-const ontologies = require('../ontologies');
+const ontologies = require('../ontologies.json');
 const initialize = require('./initialize');
 
 jest.setTimeout(20000);

@@ -11,7 +11,7 @@ module.exports = {
 
     // In the POD provider config, the root container with actors is not a real LDP container
     // Because we have chosen not to use a common dataset for this kind of data
-    // So we use the soon-deprecated getContainerFromUri to find the container
+    // So we use the deprecated getContainerFromUri to find the container
     // TODO store actors in a proper LDP container, with its own dataset ?
     if (this.settings.podProvider && `${getContainerFromUri(resourceUri)}/` === this.settings.baseUrl) {
       return [getContainerFromUri(resourceUri)];

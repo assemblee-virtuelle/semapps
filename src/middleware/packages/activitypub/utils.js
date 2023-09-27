@@ -59,6 +59,7 @@ const defaultToArray = value => {
 
 const getSlugFromUri = str => str.match(new RegExp(`.*/(.*)`))[1];
 
+/** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = str => str.match(new RegExp(`(.*)/.*`))[1];
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));

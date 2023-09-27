@@ -101,6 +101,12 @@ const CoreService = {
             }
             ctx.meta.webId = 'anon';
             return Promise.reject(new E.UnAuthorizedError(E.ERR_NO_TOKEN));
+          },
+          // Overwrite optimization method to put catchAll routes at the end
+          // See https://github.com/moleculerjs/moleculer-web/issues/335
+          optimizeRouteOrder() {
+            this.routes.sort(a => (a.opts.catchAll ? 1 : -1));
+            this.aliases.sort(a => (a.route.opts.catchAll ? 1 : -1));
           }
         }
       });

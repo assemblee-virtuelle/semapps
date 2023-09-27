@@ -1,5 +1,4 @@
 const urlJoin = require('url-join');
-const crypto = require('crypto');
 
 function getAclUriFromResourceUri(baseUrl, resourceUri) {
   return urlJoin(baseUrl, resourceUri.replace(baseUrl, baseUrl.endsWith('/') ? '_acl/' : '_acl'));
@@ -12,11 +11,7 @@ const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 function createFragmentURL(baseUrl, serverUrl) {
   let fragment = 'me';
   const res = serverUrl.match(regexProtocolAndHostAndPort);
-  if (res)
-    fragment = res[2]
-      .replace('-', '_')
-      .replace('.', '_')
-      .replace(':', '_');
+  if (res) fragment = res[2].replace('-', '_').replace('.', '_').replace(':', '_');
 
   return urlJoin(baseUrl, `#${fragment}`);
 }
@@ -25,76 +20,28 @@ const isMirror = (resourceUri, baseUrl) => {
   return !urlJoin(resourceUri, '/').startsWith(baseUrl);
 };
 
-// Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
-const extractNodes = predicates => {
-  const nodes = [];
-  if (predicates) {
-    for (const predicate of predicates) {
-      if (predicate.includes('/')) {
-        const nodeNames = predicate.split('/');
-        for (let i = 1; i <= nodeNames.length; i++) {
-          nodes.push(nodeNames.slice(0, i).join('/'));
-        }
-      } else {
-        nodes.push(predicate);
-      }
+const buildBlankNodesQuery = depth => {
+  const BASE_QUERY = '?s1 ?p1 ?o1 .';
+  let construct = BASE_QUERY;
+  let where = '';
+  if (depth > 0) {
+    let whereQueries = [];
+    whereQueries.push([BASE_QUERY]);
+    for (let i = 1; i <= depth; i++) {
+      construct += `\r\n?o${i} ?p${i + 1} ?o${i + 1} .`;
+      whereQueries.push([
+        ...whereQueries[whereQueries.length - 1],
+        `FILTER((isBLANK(?o${i}))) .`,
+        `?o${i} ?p${i + 1} ?o${i + 1} .`
+      ]);
     }
+    where = `{\r\n${whereQueries.map(q1 => q1.join('\r\n')).join('\r\n} UNION {\r\n')}\r\n}`;
+  } else if (depth === 0) {
+    where = BASE_QUERY;
+  } else {
+    throw new Error('The depth of buildBlankNodesQuery should be 0 or more');
   }
-  return nodes;
-};
-
-const generateSparqlVarName = node =>
-  crypto
-    .createHash('md5')
-    .update(node)
-    .digest('hex');
-
-const getParentNode = node => node.includes('/') && node.split('/')[0];
-
-const getPredicate = node => (node.includes('/') ? node.split('/')[1] : node);
-
-const buildOptionalQuery = (queries, parentNode = false) =>
-  queries
-    .filter(q => q.parentNode === parentNode)
-    .map(
-      q => `
-      OPTIONAL { 
-        ${q.query}
-        ${q.filter}
-        ${buildOptionalQuery(queries, q.node)}
-      }
-    `
-    )
-    .join('\n');
-
-const buildDereferenceQuery = predicates => {
-  const queries = [];
-  const nodes = extractNodes(predicates);
-
-  if (nodes && nodes.length) {
-    for (const node of nodes) {
-      const parentNode = getParentNode(node);
-      const predicate = getPredicate(node);
-      const varName = generateSparqlVarName(node);
-      const parentVarName = parentNode ? generateSparqlVarName(parentNode) : '1';
-
-      queries.push({
-        node,
-        parentNode,
-        query: `?s${parentVarName} ${predicate} ?s${varName} .\n?s${varName} ?p${varName} ?o${varName} .`,
-        filter: `FILTER(isBLANK(?s${varName})) .`
-      });
-    }
-
-    return {
-      construct: queries.map(q => q.query).join('\n'),
-      where: buildOptionalQuery(queries)
-    };
-  }
-  return {
-    construct: '',
-    where: ''
-  };
+  return { construct, where };
 };
 
 const buildFiltersQuery = filters => {
@@ -104,8 +51,8 @@ const buildFiltersQuery = filters => {
       if (filters[predicate]) {
         where += `
           FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
-          filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-        } } .
+            filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+          } } .
         `;
       } else {
         where += `
@@ -144,7 +91,10 @@ const useFullURI = (prefixedUri, ontologies) => {
 
 const getSlugFromUri = uri => uri.match(new RegExp(`.*/(.*)`))[1];
 
+/** @deprecated Use the ldp.resource.getContainers action instead */
 const getContainerFromUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
+
+const getParentContainerUri = uri => uri.match(new RegExp(`(.*)/.*`))[1];
 
 // Transforms "http://localhost:3000/dataset/data" to "dataset"
 const getDatasetFromUri = uri => {
@@ -165,7 +115,7 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
 module.exports = {
-  buildDereferenceQuery,
+  buildBlankNodesQuery,
   buildFiltersQuery,
   getPrefixRdf,
   getPrefixJSON,
@@ -173,6 +123,7 @@ module.exports = {
   useFullURI,
   getSlugFromUri,
   getContainerFromUri,
+  getParentContainerUri,
   getDatasetFromUri,
   hasType,
   isContainer,

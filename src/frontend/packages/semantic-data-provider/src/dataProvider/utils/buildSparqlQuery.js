@@ -2,6 +2,7 @@ import DataFactory from '@rdfjs/data-model';
 import { Generator as SparqlGenerator } from 'sparqljs';
 import buildBaseQuery from './buildBaseQuery';
 import buildBlankNodesQuery from './buildBlankNodesQuery';
+import buildAutoDetectBlankNodesQuery from './buildAutoDetectBlankNodesQuery';
 import resolvePrefix from './resolvePrefix';
 
 const { literal, namedNode, triple, variable } = DataFactory;
@@ -10,9 +11,13 @@ const generator = new SparqlGenerator({
   /* prefixes, baseIRI, factory, sparqlStar */
 });
 
-const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', '_servers', '_predicates'];
+const reservedFilterKeys = ['q', 'sparqlWhere', 'blankNodes', 'blankNodesDepth', '_servers', '_predicates'];
 
-const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicates, ontologies }) => {
+const buildSparqlQuery = ({ containers, params, dataModel, ontologies }) => {
+  const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+  const predicates = params.filter?._predicates || dataModel.list?.predicates;
+  const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
+  const filter = { ...dataModel.list?.filter, ...params.filter };
   const baseQuery = buildBaseQuery(predicates, ontologies);
 
   const sparqlJsParams = {
@@ -127,7 +132,10 @@ const buildSparqlQuery = ({ containers, params: { filter }, blankNodes, predicat
   }
 
   // Blank nodes
-  const blankNodesQuery = buildBlankNodesQuery(blankNodes, baseQuery, ontologies);
+  const blankNodesQuery = blankNodes
+    ? buildBlankNodesQuery(blankNodes, baseQuery, ontologies)
+    : buildAutoDetectBlankNodesQuery(blankNodesDepth, baseQuery);
+
   if (blankNodesQuery && blankNodesQuery.construct) {
     resourceWhere = resourceWhere.concat(blankNodesQuery.where);
     sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);

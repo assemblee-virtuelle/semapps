@@ -1,13 +1,11 @@
+const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { CoreService } = require('@semapps/core');
 const { WebAclMiddleware } = require('@semapps/webacl');
 const { AuthLocalService } = require('@semapps/auth');
 const { WebIdService } = require('@semapps/webid');
-const path = require('path');
-const express = require('express');
-const ApiGatewayService = require('moleculer-web');
-const supertest = require('supertest');
-const ontologies = require('../ontologies');
+const ontologies = require('../ontologies.json');
 const CONFIG = require('../config');
 
 const initialize = async () => {
@@ -16,7 +14,7 @@ const initialize = async () => {
     logger: {
       type: 'Console',
       options: {
-        level: 'error'
+        level: 'warn'
       }
     }
   });
@@ -50,36 +48,13 @@ const initialize = async () => {
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${CONFIG.HOME_URL}users`
+      usersContainer: urlJoin(CONFIG.HOME_URL, 'users')
     }
   });
-
-  const app = express();
-  const apiGateway = broker.createService({
-    mixins: [ApiGatewayService],
-    settings: {
-      server: false,
-      cors: {
-        origin: '*',
-        exposedHeaders: '*'
-      }
-    },
-    methods: {
-      authenticate(ctx, route, req, res) {
-        return Promise.resolve(null);
-      },
-      authorize(ctx, route, req, res) {
-        return Promise.resolve(ctx);
-      }
-    }
-  });
-  app.use(apiGateway.express());
 
   await broker.start();
 
-  const expressMocked = supertest(app);
-
-  return { broker, expressMocked };
+  return broker;
 };
 
 module.exports = initialize;

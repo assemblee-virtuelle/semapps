@@ -1,5 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { delay, getContainerFromUri } = require('../utils');
+const { delay, getParentContainerUri } = require('../utils');
 
 module.exports = {
   settings: {
@@ -7,7 +7,6 @@ module.exports = {
     acceptedTypes: null,
     accept: MIME_TYPES.JSON,
     jsonContext: null,
-    dereference: null,
     permissions: null,
     newResourcesPermissions: null,
     controlledActions: {},
@@ -22,7 +21,6 @@ module.exports = {
       acceptedTypes: this.settings.acceptedTypes,
       accept: this.settings.accept,
       jsonContext: this.settings.jsonContext,
-      dereference: this.settings.dereference,
       permissions: this.settings.permissions,
       excludeFromMirror: this.settings.excludeFromMirror,
       newResourcesPermissions: this.settings.newResourcesPermissions,
@@ -65,10 +63,9 @@ module.exports = {
       return ctx.call('ldp.container.detach', ctx.params);
     },
     get(ctx) {
-      const { accept, dereference, jsonContext } = this.settings;
+      const { accept, jsonContext } = this.settings;
       const containerParams = {};
       if (accept) containerParams.accept = accept;
-      if (dereference) containerParams.dereference = dereference;
       if (jsonContext) containerParams.jsonContext = jsonContext;
       return ctx.call('ldp.resource.get', {
         ...containerParams,
@@ -100,7 +97,7 @@ module.exports = {
         containerExist = await ctx.call('ldp.container.exist', { containerUri, webId: 'system' });
       } while (!containerExist);
 
-      const parentContainerUri = getContainerFromUri(containerUri);
+      const parentContainerUri = getParentContainerUri(containerUri);
       const parentContainerExist = await ctx.call('ldp.container.exist', {
         containerUri: parentContainerUri,
         webId: 'system'

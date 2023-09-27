@@ -28,7 +28,6 @@ module.exports = {
         resourceUri,
         jsonContext: { '@vocab': 'http://semapps.org/ns/core#' },
         accept: MIME_TYPES.JSON,
-        forceSemantic: true,
         webId: 'system'
       });
 
@@ -53,6 +52,8 @@ module.exports = {
             case 'webp':
               image = await image.webp(this.settings.imageProcessor.webp || {});
               break;
+            default:
+              break;
           }
 
           // We cannot write directly to the same file as input, so write to a buffer first
@@ -65,7 +66,7 @@ module.exports = {
     },
     async processAllImages(ctx) {
       const { webId } = ctx.params;
-      const container = await this.actions.list({ webId, forceSemantic: true }, { parentCtx: ctx });
+      const container = await this.actions.list({ webId }, { parentCtx: ctx });
       if (container['ldp:contains']) {
         const resources = defaultToArray(container['ldp:contains']);
         this.logger.info(`Processing ${resources.length} images...`);

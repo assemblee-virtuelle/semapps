@@ -1,5 +1,6 @@
+/* eslint-disable class-methods-use-this */
 const { MIME_TYPES } = require('@semapps/mime-types');
-const { ObjectID } = require('bson');
+const { v4: uuidv4 } = require('uuid');
 
 class TripleStoreAdapter {
   constructor({ type, dataset, baseUri, ontology = 'http://semapps.org/ns/core#' }) {
@@ -140,7 +141,7 @@ class TripleStoreAdapter {
    */
   insert(entity) {
     const { slug, ...resource } = entity;
-    resource['@id'] = this.baseUri + (slug || new ObjectID().toString());
+    resource['@id'] = this.baseUri + (slug || uuidv4());
 
     return this.broker
       .call('triplestore.insert', {

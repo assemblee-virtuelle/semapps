@@ -57,14 +57,6 @@ const fetchVoidEndpoints = async config => {
               } else {
                 config.dataServers[result.key].containers[datasetServerKey][type] = [path];
               }
-
-              // Set blank nodes by containers
-              const blankNodes = defaultToArray(partition['semapps:blankNodes']);
-              if (blankNodes) {
-                config.dataServers[result.key].blankNodes[partition['void:uriSpace']] = defaultToArray(
-                  partition['semapps:blankNodes']
-                );
-              }
             }
           }
         }

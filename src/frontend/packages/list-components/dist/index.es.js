@@ -1,2 +1,487 @@
-import*as e from"react";import t,{useEffect as r,useState as n}from"react";import{useListContext as a,useCreatePath as l,sanitizeListRestProps as i,RecordContextProvider as o,ChipField as c,Link as s,useGetList as u,useResourceDefinition as m,useResourceContext as d,FilterList as f,FilterListItem as p,Button as v,TopToolbar as y,CreateButton as h,ExportButton as g,List as E}from"react-admin";import{LinearProgress as b,Grid as k,Card as w,CardActionArea as x,CardMedia as C,CardContent as L,CardActions as P,useMediaQuery as O}from"@mui/material";import j from"@mui/styles/makeStyles";import N from"@mui/icons-material/AddCircle";import I from"@mui/icons-material/Launch";import{useGetExternalLink as F,useDataModel as S,useContainers as V}from"@semapps/semantic-data-provider";import T from"react-masonry-css";import{useLocation as A}from"react-router";function U(){return(U=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function _(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},l=Object.keys(e);for(n=0;n<l.length;n++)r=l[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var l=Object.getOwnPropertySymbols(e);for(n=0;n<l.length;n++)r=l[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function R(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,a,l=[],i=!0,o=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(l.push(n.value),!t||l.length!==t);i=!0);}catch(e){o=!0,a=e}finally{try{i||null==r.return||r.return()}finally{if(o)throw a}}return l}(e,t)||function(e,t){if(!e)return;if("string"==typeof e)return W(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);"Object"===r&&e.constructor&&(r=e.constructor.name);if("Map"===r||"Set"===r)return Array.from(e);if("Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r))return W(e,t)}(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function W(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var B=["classes","className","children","linkType","component","primaryText","appendLink","externalLinks"],D=j((function(){return{root:{display:"flex",flexWrap:"wrap"},link:{textDecoration:"none",maxWidth:"100%"},chipField:{maxWidth:"100%"},addIcon:{cursor:"pointer",fontSize:35,position:"relative",top:2},launchIcon:{width:20,paddingRight:6,marginLeft:-10}}})),z=function(e){return e.stopPropagation()},M=function(){},$=function(e){e.classes,e.className,e.children;var r=e.linkType,n=void 0===r?"edit":r,u=e.component,m=void 0===u?"div":u,d=e.primaryText,f=e.appendLink,p=e.externalLinks,v=void 0!==p&&p,y=_(e,B),h=a(e),g=h.data,E=h.isLoading,k=h.resource,w=F(v),x=l(),C=D(e),L=m;return E?t.createElement(b,null):t.createElement(L,U({className:C.root},i(y)),g.map((function(e){if(!e||e._error)return null;var r=w(e);return r?t.createElement(o,{value:e,key:e.id},t.createElement("a",{href:r,target:"_blank",rel:"noopener noreferrer",className:C.link,onClick:z},t.createElement(c,{source:d,className:C.chipField,color:"secondary",deleteIcon:t.createElement(I,{className:C.launchIcon}),onClick:M,onDelete:M}))):n?t.createElement(o,{value:e,key:e.id},t.createElement(s,{className:C.link,to:x({resource:k,id:e.id,type:n}),onClick:z},t.createElement(c,{source:d,className:C.chipField,color:"secondary",onClick:M}))):t.createElement(o,{value:e,key:e.id},t.createElement(c,{source:d,className:C.chipField,color:"secondary",onClick:M}))})),f&&t.createElement(N,{color:"primary",className:C.addIcon,onClick:f}))},q=function(e){return e.stopPropagation()},G=function(){},H=function(t){var r=t.children,n=t.linkType,i=t.externalLinks,c=t.spacing,u=t.xs,m=t.sm,d=t.md,f=t.lg,p=t.xl,v=a(),y=v.data,h=v.resource,g=v.isLoading,E=F(i),b=l();return g||!y?null:e.createElement(k,{container:!0,spacing:c},y.map((function(t){if(!t||t._error)return null;var a,l=E(t);return a=l?e.createElement("a",{href:l,target:"_blank",rel:"noopener noreferrer",onClick:q},e.cloneElement(e.Children.only(r),{externalLink:!0,onClick:G})):n?e.createElement(s,{to:b({resource:h,id:t.id,type:n}),onClick:q},e.cloneElement(e.Children.only(r),{onClick:G})):r,e.createElement(k,{item:!0,key:t.id,xs:u,sm:m,md:d,lg:f,xl:p},e.createElement(o,{value:t},a))})))};H.defaultProps={xs:6,spacing:3,linkType:"edit",externalLinks:!1};var J=j((function(){return{grid:{display:"flex",marginLeft:-20,marginBottom:-20,width:"auto"},column:{paddingLeft:20,backgroundClip:"padding-box"},card:{marginBottom:20},media:{height:0,paddingTop:"56.25%"}}})),K=function(e){var r=e.image,n=e.content,i=e.actions,c=e.breakpointCols,u=e.linkType,m=J(),d=a(),f=d.data,p=d.resource,v=l();return t.createElement(T,{breakpointCols:c,className:m.grid,columnClassName:m.column},f.map((function(e){if(!e||e._error)return null;var a="function"==typeof r?r(e):r;return t.createElement(o,{value:e},t.createElement(w,{key:e.id,className:m.card},t.createElement(s,{to:v({resource:p,id:e.id,type:u})},t.createElement(x,null,a&&t.createElement(C,{className:m.media,image:a}),n&&t.createElement(L,null,n(e)))),i&&t.createElement(P,null,i.map((function(e){return t.createElement(e)})))))})))};K.defaultProps={breakpointCols:{default:3,1050:2,700:1},linkType:"edit"};var Q=function(e){var r=e.source,n=e.id,a=d(),l=u(a),i=l.data,o=l.isLoading;return t.createElement(t.Fragment,null," ",!o&&t.createElement("span",{className:"filter-count"},"("+Object.values(i).filter((function(e){return[].concat(e[r]).includes(n)})).length+")"))},X=function(e){var n,l=e.reference,i=e.source,o=e.inverseSource,c=e.limit,s=e.sort,v=e.filter,y=e.label,h=e.icon,g=e.showCounters,E=u(l,{page:1,perPage:c},s,v),b=E.data,k=E.isLoading,w=m({resource:l}),x=d();S(x);var C=V(x),L=a();L.displayedFilters,L.filterValues;var P=L.setFilters;L.hideFilter,r((function(){var e=new URLSearchParams(window.location.search);Object.fromEntries(e.entries()).filter||k||P({})}),[]);return t.createElement(f,{label:y||(null==w||null===(n=w.options)||void 0===n?void 0:n.label)||"",icon:h||null!=w&&w.icon?t.createElement(w.icon):void 0},b&&b.filter((function(e){return function(e){if(!o)return!0;if(!C||!e)return!1;var t=!1;return Object.values(C).forEach((function(r){r.forEach((function(r){[].concat(e[o]).forEach((function(e){null!=e&&e.startsWith(r)&&(t=!0)}))}))})),t}(e)})).map((function(e){return t.createElement(p,{key:e.id,label:t.createElement("span",{className:"filter-label"},e["pair:label"],g&&t.createElement(Q,{source:i,id:e.id})),value:(r={},n=i,a=e.id,n in r?Object.defineProperty(r,n,{value:a,enumerable:!0,configurable:!0,writable:!0}):r[n]=a,r)});var r,n,a})))};X.defaultProps={limit:25,showCounters:!0};var Y=t.createContext({views:null,currentView:null,setView:function(){return null}}),Z=function(){var e=new URLSearchParams(A().search),r=t.useContext(Y),n=r.views,a=r.currentView,l=r.setView;return n?Object.entries(n).filter((function(e){return R(e,1)[0]!==a})).map((function(r){var n=R(r,2),a=n[0],i=n[1];return e.set("view",a),e.set("page",1),e.set("perPage",i.perPage),i.sort&&(e.set("sort",i.sort.field),e.set("order",i.sort.order)),t.createElement(s,{key:a,to:"?"+e.toString()},t.createElement(v,{onClick:function(){return l(a)},label:i.label},t.createElement(i.icon)))})):null},ee=["bulkActions","basePath","sort","displayedFilters","exporter","filters","filterValues","onUnselectItems","selectedIds","showFilter","total"],te=function(e){var r=e.bulkActions;e.basePath;var n=e.sort,a=e.displayedFilters,l=e.exporter,i=e.filters,o=e.filterValues,c=e.onUnselectItems,s=e.selectedIds,u=e.showFilter,d=e.total,f=_(e,ee),p=O((function(e){return e.breakpoints.down("sm")})),v=m(f);return t.createElement(y,null,t.createElement(Z,null),i&&t.cloneElement(i,{showFilter:u,displayedFilters:a,filterValues:o,context:"button"}),v.hasCreate&&t.createElement(h,null),!p&&!1!==l&&t.createElement(g,{disabled:0===d,sort:n,filter:o,exporter:l}),r&&t.cloneElement(r,{filterValues:o,selectedIds:s,onUnselectItems:c}))},re=["children","actions","views","ListComponent"],ne=function(e){e.children;var r=e.actions,a=e.views,l=e.ListComponent,i=_(e,re),o=new URLSearchParams(A().search),c=o.has("view")?o.get("view"):Object.keys(a)[0],s=R(n(c),2),u=s[0],m=s[1];return t.createElement(Y.Provider,{value:{views:a,currentView:u,setView:m}},t.createElement(l,U({actions:r,pagination:a[u].pagination,perPage:a[c].perPage,sort:a[c].sort},i),a[u].list))};ne.defaultProps={actions:t.createElement(te,null),ListComponent:E};export{$ as ChipList,H as GridList,te as ListActionsWithViews,Y as ListViewContext,K as MasonryList,ne as MultiViewsList,X as ReferenceFilter,Z as ViewsButtons};
+import {jsx as $3uY0S$jsx, jsxs as $3uY0S$jsxs, Fragment as $3uY0S$Fragment} from "react/jsx-runtime";
+import $3uY0S$react, {cloneElement as $3uY0S$cloneElement, Children as $3uY0S$Children, useEffect as $3uY0S$useEffect, useState as $3uY0S$useState} from "react";
+import {useListContext as $3uY0S$useListContext, useCreatePath as $3uY0S$useCreatePath, sanitizeListRestProps as $3uY0S$sanitizeListRestProps, RecordContextProvider as $3uY0S$RecordContextProvider, ChipField as $3uY0S$ChipField, Link as $3uY0S$Link, useResourceContext as $3uY0S$useResourceContext, useGetList as $3uY0S$useGetList, useResourceDefinition as $3uY0S$useResourceDefinition, FilterList as $3uY0S$FilterList, FilterListItem as $3uY0S$FilterListItem, List as $3uY0S$List, TopToolbar as $3uY0S$TopToolbar, CreateButton as $3uY0S$CreateButton, ExportButton as $3uY0S$ExportButton, Button as $3uY0S$Button} from "react-admin";
+import {LinearProgress as $3uY0S$LinearProgress, Grid as $3uY0S$Grid, Card as $3uY0S$Card, CardActionArea as $3uY0S$CardActionArea, CardMedia as $3uY0S$CardMedia, CardContent as $3uY0S$CardContent, CardActions as $3uY0S$CardActions, useMediaQuery as $3uY0S$useMediaQuery} from "@mui/material";
+import $3uY0S$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $3uY0S$muiiconsmaterialAddCircle from "@mui/icons-material/AddCircle";
+import $3uY0S$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
+import {useGetExternalLink as $3uY0S$useGetExternalLink, useDataModel as $3uY0S$useDataModel, useContainers as $3uY0S$useContainers} from "@semapps/semantic-data-provider";
+import $3uY0S$reactmasonrycss from "react-masonry-css";
+import {useLocation as $3uY0S$useLocation} from "react-router";
+
+
+
+
+
+
+
+
+
+const $a854ae8777f8f757$var$useStyles = (0, $3uY0S$muistylesmakeStyles)(()=>({
+        root: {
+            display: "flex",
+            flexWrap: "wrap"
+        },
+        link: {
+            textDecoration: "none",
+            maxWidth: "100%"
+        },
+        chipField: {
+            maxWidth: "100%"
+        },
+        addIcon: {
+            cursor: "pointer",
+            fontSize: 35,
+            position: "relative",
+            top: 2
+        },
+        launchIcon: {
+            width: 20,
+            paddingRight: 6,
+            marginLeft: -10
+        }
+    }));
+const $a854ae8777f8f757$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $a854ae8777f8f757$var$handleClick = ()=>{};
+const $a854ae8777f8f757$var$ChipList = (props)=>{
+    const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $3uY0S$useListContext)(props);
+    const getExternalLink = (0, $3uY0S$useGetExternalLink)(externalLinks);
+    const createPath = (0, $3uY0S$useCreatePath)();
+    const classes = $a854ae8777f8f757$var$useStyles(props);
+    const Component = component;
+    if (isLoading) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$LinearProgress), {});
+    return /*#__PURE__*/ (0, $3uY0S$jsxs)(Component, {
+        className: classes.root,
+        ...(0, $3uY0S$sanitizeListRestProps)(rest),
+        children: [
+            data.map((record)=>{
+                if (!record || record._error) return null;
+                const externalLink = getExternalLink(record);
+                if (externalLink) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $3uY0S$jsx)("a", {
+                        href: externalLink,
+                        target: "_blank",
+                        rel: "noopener noreferrer",
+                        className: classes.link,
+                        onClick: $a854ae8777f8f757$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                            source: primaryText,
+                            className: classes.chipField,
+                            color: "secondary",
+                            deleteIcon: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$muiiconsmaterialLaunch), {
+                                className: classes.launchIcon
+                            }),
+                            // Workaround to force ChipField to be clickable
+                            onClick: $a854ae8777f8f757$var$handleClick,
+                            // Required to display the delete icon
+                            onDelete: $a854ae8777f8f757$var$handleClick
+                        })
+                    })
+                }, record.id);
+                if (linkType) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+                        className: classes.link,
+                        to: createPath({
+                            resource: resource,
+                            id: record.id,
+                            type: linkType
+                        }),
+                        onClick: $a854ae8777f8f757$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                            source: primaryText,
+                            className: classes.chipField,
+                            color: "secondary",
+                            // Workaround to force ChipField to be clickable
+                            onClick: $a854ae8777f8f757$var$handleClick
+                        })
+                    })
+                }, record.id);
+                return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                    value: record,
+                    children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                        source: primaryText,
+                        className: classes.chipField,
+                        color: "secondary",
+                        // Workaround to force ChipField to be clickable
+                        onClick: $a854ae8777f8f757$var$handleClick
+                    })
+                }, record.id);
+            }),
+            appendLink && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$muiiconsmaterialAddCircle), {
+                color: "primary",
+                className: classes.addIcon,
+                onClick: appendLink
+            })
+        ]
+    });
+};
+var $a854ae8777f8f757$export$2e2bcd8739ae039 = $a854ae8777f8f757$var$ChipList;
+
+
+
+
+
+
+
+// useful to prevent click bubbling in a datagrid with rowClick
+const $e54e9a9f27806c4d$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $e54e9a9f27806c4d$var$handleClick = ()=>{};
+const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
+    const { data: data, resource: resource, isLoading: isLoading } = (0, $3uY0S$useListContext)();
+    const getExternalLink = (0, $3uY0S$useGetExternalLink)(externalLinks);
+    const createPath = (0, $3uY0S$useCreatePath)();
+    if (isLoading || !data) return null;
+    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Grid), {
+        container: true,
+        spacing: spacing,
+        children: data.map((record)=>{
+            if (!record || record._error) return null;
+            const externalLink = getExternalLink(record);
+            let child;
+            if (externalLink) child = /*#__PURE__*/ (0, $3uY0S$jsx)("a", {
+                href: externalLink,
+                target: "_blank",
+                rel: "noopener noreferrer",
+                onClick: $e54e9a9f27806c4d$var$stopPropagation,
+                children: /*#__PURE__*/ $3uY0S$cloneElement($3uY0S$Children.only(children), {
+                    externalLink: true,
+                    // Workaround to force ChipField to be clickable
+                    onClick: $e54e9a9f27806c4d$var$handleClick
+                })
+            });
+            else if (linkType) child = /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+                to: createPath({
+                    resource: resource,
+                    id: record.id,
+                    type: linkType
+                }),
+                onClick: $e54e9a9f27806c4d$var$stopPropagation,
+                children: /*#__PURE__*/ $3uY0S$cloneElement($3uY0S$Children.only(children), {
+                    // Workaround to force ChipField to be clickable
+                    onClick: $e54e9a9f27806c4d$var$handleClick
+                })
+            });
+            else child = children;
+            return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Grid), {
+                item: true,
+                xs: xs,
+                sm: sm,
+                md: md,
+                lg: lg,
+                xl: xl,
+                children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                    value: record,
+                    children: child
+                })
+            }, record.id);
+        })
+    });
+};
+$e54e9a9f27806c4d$var$GridList.defaultProps = {
+    xs: 6,
+    spacing: 3,
+    linkType: "edit",
+    externalLinks: false
+};
+var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
+
+
+
+
+
+
+
+
+const $8cf7b8f98f373d84$var$useStyles = (0, $3uY0S$muistylesmakeStyles)(()=>({
+        grid: {
+            display: "flex",
+            marginLeft: -20,
+            marginBottom: -20,
+            width: "auto"
+        },
+        column: {
+            paddingLeft: 20,
+            backgroundClip: "padding-box"
+        },
+        card: {
+            marginBottom: 20
+        },
+        media: {
+            height: 0,
+            paddingTop: "56.25%" // 16:9
+        }
+    }));
+/**
+ * @example
+ * <List component="div" perPage={50} {...props}>
+ *   <MasonryList
+ *     image={record => record.image}
+ *     content={record => (
+ *       <>
+ *         <Typography variant="subtitle1">{record.title}</Typography>
+ *         <Typography variant="body2" color="textSecondary" component="p">{record.description}</Typography>
+ *       </>
+ *     )}
+ *     linkType="show"
+ *   />
+ * </List>
+ */ const $8cf7b8f98f373d84$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
+    const classes = $8cf7b8f98f373d84$var$useStyles();
+    const { data: data, resource: resource } = (0, $3uY0S$useListContext)();
+    const createPath = (0, $3uY0S$useCreatePath)();
+    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$reactmasonrycss), {
+        breakpointCols: breakpointCols,
+        className: classes.grid,
+        columnClassName: classes.column,
+        children: data.map((record)=>{
+            if (!record || record._error) return null;
+            const imageUrl = typeof image === "function" ? image(record) : image;
+            return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                value: record,
+                children: /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$Card), {
+                    className: classes.card,
+                    children: [
+                        /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+                            to: createPath({
+                                resource: resource,
+                                id: record.id,
+                                type: linkType
+                            }),
+                            children: /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$CardActionArea), {
+                                children: [
+                                    imageUrl && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardMedia), {
+                                        className: classes.media,
+                                        image: imageUrl
+                                    }),
+                                    content && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardContent), {
+                                        children: content(record)
+                                    })
+                                ]
+                            })
+                        }),
+                        actions && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardActions), {
+                            children: actions.map((action)=>/*#__PURE__*/ (0, $3uY0S$react).createElement(action))
+                        })
+                    ]
+                }, record.id)
+            });
+        })
+    });
+};
+$8cf7b8f98f373d84$var$MasonryList.defaultProps = {
+    breakpointCols: {
+        default: 3,
+        1050: 2,
+        700: 1
+    },
+    linkType: "edit"
+};
+var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList;
+
+
+
+
+
+
+/**
+ * @example
+ * const FilterAside = () => (
+ *   <Card>
+ *     <CardContent>
+ *       <FilterLiveSearch source="pair:label" />
+ *       <ReferenceFilter reference="Theme" source="pair:hasTopic" inverseSource="pair:topicOf" />
+ *       <ReferenceFilter reference="Skill" source="pair:offers" inverseSource="pair:offeredBy" />
+ *     </CardContent>
+ *   </Card>
+ * );
+ */ const $68130c000e57b305$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
+    const resourceContext = (0, $3uY0S$useResourceContext)();
+    const { data: data, isLoading: isLoading } = (0, $3uY0S$useGetList)(resourceContext);
+    return /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$Fragment), {
+        children: [
+            "\xa0",
+            !isLoading && /*#__PURE__*/ (0, $3uY0S$jsx)("span", {
+                className: "filter-count",
+                children: `(${Object.values(data).filter((d)=>[].concat(d[source]).includes(id)).length})`
+            })
+        ]
+    });
+};
+const $68130c000e57b305$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters })=>{
+    const { data: data, isLoading: isLoading } = (0, $3uY0S$useGetList)(reference, {
+        page: 1,
+        perPage: limit
+    }, sort, filter);
+    const currentResource = (0, $3uY0S$useResourceDefinition)({
+        resource: reference
+    });
+    const resourceContext = (0, $3uY0S$useResourceContext)();
+    const resourceContextDataModel = (0, $3uY0S$useDataModel)(resourceContext);
+    const resourceContextContainers = (0, $3uY0S$useContainers)(resourceContext);
+    const { displayedFilters: displayedFilters, filterValues: filterValues, setFilters: setFilters, hideFilter: hideFilter } = (0, $3uY0S$useListContext)();
+    (0, $3uY0S$useEffect)(()=>{
+        // Needed when filter item is active and its last relation is removed
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const params = Object.fromEntries(urlSearchParams.entries());
+        if (!params.filter && !isLoading) setFilters({});
+    }, []);
+    const itemIsUsed = (itemData)=>{
+        if (!inverseSource) return true;
+        if (!resourceContextContainers || !itemData) return false;
+        let itemIsUsed = false;
+        Object.values(resourceContextContainers).forEach((value)=>{
+            value.forEach((containerUrl)=>{
+                [].concat(itemData[inverseSource]).forEach((inverseSourceData)=>{
+                    if (inverseSourceData?.startsWith(containerUrl)) itemIsUsed = true;
+                });
+            });
+        });
+        return itemIsUsed;
+    };
+    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$FilterList), {
+        label: label || currentResource?.options?.label || "",
+        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $3uY0S$react).createElement(currentResource.icon) : undefined,
+        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$FilterListItem), {
+                label: /*#__PURE__*/ (0, $3uY0S$jsxs)("span", {
+                    className: "filter-label",
+                    children: [
+                        itemData["pair:label"],
+                        showCounters && /*#__PURE__*/ (0, $3uY0S$jsx)($68130c000e57b305$var$ReferenceFilterCounter, {
+                            source: source,
+                            id: itemData.id
+                        })
+                    ]
+                }),
+                value: {
+                    [source]: itemData.id
+                }
+            }, itemData.id))
+    });
+};
+$68130c000e57b305$var$ReferenceFilter.defaultProps = {
+    limit: 25,
+    showCounters: true
+};
+var $68130c000e57b305$export$2e2bcd8739ae039 = $68130c000e57b305$var$ReferenceFilter;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $4d3421bb798b6c78$var$ListViewContext = /*#__PURE__*/ (0, $3uY0S$react).createContext({
+    views: null,
+    currentView: null,
+    setView: ()=>null
+});
+var $4d3421bb798b6c78$export$2e2bcd8739ae039 = $4d3421bb798b6c78$var$ListViewContext;
+
+
+const $5a39d2966c9779bd$var$ViewsButtons = ()=>{
+    const query = new URLSearchParams((0, $3uY0S$useLocation)().search);
+    const { views: views, currentView: currentView, setView: setView } = (0, $3uY0S$react).useContext((0, $4d3421bb798b6c78$export$2e2bcd8739ae039));
+    return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
+        query.set("view", key);
+        query.set("page", 1);
+        query.set("perPage", view.perPage);
+        if (view.sort) {
+            query.set("sort", view.sort.field);
+            query.set("order", view.sort.order);
+        }
+        return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+            to: `?${query.toString()}`,
+            children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Button), {
+                onClick: ()=>setView(key),
+                label: view.label,
+                children: /*#__PURE__*/ (0, $3uY0S$react).createElement(view.icon)
+            })
+        }, key);
+    }) : null;
+};
+var $5a39d2966c9779bd$export$2e2bcd8739ae039 = $5a39d2966c9779bd$var$ViewsButtons;
+
+
+const $032ebd19dd4d05d7$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
+    const xs = (0, $3uY0S$useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const resourceDefinition = (0, $3uY0S$useResourceDefinition)(rest);
+    return /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$TopToolbar), {
+        children: [
+            /*#__PURE__*/ (0, $3uY0S$jsx)((0, $5a39d2966c9779bd$export$2e2bcd8739ae039), {}),
+            filters && /*#__PURE__*/ (0, $3uY0S$react).cloneElement(filters, {
+                showFilter: showFilter,
+                displayedFilters: displayedFilters,
+                filterValues: filterValues,
+                context: "button"
+            }),
+            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CreateButton), {}),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ExportButton), {
+                disabled: total === 0,
+                sort: sort,
+                filter: filterValues,
+                exporter: exporter
+            }),
+            bulkActions && /*#__PURE__*/ (0, $3uY0S$react).cloneElement(bulkActions, {
+                filterValues: filterValues,
+                selectedIds: selectedIds,
+                onUnselectItems: onUnselectItems
+            })
+        ]
+    });
+};
+var $032ebd19dd4d05d7$export$2e2bcd8739ae039 = $032ebd19dd4d05d7$var$ListActionsWithViews;
+
+
+
+const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
+    const query = new URLSearchParams((0, $3uY0S$useLocation)().search);
+    const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
+    const [currentView, setView] = (0, $3uY0S$useState)(initialView);
+    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $4d3421bb798b6c78$export$2e2bcd8739ae039).Provider, {
+        value: {
+            views: views,
+            currentView: currentView,
+            setView: setView
+        },
+        children: /*#__PURE__*/ (0, $3uY0S$jsx)(ListComponent, {
+            actions: actions,
+            pagination: views[currentView].pagination,
+            // Set initial values, but use the query string to change these values to avoid a complete refresh
+            perPage: views[initialView].perPage,
+            sort: views[initialView].sort,
+            ...otherProps,
+            children: views[currentView].list
+        })
+    });
+};
+$5bd09179d1367bb7$var$MultiViewsList.defaultProps = {
+    actions: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}),
+    ListComponent: (0, $3uY0S$List)
+};
+var $5bd09179d1367bb7$export$2e2bcd8739ae039 = $5bd09179d1367bb7$var$MultiViewsList;
+
+
+
+
+
+
+
+export {$a854ae8777f8f757$export$2e2bcd8739ae039 as ChipList, $e54e9a9f27806c4d$export$2e2bcd8739ae039 as GridList, $8cf7b8f98f373d84$export$2e2bcd8739ae039 as MasonryList, $68130c000e57b305$export$2e2bcd8739ae039 as ReferenceFilter, $5bd09179d1367bb7$export$2e2bcd8739ae039 as MultiViewsList, $032ebd19dd4d05d7$export$2e2bcd8739ae039 as ListActionsWithViews, $4d3421bb798b6c78$export$2e2bcd8739ae039 as ListViewContext, $5a39d2966c9779bd$export$2e2bcd8739ae039 as ViewsButtons};
 //# sourceMappingURL=index.es.js.map

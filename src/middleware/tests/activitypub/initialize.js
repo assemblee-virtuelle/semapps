@@ -1,5 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { AuthLocalService } = require('@semapps/auth');
 const { CoreService } = require('@semapps/core');
@@ -8,8 +9,12 @@ const { containers } = require('@semapps/activitypub');
 const { WebIdService } = require('@semapps/webid');
 const EventsWatcher = require('../middleware/EventsWatcher');
 const CONFIG = require('../config');
+const { clearDataset } = require('../utils');
 
 const initialize = async (port, mainDataset, accountsDataset) => {
+  await clearDataset(mainDataset);
+  await clearDataset(accountsDataset);
+
   const baseUrl = `http://localhost:${port}/`;
 
   const broker = new ServiceBroker({
@@ -54,15 +59,10 @@ const initialize = async (port, mainDataset, accountsDataset) => {
 
   broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${baseUrl}actors/`
+      usersContainer: urlJoin(baseUrl, 'actors')
     }
   });
 
-  // Drop all existing triples, then restart broker so that default containers are recreated
-  await broker.start();
-  await broker.call('triplestore.dropAll', { webId: 'system' });
-  await broker.call('triplestore.dropAll', { dataset: accountsDataset, webId: 'system' });
-  await broker.stop();
   await broker.start();
 
   // setting some write permission on the containers for anonymous user, which is the one that will be used in the tests.

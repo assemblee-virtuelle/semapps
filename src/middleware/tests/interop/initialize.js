@@ -1,5 +1,6 @@
 const fse = require('fs-extra');
 const path = require('path');
+const urlJoin = require('url-join');
 const { ServiceBroker } = require('moleculer');
 const { ACTOR_TYPES, RelayService } = require('@semapps/activitypub');
 const { AuthLocalService } = require('@semapps/auth');
@@ -25,14 +26,12 @@ const containers = [
   {
     path: '/actors',
     acceptedTypes: [ACTOR_TYPES.PERSON],
-    excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
+    excludeFromMirror: true
   },
   {
     path: '/applications',
     acceptedTypes: [ACTOR_TYPES.APPLICATION],
-    excludeFromMirror: true,
-    dereference: ['sec:publicKey', 'as:endpoints']
+    excludeFromMirror: true
   }
 ];
 
@@ -95,7 +94,7 @@ const initialize = async (port, mainDataset, accountsDataset, serverToMirror) =>
 
   await broker.createService(WebIdService, {
     settings: {
-      usersContainer: `${baseUrl}actors/`
+      usersContainer: urlJoin(baseUrl, 'actors')
     }
   });
 
