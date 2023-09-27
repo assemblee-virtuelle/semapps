@@ -19,7 +19,13 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const LocalLoginPage = ({ hasSignup }) => {
+const LocalLoginPage = ({
+  hasSignup,
+  allowUsername,
+  postSignupRedirect,
+  postLoginRedirect,
+  additionalSignupValues
+}) => {
   const classes = useStyles();
   const navigate = useNavigate();
   const translate = useTranslate();
@@ -33,14 +39,15 @@ const LocalLoginPage = ({ hasSignup }) => {
 
   useEffect(() => {
     if (!isLoading && identity?.id) {
-      // Already authenticated, redirect to the home page
-      if (redirectTo && redirectTo.startsWith('http')) {
+      if (postLoginRedirect) {
+        navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`);
+      } else if (redirectTo && redirectTo.startsWith('http')) {
         window.location.href = redirectTo;
       } else {
         navigate(redirectTo || '/');
       }
     }
-  }, [identity, isLoading, navigate, redirectTo]);
+  }, [identity, isLoading, navigate, redirectTo, postLoginRedirect]);
 
   const [title, text] = useMemo(() => {
     if (isSignup) {
@@ -58,14 +65,22 @@ const LocalLoginPage = ({ hasSignup }) => {
   }, [isSignup, isLogin, isResetPassword, isNewPassword]);
 
   if (isLoading || identity?.id) return null;
+  if (isLoading || identity?.id) return null;
 
   return (
     <SimpleBox title={translate(title)} text={translate(text)} icon={<LockIcon />}>
       <Card>
-        {isSignup && <SignupForm redirectTo={redirectTo} delayBeforeRedirect={3000} />}
+        {isSignup && (
+          <SignupForm
+            redirectTo={redirectTo}
+            delayBeforeRedirect={4000}
+            postSignupRedirect={postSignupRedirect}
+            additionalSignupValues={additionalSignupValues}
+          />
+        )}
         {isResetPassword && <ResetPasswordForm />}
         {isNewPassword && <NewPasswordForm redirectTo={redirectTo} />}
-        {isLogin && <LoginForm redirectTo={redirectTo} />}
+        {isLogin && <LoginForm redirectTo={redirectTo} allowUsername={allowUsername} />}
         <div className={classes.switch}>
           {isSignup && (
             <Link to="/login">
@@ -95,7 +110,9 @@ const LocalLoginPage = ({ hasSignup }) => {
 };
 
 LocalLoginPage.defaultProps = {
-  hasSignup: true
+  hasSignup: true,
+  allowUsername: false,
+  additionalSignupValues: {}
 };
 
 export default LocalLoginPage;

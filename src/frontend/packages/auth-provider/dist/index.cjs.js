@@ -19,7 +19,7 @@ var $2O4Ek$reactrouterdom = require("react-router-dom");
 var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
 var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $2O4Ek$muiiconsmaterialStorage = require("@mui/icons-material/Storage");
-var $2O4Ek$proptypes = require("prop-types");
+var $2O4Ek$speakingurl = require("speakingurl");
 var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $2O4Ek$lodashisEqual = require("lodash/isEqual");
 
@@ -1579,7 +1579,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             margin: theme.spacing(0.3)
         }
     }));
-const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeRedirect: delayBeforeRedirect })=>{
+const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
     const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -1587,19 +1587,23 @@ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
     const classes = $5f70c240e5b0340c$var$useStyles();
     const location = (0, $2O4Ek$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
+    const [locale] = (0, $2O4Ek$reactadmin.useLocaleState)();
     const submit = (values)=>{
         setLoading(true);
-        signup(values).then((webId)=>{
+        signup({
+            ...values,
+            ...additionalSignupValues
+        }).then((webId)=>{
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -1629,7 +1633,25 @@ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
                     autoComplete: "username",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)()
+                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    format: (value)=>value ? (0, ($parcel$interopDefault($2O4Ek$speakingurl)))(value, {
+                            lang: locale || "fr",
+                            separator: "_",
+                            custom: [
+                                ".",
+                                "-",
+                                "0",
+                                "1",
+                                "2",
+                                "3",
+                                "4",
+                                "5",
+                                "6",
+                                "7",
+                                "8",
+                                "9"
+                            ]
+                        }) : ""
                 }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "email",
@@ -1668,11 +1690,11 @@ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
         })
     });
 };
-$5f70c240e5b0340c$var$SignupForm.propTypes = {
-    redirectTo: (0, ($parcel$interopDefault($2O4Ek$proptypes))).string
+$5f70c240e5b0340c$var$SignupForm.defaultValues = {
+    redirectTo: "/",
+    additionalSignupValues: {}
 };
 var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
-
 
 
 
@@ -1689,7 +1711,7 @@ const $8a2df01c9f2675bb$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             margin: theme.spacing(0.3)
         }
     }));
-const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo })=>{
+const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
     const login = (0, $2O4Ek$reactadmin.useLogin)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -1722,11 +1744,14 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo })=>{
             children: [
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "username",
-                    label: translate("auth.input.email"),
+                    label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: [
+                    format: (value)=>value ? value.toLowerCase() : "",
+                    validate: allowUsername ? [
+                        (0, $2O4Ek$reactadmin.required)()
+                    ] : [
                         (0, $2O4Ek$reactadmin.required)(),
                         (0, $2O4Ek$reactadmin.email)()
                     ]
@@ -1757,8 +1782,9 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo })=>{
         })
     });
 };
-$8a2df01c9f2675bb$var$LoginForm.propTypes = {
-    redirectTo: (0, ($parcel$interopDefault($2O4Ek$proptypes))).string
+$8a2df01c9f2675bb$var$LoginForm.defaultValues = {
+    redirectTo: "/",
+    allowUsername: false
 };
 var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
 
@@ -2019,7 +2045,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             alignItems: "center"
         }
     }));
-const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
+const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues })=>{
     const classes = $4c56dbfbda0fa20c$var$useStyles();
     const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -2032,15 +2058,16 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
     const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
     (0, $2O4Ek$react.useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            // Already authenticated, redirect to the home page
-            if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}`);
+            else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
     }, [
         identity,
         isLoading,
         navigate,
-        redirectTo
+        redirectTo,
+        postLoginRedirect
     ]);
     const [title, text] = (0, $2O4Ek$react.useMemo)(()=>{
         if (isSignup) return [
@@ -2066,6 +2093,7 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
         isNewPassword
     ]);
     if (isLoading || identity?.id) return null;
+    if (isLoading || identity?.id) return null;
     return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
@@ -2074,14 +2102,17 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
             children: [
                 isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
-                    delayBeforeRedirect: 3000
+                    delayBeforeRedirect: 4000,
+                    postSignupRedirect: postSignupRedirect,
+                    additionalSignupValues: additionalSignupValues
                 }),
                 isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
                 isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo
                 }),
                 isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo
+                    redirectTo: redirectTo,
+                    allowUsername: allowUsername
                 }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)("div", {
                     className: classes.switch,
@@ -2122,7 +2153,9 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
     });
 };
 $4c56dbfbda0fa20c$var$LocalLoginPage.defaultProps = {
-    hasSignup: true
+    hasSignup: true,
+    allowUsername: false,
+    additionalSignupValues: {}
 };
 var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginPage;
 
