@@ -2,7 +2,7 @@ import $4oW5r$jwtdecode from "jwt-decode";
 import $4oW5r$urljoin from "url-join";
 import {jsx as $4oW5r$jsx, jsxs as $4oW5r$jsxs, Fragment as $4oW5r$Fragment} from "react/jsx-runtime";
 import $4oW5r$react, {useEffect as $4oW5r$useEffect, useState as $4oW5r$useState, useCallback as $4oW5r$useCallback, useRef as $4oW5r$useRef, useMemo as $4oW5r$useMemo, forwardRef as $4oW5r$forwardRef} from "react";
-import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, Notification as $4oW5r$Notification, useLocale as $4oW5r$useLocale, useSafeSetState as $4oW5r$useSafeSetState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
+import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, Notification as $4oW5r$Notification, useLocale as $4oW5r$useLocale, useSafeSetState as $4oW5r$useSafeSetState, useLocaleState as $4oW5r$useLocaleState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
 import {useCreateContainer as $4oW5r$useCreateContainer} from "@semapps/semantic-data-provider";
 import $4oW5r$muiiconsmaterialShare from "@mui/icons-material/Share";
 import {Dialog as $4oW5r$Dialog, DialogTitle as $4oW5r$DialogTitle, DialogContent as $4oW5r$DialogContent, DialogActions as $4oW5r$DialogActions, TextField as $4oW5r$TextField, List as $4oW5r$List, ListItem as $4oW5r$ListItem, ListItemAvatar as $4oW5r$ListItemAvatar, Avatar as $4oW5r$Avatar, ListItemText as $4oW5r$ListItemText, ListItemSecondaryAction as $4oW5r$ListItemSecondaryAction, IconButton as $4oW5r$IconButton, Menu as $4oW5r$Menu, MenuItem as $4oW5r$MenuItem, ListItemIcon as $4oW5r$ListItemIcon, useMediaQuery as $4oW5r$useMediaQuery, DialogContentText as $4oW5r$DialogContentText, Button as $4oW5r$Button1, Card as $4oW5r$Card, Typography as $4oW5r$Typography, CardActions as $4oW5r$CardActions, StyledEngineProvider as $4oW5r$StyledEngineProvider, Box as $4oW5r$Box, Divider as $4oW5r$Divider, CardContent as $4oW5r$CardContent, CircularProgress as $4oW5r$CircularProgress} from "@mui/material";
@@ -19,7 +19,7 @@ import {useNavigate as $4oW5r$useNavigate, useSearchParams as $4oW5r$useSearchPa
 import {styled as $4oW5r$styled1, createTheme as $4oW5r$createTheme} from "@mui/material/styles";
 import $4oW5r$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $4oW5r$muiiconsmaterialStorage from "@mui/icons-material/Storage";
-import $4oW5r$proptypes from "prop-types";
+import $4oW5r$speakingurl from "speakingurl";
 import $4oW5r$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $4oW5r$lodashisEqual from "lodash/isEqual";
 
@@ -1546,7 +1546,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             margin: theme.spacing(0.3)
         }
     }));
-const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeRedirect: delayBeforeRedirect })=>{
+const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
     const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
     const signup = (0, $fb967e2c34f56644$export$2e2bcd8739ae039)();
     const translate = (0, $4oW5r$useTranslate)();
@@ -1554,19 +1554,23 @@ const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
     const classes = $e011da92680cf1fe$var$useStyles();
     const location = (0, $4oW5r$useLocation)();
     const searchParams = new URLSearchParams(location.search);
+    const [locale] = (0, $4oW5r$useLocaleState)();
     const submit = (values)=>{
         setLoading(true);
-        signup(values).then((webId)=>{
+        signup({
+            ...values,
+            ...additionalSignupValues
+        }).then((webId)=>{
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -1596,7 +1600,25 @@ const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
                     autoComplete: "username",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $4oW5r$required)()
+                    validate: (0, $4oW5r$required)(),
+                    format: (value)=>value ? (0, $4oW5r$speakingurl)(value, {
+                            lang: locale || "fr",
+                            separator: "_",
+                            custom: [
+                                ".",
+                                "-",
+                                "0",
+                                "1",
+                                "2",
+                                "3",
+                                "4",
+                                "5",
+                                "6",
+                                "7",
+                                "8",
+                                "9"
+                            ]
+                        }) : ""
                 }),
                 /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
                     source: "email",
@@ -1635,11 +1657,11 @@ const $e011da92680cf1fe$var$SignupForm = ({ redirectTo: redirectTo, delayBeforeR
         })
     });
 };
-$e011da92680cf1fe$var$SignupForm.propTypes = {
-    redirectTo: (0, $4oW5r$proptypes).string
+$e011da92680cf1fe$var$SignupForm.defaultValues = {
+    redirectTo: "/",
+    additionalSignupValues: {}
 };
 var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
-
 
 
 
@@ -1656,7 +1678,7 @@ const $e2a34b2d647a5391$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             margin: theme.spacing(0.3)
         }
     }));
-const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo })=>{
+const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername: allowUsername })=>{
     const [loading, setLoading] = (0, $4oW5r$useSafeSetState)(false);
     const login = (0, $4oW5r$useLogin)();
     const translate = (0, $4oW5r$useTranslate)();
@@ -1689,11 +1711,14 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo })=>{
             children: [
                 /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
                     source: "username",
-                    label: translate("auth.input.email"),
+                    label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: [
+                    format: (value)=>value ? value.toLowerCase() : "",
+                    validate: allowUsername ? [
+                        (0, $4oW5r$required)()
+                    ] : [
                         (0, $4oW5r$required)(),
                         (0, $4oW5r$email)()
                     ]
@@ -1724,8 +1749,9 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo })=>{
         })
     });
 };
-$e2a34b2d647a5391$var$LoginForm.propTypes = {
-    redirectTo: (0, $4oW5r$proptypes).string
+$e2a34b2d647a5391$var$LoginForm.defaultValues = {
+    redirectTo: "/",
+    allowUsername: false
 };
 var $e2a34b2d647a5391$export$2e2bcd8739ae039 = $e2a34b2d647a5391$var$LoginForm;
 
@@ -1986,7 +2012,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
             alignItems: "center"
         }
     }));
-const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
+const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues })=>{
     const classes = $23fea069f5d2d834$var$useStyles();
     const navigate = (0, $4oW5r$useNavigate)();
     const translate = (0, $4oW5r$useTranslate)();
@@ -1999,15 +2025,16 @@ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
     const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
     (0, $4oW5r$useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            // Already authenticated, redirect to the home page
-            if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}`);
+            else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
     }, [
         identity,
         isLoading,
         navigate,
-        redirectTo
+        redirectTo,
+        postLoginRedirect
     ]);
     const [title, text] = (0, $4oW5r$useMemo)(()=>{
         if (isSignup) return [
@@ -2033,6 +2060,7 @@ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
         isNewPassword
     ]);
     if (isLoading || identity?.id) return null;
+    if (isLoading || identity?.id) return null;
     return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $1b78e27e3e92a798$export$2e2bcd8739ae039), {
         title: translate(title),
         text: translate(text),
@@ -2041,14 +2069,17 @@ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
             children: [
                 isSignup && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
-                    delayBeforeRedirect: 3000
+                    delayBeforeRedirect: 4000,
+                    postSignupRedirect: postSignupRedirect,
+                    additionalSignupValues: additionalSignupValues
                 }),
                 isResetPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
                 isNewPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo
                 }),
                 isLogin && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo
+                    redirectTo: redirectTo,
+                    allowUsername: allowUsername
                 }),
                 /*#__PURE__*/ (0, $4oW5r$jsxs)("div", {
                     className: classes.switch,
@@ -2089,7 +2120,9 @@ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup })=>{
     });
 };
 $23fea069f5d2d834$var$LocalLoginPage.defaultProps = {
-    hasSignup: true
+    hasSignup: true,
+    allowUsername: false,
+    additionalSignupValues: {}
 };
 var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginPage;
 
