@@ -1,4 +1,5 @@
 const urlJoin = require('url-join');
+const { MoleculerError } = require('moleculer').Errors;
 const addRights = require('./actions/addRights');
 const awaitReadRight = require('./actions/awaitReadRight');
 const getRights = require('./actions/getRights');
@@ -9,7 +10,6 @@ const getUsersWithReadRights = require('./actions/getUsersWithReadRights');
 const deleteAllRights = require('./actions/deleteAllRights');
 const refreshContainersRights = require('./actions/refreshContainersRights');
 const removeRights = require('./actions/removeRights');
-const { MoleculerError } = require('moleculer').Errors;
 const {
   getAuthorizationNode,
   getAclUriFromResourceUri,

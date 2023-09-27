@@ -1,4 +1,1455 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("jsonld"),t=require("speakingurl"),r=require("@rdfjs/data-model"),n=require("crypto"),a=require("react-admin"),o=require("react"),i=require("@mui/styles/makeStyles");function s(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var u=s(e),c=s(t),l=s(r),f=s(n),p=s(o),d=s(i);function h(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function v(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?h(Object(r),!0).forEach((function(t){w(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):h(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function y(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-y=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},a=n.iterator||"@@iterator",o=n.asyncIterator||"@@asyncIterator",i=n.toStringTag||"@@toStringTag";function s(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{s({},"")}catch(e){s=function(e,t,r){return e[t]=r}}function u(e,t,r,n){var a=t&&t.prototype instanceof f?t:f,o=Object.create(a.prototype),i=new O(n||[]);return o._invoke=function(e,t,r){var n="suspendedStart";return function(a,o){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===a)throw o;return E()}for(r.method=a,r.arg=o;;){var i=r.delegate;if(i){var s=x(i,r);if(s){if(s===l)continue;return s}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var u=c(e,t,r);if("normal"===u.type){if(n=r.done?"completed":"suspendedYield",u.arg===l)continue;return{value:u.arg,done:r.done}}"throw"===u.type&&(n="completed",r.method="throw",r.arg=u.arg)}}}(e,r,i),o}function c(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=u;var l={};function f(){}function p(){}function d(){}var h={};s(h,a,(function(){return this}));var v=Object.getPrototypeOf,g=v&&v(v(j([])));g&&g!==t&&r.call(g,a)&&(h=g);var b=d.prototype=f.prototype=Object.create(h);function m(e){["next","throw","return"].forEach((function(t){s(e,t,(function(e){return this._invoke(t,e)}))}))}function w(e,t){var n;this._invoke=function(a,o){function i(){return new t((function(n,i){!function n(a,o,i,s){var u=c(e[a],e,o);if("throw"!==u.type){var l=u.arg,f=l.value;return f&&"object"==typeof f&&r.call(f,"__await")?t.resolve(f.__await).then((function(e){n("next",e,i,s)}),(function(e){n("throw",e,i,s)})):t.resolve(f).then((function(e){l.value=e,i(l)}),(function(e){return n("throw",e,i,s)}))}s(u.arg)}(a,o,n,i)}))}return n=n?n.then(i,i):i()}}function x(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,x(e,t),"throw"===t.method))return l;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return l}var n=c(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,l;var a=n.arg;return a?a.done?(t[e.resultName]=a.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,l):a:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,l)}function k(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function S(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function O(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(k,this),this.reset(!0)}function j(e){if(e){var t=e[a];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,o=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return o.next=o}}return{next:E}}function E(){return{value:void 0,done:!0}}return p.prototype=d,s(b,"constructor",d),s(d,"constructor",p),p.displayName=s(d,i,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===p||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,d):(e.__proto__=d,s(e,i,"GeneratorFunction")),e.prototype=Object.create(b),e},e.awrap=function(e){return{__await:e}},m(w.prototype),s(w.prototype,o,(function(){return this})),e.AsyncIterator=w,e.async=function(t,r,n,a,o){void 0===o&&(o=Promise);var i=new w(u(t,r,n,a),o);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},m(b),s(b,i,"Generator"),s(b,a,(function(){return this})),s(b,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=j,O.prototype={constructor:O,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(S),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return i.type="throw",i.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var a=this.tryEntries.length-1;a>=0;--a){var o=this.tryEntries[a],i=o.completion;if("root"===o.tryLoc)return n("end");if(o.tryLoc<=this.prev){var s=r.call(o,"catchLoc"),u=r.call(o,"finallyLoc");if(s&&u){if(this.prev<o.catchLoc)return n(o.catchLoc,!0);if(this.prev<o.finallyLoc)return n(o.finallyLoc)}else if(s){if(this.prev<o.catchLoc)return n(o.catchLoc,!0)}else{if(!u)throw new Error("try statement without catch or finally");if(this.prev<o.finallyLoc)return n(o.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var a=this.tryEntries[n];if(a.tryLoc<=this.prev&&r.call(a,"finallyLoc")&&this.prev<a.finallyLoc){var o=a;break}}o&&("break"===e||"continue"===e)&&o.tryLoc<=t&&t<=o.finallyLoc&&(o=null);var i=o?o.completion:{};return i.type=e,i.arg=t,o?(this.method="next",this.next=o.finallyLoc,l):this.complete(i)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),l},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),S(r),l}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var a=n.arg;S(r)}return a}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:j(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),l}},e}function g(e){return(g="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function b(e,t,r,n,a,o,i){try{var s=e[o](i),u=s.value}catch(e){return void r(e)}s.done?t(u):Promise.resolve(u).then(n,a)}function m(e){return function(){var t=this,r=arguments;return new Promise((function(n,a){var o=e.apply(t,r);function i(e){b(o,n,a,i,s,"next",e)}function s(e){b(o,n,a,i,s,"throw",e)}i(void 0)}))}}function w(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function x(){return(x=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function k(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function S(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,a,o=[],i=!0,s=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(o.push(n.value),!t||o.length!==t);i=!0);}catch(e){s=!0,a=e}finally{try{i||null==r.return||r.return()}finally{if(s)throw a}}return o}(e,t)||j(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function O(e){return function(e){if(Array.isArray(e))return E(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||j(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function j(e,t){if(e){if("string"==typeof e)return E(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?E(e,t):void 0}}function E(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}function C(e,t){var r="undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(!r){if(Array.isArray(e)||(r=j(e))||t&&e&&"number"==typeof e.length){r&&(e=r);var n=0,a=function(){};return{s:a,n:function(){return n>=e.length?{done:!0}:{done:!1,value:e[n++]}},e:function(e){throw e},f:a}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var o,i=!0,s=!1;return{s:function(){r=r.call(e)},n:function(){var e=r.next();return i=e.done,e},e:function(e){s=!0,o=e},f:function(){try{i||null==r.return||r.return()}finally{if(s)throw o}}}}var A="undefined"!=typeof globalThis?globalThis:"undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:{};function P(e,t){return e(t={exports:{}},t.exports),t.exports}var _=P((function(e){var t,r;t=A,r=function(){function e(e){var t=[];if(0===e.length)return"";if("string"!=typeof e[0])throw new TypeError("Url must be a string. Received "+e[0]);if(e[0].match(/^[^/:]+:\/*$/)&&e.length>1){var r=e.shift();e[0]=r+e[0]}e[0].match(/^file:\/\/\//)?e[0]=e[0].replace(/^([^/:]+):\/*/,"$1:///"):e[0]=e[0].replace(/^([^/:]+):\/*/,"$1://");for(var n=0;n<e.length;n++){var a=e[n];if("string"!=typeof a)throw new TypeError("Url must be a string. Received "+a);""!==a&&(n>0&&(a=a.replace(/^[\/]+/,"")),a=n<e.length-1?a.replace(/[\/]+$/,""):a.replace(/[\/]+$/,"/"),t.push(a))}var o=t.join("/"),i=(o=o.replace(/\/(\?|&|#[^!])/g,"$1")).split("?");return o=i.shift()+(i.length>0?"?":"")+i.join("&")}return function(){return e("object"==typeof arguments[0]?arguments[0]:[].slice.call(arguments))}},e.exports?e.exports=r():t.urljoin=r()})),L=function(){var e=m(y().mark((function e(t,r){var n,a,o,i;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return n=r.httpClient,a=r.jsonContext,e.next=3,n(t);case 3:if(o=e.sent,i=o.json){e.next=7;break}throw new Error("Not a valid JSON: "+t);case 7:if(i.id=i.id||i["@id"],i["@context"]===a){e.next=12;break}return e.next=11,u.default.compact(i,a);case 11:i=e.sent;case 12:return e.abrupt("return",i);case 13:case"end":return e.stop()}}),e)})));return function(t,r){return e.apply(this,arguments)}}(),N=function(e){return function(){var t=m(y().mark((function t(r,n){var a,o,i,s,u,c,l,f;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:if(o=e.resources,i=o[r]){t.next=4;break}throw new Error("Resource ".concat(r," is not mapped in resources file"));case 4:return t.next=6,L(n.id,e);case 6:if(s=t.sent,null!==(a=i.list)&&void 0!==a&&a.forceArray){c=C(null===(u=i.list)||void 0===u?void 0:u.forceArray);try{for(c.s();!(l=c.n()).done;)f=l.value,s[f]&&!Array.isArray(s[f])&&(s[f]=[s[f]])}catch(e){c.e(e)}finally{c.f()}}return t.abrupt("return",{data:s});case 9:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()},T=function(e){return e&&e.rawFile&&e.rawFile instanceof File},q=function(e){var t=Object.keys(e.dataServers).find((function(t){return e.dataServers[t].uploadsContainer}));if(t)return _(e.dataServers[t].baseUrl,e.dataServers[t].uploadsContainer)},U=function(){var e=m(y().mark((function e(t,r){var n,a;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(n=q(r)){e.next=3;break}throw new Error("You must define an uploadsContainer in one of the server's configuration");case 3:return e.next=5,r.httpClient(n,{method:"POST",body:t,headers:new Headers({Slug:(o=t.name,i=void 0,s=void 0,i="",s=o.split("."),s.length>1&&(i=s.pop(),o=s.join(".")),c.default(o,{lang:"fr"})+"."+i),"Content-Type":t.type})});case 5:if(201!==(a=e.sent).status){e.next=8;break}return e.abrupt("return",a.headers.get("Location"));case 8:case"end":return e.stop()}var o,i,s}),e)})));return function(t,r){return e.apply(this,arguments)}}(),I=function(){var e=m(y().mark((function e(t,r){var n,a;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:e.t0=y().keys(t);case 1:if((e.t1=e.t0()).done){e.next=22;break}if(n=e.t1.value,!t.hasOwnProperty(n)){e.next=20;break}if(!Array.isArray(t[n])){e.next=16;break}a=0;case 6:if(!(a<t[n].length)){e.next=14;break}if(!T(t[n][a])){e.next=11;break}return e.next=10,U(t[n][a].rawFile,r);case 10:t[n][a]=e.sent;case 11:a++,e.next=6;break;case 14:e.next=20;break;case 16:if(!T(t[n])){e.next=20;break}return e.next=19,U(t[n].rawFile,r);case 19:t[n]=e.sent;case 20:e.next=1;break;case 22:return e.abrupt("return",t);case 23:case"end":return e.stop()}}),e)})));return function(t,r){return e.apply(this,arguments)}}(),D=function(e,t){return Object.keys(t).find((function(r){return t[r][e]}))},M=function(e,t){switch(e){case"@default":return D("default",t);case"@pod":return D("pod",t);case"@authServer":return D("authServer",t);default:return e}},B=function(e,t,r){var n={},a=[];return t=function(e,t){if(Array.isArray(e))return e.includes("@all")?Object.keys(t):e.map((function(e){return M(e,t)}));if("string"==typeof e){if("@all"===e)return Object.keys(t);if("@remote"===e){var r=D("default",t);return Object.keys(t).filter((function(e){return e!==r}))}return[M(e,t)]}return!1}(t,r),Object.keys(r).forEach((function(o){Object.keys(r[o].containers).forEach((function(i){t&&!t.includes(i)||Object.keys(r[o].containers[i]).forEach((function(t){e.includes(t)&&r[o].containers[i][t].map((function(e){var t=_(r[i].baseUrl,e);a.includes(t)||(a.push(t),n[o]||(n[o]=[]),n[o].push(t))}))}))}))})),n},F=function(e){return function(){var t=m(y().mark((function t(r,n){var a,o,i,s,u,c,l,f,p,d,h,g,b,m,w,x;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:if(o=e.dataServers,i=e.resources,s=e.httpClient,u=e.jsonContext,c=i[r],l=new Headers,null===(a=c.create)||void 0===a||!a.container){t.next=9;break}p=Object.keys(c.create.container)[0],f=_(o[p].baseUrl,Object.values(c.create.container)[0]),t.next=19;break;case 9:if(p=(null===(d=c.create)||void 0===d?void 0:d.server)||Object.keys(o).find((function(e){return!0===o[e].default}))){t.next=12;break}throw new Error("You must define a server for the creation, or a container, or a default server");case 12:if(h=B(c.types,[p],o),(g=Object.keys(h))&&0!==g.length){t.next=16;break}throw new Error("No container with types ".concat(JSON.stringify(c.types)," found on server ").concat(p));case 16:if(!(g.length>1||h[g[0]].length>1)){t.next=18;break}throw new Error("More than one container detected with types ".concat(JSON.stringify(c.types)," on server ").concat(p));case 18:f=h[g[0]][0];case 19:if(!n.data){t.next=34;break}return null!==(b=c.fieldsMapping)&&void 0!==b&&b.title&&(Array.isArray(c.fieldsMapping.title)?l.set("Slug",c.fieldsMapping.title.map((function(e){return n.data[e]})).join(" ")):l.set("Slug",n.data[c.fieldsMapping.title])),t.next=23,I(n.data,e);case 23:return n.data=t.sent,t.next=26,s(f,{method:"POST",headers:l,body:JSON.stringify(v({"@context":u,"@type":c.types},n.data))});case 26:return m=t.sent,w=m.headers,x=w.get("Location"),t.next=31,N(e)(r,{id:x});case 31:return t.abrupt("return",t.sent);case 34:if(!n.id){t.next=41;break}return l.set("Content-Type","application/sparql-update"),t.next=38,s(f,{method:"PATCH",headers:l,body:"\n        PREFIX ldp: <http://www.w3.org/ns/ldp#>\n        INSERT DATA { <".concat(f,"> ldp:contains <").concat(n.id,">. };\n      ")});case 38:return t.next=40,N(e)(r,{id:n.id});case 40:return t.abrupt("return",t.sent);case 41:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()},R=function(e){return function(){var t=m(y().mark((function t(r,n){var a;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return a=e.httpClient,t.next=3,a(n.id,{method:"DELETE"});case 3:return t.abrupt("return",{data:{id:n.id}});case 4:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()},H=function(e){return function(){var t=m(y().mark((function t(r,n){var a,o,i,s,u;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:a=e.httpClient,o=[],i=C(n.ids),t.prev=3,i.s();case 5:if((s=i.n()).done){t.next=17;break}return u=s.value,t.prev=7,t.next=10,a(u,{method:"DELETE"});case 10:o.push(u),t.next=15;break;case 13:t.prev=13,t.t0=t.catch(7);case 15:t.next=5;break;case 17:t.next=22;break;case 19:t.prev=19,t.t1=t.catch(3),i.e(t.t1);case 22:return t.prev=22,i.f(),t.finish(22);case 25:return t.abrupt("return",{data:o});case 26:case"end":return t.stop()}}),t,null,[[3,19,22,25],[7,13]])})));return function(e,r){return t.apply(this,arguments)}}()},W=function(e){return function(){return e.dataServers}},G=function(e){return function(){return e.resources}};var z=function(){var e=m(y().mark((function e(t,r,n,a){var o,i,s,c,l,f,p;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return o=a.httpClient,i=a.jsonContext,s=Object.keys(t).reduce((function(e,r){return v(v({},e),Object.fromEntries(t[r].map((function(e){return[e,r]}))))}),{}),c=Object.keys(s).map((function(e){return o(e).then((function(e){var t=e.json;return t["@context"]!==i?u.default.compact(t,i):t})).then((function(t){if(r="ldp:Container",a=(n=t).type||n["@type"],Array.isArray(a)?a.includes(r):a===r)return t["ldp:contains"];throw new Error(e+" is not a LDP container");var r,n,a}))})),e.next=5,Promise.all(c);case 5:if(0!==(l=e.sent).length){e.next=10;break}return e.abrupt("return",{data:[],total:0});case 10:return l=(f=[].concat).apply.apply(f,O(l)),p=l.map((function(e){return e.id=e.id||e["@id"],e})),n.filter&&(n.filter.a&&(n.filter.type=n.filter.a,delete n.filter.a),Object.keys(n.filter).length>0&&(p=p.filter((function(e){return Object.entries(n.filter).some((function(t){var r=S(t,2),n=r[0],a=r[1];return"q"==n?Object.entries(e).some((function(e){var t=S(e,2);t[0];var r,n=t[1];return(null==(r=n)||"object"!=typeof r||!1!==Array.isArray(r))&&(Array.isArray(n)?n:[n]).some((function(e){if("string"==typeof e||e instanceof String)return e.toLowerCase().normalize("NFD").includes(a.toLowerCase().normalize("NFD"))}))})):!!e[n]&&(Array.isArray(e[n])?e[n].some((function(e){return e.includes(a)})):e[n].includes(a))}))})))),n.sort&&(p=p.sort((function(e,t){return!e[n.sort.field]||!t[n.sort.field]||("ASC"===n.sort.order?e[n.sort.field].localeCompare(t[n.sort.field]):t[n.sort.field].localeCompare(e[n.sort.field]))}))),n.pagination&&(p=p.slice((n.pagination.page-1)*n.pagination.perPage,n.pagination.page*n.pagination.perPage)),e.abrupt("return",{data:p,total:l.length});case 16:case"end":return e.stop()}}),e)})));return function(t,r,n,a){return e.apply(this,arguments)}}(),J=function(e){var t,r={};if(e){var n,a=C(e);try{for(a.s();!(n=a.n()).done;){var o=n.value;t=o.includes("/")?o.split("/").reverse():[o],r=v(v({},r),t.reduce((function(e,t){return w({},t,v({"@embed":"@last"},e))}),{}))}}catch(e){a.e(e)}finally{a.f()}return r}},$=function(e,t){if(e.startsWith("http://")||e.startsWith("https://"))return e;if("a"===e)return"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";var r=S(e.split(":"),2),n=r[0],a=r[1];if(a){var o=t.find((function(e){return e.prefix===n}));if(o)return o.url+a;throw new Error("No ontology found with prefix "+n)}throw new Error('The value "'.concat(e,'" is not correct. It must include a prefix or be a full URI.'))},Y=r.triple(r.variable("s1"),r.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),r.variable("type")),V=function(e,t){var n,a;return e?(n=(a=e,a?Array.isArray(a)?a:[a]:[]).map((function(e,n){return r.triple(r.variable("s1"),r.namedNode($(e,t)),r.variable("o"+(n+1)))})),{construct:[Y].concat(O(n)),where:[Y].concat(O(n.map((function(e){return{type:"optional",patterns:[e]}}))))}):{construct:n=[r.triple(r.variable("s1"),r.variable("p1"),r.variable("o1"))],where:n}},Q=P((function(e,t){var r;e.exports=r=r||function(e,t){var r;if("undefined"!=typeof window&&window.crypto&&(r=window.crypto),"undefined"!=typeof self&&self.crypto&&(r=self.crypto),"undefined"!=typeof globalThis&&globalThis.crypto&&(r=globalThis.crypto),!r&&"undefined"!=typeof window&&window.msCrypto&&(r=window.msCrypto),!r&&void 0!==A&&A.crypto&&(r=A.crypto),!r)try{r=f.default}catch(e){}var n=function(){if(r){if("function"==typeof r.getRandomValues)try{return r.getRandomValues(new Uint32Array(1))[0]}catch(e){}if("function"==typeof r.randomBytes)try{return r.randomBytes(4).readInt32LE()}catch(e){}}throw new Error("Native crypto module could not be used to get secure random number.")},a=Object.create||function(){function e(){}return function(t){var r;return e.prototype=t,r=new e,e.prototype=null,r}}(),o={},i=o.lib={},s=i.Base={extend:function(e){var t=a(this);return e&&t.mixIn(e),t.hasOwnProperty("init")&&this.init!==t.init||(t.init=function(){t.$super.init.apply(this,arguments)}),t.init.prototype=t,t.$super=this,t},create:function(){var e=this.extend();return e.init.apply(e,arguments),e},init:function(){},mixIn:function(e){for(var t in e)e.hasOwnProperty(t)&&(this[t]=e[t]);e.hasOwnProperty("toString")&&(this.toString=e.toString)},clone:function(){return this.init.prototype.extend(this)}},u=i.WordArray=s.extend({init:function(e,t){e=this.words=e||[],this.sigBytes=null!=t?t:4*e.length},toString:function(e){return(e||l).stringify(this)},concat:function(e){var t=this.words,r=e.words,n=this.sigBytes,a=e.sigBytes;if(this.clamp(),n%4)for(var o=0;o<a;o++){var i=r[o>>>2]>>>24-o%4*8&255;t[n+o>>>2]|=i<<24-(n+o)%4*8}else for(var s=0;s<a;s+=4)t[n+s>>>2]=r[s>>>2];return this.sigBytes+=a,this},clamp:function(){var t=this.words,r=this.sigBytes;t[r>>>2]&=4294967295<<32-r%4*8,t.length=e.ceil(r/4)},clone:function(){var e=s.clone.call(this);return e.words=this.words.slice(0),e},random:function(e){for(var t=[],r=0;r<e;r+=4)t.push(n());return new u.init(t,e)}}),c=o.enc={},l=c.Hex={stringify:function(e){for(var t=e.words,r=e.sigBytes,n=[],a=0;a<r;a++){var o=t[a>>>2]>>>24-a%4*8&255;n.push((o>>>4).toString(16)),n.push((15&o).toString(16))}return n.join("")},parse:function(e){for(var t=e.length,r=[],n=0;n<t;n+=2)r[n>>>3]|=parseInt(e.substr(n,2),16)<<24-n%8*4;return new u.init(r,t/2)}},p=c.Latin1={stringify:function(e){for(var t=e.words,r=e.sigBytes,n=[],a=0;a<r;a++){var o=t[a>>>2]>>>24-a%4*8&255;n.push(String.fromCharCode(o))}return n.join("")},parse:function(e){for(var t=e.length,r=[],n=0;n<t;n++)r[n>>>2]|=(255&e.charCodeAt(n))<<24-n%4*8;return new u.init(r,t)}},d=c.Utf8={stringify:function(e){try{return decodeURIComponent(escape(p.stringify(e)))}catch(e){throw new Error("Malformed UTF-8 data")}},parse:function(e){return p.parse(unescape(encodeURIComponent(e)))}},h=i.BufferedBlockAlgorithm=s.extend({reset:function(){this._data=new u.init,this._nDataBytes=0},_append:function(e){"string"==typeof e&&(e=d.parse(e)),this._data.concat(e),this._nDataBytes+=e.sigBytes},_process:function(t){var r,n=this._data,a=n.words,o=n.sigBytes,i=this.blockSize,s=o/(4*i),c=(s=t?e.ceil(s):e.max((0|s)-this._minBufferSize,0))*i,l=e.min(4*c,o);if(c){for(var f=0;f<c;f+=i)this._doProcessBlock(a,f);r=a.splice(0,c),n.sigBytes-=l}return new u.init(r,l)},clone:function(){var e=s.clone.call(this);return e._data=this._data.clone(),e},_minBufferSize:0});i.Hasher=h.extend({cfg:s.extend(),init:function(e){this.cfg=this.cfg.extend(e),this.reset()},reset:function(){h.reset.call(this),this._doReset()},update:function(e){return this._append(e),this._process(),this},finalize:function(e){return e&&this._append(e),this._doFinalize()},blockSize:16,_createHelper:function(e){return function(t,r){return new e.init(r).finalize(t)}},_createHmacHelper:function(e){return function(t,r){return new v.HMAC.init(e,r).finalize(t)}}});var v=o.algo={};return o}(Math)})),X=P((function(e,t){var r;e.exports=(r=Q,function(e){var t=r,n=t.lib,a=n.WordArray,o=n.Hasher,i=t.algo,s=[];!function(){for(var t=0;t<64;t++)s[t]=4294967296*e.abs(e.sin(t+1))|0}();var u=i.MD5=o.extend({_doReset:function(){this._hash=new a.init([1732584193,4023233417,2562383102,271733878])},_doProcessBlock:function(e,t){for(var r=0;r<16;r++){var n=t+r,a=e[n];e[n]=16711935&(a<<8|a>>>24)|4278255360&(a<<24|a>>>8)}var o=this._hash.words,i=e[t+0],u=e[t+1],d=e[t+2],h=e[t+3],v=e[t+4],y=e[t+5],g=e[t+6],b=e[t+7],m=e[t+8],w=e[t+9],x=e[t+10],k=e[t+11],S=e[t+12],O=e[t+13],j=e[t+14],E=e[t+15],C=o[0],A=o[1],P=o[2],_=o[3];C=c(C,A,P,_,i,7,s[0]),_=c(_,C,A,P,u,12,s[1]),P=c(P,_,C,A,d,17,s[2]),A=c(A,P,_,C,h,22,s[3]),C=c(C,A,P,_,v,7,s[4]),_=c(_,C,A,P,y,12,s[5]),P=c(P,_,C,A,g,17,s[6]),A=c(A,P,_,C,b,22,s[7]),C=c(C,A,P,_,m,7,s[8]),_=c(_,C,A,P,w,12,s[9]),P=c(P,_,C,A,x,17,s[10]),A=c(A,P,_,C,k,22,s[11]),C=c(C,A,P,_,S,7,s[12]),_=c(_,C,A,P,O,12,s[13]),P=c(P,_,C,A,j,17,s[14]),C=l(C,A=c(A,P,_,C,E,22,s[15]),P,_,u,5,s[16]),_=l(_,C,A,P,g,9,s[17]),P=l(P,_,C,A,k,14,s[18]),A=l(A,P,_,C,i,20,s[19]),C=l(C,A,P,_,y,5,s[20]),_=l(_,C,A,P,x,9,s[21]),P=l(P,_,C,A,E,14,s[22]),A=l(A,P,_,C,v,20,s[23]),C=l(C,A,P,_,w,5,s[24]),_=l(_,C,A,P,j,9,s[25]),P=l(P,_,C,A,h,14,s[26]),A=l(A,P,_,C,m,20,s[27]),C=l(C,A,P,_,O,5,s[28]),_=l(_,C,A,P,d,9,s[29]),P=l(P,_,C,A,b,14,s[30]),C=f(C,A=l(A,P,_,C,S,20,s[31]),P,_,y,4,s[32]),_=f(_,C,A,P,m,11,s[33]),P=f(P,_,C,A,k,16,s[34]),A=f(A,P,_,C,j,23,s[35]),C=f(C,A,P,_,u,4,s[36]),_=f(_,C,A,P,v,11,s[37]),P=f(P,_,C,A,b,16,s[38]),A=f(A,P,_,C,x,23,s[39]),C=f(C,A,P,_,O,4,s[40]),_=f(_,C,A,P,i,11,s[41]),P=f(P,_,C,A,h,16,s[42]),A=f(A,P,_,C,g,23,s[43]),C=f(C,A,P,_,w,4,s[44]),_=f(_,C,A,P,S,11,s[45]),P=f(P,_,C,A,E,16,s[46]),C=p(C,A=f(A,P,_,C,d,23,s[47]),P,_,i,6,s[48]),_=p(_,C,A,P,b,10,s[49]),P=p(P,_,C,A,j,15,s[50]),A=p(A,P,_,C,y,21,s[51]),C=p(C,A,P,_,S,6,s[52]),_=p(_,C,A,P,h,10,s[53]),P=p(P,_,C,A,x,15,s[54]),A=p(A,P,_,C,u,21,s[55]),C=p(C,A,P,_,m,6,s[56]),_=p(_,C,A,P,E,10,s[57]),P=p(P,_,C,A,g,15,s[58]),A=p(A,P,_,C,O,21,s[59]),C=p(C,A,P,_,v,6,s[60]),_=p(_,C,A,P,k,10,s[61]),P=p(P,_,C,A,d,15,s[62]),A=p(A,P,_,C,w,21,s[63]),o[0]=o[0]+C|0,o[1]=o[1]+A|0,o[2]=o[2]+P|0,o[3]=o[3]+_|0},_doFinalize:function(){var t=this._data,r=t.words,n=8*this._nDataBytes,a=8*t.sigBytes;r[a>>>5]|=128<<24-a%32;var o=e.floor(n/4294967296),i=n;r[15+(a+64>>>9<<4)]=16711935&(o<<8|o>>>24)|4278255360&(o<<24|o>>>8),r[14+(a+64>>>9<<4)]=16711935&(i<<8|i>>>24)|4278255360&(i<<24|i>>>8),t.sigBytes=4*(r.length+1),this._process();for(var s=this._hash,u=s.words,c=0;c<4;c++){var l=u[c];u[c]=16711935&(l<<8|l>>>24)|4278255360&(l<<24|l>>>8)}return s},clone:function(){var e=o.clone.call(this);return e._hash=this._hash.clone(),e}});function c(e,t,r,n,a,o,i){var s=e+(t&r|~t&n)+a+i;return(s<<o|s>>>32-o)+t}function l(e,t,r,n,a,o,i){var s=e+(t&n|r&~n)+a+i;return(s<<o|s>>>32-o)+t}function f(e,t,r,n,a,o,i){var s=e+(t^r^n)+a+i;return(s<<o|s>>>32-o)+t}function p(e,t,r,n,a,o,i){var s=e+(r^(t|~n))+a+i;return(s<<o|s>>>32-o)+t}t.MD5=o._createHelper(u),t.HmacMD5=o._createHmacHelper(u)}(Math),r.MD5)})),K=function(e){return X(e)},Z=function(e){return e.includes("/")&&e.split("/")[0]},ee=function(e){return e.includes("/")?e.split("/")[1]:e},te=function(e){return e.map((function(t){var r=t.query,n=e.find((function(e){return t.parentNode===e.node}));return void 0!==n&&(r=r.concat(n.query[0])),{type:"bgp",triples:r}}))},re=function(e,t,n){var a=[],o=function(e){var t=[];if(e){var r,n=C(e);try{for(n.s();!(r=n.n()).done;){var a=r.value;if(a.includes("/"))for(var o=a.split("/"),i=1;i<=o.length;i++)t.push(o.slice(0,i).join("/"));else t.push(a)}}catch(e){n.e(e)}finally{n.f()}}return t}(e);if(o&&n&&n.length>0){var i,s=C(o);try{for(s.s();!(i=s.n()).done;){var u=i.value,c=Z(u),l=ee(u),f=K(u),p=c?K(c):"1",d=[r.triple(r.variable("s"+p),r.namedNode($(l,n)),r.variable("s"+f)),r.triple(r.variable("s"+f),r.variable("p"+f),r.variable("o"+f))];a.push({node:u,parentNode:c,query:d,filter:""})}}catch(e){s.e(e)}finally{s.f()}return{construct:a.length>0?a.map((function(e){return e.query})).reduce((function(e,t){return e.concat(t)})):null,where:{type:"union",patterns:[t.where].concat(O(te(a)))}}}return{construct:"",where:""}},ne=l.default.literal,ae=l.default.namedNode,oe=l.default.triple,ie=l.default.variable,se=new(0,require("sparqljs").Generator)({}),ue=["q","sparqlWhere","blankNodes","_servers","_predicates"],ce=function(e){var t=e.containers,r=e.params.filter,n=e.blankNodes,a=e.predicates,o=e.ontologies,i=V(a,o),s={queryType:"CONSTRUCT",template:i.construct,where:[],type:"query",prefixes:Object.fromEntries(o.map((function(e){return[e.prefix,e.url]})))},u=[{type:"values",values:t.map((function(e){return{"?containerUri":ae(e)}}))},oe(ie("containerUri"),ae("http://www.w3.org/ns/ldp#contains"),ie("s1")),{type:"filter",expression:{type:"operation",operator:"isiri",args:[ie("s1")]}}],c=[];if(r&&Object.keys(r).length>0){var l=r.sparqlWhere&&Object.keys(r.sparqlWhere).length>0,f=r.q&&r.q.length>0;l&&[].concat(r.sparqlWhere).forEach((function(e){c.push(e)})),f&&c.push({type:"group",patterns:[{queryType:"SELECT",variables:[ie("s1")],where:[oe(ie("s1"),ie("p1"),ie("o1")),{type:"filter",expression:{type:"operation",operator:"isliteral",args:[ie("o1")]}},{type:"filter",expression:{type:"operation",operator:"regex",args:[{type:"operation",operator:"lcase",args:[{type:"operation",operator:"str",args:[ie("o1")]}]},ne(r.q.toLowerCase(),"",ae("http://www.w3.org/2001/XMLSchema#string"))]}}],type:"query"}]}),Object.entries(r).forEach((function(e){var t=S(e,2),r=t[0],n=t[1];ue.includes(r)||c.unshift(oe(ie("s1"),ae($(r,o)),ae($(n,o))))}))}var p=re(n,i,o);return p&&p.construct?(c=c.concat(p.where),s.template=s.template.concat(p.construct)):c.push(i.where),s.where.push({type:"union",patterns:[u,{type:"graph",name:ae("http://semapps.org/mirror"),patterns:u}]},{type:"union",patterns:[c,{type:"graph",name:ae("http://semapps.org/mirror"),patterns:c}]}),se.stringify(s)},le=function(e,t){for(var r=[],n=0,a=Object.keys(t);n<a.length;n++){var o=a[n];if(t[o].blankNodes)for(var i=0,s=Object.keys(t[o].blankNodes);i<s.length;i++){var u=s[i];e.includes(u)&&r.push.apply(r,O(t[o].blankNodes[u]))}}return O(new Set(r))},fe=["@context"],pe=function(e,t){switch(g(e)){case"string":return e.localeCompare(t);case"number":case"bigint":return e-t;default:return 0}},de=function(){var e=m(y().mark((function e(t,r,n,a){var o,i,s,c,l,f,p,d,h,g;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return o=a.dataServers,i=a.resources,s=a.httpClient,c=a.jsonContext,l=a.ontologies,f=i[r],p=Object.keys(t).map((function(e){return new Promise((function(r,a){var i,p,d,h,y,g,b=(null===(i=n.filter)||void 0===i?void 0:i.blankNodes)||(null===(p=f.list)||void 0===p?void 0:p.blankNodes)||le(t[e],o),m=(null===(d=n.filter)||void 0===d?void 0:d._predicates)||(null===(h=f.list)||void 0===h?void 0:h.predicates);null!==(y=n.filter)&&void 0!==y&&y.sparqlWhere&&("string"==typeof n.filter.sparqlWhere||n.filter.sparqlWhere instanceof String)&&(n.filter.sparqlWhere=JSON.parse(decodeURIComponent(n.filter.sparqlWhere)));var w=ce({containers:t[e],params:v(v({},n),{},{filter:v(v({},null===(g=f.list)||void 0===g?void 0:g.filter),n.filter)}),blankNodes:b,predicates:m,ontologies:l});s(o[e].sparqlEndpoint,{method:"POST",body:w}).then((function(e){var t,r=e.json,n=!1!==(null===(t=f.list)||void 0===t?void 0:t.explicitEmbedOnFraming)?v({"@context":c,"@type":f.types,"@embed":"@never"},J(b)):{"@context":c,"@type":f.types};return u.default.frame(r,n,{omitGraph:!1})})).then((function(e){if(e["@id"]){var t=e;e={"@context":t["@context"],"@graph":[k(t,fe)]}}r(e["@graph"]||[])})).catch((function(e){return a(e)}))}))})),e.next=5,Promise.all(p);case 5:if(0!==(d=e.sent).length){e.next=10;break}return e.abrupt("return",{data:[],total:0});case 10:return d=(h=[]).concat.apply(h,O(d)),g=d.map((function(e){return e.id=e.id||e["@id"],e})),n.sort&&(g=g.sort((function(e,t){return void 0!==e[n.sort.field]&&void 0!==t[n.sort.field]?"ASC"===n.sort.order?pe(e[n.sort.field],t[n.sort.field]):pe(t[n.sort.field],e[n.sort.field]):0}))),n.pagination&&(g=g.slice((n.pagination.page-1)*n.pagination.perPage,n.pagination.page*n.pagination.perPage)),e.abrupt("return",{data:g,total:d.length});case 15:case"end":return e.stop()}}),e)})));return function(t,r,n,a){return e.apply(this,arguments)}}(),he=function(e,t){var r={};return Object.keys(e).forEach((function(n){if(!t[n])throw new Error("No server found with key "+n);r[n]=[],e[n].forEach((function(e){r[n].push(_(t[n].baseUrl,e))}))})),r},ve=function(e){return function(){var t=m(y().mark((function t(r){var n,a,o,i,s,u,c,l,f,p,d,h=arguments;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:if(i=h.length>1&&void 0!==h[1]?h[1]:{},s=e.dataServers,u=e.resources,c=u[r]){t.next=5;break}throw new Error("Resource ".concat(r," is not mapped in resources file"));case 5:if(null!==(n=i.filter)&&void 0!==n&&n._servers||null===(a=c.list)||void 0===a||!a.containers){t.next=11;break}if(!Array.isArray(null===(f=c.list)||void 0===f?void 0:f.containers)){t.next=8;break}throw new Error("The list.containers property of ".concat(r," dataModel must be of type object ({ serverKey: [containerUri] })"));case 8:l=he(c.list.containers,s),t.next=12;break;case 11:l=B(c.types,(null===(p=i.filter)||void 0===p?void 0:p._servers)||(null===(d=c.list)||void 0===d?void 0:d.servers),s);case 12:if(null===(o=c.list)||void 0===o||!o.fetchContainer){t.next=16;break}return t.abrupt("return",z(l,r,i,e));case 16:return t.abrupt("return",de(l,r,i,e));case 17:case"end":return t.stop()}}),t)})));return function(e){return t.apply(this,arguments)}}()},ye=function(e){return function(){var t=m(y().mark((function t(r,n){var a,o;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return a=e.returnFailedResources,t.next=3,Promise.all(n.ids.map((function(t){return N(e)(r,{id:"object"===g(t)?t["@id"]:t}).then((function(e){return e.data})).catch((function(){if(a)return{id:t,_error:!0}}))})));case 3:return o=(o=t.sent).filter((function(e){return e})),t.abrupt("return",{data:o});case 6:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()},ge=function(e){return function(){var t=m(y().mark((function t(r,n){return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return n.filter=v(v({},n.filter),{},w({},n.target,n.id)),delete n.target,t.next=4,ve(e)(r,n);case 4:return t.abrupt("return",t.sent);case 5:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()},be=function(e){return function(){var t=m(y().mark((function t(r,n){var a,o;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return a=e.httpClient,o=e.jsonContext,t.next=3,I(n.data,e);case 3:return n.data=t.sent,t.next=6,a(n.id,{method:"PUT",body:JSON.stringify(v({"@context":o},n.data))});case 6:return t.abrupt("return",{data:n.data});case 7:case"end":return t.stop()}}),t)})));return function(e,r){return t.apply(this,arguments)}}()};function me(e){this.message=e}me.prototype=new Error,me.prototype.name="InvalidCharacterError";var we="undefined"!=typeof window&&window.atob&&window.atob.bind(window)||function(e){var t=String(e).replace(/=+$/,"");if(t.length%4==1)throw new me("'atob' failed: The string to be decoded is not correctly encoded.");for(var r,n,a=0,o=0,i="";n=t.charAt(o++);~n&&(r=a%4?64*r+n:n,a++%4)?i+=String.fromCharCode(255&r>>(-2*a&6)):0)n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".indexOf(n);return i};function xe(e){var t=e.replace(/-/g,"+").replace(/_/g,"/");switch(t.length%4){case 0:break;case 2:t+="==";break;case 3:t+="=";break;default:throw"Illegal base64url string!"}try{return function(e){return decodeURIComponent(we(e).replace(/(.)/g,(function(e,t){var r=t.charCodeAt(0).toString(16).toUpperCase();return r.length<2&&(r="0"+r),"%"+r})))}(t)}catch(e){return we(t)}}function ke(e){this.message=e}function Se(e,t){if("string"!=typeof e)throw new ke("Invalid token specified");var r=!0===(t=t||{}).header?0:1;try{return JSON.parse(xe(e.split(".")[r]))}catch(e){throw new ke("Invalid token specified: "+e.message)}}ke.prototype=new Error,ke.prototype.name="InvalidTokenError";var Oe=function(){var e=m(y().mark((function e(t){var r,n,a,o,i,s,u,c,l,f,p,d;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:if(r=t.dataServers,n=t.httpClient,a=localStorage.getItem("token"),o=D("pod",r),i=D("authServer",r),!a){e.next=24;break}return s=Se(a),u=s.webId,e.prev=6,e.next=9,n(u);case 9:l=e.sent,f=l.json,c=f,e.next=20;break;case 14:return e.prev=14,e.t0=e.catch(6),console.error(e.t0),localStorage.clear(),window.location.reload(),e.abrupt("return");case 20:o&&(t.dataServers[o].name="My Pod",t.dataServers[o].baseUrl=_(u,"data"),t.dataServers[o].sparqlEndpoint=(null===(p=c.endpoints)||void 0===p?void 0:p["void:sparqlEndpoint"])||_(u,"sparql")),i&&(t.dataServers[i].proxyUrl=null===(d=c.endpoints)||void 0===d?void 0:d.proxyUrl),e.next=25;break;case 24:o&&delete t.dataServers[o];case 25:case"end":return e.stop()}}),e,null,[[6,14]])})));return function(t){return e.apply(this,arguments)}}(),je=function(e){return e?Array.isArray(e)?e:[e]:void 0},Ee=function(){var e=m(y().mark((function e(t){var r,n,a,o,i,s,u,c;return y().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return r=Object.entries(t.dataServers).filter((function(e){var t=S(e,2);return t[0],!0!==t[1].pod})).map((function(e){var r=S(e,2),n=r[0],a=r[1];return t.httpClient(new URL("/.well-known/void",a.baseUrl).toString()).then((function(e){return{key:n,datasets:e.json["@graph"]}})).catch((function(e){if(404===e.status||401===e.status)return{key:n,error:e};throw e}))})),n=[],e.prev=2,e.next=5,Promise.all(r);case 5:n=e.sent,e.next=10;break;case 8:e.prev=8,e.t0=e.catch(2);case 10:a=C(n);try{for(a.s();!(o=a.n()).done;)if(i=o.value,t.dataServers[i.key].containers=t.dataServers[i.key].containers||{},t.dataServers[i.key].blankNodes=t.dataServers[i.key].blankNodes||{},i.datasets){s=C(i.datasets);try{for(c=function(){var e=u.value,r=Object.keys(t.dataServers).find((function(r){return e["void:uriSpace"]===t.dataServers[r].baseUrl}));if(r){r===i.key&&(t.dataServers[i.key].name=t.dataServers[i.key].name||e["dc:title"],t.dataServers[i.key].description=t.dataServers[i.key].description||e["dc:description"],t.dataServers[i.key].sparqlEndpoint=t.dataServers[i.key].sparqlEndpoint||e["void:sparqlEndpoint"]),t.dataServers[i.key].containers[r]=t.dataServers[i.key].containers[r]||{};var n,a=C(je(e["void:classPartition"]));try{for(a.s();!(n=a.n()).done;){var o,s=n.value,c=C(je(s["void:class"]));try{for(c.s();!(o=c.n()).done;){var l=o.value,f=s["void:uriSpace"].replace(e["void:uriSpace"],"/");t.dataServers[i.key].containers[r][l]?t.dataServers[i.key].containers[r][l].push(f):t.dataServers[i.key].containers[r][l]=[f],je(s["semapps:blankNodes"])&&(t.dataServers[i.key].blankNodes[s["void:uriSpace"]]=je(s["semapps:blankNodes"]))}}catch(e){c.e(e)}finally{c.f()}}}catch(e){a.e(e)}finally{a.f()}}},s.s();!(u=s.n()).done;)c()}catch(e){s.e(e)}finally{s.f()}}}catch(e){a.e(e)}finally{a.f()}case 12:case"end":return e.stop()}}),e,null,[[2,8]])})));return function(t){return e.apply(this,arguments)}}(),Ce=function(e,t){return Object.keys(t).find((function(r){return t[r].pod?t[r].baseUrl&&e.startsWith(t[r].baseUrl.replace("/data","")):e.startsWith(t[r].baseUrl)}))},Ae=function(e,t){return"function"==typeof e?e(t):e},Pe=function(e){return"string"==typeof e&&e.startsWith("http")},_e=function(e){var t=o.useContext(a.DataProviderContext),r=S(o.useState(),2),n=r[0],i=r[1];return o.useEffect((function(){t.getDataModels().then((function(t){return i(t[e])}))}),[t,e,i]),n},Le=function(){var e=o.useContext(a.DataProviderContext),t=S(o.useState(),2),r=t[0],n=t[1];return o.useEffect((function(){e.getDataServers().then((function(e){return n(e)}))}),[e,n]),r},Ne=function(e,t,r){var n=[];if(Object.keys(r[t].containers[t]).length>0&&Object.keys(r[t].containers[t]).forEach((function(a){e.includes(a)&&r[t].containers[t][a].map((function(e){var a=_(r[t].baseUrl,e);n.includes(a)||n.push(a)}))})),0===n.length)throw new Error("No container found matching with types ".concat(JSON.stringify(e),". You can set explicitely the create.container property of the resource."));if(n.length>1)throw new Error("More than one container found matching with types ".concat(JSON.stringify(e),". You must set the create.server or create.container property for the resource."));return n[0]},Te=["children","record","filter","source"],qe=function(e){var t=e.children,r=e.record,n=e.filter,a=e.source,i=k(e,Te),s=S(o.useState(),2),u=s[0],c=s[1];return o.useEffect((function(){if(r&&a&&Array.isArray(null==r?void 0:r[a])){var e=null==r?void 0:r[a].filter((function(e){var t=!0;for(var r in n){var a=e[r];Array.isArray(a)?a.includes(n[r])||(t=!1):a!==n[r]&&(t=!1)}return t})),t=v({},r);t[a]=e.length>0?e:void 0,c(t)}}),[r,a,n]),p.default.createElement(p.default.Fragment,null,p.default.Children.map(t,(function(e,t){return p.default.cloneElement(e,v(v({},i),{},{record:u,source:a}))})))},Ue=["children","groupReference","groupLabel","groupHeader","filterProperty"],Ie=["reificationClass","children"],De=d.default({form:{display:"flex"},input:{paddingRight:"20px"}}),Me=d.default({root:{display:"none"}});exports.FilterHandler=qe,exports.GroupedReferenceHandler=function(e){var t=e.children,r=e.groupReference,n=e.groupLabel,o=e.groupHeader,i=e.filterProperty,s=k(e,Ue),u=a.useGetList({resource:r,payload:{}}).data;return p.default.createElement(p.default.Fragment,null,null==u?void 0:u.map((function(e,r){var a={};return a[i]=e.id,p.default.createElement(p.default.Fragment,null,o&&o(v(v({},s),{},{group:e})),p.default.createElement(qe,x({},s,{filter:a,label:e[n]}),t))})))},exports.ReificationArrayInput=function(e){var t=e.reificationClass;e.children;var r=k(e,Ie),n=De(),o=Me();return p.default.createElement(a.ArrayInput,r,p.default.createElement(a.SimpleFormIterator,{classes:{form:n.form}},p.default.Children.map(e.children,(function(e,t){return p.default.cloneElement(e,{className:n.input})})),p.default.createElement(a.TextInput,{className:o.root,source:"type",initialValue:t})))},exports.buildBlankNodesQuery=re,exports.buildSparqlQuery=ce,exports.dataProvider=function(e){if(!D("default",e.dataServers))throw new Error("You must define a default server in your dataServers config");var t;e.jsonContext||(e.jsonContext=Object.fromEntries(e.ontologies.map((function(e){return[e.prefix,e.url]})))),e.returnFailedResources||(e.returnFailedResources=!1),e.httpClient=(t=e.dataServers,function(e){var r,n,o=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=D("authServer",t),s=Ce(e,t),u=s!==i&&(null===(r=t[i])||void 0===r?void 0:r.proxyUrl)&&!0!==(null===(n=t[s])||void 0===n?void 0:n.noProxy);switch(o.headers||(o.headers=new Headers),o.method){case"POST":case"PATCH":case"PUT":o.headers.has("Accept")||o.headers.set("Accept","application/ld+json"),o.headers.has("Content-Type")||o.headers.set("Content-Type","application/ld+json");break;case"DELETE":break;case"GET":default:o.headers.has("Accept")||o.headers.set("Accept","application/ld+json")}if(u){var c=new FormData;return c.append("id",e),c.append("method",o.method||"GET"),c.append("headers",JSON.stringify(Object.fromEntries(o.headers.entries()))),o.body&&(o.body instanceof File?c.append("body",o.body,o.body.name):c.append("body",o.body)),a.fetchUtils.fetchJson(t[i].proxyUrl,{method:"POST",headers:new Headers({Authorization:"Bearer ".concat(localStorage.getItem("token"))}),body:c})}if(s===i){var l=localStorage.getItem("token");l&&o.headers.set("Authorization","Bearer ".concat(l))}return a.fetchUtils.fetchJson(e,o)});var r=Oe(e),n=Ee(e),o=function(e){return m(y().mark((function t(){var a=arguments;return y().wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return t.next=2,r;case 2:return t.next=4,n;case 4:return t.next=6,e.apply(void 0,a);case 6:return t.abrupt("return",t.sent);case 7:case"end":return t.stop()}}),t)})))};return{getList:o(ve(e)),getMany:o(ye(e)),getManyReference:o(ge(e)),getOne:o(N(e)),create:o(F(e)),update:o(be(e)),updateMany:function(){throw new Error("updateMany is not implemented yet")},delete:o(R(e)),deleteMany:o(H(e)),getDataModels:o(G(e)),getDataServers:o(W(e)),getLocalDataServers:W(e),fetch:o(e.httpClient)}},exports.useContainers=function(e){var t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:"@all",r=_e(e),n=Le(),a=o.useState(),i=S(a,2),s=i[0],u=i[1];return o.useEffect((function(){r&&n&&u(B(r.types,t,n))}),[r,n,t]),s},exports.useCreateContainer=function(e){var t=_e(e),r=Le(),n=S(o.useState(),2),a=n[0],i=n[1];return o.useEffect((function(){var n,a;if(t&&r)if(null!==(n=t.create)&&void 0!==n&&n.container){var o=S(Object.entries(t.create.container)[0],2),s=o[0],u=o[1];if(!s||!r[s])throw new Error("Wrong key for the dataModel.create.container config of resource "+e);i(_(r[s].baseUrl,u))}else if(null!==(a=t.create)&&void 0!==a&&a.server){var c;i(Ne(t.types,null===(c=t.create)||void 0===c?void 0:c.server,r))}else{var l=D("default",r);i(Ne(t.types,l,r))}}),[t,r,i]),a},exports.useDataModel=_e,exports.useDataModels=function(){var e=o.useContext(a.DataProviderContext),t=S(o.useState(),2),r=t[0],n=t[1];return o.useEffect((function(){e.getDataModels().then((function(e){return n(e)}))}),[e,n]),r},exports.useDataServers=Le,exports.useGetExternalLink=function(e){var t=o.useContext(a.DataProviderContext).getLocalDataServers(),r=o.useMemo((function(){if(t)return Object.fromEntries(Object.values(t).map((function(e){var t=void 0!==e.externalLinks?e.externalLinks:!e.default;return[e.baseUrl,t]})))}),[t]);return o.useCallback((function(t){var n=Ae(e,t);if(!1===n)return!1;if(null==t||!t.id)return!1;var a=Object.keys(r).find((function(e){return null==t?void 0:t.id.startsWith(e)}));if(!a)return!1;var o=Ae(r[a],t);return!1!==o&&(Pe(n)?n:Pe(o)?o:t.id)}),[r,e])};
+var $3pVuQ$urljoin = require("url-join");
+var $3pVuQ$jsonld = require("jsonld");
+var $3pVuQ$speakingurl = require("speakingurl");
+var $3pVuQ$isobject = require("isobject");
+var $3pVuQ$rdfjsdatamodel = require("@rdfjs/data-model");
+var $3pVuQ$sparqljs = require("sparqljs");
+var $3pVuQ$cryptojsmd5 = require("crypto-js/md5");
+var $3pVuQ$jwtdecode = require("jwt-decode");
+var $3pVuQ$reactadmin = require("react-admin");
+var $3pVuQ$react = require("react");
+var $3pVuQ$reactjsxruntime = require("react/jsx-runtime");
+var $3pVuQ$muistylesmakeStyles = require("@mui/styles/makeStyles");
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "dataProvider", () => $7f6a16d0025dc83a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "buildSparqlQuery", () => $33c37185da3771a9$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "buildBlankNodesQuery", () => $64d4ce40c79d1509$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useGetExternalLink", () => $85e9a897c6d7c14a$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useContainers", () => $c2f8a77958c288fd$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useCreateContainer", () => $99ed32cbdb76cb50$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useDataModel", () => $404991bb01c2ceff$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useDataModels", () => $8d622cbd05acb834$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useDataServers", () => $9b817943cd488c90$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "FilterHandler", () => $f763906f9b20f2d8$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "GroupedReferenceHandler", () => $b4703fef6d6af456$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReificationArrayInput", () => $030f1232f6810456$export$2e2bcd8739ae039);
+
+
+const $3db7a4510a668a04$var$fetchResource = async (resourceUri, config)=>{
+    const { httpClient: httpClient, jsonContext: jsonContext } = config;
+    let { json: data } = await httpClient(resourceUri);
+    if (!data) throw new Error(`Not a valid JSON: ${resourceUri}`);
+    data.id = data.id || data["@id"];
+    // We compact only if the context is different between the frontend and the middleware
+    // TODO deep compare if the context is an object
+    if (data["@context"] !== jsonContext) data = await (0, ($parcel$interopDefault($3pVuQ$jsonld))).compact(data, jsonContext);
+    return data;
+};
+var $3db7a4510a668a04$export$2e2bcd8739ae039 = $3db7a4510a668a04$var$fetchResource;
+
+
+const $9020b8e3f4a4c1a1$var$getOneMethod = (config)=>async (resourceId, params)=>{
+        const { resources: resources } = config;
+        const dataModel = resources[resourceId];
+        if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
+        const data = await (0, $3db7a4510a668a04$export$2e2bcd8739ae039)(params.id, config);
+        // Transform single value into array if forceArray is set
+        if (dataModel.list?.forceArray) {
+            for (const forceArrayItem of dataModel.list?.forceArray || [])if (data[forceArrayItem] && !Array.isArray(data[forceArrayItem])) data[forceArrayItem] = [
+                data[forceArrayItem]
+            ];
+        }
+        // TODO activate defaultFetchPlan option
+        // if (dataModel.list?.defaultFetchPlan) {
+        //   for (const node of dataModel.list?.defaultFetchPlan) {
+        //     if (
+        //       data[node] &&
+        //       typeof data[node] === 'string' &&
+        //       data[node].startsWith('http')
+        //     ) {
+        //       try {
+        //         const dataToEmbed = await fetchResource(data[node], config);
+        //         delete dataToEmbed['@context'];
+        //         data[node] = dataToEmbed;
+        //       } catch (e) {
+        //         // Ignore errors (this may happen if user does not have rights to see the resource)
+        //       }
+        //     }
+        //   }
+        // }
+        return {
+            data: data
+        };
+    };
+var $9020b8e3f4a4c1a1$export$2e2bcd8739ae039 = $9020b8e3f4a4c1a1$var$getOneMethod;
+
+
+
+
+const $58dec60cb6361eb9$export$190bcb5b6b4f794f = (fileName)=>{
+    let fileExtension = "";
+    const splitFileName = fileName.split(".");
+    if (splitFileName.length > 1) {
+        fileExtension = splitFileName.pop();
+        fileName = splitFileName.join(".");
+    }
+    return `${(0, ($parcel$interopDefault($3pVuQ$speakingurl)))(fileName, {
+        lang: "fr"
+    })}.${fileExtension}`;
+};
+const $58dec60cb6361eb9$export$be78b3111c50efdd = (o)=>o?.rawFile && o.rawFile instanceof File;
+const $58dec60cb6361eb9$var$getUploadsContainerUri = (config)=>{
+    const serverKey = Object.keys(config.dataServers).find((key)=>config.dataServers[key].uploadsContainer);
+    if (serverKey) return (0, ($parcel$interopDefault($3pVuQ$urljoin)))(config.dataServers[serverKey].baseUrl, config.dataServers[serverKey].uploadsContainer);
+};
+const $58dec60cb6361eb9$var$uploadFile = async (rawFile, config)=>{
+    const uploadsContainerUri = $58dec60cb6361eb9$var$getUploadsContainerUri(config);
+    if (!uploadsContainerUri) throw new Error("You must define an uploadsContainer in one of the server's configuration");
+    const response = await config.httpClient(uploadsContainerUri, {
+        method: "POST",
+        body: rawFile,
+        headers: new Headers({
+            // We must sluggify the file name, because we can't use non-ASCII characters in the header
+            // However we keep the extension apart (if it exists) so that it is not replaced with a -
+            // TODO let the middleware guess the extension based on the content type
+            Slug: $58dec60cb6361eb9$export$190bcb5b6b4f794f(rawFile.name),
+            "Content-Type": rawFile.type
+        })
+    });
+    if (response.status === 201) return response.headers.get("Location");
+};
+/*
+ * Look for raw files in the record data.
+ * If there are any, upload them and replace the file by its URL.
+ */ const $58dec60cb6361eb9$var$uploadAllFiles = async (record, config)=>{
+    for(const property in record)if (Object.prototype.hasOwnProperty.call(record, property)) {
+        if (Array.isArray(record[property])) {
+            for(let i = 0; i < record[property].length; i++)if ($58dec60cb6361eb9$export$be78b3111c50efdd(record[property][i])) record[property][i] = await $58dec60cb6361eb9$var$uploadFile(record[property][i].rawFile, config);
+        } else if ($58dec60cb6361eb9$export$be78b3111c50efdd(record[property])) record[property] = await $58dec60cb6361eb9$var$uploadFile(record[property].rawFile, config);
+    }
+    return record;
+};
+var $58dec60cb6361eb9$export$2e2bcd8739ae039 = $58dec60cb6361eb9$var$uploadAllFiles;
+
+
+
+const $8f44b7c15b8b8e1d$var$getServerKeyFromType = (type, dataServers)=>{
+    return Object.keys(dataServers).find((key)=>{
+        return dataServers[key][type];
+    });
+};
+var $8f44b7c15b8b8e1d$export$2e2bcd8739ae039 = $8f44b7c15b8b8e1d$var$getServerKeyFromType;
+
+
+const $982f4f2fb185d606$var$parseServerKey = (serverKey, dataServers)=>{
+    switch(serverKey){
+        case "@default":
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+        case "@pod":
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("pod", dataServers);
+        case "@authServer":
+            return (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
+        default:
+            return serverKey;
+    }
+};
+// Return the list of servers keys in an array
+// parsing keywords like @all, @default, @pod and @authServer
+const $982f4f2fb185d606$var$parseServerKeys = (serverKeys, dataServers)=>{
+    if (Array.isArray(serverKeys)) {
+        if (serverKeys.includes("@all")) return Object.keys(dataServers);
+        return serverKeys.map((serverKey)=>$982f4f2fb185d606$var$parseServerKey(serverKey, dataServers));
+    }
+    if (typeof serverKeys === "string") {
+        if (serverKeys === "@all") return Object.keys(dataServers);
+        if (serverKeys === "@remote") {
+            const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+            return Object.keys(dataServers).filter((serverKey)=>serverKey !== defaultServerKey);
+        }
+        return [
+            $982f4f2fb185d606$var$parseServerKey(serverKeys, dataServers)
+        ];
+    }
+    // If server key is empty
+    return false;
+};
+var $982f4f2fb185d606$export$2e2bcd8739ae039 = $982f4f2fb185d606$var$parseServerKeys;
+
+
+const $fd693d31e1c2e54f$var$findContainersWithTypes = (types, serverKeys, dataServers)=>{
+    const containers = {};
+    const existingContainers = [];
+    serverKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
+    Object.keys(dataServers).forEach((key1)=>{
+        Object.keys(dataServers[key1].containers).forEach((key2)=>{
+            if (!serverKeys || serverKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
+                if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
+                    const containerUri = (0, ($parcel$interopDefault($3pVuQ$urljoin)))(dataServers[key2].baseUrl, path);
+                    // Avoid returning the same container several times
+                    if (!existingContainers.includes(containerUri)) {
+                        existingContainers.push(containerUri);
+                        if (!containers[key1]) containers[key1] = [];
+                        containers[key1].push(containerUri);
+                    }
+                });
+            });
+        });
+    });
+    return containers;
+};
+var $fd693d31e1c2e54f$export$2e2bcd8739ae039 = $fd693d31e1c2e54f$var$findContainersWithTypes;
+
+
+const $907cbc087f6529e2$var$createMethod = (config)=>async (resourceId, params)=>{
+        const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext } = config;
+        const dataModel = resources[resourceId];
+        if (!dataModel) Error(`Resource ${resourceId} is not mapped in resources file`);
+        const headers = new Headers();
+        let containerUri;
+        let serverKey;
+        if (dataModel.create?.container) {
+            serverKey = Object.keys(dataModel.create.container)[0];
+            containerUri = (0, ($parcel$interopDefault($3pVuQ$urljoin)))(dataServers[serverKey].baseUrl, Object.values(dataModel.create.container)[0]);
+        } else {
+            serverKey = dataModel.create?.server || Object.keys(dataServers).find((key)=>dataServers[key].default === true);
+            if (!serverKey) throw new Error("You must define a server for the creation, or a container, or a default server");
+            const containers = (0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, [
+                serverKey
+            ], dataServers);
+            // Extract the containerUri from the results (and ensure there is only one)
+            const serverKeys = Object.keys(containers);
+            if (!serverKeys || serverKeys.length === 0) throw new Error(`No container with types ${JSON.stringify(dataModel.types)} found on server ${serverKey}`);
+            if (serverKeys.length > 1 || containers[serverKeys[0]].length > 1) throw new Error(`More than one container detected with types ${JSON.stringify(dataModel.types)} on server ${serverKey}`);
+            containerUri = containers[serverKeys[0]][0];
+        }
+        if (params.data) {
+            if (dataModel.fieldsMapping?.title) {
+                if (Array.isArray(dataModel.fieldsMapping.title)) headers.set("Slug", dataModel.fieldsMapping.title.map((f)=>params.data[f]).join(" "));
+                else headers.set("Slug", params.data[dataModel.fieldsMapping.title]);
+            }
+            // Upload files, if there are any
+            params.data = await (0, $58dec60cb6361eb9$export$2e2bcd8739ae039)(params.data, config);
+            const { headers: responseHeaders } = await httpClient(containerUri, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify({
+                    "@context": jsonContext,
+                    "@type": dataModel.types,
+                    ...params.data
+                })
+            });
+            // Retrieve newly-created resource
+            const resourceUri = responseHeaders.get("Location");
+            return await (0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)(resourceId, {
+                id: resourceUri
+            });
+        }
+        if (params.id) {
+            headers.set("Content-Type", "application/sparql-update");
+            await httpClient(containerUri, {
+                method: "PATCH",
+                headers: headers,
+                body: `
+        PREFIX ldp: <http://www.w3.org/ns/ldp#>
+        INSERT DATA { <${containerUri}> ldp:contains <${params.id}>. };
+      `
+            });
+            // Create must return the new data, so get them from the remote URI
+            return await (0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)(resourceId, {
+                id: params.id
+            });
+        }
+    };
+var $907cbc087f6529e2$export$2e2bcd8739ae039 = $907cbc087f6529e2$var$createMethod;
+
+
+const $0e66902b578fe66a$var$deleteMethod = (config)=>async (resourceId, params)=>{
+        const { httpClient: httpClient } = config;
+        await httpClient(params.id, {
+            method: "DELETE"
+        });
+        return {
+            data: {
+                id: params.id
+            }
+        };
+    };
+var $0e66902b578fe66a$export$2e2bcd8739ae039 = $0e66902b578fe66a$var$deleteMethod;
+
+
+const $f170294dd29d8bf8$var$deleteManyMethod = (config)=>async (resourceId, params)=>{
+        const { httpClient: httpClient } = config;
+        const ids = [];
+        for (const id of params.ids)try {
+            await httpClient(id, {
+                method: "DELETE"
+            });
+            ids.push(id);
+        } catch (e) {
+        // Do nothing if we fail to delete a resource
+        }
+        return {
+            data: ids
+        };
+    };
+var $f170294dd29d8bf8$export$2e2bcd8739ae039 = $f170294dd29d8bf8$var$deleteManyMethod;
+
+
+const $b16131432127b07b$var$getDataServers = (config)=>()=>{
+        return config.dataServers;
+    };
+var $b16131432127b07b$export$2e2bcd8739ae039 = $b16131432127b07b$var$getDataServers;
+
+
+const $241c41c6f6021c7a$var$getDataModels = (config)=>()=>{
+        return config.resources;
+    };
+var $241c41c6f6021c7a$export$2e2bcd8739ae039 = $241c41c6f6021c7a$var$getDataModels;
+
+
+
+
+
+const $6e66f3a2f960b9ca$export$26b9f946b448f23e = (type, resource)=>{
+    const resourceType = resource.type || resource["@type"];
+    return Array.isArray(resourceType) ? resourceType.includes(type) : resourceType === type;
+};
+const $6e66f3a2f960b9ca$var$fetchContainers = async (containers, resourceId, params, config)=>{
+    const { httpClient: httpClient, jsonContext: jsonContext } = config;
+    // Transform in an containerUri:serverKey object
+    const containersServers = Object.keys(containers).reduce((acc, serverKey)=>({
+            ...acc,
+            ...Object.fromEntries(containers[serverKey].map((containerUri)=>[
+                    containerUri,
+                    serverKey
+                ]))
+        }), {});
+    const fetchPromises = Object.keys(containersServers).map((containerUri)=>httpClient(containerUri).then(({ json: json })=>{
+            // If container's context is different, compact it to have an uniform result
+            // TODO deep compare if the context is an object
+            if (json["@context"] !== jsonContext) return (0, ($parcel$interopDefault($3pVuQ$jsonld))).compact(json, jsonContext);
+            return json;
+        }).then((json)=>{
+            if ($6e66f3a2f960b9ca$export$26b9f946b448f23e("ldp:Container", json)) return json["ldp:contains"];
+            throw new Error(`${containerUri} is not a LDP container`);
+        }));
+    // Fetch simultaneously all containers
+    let results = await Promise.all(fetchPromises);
+    if (results.length === 0) return {
+        data: [],
+        total: 0
+    };
+    // Merge all results in one array
+    results = [].concat.apply(...results);
+    let returnData = results.map((item)=>{
+        item.id = item.id || item["@id"];
+        return item;
+    });
+    // Apply filter to results
+    if (params.filter) {
+        // For SPARQL queries, we use "a" to filter types, but in containers it must be "type"
+        if (params.filter.a) {
+            params.filter.type = params.filter.a;
+            delete params.filter.a;
+        }
+        if (Object.keys(params.filter).length > 0) returnData = returnData.filter((resource)=>{
+            return Object.entries(params.filter).every(([k, v])=>{
+                if (k == "q") return Object.entries(resource).some(([kr, vr])=>{
+                    if (!(0, ($parcel$interopDefault($3pVuQ$isobject)))(vr)) {
+                        const arrayValues = Array.isArray(vr) ? vr : [
+                            vr
+                        ];
+                        return arrayValues.some((va)=>{
+                            if (typeof va === "string" || va instanceof String) return va.toLowerCase().normalize("NFD").includes(v.toLowerCase().normalize("NFD"));
+                        });
+                    }
+                    return false;
+                });
+                if (resource[k]) return Array.isArray(resource[k]) ? resource[k].some((va)=>va.includes(v)) : resource[k].includes(v);
+                return false;
+            });
+        });
+    }
+    if (params.sort) returnData = returnData.sort((a, b)=>{
+        if (a[params.sort.field] && b[params.sort.field]) {
+            if (params.sort.order === "ASC") return a[params.sort.field].localeCompare(b[params.sort.field]);
+            return b[params.sort.field].localeCompare(a[params.sort.field]);
+        }
+        return true;
+    });
+    if (params.pagination) returnData = returnData.slice((params.pagination.page - 1) * params.pagination.perPage, params.pagination.page * params.pagination.perPage);
+    return {
+        data: returnData,
+        total: results.length
+    };
+};
+var $6e66f3a2f960b9ca$export$2e2bcd8739ae039 = $6e66f3a2f960b9ca$var$fetchContainers;
+
+
+
+const $e5241bff9fc0c9d7$var$getEmbedFrame = (blankNodes)=>{
+    let embedFrame = {};
+    let predicates;
+    if (blankNodes) {
+        for (const blankNode of blankNodes){
+            if (blankNode.includes("/")) predicates = blankNode.split("/").reverse();
+            else predicates = [
+                blankNode
+            ];
+            embedFrame = {
+                ...embedFrame,
+                ...predicates.reduce((accumulator, predicate)=>({
+                        [predicate]: {
+                            "@embed": "@last",
+                            ...accumulator
+                        }
+                    }), {})
+            };
+        }
+        return embedFrame;
+    }
+};
+var $e5241bff9fc0c9d7$export$2e2bcd8739ae039 = $e5241bff9fc0c9d7$var$getEmbedFrame;
+
+
+
+
+
+const $761c677606459117$var$resolvePrefix = (item, ontologies)=>{
+    if (item.startsWith("http://") || item.startsWith("https://")) // Already resolved, return the URI
+    return item;
+    if (item === "a") // Special case
+    return "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+    const [prefix, value] = item.split(":");
+    if (value) {
+        const ontology = ontologies.find((ontology)=>ontology.prefix === prefix);
+        if (ontology) return ontology.url + value;
+        throw new Error(`No ontology found with prefix ${prefix}`);
+    } else throw new Error(`The value "${item}" is not correct. It must include a prefix or be a full URI.`);
+};
+var $761c677606459117$export$2e2bcd8739ae039 = $761c677606459117$var$resolvePrefix;
+
+
+const $51d7c29cc84f802b$var$defaultToArray = (value)=>!value ? [] : Array.isArray(value) ? value : [
+        value
+    ];
+// We need to always include the type or React-Admin will not work properly
+const $51d7c29cc84f802b$var$typeQuery = (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)("s1"), (0, $3pVuQ$rdfjsdatamodel.namedNode)("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), (0, $3pVuQ$rdfjsdatamodel.variable)("type"));
+const $51d7c29cc84f802b$var$buildBaseQuery = (predicates, ontologies)=>{
+    let baseTriples;
+    if (predicates) {
+        baseTriples = $51d7c29cc84f802b$var$defaultToArray(predicates).map((predicate, i)=>(0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)("s1"), (0, $3pVuQ$rdfjsdatamodel.namedNode)((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i + 1}`)));
+        return {
+            construct: [
+                $51d7c29cc84f802b$var$typeQuery,
+                ...baseTriples
+            ],
+            where: [
+                $51d7c29cc84f802b$var$typeQuery,
+                ...baseTriples.map((triple)=>({
+                        type: "optional",
+                        patterns: [
+                            triple
+                        ]
+                    }))
+            ]
+        };
+    }
+    baseTriples = [
+        (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)("s1"), (0, $3pVuQ$rdfjsdatamodel.variable)("p1"), (0, $3pVuQ$rdfjsdatamodel.variable)("o1"))
+    ];
+    return {
+        construct: baseTriples,
+        where: baseTriples
+    };
+};
+var $51d7c29cc84f802b$export$2e2bcd8739ae039 = $51d7c29cc84f802b$var$buildBaseQuery;
+
+
+
+
+
+// Transform ['ont:predicate1/ont:predicate2'] to ['ont:predicate1', 'ont:predicate1/ont:predicate2']
+const $64d4ce40c79d1509$var$extractNodes = (blankNodes)=>{
+    const nodes = [];
+    if (blankNodes) {
+        for (const predicate of blankNodes)if (predicate.includes("/")) {
+            const nodeNames = predicate.split("/");
+            for(let i = 1; i <= nodeNames.length; i++)nodes.push(nodeNames.slice(0, i).join("/"));
+        } else nodes.push(predicate);
+    }
+    return nodes;
+};
+const $64d4ce40c79d1509$var$generateSparqlVarName = (node)=>(0, ($parcel$interopDefault($3pVuQ$cryptojsmd5)))(node);
+const $64d4ce40c79d1509$var$getParentNode = (node)=>node.includes("/") && node.split("/")[0];
+const $64d4ce40c79d1509$var$getPredicate = (node)=>node.includes("/") ? node.split("/")[1] : node;
+const $64d4ce40c79d1509$var$buildUnionQuery = (queries)=>queries.map((q)=>{
+        let triples = q.query;
+        const firstTriple = queries.find((q2)=>q.parentNode === q2.node);
+        if (firstTriple !== undefined) triples = triples.concat(firstTriple.query[0]);
+        return {
+            type: "bgp",
+            triples: triples
+        };
+    });
+const $64d4ce40c79d1509$var$buildBlankNodesQuery = (blankNodes, baseQuery, ontologies)=>{
+    const queries = [];
+    const nodes = $64d4ce40c79d1509$var$extractNodes(blankNodes);
+    if (nodes && ontologies && ontologies.length > 0) {
+        for (const node of nodes){
+            const parentNode = $64d4ce40c79d1509$var$getParentNode(node);
+            const predicate = $64d4ce40c79d1509$var$getPredicate(node);
+            const varName = $64d4ce40c79d1509$var$generateSparqlVarName(node);
+            const parentVarName = parentNode ? $64d4ce40c79d1509$var$generateSparqlVarName(parentNode) : "1";
+            const query = [
+                (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`s${parentVarName}`), (0, $3pVuQ$rdfjsdatamodel.namedNode)((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), (0, $3pVuQ$rdfjsdatamodel.variable)(`s${varName}`)),
+                (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`s${varName}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`p${varName}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${varName}`))
+            ];
+            queries.push({
+                node: node,
+                parentNode: parentNode,
+                query: query,
+                filter: "" // `FILTER(isBLANK(?s${varName})) .`
+            });
+        }
+        return {
+            construct: queries.length > 0 ? queries.map((q)=>q.query).reduce((pre, cur)=>pre.concat(cur)) : null,
+            where: {
+                type: "union",
+                patterns: [
+                    baseQuery.where,
+                    ...$64d4ce40c79d1509$var$buildUnionQuery(queries)
+                ]
+            }
+        };
+    }
+    return {
+        construct: "",
+        where: ""
+    };
+};
+var $64d4ce40c79d1509$export$2e2bcd8739ae039 = $64d4ce40c79d1509$var$buildBlankNodesQuery;
+
+
+
+const $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery = (depth, baseQuery)=>{
+    const construct = [
+        ...baseQuery.construct
+    ];
+    let where = {};
+    if (depth > 0) {
+        const whereQueries = [];
+        whereQueries.push([
+            baseQuery.where
+        ]);
+        for(let i = 1; i <= depth; i++){
+            construct.push((0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`p${i + 1}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i + 1}`)));
+            whereQueries.push([
+                ...whereQueries[whereQueries.length - 1],
+                {
+                    type: "filter",
+                    expression: {
+                        type: "operation",
+                        operator: "isblank",
+                        args: [
+                            (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`)
+                        ]
+                    }
+                },
+                (0, $3pVuQ$rdfjsdatamodel.triple)((0, $3pVuQ$rdfjsdatamodel.variable)(`o${i}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`p${i + 1}`), (0, $3pVuQ$rdfjsdatamodel.variable)(`o${i + 1}`))
+            ]);
+        }
+        where = {
+            type: "union",
+            patterns: whereQueries
+        };
+    } else if (depth === 0) where = baseQuery.where;
+    else throw new Error("The depth of buildAutoDetectBlankNodesQuery should be 0 or more");
+    return {
+        construct: construct,
+        where: where
+    };
+};
+var $3b137d792e8838ac$export$2e2bcd8739ae039 = $3b137d792e8838ac$var$buildAutoDetectBlankNodesQuery;
+
+
+
+const { literal: $33c37185da3771a9$var$literal, namedNode: $33c37185da3771a9$var$namedNode, triple: $33c37185da3771a9$var$triple, variable: $33c37185da3771a9$var$variable } = (0, ($parcel$interopDefault($3pVuQ$rdfjsdatamodel)));
+const $33c37185da3771a9$var$generator = new (0, $3pVuQ$sparqljs.Generator)({
+});
+const $33c37185da3771a9$var$reservedFilterKeys = [
+    "q",
+    "sparqlWhere",
+    "blankNodes",
+    "blankNodesDepth",
+    "_servers",
+    "_predicates"
+];
+const $33c37185da3771a9$var$buildSparqlQuery = ({ containers: containers, params: params, dataModel: dataModel, ontologies: ontologies })=>{
+    const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+    const predicates = params.filter?._predicates || dataModel.list?.predicates;
+    const blankNodesDepth = params.filter?.blankNodesDepth ?? dataModel.list?.blankNodesDepth ?? 2;
+    const filter = {
+        ...dataModel.list?.filter,
+        ...params.filter
+    };
+    const baseQuery = (0, $51d7c29cc84f802b$export$2e2bcd8739ae039)(predicates, ontologies);
+    const sparqlJsParams = {
+        queryType: "CONSTRUCT",
+        template: baseQuery.construct,
+        where: [],
+        type: "query",
+        prefixes: Object.fromEntries(ontologies.map((ontology)=>[
+                ontology.prefix,
+                ontology.url
+            ]))
+    };
+    const containerWhere = [
+        {
+            type: "values",
+            values: containers.map((containerUri)=>({
+                    "?containerUri": $33c37185da3771a9$var$namedNode(containerUri)
+                }))
+        },
+        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("containerUri"), $33c37185da3771a9$var$namedNode("http://www.w3.org/ns/ldp#contains"), $33c37185da3771a9$var$variable("s1")),
+        {
+            type: "filter",
+            expression: {
+                type: "operation",
+                operator: "isiri",
+                args: [
+                    $33c37185da3771a9$var$variable("s1")
+                ]
+            }
+        }
+    ];
+    let resourceWhere = [];
+    if (filter && Object.keys(filter).length > 0) {
+        const hasSPARQLFilter = filter.sparqlWhere && Object.keys(filter.sparqlWhere).length > 0;
+        const hasFullTextSearch = filter.q && filter.q.length > 0;
+        if (hasSPARQLFilter) /* 
+        Example of usage :
+        {
+          "sparqlWhere": {
+            "type": "bgp",
+            "triples": [{
+              "subject": {"termType": "Variable", "value": "s1"},
+              "predicate": {"termType": "NameNode", "value": "http://virtual-assembly.org/ontologies/pair#label"},
+              "object": {"termType": "Literal", "value": "My Organization"}
+            }]
+          }
+        }
+      */ // initialize array in case of single value :
+        [].concat(filter.sparqlWhere).forEach((sw)=>{
+            resourceWhere.push(sw);
+        });
+        if (hasFullTextSearch) resourceWhere.push({
+            type: "group",
+            patterns: [
+                {
+                    queryType: "SELECT",
+                    variables: [
+                        $33c37185da3771a9$var$variable("s1")
+                    ],
+                    where: [
+                        $33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$variable("p1"), $33c37185da3771a9$var$variable("o1")),
+                        {
+                            type: "filter",
+                            expression: {
+                                type: "operation",
+                                operator: "isliteral",
+                                args: [
+                                    $33c37185da3771a9$var$variable("o1")
+                                ]
+                            }
+                        },
+                        {
+                            type: "filter",
+                            expression: {
+                                type: "operation",
+                                operator: "regex",
+                                args: [
+                                    {
+                                        type: "operation",
+                                        operator: "lcase",
+                                        args: [
+                                            {
+                                                type: "operation",
+                                                operator: "str",
+                                                args: [
+                                                    $33c37185da3771a9$var$variable("o1")
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    $33c37185da3771a9$var$literal(filter.q.toLowerCase(), "", $33c37185da3771a9$var$namedNode("http://www.w3.org/2001/XMLSchema#string"))
+                                ]
+                            }
+                        }
+                    ],
+                    type: "query"
+                }
+            ]
+        });
+        // Other filters
+        // SPARQL keyword a = filter based on the class of a resource (example => 'a': 'pair:OrganizationType')
+        // Other filters are based on a value (example => 'petr:hasAudience': 'http://localhost:3000/audiences/tout-public')
+        Object.entries(filter).forEach(([predicate, object])=>{
+            if (!$33c37185da3771a9$var$reservedFilterKeys.includes(predicate)) resourceWhere.unshift($33c37185da3771a9$var$triple($33c37185da3771a9$var$variable("s1"), $33c37185da3771a9$var$namedNode((0, $761c677606459117$export$2e2bcd8739ae039)(predicate, ontologies)), $33c37185da3771a9$var$namedNode((0, $761c677606459117$export$2e2bcd8739ae039)(object, ontologies))));
+        });
+    }
+    // Blank nodes
+    const blankNodesQuery = blankNodes ? (0, $64d4ce40c79d1509$export$2e2bcd8739ae039)(blankNodes, baseQuery, ontologies) : (0, $3b137d792e8838ac$export$2e2bcd8739ae039)(blankNodesDepth, baseQuery);
+    if (blankNodesQuery && blankNodesQuery.construct) {
+        resourceWhere = resourceWhere.concat(blankNodesQuery.where);
+        sparqlJsParams.template = sparqlJsParams.template.concat(blankNodesQuery.construct);
+    } else resourceWhere.push(baseQuery.where);
+    sparqlJsParams.where.push({
+        type: "union",
+        patterns: [
+            containerWhere,
+            {
+                type: "graph",
+                name: $33c37185da3771a9$var$namedNode("http://semapps.org/mirror"),
+                patterns: containerWhere
+            }
+        ]
+    }, {
+        type: "union",
+        patterns: [
+            resourceWhere,
+            {
+                type: "graph",
+                name: $33c37185da3771a9$var$namedNode("http://semapps.org/mirror"),
+                patterns: resourceWhere
+            }
+        ]
+    });
+    return $33c37185da3771a9$var$generator.stringify(sparqlJsParams);
+};
+var $33c37185da3771a9$export$2e2bcd8739ae039 = $33c37185da3771a9$var$buildSparqlQuery;
+
+
+const $1e7a94d745f8597b$var$compare = (a, b)=>{
+    switch(typeof a){
+        case "string":
+            return a.localeCompare(b);
+        case "number":
+        case "bigint":
+            return a - b;
+        default:
+            return 0;
+    }
+};
+const $1e7a94d745f8597b$var$fetchSparqlEndpoints = async (containers, resourceId, params, config)=>{
+    const { dataServers: dataServers, resources: resources, httpClient: httpClient, jsonContext: jsonContext, ontologies: ontologies } = config;
+    const dataModel = resources[resourceId];
+    const sparqlQueryPromises = Object.keys(containers).map((serverKey)=>new Promise((resolve, reject)=>{
+            const blankNodes = params.filter?.blankNodes || dataModel.list?.blankNodes;
+            // When the SPARQL request comes from the browser's URL, it comes as JSON string which must must be parsed
+            if (params.filter?.sparqlWhere && (typeof params.filter.sparqlWhere === "string" || params.filter.sparqlWhere instanceof String)) params.filter.sparqlWhere = JSON.parse(decodeURIComponent(params.filter.sparqlWhere));
+            const sparqlQuery = (0, $33c37185da3771a9$export$2e2bcd8739ae039)({
+                containers: containers[serverKey],
+                params: params,
+                dataModel: dataModel,
+                ontologies: ontologies
+            });
+            httpClient(dataServers[serverKey].sparqlEndpoint, {
+                method: "POST",
+                body: sparqlQuery
+            }).then(({ json: json })=>{
+                // By default, embed only the blank nodes we explicitly asked to dereference
+                // Otherwise we may have same-type resources embedded in other resources
+                // To increase performances, you can set explicitEmbedOnFraming to false (make sure the result is still OK)
+                const frame = dataModel.list?.explicitEmbedOnFraming !== false ? {
+                    "@context": jsonContext,
+                    "@type": dataModel.types,
+                    "@embed": "@never",
+                    ...(0, $e5241bff9fc0c9d7$export$2e2bcd8739ae039)(blankNodes)
+                } : {
+                    "@context": jsonContext,
+                    "@type": dataModel.types
+                };
+                // omitGraph option force results to be in a @graph, even if we have a single result
+                return (0, ($parcel$interopDefault($3pVuQ$jsonld))).frame(json, frame, {
+                    omitGraph: false
+                });
+            }).then((compactJson)=>{
+                if (compactJson["@id"]) {
+                    const { "@context": context, ...rest } = compactJson;
+                    compactJson = {
+                        "@context": context,
+                        "@graph": [
+                            rest
+                        ]
+                    };
+                }
+                resolve(compactJson["@graph"] || []);
+            }).catch((e)=>reject(e));
+        }));
+    // Run simultaneous SPARQL queries
+    let results = await Promise.all(sparqlQueryPromises);
+    if (results.length === 0) return {
+        data: [],
+        total: 0
+    };
+    // Merge all results in one array
+    results = [].concat(...results);
+    // Add id in addition to @id, as this is what React-Admin expects
+    let returnData = results.map((item)=>{
+        item.id = item.id || item["@id"];
+        return item;
+    });
+    // TODO sort and paginate the results in the SPARQL query to improve performances
+    if (params.sort) returnData = returnData.sort((a, b)=>{
+        if (a[params.sort.field] !== undefined && b[params.sort.field] !== undefined) {
+            if (params.sort.order === "ASC") return $1e7a94d745f8597b$var$compare(a[params.sort.field], b[params.sort.field]);
+            return $1e7a94d745f8597b$var$compare(b[params.sort.field], a[params.sort.field]);
+        }
+        return 0;
+    });
+    if (params.pagination) returnData = returnData.slice((params.pagination.page - 1) * params.pagination.perPage, params.pagination.page * params.pagination.perPage);
+    return {
+        data: returnData,
+        total: results.length
+    };
+};
+var $1e7a94d745f8597b$export$2e2bcd8739ae039 = $1e7a94d745f8597b$var$fetchSparqlEndpoints;
+
+
+
+const $e3a78b3d48a0a0fb$var$findContainersWithPaths = (paths, dataServers)=>{
+    const containers = {};
+    Object.keys(paths).forEach((serverKey)=>{
+        if (dataServers[serverKey]) {
+            containers[serverKey] = [];
+            paths[serverKey].forEach((path)=>{
+                containers[serverKey].push((0, ($parcel$interopDefault($3pVuQ$urljoin)))(dataServers[serverKey].baseUrl, path));
+            });
+        } else throw new Error(`No server found with key ${serverKey}`);
+    });
+    return containers;
+};
+var $e3a78b3d48a0a0fb$export$2e2bcd8739ae039 = $e3a78b3d48a0a0fb$var$findContainersWithPaths;
+
+
+const $b6ed253f3374f5d4$var$getListMethod = (config)=>async (resourceId, params = {})=>{
+        const { dataServers: dataServers, resources: resources } = config;
+        const dataModel = resources[resourceId];
+        if (!dataModel) throw new Error(`Resource ${resourceId} is not mapped in resources file`);
+        let containers;
+        if (!params.filter?._servers && dataModel.list?.containers) {
+            if (Array.isArray(dataModel.list?.containers)) throw new Error(`The list.containers property of ${resourceId} dataModel must be of type object ({ serverKey: [containerUri] })`);
+            // If containers are set explicitly, use them
+            containers = (0, $e3a78b3d48a0a0fb$export$2e2bcd8739ae039)(dataModel.list.containers, dataServers);
+        } else // Otherwise find the container URIs on the given servers (either in the filter or the data model)
+        containers = (0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, params.filter?._servers || dataModel.list?.servers, dataServers);
+        if (dataModel.list?.fetchContainer) return (0, $6e66f3a2f960b9ca$export$2e2bcd8739ae039)(containers, resourceId, params, config);
+        return (0, $1e7a94d745f8597b$export$2e2bcd8739ae039)(containers, resourceId, params, config);
+    };
+var $b6ed253f3374f5d4$export$2e2bcd8739ae039 = $b6ed253f3374f5d4$var$getListMethod;
+
+
+
+const $e296494b4f6a4f89$var$getManyMethod = (config)=>async (resourceId, params)=>{
+        const { returnFailedResources: returnFailedResources } = config;
+        let returnData = await Promise.all(params.ids.map((id)=>(0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)(resourceId, {
+                id: typeof id === "object" ? id["@id"] : id
+            }).then(({ data: data })=>data).catch(()=>{
+                // Catch if one resource fails to load
+                // Otherwise no references will be show if only one is missing
+                // See https://github.com/marmelab/react-admin/issues/5190
+                if (returnFailedResources) return {
+                    id: id,
+                    _error: true
+                };
+            // Returning nothing
+            })));
+        // We don't want undefined results to appear in the results as it will break with react-admin
+        returnData = returnData.filter((e)=>e);
+        return {
+            data: returnData
+        };
+    };
+var $e296494b4f6a4f89$export$2e2bcd8739ae039 = $e296494b4f6a4f89$var$getManyMethod;
+
+
+
+const $e5e279a608b8e6b1$var$getManyReferenceMethod = (config)=>async (resourceId, params)=>{
+        params.filter = {
+            ...params.filter,
+            [params.target]: params.id
+        };
+        delete params.target;
+        return await (0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)(resourceId, params);
+    };
+var $e5e279a608b8e6b1$export$2e2bcd8739ae039 = $e5e279a608b8e6b1$var$getManyReferenceMethod;
+
+
+
+
+const $17541daf7ea3b8f0$var$updateMethod = (config)=>async (resourceId, params)=>{
+        const { httpClient: httpClient, jsonContext: jsonContext } = config;
+        // Upload files, if there are any
+        params.data = await (0, $58dec60cb6361eb9$export$2e2bcd8739ae039)(params.data, config);
+        await httpClient(params.id, {
+            method: "PUT",
+            body: JSON.stringify({
+                "@context": jsonContext,
+                ...params.data
+            })
+        });
+        return {
+            data: params.data
+        };
+    };
+var $17541daf7ea3b8f0$export$2e2bcd8739ae039 = $17541daf7ea3b8f0$var$updateMethod;
+
+
+
+
+
+const $3cfb23eead135e3f$var$fetchUserConfig = async (config)=>{
+    const { dataServers: dataServers, httpClient: httpClient } = config;
+    const token = localStorage.getItem("token");
+    const podKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("pod", dataServers);
+    const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
+    // If the user is logged in
+    if (token) {
+        const { webId: webId } = (0, ($parcel$interopDefault($3pVuQ$jwtdecode)))(token);
+        let userData;
+        try {
+            const { json: json } = await httpClient(webId);
+            userData = json;
+        } catch (e) {
+            console.error(e);
+            // If the webId cannot be fetched, assume an invalid token and disconnect the user
+            localStorage.clear();
+            window.location.reload();
+            return;
+        }
+        // If we have a POD server
+        if (podKey) {
+            // Fill the config provided to the data provider
+            // We must modify the config object directly
+            config.dataServers[podKey].name = "My Pod";
+            config.dataServers[podKey].baseUrl = (0, ($parcel$interopDefault($3pVuQ$urljoin)))(webId, "data"); // TODO find POD URI from user profile
+            config.dataServers[podKey].sparqlEndpoint = userData.endpoints?.["void:sparqlEndpoint"] || (0, ($parcel$interopDefault($3pVuQ$urljoin)))(webId, "sparql");
+        }
+        if (authServerKey) // Fill the config provided to the data provider
+        // We must modify the config object directly
+        config.dataServers[authServerKey].proxyUrl = userData.endpoints?.proxyUrl;
+    } else if (podKey) // If the user is not logged in, ignore the POD server
+    delete config.dataServers[podKey];
+};
+var $3cfb23eead135e3f$export$2e2bcd8739ae039 = $3cfb23eead135e3f$var$fetchUserConfig;
+
+
+const $915df908e0942746$var$defaultToArray = (value)=>!value ? undefined : Array.isArray(value) ? value : [
+        value
+    ];
+const $915df908e0942746$var$fetchVoidEndpoints = async (config)=>{
+    const fetchPromises = Object.entries(config.dataServers).filter(([key, server])=>server.pod !== true).map(([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
+                key: key,
+                datasets: result.json["@graph"]
+            })).catch((e)=>{
+            if (e.status === 404 || e.status === 401) return {
+                key: key,
+                error: e
+            };
+            throw e;
+        }));
+    let results = [];
+    try {
+        results = await Promise.all(fetchPromises);
+    } catch (e) {
+    // Do not throw error if no endpoint found
+    }
+    for (const result of results){
+        config.dataServers[result.key].containers = config.dataServers[result.key].containers || {};
+        config.dataServers[result.key].blankNodes = config.dataServers[result.key].blankNodes || {};
+        // Ignore unfetchable endpoints
+        if (result.datasets) for (const dataset of result.datasets){
+            const datasetServerKey = Object.keys(config.dataServers).find((key)=>dataset["void:uriSpace"] === config.dataServers[key].baseUrl);
+            // If the dataset is not part of a server mapped in the dataServers, ignore it
+            if (datasetServerKey) {
+                // If this is the local dataset, add the base information
+                if (datasetServerKey === result.key) {
+                    config.dataServers[result.key].name = config.dataServers[result.key].name || dataset["dc:title"];
+                    config.dataServers[result.key].description = config.dataServers[result.key].description || dataset["dc:description"];
+                    config.dataServers[result.key].sparqlEndpoint = config.dataServers[result.key].sparqlEndpoint || dataset["void:sparqlEndpoint"];
+                }
+                config.dataServers[result.key].containers[datasetServerKey] = config.dataServers[result.key].containers[datasetServerKey] || {};
+                for (const partition of $915df908e0942746$var$defaultToArray(dataset["void:classPartition"]))for (const type of $915df908e0942746$var$defaultToArray(partition["void:class"])){
+                    // Set containers by type
+                    const path = partition["void:uriSpace"].replace(dataset["void:uriSpace"], "/");
+                    if (config.dataServers[result.key].containers[datasetServerKey][type]) config.dataServers[result.key].containers[datasetServerKey][type].push(path);
+                    else config.dataServers[result.key].containers[datasetServerKey][type] = [
+                        path
+                    ];
+                }
+            }
+        }
+    }
+};
+var $915df908e0942746$export$2e2bcd8739ae039 = $915df908e0942746$var$fetchVoidEndpoints;
+
+
+
+
+// Return the first server matching with the baseUrl
+const $59a07b932dae8600$var$getServerKeyFromUri = (uri, dataServers)=>{
+    return Object.keys(dataServers).find((key)=>{
+        if (dataServers[key].pod) // The baseUrl ends with /data so remove this part to match with the webId and webId-related URLs (/inbox, /outbox...)
+        return dataServers[key].baseUrl && uri.startsWith(dataServers[key].baseUrl.replace("/data", ""));
+        return uri.startsWith(dataServers[key].baseUrl);
+    });
+};
+var $59a07b932dae8600$export$2e2bcd8739ae039 = $59a07b932dae8600$var$getServerKeyFromUri;
+
+
+
+/*
+ * HTTP client used by all calls in data provider and auth provider
+ * Do proxy calls if a proxy endpoint is available and the server is different from the auth server
+ */ const $341dff85fe619d85$var$httpClient = (dataServers)=>(url, options = {})=>{
+        const authServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("authServer", dataServers);
+        const serverKey = (0, $59a07b932dae8600$export$2e2bcd8739ae039)(url, dataServers);
+        const useProxy = serverKey !== authServerKey && dataServers[authServerKey]?.proxyUrl && dataServers[serverKey]?.noProxy !== true;
+        if (!options.headers) options.headers = new Headers();
+        switch(options.method){
+            case "POST":
+            case "PATCH":
+            case "PUT":
+                if (!options.headers.has("Accept")) options.headers.set("Accept", "application/ld+json");
+                if (!options.headers.has("Content-Type")) options.headers.set("Content-Type", "application/ld+json");
+                break;
+            case "DELETE":
+                break;
+            case "GET":
+            default:
+                if (!options.headers.has("Accept")) options.headers.set("Accept", "application/ld+json");
+                break;
+        }
+        if (useProxy) {
+            const formData = new FormData();
+            formData.append("id", url);
+            formData.append("method", options.method || "GET");
+            formData.append("headers", JSON.stringify(Object.fromEntries(options.headers.entries())));
+            if (options.body) {
+                if (options.body instanceof File) formData.append("body", options.body, options.body.name);
+                else formData.append("body", options.body);
+            }
+            // Post to proxy endpoint with multipart/form-data format
+            return (0, $3pVuQ$reactadmin.fetchUtils).fetchJson(dataServers[authServerKey].proxyUrl, {
+                method: "POST",
+                headers: new Headers({
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                }),
+                body: formData
+            });
+        }
+        // Add token if the server is the same as the auth server
+        if (serverKey === authServerKey) {
+            const token = localStorage.getItem("token");
+            if (token) options.headers.set("Authorization", `Bearer ${token}`);
+        }
+        return (0, $3pVuQ$reactadmin.fetchUtils).fetchJson(url, options);
+    };
+var $341dff85fe619d85$export$2e2bcd8739ae039 = $341dff85fe619d85$var$httpClient;
+
+
+const $7f6a16d0025dc83a$var$dataProvider = (config)=>{
+    // TODO verify all data provider config + data models
+    if (!(0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", config.dataServers)) throw new Error("You must define a default server in your dataServers config");
+    if (!config.jsonContext) config.jsonContext = Object.fromEntries(config.ontologies.map((o)=>[
+            o.prefix,
+            o.url
+        ]));
+    if (!config.returnFailedResources) config.returnFailedResources = false;
+    // Configure httpClient with data servers (this is needed for proxy calls)
+    config.httpClient = (0, $341dff85fe619d85$export$2e2bcd8739ae039)(config.dataServers);
+    const fetchUserConfigPromise = (0, $3cfb23eead135e3f$export$2e2bcd8739ae039)(config);
+    const fetchVoidEndpointsPromise = (0, $915df908e0942746$export$2e2bcd8739ae039)(config);
+    const waitForVoidEndpoints = (method)=>async (...arg)=>{
+            await fetchUserConfigPromise;
+            await fetchVoidEndpointsPromise; // Return immediately if promise is fulfilled
+            return await method(...arg);
+        };
+    return {
+        getList: waitForVoidEndpoints((0, $b6ed253f3374f5d4$export$2e2bcd8739ae039)(config)),
+        getMany: waitForVoidEndpoints((0, $e296494b4f6a4f89$export$2e2bcd8739ae039)(config)),
+        getManyReference: waitForVoidEndpoints((0, $e5e279a608b8e6b1$export$2e2bcd8739ae039)(config)),
+        getOne: waitForVoidEndpoints((0, $9020b8e3f4a4c1a1$export$2e2bcd8739ae039)(config)),
+        create: waitForVoidEndpoints((0, $907cbc087f6529e2$export$2e2bcd8739ae039)(config)),
+        update: waitForVoidEndpoints((0, $17541daf7ea3b8f0$export$2e2bcd8739ae039)(config)),
+        updateMany: ()=>{
+            throw new Error("updateMany is not implemented yet");
+        },
+        delete: waitForVoidEndpoints((0, $0e66902b578fe66a$export$2e2bcd8739ae039)(config)),
+        deleteMany: waitForVoidEndpoints((0, $f170294dd29d8bf8$export$2e2bcd8739ae039)(config)),
+        // Custom methods
+        getDataModels: waitForVoidEndpoints((0, $241c41c6f6021c7a$export$2e2bcd8739ae039)(config)),
+        getDataServers: waitForVoidEndpoints((0, $b16131432127b07b$export$2e2bcd8739ae039)(config)),
+        getLocalDataServers: (0, $b16131432127b07b$export$2e2bcd8739ae039)(config),
+        fetch: waitForVoidEndpoints(config.httpClient)
+    };
+};
+var $7f6a16d0025dc83a$export$2e2bcd8739ae039 = $7f6a16d0025dc83a$var$dataProvider;
+
+
+
+
+
+
+const $85e9a897c6d7c14a$var$compute = (externalLinks, record)=>typeof externalLinks === "function" ? externalLinks(record) : externalLinks;
+const $85e9a897c6d7c14a$var$isURL = (url)=>typeof url === "string" && url.startsWith("http");
+const $85e9a897c6d7c14a$var$useGetExternalLink = (componentExternalLinks)=>{
+    // Since the externalLinks config is defined only locally, we don't need to wait for VOID endpoints fetching
+    const dataProvider = (0, $3pVuQ$react.useContext)((0, $3pVuQ$reactadmin.DataProviderContext));
+    const dataServers = dataProvider.getLocalDataServers();
+    const serversExternalLinks = (0, $3pVuQ$react.useMemo)(()=>{
+        if (dataServers) return Object.fromEntries(Object.values(dataServers).map((server)=>{
+            // If externalLinks is not defined in the data server, use external links for non-default servers
+            const externalLinks = server.externalLinks !== undefined ? server.externalLinks : !server.default;
+            return [
+                server.baseUrl,
+                externalLinks
+            ];
+        }));
+    }, [
+        dataServers
+    ]);
+    return (0, $3pVuQ$react.useCallback)((record)=>{
+        const computedComponentExternalLinks = $85e9a897c6d7c14a$var$compute(componentExternalLinks, record);
+        // If the component explicitly asks not to display as external links, use an internal link
+        if (computedComponentExternalLinks === false) return false;
+        if (!record?.id) return false;
+        const serverBaseUrl = Object.keys(serversExternalLinks).find((baseUrl)=>record?.id.startsWith(baseUrl));
+        // If no matching data servers could be found, assume we have an internal link
+        if (!serverBaseUrl) return false;
+        const computedServerExternalLinks = $85e9a897c6d7c14a$var$compute(serversExternalLinks[serverBaseUrl], record);
+        // If the data server explicitly asks not to display as external links, use an internal link
+        if (computedServerExternalLinks === false) return false;
+        if ($85e9a897c6d7c14a$var$isURL(computedComponentExternalLinks)) return computedComponentExternalLinks;
+        if ($85e9a897c6d7c14a$var$isURL(computedServerExternalLinks)) return computedServerExternalLinks;
+        return record.id;
+    }, [
+        serversExternalLinks,
+        componentExternalLinks
+    ]);
+};
+var $85e9a897c6d7c14a$export$2e2bcd8739ae039 = $85e9a897c6d7c14a$var$useGetExternalLink;
+
+
+
+
+
+const $404991bb01c2ceff$var$useDataModel = (resourceId)=>{
+    // Get the raw data provider, since useDataProvider returns a wrapper
+    const dataProvider = (0, $3pVuQ$react.useContext)((0, $3pVuQ$reactadmin.DataProviderContext));
+    const [dataModel, setDataModel] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        dataProvider.getDataModels().then((results)=>setDataModel(results[resourceId]));
+    }, [
+        dataProvider,
+        resourceId,
+        setDataModel
+    ]);
+    return dataModel;
+};
+var $404991bb01c2ceff$export$2e2bcd8739ae039 = $404991bb01c2ceff$var$useDataModel;
+
+
+
+
+const $9b817943cd488c90$var$useDataServers = ()=>{
+    // Get the raw data provider, since useDataProvider returns a wrapper
+    const dataProvider = (0, $3pVuQ$react.useContext)((0, $3pVuQ$reactadmin.DataProviderContext));
+    const [dataServers, setDataServers] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        dataProvider.getDataServers().then((results)=>setDataServers(results));
+    }, [
+        dataProvider,
+        setDataServers
+    ]);
+    return dataServers;
+};
+var $9b817943cd488c90$export$2e2bcd8739ae039 = $9b817943cd488c90$var$useDataServers;
+
+
+
+const $c2f8a77958c288fd$var$useContainers = (resourceId, serverKeys = "@all")=>{
+    const dataModel = (0, $404991bb01c2ceff$export$2e2bcd8739ae039)(resourceId);
+    const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
+    const [containers, setContainers] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        if (dataModel && dataServers) setContainers((0, $fd693d31e1c2e54f$export$2e2bcd8739ae039)(dataModel.types, serverKeys, dataServers));
+    }, [
+        dataModel,
+        dataServers,
+        serverKeys
+    ]);
+    return containers;
+};
+var $c2f8a77958c288fd$export$2e2bcd8739ae039 = $c2f8a77958c288fd$var$useContainers;
+
+
+
+
+
+
+
+const $b32fd11d6aa83d1c$var$findCreateContainerWithTypes = (types, createServerKey, dataServers)=>{
+    const containers = [];
+    if (Object.keys(dataServers[createServerKey].containers[createServerKey]).length > 0) Object.keys(dataServers[createServerKey].containers[createServerKey]).forEach((type)=>{
+        if (types.includes(type)) dataServers[createServerKey].containers[createServerKey][type].map((path)=>{
+            const containerUri = (0, ($parcel$interopDefault($3pVuQ$urljoin)))(dataServers[createServerKey].baseUrl, path);
+            if (!containers.includes(containerUri)) containers.push(containerUri);
+        });
+    });
+    if (containers.length === 0) throw new Error(`No container found matching with types ${JSON.stringify(types)}. You can set explicitely the create.container property of the resource.`);
+    else if (containers.length > 1) throw new Error(`More than one container found matching with types ${JSON.stringify(types)}. You must set the create.server or create.container property for the resource.`);
+    return containers[0];
+};
+var $b32fd11d6aa83d1c$export$2e2bcd8739ae039 = $b32fd11d6aa83d1c$var$findCreateContainerWithTypes;
+
+
+
+const $99ed32cbdb76cb50$var$useCreateContainer = (resourceId)=>{
+    const dataModel = (0, $404991bb01c2ceff$export$2e2bcd8739ae039)(resourceId);
+    const dataServers = (0, $9b817943cd488c90$export$2e2bcd8739ae039)();
+    const [createContainer, setCreateContainer] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        if (dataModel && dataServers) {
+            if (dataModel.create?.container) {
+                const [serverKey, path] = Object.entries(dataModel.create.container)[0];
+                if (!serverKey || !dataServers[serverKey]) throw new Error(`Wrong key for the dataModel.create.container config of resource ${resourceId}`);
+                setCreateContainer((0, ($parcel$interopDefault($3pVuQ$urljoin)))(dataServers[serverKey].baseUrl, path));
+            } else if (dataModel.create?.server) setCreateContainer((0, $b32fd11d6aa83d1c$export$2e2bcd8739ae039)(dataModel.types, dataModel.create?.server, dataServers));
+            else {
+                const defaultServerKey = (0, $8f44b7c15b8b8e1d$export$2e2bcd8739ae039)("default", dataServers);
+                setCreateContainer((0, $b32fd11d6aa83d1c$export$2e2bcd8739ae039)(dataModel.types, defaultServerKey, dataServers));
+            }
+        }
+    }, [
+        dataModel,
+        dataServers,
+        setCreateContainer
+    ]);
+    return createContainer;
+};
+var $99ed32cbdb76cb50$export$2e2bcd8739ae039 = $99ed32cbdb76cb50$var$useCreateContainer;
+
+
+
+
+
+const $8d622cbd05acb834$var$useDataModels = ()=>{
+    // Get the raw data provider, since useDataProvider returns a wrapper
+    const dataProvider = (0, $3pVuQ$react.useContext)((0, $3pVuQ$reactadmin.DataProviderContext));
+    const [dataModels, setDataModels] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        dataProvider.getDataModels().then((results)=>setDataModels(results));
+    }, [
+        dataProvider,
+        setDataModels
+    ]);
+    return dataModels;
+};
+var $8d622cbd05acb834$export$2e2bcd8739ae039 = $8d622cbd05acb834$var$useDataModels;
+
+
+
+
+
+/**
+ * @example
+ * <Show>
+ *   <FilterHandler
+ *     source="property" // ex pair:organizationOfMembership
+ *     filter={{
+ *       'propertyToFilter':'value'
+ *     }} // ex {{'pair:membershipRole':'http://localhost:3000/membership-roles/role-1'}}
+ *     >
+ *     <SingleFieldList>
+ *    </SingleFieldList>
+ *   </FilterHandler>
+ * </Show>
+ */ const $f763906f9b20f2d8$var$FilterHandler = ({ children: children, record: record, filter: filter, source: source, ...otherProps })=>{
+    const [filtered, setFiltered] = (0, $3pVuQ$react.useState)();
+    (0, $3pVuQ$react.useEffect)(()=>{
+        if (record && source && Array.isArray(record?.[source])) {
+            const filteredData = record?.[source].filter((r)=>{
+                let eq = true;
+                for(const key in filter){
+                    const value = r[key];
+                    if (Array.isArray(value)) {
+                        if (!value.includes(filter[key])) eq = false;
+                    } else if (value !== filter[key]) eq = false;
+                }
+                return eq;
+            });
+            const newRecord = {
+                ...record
+            };
+            // undefined setted if no data to obtain no render in RightLabel or equivalent
+            newRecord[source] = filteredData.length > 0 ? filteredData : undefined;
+            setFiltered(newRecord);
+        }
+    }, [
+        record,
+        source,
+        filter
+    ]);
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
+        children: (0, ($parcel$interopDefault($3pVuQ$react))).Children.map(children, (child, i)=>{
+            return /*#__PURE__*/ (0, ($parcel$interopDefault($3pVuQ$react))).cloneElement(child, {
+                ...otherProps,
+                record: filtered,
+                source: source
+            });
+        })
+    });
+};
+var $f763906f9b20f2d8$export$2e2bcd8739ae039 = $f763906f9b20f2d8$var$FilterHandler;
+
+
+
+
+
+
+/*
+ * @example Label used in examples
+ *  const Label = ({label, ...otherProps})=>{
+ *     return <h2>{label}</h2>
+ *  }
+ *
+ * @example show header for each group with group property thanks to groupHeader
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupHeader={({group,...otherProps}) => <Label {...otherProps} label={group['pair:label']}></Label> }
+ *   filterProperty="property of source filtered by groupReference"
+ * >
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <ImageList>
+ *    </ImageList>
+ *   </ArrayField>
+ * </GroupedReferenceHandler>
+ *
+ * @example call chhildren with label thanks to groupLabel
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
+ *   filterProperty="property of source filtered by groupReference"
+ * >
+ *   <Label>
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <ImageList>
+ *    </ImageList>
+ *   </ArrayField>
+ * </GroupedReferenceHandler>
+ *
+ * @example conditional show of group if no data in source. Conditionale groupHeader is not possible because GroupedArrayField define group before filter ; need use chhildren.
+ * const ConditionalSourceDefinedHandler = ({record,source,children,...otherProps})=>{
+ *   if (record?.[source] && (!Array.isArray(record[source])||record[source].length>0)){
+ *     return  React.Children.map(children, (child, i) => {
+ *         return React.cloneElement(child, {...otherProps,record,source});
+ *       })
+ *   }else{
+ *     return <></>
+ *   }
+ * }
+ *
+ * <GroupedReferenceHandler
+ *   source="property" // predicat of main record to show / ex pair:organizationOfMembership
+ *   groupReference="RAresource" // React-Admin resource reference. this is the "group by" ressource. / ex MembershipRole
+ *   groupLabel="property of RAresource display" // property of React-Admin resource to display. children call whith props "label" filled by groupLabel property of groupReference
+ *   filterProperty="property of source filtered by groupReference"
+ * >
+ *  <ConditionalSourceDefinedHandler>
+ *   <Label>
+ *   <ArrayField source="property"> // same props as GroupedArrayField source
+ *    <ImageList>
+ *    </ImageList>
+ *   </ArrayField>
+ *  </ConditionalSourceDefinedHandler>
+ * </GroupedReferenceHandler>
+ *
+ *
+ */ const $b4703fef6d6af456$var$GroupedReferenceHandler = ({ children: children, groupReference: groupReference, groupLabel: groupLabel, groupHeader: groupHeader, filterProperty: filterProperty, ...otherProps })=>{
+    const { data: data } = (0, $3pVuQ$reactadmin.useGetList)({
+        resource: groupReference,
+        payload: {}
+    });
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactjsxruntime.Fragment), {
+        children: data?.map((data, index)=>{
+            const filter = {};
+            filter[filterProperty] = data.id;
+            return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactjsxruntime.Fragment), {
+                children: [
+                    groupHeader && groupHeader({
+                        ...otherProps,
+                        group: data
+                    }),
+                    /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $f763906f9b20f2d8$export$2e2bcd8739ae039), {
+                        ...otherProps,
+                        filter: filter,
+                        label: data[groupLabel],
+                        children: children
+                    })
+                ]
+            });
+        })
+    });
+};
+var $b4703fef6d6af456$export$2e2bcd8739ae039 = $b4703fef6d6af456$var$GroupedReferenceHandler;
+
+
+
+
+
+
+const $030f1232f6810456$var$useReferenceInputStyles = (0, ($parcel$interopDefault($3pVuQ$muistylesmakeStyles)))({
+    form: {
+        display: "flex"
+    },
+    input: {
+        paddingRight: "20px"
+    }
+});
+const $030f1232f6810456$var$useHideInputStyles = (0, ($parcel$interopDefault($3pVuQ$muistylesmakeStyles)))({
+    root: {
+        display: "none"
+    }
+});
+const $030f1232f6810456$var$ReificationArrayInput = (props)=>{
+    const { reificationClass: reificationClass, children: children, ...otherProps } = props;
+    const flexFormClasses = $030f1232f6810456$var$useReferenceInputStyles();
+    const hideInputStyles = $030f1232f6810456$var$useHideInputStyles();
+    return /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.ArrayInput), {
+        ...otherProps,
+        children: /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsxs)((0, $3pVuQ$reactadmin.SimpleFormIterator), {
+            classes: {
+                form: flexFormClasses.form
+            },
+            children: [
+                (0, ($parcel$interopDefault($3pVuQ$react))).Children.map(props.children, (child, i)=>{
+                    return /*#__PURE__*/ (0, ($parcel$interopDefault($3pVuQ$react))).cloneElement(child, {
+                        className: flexFormClasses.input
+                    });
+                }),
+                /*#__PURE__*/ (0, $3pVuQ$reactjsxruntime.jsx)((0, $3pVuQ$reactadmin.TextInput), {
+                    className: hideInputStyles.root,
+                    source: "type",
+                    initialValue: reificationClass
+                })
+            ]
+        })
+    });
+};
+var $030f1232f6810456$export$2e2bcd8739ae039 = $030f1232f6810456$var$ReificationArrayInput;
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map

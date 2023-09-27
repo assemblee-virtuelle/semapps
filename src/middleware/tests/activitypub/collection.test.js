@@ -40,8 +40,10 @@ describe('Handle collections', () => {
   test('Create collection', async () => {
     await broker.call('activitypub.collection.create', {
       collectionUri,
-      ordered: false,
-      summary: 'My non-ordered collection'
+      config: {
+        ordered: false,
+        summary: 'My non-ordered collection'
+      }
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {
@@ -64,8 +66,10 @@ describe('Handle collections', () => {
   test('Create ordered collection', async () => {
     await broker.call('activitypub.collection.create', {
       collectionUri: orderedCollectionUri,
-      ordered: true,
-      summary: 'My ordered collection'
+      config: {
+        ordered: true,
+        summary: 'My ordered collection'
+      }
     });
 
     const collectionExist = await broker.call('activitypub.collection.exist', {

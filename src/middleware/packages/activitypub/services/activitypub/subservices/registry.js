@@ -1,8 +1,7 @@
 const urlJoin = require('url-join');
-const pathJoin = require('path').join;
 const { quad, namedNode } = require('@rdfjs/data-model');
-const getCollectionRoute = require('../../../routes/getCollectionRoute');
-const { defaultToArray, getSlugFromUri } = require('../../../utils');
+const { MIME_TYPES } = require('@semapps/mime-types');
+const { defaultToArray } = require('../../../utils');
 const { ACTOR_TYPES, FULL_ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
 
 const RegistryService = {
@@ -36,28 +35,6 @@ const RegistryService = {
 
       // Save the collection locally
       this.registeredCollections.push({ path, name, attachToTypes, ...options });
-
-      // Find all containers where we want to attach this collection
-      const containers = this.getContainersByType(attachToTypes);
-
-      if (containers) {
-        // Go through each container
-        for (const container of Object.values(containers)) {
-          // Add a corresponding API route
-          await this.actions.addApiRoute({ collection: ctx.params, container }, { parentCtx: ctx });
-        }
-      }
-    },
-    async addApiRoute(ctx) {
-      const { container, collection } = ctx.params;
-
-      const collectionPath = pathJoin(container.fullPath, ':objectId', collection.path);
-      const collectionUri = urlJoin(this.settings.baseUri, collectionPath);
-
-      // TODO ensure it's not a problem if the same route is added twice
-      await this.broker.call('api.addRoute', {
-        route: getCollectionRoute(collectionUri, collection.controlledActions)
-      });
     },
     list() {
       return this.registeredCollections;
@@ -72,12 +49,23 @@ const RegistryService = {
         throw new Error('The param collectionUri must be provided to activitypub.registry.getByUri');
       }
 
-      // Get last part of the URI (eg. /followers)
-      const path = `/${getSlugFromUri(collectionUri)}`;
+      // TODO put in cache
+      const result = await ctx.call('triplestore.query', {
+        query: `
+          SELECT ?predicate
+          WHERE {
+            ?resource ?predicate <${collectionUri}> .
+          }
+        `,
+        accept: MIME_TYPES.JSON,
+        webId: 'system'
+      });
 
       return {
         ...this.settings.defaultCollectionOptions,
-        ...this.registeredCollections.find(collection => collection.path === path)
+        ...this.registeredCollections.find(collection =>
+          result.some(node => collection.attachPredicate === node.predicate.value)
+        )
       };
     },
     async createAndAttachCollection(ctx) {
@@ -90,7 +78,12 @@ const RegistryService = {
         this.collectionsInCreation.push(collectionUri);
 
         // Create the collection
-        await ctx.call('activitypub.collection.create', { collectionUri, webId });
+        await ctx.call('activitypub.collection.create', {
+          collectionUri,
+          config: { ordered: collection?.ordered, summary: collection?.summary },
+          options: collection, // Used by WebACL middleware if it exists
+          webId
+        });
 
         // Attach it to the object
         await ctx.call('ldp.resource.patch', {
@@ -263,14 +256,6 @@ const RegistryService = {
       // Register the container locally
       // Avoid race conditions, if this event is called while the register action is still running
       this.registeredContainers[container.name] = container;
-
-      // Find the collections that must be attached to the container's resources
-      const collections = this.getCollectionsByType(container.acceptedTypes);
-
-      // Go through each collection and add a corresponding API route
-      for (const collection of collections) {
-        await this.actions.addApiRoute({ collection, container }, { parentCtx: ctx });
-      }
     }
   }
 };

@@ -11,10 +11,6 @@ module.exports = {
     },
     contentType: {
       type: 'string'
-    },
-    disassembly: {
-      type: 'array',
-      optional: true
     }
   },
   async handler(ctx) {
@@ -25,7 +21,7 @@ module.exports = {
     if (this.isRemoteUri(resourceUri, ctx.meta.dataset))
       throw new MoleculerError('Remote resources cannot be created', 403, 'FORBIDDEN');
 
-    const { disassembly, jsonContext, controlledActions } = {
+    const { jsonContext, controlledActions } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
     };
@@ -36,15 +32,17 @@ module.exports = {
     }
 
     // Adds the default context, if it is missing
-    if (jsonContext && contentType === MIME_TYPES.JSON && !resource['@context']) {
-      resource = {
-        '@context': jsonContext,
-        ...resource
-      };
-    }
-
-    if (disassembly && contentType === MIME_TYPES.JSON) {
-      await this.createDisassembly(ctx, disassembly, resource);
+    if (contentType === MIME_TYPES.JSON && !resource['@context']) {
+      if (jsonContext) {
+        resource = {
+          '@context': jsonContext,
+          ...resource
+        };
+      } else {
+        this.logger.warn(
+          `JSON-LD context was missing when creating to ${resourceUri} but no default context was found on LDP registry`
+        );
+      }
     }
 
     if (contentType !== MIME_TYPES.JSON && !resource.body)
@@ -76,12 +74,12 @@ module.exports = {
       webId
     });
 
+    // TODO See if using controlledAction is still necessary now blank nodes are automatically detected
     const newData = await ctx.call(
       (controlledActions && controlledActions.get) || 'ldp.resource.get',
       {
         resourceUri,
         accept: MIME_TYPES.JSON,
-        forceSemantic: true,
         webId
       },
       { meta: { $cache: false } }

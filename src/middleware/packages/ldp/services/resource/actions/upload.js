@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
-const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 const { MoleculerError } = require('moleculer').Errors;
+const { getSlugFromUri, getContainerFromUri } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',

@@ -116,9 +116,7 @@ const SignatureService = {
   },
   methods: {
     buildDigest(body) {
-      return `SHA-256=${createHash('sha256')
-        .update(body)
-        .digest('base64')}`;
+      return `SHA-256=${createHash('sha256').update(body).digest('base64')}`;
     }
   }
 };

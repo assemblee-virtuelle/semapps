@@ -1,5 +1,6 @@
 const urlJoin = require('url-join');
 const { ACTOR_TYPES } = require('@semapps/activitypub');
+const getPodsRoute = require('./routes/getPodsRoute');
 
 module.exports = {
   name: 'pod',
@@ -9,14 +10,17 @@ module.exports = {
   dependencies: ['triplestore', 'ldp', 'auth.account', 'api'],
   async started() {
     // Container with actors
+    // The `podsContainer: true` config will register the container but not create LDP containers on a dataset
     await this.broker.call('ldp.registry.register', {
+      name: 'pods',
       path: '/',
       podsContainer: true,
       acceptedTypes: [ACTOR_TYPES.PERSON],
-      excludeFromMirror: true,
-      dereference: ['sec:publicKey', 'as:endpoints']
-      // newResourcesPermissions: {}
+      excludeFromMirror: true
     });
+
+    // API routes to actors (and their collections) are added manually
+    await this.broker.call('api.addRoute', { route: getPodsRoute() });
 
     // Root container for the POD (/:username/data/)
     await this.broker.call('ldp.registry.register', {
@@ -47,8 +51,9 @@ module.exports = {
 
       // Attach the POD URI to the user's account
       const accounts = await ctx.call('auth.account.find', { query: { username } });
+
       await ctx.call('auth.account.update', {
-        '@id': accounts[0]['@id'],
+        id: accounts[0]['@id'],
         podUri
       });
 

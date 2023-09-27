@@ -1,4 +1,4 @@
-const { getContainerFromUri } = require('../utils');
+const { hasType } = require('../utils');
 
 module.exports = {
   name: 'groups-manager',
@@ -27,14 +27,14 @@ module.exports = {
         return Array.isArray(record[predicate]) ? record[predicate].includes(value) : record[predicate] === value;
       });
     },
-    isUser(resourceUri) {
-      return getContainerFromUri(resourceUri) === this.settings.usersContainer;
+    isUser(resource) {
+      return hasType(resource, 'foaf:Person');
     }
   },
   events: {
     async 'ldp.resource.created'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      if (this.isUser(resourceUri)) {
+      if (this.isUser(newData)) {
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
             await ctx.call('webacl.group.addMember', {
@@ -48,7 +48,7 @@ module.exports = {
     },
     async 'ldp.resource.updated'(ctx) {
       const { resourceUri, newData } = ctx.params;
-      if (this.isUser(resourceUri)) {
+      if (this.isUser(newData)) {
         for (const rule of this.settings.rules) {
           if (this.matchRule(rule, newData)) {
             await ctx.call('webacl.group.addMember', {
@@ -67,8 +67,8 @@ module.exports = {
       }
     },
     async 'ldp.resource.deleted'(ctx) {
-      const { resourceUri } = ctx.params;
-      if (this.isUser(resourceUri)) {
+      const { resourceUri, oldData } = ctx.params;
+      if (this.isUser(oldData)) {
         for (const rule of this.settings.rules) {
           await ctx.call('webacl.group.removeMember', {
             groupSlug: rule.groupSlug,

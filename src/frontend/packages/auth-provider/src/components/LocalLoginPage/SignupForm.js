@@ -10,7 +10,7 @@ import {
   email,
   useLocaleState
 } from 'react-admin';
-import { useSignup } from '@semapps/auth-provider';
+import useSignup from '../../hooks/useSignup';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';

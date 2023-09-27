@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const { MoleculerError } = require('moleculer').Errors;
 const { MIME_TYPES } = require('@semapps/mime-types');
 const ControlledCollectionMixin = require('../../../mixins/controlled-collection');
-const { collectionPermissionsWithAnonRead, getSlugFromUri, delay, objectIdToCurrent } = require('../../../utils');
+const { collectionPermissionsWithAnonRead, getSlugFromUri, objectIdToCurrent } = require('../../../utils');
 const { ACTOR_TYPES } = require('../../../constants');
 
 const OutboxService = {
@@ -121,7 +121,6 @@ const OutboxService = {
 
       ctx.meta.$statusCode = 201;
 
-      // TODO do not return activity when calling through API calls
       return activity;
     }
   },
@@ -225,9 +224,10 @@ const OutboxService = {
 
         if (response.ok) {
           return true;
+        } else {
+          this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
+          return false;
         }
-        this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${response.statusText}`);
-        return false;
       } catch (e) {
         console.error(e);
         this.logger.warn(`Error when posting activity to remote actor ${recipientUri}: ${e.message}`);

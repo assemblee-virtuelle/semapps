@@ -1,4 +1,741 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});var e=require("react"),t=require("react-admin"),r=require("@mui/material"),n=require("@mui/styles/makeStyles"),a=require("@mui/icons-material/Launch"),o=require("react-hook-form"),i=require("@mui/icons-material/Add"),l=require("lodash.debounce"),c=require("@mui/icons-material/Visibility"),u=require("@mui/icons-material/Error"),s=require("@semapps/semantic-data-provider"),f=require("@mui/icons-material/Language"),d=require("@mui/icons-material/Facebook"),m=require("@mui/icons-material/GitHub"),p=require("@mui/icons-material/Twitter"),h=require("@mui/icons-material/Instagram"),y=require("@mui/icons-material/YouTube");function v(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}function g(e){if(e&&e.__esModule)return e;var t=Object.create(null);return e&&Object.keys(e).forEach((function(r){if("default"!==r){var n=Object.getOwnPropertyDescriptor(e,r);Object.defineProperty(t,r,n.get?n:{enumerable:!0,get:function(){return e[r]}})}})),t.default=e,Object.freeze(t)}var b=v(e),E=g(e),w=v(n),x=v(a),L=v(i),O=v(l),k=v(c),j=v(u),C=v(f),T=v(d),S=v(m),A=v(p),P=v(h),N=v(y);function F(e,t){var r=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),r.push.apply(r,n)}return r}function I(e){for(var t=1;t<arguments.length;t++){var r=null!=arguments[t]?arguments[t]:{};t%2?F(Object(r),!0).forEach((function(t){M(e,t,r[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(r)):F(Object(r)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(r,t))}))}return e}function R(){
-/*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-R=function(){return e};var e={},t=Object.prototype,r=t.hasOwnProperty,n="function"==typeof Symbol?Symbol:{},a=n.iterator||"@@iterator",o=n.asyncIterator||"@@asyncIterator",i=n.toStringTag||"@@toStringTag";function l(e,t,r){return Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}),e[t]}try{l({},"")}catch(e){l=function(e,t,r){return e[t]=r}}function c(e,t,r,n){var a=t&&t.prototype instanceof f?t:f,o=Object.create(a.prototype),i=new L(n||[]);return o._invoke=function(e,t,r){var n="suspendedStart";return function(a,o){if("executing"===n)throw new Error("Generator is already running");if("completed"===n){if("throw"===a)throw o;return k()}for(r.method=a,r.arg=o;;){var i=r.delegate;if(i){var l=E(i,r);if(l){if(l===s)continue;return l}}if("next"===r.method)r.sent=r._sent=r.arg;else if("throw"===r.method){if("suspendedStart"===n)throw n="completed",r.arg;r.dispatchException(r.arg)}else"return"===r.method&&r.abrupt("return",r.arg);n="executing";var c=u(e,t,r);if("normal"===c.type){if(n=r.done?"completed":"suspendedYield",c.arg===s)continue;return{value:c.arg,done:r.done}}"throw"===c.type&&(n="completed",r.method="throw",r.arg=c.arg)}}}(e,r,i),o}function u(e,t,r){try{return{type:"normal",arg:e.call(t,r)}}catch(e){return{type:"throw",arg:e}}}e.wrap=c;var s={};function f(){}function d(){}function m(){}var p={};l(p,a,(function(){return this}));var h=Object.getPrototypeOf,y=h&&h(h(O([])));y&&y!==t&&r.call(y,a)&&(p=y);var v=m.prototype=f.prototype=Object.create(p);function g(e){["next","throw","return"].forEach((function(t){l(e,t,(function(e){return this._invoke(t,e)}))}))}function b(e,t){var n;this._invoke=function(a,o){function i(){return new t((function(n,i){!function n(a,o,i,l){var c=u(e[a],e,o);if("throw"!==c.type){var s=c.arg,f=s.value;return f&&"object"==typeof f&&r.call(f,"__await")?t.resolve(f.__await).then((function(e){n("next",e,i,l)}),(function(e){n("throw",e,i,l)})):t.resolve(f).then((function(e){s.value=e,i(s)}),(function(e){return n("throw",e,i,l)}))}l(c.arg)}(a,o,n,i)}))}return n=n?n.then(i,i):i()}}function E(e,t){var r=e.iterator[t.method];if(void 0===r){if(t.delegate=null,"throw"===t.method){if(e.iterator.return&&(t.method="return",t.arg=void 0,E(e,t),"throw"===t.method))return s;t.method="throw",t.arg=new TypeError("The iterator does not provide a 'throw' method")}return s}var n=u(r,e.iterator,t.arg);if("throw"===n.type)return t.method="throw",t.arg=n.arg,t.delegate=null,s;var a=n.arg;return a?a.done?(t[e.resultName]=a.value,t.next=e.nextLoc,"return"!==t.method&&(t.method="next",t.arg=void 0),t.delegate=null,s):a:(t.method="throw",t.arg=new TypeError("iterator result is not an object"),t.delegate=null,s)}function w(e){var t={tryLoc:e[0]};1 in e&&(t.catchLoc=e[1]),2 in e&&(t.finallyLoc=e[2],t.afterLoc=e[3]),this.tryEntries.push(t)}function x(e){var t=e.completion||{};t.type="normal",delete t.arg,e.completion=t}function L(e){this.tryEntries=[{tryLoc:"root"}],e.forEach(w,this),this.reset(!0)}function O(e){if(e){var t=e[a];if(t)return t.call(e);if("function"==typeof e.next)return e;if(!isNaN(e.length)){var n=-1,o=function t(){for(;++n<e.length;)if(r.call(e,n))return t.value=e[n],t.done=!1,t;return t.value=void 0,t.done=!0,t};return o.next=o}}return{next:k}}function k(){return{value:void 0,done:!0}}return d.prototype=m,l(v,"constructor",m),l(m,"constructor",d),d.displayName=l(m,i,"GeneratorFunction"),e.isGeneratorFunction=function(e){var t="function"==typeof e&&e.constructor;return!!t&&(t===d||"GeneratorFunction"===(t.displayName||t.name))},e.mark=function(e){return Object.setPrototypeOf?Object.setPrototypeOf(e,m):(e.__proto__=m,l(e,i,"GeneratorFunction")),e.prototype=Object.create(v),e},e.awrap=function(e){return{__await:e}},g(b.prototype),l(b.prototype,o,(function(){return this})),e.AsyncIterator=b,e.async=function(t,r,n,a,o){void 0===o&&(o=Promise);var i=new b(c(t,r,n,a),o);return e.isGeneratorFunction(r)?i:i.next().then((function(e){return e.done?e.value:i.next()}))},g(v),l(v,i,"Generator"),l(v,a,(function(){return this})),l(v,"toString",(function(){return"[object Generator]"})),e.keys=function(e){var t=[];for(var r in e)t.push(r);return t.reverse(),function r(){for(;t.length;){var n=t.pop();if(n in e)return r.value=n,r.done=!1,r}return r.done=!0,r}},e.values=O,L.prototype={constructor:L,reset:function(e){if(this.prev=0,this.next=0,this.sent=this._sent=void 0,this.done=!1,this.delegate=null,this.method="next",this.arg=void 0,this.tryEntries.forEach(x),!e)for(var t in this)"t"===t.charAt(0)&&r.call(this,t)&&!isNaN(+t.slice(1))&&(this[t]=void 0)},stop:function(){this.done=!0;var e=this.tryEntries[0].completion;if("throw"===e.type)throw e.arg;return this.rval},dispatchException:function(e){if(this.done)throw e;var t=this;function n(r,n){return i.type="throw",i.arg=e,t.next=r,n&&(t.method="next",t.arg=void 0),!!n}for(var a=this.tryEntries.length-1;a>=0;--a){var o=this.tryEntries[a],i=o.completion;if("root"===o.tryLoc)return n("end");if(o.tryLoc<=this.prev){var l=r.call(o,"catchLoc"),c=r.call(o,"finallyLoc");if(l&&c){if(this.prev<o.catchLoc)return n(o.catchLoc,!0);if(this.prev<o.finallyLoc)return n(o.finallyLoc)}else if(l){if(this.prev<o.catchLoc)return n(o.catchLoc,!0)}else{if(!c)throw new Error("try statement without catch or finally");if(this.prev<o.finallyLoc)return n(o.finallyLoc)}}}},abrupt:function(e,t){for(var n=this.tryEntries.length-1;n>=0;--n){var a=this.tryEntries[n];if(a.tryLoc<=this.prev&&r.call(a,"finallyLoc")&&this.prev<a.finallyLoc){var o=a;break}}o&&("break"===e||"continue"===e)&&o.tryLoc<=t&&t<=o.finallyLoc&&(o=null);var i=o?o.completion:{};return i.type=e,i.arg=t,o?(this.method="next",this.next=o.finallyLoc,s):this.complete(i)},complete:function(e,t){if("throw"===e.type)throw e.arg;return"break"===e.type||"continue"===e.type?this.next=e.arg:"return"===e.type?(this.rval=this.arg=e.arg,this.method="return",this.next="end"):"normal"===e.type&&t&&(this.next=t),s},finish:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.finallyLoc===e)return this.complete(r.completion,r.afterLoc),x(r),s}},catch:function(e){for(var t=this.tryEntries.length-1;t>=0;--t){var r=this.tryEntries[t];if(r.tryLoc===e){var n=r.completion;if("throw"===n.type){var a=n.arg;x(r)}return a}}throw new Error("illegal catch attempt")},delegateYield:function(e,t,r){return this.delegate={iterator:O(e),resultName:t,nextLoc:r},"next"===this.method&&(this.arg=void 0),s}},e}function _(e){return(_="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(e)}function D(e,t,r,n,a,o,i){try{var l=e[o](i),c=l.value}catch(e){return void r(e)}l.done?t(c):Promise.resolve(c).then(n,a)}function q(e){return function(){var t=this,r=arguments;return new Promise((function(n,a){var o=e.apply(t,r);function i(e){D(o,n,a,i,l,"next",e)}function l(e){D(o,n,a,i,l,"throw",e)}i(void 0)}))}}function M(e,t,r){return t in e?Object.defineProperty(e,t,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[t]=r,e}function B(){return(B=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var n in r)Object.prototype.hasOwnProperty.call(r,n)&&(e[n]=r[n])}return e}).apply(this,arguments)}function G(e,t){if(null==e)return{};var r,n,a=function(e,t){if(null==e)return{};var r,n,a={},o=Object.keys(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||(a[r]=e[r]);return a}(e,t);if(Object.getOwnPropertySymbols){var o=Object.getOwnPropertySymbols(e);for(n=0;n<o.length;n++)r=o[n],t.indexOf(r)>=0||Object.prototype.propertyIsEnumerable.call(e,r)&&(a[r]=e[r])}return a}function z(e,t){return function(e){if(Array.isArray(e))return e}(e)||function(e,t){var r=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(null==r)return;var n,a,o=[],i=!0,l=!1;try{for(r=r.call(e);!(i=(n=r.next()).done)&&(o.push(n.value),!t||o.length!==t);i=!0);}catch(e){l=!0,a=e}finally{try{i||null==r.return||r.return()}finally{if(l)throw a}}return o}(e,t)||U(e,t)||function(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function W(e){return function(e){if(Array.isArray(e))return Y(e)}(e)||function(e){if("undefined"!=typeof Symbol&&null!=e[Symbol.iterator]||null!=e["@@iterator"])return Array.from(e)}(e)||U(e)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}()}function U(e,t){if(e){if("string"==typeof e)return Y(e,t);var r=Object.prototype.toString.call(e).slice(8,-1);return"Object"===r&&e.constructor&&(r=e.constructor.name),"Map"===r||"Set"===r?Array.from(e):"Arguments"===r||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)?Y(e,t):void 0}}function Y(e,t){(null==t||t>e.length)&&(t=e.length);for(var r=0,n=new Array(t);r<t;r++)n[r]=e[r];return n}var H=["label","defaultLabel","image","fallback","externalLink","labelColor","classes"],V=w.default((function(e){return{parent:function(e){return I({position:"relative"},e.parent)},square:{width:"100%",paddingBottom:"100%",position:"relative"},avatar:{position:"absolute",top:0,bottom:0,width:"100%",height:"100%",borderRadius:"50%","& svg":{width:"55%",height:"55%"}},chip:{position:"absolute",bottom:-10,left:0,right:0,paddingTop:3,paddingBottom:3,paddingLeft:6,paddingRight:6,marginBottom:10,cursor:"pointer"},launchIcon:{width:14}}})),Q=function(){},$=function(e){var n=e.label,a=e.defaultLabel,o=e.image,i=e.fallback,l=e.externalLink,c=e.labelColor,u=e.classes,s=G(e,H);u=V(u);var f=t.useRecordContext(),d=("function"==typeof n?n(f):f[n])||a,m="function"==typeof o?o(f):f[o],p="function"==typeof i?i(f):i;return b.default.createElement(r.Box,{className:u.parent},b.default.createElement("div",{className:u.square},b.default.createElement(r.Avatar,B({src:m||p,alt:d,fallback:p},s,{className:u.avatar}))),d?l?b.default.createElement(r.Chip,{color:c,className:u.chip,size:"small",label:d,deleteIcon:b.default.createElement(x.default,{className:u.launchIcon}),onDelete:Q}):b.default.createElement(r.Chip,{color:c,className:u.chip,size:"small",label:d}):null)};$.defaultProps={labelColor:"secondary",externalLink:!1};var J=["source"],K=function(e){var r=e.source,n=G(e,J),a=t.useRecordContext();return null!=a&&a[r]&&(Array.isArray(a[r])||(a[r]=[a[r]]),a[r]=a[r].map((function(e){return e["@id"]||e.id||e}))),b.default.createElement(t.RecordContextProvider,{value:a},b.default.createElement(t.ReferenceArrayField,B({source:r},n)))},X=["source"],Z=w.default((function(e){return{root:{width:"100%",maxWidth:"100%",backgroundColor:e.palette.background.paper,paddingTop:0,paddingBottom:0},primaryText:{width:"30%"},secondaryText:{fontStyle:"italic",color:"grey"}}})),ee=function(e,t){var r=t&&Object.values(t).find((function(t){return e.startsWith(t.baseUrl)}));return r?r.name:"Inconnu"},te=function(n){var a,o=n.keyword,i=n.source,l=n.reference,c=n.appendLink,u=n.switchToCreate,f=Z(),d=z(e.useState(!1),2),m=d[0],p=d[1],h=z(e.useState(!1),2),y=h[0],v=h[1],g=z(e.useState([]),2),E=g[0],w=g[1],x=t.useTranslate(),C=t.useDataProvider(),T=s.useDataServers(),S=t.useRecordContext(),A=t.useCreatePath(),P=t.useResourceDefinition({resource:l}),N=t.useGetResourceLabel(),F=s.useDataModel(l);if(F&&Object.keys(F).length>0&&(null==F||null===(a=F.fieldsMapping)||void 0===a||!a.title))throw new Error("No fieldsMapping.title config found for ".concat(l," dataModel"));var I=e.useMemo((function(){return O.default((function(e){var t;C.getList(l,{pagination:{page:1,perPage:100},sort:{field:null==F||null===(t=F.fieldsMapping)||void 0===t?void 0:t.title,order:"ASC"},filter:{q:e,_predicates:[F.fieldsMapping.title],_servers:"@all"}}).then((function(e){var t=e.data,r=S[i]?Array.isArray(S[i])?S[i]:[S[i]]:[],n=t.filter((function(e){return!r.includes(e.id)}));w(n),v(!0),p(!1)})).catch((function(e){p(!1)}))}),700)}),[C,F,S,i,l,w,p,v]);return e.useEffect((function(){if(o)return p(!0),v(!1),I(o),function(){return I.cancel()}}),[o,I,p]),o?b.default.createElement(r.List,{dense:!0,className:f.root},y&&E.map((function(e){return b.default.createElement(r.ListItem,{key:e.id,button:!0,onClick:function(){return c(e.id)}},b.default.createElement(r.ListItemAvatar,null,b.default.createElement(r.Avatar,null,b.default.createElement(P.icon))),b.default.createElement(r.ListItemText,{className:f.primaryText,primary:e[F.fieldsMapping.title]}),b.default.createElement(r.ListItemText,{className:f.secondaryText,primary:ee(e.id,T)}),b.default.createElement(r.ListItemSecondaryAction,null,b.default.createElement("a",{href:A({resource:l,id:e.id,type:"show"}),target:"_blank",rel:"noopener noreferrer"},b.default.createElement(r.IconButton,{edge:"end",size:"large"},b.default.createElement(k.default,null)))))})),y&&0===E.length&&b.default.createElement(r.ListItem,null,b.default.createElement(r.ListItemAvatar,null,b.default.createElement(r.Avatar,null,b.default.createElement(j.default,null))),b.default.createElement(r.ListItemText,{className:f.primaryText,primary:x("ra.navigation.no_results")})),y&&P.hasCreate&&b.default.createElement(r.ListItem,{button:!0,onClick:u},b.default.createElement(r.ListItemAvatar,null,b.default.createElement(r.Avatar,null,b.default.createElement(L.default,null))),b.default.createElement(r.ListItemText,{className:f.primaryText,primary:x("ra.page.create",{name:N(l,1)})})),m&&b.default.createElement(r.Box,{display:"flex",alignItems:"center",justifyContent:"center",height:150},b.default.createElement(r.CircularProgress,{size:60,thickness:6}))):null},re=w.default((function(){return{title:{paddingBottom:8},actions:{padding:15},addForm:{paddingTop:0},listForm:{paddingLeft:8,paddingRight:8,paddingTop:0,paddingBottom:0,maxHeight:210}}})),ne=function(n){var a=n.open,i=n.onClose,l=n.subjectUri,c=n.source,u=n.reference,f=re(),d=t.useShowContext().resource,m=z(e.useState(""),2),p=m[0],h=m[1],y=z(e.useState("find"),2),v=y[0],g=y[1],E=t.useDataProvider(),w=t.useTranslate(),x=t.useRefresh(),O=t.useNotify(),k=t.useGetResourceLabel(),j=s.useDataModel(u),C=o.useForm(),T=C.register,S=C.setValue,A=C.handleSubmit,P=e.useCallback(function(){var e=q(R().mark((function e(t){var r,n;return R().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,E.getOne(d,{id:l});case 2:return r=e.sent,n=r.data,e.next=6,E.update(d,{id:l,data:I(I({},n),{},M({},c,n[c]?Array.isArray(n[c])?[].concat(W(n[c]),[t]):[n[c],t]:t)),previousData:n});case 6:x(),i();case 8:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[E,l,d,c,x,i]),N=e.useCallback(function(){var e=q(R().mark((function e(t){var r,n;return R().wrap((function(e){for(;;)switch(e.prev=e.next){case 0:return e.next=2,E.create(u,{data:M({},j.fieldsMapping.title,t.title)});case 2:return r=e.sent,n=r.data,e.next=6,P(n.id);case 6:O('La resource "'.concat(t.title,'" a été créée'),{type:"success"});case 7:case"end":return e.stop()}}),e)})));return function(t){return e.apply(this,arguments)}}(),[E,j,P,u,O]);return b.default.createElement(r.Dialog,{fullWidth:!0,open:a,onClose:i},"find"===v?b.default.createElement(b.default.Fragment,null,b.default.createElement(r.DialogTitle,{className:f.title},"Ajouter une relation"),b.default.createElement(r.DialogContent,{className:f.addForm},b.default.createElement(r.TextField,{autoFocus:!0,label:"Rechercher ou créer des "+k(u,2).toLowerCase(),variant:"filled",margin:"dense",value:p,onChange:function(e){return h(e.target.value)},fullWidth:!0})),b.default.createElement(r.DialogContent,{className:f.listForm},b.default.createElement(te,{keyword:p,source:c,reference:u,appendLink:P,switchToCreate:function(){S("title",p),g("create")}})),b.default.createElement(r.DialogActions,{className:f.actions},b.default.createElement(t.Button,{label:"ra.action.close",variant:"text",onClick:i}))):b.default.createElement("form",{onSubmit:A(N)},b.default.createElement(r.DialogTitle,{className:f.title},w("ra.page.create",{name:k(u,1)})),b.default.createElement(r.DialogContent,{className:f.addForm},b.default.createElement(r.TextField,B({},T("title"),{autoFocus:!0,label:"Titre",variant:"filled",margin:"dense",fullWidth:!0}))),b.default.createElement(r.DialogActions,{className:f.actions},b.default.createElement(t.Button,{label:"ra.action.create",variant:"contained",startIcon:b.default.createElement(L.default,null),type:"submit"}),b.default.createElement(t.Button,{label:"ra.action.close",variant:"text",onClick:i}))))},ae=["reference","source","resource","children"],oe={color:void 0,size:void 0,className:void 0,style:void 0,attr:void 0},ie=b.default.createContext&&b.default.createContext(oe),le=function(){return(le=Object.assign||function(e){for(var t,r=1,n=arguments.length;r<n;r++)for(var a in t=arguments[r])Object.prototype.hasOwnProperty.call(t,a)&&(e[a]=t[a]);return e}).apply(this,arguments)},ce=function(e,t){var r={};for(var n in e)Object.prototype.hasOwnProperty.call(e,n)&&t.indexOf(n)<0&&(r[n]=e[n]);if(null!=e&&"function"==typeof Object.getOwnPropertySymbols){var a=0;for(n=Object.getOwnPropertySymbols(e);a<n.length;a++)t.indexOf(n[a])<0&&Object.prototype.propertyIsEnumerable.call(e,n[a])&&(r[n[a]]=e[n[a]])}return r};function ue(e){return function(t){return b.default.createElement(se,le({attr:le({},e.attr)},t),function e(t){return t&&t.map((function(t,r){return b.default.createElement(t.tag,le({key:r},t.attr),e(t.child))}))}(e.child))}}function se(e){var t=function(t){var r,n=e.attr,a=e.size,o=e.title,i=ce(e,["attr","size","title"]),l=a||t.size||"1em";return t.className&&(r=t.className),e.className&&(r=(r?r+" ":"")+e.className),b.default.createElement("svg",le({stroke:"currentColor",fill:"currentColor",strokeWidth:"0"},t.attr,n,i,{className:r,style:le(le({color:e.color||t.color},t.style),e.style),height:l,width:l,xmlns:"http://www.w3.org/2000/svg"}),o&&b.default.createElement("title",null,o),e.children)};return void 0!==ie?b.default.createElement(ie.Consumer,null,(function(e){return t(e)})):t(oe)}function fe(e){return ue({tag:"svg",attr:{viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round"},child:[{tag:"path",attr:{d:"M22.65 14.39L12 22.13 1.35 14.39a.84.84 0 0 1-.3-.94l1.22-3.78 2.44-7.51A.42.42 0 0 1 4.82 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.49h8.1l2.44-7.51A.42.42 0 0 1 18.6 2a.43.43 0 0 1 .58 0 .42.42 0 0 1 .11.18l2.44 7.51L23 13.45a.84.84 0 0 1-.35.94z"}}]})(e)}var de={"github.com":{label:"GitHub",icon:b.default.createElement(S.default,null),color:"black",contrastText:"white"},"gitlab.com":{label:"GitLab",icon:b.default.createElement(fe,null),color:"orange",contrastText:"black"},"opencollective.com":{label:"Open Collective",icon:b.default.createElement(r.Avatar,{component:"span",src:"https://opencollective.com/static/images/opencollective-icon.svg"}),color:"white",contrastText:"#297EFF"},"facebook.com":{label:"Facebook",icon:b.default.createElement(T.default,null),color:"#4267B2",contrastText:"white"},"twitter.com":{label:"Twitter",icon:b.default.createElement(A.default,null),color:"#00ACEE",contrastText:"white"},"instagram.com":{label:"Instagram",icon:b.default.createElement(P.default,null),color:"#8a3ab9",contrastText:"white"},"youtube.com":{label:"YouTube",icon:b.default.createElement(N.default,null),color:"#FF0000",contrastText:"white"}},me=w.default((function(){return{link:{textDecoration:"unset","& :hover":{cursor:"pointer"}},chip:{paddingLeft:5,paddingRight:5,marginRight:5,marginBottom:5},label:{marginTop:-1}}})),pe=function(e){return e.stopPropagation()},he=function(){};exports.AvatarWithLabelField=$,exports.MultiUrlField=function(e){var n=e.source,a=e.domainMapping,o=I(I({},de),a),i=t.useRecordContext(),l=me();return(i[n]?Array.isArray(i[n])?i[n]:[i[n]]:[]).map((function(e,t){e.startsWith("http")||(e="https://"+e);var n=new URL(e);if(!n)return null;var a=o[n.hostname]||{label:"Site web",icon:b.default.createElement(C.default,null),color:"#ea",contrastText:"black"};return b.default.createElement("a",{href:e,target:"_blank",rel:"noopener noreferrer",className:l.link,key:t},b.default.createElement(r.Chip,{component:"span",icon:b.default.cloneElement(a.icon,{style:{color:a.contrastText,width:18,height:18}}),size:"small",label:a.label,classes:{root:l.chip,label:l.label},style:{color:a.contrastText,backgroundColor:a.color}}))}))},exports.QuickAppendReferenceArrayField=function(r){var n=r.reference,a=r.source,o=r.resource,i=r.children,l=G(r,ae),c=t.useRecordContext(),u=z(e.useState(!1),2),s=u[0],f=u[1],d=t.usePermissions(c.id).permissions,m=e.useMemo((function(){return!!d&&d.some((function(e){return["acl:Append","acl:Write","acl:Control"].includes(e["acl:mode"])}))}),[d]);return b.default.createElement(b.default.Fragment,null,b.default.createElement(K,B({reference:n,source:a},l),b.default.Children.only(i)&&b.default.cloneElement(i,{appendLink:m?function(){return f(!0)}:void 0})),m&&s&&b.default.createElement(ne,{open:s,onClose:function(){return f(!1)},subjectUri:c.id,resource:o,source:a,reference:n}))},exports.ReferenceArrayField=K,exports.ReferenceField=function(e){var r=e.source,n=G(e,X),a=t.useRecordContext();return a[r]&&"object"===_(a[r])&&(a[r]=a[r]["@id"]||a[r].id),b.default.createElement(t.RecordContextProvider,{value:a},b.default.createElement(t.ReferenceField,B({record:a,source:r},n)))},exports.SeparatedListField=function(n){var a=n.children,o=n.link,i=void 0===o?"edit":o,l=n.linkType,c=n.separator,u=void 0===c?", ":c,s=t.useListContext(n),f=s.data,d=s.isLoading,m=s.resource,p=t.useCreatePath();return void 0!==l&&(console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />"),i=l),d?E.createElement(r.LinearProgress,null):E.createElement(E.Fragment,null,f.map((function(r,n){if(!r.id)return null;var o=!1!==i&&("function"==typeof i?i(r.id):p({resource:m,id:r.id,type:i}));return o?E.createElement("span",{key:r.id},E.createElement(t.Link,{to:o,onClick:pe},e.cloneElement(e.Children.only(a),{onClick:he})),n<f.length-1&&u):E.createElement("span",{key:r.id},E.createElement(t.RecordContextProvider,{value:r},a),n<f.length-1&&u)})))};
+var $drrcw$reactjsxruntime = require("react/jsx-runtime");
+var $drrcw$react = require("react");
+var $drrcw$reactadmin = require("react-admin");
+var $drrcw$muimaterial = require("@mui/material");
+var $drrcw$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $drrcw$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
+var $drrcw$reacthookform = require("react-hook-form");
+var $drrcw$muiiconsmaterialAdd = require("@mui/icons-material/Add");
+var $drrcw$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $drrcw$lodashdebounce = require("lodash.debounce");
+var $drrcw$muiiconsmaterialVisibility = require("@mui/icons-material/Visibility");
+var $drrcw$muiiconsmaterialError = require("@mui/icons-material/Error");
+var $drrcw$muiiconsmaterialLanguage = require("@mui/icons-material/Language");
+var $drrcw$muiiconsmaterialFacebook = require("@mui/icons-material/Facebook");
+var $drrcw$muiiconsmaterialGitHub = require("@mui/icons-material/GitHub");
+var $drrcw$muiiconsmaterialTwitter = require("@mui/icons-material/Twitter");
+var $drrcw$muiiconsmaterialInstagram = require("@mui/icons-material/Instagram");
+var $drrcw$muiiconsmaterialYouTube = require("@mui/icons-material/YouTube");
+var $drrcw$reacticonsfi = require("react-icons/fi");
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
+}
+
+$parcel$export(module.exports, "AvatarWithLabelField", () => $4e17293ac0574285$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceArrayField", () => $b6ed9e2776cb4ba3$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceField", () => $387e8196d8654c58$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "QuickAppendReferenceArrayField", () => $6a1cce6d258bf615$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "MultiUrlField", () => $732a429355ed7119$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "SeparatedListField", () => $43c570e3fbe4d9a0$export$2e2bcd8739ae039);
+
+
+
+
+
+
+const $4e17293ac0574285$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))((theme)=>({
+        parent: (props)=>({
+                position: "relative",
+                ...props.parent
+            }),
+        square: {
+            width: "100%",
+            paddingBottom: "100%",
+            position: "relative"
+        },
+        avatar: {
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            // backgroundColor: theme.palette.primary.main,
+            "& svg": {
+                width: "55%",
+                height: "55%"
+            }
+        },
+        chip: {
+            position: "absolute",
+            bottom: -10,
+            left: 0,
+            right: 0,
+            paddingTop: 3,
+            paddingBottom: 3,
+            paddingLeft: 6,
+            paddingRight: 6,
+            marginBottom: 10,
+            cursor: "pointer"
+        },
+        launchIcon: {
+            width: 14
+        }
+    }));
+const $4e17293ac0574285$var$handleClick = ()=>{};
+const $4e17293ac0574285$var$AvatarWithLabelField = ({ label: label, defaultLabel: defaultLabel, image: image, fallback: fallback, externalLink: externalLink, labelColor: labelColor, classes: classes, ...rest })=>{
+    classes = $4e17293ac0574285$var$useStyles(classes);
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const computedLabel = (typeof label === "function" ? label(record) : record[label]) || defaultLabel;
+    const computedImage = typeof image === "function" ? image(record) : record[image];
+    const computedFallback = typeof fallback === "function" ? fallback(record) : fallback;
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.Box), {
+        className: classes.parent,
+        children: [
+            /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("div", {
+                className: classes.square,
+                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+                    src: computedImage || computedFallback,
+                    alt: computedLabel,
+                    fallback: computedFallback,
+                    ...rest,
+                    className: classes.avatar
+                })
+            }),
+            !computedLabel ? null : externalLink ? /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+                color: labelColor,
+                className: classes.chip,
+                size: "small",
+                label: computedLabel,
+                deleteIcon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialLaunch))), {
+                    className: classes.launchIcon
+                }),
+                onDelete: $4e17293ac0574285$var$handleClick
+            }) : /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+                color: labelColor,
+                className: classes.chip,
+                size: "small",
+                label: computedLabel
+            })
+        ]
+    });
+};
+$4e17293ac0574285$var$AvatarWithLabelField.defaultProps = {
+    labelColor: "secondary",
+    externalLink: false
+};
+var $4e17293ac0574285$export$2e2bcd8739ae039 = $4e17293ac0574285$var$AvatarWithLabelField;
+
+
+
+
+
+const $b6ed9e2776cb4ba3$var$ReferenceArrayField = ({ source: source, ...otherProps })=>{
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    if (record?.[source]) {
+        if (!Array.isArray(record[source])) record[source] = [
+            record[source]
+        ];
+        record[source] = record[source].map((i)=>i["@id"] || i.id || i);
+    }
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+        value: record,
+        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.ReferenceArrayField), {
+            source: source,
+            ...otherProps
+        })
+    });
+};
+var $b6ed9e2776cb4ba3$export$2e2bcd8739ae039 = $b6ed9e2776cb4ba3$var$ReferenceArrayField;
+
+
+
+
+
+const $387e8196d8654c58$var$ReferenceField = ({ source: source, ...otherProps })=>{
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    if (record[source]) {
+        if (typeof record[source] === "object") record[source] = record[source]["@id"] || record[source].id;
+    }
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+        value: record,
+        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.ReferenceField), {
+            record: record,
+            source: source,
+            ...otherProps
+        })
+    });
+};
+var $387e8196d8654c58$export$2e2bcd8739ae039 = $387e8196d8654c58$var$ReferenceField;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $c7e6f337903f861b$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))((theme)=>({
+        root: {
+            width: "100%",
+            maxWidth: "100%",
+            backgroundColor: theme.palette.background.paper,
+            paddingTop: 0,
+            paddingBottom: 0
+        },
+        primaryText: {
+            width: "30%"
+        },
+        secondaryText: {
+            fontStyle: "italic",
+            color: "grey"
+        }
+    }));
+const $c7e6f337903f861b$var$getServerName = (resourceUri, dataServers)=>{
+    const server = dataServers && Object.values(dataServers).find((server)=>resourceUri.startsWith(server.baseUrl));
+    return server ? server.name : "Inconnu";
+};
+const $c7e6f337903f861b$var$ResultsList = ({ keyword: keyword, source: source, reference: reference, appendLink: appendLink, switchToCreate: switchToCreate })=>{
+    const classes = $c7e6f337903f861b$var$useStyles();
+    const [loading, setLoading] = (0, $drrcw$react.useState)(false);
+    const [loaded, setLoaded] = (0, $drrcw$react.useState)(false);
+    const [results, setResults] = (0, $drrcw$react.useState)([]);
+    const translate = (0, $drrcw$reactadmin.useTranslate)();
+    const dataProvider = (0, $drrcw$reactadmin.useDataProvider)();
+    const dataServers = (0, $drrcw$semappssemanticdataprovider.useDataServers)();
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const createPath = (0, $drrcw$reactadmin.useCreatePath)();
+    const referenceDefinition = (0, $drrcw$reactadmin.useResourceDefinition)({
+        resource: reference
+    });
+    const getResourceLabel = (0, $drrcw$reactadmin.useGetResourceLabel)();
+    const dataModel = (0, $drrcw$semappssemanticdataprovider.useDataModel)(reference);
+    if (dataModel && Object.keys(dataModel).length > 0 && !dataModel?.fieldsMapping?.title) throw new Error(`No fieldsMapping.title config found for ${reference} dataModel`);
+    const search = (0, $drrcw$react.useMemo)(()=>(0, ($parcel$interopDefault($drrcw$lodashdebounce)))((keyword)=>{
+            dataProvider.getList(reference, {
+                pagination: {
+                    page: 1,
+                    perPage: 100
+                },
+                sort: {
+                    field: dataModel?.fieldsMapping?.title,
+                    order: "ASC"
+                },
+                filter: {
+                    q: keyword,
+                    _predicates: [
+                        dataModel.fieldsMapping.title
+                    ],
+                    _servers: "@all"
+                }
+            }).then(({ data: data })=>{
+                const existingLinks = record[source] ? Array.isArray(record[source]) ? record[source] : [
+                    record[source]
+                ] : [];
+                const newLinks = data.filter((record)=>!existingLinks.includes(record.id));
+                setResults(newLinks);
+                setLoaded(true);
+                setLoading(false);
+            }).catch((e)=>{
+                setLoading(false);
+            });
+        }, 700), [
+        dataProvider,
+        dataModel,
+        record,
+        source,
+        reference,
+        setResults,
+        setLoading,
+        setLoaded
+    ]);
+    (0, $drrcw$react.useEffect)(()=>{
+        if (!keyword) return undefined;
+        setLoading(true);
+        setLoaded(false);
+        search(keyword);
+        return ()=>search.cancel();
+    }, [
+        keyword,
+        search,
+        setLoading
+    ]);
+    if (!keyword) return null;
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.List), {
+        dense: true,
+        className: classes.root,
+        children: [
+            loaded && results.map((resource)=>/*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+                    button: true,
+                    onClick: ()=>appendLink(resource.id),
+                    children: [
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+                                children: /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).createElement(referenceDefinition.icon)
+                            })
+                        }),
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                            className: classes.primaryText,
+                            primary: resource[dataModel.fieldsMapping.title]
+                        }),
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                            className: classes.secondaryText,
+                            primary: $c7e6f337903f861b$var$getServerName(resource.id, dataServers)
+                        }),
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemSecondaryAction), {
+                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("a", {
+                                href: createPath({
+                                    resource: reference,
+                                    id: resource.id,
+                                    type: "show"
+                                }),
+                                target: "_blank",
+                                rel: "noopener noreferrer",
+                                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.IconButton), {
+                                    edge: "end",
+                                    size: "large",
+                                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialVisibility))), {})
+                                })
+                            })
+                        })
+                    ]
+                }, resource.id)),
+            loaded && results.length === 0 && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+                children: [
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialError))), {})
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                        className: classes.primaryText,
+                        primary: translate("ra.navigation.no_results")
+                    })
+                ]
+            }),
+            loaded && referenceDefinition.hasCreate && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.ListItem), {
+                button: true,
+                onClick: switchToCreate,
+                children: [
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemAvatar), {
+                        children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+                            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialAdd))), {})
+                        })
+                    }),
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.ListItemText), {
+                        className: classes.primaryText,
+                        primary: translate("ra.page.create", {
+                            name: getResourceLabel(reference, 1)
+                        })
+                    })
+                ]
+            }),
+            loading && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Box), {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 150,
+                children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.CircularProgress), {
+                    size: 60,
+                    thickness: 6
+                })
+            })
+        ]
+    });
+};
+var $c7e6f337903f861b$export$2e2bcd8739ae039 = $c7e6f337903f861b$var$ResultsList;
+
+
+const $9ac0ba4780250906$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))(()=>({
+        title: {
+            paddingBottom: 8
+        },
+        actions: {
+            padding: 15
+        },
+        addForm: {
+            paddingTop: 0
+        },
+        listForm: {
+            paddingLeft: 8,
+            paddingRight: 8,
+            paddingTop: 0,
+            paddingBottom: 0,
+            maxHeight: 210
+        }
+    }));
+const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose, subjectUri: subjectUri, source: source, reference: reference })=>{
+    const classes = $9ac0ba4780250906$var$useStyles();
+    const { resource: resource } = (0, $drrcw$reactadmin.useShowContext)();
+    const [keyword, setKeyword] = (0, $drrcw$react.useState)("");
+    const [panel, setPanel] = (0, $drrcw$react.useState)("find");
+    const dataProvider = (0, $drrcw$reactadmin.useDataProvider)();
+    const translate = (0, $drrcw$reactadmin.useTranslate)();
+    const refresh = (0, $drrcw$reactadmin.useRefresh)();
+    const notify = (0, $drrcw$reactadmin.useNotify)();
+    const getResourceLabel = (0, $drrcw$reactadmin.useGetResourceLabel)();
+    const dataModel = (0, $drrcw$semappssemanticdataprovider.useDataModel)(reference);
+    const { register: register, setValue: setValue, handleSubmit: handleSubmit } = (0, $drrcw$reacthookform.useForm)();
+    const appendLink = (0, $drrcw$react.useCallback)(async (objectUri)=>{
+        // Get the freshest data so that the put operation doesn't overwrite anything
+        const { data: data } = await dataProvider.getOne(resource, {
+            id: subjectUri
+        });
+        await dataProvider.update(resource, {
+            id: subjectUri,
+            data: {
+                ...data,
+                [source]: data[source] ? Array.isArray(data[source]) ? [
+                    ...data[source],
+                    objectUri
+                ] : [
+                    data[source],
+                    objectUri
+                ] : objectUri
+            },
+            previousData: data
+        });
+        refresh();
+        onClose();
+    }, [
+        dataProvider,
+        subjectUri,
+        resource,
+        source,
+        refresh,
+        onClose
+    ]);
+    const create = (0, $drrcw$react.useCallback)(async (values)=>{
+        const { data: data } = await dataProvider.create(reference, {
+            data: {
+                [dataModel.fieldsMapping.title]: values.title
+            }
+        });
+        await appendLink(data.id);
+        notify(`La resource "${values.title}" a été créée`, {
+            type: "success"
+        });
+    }, [
+        dataProvider,
+        dataModel,
+        appendLink,
+        reference,
+        notify
+    ]);
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Dialog), {
+        fullWidth: true,
+        open: open,
+        onClose: onClose,
+        children: panel === "find" ? /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$reactjsxruntime.Fragment), {
+            children: [
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogTitle), {
+                    className: classes.title,
+                    children: "Ajouter une relation"
+                }),
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                    className: classes.addForm,
+                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.TextField), {
+                        autoFocus: true,
+                        label: `Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        variant: "filled",
+                        margin: "dense",
+                        value: keyword,
+                        onChange: (e)=>setKeyword(e.target.value),
+                        fullWidth: true
+                    })
+                }),
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                    className: classes.listForm,
+                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $c7e6f337903f861b$export$2e2bcd8739ae039), {
+                        keyword: keyword,
+                        source: source,
+                        reference: reference,
+                        appendLink: appendLink,
+                        switchToCreate: ()=>{
+                            setValue("title", keyword);
+                            setPanel("create");
+                        }
+                    })
+                }),
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogActions), {
+                    className: classes.actions,
+                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                        label: "ra.action.close",
+                        variant: "text",
+                        onClick: onClose
+                    })
+                })
+            ]
+        }) : /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("form", {
+            onSubmit: handleSubmit(create),
+            children: [
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogTitle), {
+                    className: classes.title,
+                    children: translate("ra.page.create", {
+                        name: getResourceLabel(reference, 1)
+                    })
+                }),
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.DialogContent), {
+                    className: classes.addForm,
+                    children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.TextField), {
+                        ...register("title"),
+                        autoFocus: true,
+                        label: "Titre",
+                        variant: "filled",
+                        margin: "dense",
+                        fullWidth: true
+                    })
+                }),
+                /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$muimaterial.DialogActions), {
+                    className: classes.actions,
+                    children: [
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                            label: "ra.action.create",
+                            variant: "contained",
+                            startIcon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialAdd))), {}),
+                            type: "submit"
+                        }),
+                        /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Button), {
+                            label: "ra.action.close",
+                            variant: "text",
+                            onClick: onClose
+                        })
+                    ]
+                })
+            ]
+        })
+    });
+};
+var $9ac0ba4780250906$export$2e2bcd8739ae039 = $9ac0ba4780250906$var$QuickAppendDialog;
+
+
+const $6a1cce6d258bf615$var$QuickAppendReferenceArrayField = ({ reference: reference, source: source, resource: resource, children: children, ...otherProps })=>{
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const [showDialog, setShowDialog] = (0, $drrcw$react.useState)(false);
+    const { permissions: permissions } = (0, $drrcw$reactadmin.usePermissions)(record.id);
+    const canAppend = (0, $drrcw$react.useMemo)(()=>!!permissions && permissions.some((p)=>[
+                "acl:Append",
+                "acl:Write",
+                "acl:Control"
+            ].includes(p["acl:mode"])), [
+        permissions
+    ]);
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)((0, $drrcw$reactjsxruntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $b6ed9e2776cb4ba3$export$2e2bcd8739ae039), {
+                reference: reference,
+                source: source,
+                ...otherProps,
+                children: (0, ($parcel$interopDefault($drrcw$react))).Children.only(children) && /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).cloneElement(children, {
+                    appendLink: canAppend ? ()=>setShowDialog(true) : undefined
+                })
+            }),
+            canAppend && showDialog && /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $9ac0ba4780250906$export$2e2bcd8739ae039), {
+                open: showDialog,
+                onClose: ()=>setShowDialog(false),
+                subjectUri: record.id,
+                resource: resource,
+                source: source,
+                reference: reference
+            })
+        ]
+    });
+};
+var $6a1cce6d258bf615$export$2e2bcd8739ae039 = $6a1cce6d258bf615$var$QuickAppendReferenceArrayField;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const $732a429355ed7119$var$defaultdomainMapping = {
+    "github.com": {
+        label: "GitHub",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialGitHub))), {}),
+        color: "black",
+        contrastText: "white"
+    },
+    "gitlab.com": {
+        label: "GitLab",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reacticonsfi.FiGitlab), {}),
+        color: "orange",
+        contrastText: "black"
+    },
+    "opencollective.com": {
+        label: "Open Collective",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Avatar), {
+            component: "span",
+            src: "https://opencollective.com/static/images/opencollective-icon.svg"
+        }),
+        color: "white",
+        contrastText: "#297EFF"
+    },
+    "facebook.com": {
+        label: "Facebook",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialFacebook))), {}),
+        color: "#4267B2",
+        contrastText: "white"
+    },
+    "twitter.com": {
+        label: "Twitter",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialTwitter))), {}),
+        color: "#00ACEE",
+        contrastText: "white"
+    },
+    "instagram.com": {
+        label: "Instagram",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialInstagram))), {}),
+        color: "#8a3ab9",
+        contrastText: "white"
+    },
+    "youtube.com": {
+        label: "YouTube",
+        icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialYouTube))), {}),
+        color: "#FF0000",
+        contrastText: "white"
+    }
+};
+const $732a429355ed7119$var$useStyles = (0, ($parcel$interopDefault($drrcw$muistylesmakeStyles)))(()=>({
+        link: {
+            textDecoration: "unset",
+            "& :hover": {
+                cursor: "pointer"
+            }
+        },
+        chip: {
+            paddingLeft: 5,
+            paddingRight: 5,
+            marginRight: 5,
+            marginBottom: 5
+        },
+        label: {
+            marginTop: -1
+        }
+    }));
+const $732a429355ed7119$var$MultiUrlField = ({ source: source, domainMapping: domainMapping })=>{
+    const newDomainMapping = {
+        ...$732a429355ed7119$var$defaultdomainMapping,
+        ...domainMapping
+    };
+    const record = (0, $drrcw$reactadmin.useRecordContext)();
+    const classes = $732a429355ed7119$var$useStyles();
+    const urlArray = record[source] ? Array.isArray(record[source]) ? record[source] : [
+        record[source]
+    ] : [];
+    return urlArray.map((url, index)=>{
+        if (!url.startsWith("http")) url = `https://${url}`;
+        const parsedUrl = new URL(url);
+        if (!parsedUrl) return null;
+        const chip = newDomainMapping[parsedUrl.hostname] || {
+            label: "Site web",
+            icon: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, ($parcel$interopDefault($drrcw$muiiconsmaterialLanguage))), {}),
+            color: "#ea",
+            contrastText: "black"
+        };
+        return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)("a", {
+            href: url,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: classes.link,
+            children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.Chip), {
+                component: "span",
+                icon: /*#__PURE__*/ (0, ($parcel$interopDefault($drrcw$react))).cloneElement(chip.icon, {
+                    style: {
+                        color: chip.contrastText,
+                        width: 18,
+                        height: 18
+                    }
+                }),
+                size: "small",
+                label: chip.label,
+                classes: {
+                    root: classes.chip,
+                    label: classes.label
+                },
+                style: {
+                    color: chip.contrastText,
+                    backgroundColor: chip.color
+                }
+            })
+        }, index);
+    });
+};
+var $732a429355ed7119$export$2e2bcd8739ae039 = $732a429355ed7119$var$MultiUrlField;
+
+
+
+
+
+
+// useful to prevent click bubbling in a datagrid with rowClick
+const $43c570e3fbe4d9a0$var$stopPropagation = (e)=>e.stopPropagation();
+// Our handleClick does nothing as we wrap the children inside a Link but it is
+// required by ChipField, which uses a Chip from material-ui.
+// The material-ui Chip requires an onClick handler to behave like a clickable element.
+const $43c570e3fbe4d9a0$var$handleClick = ()=>{};
+const $43c570e3fbe4d9a0$var$SeparatedListField = (props)=>{
+    let { children: children, link: link = "edit", linkType: linkType, separator: separator = ",\xa0" } = props;
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $drrcw$reactadmin.useListContext)(props);
+    const createPath = (0, $drrcw$reactadmin.useCreatePath)();
+    if (linkType !== undefined) {
+        console.warn("The 'linkType' prop is deprecated and should be named to 'link' in <SeparatedListField />");
+        link = linkType;
+    }
+    if (isLoading) return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.LinearProgress), {});
+    return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactjsxruntime.Fragment), {
+        children: data.map((record, i)=>{
+            if (!record.id) return null;
+            const resourceLinkPath = link !== false && (typeof link === "function" ? link(record.id) : createPath({
+                resource: resource,
+                id: record.id,
+                type: link
+            }));
+            if (resourceLinkPath) return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("span", {
+                children: [
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.Link), {
+                        to: resourceLinkPath,
+                        onClick: $43c570e3fbe4d9a0$var$stopPropagation,
+                        children: /*#__PURE__*/ (0, $drrcw$react.cloneElement)((0, $drrcw$react.Children).only(children), {
+                            // Workaround to force ChipField to be clickable
+                            onClick: $43c570e3fbe4d9a0$var$handleClick
+                        })
+                    }),
+                    i < data.length - 1 && separator
+                ]
+            }, record.id);
+            return /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsxs)("span", {
+                children: [
+                    /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$reactadmin.RecordContextProvider), {
+                        value: record,
+                        children: children
+                    }),
+                    i < data.length - 1 && separator
+                ]
+            }, record.id);
+        })
+    });
+};
+var $43c570e3fbe4d9a0$export$2e2bcd8739ae039 = $43c570e3fbe4d9a0$var$SeparatedListField;
+
+
+
+
 //# sourceMappingURL=index.cjs.js.map
