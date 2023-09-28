@@ -17,7 +17,10 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
         try {
           const { json } = await dataProvider.fetch(urlJoin(authServerUrl, 'auth/login'), {
             method: 'POST',
-            body: JSON.stringify({ username: username.trim(), password: password.trim() }),
+            body: JSON.stringify({
+              username: username.trim(),
+              password: password.trim()
+            }),
             headers: new Headers({ 'Content-Type': 'application/json' })
           });
           const { token } = json;
@@ -92,9 +95,10 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
           const { webId } = jwtDecode(token);
           // Delete token but also any other value in local storage
           localStorage.clear();
-          window.location.href = `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
-            'http://activitypods.org/ns/core#FrontAppRegistration'
-          )}`;
+          window.location.href =
+            urlJoin(webId, 'openApp') +
+            '?type=' +
+            encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
           break;
       }
 
@@ -245,7 +249,11 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
 
         await dataProvider.fetch(urlJoin(authServerUrl, 'auth/account'), {
           method: 'POST',
-          body: JSON.stringify({ currentPassword, email: email.trim(), newPassword }),
+          body: JSON.stringify({
+            currentPassword,
+            email: email?.trim(),
+            newPassword
+          }),
           headers: new Headers({ 'Content-Type': 'application/json' })
         });
       } catch (e) {

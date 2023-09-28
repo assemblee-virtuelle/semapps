@@ -41,7 +41,9 @@ const englishMessages = {
       username_or_email: 'User ID or email address',
       current_password: 'Current password',
       new_password: 'New password',
-      confirm_new_password: 'Confirm new password'
+      confirm_new_password: 'Confirm new password',
+      password_strength: 'Password strength',
+      password_too_weak: 'Password too weak. Increase length or add special characters.'
     },
     helper: {
       login: 'Sign in to your account',

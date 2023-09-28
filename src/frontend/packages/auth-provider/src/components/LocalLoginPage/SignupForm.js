@@ -10,10 +10,13 @@ import {
   email,
   useLocaleState
 } from 'react-admin';
-import useSignup from '../../hooks/useSignup';
 import { useLocation } from 'react-router-dom';
-import { Button, CardContent, CircularProgress } from '@mui/material';
+import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import useSignup from '../../hooks/useSignup';
+import validatePasswordStrength from './validatePasswordStrength';
+import PasswordStrengthIndicator from './PasswordStrengthIndicator';
+import { defaultScorer } from '../../passwordScorer';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -24,7 +27,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, delayBeforeRedirect }) => {
+/**
+ * @param postSignupRedirect
+ * @param additionalSignupValues
+ * @param delayBeforeRedirect
+ * @param {string} redirectTo
+ * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */
+const SignupForm = ({
+  redirectTo,
+  passwordScorer = defaultScorer,
+  postSignupRedirect,
+  additionalSignupValues,
+  delayBeforeRedirect
+}) => {
   const [loading, setLoading] = useSafeSetState(false);
   const signup = useSignup();
   const translate = useTranslate();
@@ -33,6 +52,7 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const [locale] = useLocaleState();
+  const [password, setPassword] = React.useState('');
 
   const submit = values => {
     setLoading(true);
@@ -105,14 +125,24 @@ const SignupForm = ({ redirectTo, postSignupRedirect, additionalSignupValues, de
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
           validate={[required(), email()]}
         />
+        {passwordScorer && password && !(searchParams.has('email') && searchParams.has('force-email')) && (
+          <>
+            <Typography variant="caption" style={{ marginBottom: 3 }}>
+              {translate('auth.input.password_strength')}:{' '}
+            </Typography>
+            <PasswordStrengthIndicator password={password} scorer={passwordScorer} sx={{ width: '100%' }} />
+          </>
+        )}
         <TextInput
           source="password"
           type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
           label={translate('ra.auth.password')}
           autoComplete="new-password"
           fullWidth
           disabled={loading || (searchParams.has('email') && searchParams.has('force-email'))}
-          validate={required()}
+          validate={[required(), validatePasswordStrength(passwordScorer)]}
         />
         <Button
           variant="contained"

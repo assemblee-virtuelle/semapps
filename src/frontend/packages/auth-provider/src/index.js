@@ -32,5 +32,14 @@ export { default as useCheckPermissions } from './hooks/useCheckPermissions';
 export { default as usePermissionsWithRefetch } from './hooks/usePermissionsWithRefetch';
 export { default as useSignup } from './hooks/useSignup';
 
+// Password scoring
+export { default as PasswordStrengthIndicator } from './components/LocalLoginPage/PasswordStrengthIndicator';
+export { default as validatePasswordStrength } from './components/LocalLoginPage/validatePasswordStrength';
+export {
+  defaultScorer as defaultPasswordScorer,
+  defaultOptions as defaultPasswordScorerOptions,
+  createPasswordScorer
+} from './passwordScorer';
+
 export { default as englishMessages } from './messages/english';
 export { default as frenchMessages } from './messages/french';

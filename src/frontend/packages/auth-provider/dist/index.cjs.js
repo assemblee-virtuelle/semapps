@@ -20,6 +20,7 @@ var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
 var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
 var $2O4Ek$muiiconsmaterialStorage = require("@mui/icons-material/Storage");
 var $2O4Ek$speakingurl = require("speakingurl");
+var $2O4Ek$muistyles = require("@mui/styles");
 var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $2O4Ek$lodashisEqual = require("lodash/isEqual");
 
@@ -54,6 +55,11 @@ $parcel$export(module.exports, "useCheckAuthenticated", () => $84db3891236a263f$
 $parcel$export(module.exports, "useCheckPermissions", () => $673a0cc190160362$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "usePermissionsWithRefetch", () => $80da6dcda9baa28b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useSignup", () => $19e4629c708b7a3e$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "PasswordStrengthIndicator", () => $edfec7f9e9fd7881$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "validatePasswordStrength", () => $eab41bc89667b2c6$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "defaultPasswordScorer", () => $d1ca1e1d215e32ca$export$19dcdb21c6965fb8);
+$parcel$export(module.exports, "defaultPasswordScorerOptions", () => $d1ca1e1d215e32ca$export$ba43bf67f3d48107);
+$parcel$export(module.exports, "createPasswordScorer", () => $d1ca1e1d215e32ca$export$a1d713a9155d58fc);
 $parcel$export(module.exports, "englishMessages", () => $be2fdde9f3e3137d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$2e2bcd8739ae039);
 
@@ -184,7 +190,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
                     // Delete token but also any other value in local storage
                     localStorage.clear();
-                    window.location.href = `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                    window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp") + "?type=" + encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration");
                     break;
             }
             // Avoid displaying immediately the login page
@@ -324,7 +330,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     method: "POST",
                     body: JSON.stringify({
                         currentPassword: currentPassword,
-                        email: email.trim(),
+                        email: email?.trim(),
                         newPassword: newPassword
                     }),
                     headers: new Headers({
@@ -1559,6 +1565,9 @@ var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPag
 
 
 
+
+
+
 const $19e4629c708b7a3e$var$useSignup = ()=>{
     const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
     return (0, $2O4Ek$react.useCallback)((params = {})=>authProvider.signup(params), [
@@ -1568,6 +1577,131 @@ const $19e4629c708b7a3e$var$useSignup = ()=>{
 var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
 
 
+// Inspired by https://github.com/bartlomiejzuber/password-strength-score
+/**
+ * @typedef PasswordStrengthOptions
+ * @property {number} isVeryLongLength - Required characters for a very long password (default: 12)
+ * @property {number} isLongLength - Required characters for a long password (default: 6)
+ * @property {number} isVeryLongScore - Score for a very long password (default: 2.5)
+ * @property {number} isLongScore - Score for a long password (default: 1.5)
+ * @property {number} uppercaseScore - Score for a password with uppercase letters (default: 1)
+ * @property {number} lowercaseScore - Score for a password with lowercase letters (default: 1)
+ * @property {number} numbersScore - Score for a password with numbers (default: 1)
+ * @property {number} nonAlphanumericsScore - Score for a password without non-alphanumeric characters (default: 1)
+ */ /** @type {PasswordStrengthOptions} */ const $d1ca1e1d215e32ca$export$ba43bf67f3d48107 = {
+    isVeryLongLength: 14,
+    isLongLength: 8,
+    isLongScore: 2,
+    isVeryLongScore: 4,
+    uppercaseScore: 1,
+    lowercaseScore: 1,
+    numbersScore: 1,
+    nonAlphanumericsScore: 1
+};
+const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password, options)=>{
+    if (!password) return 0;
+    const mergedOptions = {
+        ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
+        ...options
+    };
+    const longScore = password.length >= mergedOptions.isLongLength && mergedOptions.isLongScore || 0;
+    const veryLongScore = password.length >= mergedOptions.isVeryLongLength && mergedOptions.isVeryLongScore || 0;
+    const lowercaseScore = /[a-z]/.test(password) && mergedOptions.lowercaseScore || 0;
+    const uppercaseScore = /[A-Z]/.test(password) && mergedOptions.uppercaseScore || 0;
+    const numbersScore = /\d/.test(password) && mergedOptions.numbersScore || 0;
+    const nonalphasScore = /\W/.test(password) && mergedOptions.nonAlphanumericsScore || 0;
+    return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
+};
+const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107, minRequiredScore = 5)=>{
+    const mergedOptions = {
+        ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
+        ...options
+    };
+    return {
+        scoreFn: (password)=>$d1ca1e1d215e32ca$export$963a5c59734509bb(password, mergedOptions),
+        minRequiredScore: minRequiredScore,
+        maxScore: mergedOptions.uppercaseScore + mergedOptions.lowercaseScore + mergedOptions.numbersScore + mergedOptions.nonAlphanumericsScore + mergedOptions.isLongScore + mergedOptions.isVeryLongScore
+    };
+};
+const $d1ca1e1d215e32ca$export$19dcdb21c6965fb8 = $d1ca1e1d215e32ca$export$a1d713a9155d58fc($d1ca1e1d215e32ca$export$ba43bf67f3d48107, 5);
+
+
+const $eab41bc89667b2c6$var$validatePasswordStrength = (scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8))=>(value)=>{
+        if (!scorer) return undefined;
+        const strength = scorer.scoreFn(value);
+        if (strength < scorer.minRequiredScore) return "auth.input.password_too_weak";
+        return undefined;
+    };
+var $eab41bc89667b2c6$export$2e2bcd8739ae039 = $eab41bc89667b2c6$var$validatePasswordStrength;
+
+
+
+
+
+
+
+
+/**
+ * @typedef {Object} Color
+ * @property {number} red
+ * @property {number} green
+ * @property {number} blue
+ */ /** Calculate a rgb-color from a gradient between `color1` and `color2`
+ * @param {number} fade - Indicates the fade between `color1` and `color2` in the range [0, 1].
+ * @param {Color} color1
+ * @param {Color} color2
+ * @returns {string} `` `rgb(${red}, ${green}, ${blue})` ``
+ */ const $bd29744006fdc23c$var$colorGradient = (fade, color1, color2)=>{
+    var diffRed = color2.red - color1.red;
+    var diffGreen = color2.green - color1.green;
+    var diffBlue = color2.blue - color1.blue;
+    var gradient = {
+        red: Math.floor(color1.red + diffRed * fade),
+        green: Math.floor(color1.green + diffGreen * fade),
+        blue: Math.floor(color1.blue + diffBlue * fade)
+    };
+    return "rgb(" + gradient.red + "," + gradient.green + "," + gradient.blue + ")";
+};
+function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
+    const { minVal: minVal, maxVal: maxVal, currentVal: currentVal, badColor: badColor, goodColor: goodColor, ...restProps } = props;
+    const color1 = badColor || {
+        red: 0xff,
+        green: 0x40,
+        blue: 0x47
+    };
+    const color2 = goodColor || {
+        red: 0x00,
+        green: 0xff,
+        blue: 0x6e
+    };
+    const fade = Math.max(0, Math.min(1, (currentVal - minVal) / (maxVal - minVal)));
+    const currentColor = $bd29744006fdc23c$var$colorGradient(fade, color1, color2);
+    const StyledLinearProgress = (0, $2O4Ek$muistyles.withStyles)({
+        colorPrimary: {
+            backgroundColor: "#e0e0e0"
+        },
+        barColorPrimary: {
+            backgroundColor: currentColor
+        }
+    })((0, $2O4Ek$muimaterial.LinearProgress));
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)(StyledLinearProgress, {
+        ...restProps,
+        value: 100 * fade,
+        variant: "determinate"
+    });
+}
+
+
+
+function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), password: password, ...restProps }) {
+    const strength = scorer.scoreFn(password);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
+        currentVal: strength,
+        minVal: 0,
+        maxVal: scorer.maxScore,
+        ...restProps
+    });
+}
 
 
 
@@ -1579,7 +1713,16 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             margin: theme.spacing(0.3)
         }
     }));
-const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
+/**
+ * @param postSignupRedirect
+ * @param additionalSignupValues
+ * @param delayBeforeRedirect
+ * @param {string} redirectTo
+ * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), postSignupRedirect: postSignupRedirect, additionalSignupValues: additionalSignupValues, delayBeforeRedirect: delayBeforeRedirect })=>{
     const [loading, setLoading] = (0, $2O4Ek$reactadmin.useSafeSetState)(false);
     const signup = (0, $19e4629c708b7a3e$export$2e2bcd8739ae039)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -1588,6 +1731,7 @@ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, postSignupRe
     const location = (0, $2O4Ek$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const [locale] = (0, $2O4Ek$reactadmin.useLocaleState)();
+    const [password, setPassword] = $2O4Ek$react.useState("");
     const submit = (values)=>{
         setLoading(true);
         signup({
@@ -1664,14 +1808,41 @@ const $5f70c240e5b0340c$var$SignupForm = ({ redirectTo: redirectTo, postSignupRe
                         (0, $2O4Ek$reactadmin.email)()
                     ]
                 }),
+                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                    children: [
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                            variant: "caption",
+                            style: {
+                                marginBottom: 3
+                            },
+                            children: [
+                                translate("auth.input.password_strength"),
+                                ":",
+                                " "
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                            password: password,
+                            scorer: passwordScorer,
+                            sx: {
+                                width: "100%"
+                            }
+                        })
+                    ]
+                }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "password",
                     type: "password",
+                    value: password,
+                    onChange: (e)=>setPassword(e.target.value),
                     label: translate("ra.auth.password"),
                     autoComplete: "new-password",
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
-                    validate: (0, $2O4Ek$reactadmin.required)()
+                    validate: [
+                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                    ]
                 }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
                     variant: "contained",
@@ -1795,12 +1966,22 @@ var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
 
 
 
+
+
+
 const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
         icon: {
             margin: theme.spacing(0.3)
         }
     }));
-const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo })=>{
+/**
+ *
+ * @param {string} redirectTo
+ * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */ const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const location = (0, $2O4Ek$reactrouterdom.useLocation)();
     const searchParams = new URLSearchParams(location.search);
     const token = searchParams.get("token");
@@ -1809,6 +1990,7 @@ const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo })=>{
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
     const notify = (0, $2O4Ek$reactadmin.useNotify)();
     const classes = $176df6bd8edc5f4d$var$useStyles();
+    const [newPassword, setNewPassword] = (0, $2O4Ek$react.useState)("");
     const submit = (values)=>{
         setLoading(true);
         authProvider.setNewPassword({
@@ -1849,15 +2031,42 @@ const $176df6bd8edc5f4d$var$NewPasswordForm = ({ redirectTo: redirectTo })=>{
                     validate: (0, $2O4Ek$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
+                passwordScorer && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                    children: [
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                            variant: "caption",
+                            style: {
+                                marginBottom: 3
+                            },
+                            children: [
+                                translate("auth.input.password_strength"),
+                                ":",
+                                " "
+                            ]
+                        }),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                            password: newPassword,
+                            scorer: passwordScorer,
+                            sx: {
+                                width: "100%"
+                            }
+                        })
+                    ]
+                }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "password",
+                    value: newPassword,
                     label: translate("auth.input.new_password"),
                     autoComplete: "current-password",
                     fullWidth: true,
                     disabled: loading,
-                    validate: (0, $2O4Ek$reactadmin.required)(),
+                    validate: [
+                        (0, $2O4Ek$reactadmin.required)(),
+                        (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
+                    ],
+                    onChange: (e)=>setNewPassword(e.target.value),
                     format: (value)=>value ? value.toLowerCase() : ""
                 }),
                 /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
@@ -2037,6 +2246,7 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
 var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
+
 const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
         switch: {
             marginBottom: "1em",
@@ -2045,7 +2255,18 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             alignItems: "center"
         }
     }));
-const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues })=>{
+/**
+ * @param {object} props Props
+ * @param {boolean} props.hasSignup If to show signup form.
+ * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
+ * @param {string} props.postSignupRedirect Location to redirect to after signup.
+ * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {object} props.additionalSignupValues
+ * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const classes = $4c56dbfbda0fa20c$var$useStyles();
     const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -2104,11 +2325,13 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsern
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
-                    additionalSignupValues: additionalSignupValues
+                    additionalSignupValues: additionalSignupValues,
+                    passwordScorer: passwordScorer
                 }),
                 isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
                 isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo
+                    redirectTo: redirectTo,
+                    passwordScorer: passwordScorer
                 }),
                 isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
@@ -2329,6 +2552,9 @@ var $80da6dcda9baa28b$export$2e2bcd8739ae039 = $80da6dcda9baa28b$var$usePermissi
 
 
 
+
+
+
 const $be2fdde9f3e3137d$var$englishMessages = {
     auth: {
         dialog: {
@@ -2372,7 +2598,9 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             username_or_email: "User ID or email address",
             current_password: "Current password",
             new_password: "New password",
-            confirm_new_password: "Confirm new password"
+            confirm_new_password: "Confirm new password",
+            password_strength: "Password strength",
+            password_too_weak: "Password too weak. Increase length or add special characters."
         },
         helper: {
             login: "Sign in to your account",
@@ -2457,7 +2685,9 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             username_or_email: "Identifiant ou adresse e-mail",
             current_password: "Mot de passe actuel",
             new_password: "Nouveau mot de passe",
-            confirm_new_password: "Confirmer le nouveau mot de passe"
+            confirm_new_password: "Confirmer le nouveau mot de passe",
+            password_strength: "Force du mot de passe",
+            password_too_weak: "Mot de passe trop faible. Augmenter la longueur ou ajouter des caract\xe8res sp\xe9ciaux."
         },
         helper: {
             login: "Connectez-vous \xe0 votre compte.",
