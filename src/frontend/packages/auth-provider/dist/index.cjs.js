@@ -57,7 +57,9 @@ $parcel$export(module.exports, "usePermissionsWithRefetch", () => $80da6dcda9baa
 $parcel$export(module.exports, "useSignup", () => $19e4629c708b7a3e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "PasswordStrengthIndicator", () => $edfec7f9e9fd7881$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "validatePasswordStrength", () => $eab41bc89667b2c6$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "passwordScorer", () => $d1ca1e1d215e32ca$exports);
+$parcel$export(module.exports, "defaultPasswordScorer", () => $d1ca1e1d215e32ca$export$19dcdb21c6965fb8);
+$parcel$export(module.exports, "defaultPasswordScorerOptions", () => $d1ca1e1d215e32ca$export$ba43bf67f3d48107);
+$parcel$export(module.exports, "createPasswordScorer", () => $d1ca1e1d215e32ca$export$a1d713a9155d58fc);
 $parcel$export(module.exports, "englishMessages", () => $be2fdde9f3e3137d$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "frenchMessages", () => $6dbc362c3d93e01d$export$2e2bcd8739ae039);
 
@@ -1563,6 +1565,9 @@ var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPag
 
 
 
+
+
+
 const $19e4629c708b7a3e$var$useSignup = ()=>{
     const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
     return (0, $2O4Ek$react.useCallback)((params = {})=>authProvider.signup(params), [
@@ -1572,15 +1577,6 @@ const $19e4629c708b7a3e$var$useSignup = ()=>{
 var $19e4629c708b7a3e$export$2e2bcd8739ae039 = $19e4629c708b7a3e$var$useSignup;
 
 
-
-
-
-var $d1ca1e1d215e32ca$exports = {};
-
-$parcel$export($d1ca1e1d215e32ca$exports, "defaultOptions", () => $d1ca1e1d215e32ca$export$ba43bf67f3d48107);
-$parcel$export($d1ca1e1d215e32ca$exports, "passwordStrength", () => $d1ca1e1d215e32ca$export$963a5c59734509bb);
-$parcel$export($d1ca1e1d215e32ca$exports, "createPasswordScorer", () => $d1ca1e1d215e32ca$export$a1d713a9155d58fc);
-$parcel$export($d1ca1e1d215e32ca$exports, "defaultScorer", () => $d1ca1e1d215e32ca$export$19dcdb21c6965fb8);
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
  * @typedef PasswordStrengthOptions
@@ -1616,7 +1612,7 @@ const $d1ca1e1d215e32ca$export$963a5c59734509bb = (password, options)=>{
     const nonalphasScore = /\W/.test(password) && mergedOptions.nonAlphanumericsScore || 0;
     return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
 };
-const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107, minRequiredScore)=>{
+const $d1ca1e1d215e32ca$export$a1d713a9155d58fc = (options = $d1ca1e1d215e32ca$export$ba43bf67f3d48107, minRequiredScore = 5)=>{
     const mergedOptions = {
         ...$d1ca1e1d215e32ca$export$ba43bf67f3d48107,
         ...options
@@ -1722,7 +1718,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
  * @param additionalSignupValues
  * @param delayBeforeRedirect
  * @param {string} redirectTo
- * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
@@ -1745,13 +1741,13 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? postSignupRedirect + "?redirect=" + encodeURIComponent(redirectTo || "/") : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? postSignupRedirect + "?redirect=" + encodeURIComponent(redirectTo || "/") : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -2250,6 +2246,7 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
 var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
+
 const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
         switch: {
             marginBottom: "1em",
@@ -2258,7 +2255,18 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             alignItems: "center"
         }
     }));
-const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues })=>{
+/**
+ * @param {object} props Props
+ * @param {boolean} props.hasSignup If to show signup form.
+ * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
+ * @param {string} props.postSignupRedirect Location to redirect to after signup.
+ * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {object} props.additionalSignupValues
+ * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8) })=>{
     const classes = $4c56dbfbda0fa20c$var$useStyles();
     const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
@@ -2317,11 +2325,13 @@ const $4c56dbfbda0fa20c$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsern
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
-                    additionalSignupValues: additionalSignupValues
+                    additionalSignupValues: additionalSignupValues,
+                    passwordScorer: passwordScorer
                 }),
                 isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
                 isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo
+                    redirectTo: redirectTo,
+                    passwordScorer: passwordScorer
                 }),
                 isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,

@@ -24,9 +24,6 @@ import {withStyles as $4oW5r$withStyles} from "@mui/styles";
 import $4oW5r$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $4oW5r$lodashisEqual from "lodash/isEqual";
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
 
 
 
@@ -1530,6 +1527,9 @@ var $907d5edbccff943e$export$2e2bcd8739ae039 = $907d5edbccff943e$var$PodLoginPag
 
 
 
+
+
+
 const $fb967e2c34f56644$var$useSignup = ()=>{
     const authProvider = (0, $4oW5r$useAuthProvider)();
     return (0, $4oW5r$useCallback)((params = {})=>authProvider.signup(params), [
@@ -1539,15 +1539,6 @@ const $fb967e2c34f56644$var$useSignup = ()=>{
 var $fb967e2c34f56644$export$2e2bcd8739ae039 = $fb967e2c34f56644$var$useSignup;
 
 
-
-
-
-var $646d64648a630b24$exports = {};
-
-$parcel$export($646d64648a630b24$exports, "defaultOptions", () => $646d64648a630b24$export$ba43bf67f3d48107);
-$parcel$export($646d64648a630b24$exports, "passwordStrength", () => $646d64648a630b24$export$963a5c59734509bb);
-$parcel$export($646d64648a630b24$exports, "createPasswordScorer", () => $646d64648a630b24$export$a1d713a9155d58fc);
-$parcel$export($646d64648a630b24$exports, "defaultScorer", () => $646d64648a630b24$export$19dcdb21c6965fb8);
 // Inspired by https://github.com/bartlomiejzuber/password-strength-score
 /**
  * @typedef PasswordStrengthOptions
@@ -1583,7 +1574,7 @@ const $646d64648a630b24$export$963a5c59734509bb = (password, options)=>{
     const nonalphasScore = /\W/.test(password) && mergedOptions.nonAlphanumericsScore || 0;
     return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
 };
-const $646d64648a630b24$export$a1d713a9155d58fc = (options = $646d64648a630b24$export$ba43bf67f3d48107, minRequiredScore)=>{
+const $646d64648a630b24$export$a1d713a9155d58fc = (options = $646d64648a630b24$export$ba43bf67f3d48107, minRequiredScore = 5)=>{
     const mergedOptions = {
         ...$646d64648a630b24$export$ba43bf67f3d48107,
         ...options
@@ -1689,7 +1680,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
  * @param additionalSignupValues
  * @param delayBeforeRedirect
  * @param {string} redirectTo
- * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
@@ -1712,13 +1703,13 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? postSignupRedirect + "?redirect=" + encodeURIComponent(redirectTo || "/") : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? postSignupRedirect + "?redirect=" + encodeURIComponent(redirectTo || "/") : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -2217,6 +2208,7 @@ const $1b78e27e3e92a798$var$SimpleBox = ({ title: title, icon: icon, text: text,
 var $1b78e27e3e92a798$export$2e2bcd8739ae039 = $1b78e27e3e92a798$var$SimpleBox;
 
 
+
 const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
         switch: {
             marginBottom: "1em",
@@ -2225,7 +2217,18 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
             alignItems: "center"
         }
     }));
-const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues })=>{
+/**
+ * @param {object} props Props
+ * @param {boolean} props.hasSignup If to show signup form.
+ * @param {boolean} props.allowUsername Indicates, if login is allowed with username (instead of email).
+ * @param {string} props.postSignupRedirect Location to redirect to after signup.
+ * @param {string} props.postLoginRedirect Location to redirect to after login.
+ * @param {object} props.additionalSignupValues
+ * @param {object} props.passwordScorer Scorer to evaluate and indicate password strength.
+ *  Set to `null` or `false`, if you don't want password strength checks. Default is
+ *  passwordStrength's `defaultScorer`.
+ * @returns
+ */ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsername: allowUsername, postSignupRedirect: postSignupRedirect, postLoginRedirect: postLoginRedirect, additionalSignupValues: additionalSignupValues, passwordScorer: passwordScorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8) })=>{
     const classes = $23fea069f5d2d834$var$useStyles();
     const navigate = (0, $4oW5r$useNavigate)();
     const translate = (0, $4oW5r$useTranslate)();
@@ -2284,11 +2287,13 @@ const $23fea069f5d2d834$var$LocalLoginPage = ({ hasSignup: hasSignup, allowUsern
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
-                    additionalSignupValues: additionalSignupValues
+                    additionalSignupValues: additionalSignupValues,
+                    passwordScorer: passwordScorer
                 }),
                 isResetPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
                 isNewPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
-                    redirectTo: redirectTo
+                    redirectTo: redirectTo,
+                    passwordScorer: passwordScorer
                 }),
                 isLogin && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
                     redirectTo: redirectTo,
@@ -2688,5 +2693,5 @@ var $509b6323d7902699$export$2e2bcd8739ae039 = $509b6323d7902699$var$frenchMessa
 
 
 
-export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $62be5dcee9954341$export$2e2bcd8739ae039 as EditActionsWithPermissions, $701198930c0b0c72$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $d1f54fc03225e8ee$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $907d5edbccff943e$export$2e2bcd8739ae039 as PodLoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $abd69a52484f41d9$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
+export {$1d8606895ce3b768$export$2e2bcd8739ae039 as authProvider, $f2c5683e04dee28c$export$2e2bcd8739ae039 as CreateWithPermissions, $28fa6ad821327921$export$2e2bcd8739ae039 as EditWithPermissions, $62be5dcee9954341$export$2e2bcd8739ae039 as EditActionsWithPermissions, $701198930c0b0c72$export$2e2bcd8739ae039 as EditToolbarWithPermissions, $c78c2d7e17f60b2f$export$2e2bcd8739ae039 as EditButtonWithPermissions, $7efdcbe4be05bfd5$export$2e2bcd8739ae039 as DeleteButtonWithPermissions, $a4ded8260cc90dad$export$2e2bcd8739ae039 as ListWithPermissions, $e6071424a1ba88d9$export$2e2bcd8739ae039 as ListActionsWithPermissions, $561bb436d5af917c$export$2e2bcd8739ae039 as ShowWithPermissions, $d1f54fc03225e8ee$export$2e2bcd8739ae039 as ShowActionsWithPermissions, $7dac2771cc5eb38b$export$2e2bcd8739ae039 as PermissionsButton, $c2eef7602bbbff5e$export$2e2bcd8739ae039 as AuthDialog, $479961b7e298304b$export$2e2bcd8739ae039 as SsoLoginPage, $479961b7e298304b$export$2e2bcd8739ae039 as LoginPage, $907d5edbccff943e$export$2e2bcd8739ae039 as PodLoginPage, $23fea069f5d2d834$export$2e2bcd8739ae039 as LocalLoginPage, $9594dfbc217337d0$export$2e2bcd8739ae039 as ResourceWithPermissions, $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 as UserMenu, $7ad577d9c9c71db0$export$2e2bcd8739ae039 as useAgents, $a18ea4963428dd85$export$2e2bcd8739ae039 as useCheckAuthenticated, $abd69a52484f41d9$export$2e2bcd8739ae039 as useCheckPermissions, $26b16c415d19fb4a$export$2e2bcd8739ae039 as usePermissionsWithRefetch, $fb967e2c34f56644$export$2e2bcd8739ae039 as useSignup, $a8046307c9dfa483$export$2e2bcd8739ae039 as PasswordStrengthIndicator, $7a0bbe6824860dfe$export$2e2bcd8739ae039 as validatePasswordStrength, $646d64648a630b24$export$19dcdb21c6965fb8 as defaultPasswordScorer, $646d64648a630b24$export$ba43bf67f3d48107 as defaultPasswordScorerOptions, $646d64648a630b24$export$a1d713a9155d58fc as createPasswordScorer, $22afd1c81635c9d9$export$2e2bcd8739ae039 as englishMessages, $509b6323d7902699$export$2e2bcd8739ae039 as frenchMessages};
 //# sourceMappingURL=index.es.js.map

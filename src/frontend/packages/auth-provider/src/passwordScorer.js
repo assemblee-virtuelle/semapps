@@ -26,9 +26,9 @@ export const defaultOptions = {
 
 /**
  *
- * @param {string} password
- * @param {PasswordStrengthOptions} options
- * @returns password strength score
+ * @param {string} password Password text.
+ * @param {PasswordStrengthOptions} options Password options.
+ * @returns {number} The password strength score.
  */
 export const passwordStrength = (password, options) => {
   if (!password) {
@@ -47,7 +47,7 @@ export const passwordStrength = (password, options) => {
   return uppercaseScore + lowercaseScore + numbersScore + nonalphasScore + longScore + veryLongScore;
 };
 
-export const createPasswordScorer = (options = defaultOptions, minRequiredScore) => {
+export const createPasswordScorer = (options = defaultOptions, minRequiredScore = 5) => {
   const mergedOptions = { ...defaultOptions, ...options };
 
   return {

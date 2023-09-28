@@ -10,10 +10,10 @@ import {
   email,
   useLocaleState
 } from 'react-admin';
-import useSignup from '../../hooks/useSignup';
 import { useLocation } from 'react-router-dom';
 import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
+import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
  * @param additionalSignupValues
  * @param delayBeforeRedirect
  * @param {string} redirectTo
- * @param {Object} passwordScorer Scorer to evaluate and indicate password strength.
+ * @param {object} passwordScorer Scorer to evaluate and indicate password strength.
  *  Set to `null` or `false`, if you don't want password strength checks. Default is
  *  passwordStrength's `defaultScorer`.
  * @returns
@@ -66,7 +66,7 @@ const SignupForm = ({
             // Reload to ensure the dataServer config is reset
             window.location.reload();
             window.location.href = postSignupRedirect
-              ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/')
+              ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
               : redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
@@ -74,7 +74,7 @@ const SignupForm = ({
           // Reload to ensure the dataServer config is reset
           window.location.reload();
           window.location.href = postSignupRedirect
-            ? postSignupRedirect + '?redirect=' + encodeURIComponent(redirectTo || '/')
+            ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
             : redirectTo || '/';
           setLoading(false);
         }
