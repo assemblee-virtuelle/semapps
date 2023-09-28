@@ -3,7 +3,7 @@ const urlJoin = require('url-join');
 const { namedNode, literal, triple, variable } = require('@rdfjs/data-model');
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { ACTOR_TYPES, AS_PREFIX } = require('../../../constants');
-const { delay, defaultToArray, getSlugFromUri } = require('../../../utils');
+const { defaultToArray, getSlugFromUri, waitForResource } = require('../../../utils');
 
 const ActorService = {
   name: 'activitypub.actor',
@@ -157,14 +157,15 @@ const ActorService = {
       });
     },
     async awaitCreateComplete(ctx) {
-      const { actorUri, additionalKeys = [] } = ctx.params;
+      const { actorUri, additionalKeys = [], delayMs = 1000, maxTries = 20 } = ctx.params;
       const keysToCheck = ['publicKey', 'outbox', 'inbox', 'followers', 'following', ...additionalKeys];
-      let actor;
-      do {
-        if (actor) await delay(1000);
-        actor = await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } });
-      } while (!keysToCheck.every(key => Object.keys(actor).includes(key)));
-      return actor;
+
+      return await waitForResource(
+        delayMs,
+        keysToCheck,
+        maxTries,
+        async () => await this.actions.get({ actorUri, webId: 'system' }, { parentCtx: ctx, meta: { $cache: false } })
+      );
     },
     async generateMissingActorsData(ctx) {
       for (const containerUri of this.settings.actorsContainers) {

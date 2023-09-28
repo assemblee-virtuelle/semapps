@@ -1,6 +1,6 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
-const { delay } = require('../../../utils');
+const { waitForResource } = require('../../../utils');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -24,21 +24,22 @@ const ObjectService = {
       });
     },
     async awaitCreateComplete(ctx) {
-      const { objectUri, predicates } = ctx.params;
-      let object;
-      do {
-        if (object) await delay(1000); // Delay only on second loop
-        object = await ctx.call(
-          'ldp.resource.get',
-          {
-            resourceUri: objectUri,
-            accept: MIME_TYPES.JSON,
-            webId: 'system'
-          },
-          { meta: { $cache: false } }
-        );
-      } while (!predicates.every(p => Object.keys(object).includes(p)));
-      return object;
+      const { objectUri, predicates, delayMs = 1000, maxTries = 30 } = ctx.params;
+      return await waitForResource(
+        delayMs,
+        predicates,
+        maxTries,
+        async () =>
+          (object = await ctx.call(
+            'ldp.resource.get',
+            {
+              resourceUri: objectUri,
+              accept: MIME_TYPES.JSON,
+              webId: 'system'
+            },
+            { meta: { $cache: false } }
+          ))
+      );
     },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
@@ -69,9 +70,8 @@ const ObjectService = {
 
           if (!container)
             throw new Error(
-              `Cannot create resource of type "${
-                activity.object.type || activity.object['@type']
-              }", no matching containers were found!`
+              `Cannot create resource of type "${activity.object.type ||
+                activity.object['@type']}", no matching containers were found!`
             );
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
