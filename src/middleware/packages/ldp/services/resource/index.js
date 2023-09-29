@@ -1,3 +1,4 @@
+const awaitCreateCompleteAction = require('./actions/awaitCreateComplete');
 const getAction = require('./actions/get');
 const createAction = require('./actions/create');
 const patchAction = require('./actions/patch');
@@ -22,6 +23,7 @@ module.exports = {
   },
   dependencies: ['triplestore', 'jsonld'],
   actions: {
+    awaitCreateComplete: awaitCreateCompleteAction,
     create: createAction,
     delete: deleteAction,
     exist: existAction,

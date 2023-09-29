@@ -23,24 +23,6 @@ const ObjectService = {
         accept: MIME_TYPES.JSON
       });
     },
-    async awaitCreateComplete(ctx) {
-      const { objectUri, predicates, delayMs = 1000, maxTries = 30 } = ctx.params;
-      return await waitForResource(
-        delayMs,
-        predicates,
-        maxTries,
-        async () =>
-          (object = await ctx.call(
-            'ldp.resource.get',
-            {
-              resourceUri: objectUri,
-              accept: MIME_TYPES.JSON,
-              webId: 'system'
-            },
-            { meta: { $cache: false } }
-          ))
-      );
-    },
     async process(ctx) {
       let { activity, actorUri } = ctx.params;
       let activityType = activity.type || activity['@type'];
