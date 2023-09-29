@@ -6,7 +6,9 @@
     "noLib": false,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx"
   },
   "exclude": ["node_modules", "*.es.js", "*.cjs", "*.cjs.js"]
 }
