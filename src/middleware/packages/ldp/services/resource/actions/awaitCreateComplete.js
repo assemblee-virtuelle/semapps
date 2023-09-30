@@ -12,7 +12,6 @@ module.exports = {
 
     // Optional get-action parameters
     webId: { type: 'string', optional: true },
-    dereference: { type: 'array', optional: true },
     jsonContext: {
       type: 'multi',
       rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
@@ -24,20 +23,17 @@ module.exports = {
   async handler(ctx) {
     const { resourceUri, predicates = [], delayMs = 1000, maxTries = 30, webId = 'system', ...rest } = ctx.params;
 
-    return await waitForResource(
-      delayMs,
-      predicates,
-      maxTries,
-      async () =>
-        (object = await ctx.call(
-          'ldp.resource.get',
-          {
-            resourceUri: resourceUri,
-            accept: MIME_TYPES.JSON,
-            ...rest
-          },
-          { meta: { $cache: false } }
-        ))
+    return await waitForResource(delayMs, predicates, maxTries, () =>
+      ctx.call(
+        'ldp.resource.get',
+        {
+          resourceUri: resourceUri,
+          accept: MIME_TYPES.JSON,
+          webId,
+          ...rest
+        },
+        { meta: { $cache: false } }
+      )
     );
   }
 };

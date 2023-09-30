@@ -1,6 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
 const { OBJECT_TYPES, ACTIVITY_TYPES } = require('../../../constants');
-const { waitForResource } = require('../../../utils');
 
 const ObjectService = {
   name: 'activitypub.object',
@@ -52,8 +51,9 @@ const ObjectService = {
 
           if (!container)
             throw new Error(
-              `Cannot create resource of type "${activity.object.type ||
-                activity.object['@type']}", no matching containers were found!`
+              `Cannot create resource of type "${
+                activity.object.type || activity.object['@type']
+              }", no matching containers were found!`
             );
 
           const containerUri = await ctx.call('ldp.registry.getUri', { path: container.path, webId: actorUri });
