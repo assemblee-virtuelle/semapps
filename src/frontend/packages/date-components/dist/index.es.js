@@ -1,108 +1,82 @@
-import {jsx as $1h8NM$jsx} from "react/jsx-runtime";
-import {useCallback as $1h8NM$useCallback, useMemo as $1h8NM$useMemo} from "react";
-import {DatePicker as $1h8NM$DatePicker} from "@mui/x-date-pickers/DatePicker";
-import {TimePicker as $1h8NM$TimePicker} from "@mui/x-date-pickers/TimePicker";
-import {DateTimePicker as $1h8NM$DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
-import {useInput as $1h8NM$useInput, FieldTitle as $1h8NM$FieldTitle, InputHelperText as $1h8NM$InputHelperText, useListContext as $1h8NM$useListContext, useCreatePath as $1h8NM$useCreatePath} from "react-admin";
-import {LocalizationProvider as $1h8NM$LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {AdapterDateFns as $1h8NM$AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
-import $1h8NM$fullcalendarreact from "@fullcalendar/react";
-import $1h8NM$fullcalendardaygrid from "@fullcalendar/daygrid";
-import {useTheme as $1h8NM$useTheme} from "@mui/material";
-import $1h8NM$muistylesmakeStyles from "@mui/styles/makeStyles";
-import {useSearchParams as $1h8NM$useSearchParams, useNavigate as $1h8NM$useNavigate} from "react-router-dom";
-import $1h8NM$fullcalendarlist from "@fullcalendar/list";
+import {jsx as $5Ihaz$jsx, jsxs as $5Ihaz$jsxs} from "react/jsx-runtime";
+import {DatePicker as $5Ihaz$DatePicker} from "@mui/x-date-pickers/DatePicker";
+import {TimePicker as $5Ihaz$TimePicker} from "@mui/x-date-pickers/TimePicker";
+import {DateTimePicker as $5Ihaz$DateTimePicker} from "@mui/x-date-pickers/DateTimePicker";
+import {useCallback as $5Ihaz$useCallback, useMemo as $5Ihaz$useMemo} from "react";
+import {useInput as $5Ihaz$useInput, useTranslateLabel as $5Ihaz$useTranslateLabel, InputHelperText as $5Ihaz$InputHelperText, useListContext as $5Ihaz$useListContext, useCreatePath as $5Ihaz$useCreatePath} from "react-admin";
+import {LocalizationProvider as $5Ihaz$LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDateFns as $5Ihaz$AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import $5Ihaz$fullcalendarreact from "@fullcalendar/react";
+import $5Ihaz$fullcalendardaygrid from "@fullcalendar/daygrid";
+import {useTheme as $5Ihaz$useTheme} from "@mui/material";
+import $5Ihaz$muistylesmakeStyles from "@mui/styles/makeStyles";
+import {useSearchParams as $5Ihaz$useSearchParams, useNavigate as $5Ihaz$useNavigate} from "react-router-dom";
+import $5Ihaz$fullcalendarlist from "@fullcalendar/list";
+
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/jsx-props-no-spreading */ 
+
+
+
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
 
 
 
 
-
-
-
-
-
-
-
-const $85cccff3a4734cfe$var$leftPad = (nb = 2)=>(value)=>("0".repeat(nb) + value).slice(-nb);
-const $85cccff3a4734cfe$var$leftPad4 = $85cccff3a4734cfe$var$leftPad(4);
-const $85cccff3a4734cfe$var$leftPad2 = $85cccff3a4734cfe$var$leftPad(2);
-// yyyy-MM-ddThh:mm
-const $85cccff3a4734cfe$var$dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
-/**
- * @param {Date} value value to convert
- * @returns {string} A standardized datetime (yyyy-MM-ddThh:mm), to be passed to an <input type="datetime-local" />
- */ const $85cccff3a4734cfe$var$convertDateToString = (value)=>{
-    if (!(value instanceof Date) || isNaN(value.getDate())) return "";
-    const yy = $85cccff3a4734cfe$var$leftPad4(value.getFullYear());
-    const MM = $85cccff3a4734cfe$var$leftPad2(value.getMonth() + 1);
-    const dd = $85cccff3a4734cfe$var$leftPad2(value.getDate());
-    const hh = $85cccff3a4734cfe$var$leftPad2(value.getHours());
-    const mm = $85cccff3a4734cfe$var$leftPad2(value.getMinutes());
-    return `${yy}-${MM}-${dd}T${hh}:${mm}`;
-};
-const $85cccff3a4734cfe$export$59113f23fb667b84 = (value)=>{
-    // null, undefined and empty string values should not go through convertDateToString
-    // otherwise, it returns undefined and will make the input an uncontrolled one.
-    if (value == null || value === "") return "";
-    if (value instanceof Date) return $85cccff3a4734cfe$var$convertDateToString(value);
-    // valid dates should not be converted
-    if ($85cccff3a4734cfe$var$dateTimeRegex.test(value)) return value;
-    return $85cccff3a4734cfe$var$convertDateToString(new Date(value));
-};
-const $85cccff3a4734cfe$export$9a692607b62bf94e = (value)=>value ? new Date(value) : "";
-
-
-const $23b8ae46df88f164$var$Picker = ({ PickerComponent: PickerComponent, format: format = (0, $85cccff3a4734cfe$export$59113f23fb667b84), label: label, source: source, helperText: helperText, onBlur: onBlur, onChange: onChange, onFocus: onFocus, parse: parse = (0, $85cccff3a4734cfe$export$9a692607b62bf94e), validate: validate, defaultValue: defaultValue, locale: locale, pickerVariant: pickerVariant = "dialog", stringFormat: stringFormat = "ISO", allowClear: allowClear, ...rest })=>{
-    const { field: field, isRequired: isRequired, fieldState: { error: error, isTouched: isTouched } } = (0, $1h8NM$useInput)({
+const $610808f89222f9cc$var$Picker = ({ PickerComponent: PickerComponent, label: label, source: source, helperText: helperText, fullWidth: fullWidth, onBlur: onBlur, onChange: onChange, format: format, parse: parse, validate: validate, defaultValue: defaultValue, locale: locale, translations: translations, stringFormat: stringFormat = "ISO", ...rest })=>{
+    const { field: field, isRequired: isRequired, fieldState: { error: error, isTouched: isTouched, invalid: invalid }, formState: { isSubmitted: isSubmitted } } = (0, $5Ihaz$useInput)({
         format: format,
         onBlur: onBlur,
         onChange: onChange,
-        onFocus: onFocus,
         parse: parse,
         source: source,
         validate: validate,
-        ...rest
+        defaultValue: defaultValue
     });
-    const handleChange = (0, $1h8NM$useCallback)((value)=>{
-        Date.parse(value) ? field.onChange(stringFormat === "ISO" ? value.toISOString() : value.toString()) : field.onChange(null);
-    }, []);
-    return /*#__PURE__*/ (0, $1h8NM$jsx)((0, $1h8NM$LocalizationProvider), {
-        dateAdapter: (0, $1h8NM$AdapterDateFns),
-        adapterLocale: locale,
-        children: /*#__PURE__*/ (0, $1h8NM$jsx)(PickerComponent, {
-            label: /*#__PURE__*/ (0, $1h8NM$jsx)((0, $1h8NM$FieldTitle), {
+    const handleChange = (0, $5Ihaz$useCallback)((value)=>{
+        if (value instanceof Date) field.onChange(stringFormat === "ISO" ? value.toISOString() : value.toString());
+        else field.onChange(null);
+    }, [
+        field,
+        stringFormat
+    ]);
+    const translateLabel = (0, $5Ihaz$useTranslateLabel)();
+    const translatedLabel = /*#__PURE__*/ (0, $5Ihaz$jsxs)("span", {
+        children: [
+            translateLabel({
                 label: label,
-                source: source,
-                isRequired: isRequired
+                source: source
             }),
-            error: !!(isTouched && error),
+            isRequired && /*#__PURE__*/ (0, $5Ihaz$jsx)("span", {
+                "aria-hidden": "true",
+                children: " *"
+            })
+        ]
+    });
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$LocalizationProvider), {
+        dateAdapter: (0, $5Ihaz$AdapterDateFns),
+        adapterLocale: locale,
+        localeText: translations?.components.MuiLocalizationProvider.defaultProps.localeText,
+        children: /*#__PURE__*/ (0, $5Ihaz$jsx)(PickerComponent, {
+            label: translatedLabel,
             slotProps: {
                 textField: {
-                    helperText: /*#__PURE__*/ (0, $1h8NM$jsx)((0, $1h8NM$InputHelperText), {
-                        touched: isTouched,
-                        error: error,
+                    error: (isTouched || isSubmitted) && invalid,
+                    size: "small",
+                    fullWidth: fullWidth,
+                    helperText: /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$InputHelperText), {
+                        touched: isTouched || isSubmitted,
+                        error: error?.message,
                         helperText: helperText
                     })
                 }
             },
-            ...$23b8ae46df88f164$var$sanitizeRestProps(rest),
             value: field.value ? new Date(field.value) : null,
             onChange: handleChange,
-            onBlur: ()=>field.onBlur(field.value ? stringFormat === "ISO" ? new Date(field.value).toISOString() : new Date(field.value).toString() : null)
+            ...rest
         })
     });
 };
-$23b8ae46df88f164$var$Picker.defaultProps = {
-    isRequired: false,
-    meta: {
-        isTouched: false,
-        error: false
-    },
-    locale: undefined,
-    parse: (value)=>value === "" ? null : value // Avoid saving an empty string in the dataset
-};
-const $23b8ae46df88f164$var$sanitizeRestProps = ({ allowEmpty: allowEmpty, alwaysOn: alwaysOn, component: component, defaultValue: defaultValue, format: format, formClassName: formClassName, initialValue: initialValue, initializeForm: initializeForm, input: input, isRequired: isRequired, label: label, limitChoicesToValue: limitChoicesToValue, locale: locale, meta: meta, options: options, optionText: optionText, optionValue: optionValue, parse: parse, source: source, textAlign: textAlign, translate: translate, translateChoice: translateChoice, labelTime: labelTime, ...rest })=>rest;
-var $23b8ae46df88f164$export$2e2bcd8739ae039 = $23b8ae46df88f164$var$Picker;
+var $610808f89222f9cc$export$2e2bcd8739ae039 = $610808f89222f9cc$var$Picker;
 
 
 
@@ -115,18 +89,18 @@ var $23b8ae46df88f164$export$2e2bcd8739ae039 = $23b8ae46df88f164$var$Picker;
 
 
 const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: startDate, endDate: endDate, linkType: linkType })=>{
-    const { data: data, isLoading: isLoading, resource: resource } = (0, $1h8NM$useListContext)();
-    const [searchParams, setSearchParams] = (0, $1h8NM$useSearchParams)();
-    const navigate = (0, $1h8NM$useNavigate)();
-    const createPath = (0, $1h8NM$useCreatePath)();
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $5Ihaz$useListContext)();
+    const [searchParams, setSearchParams] = (0, $5Ihaz$useSearchParams)();
+    const navigate = (0, $5Ihaz$useNavigate)();
+    const createPath = (0, $5Ihaz$useCreatePath)();
     const query = new URLSearchParams(location.search);
     // Bypass the link in order to use React-Router
-    const eventClick = (0, $1h8NM$useCallback)(({ event: event, jsEvent: jsEvent })=>{
+    const eventClick = (0, $5Ihaz$useCallback)(({ event: event, jsEvent: jsEvent })=>{
         jsEvent.preventDefault();
         navigate(event.url);
     }, []);
     // Change the query string when month change
-    const datesSet = (0, $1h8NM$useCallback)(({ view: view })=>{
+    const datesSet = (0, $5Ihaz$useCallback)(({ view: view })=>{
         setSearchParams((params)=>({
                 ...params,
                 month: view.currentStart.getMonth() + 1,
@@ -135,7 +109,7 @@ const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: s
     }, [
         setSearchParams
     ]);
-    const events = (0, $1h8NM$useMemo)(()=>!isLoading && data.filter((record)=>record).map((record)=>({
+    const events = (0, $5Ihaz$useMemo)(()=>!isLoading && data.filter((record)=>record).map((record)=>({
                 id: record.id,
                 title: typeof label === "string" ? record[label] : label(record),
                 start: typeof startDate === "string" ? record[startDate] : startDate(record),
@@ -161,7 +135,7 @@ const $37245c02f9b1b006$var$useFullCalendarProps = ({ label: label, startDate: s
 var $37245c02f9b1b006$export$2e2bcd8739ae039 = $37245c02f9b1b006$var$useFullCalendarProps;
 
 
-const $abbcc02f55461290$var$useGlobalStyles = (0, $1h8NM$muistylesmakeStyles)((theme)=>({
+const $abbcc02f55461290$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
         "@global": {
             ".fc-button": {
                 backgroundColor: `${theme.palette.primary.main} !important`,
@@ -178,12 +152,12 @@ const $abbcc02f55461290$var$useGlobalStyles = (0, $1h8NM$muistylesmakeStyles)((t
         }
     }));
 const $abbcc02f55461290$var$CalendarList = (props)=>{
-    const theme = (0, $1h8NM$useTheme)();
+    const theme = (0, $5Ihaz$useTheme)();
     const fullCalendarProps = (0, $37245c02f9b1b006$export$2e2bcd8739ae039)(props);
     $abbcc02f55461290$var$useGlobalStyles();
-    return /*#__PURE__*/ (0, $1h8NM$jsx)((0, $1h8NM$fullcalendarreact), {
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
         plugins: [
-            (0, $1h8NM$fullcalendardaygrid)
+            (0, $5Ihaz$fullcalendardaygrid)
         ],
         locale: props.locale,
         initialView: "dayGridMonth",
@@ -203,7 +177,7 @@ var $abbcc02f55461290$export$2e2bcd8739ae039 = $abbcc02f55461290$var$CalendarLis
 
 
 
-const $69d9f850452774a2$var$useGlobalStyles = (0, $1h8NM$muistylesmakeStyles)((theme)=>({
+const $69d9f850452774a2$var$useGlobalStyles = (0, $5Ihaz$muistylesmakeStyles)((theme)=>({
         "@global": {
             ".fc-button": {
                 backgroundColor: `${theme.palette.primary.main} !important`,
@@ -215,9 +189,9 @@ const $69d9f850452774a2$var$useGlobalStyles = (0, $1h8NM$muistylesmakeStyles)((t
 const $69d9f850452774a2$var$DaysList = (props)=>{
     const fullCalendarProps = (0, $37245c02f9b1b006$export$2e2bcd8739ae039)(props);
     $69d9f850452774a2$var$useGlobalStyles();
-    return /*#__PURE__*/ (0, $1h8NM$jsx)((0, $1h8NM$fullcalendarreact), {
+    return /*#__PURE__*/ (0, $5Ihaz$jsx)((0, $5Ihaz$fullcalendarreact), {
         plugins: [
-            (0, $1h8NM$fullcalendarlist)
+            (0, $5Ihaz$fullcalendarlist)
         ],
         locale: props.locale,
         initialView: "listMonth",
@@ -231,19 +205,19 @@ var $69d9f850452774a2$export$2e2bcd8739ae039 = $69d9f850452774a2$var$DaysList;
 
 
 
-const $92007338c717b459$export$7edc06cf1783b30f = (props)=>/*#__PURE__*/ (0, $1h8NM$jsx)((0, $23b8ae46df88f164$export$2e2bcd8739ae039), {
-        PickerComponent: (0, $1h8NM$DatePicker),
+const $582746363a8b71b9$export$7edc06cf1783b30f = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$DatePicker),
         ...props
     });
-const $92007338c717b459$export$a1af6f79df847fac = (props)=>/*#__PURE__*/ (0, $1h8NM$jsx)((0, $23b8ae46df88f164$export$2e2bcd8739ae039), {
-        PickerComponent: (0, $1h8NM$TimePicker),
+const $582746363a8b71b9$export$a1af6f79df847fac = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$TimePicker),
         ...props
     });
-const $92007338c717b459$export$183478aa40b5df1 = (props)=>/*#__PURE__*/ (0, $1h8NM$jsx)((0, $23b8ae46df88f164$export$2e2bcd8739ae039), {
-        PickerComponent: (0, $1h8NM$DateTimePicker),
+const $582746363a8b71b9$export$183478aa40b5df1 = (props)=>/*#__PURE__*/ (0, $5Ihaz$jsx)((0, $610808f89222f9cc$export$2e2bcd8739ae039), {
+        PickerComponent: (0, $5Ihaz$DateTimePicker),
         ...props
     });
 
 
-export {$92007338c717b459$export$7edc06cf1783b30f as DateInput, $92007338c717b459$export$a1af6f79df847fac as TimeInput, $92007338c717b459$export$183478aa40b5df1 as DateTimeInput, $abbcc02f55461290$export$2e2bcd8739ae039 as CalendarList, $69d9f850452774a2$export$2e2bcd8739ae039 as DaysList, $37245c02f9b1b006$export$2e2bcd8739ae039 as useFullCalendarProps};
+export {$582746363a8b71b9$export$7edc06cf1783b30f as DateInput, $582746363a8b71b9$export$a1af6f79df847fac as TimeInput, $582746363a8b71b9$export$183478aa40b5df1 as DateTimeInput, $abbcc02f55461290$export$2e2bcd8739ae039 as CalendarList, $69d9f850452774a2$export$2e2bcd8739ae039 as DaysList, $37245c02f9b1b006$export$2e2bcd8739ae039 as useFullCalendarProps};
 //# sourceMappingURL=index.es.js.map

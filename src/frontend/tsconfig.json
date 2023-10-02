@@ -8,7 +8,8 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "isolatedModules": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "lib": ["ESNext"]
   },
   "exclude": ["node_modules", "*.es.js", "*.cjs", "*.cjs.js"]
 }
