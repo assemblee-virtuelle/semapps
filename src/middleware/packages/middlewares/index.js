@@ -26,6 +26,7 @@ const negotiateContentType = (req, res, next) => {
   }
 };
 
+/** @type {(msg: string) => never} */
 const throw403 = msg => {
   throw new MoleculerError('Forbidden', 403, 'ACCESS_DENIED', { status: 'Forbidden', text: msg });
 };

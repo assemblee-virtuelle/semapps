@@ -1,4 +1,5 @@
 const { throw403 } = require('@semapps/middlewares');
+const { arrayOf } = require('@semapps/ldp');
 const { isRemoteUri, getSlugFromUri } = require('../utils');
 const { defaultContainerRights, defaultCollectionRights } = require('../defaultRights');
 
@@ -53,6 +54,29 @@ const addRightsToNewUser = async (ctx, userUri) => {
   });
 };
 
+/**
+ * Check, if an URI is attached to `ctx.authorization.capability`.
+ * If the capability is valid and enables access to the resource, return true.
+ * @param {string} mode The `acl:Mode` to check for (e.g. `acl:Read`).
+ * @returns {Promise<boolean>} true, if capability enables access to the resource, false otherwise.
+ */
+const hasValidCapability = async (capDocument, resourceUri, mode) => {
+  // Check, if the capability's ACLs allow access to the resource.
+  if (
+    capDocument &&
+    arrayOf(capDocument.type).includes('acl:Authorization') &&
+    arrayOf(capDocument['acl:Mode']).includes(mode) &&
+    arrayOf(capDocument['acl:AccessTo']).includes(resourceUri)
+  ) {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Middleware that ensures that requests are conforming ACL records.
+ * @type {import('moleculer').Middleware}
+ */
 const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://semapps.org/webacl' }) => ({
   name: 'WebAclMiddleware',
   async started() {
@@ -101,6 +125,16 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         if (result.read) {
           return bypass();
         }
+
+        // Check, if there is a valid capability.
+        if (ctx.meta.authorization?.capability) {
+          if (await hasValidCapability(ctx.meta.authorization.capability, resourceUri, 'acl:Read')) {
+            // By setting webId to 'system', we bypass the read permission checks.
+            ctx.meta.webId = 'system';
+            return bypass();
+          }
+        }
+
         throw403();
       };
     }

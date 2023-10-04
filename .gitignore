@@ -13,3 +13,4 @@ lerna-debug.log
 .settings
 # conflict
 *.orig
+.nx
