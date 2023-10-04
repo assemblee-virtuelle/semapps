@@ -8,6 +8,7 @@ module.exports = {
   ControlledContainerMixin: require('./mixins/controlled-container'),
   ImageProcessorMixin: require('./mixins/image-processor'),
   DocumentTaggerMixin: require('./mixins/document-tagger'),
+  DisassemblyMixin: require('./mixins/disassembly'),
   LdpAdapter: require('./adapter'),
   ...utils
 };
