@@ -195,8 +195,8 @@ const ActorService = {
     isRemoteUri(uri, dataset) {
       if (this.settings.podProvider && !dataset) return true; // If no dataset is set, assume actor is remote
       return (
-        !urlJoin(uri, '/').startsWith(this.settings.baseUrl) ||
-        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUrl, dataset)}/`))
+        !urlJoin(uri, '/').startsWith(this.settings.baseUri) ||
+        (this.settings.podProvider && !urlJoin(uri, '/').startsWith(`${urlJoin(this.settings.baseUri, dataset)}/`))
       );
     },
     isActor(resource) {
