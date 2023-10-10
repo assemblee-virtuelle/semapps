@@ -7,6 +7,11 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
+    jsonContext: {
+      type: 'multi',
+      rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+      optional: true
+    },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {

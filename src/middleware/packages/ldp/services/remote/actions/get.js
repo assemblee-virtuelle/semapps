@@ -6,6 +6,11 @@ module.exports = {
     resourceUri: { type: 'string' },
     webId: { type: 'string', optional: true },
     accept: { type: 'string', default: MIME_TYPES.JSON },
+    jsonContext: {
+      type: 'multi',
+      rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+      optional: true
+    },
     // Inspired from https://developer.chrome.com/docs/workbox/caching-strategies-overview/#caching-strategies
     strategy: {
       type: 'enum',
@@ -14,7 +19,7 @@ module.exports = {
     }
   },
   async handler(ctx) {
-    const { resourceUri, accept, ...rest } = ctx.params;
+    const { resourceUri, accept, jsonContext, ...rest } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
     // Without webId, we have no way to know which dataset to look in, so get from network
@@ -29,29 +34,35 @@ module.exports = {
 
     switch (strategy) {
       case 'cacheFirst':
-        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx }).catch(e => {
-          if (e.code === 404) {
-            return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
-          }
-          throw e;
-        });
+        return this.actions
+          .getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx });
+            }
+            throw e;
+          });
 
       case 'networkFirst':
-        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx }).catch(e => {
+        return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx }).catch(e => {
           if (e.code === 404) {
-            return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+            return this.actions.getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx });
           }
           throw e;
         });
 
       case 'cacheOnly':
-        return this.actions.getStored({ resourceUri, webId, accept, ...rest }, { parentCtx: ctx });
+        return this.actions.getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx });
 
       case 'networkOnly':
-        return this.actions.getNetwork({ resourceUri, webId, accept }, { parentCtx: ctx });
+        return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx });
 
       case 'staleWhileRevalidate':
-        throw new Error(`Strategy staleWhileRevalidate not implemented yet`);
+        // Not implemented yet
+        break;
+
+      default:
+        throw new Error(`Unknown strategy: ${strategy}`);
     }
   }
 };

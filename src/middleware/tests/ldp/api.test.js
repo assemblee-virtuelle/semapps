@@ -49,13 +49,78 @@ describe('LDP handling through API', () => {
     });
   });
 
+  test('Get resource with JsonLdContext header', async () => {
+    // Use string
+    await expect(
+      fetchServer(resourceUri, {
+        headers: new fetch.Headers({
+          JsonLdContext: 'https://www.w3.org/ns/activitystreams'
+        })
+      })
+    ).resolves.toMatchObject({
+      json: {
+        type: 'http://virtual-assembly.org/ontologies/pair#Project'
+      }
+    });
+
+    // Use object
+    await expect(
+      fetchServer(resourceUri, {
+        headers: new fetch.Headers({
+          JsonLdContext: JSON.stringify({ pr: 'http://virtual-assembly.org/ontologies/pair#' }) // Exotic prefix
+        })
+      })
+    ).resolves.toMatchObject({
+      json: {
+        '@type': 'pr:Project'
+      }
+    });
+
+    // Use array
+    await expect(
+      fetchServer(resourceUri, {
+        headers: new fetch.Headers({
+          JsonLdContext: JSON.stringify([
+            'https://www.w3.org/ns/activitystreams',
+            { pr: 'http://virtual-assembly.org/ontologies/pair#' } // Exotic prefix
+          ])
+        })
+      })
+    ).resolves.toMatchObject({
+      json: {
+        type: 'pr:Project'
+      }
+    });
+  });
+
   test('Get container', async () => {
     await expect(fetchServer(containerUri)).resolves.toMatchObject({
       json: {
         '@type': ['ldp:Container', 'ldp:BasicContainer'],
         'ldp:contains': [
           {
-            '@id': resourceUri
+            '@id': resourceUri,
+            'pair:label': 'myLabel'
+          }
+        ]
+      }
+    });
+  });
+
+  test('Get container with JsonLdContext header', async () => {
+    await expect(
+      fetchServer(containerUri, {
+        headers: new fetch.Headers({
+          JsonLdContext: 'https://www.w3.org/ns/activitystreams'
+        })
+      })
+    ).resolves.toMatchObject({
+      json: {
+        type: ['ldp:Container', 'ldp:BasicContainer'],
+        'ldp:contains': [
+          {
+            id: resourceUri,
+            'http://virtual-assembly.org/ontologies/pair#label': 'myLabel'
           }
         ]
       }

@@ -1,6 +1,17 @@
 const fs = require('fs');
 const { MoleculerError } = require('moleculer').Errors;
 
+const parseJson = json => {
+  try {
+    if (json) {
+      return JSON.parse(json);
+    }
+  } catch (e) {
+    // Ignore parse error. Assume it is a simple string.
+  }
+  return json;
+};
+
 module.exports = async function get(ctx) {
   try {
     const { username, slugParts } = ctx.params;
@@ -20,7 +31,8 @@ module.exports = async function get(ctx) {
 
       const res = await ctx.call(controlledActions?.list || 'ldp.container.get', {
         containerUri: uri,
-        accept
+        accept,
+        jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
       });
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return res;
@@ -33,7 +45,8 @@ module.exports = async function get(ctx) {
 
       const res = await ctx.call(controlledActions?.get || 'activitypub.collection.get', {
         collectionUri: uri,
-        page: ctx.params.page
+        page: ctx.params.page,
+        jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
       });
       ctx.meta.$responseType = 'application/ld+json';
       return res;
@@ -64,7 +77,8 @@ module.exports = async function get(ctx) {
 
       const resource = await ctx.call(controlledActions.get || 'ldp.resource.get', {
         resourceUri: uri,
-        accept
+        accept,
+        jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
       });
 
       if (types.includes('http://semapps.org/ns/core#File')) {
