@@ -32,8 +32,8 @@ describe.each(['single-server', 'multi-server'])('In mode %s, posting to followe
         broker[i].call(actionName, params, { ...options, meta: { ...options.meta, webId } });
     }
 
-    bob = actors[1];
-    alice = actors[2];
+    alice = actors[1];
+    bob = actors[2];
   });
 
   afterAll(async () => {

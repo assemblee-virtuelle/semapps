@@ -1,4 +1,5 @@
 const { MIME_TYPES } = require('@semapps/mime-types');
+const { cleanUndefined } = require('../../../utils');
 
 module.exports = {
   visibility: 'public',
@@ -35,27 +36,35 @@ module.exports = {
     switch (strategy) {
       case 'cacheFirst':
         return this.actions
-          .getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx })
+          .getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), { parentCtx: ctx })
           .catch(e => {
             if (e.code === 404) {
-              return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx });
+              return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), {
+                parentCtx: ctx
+              });
             }
             throw e;
           });
 
       case 'networkFirst':
-        return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx }).catch(e => {
-          if (e.code === 404) {
-            return this.actions.getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx });
-          }
-          throw e;
-        });
+        return this.actions
+          .getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx })
+          .catch(e => {
+            if (e.code === 404) {
+              return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
+                parentCtx: ctx
+              });
+            }
+            throw e;
+          });
 
       case 'cacheOnly':
-        return this.actions.getStored({ resourceUri, webId, accept, jsonContext, ...rest }, { parentCtx: ctx });
+        return this.actions.getStored(cleanUndefined({ resourceUri, webId, accept, jsonContext, ...rest }), {
+          parentCtx: ctx
+        });
 
       case 'networkOnly':
-        return this.actions.getNetwork({ resourceUri, webId, accept, jsonContext }, { parentCtx: ctx });
+        return this.actions.getNetwork(cleanUndefined({ resourceUri, webId, accept, jsonContext }), { parentCtx: ctx });
 
       case 'staleWhileRevalidate':
         // Not implemented yet

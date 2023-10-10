@@ -70,8 +70,8 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
-        id: resourceUri,
-        type: 'pair:Resource',
+        '@id': resourceUri,
+        '@type': 'pair:Resource',
         'pair:label': 'My resource'
       });
     });
@@ -92,8 +92,8 @@ describe('Server2 mirror server1', () => {
 
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
-        id: resourceUri,
-        type: 'pair:Resource',
+        '@id': resourceUri,
+        '@type': 'pair:Resource',
         'pair:label': 'My resource updated'
       });
     });

@@ -18,6 +18,8 @@ module.exports = {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    // No options will be returned by ldp.registry.getByUri unless the resource is in a local container (this is the case for activities)
+    // TODO Store the context of the original resource ?
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
