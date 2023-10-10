@@ -233,6 +233,7 @@ const CollectionService = {
                 await ctx.call('ldp.resource.get', {
                   resourceUri: itemUri,
                   accept: MIME_TYPES.JSON,
+                  jsonContext: this.settings.jsonContext,
                   webId
                 })
               );

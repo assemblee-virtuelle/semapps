@@ -5,7 +5,8 @@ const {
   buildBlankNodesQuery,
   buildFiltersQuery,
   isContainer,
-  defaultToArray
+  defaultToArray,
+  cleanUndefined
 } = require('../../../utils');
 
 module.exports = {
@@ -64,21 +65,16 @@ module.exports = {
       if (result && result.contains) {
         for (const resourceUri of defaultToArray(result.contains)) {
           try {
-            // We pass the following parameters only if they are explicit
-            const explicitProperties = ['jsonContext', 'accept'];
-            const explicitParams = explicitProperties.reduce((accumulator, currentProperty) => {
-              if (ctx.params[currentProperty]) {
-                accumulator[currentProperty] = ctx.params[currentProperty];
-              }
-              return accumulator;
-            }, {});
-
-            const resource = await ctx.call('ldp.resource.get', {
-              resourceUri,
-              webId,
-              // We pass the following parameters only if they are explicit
-              ...explicitParams
-            });
+            // We pass the accept/jsonContext parameters only if they are explicit
+            const resource = await ctx.call(
+              'ldp.resource.get',
+              cleanUndefined({
+                resourceUri,
+                webId,
+                jsonContext,
+                accept
+              })
+            );
 
             // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
             // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074

@@ -17,7 +17,8 @@ module.exports = {
   async handler(ctx) {
     const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const headers = new Headers({ accept, JsonLdContext: jsonContext });
+    const headers = new Headers({ accept });
+    if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
     if (!this.isRemoteUri(resourceUri, webId)) {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);

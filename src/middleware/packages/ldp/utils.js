@@ -11,11 +11,7 @@ const regexProtocolAndHostAndPort = new RegExp('^http(s)?:\\/\\/([\\w-\\.:]*)');
 function createFragmentURL(baseUrl, serverUrl) {
   let fragment = 'me';
   const res = serverUrl.match(regexProtocolAndHostAndPort);
-  if (res)
-    fragment = res[2]
-      .replace('-', '_')
-      .replace('.', '_')
-      .replace(':', '_');
+  if (res) fragment = res[2].replace('-', '_').replace('.', '_').replace(':', '_');
 
   return urlJoin(baseUrl, `#${fragment}`);
 }
@@ -55,8 +51,8 @@ const buildFiltersQuery = filters => {
       if (filters[predicate]) {
         where += `
           FILTER EXISTS { ?s1 ${predicate.startsWith('http') ? `<${predicate}>` : predicate} ${
-          filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
-        } } .
+            filters[predicate].startsWith('http') ? `<${filters[predicate]}>` : `"${filters[predicate]}"`
+          } } .
         `;
       } else {
         where += `
@@ -118,6 +114,21 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 
 const delay = t => new Promise(resolve => setTimeout(resolve, t));
 
+// Remove undefined values from object
+const cleanUndefined = obj =>
+  Object.keys(obj).reduce((acc, key) => (obj[key] === undefined ? acc : { ...acc, [key]: obj[key] }), {});
+
+const parseJson = json => {
+  try {
+    if (json) {
+      return JSON.parse(json);
+    }
+  } catch (e) {
+    // Ignore parse error. Assume it is a simple string.
+  }
+  return json;
+};
+
 const arrayOf = value => {
   // If the field is null-ish, we suppose there are no values.
   if (!value) {
@@ -147,7 +158,7 @@ const waitForResource = async (delayMs, fieldNames, maxTries, callback) => {
     }
     await delay(delayMs);
   }
-  throw new Error(`Waiting for resource failed. No results after ${  maxTries  } tries`);
+  throw new Error(`Waiting for resource failed. No results after ${maxTries} tries`);
 };
 
 module.exports = {
@@ -165,6 +176,8 @@ module.exports = {
   isContainer,
   defaultToArray,
   delay,
+  cleanUndefined,
+  parseJson,
   getAclUriFromResourceUri,
   isMirror,
   createFragmentURL,
