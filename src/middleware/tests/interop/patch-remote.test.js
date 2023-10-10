@@ -57,8 +57,8 @@ describe('Server2 imports a single resource from server1', () => {
 
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
-        '@id': resourceUri,
-        '@type': 'pair:Resource',
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource',
         'semapps:singleMirroredResource': 'http://localhost:3001'
       });
@@ -83,8 +83,8 @@ describe('Server2 imports a single resource from server1', () => {
 
     await waitForExpect(async () => {
       await expect(server2.call('ldp.remote.get', { resourceUri, strategy: 'cacheOnly' })).resolves.toMatchObject({
-        '@id': resourceUri,
-        '@type': 'pair:Resource',
+        id: resourceUri,
+        type: 'pair:Resource',
         'pair:label': 'My resource updated',
         'semapps:singleMirroredResource': 'http://localhost:3001'
       });
