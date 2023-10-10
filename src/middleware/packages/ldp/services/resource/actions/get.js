@@ -35,7 +35,7 @@ module.exports = {
       ...ctx.params
     };
 
-    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId });
+    const resourceExist = await ctx.call('ldp.resource.exist', { resourceUri, webId: aclVerified ? 'system' : webId });
 
     if (resourceExist) {
       const blankNodesQuery = buildBlankNodesQuery(4);
