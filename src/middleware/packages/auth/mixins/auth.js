@@ -2,33 +2,37 @@ const passport = require('passport');
 const { Errors: E } = require('moleculer-web');
 const { TripleStoreAdapter } = require('@semapps/triplestore');
 const urlJoin = require('url-join');
-const { throw500 } = require('@semapps/middlewares');
 const AuthAccountService = require('../services/account');
 const AuthJWTService = require('../services/jwt');
+const CapabilitiesContainerService = require('../services/capabilities-container');
 
 /** @type {import('moleculer').ServiceSchema} */
 const AuthMixin = {
   settings: {
     baseUrl: null,
     jwtPath: null,
+    capabilitiesPath: undefined,
     registrationAllowed: true,
     reservedUsernames: [],
     webIdSelection: [],
     accountSelection: [],
-    accountsDataset: 'settings'
+    accountsDataset: 'settings',
+    podProvider: null
   },
-  dependencies: ['api', 'webid', 'ldp.resource'],
+  dependencies: ['api', 'webid'],
   async created() {
     const { jwtPath, reservedUsernames, accountsDataset } = this.settings;
 
-    await this.broker.createService(AuthJWTService, {
+    this.broker.createService(AuthJWTService, {
       settings: { jwtPath }
     });
 
-    await this.broker.createService(AuthAccountService, {
+    this.broker.createService(AuthAccountService, {
       settings: { reservedUsernames },
       adapter: new TripleStoreAdapter({ type: 'AuthAccount', dataset: accountsDataset })
     });
+
+    this.broker.createService(CapabilitiesContainerService, { settings: { path: this.settings.capabilitiesPath } });
   },
   async started() {
     if (!this.passportId) throw new Error('this.passportId must be set in the service creation.');
@@ -53,7 +57,7 @@ const AuthMixin = {
     // See https://moleculer.services/docs/0.13/moleculer-web.html#Authentication
     async authenticate(ctx) {
       const { route, req, res } = ctx.params;
-      // Extract token from authorization header (do not take the Bearer part)
+      // Extract method and token from authorization header.
       const [method, token] = req.headers.authorization?.split(' ') || [];
 
       if (!token) {
@@ -73,11 +77,12 @@ const AuthMixin = {
         // TODO make sure token is deleted client-side
         ctx.meta.webId = 'anon';
         return Promise.reject(new E.UnAuthorizedError(E.ERR_INVALID_TOKEN));
-      } else if (method === 'Capability' || req.$params.capability) {
+      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
         const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions
-          .getValidateCapability({ capabilityUri, username: req.parsedUrl.match(/[^/]+/)[0] })
-          .catch(err => throw500(err));
+        const capability = await this.actions.getValidateCapability({
+          capabilityUri,
+          username: req.parsedUrl.match(/[^/]+/)[0]
+        });
 
         ctx.meta.webId = 'anon';
         req.$ctx.meta.webId = 'anon';
@@ -108,11 +113,12 @@ const AuthMixin = {
           ctx.meta.webId = payload.webId;
           return Promise.resolve(payload);
         }
-      } else if (method === 'Capability') {
+      } else if ((method === 'Capability' || req.$params.capability) && this.settings.podProvider) {
         const capabilityUri = token || req.$params.capability;
-        const capability = await this.actions
-          .getValidateCapability({ capabilityUri, username: req.parsedUrl.match(/[^/]+/)[0] })
-          .catch(err => throw500(err));
+        const capability = await this.actions.getValidateCapability({
+          capabilityUri,
+          username: req.parsedUrl.match(/[^/]+/)[0]
+        });
 
         ctx.meta.webId = 'anon';
 
@@ -160,11 +166,6 @@ const AuthMixin = {
           new URL(capabilityUri);
         } catch {
           return undefined;
-        }
-
-        // Check, if moleculer service 'capabilities' is available.
-        if (!ctx.broker.getLocalService('capabilities')) {
-          throw new Error('The capabilities service is not available');
         }
 
         // Check, if provided capabilitiesUri is within the resource owner's cap container.

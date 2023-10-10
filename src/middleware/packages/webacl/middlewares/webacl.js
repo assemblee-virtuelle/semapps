@@ -129,8 +129,6 @@ const WebAclMiddleware = ({ baseUrl, podProvider = false, graphName = 'http://se
         // Check, if there is a valid capability.
         if (ctx.meta.authorization?.capability) {
           if (await hasValidCapability(ctx.meta.authorization.capability, resourceUri, 'acl:Read')) {
-            // By setting webId to 'system', we bypass the read permission checks.
-            ctx.meta.webId = 'system';
             return bypass();
           }
         }
