@@ -143,10 +143,11 @@ const CollectionService = {
      * @param dereferenceItems Should we dereference the items in the collection ?
      * @param page Page number. If none are defined, display the collection.
      * @param itemsPerPage Number of items to show per page
+     * @param jsonContext JSON-LD context to format the whole result
      * @param sort Object with `predicate` and `order` properties to sort ordered collections
      */
     async get(ctx) {
-      const { collectionUri, page } = ctx.params;
+      const { collectionUri, page, jsonContext } = ctx.params;
       const webId = ctx.params.webId || ctx.meta.webId || 'anon';
       const { dereferenceItems, itemsPerPage, sort } = {
         ...(await ctx.call('activitypub.registry.getByUri', { collectionUri })),
@@ -229,10 +230,11 @@ const CollectionService = {
           for (const itemUri of selectedItemsUris) {
             try {
               selectedItems.push(
-                await ctx.call('activitypub.object.get', {
-                  objectUri: itemUri,
-                  actorUri: webId,
-                  jsonContext: this.settings.jsonContext
+                await ctx.call('ldp.resource.get', {
+                  resourceUri: itemUri,
+                  accept: MIME_TYPES.JSON,
+                  jsonContext: this.settings.jsonContext,
+                  webId
                 })
               );
             } catch (e) {
@@ -273,6 +275,13 @@ const CollectionService = {
             totalItems: allItems ? allItems.length : 0
           };
         }
+      }
+
+      if (jsonContext) {
+        returnData = await ctx.call('jsonld.compact', {
+          input: returnData,
+          context: jsonContext
+        });
       }
 
       return returnData;

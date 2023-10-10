@@ -7,12 +7,18 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
+    jsonContext: {
+      type: 'multi',
+      rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+      optional: true
+    },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
-    const { resourceUri, accept } = ctx.params;
+    const { resourceUri, accept, jsonContext } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const headers = new Headers({ accept });
+    if (jsonContext) headers.set('JsonLdContext', JSON.stringify(jsonContext));
 
     if (!this.isRemoteUri(resourceUri, webId)) {
       throw new Error(`The resourceUri param must be remote. Provided: ${resourceUri} (webId ${webId})`);

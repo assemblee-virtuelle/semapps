@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { MoleculerError } = require('moleculer').Errors;
+const { cleanUndefined, parseJson } = require('../../../utils');
 
 module.exports = async function get(ctx) {
   try {
@@ -18,10 +19,14 @@ module.exports = async function get(ctx) {
         ...ctx.meta.headers
       };
 
-      const res = await ctx.call(controlledActions?.list || 'ldp.container.get', {
-        containerUri: uri,
-        accept
-      });
+      const res = await ctx.call(
+        controlledActions?.list || 'ldp.container.get',
+        cleanUndefined({
+          containerUri: uri,
+          accept,
+          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+        })
+      );
       ctx.meta.$responseType = ctx.meta.$responseType || accept;
       return res;
     } else if (types.includes('https://www.w3.org/ns/activitystreams#Collection')) {
@@ -31,10 +36,14 @@ module.exports = async function get(ctx) {
 
       const { controlledActions } = await ctx.call('activitypub.registry.getByUri', { collectionUri: uri });
 
-      const res = await ctx.call(controlledActions?.get || 'activitypub.collection.get', {
-        collectionUri: uri,
-        page: ctx.params.page
-      });
+      const res = await ctx.call(
+        controlledActions?.get || 'activitypub.collection.get',
+        cleanUndefined({
+          collectionUri: uri,
+          page: ctx.params.page,
+          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+        })
+      );
       ctx.meta.$responseType = 'application/ld+json';
       return res;
     } else {
@@ -62,10 +71,14 @@ module.exports = async function get(ctx) {
         }
       }
 
-      const resource = await ctx.call(controlledActions.get || 'ldp.resource.get', {
-        resourceUri: uri,
-        accept
-      });
+      const resource = await ctx.call(
+        controlledActions.get || 'ldp.resource.get',
+        cleanUndefined({
+          resourceUri: uri,
+          accept,
+          jsonContext: parseJson(ctx.meta.headers?.jsonldcontext)
+        })
+      );
 
       if (types.includes('http://semapps.org/ns/core#File')) {
         try {

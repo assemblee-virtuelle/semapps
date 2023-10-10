@@ -63,6 +63,23 @@ describe('Handle collections', () => {
     });
   });
 
+  test('Get collection with custom jsonContext', async () => {
+    const collection = await broker.call('activitypub.collection.get', {
+      collectionUri,
+      jsonContext: { as: 'https://www.w3.org/ns/activitystreams#' }
+    });
+
+    expect(collection).toMatchObject({
+      '@id': collectionUri,
+      '@type': 'as:Collection',
+      'as:summary': 'My non-ordered collection',
+      'as:items': [],
+      'as:totalItems': expect.objectContaining({
+        '@value': 0
+      })
+    });
+  });
+
   test('Create ordered collection', async () => {
     await broker.call('activitypub.collection.create', {
       collectionUri: orderedCollectionUri,

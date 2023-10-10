@@ -7,12 +7,19 @@ module.exports = {
   params: {
     resourceUri: { type: 'string' },
     accept: { type: 'string', default: MIME_TYPES.JSON },
+    jsonContext: {
+      type: 'multi',
+      rules: [{ type: 'array' }, { type: 'object' }, { type: 'string' }],
+      optional: true
+    },
     webId: { type: 'string', optional: true }
   },
   async handler(ctx) {
     const { resourceUri } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
 
+    // No options will be returned by ldp.registry.getByUri unless the resource is in a local container (this is the case for activities)
+    // TODO Store the context of the original resource ?
     const { accept, jsonContext } = {
       ...(await ctx.call('ldp.registry.getByUri', { resourceUri })),
       ...ctx.params
