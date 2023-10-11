@@ -15,7 +15,7 @@
     "watch": "parcel watch"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.5.0-alpha.1",
+    "@semapps/semantic-data-provider": "0.6.0-alpha.1",
     "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
