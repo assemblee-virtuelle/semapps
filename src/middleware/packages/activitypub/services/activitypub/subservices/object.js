@@ -82,10 +82,14 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.DELETE: {
-          const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
-          // If the resource is already deleted, it means it was an announcement
-          if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
-            await ctx.call('ldp.resource.delete', { resourceUri, webId: actorUri });
+          if (activity.object) {
+            const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
+            // If the resource is already deleted, it means it was an announcement
+            if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
+              await ctx.call('ldp.resource.delete', { resourceUri, webId: actorUri });
+            }
+          } else {
+            this.logger.warn('Cannot delete object as it is undefined');
           }
           break;
         }
