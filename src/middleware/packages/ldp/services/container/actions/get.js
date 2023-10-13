@@ -76,16 +76,19 @@ module.exports = {
               })
             );
 
-            // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
-            // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
-            if (isContainer(resource)) {
-              delete resource['ldp:contains'];
-              const typePredicate = resource.type ? 'type' : '@type';
-              resource[typePredicate] = defaultToArray(resource[typePredicate]);
-              resource[typePredicate].push('ldp:Resource');
-            }
+            // Ensure a valid resource is returned (in some case, we may have only the context)
+            if (resource['@id'] || resource.id) {
+              // If we have a child container, remove the ldp:contains property and add a ldp:Resource type
+              // We are copying SOLID: https://github.com/assemblee-virtuelle/semapps/issues/429#issuecomment-768210074
+              if (isContainer(resource)) {
+                delete resource['ldp:contains'];
+                const typePredicate = resource.type ? 'type' : '@type';
+                resource[typePredicate] = defaultToArray(resource[typePredicate]);
+                resource[typePredicate].push('ldp:Resource');
+              }
 
-            resources.push(resource);
+              resources.push(resource);
+            }
           } catch (e) {
             // Ignore a resource if it is not found
             if (e.name !== 'MoleculerError') throw e;
