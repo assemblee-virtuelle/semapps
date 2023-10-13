@@ -10,10 +10,20 @@ const matchActivity = async (ctx, pattern, activityOrObject) => {
 
   // Check if we need to dereference the activity or object
   if (typeof activityOrObject === 'string') {
-    dereferencedActivityOrObject = await ctx.call('ldp.resource.get', {
-      resourceUri: activityOrObject,
-      accept: MIME_TYPES.JSON
-    });
+    try {
+      dereferencedActivityOrObject = await ctx.call('ldp.resource.get', {
+        resourceUri: activityOrObject,
+        accept: MIME_TYPES.JSON
+      });
+    } catch (e) {
+      if (e.code === 404) {
+        // Ignore 404 errors as they may happen when objects are deleted in side effects
+        this.logger.warn(`Could not dereference ${activityOrObject} as it is not found`);
+        dereferencedActivityOrObject = { error: e.message };
+      } else {
+        throw new Error(e);
+      }
+    }
   } else {
     // Copy the object to a new object
     dereferencedActivityOrObject = { ...activityOrObject };
