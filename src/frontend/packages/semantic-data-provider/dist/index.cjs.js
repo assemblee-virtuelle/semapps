@@ -950,7 +950,7 @@ const $915df908e0942746$var$fetchVoidEndpoints = async (config)=>{
                 key: key,
                 datasets: result.json["@graph"]
             })).catch((e)=>{
-            if (e.status === 404 || e.status === 401) return {
+            if (e.status === 404 || e.status === 401 || e.status === 500) return {
                 key: key,
                 error: e
             };
