@@ -82,13 +82,16 @@ const ObjectService = {
         }
 
         case ACTIVITY_TYPES.DELETE: {
-          // TODO ensure that this is not an announcement (like for Update and Create)
-          await ctx.call('ldp.resource.delete', {
-            resourceUri: typeof activity.object === 'string' ? activity.object : activity.object.id,
-            webId: actorUri
-          });
+          const resourceUri = typeof activity.object === 'string' ? activity.object : activity.object.id;
+          // If the resource is already deleted, it means it was an announcement
+          if (await ctx.call('ldp.resource.exist', { resourceUri, webId: actorUri })) {
+            await ctx.call('ldp.resource.delete', { resourceUri, webId: actorUri });
+          }
           break;
         }
+
+        default:
+          break;
       }
 
       if (objectUri) {
