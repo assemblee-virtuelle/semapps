@@ -85,7 +85,7 @@ module.exports = {
       return ctx.call('ldp.resource.delete', ctx.params);
     },
     getContainerUri(ctx) {
-      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params.webId || ctx.meta.webId });
+      return ctx.call('ldp.registry.getUri', { path: this.settings.path, webId: ctx.params?.webId || ctx.meta?.webId });
     },
     async waitForContainerCreation(ctx) {
       const { containerUri } = ctx.params;
