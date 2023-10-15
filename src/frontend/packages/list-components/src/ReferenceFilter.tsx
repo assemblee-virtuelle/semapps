@@ -36,7 +36,7 @@ type CounterProps = {
 
 const ReferenceFilterCounter: FunctionComponent<CounterProps> = ({ source, id }) => {
   const resourceContext = useResourceContext();
-  const { data } = useGetList<RaRecord>(resourceContext);
+  const { data } = useGetList<RaRecord>(resourceContext, { pagination: { page: 1, perPage: Infinity } });
 
   return (
     <>

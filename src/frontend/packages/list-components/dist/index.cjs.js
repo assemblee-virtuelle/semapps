@@ -9,9 +9,11 @@ var $5MILa$semappssemanticdataprovider = require("@semapps/semantic-data-provide
 var $5MILa$reactmasonrycss = require("react-masonry-css");
 var $5MILa$reactrouter = require("react-router");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -322,7 +324,12 @@ var $bc22719d52a02d2c$export$2e2bcd8739ae039 = $bc22719d52a02d2c$var$MasonryList
 const $696f298352ead676$var$toArray = (e)=>[].concat(e);
 const $696f298352ead676$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
     const resourceContext = (0, $5MILa$reactadmin.useResourceContext)();
-    const { data: data } = (0, $5MILa$reactadmin.useGetList)(resourceContext);
+    const { data: data } = (0, $5MILa$reactadmin.useGetList)(resourceContext, {
+        pagination: {
+            page: 1,
+            perPage: Infinity
+        }
+    });
     return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$reactjsxruntime.Fragment), {
         children: [
             "\xa0",

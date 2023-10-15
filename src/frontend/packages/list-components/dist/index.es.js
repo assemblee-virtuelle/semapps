@@ -307,7 +307,12 @@ var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList
 const $5ced1203870db4f6$var$toArray = (e)=>[].concat(e);
 const $5ced1203870db4f6$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
     const resourceContext = (0, $2An97$useResourceContext)();
-    const { data: data } = (0, $2An97$useGetList)(resourceContext);
+    const { data: data } = (0, $2An97$useGetList)(resourceContext, {
+        pagination: {
+            page: 1,
+            perPage: Infinity
+        }
+    });
     return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Fragment), {
         children: [
             "\xa0",
