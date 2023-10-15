@@ -10,7 +10,10 @@
     // "plugin:@typescript-eslint/recommended-type-checked",
     "prettier"
   ],
-  "ignorePatterns": ["*.cjs", "*.es.js", "*.cjs.js"],
+  "globals": {
+    "JSX": true
+  },
+  "ignorePatterns": ["*.cjs", "*.es.js", "*.cjs.js", "*.d.ts"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": true

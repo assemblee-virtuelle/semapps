@@ -1884,6 +1884,13 @@
   dependencies:
     "@parcel/types" "2.10.0"
 
+"@parcel/plugin@2.10.0":
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.10.0.tgz#03a963f713fa76d76469955e3a693e7c3b607138"
+  integrity sha512-FaWchkYJxLOohNNb3ah9R/9gckew+iGOzcGZ1bUtLGc/Dwz1mTVeaAanqOjlZ6C5FCe9lMctkH7h0eQsJ0mlVQ==
+  dependencies:
+    "@parcel/types" "2.10.0"
+
 "@parcel/plugin@2.9.3":
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.9.3.tgz#90e9a9482fa27735494372f5643db01abcf3fdb6"

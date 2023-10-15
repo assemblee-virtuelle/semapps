@@ -1,13 +1,13 @@
-var $1w0zd$reactjsxruntime = require("react/jsx-runtime");
-var $1w0zd$react = require("react");
-var $1w0zd$reactadmin = require("react-admin");
-var $1w0zd$muimaterial = require("@mui/material");
-var $1w0zd$muistylesmakeStyles = require("@mui/styles/makeStyles");
-var $1w0zd$muiiconsmaterialAddCircle = require("@mui/icons-material/AddCircle");
-var $1w0zd$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
-var $1w0zd$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
-var $1w0zd$reactmasonrycss = require("react-masonry-css");
-var $1w0zd$reactrouter = require("react-router");
+var $5MILa$reactjsxruntime = require("react/jsx-runtime");
+var $5MILa$react = require("react");
+var $5MILa$reactadmin = require("react-admin");
+var $5MILa$muimaterial = require("@mui/material");
+var $5MILa$muistylesmakeStyles = require("@mui/styles/makeStyles");
+var $5MILa$muiiconsmaterialAddCircle = require("@mui/icons-material/AddCircle");
+var $5MILa$muiiconsmaterialLaunch = require("@mui/icons-material/Launch");
+var $5MILa$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
+var $5MILa$reactmasonrycss = require("react-masonry-css");
+var $5MILa$reactrouter = require("react-router");
 
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
@@ -19,7 +19,7 @@ function $parcel$interopDefault(a) {
 $parcel$export(module.exports, "ChipList", () => $2eed9b3621f13b18$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "GridList", () => $a4d27c2ab268c05b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "MasonryList", () => $bc22719d52a02d2c$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ReferenceFilter", () => $c194354c4d8b3a77$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "ReferenceFilter", () => $696f298352ead676$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "MultiViewsList", () => $8e315201c1049d3f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ListActionsWithViews", () => $6ca83fab5dd482a0$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ListViewContext", () => $1f2a4ca7a7e2b912$export$2e2bcd8739ae039);
@@ -32,7 +32,7 @@ $parcel$export(module.exports, "ViewsButtons", () => $2b75f3c2996d19f7$export$2e
 
 
 
-const $2eed9b3621f13b18$var$useStyles = (0, ($parcel$interopDefault($1w0zd$muistylesmakeStyles)))(()=>({
+const $2eed9b3621f13b18$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         root: {
             display: "flex",
             flexWrap: "wrap"
@@ -63,32 +63,32 @@ const $2eed9b3621f13b18$var$stopPropagation = (e)=>e.stopPropagation();
 const $2eed9b3621f13b18$var$handleClick = ()=>{};
 const $2eed9b3621f13b18$var$ChipList = (props)=>{
     const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
-    const { data: data, isLoading: isLoading, resource: resource } = (0, $1w0zd$reactadmin.useListContext)(props);
-    const getExternalLink = (0, $1w0zd$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
-    const createPath = (0, $1w0zd$reactadmin.useCreatePath)();
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $5MILa$reactadmin.useListContext)(props);
+    const getExternalLink = (0, $5MILa$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
+    const createPath = (0, $5MILa$reactadmin.useCreatePath)();
     const classes = $2eed9b3621f13b18$var$useStyles(props);
     const Component = component;
-    if (isLoading) return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.LinearProgress), {});
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)(Component, {
+    if (isLoading) return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.LinearProgress), {});
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)(Component, {
         className: classes.root,
-        ...(0, $1w0zd$reactadmin.sanitizeListRestProps)(rest),
+        ...(0, $5MILa$reactadmin.sanitizeListRestProps)(rest),
         children: [
             data.map((record)=>{
                 if (!record || record._error) return null;
                 const externalLink = getExternalLink(record);
-                if (externalLink) return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.RecordContextProvider), {
+                if (externalLink) return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)("a", {
+                    children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)("a", {
                         href: externalLink,
                         target: "_blank",
                         rel: "noopener noreferrer",
                         className: classes.link,
                         onClick: $2eed9b3621f13b18$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.ChipField), {
+                        children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.ChipField), {
                             source: primaryText,
                             className: classes.chipField,
                             color: "secondary",
-                            deleteIcon: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, ($parcel$interopDefault($1w0zd$muiiconsmaterialLaunch))), {
+                            deleteIcon: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, ($parcel$interopDefault($5MILa$muiiconsmaterialLaunch))), {
                                 className: classes.launchIcon
                             }),
                             // Workaround to force ChipField to be clickable
@@ -98,9 +98,9 @@ const $2eed9b3621f13b18$var$ChipList = (props)=>{
                         })
                     })
                 }, record.id);
-                if (linkType) return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.RecordContextProvider), {
+                if (linkType) return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.Link), {
+                    children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Link), {
                         className: classes.link,
                         to: createPath({
                             resource: resource,
@@ -108,7 +108,7 @@ const $2eed9b3621f13b18$var$ChipList = (props)=>{
                             type: linkType
                         }),
                         onClick: $2eed9b3621f13b18$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.ChipField), {
+                        children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.ChipField), {
                             source: primaryText,
                             className: classes.chipField,
                             color: "secondary",
@@ -117,9 +117,9 @@ const $2eed9b3621f13b18$var$ChipList = (props)=>{
                         })
                     })
                 }, record.id);
-                return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.RecordContextProvider), {
+                return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.ChipField), {
+                    children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.ChipField), {
                         source: primaryText,
                         className: classes.chipField,
                         color: "secondary",
@@ -128,7 +128,7 @@ const $2eed9b3621f13b18$var$ChipList = (props)=>{
                     })
                 }, record.id);
             }),
-            appendLink && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, ($parcel$interopDefault($1w0zd$muiiconsmaterialAddCircle))), {
+            appendLink && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, ($parcel$interopDefault($5MILa$muiiconsmaterialAddCircle))), {
                 color: "primary",
                 className: classes.addIcon,
                 onClick: appendLink
@@ -151,49 +151,49 @@ const $a4d27c2ab268c05b$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $a4d27c2ab268c05b$var$handleClick = ()=>{};
 const $a4d27c2ab268c05b$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
-    const { data: data, resource: resource, isLoading: isLoading } = (0, $1w0zd$reactadmin.useListContext)();
-    const getExternalLink = (0, $1w0zd$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
-    const createPath = (0, $1w0zd$reactadmin.useCreatePath)();
+    const { data: data, resource: resource, isLoading: isLoading } = (0, $5MILa$reactadmin.useListContext)();
+    const getExternalLink = (0, $5MILa$semappssemanticdataprovider.useGetExternalLink)(externalLinks);
+    const createPath = (0, $5MILa$reactadmin.useCreatePath)();
     if (isLoading || !data) return null;
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.Grid), {
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.Grid), {
         container: true,
         spacing: spacing,
         children: data.map((record)=>{
             if (!record || record._error) return null;
             const externalLink = getExternalLink(record);
             let child;
-            if (externalLink) child = /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)("a", {
+            if (externalLink) child = /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)("a", {
                 href: externalLink,
                 target: "_blank",
                 rel: "noopener noreferrer",
                 onClick: $a4d27c2ab268c05b$var$stopPropagation,
-                children: /*#__PURE__*/ $1w0zd$react.cloneElement($1w0zd$react.Children.only(children), {
+                children: /*#__PURE__*/ $5MILa$react.cloneElement($5MILa$react.Children.only(children), {
                     externalLink: true,
                     // Workaround to force ChipField to be clickable
                     onClick: $a4d27c2ab268c05b$var$handleClick
                 })
             });
-            else if (linkType) child = /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.Link), {
+            else if (linkType) child = /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Link), {
                 to: createPath({
                     resource: resource,
                     id: record.id,
                     type: linkType
                 }),
                 onClick: $a4d27c2ab268c05b$var$stopPropagation,
-                children: /*#__PURE__*/ $1w0zd$react.cloneElement($1w0zd$react.Children.only(children), {
+                children: /*#__PURE__*/ $5MILa$react.cloneElement($5MILa$react.Children.only(children), {
                     // Workaround to force ChipField to be clickable
                     onClick: $a4d27c2ab268c05b$var$handleClick
                 })
             });
             else child = children;
-            return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.Grid), {
+            return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.Grid), {
                 item: true,
                 xs: xs,
                 sm: sm,
                 md: md,
                 lg: lg,
                 xl: xl,
-                children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.RecordContextProvider), {
+                children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                     value: record,
                     children: child
                 })
@@ -216,7 +216,7 @@ var $a4d27c2ab268c05b$export$2e2bcd8739ae039 = $a4d27c2ab268c05b$var$GridList;
 
 
 
-const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($1w0zd$muistylesmakeStyles)))(()=>({
+const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($5MILa$muistylesmakeStyles)))(()=>({
         grid: {
             display: "flex",
             marginLeft: -20,
@@ -251,40 +251,40 @@ const $bc22719d52a02d2c$var$useStyles = (0, ($parcel$interopDefault($1w0zd$muist
  * </List>
  */ const $bc22719d52a02d2c$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
     const classes = $bc22719d52a02d2c$var$useStyles();
-    const { data: data, resource: resource } = (0, $1w0zd$reactadmin.useListContext)();
-    const createPath = (0, $1w0zd$reactadmin.useCreatePath)();
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, ($parcel$interopDefault($1w0zd$reactmasonrycss))), {
+    const { data: data, resource: resource } = (0, $5MILa$reactadmin.useListContext)();
+    const createPath = (0, $5MILa$reactadmin.useCreatePath)();
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, ($parcel$interopDefault($5MILa$reactmasonrycss))), {
         breakpointCols: breakpointCols,
         className: classes.grid,
         columnClassName: classes.column,
         children: data.map((record)=>{
             if (!record || record._error) return null;
             const imageUrl = typeof image === "function" ? image(record) : image;
-            return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.RecordContextProvider), {
+            return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.RecordContextProvider), {
                 value: record,
-                children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)((0, $1w0zd$muimaterial.Card), {
+                children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$muimaterial.Card), {
                     className: classes.card,
                     children: [
-                        /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.Link), {
+                        /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Link), {
                             to: createPath({
                                 resource: resource,
                                 id: record.id,
                                 type: linkType
                             }),
-                            children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)((0, $1w0zd$muimaterial.CardActionArea), {
+                            children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$muimaterial.CardActionArea), {
                                 children: [
-                                    imageUrl && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.CardMedia), {
+                                    imageUrl && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.CardMedia), {
                                         className: classes.media,
                                         image: imageUrl
                                     }),
-                                    content && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.CardContent), {
+                                    content && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.CardContent), {
                                         children: content(record)
                                     })
                                 ]
                             })
                         }),
-                        actions && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$muimaterial.CardActions), {
-                            children: actions.map((action)=>/*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).createElement(action))
+                        actions && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$muimaterial.CardActions), {
+                            children: actions.map((action)=>/*#__PURE__*/ (0, ($parcel$interopDefault($5MILa$react))).createElement(action))
                         })
                     ]
                 }, record.id)
@@ -303,7 +303,7 @@ $bc22719d52a02d2c$var$MasonryList.defaultProps = {
 var $bc22719d52a02d2c$export$2e2bcd8739ae039 = $bc22719d52a02d2c$var$MasonryList;
 
 
-
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
 
 
 
@@ -318,59 +318,63 @@ var $bc22719d52a02d2c$export$2e2bcd8739ae039 = $bc22719d52a02d2c$var$MasonryList
  *     </CardContent>
  *   </Card>
  * );
- */ const $c194354c4d8b3a77$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
-    const resourceContext = (0, $1w0zd$reactadmin.useResourceContext)();
-    const { data: data, isLoading: isLoading } = (0, $1w0zd$reactadmin.useGetList)(resourceContext);
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)((0, $1w0zd$reactjsxruntime.Fragment), {
+ */ // Converts an element to array or returns it if it's already an array
+const $696f298352ead676$var$toArray = (e)=>[].concat(e);
+const $696f298352ead676$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
+    const resourceContext = (0, $5MILa$reactadmin.useResourceContext)();
+    const { data: data } = (0, $5MILa$reactadmin.useGetList)(resourceContext);
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$reactjsxruntime.Fragment), {
         children: [
             "\xa0",
-            !isLoading && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)("span", {
+            data && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)("span", {
                 className: "filter-count",
-                children: `(${Object.values(data).filter((d)=>[].concat(d[source]).includes(id)).length})`
+                children: `(${data.filter((d)=>$696f298352ead676$var$toArray(d[source]).includes(id)).length})`
             })
         ]
     });
 };
-const $c194354c4d8b3a77$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters })=>{
-    const { data: data, isLoading: isLoading } = (0, $1w0zd$reactadmin.useGetList)(reference, {
-        page: 1,
-        perPage: limit
-    }, sort, filter);
-    const currentResource = (0, $1w0zd$reactadmin.useResourceDefinition)({
+const $696f298352ead676$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit = 25, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters = true })=>{
+    const { data: data, isLoading: isLoading } = (0, $5MILa$reactadmin.useGetList)(reference, {
+        pagination: {
+            page: 1,
+            perPage: limit
+        },
+        sort: sort,
+        filter: filter
+    });
+    const currentResource = (0, $5MILa$reactadmin.useResourceDefinition)({
         resource: reference
     });
-    const resourceContext = (0, $1w0zd$reactadmin.useResourceContext)();
-    const resourceContextDataModel = (0, $1w0zd$semappssemanticdataprovider.useDataModel)(resourceContext);
-    const resourceContextContainers = (0, $1w0zd$semappssemanticdataprovider.useContainers)(resourceContext);
-    const { displayedFilters: displayedFilters, filterValues: filterValues, setFilters: setFilters, hideFilter: hideFilter } = (0, $1w0zd$reactadmin.useListContext)();
-    (0, $1w0zd$react.useEffect)(()=>{
+    const resourceContext = (0, $5MILa$reactadmin.useResourceContext)();
+    const resourceContextContainers = (0, $5MILa$semappssemanticdataprovider.useContainers)(resourceContext);
+    const { setFilters: setFilters } = (0, $5MILa$reactadmin.useListContext)();
+    (0, $5MILa$react.useEffect)(()=>{
         // Needed when filter item is active and its last relation is removed
         const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.filter && !isLoading) setFilters({});
-    }, []);
+        if (!urlSearchParams.get("filter") && !isLoading) setFilters({}, []);
+    }, [
+        isLoading,
+        setFilters
+    ]);
     const itemIsUsed = (itemData)=>{
         if (!inverseSource) return true;
         if (!resourceContextContainers || !itemData) return false;
-        let itemIsUsed = false;
-        Object.values(resourceContextContainers).forEach((value)=>{
-            value.forEach((containerUrl)=>{
-                [].concat(itemData[inverseSource]).forEach((inverseSourceData)=>{
-                    if (inverseSourceData?.startsWith(containerUrl)) itemIsUsed = true;
-                });
+        return Object.values(resourceContextContainers).flat().some((containerUrl)=>{
+            if (!itemData[inverseSource]) return false;
+            return $696f298352ead676$var$toArray(itemData[inverseSource]).some((inverseSourceData)=>{
+                return inverseSourceData?.startsWith(containerUrl);
             });
         });
-        return itemIsUsed;
     };
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.FilterList), {
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.FilterList), {
         label: label || currentResource?.options?.label || "",
-        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).createElement(currentResource.icon) : undefined,
-        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.FilterListItem), {
-                label: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)("span", {
+        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $5MILa$react.createElement)(currentResource.icon) : undefined,
+        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.FilterListItem), {
+                label: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)("span", {
                     className: "filter-label",
                     children: [
                         itemData["pair:label"],
-                        showCounters && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)($c194354c4d8b3a77$var$ReferenceFilterCounter, {
+                        showCounters && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)($696f298352ead676$var$ReferenceFilterCounter, {
                             source: source,
                             id: itemData.id
                         })
@@ -382,11 +386,7 @@ const $c194354c4d8b3a77$var$ReferenceFilter = ({ reference: reference, source: s
             }, itemData.id))
     });
 };
-$c194354c4d8b3a77$var$ReferenceFilter.defaultProps = {
-    limit: 25,
-    showCounters: true
-};
-var $c194354c4d8b3a77$export$2e2bcd8739ae039 = $c194354c4d8b3a77$var$ReferenceFilter;
+var $696f298352ead676$export$2e2bcd8739ae039 = $696f298352ead676$var$ReferenceFilter;
 
 
 
@@ -402,7 +402,7 @@ var $c194354c4d8b3a77$export$2e2bcd8739ae039 = $c194354c4d8b3a77$var$ReferenceFi
 
 
 
-const $1f2a4ca7a7e2b912$var$ListViewContext = /*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).createContext({
+const $1f2a4ca7a7e2b912$var$ListViewContext = /*#__PURE__*/ (0, ($parcel$interopDefault($5MILa$react))).createContext({
     views: null,
     currentView: null,
     setView: ()=>null
@@ -411,8 +411,8 @@ var $1f2a4ca7a7e2b912$export$2e2bcd8739ae039 = $1f2a4ca7a7e2b912$var$ListViewCon
 
 
 const $2b75f3c2996d19f7$var$ViewsButtons = ()=>{
-    const query = new URLSearchParams((0, $1w0zd$reactrouter.useLocation)().search);
-    const { views: views, currentView: currentView, setView: setView } = (0, ($parcel$interopDefault($1w0zd$react))).useContext((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039));
+    const query = new URLSearchParams((0, $5MILa$reactrouter.useLocation)().search);
+    const { views: views, currentView: currentView, setView: setView } = (0, ($parcel$interopDefault($5MILa$react))).useContext((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039));
     return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
         query.set("view", key);
         query.set("page", 1);
@@ -421,12 +421,12 @@ const $2b75f3c2996d19f7$var$ViewsButtons = ()=>{
             query.set("sort", view.sort.field);
             query.set("order", view.sort.order);
         }
-        return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.Link), {
+        return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Link), {
             to: `?${query.toString()}`,
-            children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.Button), {
+            children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.Button), {
                 onClick: ()=>setView(key),
                 label: view.label,
-                children: /*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).createElement(view.icon)
+                children: /*#__PURE__*/ (0, ($parcel$interopDefault($5MILa$react))).createElement(view.icon)
             })
         }, key);
     }) : null;
@@ -435,25 +435,25 @@ var $2b75f3c2996d19f7$export$2e2bcd8739ae039 = $2b75f3c2996d19f7$var$ViewsButton
 
 
 const $6ca83fab5dd482a0$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
-    const xs = (0, $1w0zd$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
-    const resourceDefinition = (0, $1w0zd$reactadmin.useResourceDefinition)(rest);
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsxs)((0, $1w0zd$reactadmin.TopToolbar), {
+    const xs = (0, $5MILa$muimaterial.useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const resourceDefinition = (0, $5MILa$reactadmin.useResourceDefinition)(rest);
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsxs)((0, $5MILa$reactadmin.TopToolbar), {
         children: [
-            /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $2b75f3c2996d19f7$export$2e2bcd8739ae039), {}),
-            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).cloneElement(filters, {
+            /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $2b75f3c2996d19f7$export$2e2bcd8739ae039), {}),
+            filters && /*#__PURE__*/ (0, ($parcel$interopDefault($5MILa$react))).cloneElement(filters, {
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.CreateButton), {}),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1w0zd$reactadmin.ExportButton), {
+            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.CreateButton), {}),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $5MILa$reactadmin.ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
             }),
-            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($1w0zd$react))).cloneElement(bulkActions, {
+            bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($5MILa$react))).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
@@ -466,16 +466,16 @@ var $6ca83fab5dd482a0$export$2e2bcd8739ae039 = $6ca83fab5dd482a0$var$ListActions
 
 
 const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
-    const query = new URLSearchParams((0, $1w0zd$reactrouter.useLocation)().search);
+    const query = new URLSearchParams((0, $5MILa$reactrouter.useLocation)().search);
     const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
-    const [currentView, setView] = (0, $1w0zd$react.useState)(initialView);
-    return /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039).Provider, {
+    const [currentView, setView] = (0, $5MILa$react.useState)(initialView);
+    return /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $1f2a4ca7a7e2b912$export$2e2bcd8739ae039).Provider, {
         value: {
             views: views,
             currentView: currentView,
             setView: setView
         },
-        children: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)(ListComponent, {
+        children: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)(ListComponent, {
             actions: actions,
             pagination: views[currentView].pagination,
             // Set initial values, but use the query string to change these values to avoid a complete refresh
@@ -487,8 +487,8 @@ const $8e315201c1049d3f$var$MultiViewsList = ({ children: children, actions: act
     });
 };
 $8e315201c1049d3f$var$MultiViewsList.defaultProps = {
-    actions: /*#__PURE__*/ (0, $1w0zd$reactjsxruntime.jsx)((0, $6ca83fab5dd482a0$export$2e2bcd8739ae039), {}),
-    ListComponent: (0, $1w0zd$reactadmin.List)
+    actions: /*#__PURE__*/ (0, $5MILa$reactjsxruntime.jsx)((0, $6ca83fab5dd482a0$export$2e2bcd8739ae039), {}),
+    ListComponent: (0, $5MILa$reactadmin.List)
 };
 var $8e315201c1049d3f$export$2e2bcd8739ae039 = $8e315201c1049d3f$var$MultiViewsList;
 

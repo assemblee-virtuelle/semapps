@@ -4,15 +4,17 @@
   "description": "React-Admin list components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
-  "source": "src/index.js",
+  "source": "src/index.ts",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "parcel build && yalc publish --push --changed",
-    "watch": "nodemon --watch src --exec 'yarn build'"
+    "watch": "nodemon --watch src --exec 'yarn build'",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@semapps/semantic-data-provider": "0.6.0-alpha.2",
@@ -29,5 +31,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@parcel/packager-ts": "^2.10.0",
+    "@parcel/transformer-typescript-types": "^2.10.0",
+    "parcel": "^2.9.3"
+  }
 }
