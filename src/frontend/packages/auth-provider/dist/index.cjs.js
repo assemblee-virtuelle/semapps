@@ -1,6 +1,6 @@
 var $2O4Ek$jwtdecode = require("jwt-decode");
 var $2O4Ek$urljoin = require("url-join");
-var $2O4Ek$reactjsxruntime = require("react/jsx-runtime");
+var $2O4Ek$reactjsxdevruntime = require("react/jsx-dev-runtime");
 var $2O4Ek$react = require("react");
 var $2O4Ek$reactadmin = require("react-admin");
 var $2O4Ek$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
@@ -32,24 +32,24 @@ function $parcel$interopDefault(a) {
 }
 
 $parcel$export(module.exports, "authProvider", () => $6a92eb32301846ac$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditActionsWithPermissions", () => $4076d0aea1b9e239$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditToolbarWithPermissions", () => $f1baa8bd5325fac3$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ListActionsWithPermissions", () => $6452f20f9b47ebd6$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ShowWithPermissions", () => $773eb052716d0fa7$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ShowActionsWithPermissions", () => $83b0bd683a7f3aa8$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "PodLoginPage", () => $2b9a1c186b0ca88b$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "CreateWithPermissions", () => $7c87aa71409e289a$exports.default);
+$parcel$export(module.exports, "EditWithPermissions", () => $6f1389d03e4735d1$exports.default);
+$parcel$export(module.exports, "EditActionsWithPermissions", () => $4076d0aea1b9e239$exports.default);
+$parcel$export(module.exports, "EditToolbarWithPermissions", () => $f1baa8bd5325fac3$exports.default);
+$parcel$export(module.exports, "EditButtonWithPermissions", () => $496e40eed9f00a2c$exports.default);
+$parcel$export(module.exports, "DeleteButtonWithPermissions", () => $79bac4913d414938$exports.default);
+$parcel$export(module.exports, "ListWithPermissions", () => $15811bcd3a3eb59f$exports.default);
+$parcel$export(module.exports, "ListActionsWithPermissions", () => $6452f20f9b47ebd6$exports.default);
+$parcel$export(module.exports, "ShowWithPermissions", () => $773eb052716d0fa7$exports.default);
+$parcel$export(module.exports, "ShowActionsWithPermissions", () => $83b0bd683a7f3aa8$exports.default);
+$parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$exports.default);
+$parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$exports.default);
+$parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$exports.default);
+$parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$exports.default);
+$parcel$export(module.exports, "PodLoginPage", () => $2b9a1c186b0ca88b$exports.default);
+$parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$exports.default);
+$parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$exports.default);
+$parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$exports.default);
 $parcel$export(module.exports, "useAgents", () => $780e01b2b2982de2$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCheckAuthenticated", () => $84db3891236a263f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCheckPermissions", () => $673a0cc190160362$export$2e2bcd8739ae039);
@@ -347,6 +347,9 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
 var $6a92eb32301846ac$export$2e2bcd8739ae039 = $6a92eb32301846ac$var$authProvider;
 
 
+var $7c87aa71409e289a$exports = {};
+
+$parcel$export($7c87aa71409e289a$exports, "default", () => $7c87aa71409e289a$export$2e2bcd8739ae039);
 
 
 
@@ -448,32 +451,55 @@ const $7c87aa71409e289a$var$CreateWithPermissions = (props)=>{
     const resource = (0, $2O4Ek$reactadmin.useResourceContext)();
     const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(createContainerUri, "create");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Create), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Create), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/create/CreateWithPermissions.js",
+        lineNumber: 10,
+        columnNumber: 10
+    }, undefined);
 };
 $7c87aa71409e289a$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateActions), {})
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.CreateActions), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/create/CreateWithPermissions.js",
+        lineNumber: 14,
+        columnNumber: 12
+    }, undefined)
 };
 var $7c87aa71409e289a$export$2e2bcd8739ae039 = $7c87aa71409e289a$var$CreateWithPermissions;
 
 
+var $6f1389d03e4735d1$exports = {};
+
+$parcel$export($6f1389d03e4735d1$exports, "default", () => $6f1389d03e4735d1$export$2e2bcd8739ae039);
+
+
+
+var $4076d0aea1b9e239$exports = {};
+
+$parcel$export($4076d0aea1b9e239$exports, "default", () => $4076d0aea1b9e239$export$2e2bcd8739ae039);
+
+
+
+var $49d4f2fbe6f28cfd$exports = {};
+
+$parcel$export($49d4f2fbe6f28cfd$exports, "default", () => $49d4f2fbe6f28cfd$export$2e2bcd8739ae039);
 
 
 
 
 
+var $eb7f8a6f7bf44740$exports = {};
+
+$parcel$export($eb7f8a6f7bf44740$exports, "default", () => $eb7f8a6f7bf44740$export$2e2bcd8739ae039);
 
 
 
 
 
+var $a613ad42a03b1bc4$exports = {};
 
-
-
-
-
-
+$parcel$export($a613ad42a03b1bc4$exports, "default", () => $a613ad42a03b1bc4$export$2e2bcd8739ae039);
 
 
 
@@ -517,7 +543,7 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
     }, [
         data
     ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muimaterialAutocomplete))), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muimaterialAutocomplete))), {
         classes: {
             option: classes.option
         },
@@ -540,37 +566,51 @@ const $a613ad42a03b1bc4$var$AddPermissionsForm = ({ agents: agents, addPermissio
         onInputChange: (event, newInputValue)=>{
             setInputValue(newInputValue);
         },
-        renderInput: (params)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.TextField), {
+        renderInput: (params)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.TextField), {
                 ...params,
                 label: translate("auth.input.agent_select"),
                 variant: "filled",
                 margin: "dense",
                 fullWidth: true
-            }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
+            }, void 0, false, void 0, void 0),
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.List), {
                 dense: true,
                 className: classes.list,
                 ...props,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItem), {
                     button: true,
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
                                 src: option.image,
-                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {})
-                            })
-                        }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {}, void 0, false, void 0, void 0)
+                            }, void 0, false, void 0, void 0)
+                        }, void 0, false, void 0, void 0),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                             primary: option["pair:label"]
-                        })
+                        }, void 0, false, void 0, void 0)
                     ]
-                })
-            })
-    });
+                }, void 0, true, void 0, void 0)
+            }, void 0, false, void 0, void 0)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AddPermissionsForm.js",
+        lineNumber: 43,
+        columnNumber: 5
+    }, undefined);
 };
 var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissionsForm;
 
 
+var $6bcadc28bc94109b$exports = {};
+
+$parcel$export($6bcadc28bc94109b$exports, "default", () => $6bcadc28bc94109b$export$2e2bcd8739ae039);
+
+
+
+
+var $7a8c6187e6c69fdd$exports = {};
+
+$parcel$export($7a8c6187e6c69fdd$exports, "default", () => $7a8c6187e6c69fdd$export$2e2bcd8739ae039);
 
 
 
@@ -579,10 +619,9 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 
 
 
+var $9f58b72d42a695d9$exports = {};
 
-
-
-
+$parcel$export($9f58b72d42a695d9$exports, "default", () => $9f58b72d42a695d9$export$2e2bcd8739ae039);
 
 
 
@@ -593,11 +632,27 @@ var $a613ad42a03b1bc4$export$2e2bcd8739ae039 = $a613ad42a03b1bc4$var$AddPermissi
 const $9f58b72d42a695d9$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $09162138eadab4b9$export$2703254089a859eb:
-            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPublic))), {}) : /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialVpnLock))), {});
+            return agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPublic))), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 11,
+                columnNumber: 45
+            }, undefined) : /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialVpnLock))), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 11,
+                columnNumber: 62
+            }, undefined);
         case 0, $09162138eadab4b9$export$97a08a1bb7ee0545:
-            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {});
+            return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialPerson))), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 13,
+                columnNumber: 14
+            }, undefined);
         case 0, $09162138eadab4b9$export$f07ccbe0773f2c7:
-            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialGroup))), {});
+            return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialGroup))), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 15,
+                columnNumber: 14
+            }, undefined);
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
     }
@@ -651,62 +706,126 @@ const $7a8c6187e6c69fdd$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
     const labels = isContainer ? (0, $09162138eadab4b9$export$edca379024d80309) : (0, $09162138eadab4b9$export$2e9571c4ccdeb6a9);
-    if (loading) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Loading), {});
-    if (error) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Error), {});
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+    if (loading) return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Loading), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 73,
+        columnNumber: 23
+    }, undefined);
+    if (error) return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Error), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 74,
+        columnNumber: 21
+    }, undefined);
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItem), {
         className: classes.listItem,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
                     src: user?.image,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $9f58b72d42a695d9$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $9f58b72d42a695d9$exports.default), {
                         agent: agent
-                    })
-                })
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 80,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                    lineNumber: 79,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 78,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                 className: classes.primaryText,
                 primary: user ? user["pair:label"] : translate(agent.id === (0, $09162138eadab4b9$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 83,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                 className: classes.secondaryText,
                 primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItemSecondaryAction), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 91,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemSecondaryAction), {
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.IconButton), {
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.IconButton), {
                         onClick: openMenu,
                         size: "large",
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {})
-                    }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Menu), {
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                            lineNumber: 97,
+                            columnNumber: 11
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 96,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Menu), {
                         anchorEl: anchorEl,
                         keepMounted: true,
                         open: Boolean(anchorEl),
                         onClose: closeMenu,
                         children: Object.entries(labels).map(([rightKey, rightLabel])=>{
                             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
-                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.MenuItem), {
                                 onClick: ()=>{
                                     if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
                                     else addPermission(agent.id, agent.predicate, rightKey);
                                     closeMenu();
                                 },
                                 children: [
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
-                                        children: hasPermission ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialCheck))), {}) : null
-                                    }),
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemIcon), {
+                                        children: hasPermission ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialCheck))), {}, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                            lineNumber: 114,
+                                            columnNumber: 48
+                                        }, undefined) : null
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                        lineNumber: 114,
+                                        columnNumber: 17
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                                         primary: translate(rightLabel)
-                                    })
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                        lineNumber: 115,
+                                        columnNumber: 17
+                                    }, undefined)
                                 ]
-                            }, rightKey);
+                            }, rightKey, true, {
+                                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                lineNumber: 103,
+                                columnNumber: 15
+                            }, undefined);
                         })
-                    })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 99,
+                        columnNumber: 9
+                    }, undefined)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 95,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 77,
+        columnNumber: 5
+    }, undefined);
 };
 var $7a8c6187e6c69fdd$export$2e2bcd8739ae039 = $7a8c6187e6c69fdd$var$AgentItem;
 
@@ -717,15 +836,23 @@ const $6bcadc28bc94109b$var$StyledList = (0, $2O4Ek$muisystem.styled)((0, $2O4Ek
         backgroundColor: theme.palette.background.paper
     }));
 const $6bcadc28bc94109b$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($6bcadc28bc94109b$var$StyledList, {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($6bcadc28bc94109b$var$StyledList, {
         dense: true,
-        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $7a8c6187e6c69fdd$export$2e2bcd8739ae039), {
+        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $7a8c6187e6c69fdd$exports.default), {
                 isContainer: isContainer,
                 agent: agent,
                 addPermission: addPermission,
                 removePermission: removePermission
-            }, agentId))
-    });
+            }, agentId, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/EditPermissionsForm.js",
+                lineNumber: 16,
+                columnNumber: 9
+            }, undefined))
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/EditPermissionsForm.js",
+        lineNumber: 14,
+        columnNumber: 5
+    }, undefined);
 };
 var $6bcadc28bc94109b$export$2e2bcd8739ae039 = $6bcadc28bc94109b$var$EditPermissionsForm;
 
@@ -852,41 +979,73 @@ const $eb7f8a6f7bf44740$var$PermissionsDialog = ({ open: open, onClose: onClose,
     const classes = $eb7f8a6f7bf44740$var$useStyles();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $780e01b2b2982de2$export$2e2bcd8739ae039)(uri);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogTitle), {
                 className: classes.title,
                 children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 34,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogContent), {
                 className: classes.addForm,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a613ad42a03b1bc4$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $a613ad42a03b1bc4$exports.default), {
                     agents: agents,
                     addPermission: addPermission
-                })
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 38,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 37,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogContent), {
                 className: classes.listForm,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6bcadc28bc94109b$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $6bcadc28bc94109b$exports.default), {
                     isContainer: isContainer,
                     agents: agents,
                     addPermission: addPermission,
                     removePermission: removePermission
-                })
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 41,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 40,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogActions), {
                 className: classes.actions,
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Button), {
                     label: "ra.action.close",
                     variant: "text",
                     onClick: onClose
-                })
-            })
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 49,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 48,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+        lineNumber: 33,
+        columnNumber: 5
+    }, undefined);
 };
 var $eb7f8a6f7bf44740$export$2e2bcd8739ae039 = $eb7f8a6f7bf44740$var$PermissionsDialog;
 
@@ -897,21 +1056,33 @@ const $49d4f2fbe6f28cfd$var$PermissionsButton = ({ isContainer: isContainer })=>
     const [showDialog, setShowDialog] = (0, $2O4Ek$react.useState)(false);
     const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactjsxdevruntime.Fragment), {
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Button), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Button), {
                 label: "auth.action.permissions",
                 onClick: ()=>setShowDialog(true),
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialShare))), {})
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $eb7f8a6f7bf44740$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialShare))), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                    lineNumber: 16,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                lineNumber: 15,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $eb7f8a6f7bf44740$exports.default), {
                 uri: uri,
                 isContainer: isContainer,
                 open: showDialog,
                 onClose: ()=>setShowDialog(false)
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                lineNumber: 18,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true);
 };
 $49d4f2fbe6f28cfd$var$PermissionsButton.defaultProps = {
     isContainer: false
@@ -924,21 +1095,43 @@ const $4076d0aea1b9e239$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
     const record = (0, $2O4Ek$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissionsOptimized)(record?.id);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.ListButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 19
+            }, undefined),
+            hasShow && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.ShowButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 20,
+                columnNumber: 19
+            }, undefined),
+            !!permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $49d4f2fbe6f28cfd$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 21,
+                columnNumber: 91
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 };
 var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActionsWithPermissions;
 
 
+var $f1baa8bd5325fac3$exports = {};
+
+$parcel$export($f1baa8bd5325fac3$exports, "default", () => $f1baa8bd5325fac3$export$2e2bcd8739ae039);
 
 
 
 
+var $79bac4913d414938$exports = {};
+
+$parcel$export($79bac4913d414938$exports, "default", () => $79bac4913d414938$export$2e2bcd8739ae039);
 
 
 
@@ -946,9 +1139,13 @@ var $4076d0aea1b9e239$export$2e2bcd8739ae039 = $4076d0aea1b9e239$var$EditActions
 const $79bac4913d414938$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.DeleteButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.DeleteButton), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/DeleteButtonWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 12
+    }, undefined);
     return null;
 };
 var $79bac4913d414938$export$2e2bcd8739ae039 = $79bac4913d414938$var$DeleteButtonWithPermissions;
@@ -963,16 +1160,28 @@ const $f1baa8bd5325fac3$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $f1baa8bd5325fac3$var$EditToolbarWithPermissions = (props)=>{
     const classes = $f1baa8bd5325fac3$var$useStyles();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.Toolbar), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Toolbar), {
         ...props,
         className: classes.toolbar,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.SaveButton), {}),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $79bac4913d414938$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.SaveButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+                lineNumber: 18,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $79bac4913d414938$exports.default), {
                 mutationMode: "undoable"
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+        lineNumber: 17,
+        columnNumber: 5
+    }, undefined);
 };
 var $f1baa8bd5325fac3$export$2e2bcd8739ae039 = $f1baa8bd5325fac3$var$EditToolbarWithPermissions;
 
@@ -981,23 +1190,38 @@ var $f1baa8bd5325fac3$export$2e2bcd8739ae039 = $f1baa8bd5325fac3$var$EditToolbar
 const $6f1389d03e4735d1$var$EditWithPermissions = (props)=>{
     const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Edit), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Edit), {
         ...props,
         children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $f1baa8bd5325fac3$export$2e2bcd8739ae039), {}),
+            toolbar: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $f1baa8bd5325fac3$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+                lineNumber: 13,
+                columnNumber: 18
+            }, undefined),
             // Allow to override toolbar
             ...props.children.props
         })
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 $6f1389d03e4735d1$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $4076d0aea1b9e239$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $4076d0aea1b9e239$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+        lineNumber: 22,
+        columnNumber: 12
+    }, undefined)
 };
 var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPermissions;
 
 
 
 
+var $496e40eed9f00a2c$exports = {};
+
+$parcel$export($496e40eed9f00a2c$exports, "default", () => $496e40eed9f00a2c$export$2e2bcd8739ae039);
 
 
 
@@ -1005,18 +1229,28 @@ var $6f1389d03e4735d1$export$2e2bcd8739ae039 = $6f1389d03e4735d1$var$EditWithPer
 const $496e40eed9f00a2c$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $2O4Ek$reactadmin.usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.EditButton), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditButtonWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 12
+    }, undefined);
     return null;
 };
 var $496e40eed9f00a2c$export$2e2bcd8739ae039 = $496e40eed9f00a2c$var$EditButtonWithPermissions;
 
 
 
+var $15811bcd3a3eb59f$exports = {};
+
+$parcel$export($15811bcd3a3eb59f$exports, "default", () => $15811bcd3a3eb59f$export$2e2bcd8739ae039);
 
 
 
+var $6452f20f9b47ebd6$exports = {};
+
+$parcel$export($6452f20f9b47ebd6$exports, "default", () => $6452f20f9b47ebd6$export$2e2bcd8739ae039);
 
 
 
@@ -1031,7 +1265,7 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
     const resourceDefinition = (0, $2O4Ek$reactadmin.useResourceDefinition)();
     const createContainerUri = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(resource);
     const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainerUri);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TopToolbar), {
         children: [
             filters && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(filters, {
                 showFilter: showFilter,
@@ -1039,40 +1273,70 @@ const $6452f20f9b47ebd6$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.CreateButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 43,
+                columnNumber: 9
+            }, undefined),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $49d4f2fbe6f28cfd$exports.default), {
                 isContainer: true
-            }),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ExportButton), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 46,
+                columnNumber: 9
+            }, undefined),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
-            }),
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 49,
+                columnNumber: 9
+            }, undefined),
             bulkActions && /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
             })
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+        lineNumber: 34,
+        columnNumber: 5
+    }, undefined);
 };
 var $6452f20f9b47ebd6$export$2e2bcd8739ae039 = $6452f20f9b47ebd6$var$ListActionsWithPermissions;
 
 
-const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.List), {
+const $15811bcd3a3eb59f$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.List), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/list/ListWithPermissions.js",
+        lineNumber: 5,
+        columnNumber: 38
+    }, undefined);
 $15811bcd3a3eb59f$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $6452f20f9b47ebd6$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $6452f20f9b47ebd6$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/list/ListWithPermissions.js",
+        lineNumber: 8,
+        columnNumber: 12
+    }, undefined)
 };
 var $15811bcd3a3eb59f$export$2e2bcd8739ae039 = $15811bcd3a3eb59f$var$ListWithPermissions;
 
 
 
+var $773eb052716d0fa7$exports = {};
+
+$parcel$export($773eb052716d0fa7$exports, "default", () => $773eb052716d0fa7$export$2e2bcd8739ae039);
 
 
 
+var $83b0bd683a7f3aa8$exports = {};
+
+$parcel$export($83b0bd683a7f3aa8$exports, "default", () => $83b0bd683a7f3aa8$export$2e2bcd8739ae039);
 
 
 
@@ -1082,13 +1346,29 @@ const $83b0bd683a7f3aa8$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $2O4Ek$reactadmin.useResourceDefinition)();
     const record = (0, $2O4Ek$reactadmin.useRecordContext)();
     const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(record?.id);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactadmin.TopToolbar), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.EditButton), {}),
-            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $49d4f2fbe6f28cfd$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.ListButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 19
+            }, undefined),
+            hasEdit && permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.EditButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 20,
+                columnNumber: 97
+            }, undefined),
+            permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $49d4f2fbe6f28cfd$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 21,
+                columnNumber: 89
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 };
 var $83b0bd683a7f3aa8$export$2e2bcd8739ae039 = $83b0bd683a7f3aa8$var$ShowActionsWithPermissions;
 
@@ -1097,18 +1377,29 @@ var $83b0bd683a7f3aa8$export$2e2bcd8739ae039 = $83b0bd683a7f3aa8$var$ShowActions
 const $773eb052716d0fa7$var$ShowWithPermissions = (props)=>{
     const recordId = (0, $2O4Ek$reactadmin.useGetRecordId)();
     (0, $673a0cc190160362$export$2e2bcd8739ae039)(recordId, "show");
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Show), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Show), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/show/ShowWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 10
+    }, undefined);
 };
 $773eb052716d0fa7$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $83b0bd683a7f3aa8$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $83b0bd683a7f3aa8$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/show/ShowWithPermissions.js",
+        lineNumber: 13,
+        columnNumber: 12
+    }, undefined)
 };
 var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPermissions;
 
 
 
 
+var $4e0bf9be00aaa242$exports = {};
+
+$parcel$export($4e0bf9be00aaa242$exports, "default", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
 
 
 
@@ -1116,37 +1407,65 @@ var $773eb052716d0fa7$export$2e2bcd8739ae039 = $773eb052716d0fa7$var$ShowWithPer
 const $4e0bf9be00aaa242$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
     const login = (0, $2O4Ek$reactadmin.useLogin)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Dialog), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Dialog), {
         open: open,
         onClose: onClose,
         ...rest,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogTitle), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogTitle), {
                 children: translate(title)
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContent), {
-                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.DialogContentText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 10,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogContent), {
+                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogContentText), {
                     children: translate(message)
-                })
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.DialogActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                    lineNumber: 12,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 11,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.DialogActions), {
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                         onClick: onClose,
                         children: translate("ra.action.cancel")
-                    }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                        lineNumber: 15,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                         onClick: ()=>login({
                                 redirect: redirect || window.location.pathname + window.location.search
                             }),
                         color: "primary",
                         variant: "contained",
                         children: translate("auth.action.login")
-                    })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                        lineNumber: 16,
+                        columnNumber: 9
+                    }, undefined)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 14,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+        lineNumber: 9,
+        columnNumber: 5
+    }, undefined);
 };
 $4e0bf9be00aaa242$var$AuthDialog.defaultProps = {
     title: "auth.dialog.login_required",
@@ -1155,6 +1474,10 @@ $4e0bf9be00aaa242$var$AuthDialog.defaultProps = {
 var $4e0bf9be00aaa242$export$2e2bcd8739ae039 = $4e0bf9be00aaa242$var$AuthDialog;
 
 
+var $0af8eee27f6a6e9f$exports = {};
+
+$parcel$export($0af8eee27f6a6e9f$exports, "SsoLoginPageClasses", () => $0af8eee27f6a6e9f$export$388de65c72fa74b4);
+$parcel$export($0af8eee27f6a6e9f$exports, "default", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
 
 
 
@@ -1271,34 +1594,62 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
         if (!backgroundImageLoaded) lazyLoadBackgroundImage();
     });
     if (isLoading) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($0af8eee27f6a6e9f$var$Root, {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($0af8eee27f6a6e9f$var$Root, {
         ...rest,
         ref: containerRef,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Card), {
             className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.card,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)("div", {
                     className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.avatar,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
                         className: $0af8eee27f6a6e9f$export$388de65c72fa74b4.icon,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
-                    })
-                }),
-                text && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                            lineNumber: 114,
+                            columnNumber: 13
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                        lineNumber: 113,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                    lineNumber: 112,
+                    columnNumber: 9
+                }, undefined),
+                text && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                     variant: "body2" /* className={classes.text} */ ,
                     children: text
-                }),
-                buttons?.map((button, i)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CardActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                    lineNumber: 117,
+                    columnNumber: 18
+                }, undefined),
+                buttons?.map((button, i)=>/*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CardActions), {
                         children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(button, {
                             fullWidth: true,
                             variant: "outlined",
                             type: "submit",
                             onClick: ()=>login({}, "/login")
                         })
-                    }, i))
+                    }, i, false, {
+                        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                        lineNumber: 119,
+                        columnNumber: 11
+                    }, undefined))
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+            lineNumber: 111,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+        lineNumber: 110,
+        columnNumber: 5
+    }, undefined);
 };
 const $0af8eee27f6a6e9f$var$PREFIX = "SsoLoginPage";
 const $0af8eee27f6a6e9f$export$388de65c72fa74b4 = {
@@ -1342,23 +1693,34 @@ $0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
     propertiesExist: [],
     // TODO deprecate this
     buttons: [
-        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
-            startIcon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
+            startIcon: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
                 src: "/lescommuns.jpg"
-            }),
+            }, void 0, false, void 0, void 0),
             children: "Les Communs"
-        })
+        }, void 0, false, {
+            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+            lineNumber: 177,
+            columnNumber: 13
+        }, undefined)
     ],
     userResource: "Person"
 };
 var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPage;
 
 
+var $2b9a1c186b0ca88b$exports = {};
+
+$parcel$export($2b9a1c186b0ca88b$exports, "default", () => $2b9a1c186b0ca88b$export$2e2bcd8739ae039);
 
 
 
 
 
+
+var $58ba431c466c0ccd$exports = {};
+
+$parcel$export($58ba431c466c0ccd$exports, "default", () => $58ba431c466c0ccd$export$2e2bcd8739ae039);
 
 
 
@@ -1403,9 +1765,11 @@ const $58ba431c466c0ccd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             paddingBottom: 5
         }
     }));
-const $58ba431c466c0ccd$var$PodLoginPageView = ({ history: history, location: location, text: text, customPodProviders: customPodProviders })=>{
+const $58ba431c466c0ccd$var$PodLoginPageView = ({ text: text, customPodProviders: customPodProviders })=>{
     const classes = $58ba431c466c0ccd$var$useStyles();
     const notify = (0, $2O4Ek$reactadmin.useNotify)();
+    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
+    const navigate = (0, $2O4Ek$reactrouterdom.useNavigate)();
     const locale = (0, $2O4Ek$reactadmin.useLocale)();
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
     const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
@@ -1449,7 +1813,7 @@ const $58ba431c466c0ccd$var$PodLoginPageView = ({ history: history, location: lo
                     const data = await response.json();
                     if (!authProvider.checkUser(data)) {
                         notify("auth.message.user_not_allowed_to_login", "error");
-                        history.replace("/login");
+                        navigate("/login");
                     } else {
                         localStorage.setItem("token", token);
                         notify("auth.message.user_connected", "info");
@@ -1470,64 +1834,128 @@ const $58ba431c466c0ccd$var$PodLoginPageView = ({ history: history, location: lo
         dataProvider
     ]);
     if (searchParams.has("token") || searchParams.has("addUser") || searchParams.has("logout")) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Card), {
             className: classes.card,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)("div", {
                     className: classes.lockIconAvatar,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
                         className: classes.lockIcon,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                            lineNumber: 125,
+                            columnNumber: 13
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 124,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 123,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
                     pl: 2,
                     pr: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                         variant: "body2",
                         className: classes.text,
                         children: text || translate("auth.message.choose_pod_provider")
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 129,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 128,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
                     m: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
+                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.List), {
                         className: classes.list,
                         children: podProviders.map((podProvider, i)=>{
                             const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
                             if (searchParams.has("signup")) url.searchParams.set("signup", "true");
                             url.searchParams.set("redirect", window.location.href);
-                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($2O4Ek$react))).Fragment, {
+                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$react))).Fragment, {
                                 children: [
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Divider), {}),
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Divider), {}, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                        lineNumber: 145,
+                                        columnNumber: 19
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItem), {
                                         button: true,
                                         onClick: ()=>window.location.href = url.toString(),
                                         className: classes.listItem,
                                         children: [
-                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
-                                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialStorage))), {})
-                                                })
-                                            }),
-                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemAvatar), {
+                                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Avatar), {
+                                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialStorage))), {}, void 0, false, {
+                                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                        lineNumber: 154,
+                                                        columnNumber: 25
+                                                    }, undefined)
+                                                }, void 0, false, {
+                                                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                    lineNumber: 153,
+                                                    columnNumber: 23
+                                                }, undefined)
+                                            }, void 0, false, {
+                                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                lineNumber: 152,
+                                                columnNumber: 21
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                                                 primary: podProvider["apods:domainName"],
                                                 secondary: podProvider["apods:area"]
-                                            })
+                                            }, void 0, false, {
+                                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                lineNumber: 157,
+                                                columnNumber: 21
+                                            }, undefined)
                                         ]
-                                    }, i)
+                                    }, i, true, {
+                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                        lineNumber: 146,
+                                        columnNumber: 19
+                                    }, undefined)
                                 ]
-                            }, i);
+                            }, i, true, {
+                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                lineNumber: 144,
+                                columnNumber: 17
+                            }, undefined);
                         })
-                    })
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 134,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 133,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+            lineNumber: 122,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+        lineNumber: 121,
+        columnNumber: 5
+    }, undefined);
 };
 var $58ba431c466c0ccd$export$2e2bcd8739ae039 = $58ba431c466c0ccd$var$PodLoginPageView;
 
@@ -1536,22 +1964,41 @@ const $2b9a1c186b0ca88b$var$PodLoginPage = (props)=>{
     const muiTheme = (0, $2O4Ek$react.useMemo)(()=>(0, $2O4Ek$muimaterialstyles.createTheme)(props.theme), [
         props.theme
     ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.StyledEngineProvider), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.StyledEngineProvider), {
         injectFirst: true,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muisystem.ThemeProvider), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muisystem.ThemeProvider), {
             theme: muiTheme,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $58ba431c466c0ccd$export$2e2bcd8739ae039), {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $58ba431c466c0ccd$exports.default), {
                     ...props
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+                    lineNumber: 13,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Notification), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+                    lineNumber: 14,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+            lineNumber: 12,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPage;
 
 
+var $4c56dbfbda0fa20c$exports = {};
+
+$parcel$export($4c56dbfbda0fa20c$exports, "default", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
 
 
 
@@ -1559,6 +2006,9 @@ var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPag
 
 
 
+var $5f70c240e5b0340c$exports = {};
+
+$parcel$export($5f70c240e5b0340c$exports, "default", () => $5f70c240e5b0340c$export$2e2bcd8739ae039);
 
 
 
@@ -1684,23 +2134,31 @@ function $bd29744006fdc23c$export$2e2bcd8739ae039(props) {
             backgroundColor: currentColor
         }
     })((0, $2O4Ek$muimaterial.LinearProgress));
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)(StyledLinearProgress, {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
         variant: "determinate"
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/ColorGradientProgressBar.js",
+        lineNumber: 58,
+        columnNumber: 10
+    }, this);
 }
 
 
 
 function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e1d215e32ca$export$19dcdb21c6965fb8), password: password, ...restProps }) {
     const strength = scorer.scoreFn(password);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $bd29744006fdc23c$export$2e2bcd8739ae039), {
         currentVal: strength,
         minVal: 0,
         maxVal: scorer.maxScore,
         ...restProps
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/PasswordStrengthIndicator.js",
+        lineNumber: 7,
+        columnNumber: 10
+    }, this);
 }
 
 
@@ -1761,16 +2219,16 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "username",
                     label: translate("auth.input.username"),
@@ -1796,8 +2254,12 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                                 "9"
                             ]
                         }) : ""
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 102,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
@@ -1807,10 +2269,14 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                         (0, $2O4Ek$reactadmin.required)(),
                         (0, $2O4Ek$reactadmin.email)()
                     ]
-                }),
-                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 120,
+                    columnNumber: 9
+                }, undefined),
+                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactjsxdevruntime.Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1820,17 +2286,25 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                                 ":",
                                 " "
                             ]
-                        }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        }, void 0, true, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                            lineNumber: 130,
+                            columnNumber: 13
+                        }, undefined),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                             password: password,
                             scorer: passwordScorer,
                             sx: {
                                 width: "100%"
                             }
-                        })
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                            lineNumber: 133,
+                            columnNumber: 13
+                        }, undefined)
                     ]
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                }, void 0, true),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "password",
                     type: "password",
                     value: password,
@@ -1843,23 +2317,43 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                         (0, $2O4Ek$reactadmin.required)(),
                         (0, $eab41bc89667b2c6$export$2e2bcd8739ae039)(passwordScorer)
                     ]
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 136,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.signup")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                        lineNumber: 156,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.signup")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 147,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+            lineNumber: 101,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+        lineNumber: 100,
+        columnNumber: 5
+    }, undefined);
 };
 $5f70c240e5b0340c$var$SignupForm.defaultValues = {
     redirectTo: "/",
@@ -1868,6 +2362,9 @@ $5f70c240e5b0340c$var$SignupForm.defaultValues = {
 var $5f70c240e5b0340c$export$2e2bcd8739ae039 = $5f70c240e5b0340c$var$SignupForm;
 
 
+var $8a2df01c9f2675bb$exports = {};
+
+$parcel$export($8a2df01c9f2675bb$exports, "default", () => $8a2df01c9f2675bb$export$2e2bcd8739ae039);
 
 
 
@@ -1904,16 +2401,16 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "username",
                     label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
@@ -1926,8 +2423,12 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                         (0, $2O4Ek$reactadmin.required)(),
                         (0, $2O4Ek$reactadmin.email)()
                     ]
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 52,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     source: "password",
                     type: "password",
                     label: translate("ra.auth.password"),
@@ -1935,23 +2436,43 @@ const $8a2df01c9f2675bb$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: (0, $2O4Ek$reactadmin.required)()
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 61,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.login")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                        lineNumber: 79,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.login")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 70,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+            lineNumber: 51,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+        lineNumber: 50,
+        columnNumber: 5
+    }, undefined);
 };
 $8a2df01c9f2675bb$var$LoginForm.defaultValues = {
     redirectTo: "/",
@@ -1960,6 +2481,9 @@ $8a2df01c9f2675bb$var$LoginForm.defaultValues = {
 var $8a2df01c9f2675bb$export$2e2bcd8739ae039 = $8a2df01c9f2675bb$var$LoginForm;
 
 
+var $176df6bd8edc5f4d$exports = {};
+
+$parcel$export($176df6bd8edc5f4d$exports, "default", () => $176df6bd8edc5f4d$export$2e2bcd8739ae039);
 
 
 
@@ -2012,16 +2536,16 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
@@ -2030,10 +2554,14 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     disabled: loading,
                     validate: (0, $2O4Ek$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                passwordScorer && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 70,
+                    columnNumber: 9
+                }, undefined),
+                passwordScorer && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactjsxdevruntime.Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Typography), {
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -2043,17 +2571,25 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                                 ":",
                                 " "
                             ]
-                        }),
-                        /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
+                        }, void 0, true, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                            lineNumber: 82,
+                            columnNumber: 13
+                        }, undefined),
+                        /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $edfec7f9e9fd7881$export$2e2bcd8739ae039), {
                             password: newPassword,
                             scorer: passwordScorer,
                             sx: {
                                 width: "100%"
                             }
-                        })
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                            lineNumber: 86,
+                            columnNumber: 13
+                        }, undefined)
                     ]
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                }, void 0, true),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "password",
@@ -2068,8 +2604,12 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     ],
                     onChange: (e)=>setNewPassword(e.target.value),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 89,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "confirm-password",
@@ -2079,27 +2619,50 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
                     disabled: loading,
                     validate: (0, $2O4Ek$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 102,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.set_new_password")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                        lineNumber: 122,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.set_new_password")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 113,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+            lineNumber: 69,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+        lineNumber: 68,
+        columnNumber: 5
+    }, undefined);
 };
 var $176df6bd8edc5f4d$export$2e2bcd8739ae039 = $176df6bd8edc5f4d$var$NewPasswordForm;
 
 
+var $a04debd4e4af2a01$exports = {};
+
+$parcel$export($a04debd4e4af2a01$exports, "default", () => $a04debd4e4af2a01$export$2e2bcd8739ae039);
 
 
 
@@ -2133,12 +2696,12 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
             });
         });
     };
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Form), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Form), {
         onSubmit: submit,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.CardContent), {
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.TextInput), {
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
@@ -2147,27 +2710,50 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
                     disabled: loading,
                     validate: (0, $2O4Ek$reactadmin.required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Button), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                    lineNumber: 48,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Button), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.reset_password")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                        lineNumber: 67,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.reset_password")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                    lineNumber: 58,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+            lineNumber: 47,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+        lineNumber: 46,
+        columnNumber: 5
+    }, undefined);
 };
 var $a04debd4e4af2a01$export$2e2bcd8739ae039 = $a04debd4e4af2a01$var$ResetPasswordForm;
 
 
+var $d6b5c702311394c4$exports = {};
+
+$parcel$export($d6b5c702311394c4$exports, "default", () => $d6b5c702311394c4$export$2e2bcd8739ae039);
 
 
 
@@ -2203,16 +2789,16 @@ const $d6b5c702311394c4$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     }));
 const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
     const classes = $d6b5c702311394c4$var$useStyles();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         className: classes.root,
         children: [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Card), {
                 className: classes.card,
                 children: [
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Box), {
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
                         p: 2,
                         display: "flex",
                         justifyContent: "start",
@@ -2221,27 +2807,55 @@ const $d6b5c702311394c4$var$SimpleBox = ({ title: title, icon: icon, text: text,
                                 fontSize: "large",
                                 className: classes.icon
                             }),
-                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
-                            })
+                            }, void 0, false, {
+                                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                                lineNumber: 42,
+                                columnNumber: 11
+                            }, undefined)
                         ]
-                    }),
-                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
+                    }, void 0, true, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                        lineNumber: 40,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Box), {
                         pl: 2,
                         pr: 2,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                             variant: "body1",
                             children: text
-                        })
-                    }),
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                            lineNumber: 47,
+                            columnNumber: 11
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                        lineNumber: 46,
+                        columnNumber: 9
+                    }, undefined),
                     children
                 ]
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                lineNumber: 39,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Notification), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                lineNumber: 51,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+        lineNumber: 38,
+        columnNumber: 5
+    }, undefined);
 };
 var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
@@ -2315,65 +2929,125 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     ]);
     if (isLoading || identity?.id) return null;
     if (isLoading || identity?.id) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $d6b5c702311394c4$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $d6b5c702311394c4$exports.default), {
         title: translate(title),
         text: translate(text),
-        icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}),
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
+        icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {}, void 0, false, void 0, void 0),
+        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Card), {
             children: [
-                isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $5f70c240e5b0340c$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $5f70c240e5b0340c$exports.default), {
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
-                }),
-                isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $a04debd4e4af2a01$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $176df6bd8edc5f4d$export$2e2bcd8739ae039), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 88,
+                    columnNumber: 11
+                }, undefined),
+                isResetPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $a04debd4e4af2a01$exports.default), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 96,
+                    columnNumber: 29
+                }, undefined),
+                isNewPassword && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $176df6bd8edc5f4d$exports.default), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
-                }),
-                isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $8a2df01c9f2675bb$export$2e2bcd8739ae039), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 97,
+                    columnNumber: 27
+                }, undefined),
+                isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $8a2df01c9f2675bb$exports.default), {
                     redirectTo: redirectTo,
                     allowUsername: allowUsername
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)("div", {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 98,
+                    columnNumber: 21
+                }, undefined),
+                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)("div", {
                     className: classes.switch,
                     children: [
-                        isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                        isSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactrouterdom.Link), {
                             to: "/login",
-                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
-                            })
-                        }),
-                        isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$reactjsxruntime.Fragment), {
+                            }, void 0, false, {
+                                fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                lineNumber: 102,
+                                columnNumber: 15
+                            }, undefined)
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                            lineNumber: 101,
+                            columnNumber: 13
+                        }, undefined),
+                        isLogin && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactjsxdevruntime.Fragment), {
                             children: [
-                                hasSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                                hasSignup && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)("div", {
+                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactrouterdom.Link), {
                                         to: "/login?signup=true",
-                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
-                                        })
-                                    })
-                                }),
-                                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactrouterdom.Link), {
+                                        }, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                            lineNumber: 110,
+                                            columnNumber: 21
+                                        }, undefined)
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                        lineNumber: 109,
+                                        columnNumber: 19
+                                    }, undefined)
+                                }, void 0, false, {
+                                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                    lineNumber: 108,
+                                    columnNumber: 17
+                                }, undefined),
+                                /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)("div", {
+                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactrouterdom.Link), {
                                         to: `/login?reset_password=true&${searchParams.toString()}`,
-                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
+                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")
-                                        })
-                                    })
-                                })
+                                        }, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                            lineNumber: 116,
+                                            columnNumber: 19
+                                        }, undefined)
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                        lineNumber: 115,
+                                        columnNumber: 17
+                                    }, undefined)
+                                }, void 0, false, {
+                                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                    lineNumber: 114,
+                                    columnNumber: 15
+                                }, undefined)
                             ]
-                        })
+                        }, void 0, true)
                     ]
-                })
+                }, void 0, true, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 99,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+            lineNumber: 86,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+        lineNumber: 85,
+        columnNumber: 5
+    }, undefined);
 };
 $4c56dbfbda0fa20c$var$LocalLoginPage.defaultProps = {
     hasSignup: true,
@@ -2383,6 +3057,9 @@ $4c56dbfbda0fa20c$var$LocalLoginPage.defaultProps = {
 var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginPage;
 
 
+var $0973974d3aa8078b$exports = {};
+
+$parcel$export($0973974d3aa8078b$exports, "default", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
 
 
 
@@ -2392,15 +3069,22 @@ var $4c56dbfbda0fa20c$export$2e2bcd8739ae039 = $4c56dbfbda0fa20c$var$LocalLoginP
 const $0973974d3aa8078b$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
     const createContainer = (0, $2O4Ek$semappssemanticdataprovider.useCreateContainer)(name);
     const { permissions: permissions } = (0, $2O4Ek$reactadmin.usePermissions)(createContainer);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Resource), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Resource), {
         ...rest,
         name: name,
         create: permissions && permissions.some((p)=>(0, $09162138eadab4b9$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/ResourceWithPermissions.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 var $0973974d3aa8078b$export$2e2bcd8739ae039 = $0973974d3aa8078b$var$ResourceWithPermission;
 
 
+var $9734e84907c0d5dd$exports = {};
+
+$parcel$export($9734e84907c0d5dd$exports, "default", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
 
 
 
@@ -2421,54 +3105,90 @@ const $9734e84907c0d5dd$var$UserMenuItem = /*#__PURE__*/ (0, $2O4Ek$react.forwar
         onClose,
         navigate
     ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.MenuItem), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.MenuItem), {
         onClick: onClick,
         ref: ref,
         ...rest,
         children: [
-            icon && /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemIcon), {
+            icon && /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemIcon), {
                 children: /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(icon, {
                     fontSize: "small"
                 })
-            }),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 24,
+                columnNumber: 16
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$muimaterial.ListItemText), {
                 children: translate(label)
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 25,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 });
 const $9734e84907c0d5dd$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
     const { identity: identity } = (0, $2O4Ek$reactadmin.useGetIdentity)();
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.UserMenu), {
+    return /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
-                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialAccountCircle))), {}),
+                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialAccountCircle))), {}, void 0, false, void 0, void 0),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
-            }, "view"),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            }, "view", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 36,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
-                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {}),
+                icon: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialEdit))), {}, void 0, false, void 0, void 0),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
-            }, "edit"),
+            }, "edit", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 42,
+                columnNumber: 13
+            }, undefined),
             /*#__PURE__*/ (0, ($parcel$interopDefault($2O4Ek$react))).cloneElement(logout, {
                 key: "logout"
             })
         ] : [
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.signup",
                 to: "/login?signup=true"
-            }, "signup"),
-            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)($9734e84907c0d5dd$var$UserMenuItem, {
+            }, "signup", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 51,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)($9734e84907c0d5dd$var$UserMenuItem, {
                 label: "auth.action.login",
                 to: "/login"
-            }, "login")
+            }, "login", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 52,
+                columnNumber: 13
+            }, undefined)
         ]
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 33,
+        columnNumber: 5
+    }, undefined);
 };
 $9734e84907c0d5dd$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Logout), {}),
+    logout: /*#__PURE__*/ (0, $2O4Ek$reactjsxdevruntime.jsxDEV)((0, $2O4Ek$reactadmin.Logout), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 59,
+        columnNumber: 11
+    }, undefined),
     profileResource: "Person"
 };
 var $9734e84907c0d5dd$export$2e2bcd8739ae039 = $9734e84907c0d5dd$var$UserMenu;

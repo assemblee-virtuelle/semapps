@@ -1,6 +1,6 @@
 import $4oW5r$jwtdecode from "jwt-decode";
 import $4oW5r$urljoin from "url-join";
-import {jsx as $4oW5r$jsx, jsxs as $4oW5r$jsxs, Fragment as $4oW5r$Fragment} from "react/jsx-runtime";
+import {jsxDEV as $4oW5r$jsxDEV, Fragment as $4oW5r$Fragment} from "react/jsx-dev-runtime";
 import $4oW5r$react, {useEffect as $4oW5r$useEffect, useState as $4oW5r$useState, useCallback as $4oW5r$useCallback, useRef as $4oW5r$useRef, useMemo as $4oW5r$useMemo, forwardRef as $4oW5r$forwardRef} from "react";
 import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, Notification as $4oW5r$Notification, useLocale as $4oW5r$useLocale, useSafeSetState as $4oW5r$useSafeSetState, useLocaleState as $4oW5r$useLocaleState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
 import {useCreateContainer as $4oW5r$useCreateContainer} from "@semapps/semantic-data-provider";
@@ -15,7 +15,7 @@ import $4oW5r$muiiconsmaterialCheck from "@mui/icons-material/Check";
 import $4oW5r$muiiconsmaterialPublic from "@mui/icons-material/Public";
 import $4oW5r$muiiconsmaterialVpnLock from "@mui/icons-material/VpnLock";
 import $4oW5r$muiiconsmaterialGroup from "@mui/icons-material/Group";
-import {useNavigate as $4oW5r$useNavigate, useSearchParams as $4oW5r$useSearchParams, Link as $4oW5r$Link, useLocation as $4oW5r$useLocation} from "react-router-dom";
+import {useNavigate as $4oW5r$useNavigate, useSearchParams as $4oW5r$useSearchParams, useLocation as $4oW5r$useLocation, Link as $4oW5r$Link} from "react-router-dom";
 import {styled as $4oW5r$styled1, createTheme as $4oW5r$createTheme} from "@mui/material/styles";
 import $4oW5r$muiiconsmaterialLock from "@mui/icons-material/Lock";
 import $4oW5r$muiiconsmaterialStorage from "@mui/icons-material/Storage";
@@ -24,6 +24,9 @@ import {withStyles as $4oW5r$withStyles} from "@mui/styles";
 import $4oW5r$muiiconsmaterialAccountCircle from "@mui/icons-material/AccountCircle";
 import $4oW5r$lodashisEqual from "lodash/isEqual";
 
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
 
 
 
@@ -309,6 +312,9 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
 var $1d8606895ce3b768$export$2e2bcd8739ae039 = $1d8606895ce3b768$var$authProvider;
 
 
+var $f2c5683e04dee28c$exports = {};
+
+$parcel$export($f2c5683e04dee28c$exports, "default", () => $f2c5683e04dee28c$export$2e2bcd8739ae039);
 
 
 
@@ -410,32 +416,55 @@ const $f2c5683e04dee28c$var$CreateWithPermissions = (props)=>{
     const resource = (0, $4oW5r$useResourceContext)();
     const createContainerUri = (0, $4oW5r$useCreateContainer)(resource);
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(createContainerUri, "create");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Create), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Create), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/create/CreateWithPermissions.js",
+        lineNumber: 10,
+        columnNumber: 10
+    }, undefined);
 };
 $f2c5683e04dee28c$var$CreateWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CreateActions), {})
+    actions: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CreateActions), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/create/CreateWithPermissions.js",
+        lineNumber: 14,
+        columnNumber: 12
+    }, undefined)
 };
 var $f2c5683e04dee28c$export$2e2bcd8739ae039 = $f2c5683e04dee28c$var$CreateWithPermissions;
 
 
+var $28fa6ad821327921$exports = {};
+
+$parcel$export($28fa6ad821327921$exports, "default", () => $28fa6ad821327921$export$2e2bcd8739ae039);
+
+
+
+var $62be5dcee9954341$exports = {};
+
+$parcel$export($62be5dcee9954341$exports, "default", () => $62be5dcee9954341$export$2e2bcd8739ae039);
+
+
+
+var $7dac2771cc5eb38b$exports = {};
+
+$parcel$export($7dac2771cc5eb38b$exports, "default", () => $7dac2771cc5eb38b$export$2e2bcd8739ae039);
 
 
 
 
 
+var $827412a5ced0d5cd$exports = {};
+
+$parcel$export($827412a5ced0d5cd$exports, "default", () => $827412a5ced0d5cd$export$2e2bcd8739ae039);
 
 
 
 
 
+var $38698ff0e415f88b$exports = {};
 
-
-
-
-
-
+$parcel$export($38698ff0e415f88b$exports, "default", () => $38698ff0e415f88b$export$2e2bcd8739ae039);
 
 
 
@@ -479,7 +508,7 @@ const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermissio
     }, [
         data
     ]);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muimaterialAutocomplete), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muimaterialAutocomplete), {
         classes: {
             option: classes.option
         },
@@ -502,37 +531,51 @@ const $38698ff0e415f88b$var$AddPermissionsForm = ({ agents: agents, addPermissio
         onInputChange: (event, newInputValue)=>{
             setInputValue(newInputValue);
         },
-        renderInput: (params)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextField), {
+        renderInput: (params)=>/*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextField), {
                 ...params,
                 label: translate("auth.input.agent_select"),
                 variant: "filled",
                 margin: "dense",
                 fullWidth: true
-            }),
-        renderOption: (props, option)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$List), {
+            }, void 0, false, void 0, void 0),
+        renderOption: (props, option)=>/*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$List), {
                 dense: true,
                 className: classes.list,
                 ...props,
-                children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItem), {
                     button: true,
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                            children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemAvatar), {
+                            children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
                                 src: option.image,
-                                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPerson), {})
-                            })
-                        }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialPerson), {}, void 0, false, void 0, void 0)
+                            }, void 0, false, void 0, void 0)
+                        }, void 0, false, void 0, void 0),
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                             primary: option["pair:label"]
-                        })
+                        }, void 0, false, void 0, void 0)
                     ]
-                })
-            })
-    });
+                }, void 0, true, void 0, void 0)
+            }, void 0, false, void 0, void 0)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AddPermissionsForm.js",
+        lineNumber: 43,
+        columnNumber: 5
+    }, undefined);
 };
 var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissionsForm;
 
 
+var $c8acba773a123777$exports = {};
+
+$parcel$export($c8acba773a123777$exports, "default", () => $c8acba773a123777$export$2e2bcd8739ae039);
+
+
+
+
+var $e8b8e6301988112e$exports = {};
+
+$parcel$export($e8b8e6301988112e$exports, "default", () => $e8b8e6301988112e$export$2e2bcd8739ae039);
 
 
 
@@ -541,10 +584,9 @@ var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissi
 
 
 
+var $2a38cfa58fd59a9e$exports = {};
 
-
-
-
+$parcel$export($2a38cfa58fd59a9e$exports, "default", () => $2a38cfa58fd59a9e$export$2e2bcd8739ae039);
 
 
 
@@ -555,11 +597,27 @@ var $38698ff0e415f88b$export$2e2bcd8739ae039 = $38698ff0e415f88b$var$AddPermissi
 const $2a38cfa58fd59a9e$var$AgentIcon = ({ agent: agent })=>{
     switch(agent.predicate){
         case 0, $3ecc2efd72c45a68$export$2703254089a859eb:
-            return agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPublic), {}) : /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialVpnLock), {});
+            return agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialPublic), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 11,
+                columnNumber: 45
+            }, undefined) : /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialVpnLock), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 11,
+                columnNumber: 62
+            }, undefined);
         case 0, $3ecc2efd72c45a68$export$97a08a1bb7ee0545:
-            return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialPerson), {});
+            return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialPerson), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 13,
+                columnNumber: 14
+            }, undefined);
         case 0, $3ecc2efd72c45a68$export$f07ccbe0773f2c7:
-            return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialGroup), {});
+            return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialGroup), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentIcon.js",
+                lineNumber: 15,
+                columnNumber: 14
+            }, undefined);
         default:
             throw new Error(`Unknown agent predicate: ${agent.predicate}`);
     }
@@ -613,62 +671,126 @@ const $e8b8e6301988112e$var$AgentItem = ({ isContainer: isContainer, agent: agen
     const openMenu = (event)=>setAnchorEl(event.currentTarget);
     const closeMenu = ()=>setAnchorEl(null);
     const labels = isContainer ? (0, $3ecc2efd72c45a68$export$edca379024d80309) : (0, $3ecc2efd72c45a68$export$2e9571c4ccdeb6a9);
-    if (loading) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Loading), {});
-    if (error) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Error), {});
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
+    if (loading) return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Loading), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 73,
+        columnNumber: 23
+    }, undefined);
+    if (error) return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Error), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 74,
+        columnNumber: 21
+    }, undefined);
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItem), {
         className: classes.listItem,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemAvatar), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
                     src: user?.image,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $2a38cfa58fd59a9e$export$2e2bcd8739ae039), {
+                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $2a38cfa58fd59a9e$exports.default), {
                         agent: agent
-                    })
-                })
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 80,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                    lineNumber: 79,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 78,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                 className: classes.primaryText,
                 primary: user ? user["pair:label"] : translate(agent.id === (0, $3ecc2efd72c45a68$export$83ae1bc0992a6335) ? "auth.agent.anonymous" : "auth.agent.authenticated")
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 83,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                 className: classes.secondaryText,
                 primary: agent.permissions && agent.permissions.map((p)=>translate(labels[p])).join(", ")
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItemSecondaryAction), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 91,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemSecondaryAction), {
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$IconButton), {
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$IconButton), {
                         onClick: openMenu,
                         size: "large",
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialEdit), {})
-                    }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Menu), {
+                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialEdit), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                            lineNumber: 97,
+                            columnNumber: 11
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 96,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Menu), {
                         anchorEl: anchorEl,
                         keepMounted: true,
                         open: Boolean(anchorEl),
                         onClose: closeMenu,
                         children: Object.entries(labels).map(([rightKey, rightLabel])=>{
                             const hasPermission = agent.permissions && agent.permissions.includes(rightKey);
-                            return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$MenuItem), {
+                            return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$MenuItem), {
                                 onClick: ()=>{
                                     if (hasPermission) removePermission(agent.id, agent.predicate, rightKey);
                                     else addPermission(agent.id, agent.predicate, rightKey);
                                     closeMenu();
                                 },
                                 children: [
-                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemIcon), {
-                                        children: hasPermission ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialCheck), {}) : null
-                                    }),
-                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemIcon), {
+                                        children: hasPermission ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialCheck), {}, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                            lineNumber: 114,
+                                            columnNumber: 48
+                                        }, undefined) : null
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                        lineNumber: 114,
+                                        columnNumber: 17
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                                         primary: translate(rightLabel)
-                                    })
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                        lineNumber: 115,
+                                        columnNumber: 17
+                                    }, undefined)
                                 ]
-                            }, rightKey);
+                            }, rightKey, true, {
+                                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                                lineNumber: 103,
+                                columnNumber: 15
+                            }, undefined);
                         })
-                    })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                        lineNumber: 99,
+                        columnNumber: 9
+                    }, undefined)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+                lineNumber: 95,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/AgentItem.js",
+        lineNumber: 77,
+        columnNumber: 5
+    }, undefined);
 };
 var $e8b8e6301988112e$export$2e2bcd8739ae039 = $e8b8e6301988112e$var$AgentItem;
 
@@ -679,15 +801,23 @@ const $c8acba773a123777$var$StyledList = (0, $4oW5r$styled)((0, $4oW5r$List))(({
         backgroundColor: theme.palette.background.paper
     }));
 const $c8acba773a123777$var$EditPermissionsForm = ({ isContainer: isContainer, agents: agents, addPermission: addPermission, removePermission: removePermission })=>{
-    return /*#__PURE__*/ (0, $4oW5r$jsx)($c8acba773a123777$var$StyledList, {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)($c8acba773a123777$var$StyledList, {
         dense: true,
-        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $e8b8e6301988112e$export$2e2bcd8739ae039), {
+        children: Object.entries(agents).map(([agentId, agent])=>/*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $e8b8e6301988112e$exports.default), {
                 isContainer: isContainer,
                 agent: agent,
                 addPermission: addPermission,
                 removePermission: removePermission
-            }, agentId))
-    });
+            }, agentId, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/EditPermissionsForm.js",
+                lineNumber: 16,
+                columnNumber: 9
+            }, undefined))
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/EditPermissionsForm.js",
+        lineNumber: 14,
+        columnNumber: 5
+    }, undefined);
 };
 var $c8acba773a123777$export$2e2bcd8739ae039 = $c8acba773a123777$var$EditPermissionsForm;
 
@@ -814,41 +944,73 @@ const $827412a5ced0d5cd$var$PermissionsDialog = ({ open: open, onClose: onClose,
     const classes = $827412a5ced0d5cd$var$useStyles();
     const translate = (0, $4oW5r$useTranslate)();
     const { agents: agents, addPermission: addPermission, removePermission: removePermission } = (0, $7ad577d9c9c71db0$export$2e2bcd8739ae039)(uri);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Dialog), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Dialog), {
         fullWidth: true,
         open: open,
         onClose: onClose,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogTitle), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogTitle), {
                 className: classes.title,
                 children: translate(isContainer ? "auth.dialog.container_permissions" : "auth.dialog.resource_permissions")
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 34,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogContent), {
                 className: classes.addForm,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $38698ff0e415f88b$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $38698ff0e415f88b$exports.default), {
                     agents: agents,
                     addPermission: addPermission
-                })
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 38,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 37,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogContent), {
                 className: classes.listForm,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $c8acba773a123777$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $c8acba773a123777$exports.default), {
                     isContainer: isContainer,
                     agents: agents,
                     addPermission: addPermission,
                     removePermission: removePermission
-                })
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 41,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 40,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogActions), {
                 className: classes.actions,
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button), {
                     label: "ra.action.close",
                     variant: "text",
                     onClick: onClose
-                })
-            })
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                    lineNumber: 49,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+                lineNumber: 48,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsDialog.js",
+        lineNumber: 33,
+        columnNumber: 5
+    }, undefined);
 };
 var $827412a5ced0d5cd$export$2e2bcd8739ae039 = $827412a5ced0d5cd$var$PermissionsDialog;
 
@@ -859,21 +1021,33 @@ const $7dac2771cc5eb38b$var$PermissionsButton = ({ isContainer: isContainer })=>
     const [showDialog, setShowDialog] = (0, $4oW5r$useState)(false);
     const createContainer = (0, $4oW5r$useCreateContainer)(resource);
     const uri = isContainer ? createContainer : record.id || record["@id"];
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Fragment), {
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button), {
                 label: "auth.action.permissions",
                 onClick: ()=>setShowDialog(true),
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialShare), {})
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $827412a5ced0d5cd$export$2e2bcd8739ae039), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialShare), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                    lineNumber: 16,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                lineNumber: 15,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $827412a5ced0d5cd$exports.default), {
                 uri: uri,
                 isContainer: isContainer,
                 open: showDialog,
                 onClose: ()=>setShowDialog(false)
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/PermissionsButton/PermissionsButton.js",
+                lineNumber: 18,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true);
 };
 $7dac2771cc5eb38b$var$PermissionsButton.defaultProps = {
     isContainer: false
@@ -886,21 +1060,43 @@ const $62be5dcee9954341$var$EditActionsWithPermissions = ()=>{
     const { hasList: hasList, hasShow: hasShow } = (0, $4oW5r$useResourceDefinition)();
     const record = (0, $4oW5r$useRecordContext)();
     const { permissions: permissions } = (0, $4oW5r$usePermissionsOptimized)(record?.id);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListButton), {}),
-            hasShow && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ShowButton), {}),
-            !!permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 19
+            }, undefined),
+            hasShow && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ShowButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 20,
+                columnNumber: 19
+            }, undefined),
+            !!permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $7dac2771cc5eb38b$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+                lineNumber: 21,
+                columnNumber: 91
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/edit/EditActionsWithPermissions.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 };
 var $62be5dcee9954341$export$2e2bcd8739ae039 = $62be5dcee9954341$var$EditActionsWithPermissions;
 
 
+var $701198930c0b0c72$exports = {};
+
+$parcel$export($701198930c0b0c72$exports, "default", () => $701198930c0b0c72$export$2e2bcd8739ae039);
 
 
 
 
+var $7efdcbe4be05bfd5$exports = {};
+
+$parcel$export($7efdcbe4be05bfd5$exports, "default", () => $7efdcbe4be05bfd5$export$2e2bcd8739ae039);
 
 
 
@@ -908,9 +1104,13 @@ var $62be5dcee9954341$export$2e2bcd8739ae039 = $62be5dcee9954341$var$EditActions
 const $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions = (props)=>{
     const recordId = (0, $4oW5r$useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4oW5r$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DeleteButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$ac7b0367c0f9031e).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DeleteButton), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/DeleteButtonWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 12
+    }, undefined);
     return null;
 };
 var $7efdcbe4be05bfd5$export$2e2bcd8739ae039 = $7efdcbe4be05bfd5$var$DeleteButtonWithPermissions;
@@ -925,16 +1125,28 @@ const $701198930c0b0c72$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     }));
 const $701198930c0b0c72$var$EditToolbarWithPermissions = (props)=>{
     const classes = $701198930c0b0c72$var$useStyles();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Toolbar), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Toolbar), {
         ...props,
         className: classes.toolbar,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$SaveButton), {}),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7efdcbe4be05bfd5$export$2e2bcd8739ae039), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$SaveButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+                lineNumber: 18,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $7efdcbe4be05bfd5$exports.default), {
                 mutationMode: "undoable"
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/edit/EditToolbarWithPermissions.js",
+        lineNumber: 17,
+        columnNumber: 5
+    }, undefined);
 };
 var $701198930c0b0c72$export$2e2bcd8739ae039 = $701198930c0b0c72$var$EditToolbarWithPermissions;
 
@@ -943,23 +1155,38 @@ var $701198930c0b0c72$export$2e2bcd8739ae039 = $701198930c0b0c72$var$EditToolbar
 const $28fa6ad821327921$var$EditWithPermissions = (props)=>{
     const recordId = (0, $4oW5r$useGetRecordId)();
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "edit");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Edit), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Edit), {
         ...props,
         children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(props.children, {
-            toolbar: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $701198930c0b0c72$export$2e2bcd8739ae039), {}),
+            toolbar: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $701198930c0b0c72$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+                lineNumber: 13,
+                columnNumber: 18
+            }, undefined),
             // Allow to override toolbar
             ...props.children.props
         })
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 $28fa6ad821327921$var$EditWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $62be5dcee9954341$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $62be5dcee9954341$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditWithPermissions.js",
+        lineNumber: 22,
+        columnNumber: 12
+    }, undefined)
 };
 var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPermissions;
 
 
 
 
+var $c78c2d7e17f60b2f$exports = {};
+
+$parcel$export($c78c2d7e17f60b2f$exports, "default", () => $c78c2d7e17f60b2f$export$2e2bcd8739ae039);
 
 
 
@@ -967,18 +1194,28 @@ var $28fa6ad821327921$export$2e2bcd8739ae039 = $28fa6ad821327921$var$EditWithPer
 const $c78c2d7e17f60b2f$var$EditButtonWithPermissions = (props)=>{
     const recordId = (0, $4oW5r$useGetRecordId)();
     const { permissions: permissions, isLoading: isLoading } = (0, $4oW5r$usePermissions)(recordId);
-    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$EditButton), {
+    if (!isLoading && permissions?.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"]))) return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$EditButton), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/edit/EditButtonWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 12
+    }, undefined);
     return null;
 };
 var $c78c2d7e17f60b2f$export$2e2bcd8739ae039 = $c78c2d7e17f60b2f$var$EditButtonWithPermissions;
 
 
 
+var $a4ded8260cc90dad$exports = {};
+
+$parcel$export($a4ded8260cc90dad$exports, "default", () => $a4ded8260cc90dad$export$2e2bcd8739ae039);
 
 
 
+var $e6071424a1ba88d9$exports = {};
+
+$parcel$export($e6071424a1ba88d9$exports, "default", () => $e6071424a1ba88d9$export$2e2bcd8739ae039);
 
 
 
@@ -993,7 +1230,7 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
     const resourceDefinition = (0, $4oW5r$useResourceDefinition)();
     const createContainerUri = (0, $4oW5r$useCreateContainer)(resource);
     const { permissions: permissions } = (0, $4oW5r$usePermissions)(createContainerUri);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TopToolbar), {
         children: [
             filters && /*#__PURE__*/ (0, $4oW5r$react).cloneElement(filters, {
                 showFilter: showFilter,
@@ -1001,40 +1238,70 @@ const $e6071424a1ba88d9$var$ListActionsWithPermissions = ({ bulkActions: bulkAct
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CreateButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {
+            resourceDefinition.hasCreate && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CreateButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 43,
+                columnNumber: 9
+            }, undefined),
+            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $7dac2771cc5eb38b$exports.default), {
                 isContainer: true
-            }),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ExportButton), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 46,
+                columnNumber: 9
+            }, undefined),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
-            }),
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+                lineNumber: 49,
+                columnNumber: 9
+            }, undefined),
             bulkActions && /*#__PURE__*/ (0, $4oW5r$react).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
             })
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/list/ListActionsWithPermissions.js",
+        lineNumber: 34,
+        columnNumber: 5
+    }, undefined);
 };
 var $e6071424a1ba88d9$export$2e2bcd8739ae039 = $e6071424a1ba88d9$var$ListActionsWithPermissions;
 
 
-const $a4ded8260cc90dad$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$List1), {
+const $a4ded8260cc90dad$var$ListWithPermissions = (props)=>/*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$List1), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/list/ListWithPermissions.js",
+        lineNumber: 5,
+        columnNumber: 38
+    }, undefined);
 $a4ded8260cc90dad$var$ListWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e6071424a1ba88d9$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $e6071424a1ba88d9$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/list/ListWithPermissions.js",
+        lineNumber: 8,
+        columnNumber: 12
+    }, undefined)
 };
 var $a4ded8260cc90dad$export$2e2bcd8739ae039 = $a4ded8260cc90dad$var$ListWithPermissions;
 
 
 
+var $561bb436d5af917c$exports = {};
+
+$parcel$export($561bb436d5af917c$exports, "default", () => $561bb436d5af917c$export$2e2bcd8739ae039);
 
 
 
+var $d1f54fc03225e8ee$exports = {};
+
+$parcel$export($d1f54fc03225e8ee$exports, "default", () => $d1f54fc03225e8ee$export$2e2bcd8739ae039);
 
 
 
@@ -1044,13 +1311,29 @@ const $d1f54fc03225e8ee$var$ShowActionsWithPermissions = ()=>{
     const { hasList: hasList, hasEdit: hasEdit } = (0, $4oW5r$useResourceDefinition)();
     const record = (0, $4oW5r$useRecordContext)();
     const { permissions: permissions } = (0, $4oW5r$usePermissions)(record?.id);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$TopToolbar), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TopToolbar), {
         children: [
-            hasList && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListButton), {}),
-            hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$EditButton), {}),
-            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $7dac2771cc5eb38b$export$2e2bcd8739ae039), {})
+            hasList && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 19,
+                columnNumber: 19
+            }, undefined),
+            hasEdit && permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$b9d0f5f3ab5e453b).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$EditButton), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 20,
+                columnNumber: 97
+            }, undefined),
+            permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$22242524f7d0624).includes(p["acl:mode"])) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $7dac2771cc5eb38b$exports.default), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+                lineNumber: 21,
+                columnNumber: 89
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/crud/show/ShowActionsWithPermissions.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 };
 var $d1f54fc03225e8ee$export$2e2bcd8739ae039 = $d1f54fc03225e8ee$var$ShowActionsWithPermissions;
 
@@ -1059,18 +1342,29 @@ var $d1f54fc03225e8ee$export$2e2bcd8739ae039 = $d1f54fc03225e8ee$var$ShowActions
 const $561bb436d5af917c$var$ShowWithPermissions = (props)=>{
     const recordId = (0, $4oW5r$useGetRecordId)();
     (0, $abd69a52484f41d9$export$2e2bcd8739ae039)(recordId, "show");
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Show), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Show), {
         ...props
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/show/ShowWithPermissions.js",
+        lineNumber: 9,
+        columnNumber: 10
+    }, undefined);
 };
 $561bb436d5af917c$var$ShowWithPermissions.defaultProps = {
-    actions: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $d1f54fc03225e8ee$export$2e2bcd8739ae039), {})
+    actions: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $d1f54fc03225e8ee$exports.default), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/crud/show/ShowWithPermissions.js",
+        lineNumber: 13,
+        columnNumber: 12
+    }, undefined)
 };
 var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPermissions;
 
 
 
 
+var $c2eef7602bbbff5e$exports = {};
+
+$parcel$export($c2eef7602bbbff5e$exports, "default", () => $c2eef7602bbbff5e$export$2e2bcd8739ae039);
 
 
 
@@ -1078,37 +1372,65 @@ var $561bb436d5af917c$export$2e2bcd8739ae039 = $561bb436d5af917c$var$ShowWithPer
 const $c2eef7602bbbff5e$var$AuthDialog = ({ open: open, onClose: onClose, title: title, message: message, redirect: redirect, ...rest })=>{
     const login = (0, $4oW5r$useLogin)();
     const translate = (0, $4oW5r$useTranslate)();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Dialog), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Dialog), {
         open: open,
         onClose: onClose,
         ...rest,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogTitle), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogTitle), {
                 children: translate(title)
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContent), {
-                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$DialogContentText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 10,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogContent), {
+                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogContentText), {
                     children: translate(message)
-                })
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$DialogActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                    lineNumber: 12,
+                    columnNumber: 9
+                }, undefined)
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 11,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$DialogActions), {
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                         onClick: onClose,
                         children: translate("ra.action.cancel")
-                    }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                        lineNumber: 15,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                         onClick: ()=>login({
                                 redirect: redirect || window.location.pathname + window.location.search
                             }),
                         color: "primary",
                         variant: "contained",
                         children: translate("auth.action.login")
-                    })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                        lineNumber: 16,
+                        columnNumber: 9
+                    }, undefined)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/AuthDialog.js",
+                lineNumber: 14,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/AuthDialog.js",
+        lineNumber: 9,
+        columnNumber: 5
+    }, undefined);
 };
 $c2eef7602bbbff5e$var$AuthDialog.defaultProps = {
     title: "auth.dialog.login_required",
@@ -1117,6 +1439,10 @@ $c2eef7602bbbff5e$var$AuthDialog.defaultProps = {
 var $c2eef7602bbbff5e$export$2e2bcd8739ae039 = $c2eef7602bbbff5e$var$AuthDialog;
 
 
+var $479961b7e298304b$exports = {};
+
+$parcel$export($479961b7e298304b$exports, "SsoLoginPageClasses", () => $479961b7e298304b$export$388de65c72fa74b4);
+$parcel$export($479961b7e298304b$exports, "default", () => $479961b7e298304b$export$2e2bcd8739ae039);
 
 
 
@@ -1233,34 +1559,62 @@ const $479961b7e298304b$var$SsoLoginPage = ({ children: children, backgroundImag
         if (!backgroundImageLoaded) lazyLoadBackgroundImage();
     });
     if (isLoading) return null;
-    return /*#__PURE__*/ (0, $4oW5r$jsx)($479961b7e298304b$var$Root, {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)($479961b7e298304b$var$Root, {
         ...rest,
         ref: containerRef,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Card), {
             className: $479961b7e298304b$export$388de65c72fa74b4.card,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)("div", {
                     className: $479961b7e298304b$export$388de65c72fa74b4.avatar,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
                         className: $479961b7e298304b$export$388de65c72fa74b4.icon,
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialLock), {})
-                    })
-                }),
-                text && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialLock), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                            lineNumber: 114,
+                            columnNumber: 13
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                        lineNumber: 113,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                    lineNumber: 112,
+                    columnNumber: 9
+                }, undefined),
+                text && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                     variant: "body2" /* className={classes.text} */ ,
                     children: text
-                }),
-                buttons?.map((button, i)=>/*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CardActions), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                    lineNumber: 117,
+                    columnNumber: 18
+                }, undefined),
+                buttons?.map((button, i)=>/*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CardActions), {
                         children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(button, {
                             fullWidth: true,
                             variant: "outlined",
                             type: "submit",
                             onClick: ()=>login({}, "/login")
                         })
-                    }, i))
+                    }, i, false, {
+                        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+                        lineNumber: 119,
+                        columnNumber: 11
+                    }, undefined))
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+            lineNumber: 111,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+        lineNumber: 110,
+        columnNumber: 5
+    }, undefined);
 };
 const $479961b7e298304b$var$PREFIX = "SsoLoginPage";
 const $479961b7e298304b$export$388de65c72fa74b4 = {
@@ -1304,23 +1658,34 @@ $479961b7e298304b$var$SsoLoginPage.defaultProps = {
     propertiesExist: [],
     // TODO deprecate this
     buttons: [
-        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
-            startIcon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
+            startIcon: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
                 src: "/lescommuns.jpg"
-            }),
+            }, void 0, false, void 0, void 0),
             children: "Les Communs"
-        })
+        }, void 0, false, {
+            fileName: "packages/auth-provider/src/components/SsoLoginPage.js",
+            lineNumber: 177,
+            columnNumber: 13
+        }, undefined)
     ],
     userResource: "Person"
 };
 var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPage;
 
 
+var $907d5edbccff943e$exports = {};
+
+$parcel$export($907d5edbccff943e$exports, "default", () => $907d5edbccff943e$export$2e2bcd8739ae039);
 
 
 
 
 
+
+var $a6bc0c3ff4b3b177$exports = {};
+
+$parcel$export($a6bc0c3ff4b3b177$exports, "default", () => $a6bc0c3ff4b3b177$export$2e2bcd8739ae039);
 
 
 
@@ -1365,9 +1730,11 @@ const $a6bc0c3ff4b3b177$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             paddingBottom: 5
         }
     }));
-const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: location, text: text, customPodProviders: customPodProviders })=>{
+const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ text: text, customPodProviders: customPodProviders })=>{
     const classes = $a6bc0c3ff4b3b177$var$useStyles();
     const notify = (0, $4oW5r$useNotify)();
+    const location = (0, $4oW5r$useLocation)();
+    const navigate = (0, $4oW5r$useNavigate)();
     const locale = (0, $4oW5r$useLocale)();
     const translate = (0, $4oW5r$useTranslate)();
     const authProvider = (0, $4oW5r$useAuthProvider)();
@@ -1411,7 +1778,7 @@ const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: lo
                     const data = await response.json();
                     if (!authProvider.checkUser(data)) {
                         notify("auth.message.user_not_allowed_to_login", "error");
-                        history.replace("/login");
+                        navigate("/login");
                     } else {
                         localStorage.setItem("token", token);
                         notify("auth.message.user_connected", "info");
@@ -1432,64 +1799,128 @@ const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: lo
         dataProvider
     ]);
     if (searchParams.has("token") || searchParams.has("addUser") || searchParams.has("logout")) return null;
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Card), {
             className: classes.card,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)("div", {
                     className: classes.lockIconAvatar,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
                         className: classes.lockIcon,
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialLock), {})
-                    })
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
+                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialLock), {}, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                            lineNumber: 125,
+                            columnNumber: 13
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 124,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 123,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
                     pl: 2,
                     pr: 2,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                         variant: "body2",
                         className: classes.text,
                         children: text || translate("auth.message.choose_pod_provider")
-                    })
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 129,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 128,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
                     m: 2,
-                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$List), {
+                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$List), {
                         className: classes.list,
                         children: podProviders.map((podProvider, i)=>{
                             const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
                             if (searchParams.has("signup")) url.searchParams.set("signup", "true");
                             url.searchParams.set("redirect", window.location.href);
-                            return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$react).Fragment, {
+                            return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$react).Fragment, {
                                 children: [
-                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Divider), {}),
-                                    /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
+                                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Divider), {}, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                        lineNumber: 145,
+                                        columnNumber: 19
+                                    }, undefined),
+                                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItem), {
                                         button: true,
                                         onClick: ()=>window.location.href = url.toString(),
                                         className: classes.listItem,
                                         children: [
-                                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                                                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
-                                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialStorage), {})
-                                                })
-                                            }),
-                                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                                            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemAvatar), {
+                                                children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Avatar), {
+                                                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialStorage), {}, void 0, false, {
+                                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                        lineNumber: 154,
+                                                        columnNumber: 25
+                                                    }, undefined)
+                                                }, void 0, false, {
+                                                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                    lineNumber: 153,
+                                                    columnNumber: 23
+                                                }, undefined)
+                                            }, void 0, false, {
+                                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                lineNumber: 152,
+                                                columnNumber: 21
+                                            }, undefined),
+                                            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                                                 primary: podProvider["apods:domainName"],
                                                 secondary: podProvider["apods:area"]
-                                            })
+                                            }, void 0, false, {
+                                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                                lineNumber: 157,
+                                                columnNumber: 21
+                                            }, undefined)
                                         ]
-                                    }, i)
+                                    }, i, true, {
+                                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                        lineNumber: 146,
+                                        columnNumber: 19
+                                    }, undefined)
                                 ]
-                            }, i);
+                            }, i, true, {
+                                fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                                lineNumber: 144,
+                                columnNumber: 17
+                            }, undefined);
                         })
-                    })
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                        lineNumber: 134,
+                        columnNumber: 11
+                    }, undefined)
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+                    lineNumber: 133,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+            lineNumber: 122,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPageView.js",
+        lineNumber: 121,
+        columnNumber: 5
+    }, undefined);
 };
 var $a6bc0c3ff4b3b177$export$2e2bcd8739ae039 = $a6bc0c3ff4b3b177$var$PodLoginPageView;
 
@@ -1498,22 +1929,41 @@ const $907d5edbccff943e$var$PodLoginPage = (props)=>{
     const muiTheme = (0, $4oW5r$useMemo)(()=>(0, $4oW5r$createTheme)(props.theme), [
         props.theme
     ]);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$StyledEngineProvider), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$StyledEngineProvider), {
         injectFirst: true,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ThemeProvider), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ThemeProvider), {
             theme: muiTheme,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a6bc0c3ff4b3b177$export$2e2bcd8739ae039), {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $a6bc0c3ff4b3b177$exports.default), {
                     ...props
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Notification), {})
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+                    lineNumber: 13,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Notification), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+                    lineNumber: 14,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+            lineNumber: 12,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/PodLoginPage/PodLoginPage.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 var $907d5edbccff943e$export$2e2bcd8739ae039 = $907d5edbccff943e$var$PodLoginPage;
 
 
+var $23fea069f5d2d834$exports = {};
+
+$parcel$export($23fea069f5d2d834$exports, "default", () => $23fea069f5d2d834$export$2e2bcd8739ae039);
 
 
 
@@ -1521,6 +1971,9 @@ var $907d5edbccff943e$export$2e2bcd8739ae039 = $907d5edbccff943e$var$PodLoginPag
 
 
 
+var $e011da92680cf1fe$exports = {};
+
+$parcel$export($e011da92680cf1fe$exports, "default", () => $e011da92680cf1fe$export$2e2bcd8739ae039);
 
 
 
@@ -1646,23 +2099,31 @@ function $bab067faa4d10954$export$2e2bcd8739ae039(props) {
             backgroundColor: currentColor
         }
     })((0, $4oW5r$LinearProgress));
-    return /*#__PURE__*/ (0, $4oW5r$jsx)(StyledLinearProgress, {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)(StyledLinearProgress, {
         ...restProps,
         value: 100 * fade,
         variant: "determinate"
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/ColorGradientProgressBar.js",
+        lineNumber: 58,
+        columnNumber: 10
+    }, this);
 }
 
 
 
 function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64648a630b24$export$19dcdb21c6965fb8), password: password, ...restProps }) {
     const strength = scorer.scoreFn(password);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $bab067faa4d10954$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $bab067faa4d10954$export$2e2bcd8739ae039), {
         currentVal: strength,
         minVal: 0,
         maxVal: scorer.maxScore,
         ...restProps
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/PasswordStrengthIndicator.js",
+        lineNumber: 7,
+        columnNumber: 10
+    }, this);
 }
 
 
@@ -1723,16 +2184,16 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     autoFocus: true,
                     source: "username",
                     label: translate("auth.input.username"),
@@ -1758,8 +2219,12 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                                 "9"
                             ]
                         }) : ""
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 102,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     source: "email",
                     label: translate("auth.input.email"),
                     autoComplete: "email",
@@ -1769,10 +2234,14 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                         (0, $4oW5r$required)(),
                         (0, $4oW5r$email)()
                     ]
-                }),
-                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 120,
+                    columnNumber: 9
+                }, undefined),
+                passwordScorer && password && !(searchParams.has("email") && searchParams.has("force-email")) && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Typography), {
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -1782,17 +2251,25 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                                 ":",
                                 " "
                             ]
-                        }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        }, void 0, true, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                            lineNumber: 130,
+                            columnNumber: 13
+                        }, undefined),
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
                             password: password,
                             scorer: passwordScorer,
                             sx: {
                                 width: "100%"
                             }
-                        })
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                            lineNumber: 133,
+                            columnNumber: 13
+                        }, undefined)
                     ]
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                }, void 0, true),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     source: "password",
                     type: "password",
                     value: password,
@@ -1805,23 +2282,43 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                         (0, $4oW5r$required)(),
                         (0, $7a0bbe6824860dfe$export$2e2bcd8739ae039)(passwordScorer)
                     ]
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 136,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.signup")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                        lineNumber: 156,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.signup")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+                    lineNumber: 147,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+            lineNumber: 101,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/SignupForm.js",
+        lineNumber: 100,
+        columnNumber: 5
+    }, undefined);
 };
 $e011da92680cf1fe$var$SignupForm.defaultValues = {
     redirectTo: "/",
@@ -1830,6 +2327,9 @@ $e011da92680cf1fe$var$SignupForm.defaultValues = {
 var $e011da92680cf1fe$export$2e2bcd8739ae039 = $e011da92680cf1fe$var$SignupForm;
 
 
+var $e2a34b2d647a5391$exports = {};
+
+$parcel$export($e2a34b2d647a5391$exports, "default", () => $e2a34b2d647a5391$export$2e2bcd8739ae039);
 
 
 
@@ -1866,16 +2366,16 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     source: "username",
                     label: translate(allowUsername ? "auth.input.username_or_email" : "auth.input.email"),
                     autoComplete: "email",
@@ -1888,8 +2388,12 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                         (0, $4oW5r$required)(),
                         (0, $4oW5r$email)()
                     ]
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 52,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     source: "password",
                     type: "password",
                     label: translate("ra.auth.password"),
@@ -1897,23 +2401,43 @@ const $e2a34b2d647a5391$var$LoginForm = ({ redirectTo: redirectTo, allowUsername
                     fullWidth: true,
                     disabled: loading || searchParams.has("email") && searchParams.has("force-email"),
                     validate: (0, $4oW5r$required)()
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 61,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.login")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                        lineNumber: 79,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.login")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+                    lineNumber: 70,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+            lineNumber: 51,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/LoginForm.js",
+        lineNumber: 50,
+        columnNumber: 5
+    }, undefined);
 };
 $e2a34b2d647a5391$var$LoginForm.defaultValues = {
     redirectTo: "/",
@@ -1922,6 +2446,9 @@ $e2a34b2d647a5391$var$LoginForm.defaultValues = {
 var $e2a34b2d647a5391$export$2e2bcd8739ae039 = $e2a34b2d647a5391$var$LoginForm;
 
 
+var $b403c35bd8d76c50$exports = {};
+
+$parcel$export($b403c35bd8d76c50$exports, "default", () => $b403c35bd8d76c50$export$2e2bcd8739ae039);
 
 
 
@@ -1974,16 +2501,16 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Form), {
         onSubmit: submit,
         noValidate: true,
         defaultValues: {
             email: searchParams.get("email")
         },
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
@@ -1992,10 +2519,14 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     disabled: loading,
                     validate: (0, $4oW5r$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                passwordScorer && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 70,
+                    columnNumber: 9
+                }, undefined),
+                passwordScorer && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Fragment), {
                     children: [
-                        /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Typography), {
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                             variant: "caption",
                             style: {
                                 marginBottom: 3
@@ -2005,17 +2536,25 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                                 ":",
                                 " "
                             ]
-                        }),
-                        /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
+                        }, void 0, true, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                            lineNumber: 82,
+                            columnNumber: 13
+                        }, undefined),
+                        /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $a8046307c9dfa483$export$2e2bcd8739ae039), {
                             password: newPassword,
                             scorer: passwordScorer,
                             sx: {
                                 width: "100%"
                             }
-                        })
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                            lineNumber: 86,
+                            columnNumber: 13
+                        }, undefined)
                     ]
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                }, void 0, true),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "password",
@@ -2030,8 +2569,12 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     ],
                     onChange: (e)=>setNewPassword(e.target.value),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 89,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     autoFocus: true,
                     type: "password",
                     source: "confirm-password",
@@ -2041,27 +2584,50 @@ const $b403c35bd8d76c50$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
                     disabled: loading,
                     validate: (0, $4oW5r$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 102,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.set_new_password")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                        lineNumber: 122,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.set_new_password")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+                    lineNumber: 113,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+            lineNumber: 69,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/NewPasswordForm.js",
+        lineNumber: 68,
+        columnNumber: 5
+    }, undefined);
 };
 var $b403c35bd8d76c50$export$2e2bcd8739ae039 = $b403c35bd8d76c50$var$NewPasswordForm;
 
 
+var $8d415f03f06df877$exports = {};
+
+$parcel$export($8d415f03f06df877$exports, "default", () => $8d415f03f06df877$export$2e2bcd8739ae039);
 
 
 
@@ -2095,12 +2661,12 @@ const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
             });
         });
     };
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Form), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Form), {
         onSubmit: submit,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$CardContent), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CardContent), {
             className: classes.content,
             children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$TextInput), {
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$TextInput), {
                     autoFocus: true,
                     source: "email",
                     label: translate("auth.input.email"),
@@ -2109,27 +2675,50 @@ const $8d415f03f06df877$var$ResetPasswordForm = ()=>{
                     disabled: loading,
                     validate: (0, $4oW5r$required)(),
                     format: (value)=>value ? value.toLowerCase() : ""
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Button1), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                    lineNumber: 48,
+                    columnNumber: 9
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Button1), {
                     variant: "contained",
                     type: "submit",
                     color: "primary",
                     disabled: loading,
                     fullWidth: true,
                     className: classes.button,
-                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$CircularProgress), {
+                    children: loading ? /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$CircularProgress), {
                         className: classes.icon,
                         size: 19,
                         thickness: 3
-                    }) : translate("auth.action.reset_password")
-                })
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                        lineNumber: 67,
+                        columnNumber: 13
+                    }, undefined) : translate("auth.action.reset_password")
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+                    lineNumber: 58,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+            lineNumber: 47,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/ResetPasswordForm.js",
+        lineNumber: 46,
+        columnNumber: 5
+    }, undefined);
 };
 var $8d415f03f06df877$export$2e2bcd8739ae039 = $8d415f03f06df877$var$ResetPasswordForm;
 
 
+var $1b78e27e3e92a798$exports = {};
+
+$parcel$export($1b78e27e3e92a798$exports, "default", () => $1b78e27e3e92a798$export$2e2bcd8739ae039);
 
 
 
@@ -2165,16 +2754,16 @@ const $1b78e27e3e92a798$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
     }));
 const $1b78e27e3e92a798$var$SimpleBox = ({ title: title, icon: icon, text: text, children: children })=>{
     const classes = $1b78e27e3e92a798$var$useStyles();
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Box), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         className: classes.root,
         children: [
-            /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Card), {
                 className: classes.card,
                 children: [
-                    /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Box), {
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
                         p: 2,
                         display: "flex",
                         justifyContent: "start",
@@ -2183,27 +2772,55 @@ const $1b78e27e3e92a798$var$SimpleBox = ({ title: title, icon: icon, text: text,
                                 fontSize: "large",
                                 className: classes.icon
                             }),
-                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                                 variant: "h4",
                                 className: classes.title,
                                 children: title
-                            })
+                            }, void 0, false, {
+                                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                                lineNumber: 42,
+                                columnNumber: 11
+                            }, undefined)
                         ]
-                    }),
-                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
+                    }, void 0, true, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                        lineNumber: 40,
+                        columnNumber: 9
+                    }, undefined),
+                    /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Box), {
                         pl: 2,
                         pr: 2,
-                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                             variant: "body1",
                             children: text
-                        })
-                    }),
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                            lineNumber: 47,
+                            columnNumber: 11
+                        }, undefined)
+                    }, void 0, false, {
+                        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                        lineNumber: 46,
+                        columnNumber: 9
+                    }, undefined),
                     children
                 ]
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Notification), {})
+            }, void 0, true, {
+                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                lineNumber: 39,
+                columnNumber: 7
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Notification), {}, void 0, false, {
+                fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+                lineNumber: 51,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/SimpleBox.js",
+        lineNumber: 38,
+        columnNumber: 5
+    }, undefined);
 };
 var $1b78e27e3e92a798$export$2e2bcd8739ae039 = $1b78e27e3e92a798$var$SimpleBox;
 
@@ -2277,65 +2894,125 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     ]);
     if (isLoading || identity?.id) return null;
     if (isLoading || identity?.id) return null;
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $1b78e27e3e92a798$export$2e2bcd8739ae039), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $1b78e27e3e92a798$exports.default), {
         title: translate(title),
         text: translate(text),
-        icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialLock), {}),
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Card), {
+        icon: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialLock), {}, void 0, false, void 0, void 0),
+        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Card), {
             children: [
-                isSignup && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e011da92680cf1fe$export$2e2bcd8739ae039), {
+                isSignup && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $e011da92680cf1fe$exports.default), {
                     redirectTo: redirectTo,
                     delayBeforeRedirect: 4000,
                     postSignupRedirect: postSignupRedirect,
                     additionalSignupValues: additionalSignupValues,
                     passwordScorer: passwordScorer
-                }),
-                isResetPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $8d415f03f06df877$export$2e2bcd8739ae039), {}),
-                isNewPassword && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $b403c35bd8d76c50$export$2e2bcd8739ae039), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 88,
+                    columnNumber: 11
+                }, undefined),
+                isResetPassword && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $8d415f03f06df877$exports.default), {}, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 96,
+                    columnNumber: 29
+                }, undefined),
+                isNewPassword && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $b403c35bd8d76c50$exports.default), {
                     redirectTo: redirectTo,
                     passwordScorer: passwordScorer
-                }),
-                isLogin && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $e2a34b2d647a5391$export$2e2bcd8739ae039), {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 97,
+                    columnNumber: 27
+                }, undefined),
+                isLogin && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $e2a34b2d647a5391$exports.default), {
                     redirectTo: redirectTo,
                     allowUsername: allowUsername
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsxs)("div", {
+                }, void 0, false, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 98,
+                    columnNumber: 21
+                }, undefined),
+                /*#__PURE__*/ (0, $4oW5r$jsxDEV)("div", {
                     className: classes.switch,
                     children: [
-                        isSignup && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
+                        isSignup && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Link), {
                             to: "/login",
-                            children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                            children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                                 variant: "body2",
                                 children: translate("auth.action.login")
-                            })
-                        }),
-                        isLogin && /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$Fragment), {
+                            }, void 0, false, {
+                                fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                lineNumber: 102,
+                                columnNumber: 15
+                            }, undefined)
+                        }, void 0, false, {
+                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                            lineNumber: 101,
+                            columnNumber: 13
+                        }, undefined),
+                        isLogin && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Fragment), {
                             children: [
-                                hasSignup && /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
+                                hasSignup && /*#__PURE__*/ (0, $4oW5r$jsxDEV)("div", {
+                                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Link), {
                                         to: "/login?signup=true",
-                                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.signup")
-                                        })
-                                    })
-                                }),
-                                /*#__PURE__*/ (0, $4oW5r$jsx)("div", {
-                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Link), {
+                                        }, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                            lineNumber: 110,
+                                            columnNumber: 21
+                                        }, undefined)
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                        lineNumber: 109,
+                                        columnNumber: 19
+                                    }, undefined)
+                                }, void 0, false, {
+                                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                    lineNumber: 108,
+                                    columnNumber: 17
+                                }, undefined),
+                                /*#__PURE__*/ (0, $4oW5r$jsxDEV)("div", {
+                                    children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Link), {
                                         to: `/login?reset_password=true&${searchParams.toString()}`,
-                                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Typography), {
+                                        children: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Typography), {
                                             variant: "body2",
                                             children: translate("auth.action.reset_password")
-                                        })
-                                    })
-                                })
+                                        }, void 0, false, {
+                                            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                            lineNumber: 116,
+                                            columnNumber: 19
+                                        }, undefined)
+                                    }, void 0, false, {
+                                        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                        lineNumber: 115,
+                                        columnNumber: 17
+                                    }, undefined)
+                                }, void 0, false, {
+                                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                                    lineNumber: 114,
+                                    columnNumber: 15
+                                }, undefined)
                             ]
-                        })
+                        }, void 0, true)
                     ]
-                })
+                }, void 0, true, {
+                    fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+                    lineNumber: 99,
+                    columnNumber: 9
+                }, undefined)
             ]
-        })
-    });
+        }, void 0, true, {
+            fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+            lineNumber: 86,
+            columnNumber: 7
+        }, undefined)
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/LocalLoginPage/LocalLoginPage.js",
+        lineNumber: 85,
+        columnNumber: 5
+    }, undefined);
 };
 $23fea069f5d2d834$var$LocalLoginPage.defaultProps = {
     hasSignup: true,
@@ -2345,6 +3022,9 @@ $23fea069f5d2d834$var$LocalLoginPage.defaultProps = {
 var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginPage;
 
 
+var $9594dfbc217337d0$exports = {};
+
+$parcel$export($9594dfbc217337d0$exports, "default", () => $9594dfbc217337d0$export$2e2bcd8739ae039);
 
 
 
@@ -2354,15 +3034,22 @@ var $23fea069f5d2d834$export$2e2bcd8739ae039 = $23fea069f5d2d834$var$LocalLoginP
 const $9594dfbc217337d0$var$ResourceWithPermission = ({ name: name, create: create, ...rest })=>{
     const createContainer = (0, $4oW5r$useCreateContainer)(name);
     const { permissions: permissions } = (0, $4oW5r$usePermissions)(createContainer);
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Resource), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Resource), {
         ...rest,
         name: name,
         create: permissions && permissions.some((p)=>(0, $3ecc2efd72c45a68$export$65615a101bd6f5ca).includes(p["acl:mode"])) ? create : undefined
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/ResourceWithPermissions.js",
+        lineNumber: 11,
+        columnNumber: 5
+    }, undefined);
 };
 var $9594dfbc217337d0$export$2e2bcd8739ae039 = $9594dfbc217337d0$var$ResourceWithPermission;
 
 
+var $5ef2eaf62f09ff2c$exports = {};
+
+$parcel$export($5ef2eaf62f09ff2c$exports, "default", () => $5ef2eaf62f09ff2c$export$2e2bcd8739ae039);
 
 
 
@@ -2383,54 +3070,90 @@ const $5ef2eaf62f09ff2c$var$UserMenuItem = /*#__PURE__*/ (0, $4oW5r$forwardRef)(
         onClose,
         navigate
     ]);
-    return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$MenuItem), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$MenuItem), {
         onClick: onClick,
         ref: ref,
         ...rest,
         children: [
-            icon && /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemIcon), {
+            icon && /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemIcon), {
                 children: /*#__PURE__*/ (0, $4oW5r$react).cloneElement(icon, {
                     fontSize: "small"
                 })
-            }),
-            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 24,
+                columnNumber: 16
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$ListItemText), {
                 children: translate(label)
-            })
+            }, void 0, false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 25,
+                columnNumber: 7
+            }, undefined)
         ]
-    });
+    }, void 0, true, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 18,
+        columnNumber: 5
+    }, undefined);
 });
 const $5ef2eaf62f09ff2c$var$UserMenu = ({ logout: logout, profileResource: profileResource, ...otherProps })=>{
     const { identity: identity } = (0, $4oW5r$useGetIdentity)();
-    return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$UserMenu), {
+    return /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$UserMenu), {
         ...otherProps,
         children: identity && identity.id !== "" ? [
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.view_my_profile",
-                icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialAccountCircle), {}),
+                icon: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialAccountCircle), {}, void 0, false, void 0, void 0),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}/show`
-            }, "view"),
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            }, "view", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 36,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.edit_my_profile",
-                icon: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialEdit), {}),
+                icon: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$muiiconsmaterialEdit), {}, void 0, false, void 0, void 0),
                 to: `/${profileResource}/${encodeURIComponent(identity?.profileData?.id || identity.id)}`
-            }, "edit"),
+            }, "edit", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 42,
+                columnNumber: 13
+            }, undefined),
             /*#__PURE__*/ (0, $4oW5r$react).cloneElement(logout, {
                 key: "logout"
             })
         ] : [
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.signup",
                 to: "/login?signup=true"
-            }, "signup"),
-            /*#__PURE__*/ (0, $4oW5r$jsx)($5ef2eaf62f09ff2c$var$UserMenuItem, {
+            }, "signup", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 51,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, $4oW5r$jsxDEV)($5ef2eaf62f09ff2c$var$UserMenuItem, {
                 label: "auth.action.login",
                 to: "/login"
-            }, "login")
+            }, "login", false, {
+                fileName: "packages/auth-provider/src/components/UserMenu.js",
+                lineNumber: 52,
+                columnNumber: 13
+            }, undefined)
         ]
-    });
+    }, void 0, false, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 33,
+        columnNumber: 5
+    }, undefined);
 };
 $5ef2eaf62f09ff2c$var$UserMenu.defaultProps = {
-    logout: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Logout), {}),
+    logout: /*#__PURE__*/ (0, $4oW5r$jsxDEV)((0, $4oW5r$Logout), {}, void 0, false, {
+        fileName: "packages/auth-provider/src/components/UserMenu.js",
+        lineNumber: 59,
+        columnNumber: 11
+    }, undefined),
     profileResource: "Person"
 };
 var $5ef2eaf62f09ff2c$export$2e2bcd8739ae039 = $5ef2eaf62f09ff2c$var$UserMenu;

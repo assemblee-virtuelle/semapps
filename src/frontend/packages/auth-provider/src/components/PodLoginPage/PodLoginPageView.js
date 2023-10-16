@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import jwtDecode from 'jwt-decode';
 import { useNotify, useAuthProvider, useDataProvider, useLocale, useTranslate } from 'react-admin';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider, Card, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import LockIcon from '@mui/icons-material/Lock';
@@ -42,9 +43,11 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
+const PodLoginPageView = ({ text, customPodProviders }) => {
   const classes = useStyles();
   const notify = useNotify();
+  const location = useLocation();
+  const navigate = useNavigate();
   const locale = useLocale();
   const translate = useTranslate();
   const authProvider = useAuthProvider();
@@ -92,7 +95,7 @@ const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
           const data = await response.json();
           if (!authProvider.checkUser(data)) {
             notify('auth.message.user_not_allowed_to_login', 'error');
-            history.replace('/login');
+            navigate('/login');
           } else {
             localStorage.setItem('token', token);
             notify('auth.message.user_connected', 'info');
