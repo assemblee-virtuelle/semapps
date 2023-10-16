@@ -18,9 +18,11 @@ var $02DsL$reactleafletcore = require("@react-leaflet/core");
 require("leaflet.markercluster");
 var $02DsL$muiiconsmaterialClear = require("@mui/icons-material/Clear");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

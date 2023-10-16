@@ -484,7 +484,7 @@ const $be88b298220210d1$var$CommentsList = ({ comments: comments, userResource: 
                                                 className: classes.label
                                             })
                                         }),
-                                        "\xa0•\xa0",
+                                        "\xa0\u2022\xa0",
                                         /*#__PURE__*/ (0, $2hSwr$jsx)((0, $2hSwr$DateField), {
                                             record: comment,
                                             variant: "body2",

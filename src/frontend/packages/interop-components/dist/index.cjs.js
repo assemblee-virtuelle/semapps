@@ -15,9 +15,11 @@ var $91PtX$semappsinputcomponents = require("@semapps/input-components");
 var $91PtX$urljoin = require("url-join");
 var $91PtX$muiiconsmaterialStarBorder = require("@mui/icons-material/StarBorder");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -541,7 +543,7 @@ const $17a31747492cb646$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api
             const json = await response.json();
             return json._embedded.results.map((r)=>({
                     uri: r.uri,
-                    label: $17a31747492cb646$var$capitalize(r.title.replace("’", "'")),
+                    label: $17a31747492cb646$var$capitalize(r.title.replace("\u2019", "'")),
                     icon: (0, ($parcel$interopDefault($91PtX$muiiconsmaterialStarBorder)))
                 }));
         }

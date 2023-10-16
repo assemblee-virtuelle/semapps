@@ -11,9 +11,11 @@ var $3pVuQ$react = require("react");
 var $3pVuQ$reactjsxruntime = require("react/jsx-runtime");
 var $3pVuQ$muistylesmakeStyles = require("@mui/styles/makeStyles");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

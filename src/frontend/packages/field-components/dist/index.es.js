@@ -409,7 +409,7 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
             }
         });
         await appendLink(data.id);
-        notify(`La resource "${values.title}" a été créée`, {
+        notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
             type: "success"
         });
     }, [
@@ -433,7 +433,7 @@ const $3d5bffcd1289119f$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                     className: classes.addForm,
                     children: /*#__PURE__*/ (0, $iSi6A$jsx)((0, $iSi6A$TextField), {
                         autoFocus: true,
-                        label: `Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        label: `Rechercher ou cr\xe9er des ${getResourceLabel(reference, 2).toLowerCase()}`,
                         variant: "filled",
                         margin: "dense",
                         value: keyword,

@@ -14,9 +14,11 @@ var $jwOeV$semappsfieldcomponents = require("@semapps/field-components");
 var $jwOeV$tiptapreact = require("@tiptap/react");
 var $jwOeV$tippyjs = require("tippy.js");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -503,7 +505,7 @@ const $d68cd57b2d06b6d5$var$CommentsList = ({ comments: comments, userResource: 
                                                 className: classes.label
                                             })
                                         }),
-                                        "\xa0•\xa0",
+                                        "\xa0\u2022\xa0",
                                         /*#__PURE__*/ (0, $jwOeV$reactjsxruntime.jsx)((0, $jwOeV$reactadmin.DateField), {
                                             record: comment,
                                             variant: "body2",

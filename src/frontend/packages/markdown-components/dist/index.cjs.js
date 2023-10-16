@@ -7,9 +7,11 @@ var $7rG7r$reactmde = require("react-mde");
 var $7rG7r$muimaterial = require("@mui/material");
 var $7rG7r$muimaterialstyles = require("@mui/material/styles");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

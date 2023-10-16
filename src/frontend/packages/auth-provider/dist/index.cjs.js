@@ -24,9 +24,11 @@ var $2O4Ek$muistyles = require("@mui/styles");
 var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
 var $2O4Ek$lodashisEqual = require("lodash/isEqual");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

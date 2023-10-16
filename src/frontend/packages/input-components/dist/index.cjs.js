@@ -4,9 +4,11 @@ var $jhbHd$reactadmin = require("react-admin");
 var $jhbHd$semappssemanticdataprovider = require("@semapps/semantic-data-provider");
 var $jhbHd$reacthookform = require("react-hook-form");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

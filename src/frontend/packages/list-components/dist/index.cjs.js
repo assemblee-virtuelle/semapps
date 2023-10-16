@@ -9,9 +9,11 @@ var $1w0zd$semappssemanticdataprovider = require("@semapps/semantic-data-provide
 var $1w0zd$reactmasonrycss = require("react-masonry-css");
 var $1w0zd$reactrouter = require("react-router");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }

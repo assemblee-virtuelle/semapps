@@ -525,7 +525,7 @@ const $1cadde849f110c85$var$fetchESCO = (apiUrl = "https://ec.europa.eu/esco/api
             const json = await response.json();
             return json._embedded.results.map((r)=>({
                     uri: r.uri,
-                    label: $1cadde849f110c85$var$capitalize(r.title.replace("’", "'")),
+                    label: $1cadde849f110c85$var$capitalize(r.title.replace("\u2019", "'")),
                     icon: (0, $e5Hbp$muiiconsmaterialStarBorder)
                 }));
         }

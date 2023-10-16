@@ -18,9 +18,11 @@ var $drrcw$muiiconsmaterialInstagram = require("@mui/icons-material/Instagram");
 var $drrcw$muiiconsmaterialYouTube = require("@mui/icons-material/YouTube");
 var $drrcw$reacticonsfi = require("react-icons/fi");
 
+
 function $parcel$export(e, n, v, s) {
   Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
 }
+
 function $parcel$interopDefault(a) {
   return a && a.__esModule ? a.default : a;
 }
@@ -422,7 +424,7 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
             }
         });
         await appendLink(data.id);
-        notify(`La resource "${values.title}" a été créée`, {
+        notify(`La resource "${values.title}" a \xe9t\xe9 cr\xe9\xe9e`, {
             type: "success"
         });
     }, [
@@ -446,7 +448,7 @@ const $9ac0ba4780250906$var$QuickAppendDialog = ({ open: open, onClose: onClose,
                     className: classes.addForm,
                     children: /*#__PURE__*/ (0, $drrcw$reactjsxruntime.jsx)((0, $drrcw$muimaterial.TextField), {
                         autoFocus: true,
-                        label: `Rechercher ou créer des ${getResourceLabel(reference, 2).toLowerCase()}`,
+                        label: `Rechercher ou cr\xe9er des ${getResourceLabel(reference, 2).toLowerCase()}`,
                         variant: "filled",
                         margin: "dense",
                         value: keyword,
