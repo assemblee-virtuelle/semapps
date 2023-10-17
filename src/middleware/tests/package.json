@@ -8,16 +8,16 @@
   "author": "SemApps Team",
   "license": "Apache-2.0",
   "dependencies": {
-    "@semapps/activitypub": "0.6.0-alpha.1",
-    "@semapps/auth": "0.6.0-alpha.1",
-    "@semapps/core": "0.6.0-alpha.1",
-    "@semapps/inference": "0.6.0-alpha.1",
-    "@semapps/ldp": "0.6.0-alpha.1",
-    "@semapps/middlewares": "0.6.0-alpha.1",
-    "@semapps/mime-types": "0.6.0-alpha.1",
-    "@semapps/sync": "0.6.0-alpha.1",
-    "@semapps/webacl": "0.6.0-alpha.1",
-    "@semapps/webid": "0.6.0-alpha.1",
+    "@semapps/activitypub": "0.6.0-alpha.2",
+    "@semapps/auth": "0.6.0-alpha.2",
+    "@semapps/core": "0.6.0-alpha.2",
+    "@semapps/inference": "0.6.0-alpha.2",
+    "@semapps/ldp": "0.6.0-alpha.2",
+    "@semapps/middlewares": "0.6.0-alpha.2",
+    "@semapps/mime-types": "0.6.0-alpha.2",
+    "@semapps/sync": "0.6.0-alpha.2",
+    "@semapps/webacl": "0.6.0-alpha.2",
+    "@semapps/webid": "0.6.0-alpha.2",
     "dotenv-flow": "^3.1.0",
     "fs-extra": "^9.0.1",
     "moleculer": "^0.14.17",
@@ -31,7 +31,7 @@
     "@types/jest": "^29.5.3",
     "jest": "^24.9.0"
   },
-  "version": "0.6.0-alpha.1",
+  "version": "0.6.0-alpha.2",
   "engines": {
     "node": ">=14"
   }
