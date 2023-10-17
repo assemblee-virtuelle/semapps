@@ -1,6 +1,6 @@
 {
   "name": "@semapps/list-components",
-  "version": "0.6.0-alpha.1",
+  "version": "0.6.0-alpha.2",
   "description": "React-Admin list components for SemApps",
   "license": "Apache-2.0",
   "author": "Virtual Assembly",
@@ -15,7 +15,7 @@
     "watch": "parcel watch"
   },
   "dependencies": {
-    "@semapps/semantic-data-provider": "0.6.0-alpha.1",
+    "@semapps/semantic-data-provider": "0.6.0-alpha.2",
     "react-masonry-css": "^1.0.14"
   },
   "peerDependencies": {
