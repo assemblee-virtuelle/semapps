@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build",
-    "watch": "parcel watch"
+    "build": "parcel build && yalc publish --push --changed",
+    "watch": "nodemon --watch src --exec 'yarn build'"
   },
   "dependencies": {
     "@semapps/semantic-data-provider": "0.6.0-alpha.1",
@@ -35,6 +35,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "parcel": "^2.9.3"
+    "parcel": "^2.9.3",
+    "yalc": "1.0.0-pre.53",
+    "nodemon": "3.0.1"
   }
 }

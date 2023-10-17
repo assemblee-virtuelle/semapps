@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "build": "lerna run build",
+    "build": "lerna run build && yarn run yalc:publish",
     "version": "lerna version --force-publish='*' --exact --tag-version-prefix='frontend-v'",
     "publish": "lerna publish from-package --dist-tag latest",
     "prettier": "prettier --write '**/*.{js,ts,json}'",
@@ -13,7 +13,8 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "lint-files": "eslint --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "preinstall": "git config core.hooksPath .git-hooks"
+    "preinstall": "git config core.hooksPath .git-hooks",
+    "yalc:publish": "lerna exec --parallel --scope @semapps/** -- yalc publish --push --changed"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",
@@ -31,7 +32,8 @@
     "lerna": "^3.19.0",
     "nx": "16.5.1",
     "prettier": "^3.0.3",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "yalc": "1.0.0-pre.53"
   },
   "workspaces": [
     "packages/*",
