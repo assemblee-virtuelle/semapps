@@ -34,9 +34,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "parcel": "^2.9.3",
-    "yalc": "1.0.0-pre.53",
-    "nodemon": "3.0.1"
-  }
+  "devDependencies": {}
 }
