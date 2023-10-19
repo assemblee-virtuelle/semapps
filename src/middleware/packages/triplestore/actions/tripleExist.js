@@ -24,6 +24,9 @@ module.exports = {
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
     const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
+    if (!(await ctx.call('triplestore.dataset.exist', { dataset })))
+      throw new Error(`The dataset ${dataset} doesn't exist`);
+
     return await ctx.call('triplestore.query', {
       query: {
         type: 'query',

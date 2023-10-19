@@ -19,16 +19,18 @@ module.exports = {
   async handler(ctx) {
     let { query } = ctx.params;
     const webId = ctx.params.webId || ctx.meta.webId || 'anon';
-    const dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
+    let dataset = ctx.params.dataset || ctx.meta.dataset || this.settings.mainDataset;
 
     if (!dataset) throw new Error(`No dataset defined for triplestore update: ${query}`);
+    if (dataset !== '*' && !(await ctx.call('triplestore.dataset.exist', { dataset })))
+      throw new Error(`The dataset ${dataset} doesn't exist`);
 
     if (typeof query === 'object') query = this.generateSparqlQuery(query);
 
     // Handle wildcard
     const datasets = dataset === '*' ? await ctx.call('triplestore.dataset.list') : [dataset];
 
-    for (const dataset of datasets) {
+    for (dataset of datasets) {
       if (datasets.length > 1) this.logger.info(`Updating dataset ${dataset}...`);
       await this.fetch(urlJoin(this.settings.url, dataset, 'update'), {
         body: query,
