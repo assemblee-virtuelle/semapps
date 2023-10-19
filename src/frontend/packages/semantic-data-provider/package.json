@@ -11,8 +11,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "parcel build",
-    "watch": "parcel watch"
+    "build": "parcel build && yalc publish --push --changed",
+    "watch": "nodemon --watch src --exec 'yarn build'"
   },
   "dependencies": {
     "@rdfjs/data-model": "^1.3.4",
@@ -32,8 +32,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "parcel": "^2.9.3"
-  },
+  "devDependencies": {},
   "gitHead": "4fa70690c5932b8c9d9cb5eb4c36a10f687703ff"
 }

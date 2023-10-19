@@ -3,77 +3,34 @@
 # This script runs the linter and prettier for staged files
 # in the middleware and frontend packages.
 
+
+# Skip, if flag is set.
 if [ "$SKIP_PRECOMMIT_CHECKS" = true ] || [ "$SKIP_PRECOMMIT_CHECKS" = 1 ] ; then
     echo "=== Skipping pre-commit prettier run ==="
     exit 0
 fi
 
+# cd to root directory.
 ROOT_DIR=$(git rev-parse --show-toplevel)
+cd "$ROOT_DIR"
+
 
 # Select staged files.
-FILES="$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')"
+FILES="$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g' | xargs -r realpath | sed 's/.*/"&"/')"
 [ -z "$FILES" ] && echo "=== Nothing to do ===" && exit 0
 
+## Run scripts
 
-echo "======================"
-echo "=== Running linter ==="
-echo "======================"
-
-MIDDLEWARE_FILES="$(echo "$FILES" | grep -E "src/middleware" | xargs -r realpath)"
-FRONTEND_FILES="$(echo "$FILES" | grep -E "src/frontend" | xargs -r realpath)"
-
-LINT_FILE_TYPES="js|jsx|ts|tsx"
-LINT_MIDDLEWARE_FILES=$(echo "$MIDDLEWARE_FILES" | grep -E "\.($LINT_FILE_TYPES)$")
-LINT_FRONTEND_FILES=$(echo "$FRONTEND_FILES" | grep -E "\.($LINT_FILE_TYPES)$")
-
-# Function to evaluate the linter results
-function evaluate_linter_results {
-    if [ $? == 1 ]; then
-        echo "================================================================="
-        echo "The linter found some errors. Please fix them before committing."
-        echo "You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
-        echo "================================================================="
-        exit 1
-    elif [ $? -ge 2 ]; then
-        echo "==============================================================================="
-        echo "Something went wrong running the linter. Have you bootstrapped the project yet?"
-        echo "You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
-        echo "==============================================================================="
-        exit 1
-    fi
-}
-
-cd "$ROOT_DIR"/src/middleware
-yarn run lint-files $LINT_MIDDLEWARE_FILES
-evaluate_linter_results
-
-cd "$ROOT_DIR"/src/frontend
-yarn run lint-files $LINT_FRONTEND_FILES
-evaluate_linter_results
-
-cd "$ROOT_DIR"
-
-
-echo "========================"
-echo "=== Running prettier ==="
-echo "========================"
-
-# Run prettier on all staged files.
-cd "$ROOT_DIR"/src/middleware
-echo "$MIDDLEWARE_FILES" | xargs npx prettier --write --ignore-unknown
-cd "$ROOT_DIR"/src/frontend
-echo "$FRONTEND_FILES" | xargs npx prettier --write --ignore-unknown
-cd "$ROOT_DIR"
-
+./scripts/run-linter.sh $FILES
 if [ $? != 0 ]; then
-    echo "========================================================================"
-    echo "Something went wrong running prettier. Have you run \`npm install\` yet?"
-    echo "You can skip pre-commit checks by setting \$SKIP_PRECOMMIT_CHECKS"
-    echo "========================================================================"
-    exit 1
+    exit $?
 fi
 
-echo "=== Prettier done ==="
+./scripts/run-prettier.sh $FILES
+if [ $? != 0 ]; then
+    exit $?
+fi
+
 
 # Add back the modified/prettified files to staging
 echo "$FILES" | xargs -r git add

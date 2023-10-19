@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Catch cases where the work dir changed after a git rebase.
+# In that cases, run ./scripts/on-workdir-changed.sh
+
+
+# If coming from a rewrite-rebase ($1 == rebase), run on-workdir-changed.
+if [ "$1" = "rebase" ] ; then
+    # cd to root directory
+    ROOT_DIR=$(git rev-parse --show-toplevel)
+    cd "$ROOT_DIR"
+
+  ./scripts/on-workdir-changed.sh
+fi
