@@ -18,7 +18,6 @@ var $2O4Ek$muiiconsmaterialGroup = require("@mui/icons-material/Group");
 var $2O4Ek$reactrouterdom = require("react-router-dom");
 var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
 var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
-var $2O4Ek$muiiconsmaterialStorage = require("@mui/icons-material/Storage");
 var $2O4Ek$speakingurl = require("speakingurl");
 var $2O4Ek$muistyles = require("@mui/styles");
 var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
@@ -46,7 +45,6 @@ $parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$expo
 $parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "PodLoginPage", () => $2b9a1c186b0ca88b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
@@ -139,6 +137,21 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
+        handleCallback: async ()=>{
+            const { searchParams: searchParams } = new URL(window.location);
+            const token = searchParams.get("token");
+            if (!token) throw new Error("auth.message.no_token_returned");
+            let webId;
+            try {
+                ({ webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token));
+            } catch (e) {
+                throw new Error("auth.message.invalid_token_returned");
+            }
+            const { json: json } = await dataProvider.fetch(webId);
+            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+            localStorage.setItem("token", token);
+        },
         signup: async (params)=>{
             const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
             if (authType === $6a92eb32301846ac$var$AUTH_TYPE_LOCAL) {
@@ -181,20 +194,26 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                     window.location.href = "/";
                     break;
                 case $6a92eb32301846ac$var$AUTH_TYPE_SSO:
-                    const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
-                    const baseUrl = new URL(window.location.href).origin;
-                    window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(baseUrl, "login")}?logout=true`)}`);
-                    break;
+                    {
+                        const authServerUrl = await (0, $2d06940433ec0c6c$export$274217e117cdbc7b)(dataProvider);
+                        const baseUrl = new URL(window.location.href).origin;
+                        return (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(baseUrl, "login")}?logout=true`)}`);
+                    }
                 case $6a92eb32301846ac$var$AUTH_TYPE_POD:
-                    const token = localStorage.getItem("token");
-                    const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
-                    // Delete token but also any other value in local storage
-                    localStorage.clear();
-                    window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp") + "?type=" + encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration");
+                    {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
+                            // Delete token but also any other value in local storage
+                            localStorage.clear();
+                            // Redirect to the POD provider
+                            return `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                        }
+                        break;
+                    }
+                default:
                     break;
             }
-            // Avoid displaying immediately the login page
-            return "/";
         },
         checkAuth: async ()=>{
             const token = localStorage.getItem("token");
@@ -1368,204 +1387,6 @@ var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPag
 
 
 
-const $58ba431c466c0ccd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
-        "@global": {
-            body: {
-                backgroundColor: theme.palette.primary.main
-            }
-        },
-        text: {
-            textAlign: "center",
-            padding: "4px 8px 8px"
-        },
-        card: {
-            minWidth: 300,
-            maxWidth: 350,
-            marginTop: "6em",
-            [theme.breakpoints.down("sm")]: {
-                margin: "1em"
-            }
-        },
-        lockIconAvatar: {
-            margin: "1em",
-            display: "flex",
-            justifyContent: "center"
-        },
-        lockIcon: {
-            backgroundColor: theme.palette.grey["500"]
-        },
-        list: {
-            paddingTop: 0,
-            paddingBottom: 0
-        },
-        listItem: {
-            paddingTop: 5,
-            paddingBottom: 5
-        }
-    }));
-const $58ba431c466c0ccd$var$PodLoginPageView = ({ history: history, location: location, text: text, customPodProviders: customPodProviders })=>{
-    const classes = $58ba431c466c0ccd$var$useStyles();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
-    const locale = (0, $2O4Ek$reactadmin.useLocale)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const authProvider = (0, $2O4Ek$reactadmin.useAuthProvider)();
-    const dataProvider = (0, $2O4Ek$reactadmin.useDataProvider)();
-    const [podProviders, setPodProviders] = (0, $2O4Ek$react.useState)(customPodProviders || []);
-    const searchParams = new URLSearchParams(location.search);
-    (0, $2O4Ek$react.useEffect)(()=>{
-        (async ()=>{
-            if (podProviders.length === 0) {
-                const results = await fetch("https://data.activitypods.org/pod-providers", {
-                    headers: {
-                        Accept: "application/ld+json"
-                    }
-                });
-                if (results.ok) {
-                    const json = await results.json();
-                    // Filter POD providers by available locales
-                    const podProviders = json["ldp:contains"].filter((provider)=>Array.isArray(provider["apods:locales"]) ? provider["apods:locales"].includes(locale) : provider["apods:locales"] === locale);
-                    setPodProviders(podProviders);
-                } else notify("auth.message.pod_providers_not_loaded", "error");
-            }
-        })();
-    }, [
-        podProviders,
-        setPodProviders,
-        notify,
-        locale
-    ]);
-    (0, $2O4Ek$react.useEffect)(()=>{
-        (async ()=>{
-            if (searchParams.has("token")) {
-                const token = searchParams.get("token");
-                const { webId: webId } = (0, ($parcel$interopDefault($2O4Ek$jwtdecode)))(token);
-                const response = await fetch(webId, {
-                    headers: {
-                        Accept: "application/json"
-                    }
-                });
-                if (!response.ok) notify("auth.message.unable_to_fetch_user_data", "error");
-                else {
-                    const data = await response.json();
-                    if (!authProvider.checkUser(data)) {
-                        notify("auth.message.user_not_allowed_to_login", "error");
-                        history.replace("/login");
-                    } else {
-                        localStorage.setItem("token", token);
-                        notify("auth.message.user_connected", "info");
-                        // Reload to ensure the dataServers config is reset
-                        window.location.reload();
-                        window.location.href = "/?addUser=true";
-                    }
-                }
-            } else if (searchParams.has("logout")) {
-                // Delete token and any other value in local storage
-                localStorage.clear();
-                notify("auth.message.user_disconnected", "info");
-                history.push("/");
-            }
-        })();
-    }, [
-        searchParams,
-        dataProvider
-    ]);
-    if (searchParams.has("token") || searchParams.has("addUser") || searchParams.has("logout")) return null;
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
-            className: classes.card,
-            children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                    className: classes.lockIconAvatar,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
-                        className: classes.lockIcon,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-                    pl: 2,
-                    pr: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
-                        variant: "body2",
-                        className: classes.text,
-                        children: text || translate("auth.message.choose_pod_provider")
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-                    m: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
-                        className: classes.list,
-                        children: podProviders.map((podProvider, i)=>{
-                            const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
-                            if (searchParams.has("signup")) url.searchParams.set("signup", "true");
-                            url.searchParams.set("redirect", window.location.href);
-                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($2O4Ek$react))).Fragment, {
-                                children: [
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Divider), {}),
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItem), {
-                                        button: true,
-                                        onClick: ()=>window.location.href = url.toString(),
-                                        className: classes.listItem,
-                                        children: [
-                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                                                children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
-                                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialStorage))), {})
-                                                })
-                                            }),
-                                            /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
-                                                primary: podProvider["apods:domainName"],
-                                                secondary: podProvider["apods:area"]
-                                            })
-                                        ]
-                                    }, i)
-                                ]
-                            }, i);
-                        })
-                    })
-                })
-            ]
-        })
-    });
-};
-var $58ba431c466c0ccd$export$2e2bcd8739ae039 = $58ba431c466c0ccd$var$PodLoginPageView;
-
-
-const $2b9a1c186b0ca88b$var$PodLoginPage = (props)=>{
-    const muiTheme = (0, $2O4Ek$react.useMemo)(()=>(0, $2O4Ek$muimaterialstyles.createTheme)(props.theme), [
-        props.theme
-    ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.StyledEngineProvider), {
-        injectFirst: true,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muisystem.ThemeProvider), {
-            theme: muiTheme,
-            children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $58ba431c466c0ccd$export$2e2bcd8739ae039), {
-                    ...props
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$reactadmin.Notification), {})
-            ]
-        })
-    });
-};
-var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 const $19e4629c708b7a3e$var$useSignup = ()=>{
@@ -1705,6 +1526,22 @@ function $edfec7f9e9fd7881$export$2e2bcd8739ae039({ scorer: scorer = (0, $d1ca1e
 
 
 
+const $cd7709c431b14d14$var$USED_SEARCH_PARAMS = [
+    "signup",
+    "reset_password",
+    "new_password",
+    "redirect",
+    "email",
+    "force-email"
+];
+const $cd7709c431b14d14$var$getSearchParamsRest = (searchParams)=>{
+    const rest = [];
+    for (const [key, value] of searchParams.entries())if (!$cd7709c431b14d14$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
+    return rest.length > 0 ? `&${rest.join("&")}` : "";
+};
+var $cd7709c431b14d14$export$2e2bcd8739ae039 = $cd7709c431b14d14$var$getSearchParamsRest;
+
+
 const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
         content: {
             width: 450
@@ -1728,8 +1565,7 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     const translate = (0, $2O4Ek$reactadmin.useTranslate)();
     const notify = (0, $2O4Ek$reactadmin.useNotify)();
     const classes = $5f70c240e5b0340c$var$useStyles();
-    const location = (0, $2O4Ek$reactrouterdom.useLocation)();
-    const searchParams = new URLSearchParams(location.search);
+    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
     const [locale] = (0, $2O4Ek$reactadmin.useLocaleState)();
     const [password, setPassword] = $2O4Ek$react.useState("");
     const submit = (values)=>{
@@ -1741,13 +1577,13 @@ const $5f70c240e5b0340c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -2247,6 +2083,7 @@ var $d6b5c702311394c4$export$2e2bcd8739ae039 = $d6b5c702311394c4$var$SimpleBox;
 
 
 
+
 const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))(()=>({
         switch: {
             marginBottom: "1em",
@@ -2279,7 +2116,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
     const { identity: identity, isLoading: isLoading } = (0, $2O4Ek$reactadmin.useGetIdentity)();
     (0, $2O4Ek$react.useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}`);
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $cd7709c431b14d14$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
@@ -2287,6 +2124,7 @@ const $4c56dbfbda0fa20c$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muist
         identity,
         isLoading,
         navigate,
+        searchParams,
         redirectTo,
         postLoginRedirect
     ]);
@@ -2615,6 +2453,9 @@ const $be2fdde9f3e3137d$var$englishMessages = {
             resource_control_forbidden: "You are not allowed to control this resource",
             container_create_forbidden: "You are not allowed to create new resource",
             container_list_forbidden: "You are not allowed to list these resources",
+            unable_to_fetch_user_data: "Unable to fetch user data",
+            no_token_returned: "No token returned",
+            invalid_token_returned: "Invalid token returned",
             user_not_allowed_to_login: "You are not allowed to login with this account",
             user_email_not_found: "No account found with this email address",
             user_email_exist: "An account already exist with this email address",
@@ -2702,6 +2543,9 @@ const $6dbc362c3d93e01d$var$frenchMessages = {
             resource_control_forbidden: "Vous n'avez pas la permission d'administrer cette ressource",
             container_create_forbidden: "Vous n'avez pas la permission de cr\xe9er des ressources",
             container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
+            unable_to_fetch_user_data: "Impossible de r\xe9cup\xe9rer les donn\xe9es du profil",
+            no_token_returned: "Aucun token a \xe9t\xe9 retourn\xe9",
+            invalid_token_returned: "Token invalide",
             user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
             user_email_not_found: "Aucun compte trouv\xe9 avec cette adresse mail",
             user_email_exist: "Un compte existe d\xe9j\xe0 avec cette adresse mail",

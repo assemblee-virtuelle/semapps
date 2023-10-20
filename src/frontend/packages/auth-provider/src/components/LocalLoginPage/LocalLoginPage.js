@@ -10,6 +10,7 @@ import NewPasswordForm from './NewPasswordForm';
 import ResetPasswordForm from './ResetPasswordForm';
 import SimpleBox from './SimpleBox';
 import { defaultScorer } from '../../passwordScorer';
+import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(() => ({
   switch: {
@@ -54,14 +55,16 @@ const LocalLoginPage = ({
   useEffect(() => {
     if (!isLoading && identity?.id) {
       if (postLoginRedirect) {
-        navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`);
+        navigate(
+          `${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(searchParams)}`
+        );
       } else if (redirectTo && redirectTo.startsWith('http')) {
         window.location.href = redirectTo;
       } else {
         navigate(redirectTo || '/');
       }
     }
-  }, [identity, isLoading, navigate, redirectTo, postLoginRedirect]);
+  }, [identity, isLoading, navigate, searchParams, redirectTo, postLoginRedirect]);
 
   const [title, text] = useMemo(() => {
     if (isSignup) {
