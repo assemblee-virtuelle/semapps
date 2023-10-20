@@ -10,13 +10,14 @@ import {
   email,
   useLocaleState
 } from 'react-admin';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Button, CardContent, CircularProgress, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import useSignup from '../../hooks/useSignup';
 import validatePasswordStrength from './validatePasswordStrength';
 import PasswordStrengthIndicator from './PasswordStrengthIndicator';
 import { defaultScorer } from '../../passwordScorer';
+import getSearchParamsRest from './getSearchParamsRest';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -49,8 +50,7 @@ const SignupForm = ({
   const translate = useTranslate();
   const notify = useNotify();
   const classes = useStyles();
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
+  const [searchParams] = useSearchParams();
   const [locale] = useLocaleState();
   const [password, setPassword] = React.useState('');
 
@@ -66,7 +66,9 @@ const SignupForm = ({
             // Reload to ensure the dataServer config is reset
             window.location.reload();
             window.location.href = postSignupRedirect
-              ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
+              ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(
+                  searchParams
+                )}`
               : redirectTo || '/';
             setLoading(false);
           }, delayBeforeRedirect);
@@ -74,7 +76,9 @@ const SignupForm = ({
           // Reload to ensure the dataServer config is reset
           window.location.reload();
           window.location.href = postSignupRedirect
-            ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}`
+            ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || '/')}${getSearchParamsRest(
+                searchParams
+              )}`
             : redirectTo || '/';
           setLoading(false);
         }

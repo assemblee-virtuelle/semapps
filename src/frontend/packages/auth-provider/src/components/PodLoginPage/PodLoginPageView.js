@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import jwtDecode from 'jwt-decode';
-import { useNotify, useAuthProvider, useDataProvider, useLocale, useTranslate } from 'react-admin';
-import { Box, List, ListItem, ListItemText, ListItemAvatar, Avatar, Divider, Card, Typography } from '@mui/material';
+import { useNotify, useLocaleState, useTranslate } from 'react-admin';
+import { useSearchParams } from 'react-router-dom';
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  Divider,
+  Card,
+  Typography
+} from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import LockIcon from '@mui/icons-material/Lock';
 import StorageIcon from '@mui/icons-material/Storage';
@@ -42,15 +53,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
+const PodLoginPageView = ({ text, customPodProviders, appDomain }) => {
   const classes = useStyles();
   const notify = useNotify();
-  const locale = useLocale();
+  const [searchParams] = useSearchParams();
+  const [locale] = useLocaleState();
   const translate = useTranslate();
-  const authProvider = useAuthProvider();
-  const dataProvider = useDataProvider();
   const [podProviders, setPodProviders] = useState(customPodProviders || []);
-  const searchParams = new URLSearchParams(location.search);
 
   useEffect(() => {
     (async () => {
@@ -76,44 +85,6 @@ const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
     })();
   }, [podProviders, setPodProviders, notify, locale]);
 
-  useEffect(() => {
-    (async () => {
-      if (searchParams.has('token')) {
-        const token = searchParams.get('token');
-        const { webId } = jwtDecode(token);
-        const response = await fetch(webId, {
-          headers: {
-            Accept: 'application/json'
-          }
-        });
-        if (!response.ok) {
-          notify('auth.message.unable_to_fetch_user_data', 'error');
-        } else {
-          const data = await response.json();
-          if (!authProvider.checkUser(data)) {
-            notify('auth.message.user_not_allowed_to_login', 'error');
-            history.replace('/login');
-          } else {
-            localStorage.setItem('token', token);
-            notify('auth.message.user_connected', 'info');
-            // Reload to ensure the dataServers config is reset
-            window.location.reload();
-            window.location.href = '/?addUser=true';
-          }
-        }
-      } else if (searchParams.has('logout')) {
-        // Delete token and any other value in local storage
-        localStorage.clear();
-        notify('auth.message.user_disconnected', 'info');
-        history.push('/');
-      }
-    })();
-  }, [searchParams, dataProvider]);
-
-  if (searchParams.has('token') || searchParams.has('addUser') || searchParams.has('logout')) {
-    return null;
-  }
-
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Card className={classes.card}>
@@ -136,22 +107,20 @@ const PodLoginPageView = ({ history, location, text, customPodProviders }) => {
                   podProvider['apods:domainName']
               );
               if (searchParams.has('signup')) url.searchParams.set('signup', 'true');
-              url.searchParams.set('redirect', window.location.href);
+              url.searchParams.set('redirect', `${new URL(window.location.href).origin}/auth-callback`);
+              url.searchParams.set('appDomain', appDomain);
               return (
                 <React.Fragment key={i}>
                   <Divider />
-                  <ListItem
-                    key={i}
-                    button
-                    onClick={() => (window.location.href = url.toString())}
-                    className={classes.listItem}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        <StorageIcon />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
+                  <ListItem className={classes.listItem}>
+                    <ListItemButton onClick={() => (window.location.href = url.toString())}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <StorageIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText primary={podProvider['apods:domainName']} secondary={podProvider['apods:area']} />
+                    </ListItemButton>
                   </ListItem>
                 </React.Fragment>
               );

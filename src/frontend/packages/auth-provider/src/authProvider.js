@@ -36,6 +36,26 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
+    async handleCallback() {
+      const { searchParams } = new URL(window.location);
+
+      const token = searchParams.get('token');
+      if (!token) throw new Error('auth.message.no_token_returned');
+
+      let webId;
+      try {
+        ({ webId } = jwtDecode(token));
+      } catch (e) {
+        throw new Error('auth.message.invalid_token_returned');
+      }
+      const { json } = await dataProvider.fetch(webId);
+
+      if (!json) throw new Error('auth.message.unable_to_fetch_user_data');
+
+      if (checkUser && !checkUser(json)) throw new Error('auth.message.user_not_allowed_to_login');
+
+      localStorage.setItem('token', token);
+    },
     signup: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);
       if (authType === AUTH_TYPE_LOCAL) {
@@ -73,37 +93,41 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
     },
     logout: async () => {
       switch (authType) {
-        case AUTH_TYPE_LOCAL:
+        case AUTH_TYPE_LOCAL: {
           // Delete token but also any other value in local storage
           localStorage.clear();
           // Reload to ensure the dataServer config is reset
           window.location.reload();
           window.location.href = '/';
           break;
+        }
 
-        case AUTH_TYPE_SSO:
+        case AUTH_TYPE_SSO: {
           const authServerUrl = await getAuthServerUrl(dataProvider);
           const baseUrl = new URL(window.location.href).origin;
-          window.location.href = urlJoin(
+          return urlJoin(
             authServerUrl,
             `auth/logout?redirectUrl=${encodeURIComponent(`${urlJoin(baseUrl, 'login')}?logout=true`)}`
           );
-          break;
+        }
 
-        case AUTH_TYPE_POD:
+        case AUTH_TYPE_POD: {
           const token = localStorage.getItem('token');
-          const { webId } = jwtDecode(token);
-          // Delete token but also any other value in local storage
-          localStorage.clear();
-          window.location.href =
-            urlJoin(webId, 'openApp') +
-            '?type=' +
-            encodeURIComponent('http://activitypods.org/ns/core#FrontAppRegistration');
+          if (token) {
+            const { webId } = jwtDecode(token);
+            // Delete token but also any other value in local storage
+            localStorage.clear();
+            // Redirect to the POD provider
+            return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
+              'http://activitypods.org/ns/core#FrontAppRegistration'
+            )}`;
+          }
+          break;
+        }
+
+        default:
           break;
       }
-
-      // Avoid displaying immediately the login page
-      return '/';
     },
     checkAuth: async () => {
       const token = localStorage.getItem('token');

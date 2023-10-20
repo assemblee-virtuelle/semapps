@@ -2,10 +2,10 @@ import $4oW5r$jwtdecode from "jwt-decode";
 import $4oW5r$urljoin from "url-join";
 import {jsx as $4oW5r$jsx, jsxs as $4oW5r$jsxs, Fragment as $4oW5r$Fragment} from "react/jsx-runtime";
 import $4oW5r$react, {useEffect as $4oW5r$useEffect, useState as $4oW5r$useState, useCallback as $4oW5r$useCallback, useRef as $4oW5r$useRef, useMemo as $4oW5r$useMemo, forwardRef as $4oW5r$forwardRef} from "react";
-import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, Notification as $4oW5r$Notification, useLocale as $4oW5r$useLocale, useSafeSetState as $4oW5r$useSafeSetState, useLocaleState as $4oW5r$useLocaleState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
+import {useResourceContext as $4oW5r$useResourceContext, Create as $4oW5r$Create, CreateActions as $4oW5r$CreateActions, useGetIdentity as $4oW5r$useGetIdentity, usePermissions as $4oW5r$usePermissions, useNotify as $4oW5r$useNotify, useRedirect as $4oW5r$useRedirect, useGetRecordId as $4oW5r$useGetRecordId, Edit as $4oW5r$Edit, useResourceDefinition as $4oW5r$useResourceDefinition, useRecordContext as $4oW5r$useRecordContext, usePermissionsOptimized as $4oW5r$usePermissionsOptimized, TopToolbar as $4oW5r$TopToolbar, ListButton as $4oW5r$ListButton, ShowButton as $4oW5r$ShowButton, Button as $4oW5r$Button, useTranslate as $4oW5r$useTranslate, useGetList as $4oW5r$useGetList, useDataProvider as $4oW5r$useDataProvider, Loading as $4oW5r$Loading, Error as $4oW5r$Error, useAuthProvider as $4oW5r$useAuthProvider, Toolbar as $4oW5r$Toolbar, SaveButton as $4oW5r$SaveButton, DeleteButton as $4oW5r$DeleteButton, EditButton as $4oW5r$EditButton, List as $4oW5r$List1, CreateButton as $4oW5r$CreateButton, ExportButton as $4oW5r$ExportButton, Show as $4oW5r$Show, useLogin as $4oW5r$useLogin, useLocaleState as $4oW5r$useLocaleState, useSafeSetState as $4oW5r$useSafeSetState, Form as $4oW5r$Form, TextInput as $4oW5r$TextInput, required as $4oW5r$required, email as $4oW5r$email, Notification as $4oW5r$Notification, Resource as $4oW5r$Resource, useUserMenu as $4oW5r$useUserMenu, UserMenu as $4oW5r$UserMenu, Logout as $4oW5r$Logout, useGetPermissions as $4oW5r$useGetPermissions} from "react-admin";
 import {useCreateContainer as $4oW5r$useCreateContainer} from "@semapps/semantic-data-provider";
 import $4oW5r$muiiconsmaterialShare from "@mui/icons-material/Share";
-import {Dialog as $4oW5r$Dialog, DialogTitle as $4oW5r$DialogTitle, DialogContent as $4oW5r$DialogContent, DialogActions as $4oW5r$DialogActions, TextField as $4oW5r$TextField, List as $4oW5r$List, ListItem as $4oW5r$ListItem, ListItemAvatar as $4oW5r$ListItemAvatar, Avatar as $4oW5r$Avatar, ListItemText as $4oW5r$ListItemText, ListItemSecondaryAction as $4oW5r$ListItemSecondaryAction, IconButton as $4oW5r$IconButton, Menu as $4oW5r$Menu, MenuItem as $4oW5r$MenuItem, ListItemIcon as $4oW5r$ListItemIcon, useMediaQuery as $4oW5r$useMediaQuery, DialogContentText as $4oW5r$DialogContentText, Button as $4oW5r$Button1, Card as $4oW5r$Card, Typography as $4oW5r$Typography, CardActions as $4oW5r$CardActions, StyledEngineProvider as $4oW5r$StyledEngineProvider, Box as $4oW5r$Box, Divider as $4oW5r$Divider, CardContent as $4oW5r$CardContent, CircularProgress as $4oW5r$CircularProgress, LinearProgress as $4oW5r$LinearProgress} from "@mui/material";
+import {Dialog as $4oW5r$Dialog, DialogTitle as $4oW5r$DialogTitle, DialogContent as $4oW5r$DialogContent, DialogActions as $4oW5r$DialogActions, TextField as $4oW5r$TextField, List as $4oW5r$List, ListItem as $4oW5r$ListItem, ListItemAvatar as $4oW5r$ListItemAvatar, Avatar as $4oW5r$Avatar, ListItemText as $4oW5r$ListItemText, ListItemSecondaryAction as $4oW5r$ListItemSecondaryAction, IconButton as $4oW5r$IconButton, Menu as $4oW5r$Menu, MenuItem as $4oW5r$MenuItem, ListItemIcon as $4oW5r$ListItemIcon, useMediaQuery as $4oW5r$useMediaQuery, DialogContentText as $4oW5r$DialogContentText, Button as $4oW5r$Button1, Card as $4oW5r$Card, Typography as $4oW5r$Typography, CardActions as $4oW5r$CardActions, StyledEngineProvider as $4oW5r$StyledEngineProvider, Box as $4oW5r$Box, Divider as $4oW5r$Divider, ListItemButton as $4oW5r$ListItemButton, CardContent as $4oW5r$CardContent, CircularProgress as $4oW5r$CircularProgress, LinearProgress as $4oW5r$LinearProgress} from "@mui/material";
 import $4oW5r$muistylesmakeStyles from "@mui/styles/makeStyles";
 import $4oW5r$muimaterialAutocomplete from "@mui/material/Autocomplete";
 import $4oW5r$muiiconsmaterialPerson from "@mui/icons-material/Person";
@@ -101,6 +101,21 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, $4oW5r$urljoin)(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
+        async handleCallback () {
+            const { searchParams: searchParams } = new URL(window.location);
+            const token = searchParams.get("token");
+            if (!token) throw new Error("auth.message.no_token_returned");
+            let webId;
+            try {
+                ({ webId: webId } = (0, $4oW5r$jwtdecode)(token));
+            } catch (e) {
+                throw new Error("auth.message.invalid_token_returned");
+            }
+            const { json: json } = await dataProvider.fetch(webId);
+            if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
+            if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
+            localStorage.setItem("token", token);
+        },
         signup: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
             if (authType === $1d8606895ce3b768$var$AUTH_TYPE_LOCAL) {
@@ -143,20 +158,26 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
                     window.location.href = "/";
                     break;
                 case $1d8606895ce3b768$var$AUTH_TYPE_SSO:
-                    const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
-                    const baseUrl = new URL(window.location.href).origin;
-                    window.location.href = (0, $4oW5r$urljoin)(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, $4oW5r$urljoin)(baseUrl, "login")}?logout=true`)}`);
-                    break;
+                    {
+                        const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
+                        const baseUrl = new URL(window.location.href).origin;
+                        return (0, $4oW5r$urljoin)(authServerUrl, `auth/logout?redirectUrl=${encodeURIComponent(`${(0, $4oW5r$urljoin)(baseUrl, "login")}?logout=true`)}`);
+                    }
                 case $1d8606895ce3b768$var$AUTH_TYPE_POD:
-                    const token = localStorage.getItem("token");
-                    const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
-                    // Delete token but also any other value in local storage
-                    localStorage.clear();
-                    window.location.href = (0, $4oW5r$urljoin)(webId, "openApp") + "?type=" + encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration");
+                    {
+                        const token = localStorage.getItem("token");
+                        if (token) {
+                            const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
+                            // Delete token but also any other value in local storage
+                            localStorage.clear();
+                            // Redirect to the POD provider
+                            return `${(0, $4oW5r$urljoin)(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                        }
+                        break;
+                    }
+                default:
                     break;
             }
-            // Avoid displaying immediately the login page
-            return "/";
         },
         checkAuth: async ()=>{
             const token = localStorage.getItem("token");
@@ -1329,7 +1350,6 @@ var $479961b7e298304b$export$2e2bcd8739ae039 = $479961b7e298304b$var$SsoLoginPag
 
 
 
-
 const $a6bc0c3ff4b3b177$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
         "@global": {
             body: {
@@ -1365,15 +1385,13 @@ const $a6bc0c3ff4b3b177$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             paddingBottom: 5
         }
     }));
-const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: location, text: text, customPodProviders: customPodProviders })=>{
+const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ text: text, customPodProviders: customPodProviders, appDomain: appDomain })=>{
     const classes = $a6bc0c3ff4b3b177$var$useStyles();
     const notify = (0, $4oW5r$useNotify)();
-    const locale = (0, $4oW5r$useLocale)();
+    const [searchParams] = (0, $4oW5r$useSearchParams)();
+    const [locale] = (0, $4oW5r$useLocaleState)();
     const translate = (0, $4oW5r$useTranslate)();
-    const authProvider = (0, $4oW5r$useAuthProvider)();
-    const dataProvider = (0, $4oW5r$useDataProvider)();
     const [podProviders, setPodProviders] = (0, $4oW5r$useState)(customPodProviders || []);
-    const searchParams = new URLSearchParams(location.search);
     (0, $4oW5r$useEffect)(()=>{
         (async ()=>{
             if (podProviders.length === 0) {
@@ -1396,42 +1414,6 @@ const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: lo
         notify,
         locale
     ]);
-    (0, $4oW5r$useEffect)(()=>{
-        (async ()=>{
-            if (searchParams.has("token")) {
-                const token = searchParams.get("token");
-                const { webId: webId } = (0, $4oW5r$jwtdecode)(token);
-                const response = await fetch(webId, {
-                    headers: {
-                        Accept: "application/json"
-                    }
-                });
-                if (!response.ok) notify("auth.message.unable_to_fetch_user_data", "error");
-                else {
-                    const data = await response.json();
-                    if (!authProvider.checkUser(data)) {
-                        notify("auth.message.user_not_allowed_to_login", "error");
-                        history.replace("/login");
-                    } else {
-                        localStorage.setItem("token", token);
-                        notify("auth.message.user_connected", "info");
-                        // Reload to ensure the dataServers config is reset
-                        window.location.reload();
-                        window.location.href = "/?addUser=true";
-                    }
-                }
-            } else if (searchParams.has("logout")) {
-                // Delete token and any other value in local storage
-                localStorage.clear();
-                notify("auth.message.user_disconnected", "info");
-                history.push("/");
-            }
-        })();
-    }, [
-        searchParams,
-        dataProvider
-    ]);
-    if (searchParams.has("token") || searchParams.has("addUser") || searchParams.has("logout")) return null;
     return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Box), {
         display: "flex",
         flexDirection: "column",
@@ -1462,26 +1444,28 @@ const $a6bc0c3ff4b3b177$var$PodLoginPageView = ({ history: history, location: lo
                         children: podProviders.map((podProvider, i)=>{
                             const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
                             if (searchParams.has("signup")) url.searchParams.set("signup", "true");
-                            url.searchParams.set("redirect", window.location.href);
+                            url.searchParams.set("redirect", `${new URL(window.location.href).origin}/auth-callback`);
+                            url.searchParams.set("appDomain", appDomain);
                             return /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$react).Fragment, {
                                 children: [
                                     /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Divider), {}),
-                                    /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItem), {
-                                        button: true,
-                                        onClick: ()=>window.location.href = url.toString(),
+                                    /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItem), {
                                         className: classes.listItem,
-                                        children: [
-                                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
-                                                children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
-                                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialStorage), {})
+                                        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ListItemButton), {
+                                            onClick: ()=>window.location.href = url.toString(),
+                                            children: [
+                                                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemAvatar), {
+                                                    children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Avatar), {
+                                                        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$muiiconsmaterialStorage), {})
+                                                    })
+                                                }),
+                                                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
+                                                    primary: podProvider["apods:domainName"],
+                                                    secondary: podProvider["apods:area"]
                                                 })
-                                            }),
-                                            /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ListItemText), {
-                                                primary: podProvider["apods:domainName"],
-                                                secondary: podProvider["apods:area"]
-                                            })
-                                        ]
-                                    }, i)
+                                            ]
+                                        })
+                                    })
                                 ]
                             }, i);
                         })
@@ -1500,14 +1484,11 @@ const $907d5edbccff943e$var$PodLoginPage = (props)=>{
     ]);
     return /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$StyledEngineProvider), {
         injectFirst: true,
-        children: /*#__PURE__*/ (0, $4oW5r$jsxs)((0, $4oW5r$ThemeProvider), {
+        children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$ThemeProvider), {
             theme: muiTheme,
-            children: [
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a6bc0c3ff4b3b177$export$2e2bcd8739ae039), {
-                    ...props
-                }),
-                /*#__PURE__*/ (0, $4oW5r$jsx)((0, $4oW5r$Notification), {})
-            ]
+            children: /*#__PURE__*/ (0, $4oW5r$jsx)((0, $a6bc0c3ff4b3b177$export$2e2bcd8739ae039), {
+                ...props
+            })
         })
     });
 };
@@ -1667,6 +1648,22 @@ function $a8046307c9dfa483$export$2e2bcd8739ae039({ scorer: scorer = (0, $646d64
 
 
 
+const $2dfd781b793256e6$var$USED_SEARCH_PARAMS = [
+    "signup",
+    "reset_password",
+    "new_password",
+    "redirect",
+    "email",
+    "force-email"
+];
+const $2dfd781b793256e6$var$getSearchParamsRest = (searchParams)=>{
+    const rest = [];
+    for (const [key, value] of searchParams.entries())if (!$2dfd781b793256e6$var$USED_SEARCH_PARAMS.includes(key)) rest.push(`${key}=${encodeURIComponent(value)}`);
+    return rest.length > 0 ? `&${rest.join("&")}` : "";
+};
+var $2dfd781b793256e6$export$2e2bcd8739ae039 = $2dfd781b793256e6$var$getSearchParamsRest;
+
+
 const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=>({
         content: {
             width: 450
@@ -1690,8 +1687,7 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
     const translate = (0, $4oW5r$useTranslate)();
     const notify = (0, $4oW5r$useNotify)();
     const classes = $e011da92680cf1fe$var$useStyles();
-    const location = (0, $4oW5r$useLocation)();
-    const searchParams = new URLSearchParams(location.search);
+    const [searchParams] = (0, $4oW5r$useSearchParams)();
     const [locale] = (0, $4oW5r$useLocaleState)();
     const [password, setPassword] = $4oW5r$useState("");
     const submit = (values)=>{
@@ -1703,13 +1699,13 @@ const $e011da92680cf1fe$var$useStyles = (0, $4oW5r$muistylesmakeStyles)((theme)=
             if (delayBeforeRedirect) setTimeout(()=>{
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }, delayBeforeRedirect);
             else {
                 // Reload to ensure the dataServer config is reset
                 window.location.reload();
-                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}` : redirectTo || "/";
+                window.location.href = postSignupRedirect ? `${postSignupRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}` : redirectTo || "/";
                 setLoading(false);
             }
             notify("auth.message.new_user_created", {
@@ -2209,6 +2205,7 @@ var $1b78e27e3e92a798$export$2e2bcd8739ae039 = $1b78e27e3e92a798$var$SimpleBox;
 
 
 
+
 const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
         switch: {
             marginBottom: "1em",
@@ -2241,7 +2238,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
     const { identity: identity, isLoading: isLoading } = (0, $4oW5r$useGetIdentity)();
     (0, $4oW5r$useEffect)(()=>{
         if (!isLoading && identity?.id) {
-            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}`);
+            if (postLoginRedirect) navigate(`${postLoginRedirect}?redirect=${encodeURIComponent(redirectTo || "/")}${(0, $2dfd781b793256e6$export$2e2bcd8739ae039)(searchParams)}`);
             else if (redirectTo && redirectTo.startsWith("http")) window.location.href = redirectTo;
             else navigate(redirectTo || "/");
         }
@@ -2249,6 +2246,7 @@ const $23fea069f5d2d834$var$useStyles = (0, $4oW5r$muistylesmakeStyles)(()=>({
         identity,
         isLoading,
         navigate,
+        searchParams,
         redirectTo,
         postLoginRedirect
     ]);
@@ -2577,6 +2575,9 @@ const $22afd1c81635c9d9$var$englishMessages = {
             resource_control_forbidden: "You are not allowed to control this resource",
             container_create_forbidden: "You are not allowed to create new resource",
             container_list_forbidden: "You are not allowed to list these resources",
+            unable_to_fetch_user_data: "Unable to fetch user data",
+            no_token_returned: "No token returned",
+            invalid_token_returned: "Invalid token returned",
             user_not_allowed_to_login: "You are not allowed to login with this account",
             user_email_not_found: "No account found with this email address",
             user_email_exist: "An account already exist with this email address",
@@ -2664,6 +2665,9 @@ const $509b6323d7902699$var$frenchMessages = {
             resource_control_forbidden: "Vous n'avez pas la permission d'administrer cette ressource",
             container_create_forbidden: "Vous n'avez pas la permission de cr\xe9er des ressources",
             container_list_forbidden: "Vous n'avez pas la permission de voir ces ressources",
+            unable_to_fetch_user_data: "Impossible de r\xe9cup\xe9rer les donn\xe9es du profil",
+            no_token_returned: "Aucun token a \xe9t\xe9 retourn\xe9",
+            invalid_token_returned: "Token invalide",
             user_not_allowed_to_login: "Vous n'avez pas le droit de vous connecter avec ce compte",
             user_email_not_found: "Aucun compte trouv\xe9 avec cette adresse mail",
             user_email_exist: "Un compte existe d\xe9j\xe0 avec cette adresse mail",
