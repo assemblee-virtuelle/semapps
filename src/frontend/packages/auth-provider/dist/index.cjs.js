@@ -18,7 +18,6 @@ var $2O4Ek$muiiconsmaterialGroup = require("@mui/icons-material/Group");
 var $2O4Ek$reactrouterdom = require("react-router-dom");
 var $2O4Ek$muimaterialstyles = require("@mui/material/styles");
 var $2O4Ek$muiiconsmaterialLock = require("@mui/icons-material/Lock");
-var $2O4Ek$muiiconsmaterialStorage = require("@mui/icons-material/Storage");
 var $2O4Ek$speakingurl = require("speakingurl");
 var $2O4Ek$muistyles = require("@mui/styles");
 var $2O4Ek$muiiconsmaterialAccountCircle = require("@mui/icons-material/AccountCircle");
@@ -46,7 +45,6 @@ $parcel$export(module.exports, "PermissionsButton", () => $49d4f2fbe6f28cfd$expo
 $parcel$export(module.exports, "AuthDialog", () => $4e0bf9be00aaa242$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "SsoLoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "LoginPage", () => $0af8eee27f6a6e9f$export$2e2bcd8739ae039);
-$parcel$export(module.exports, "PodLoginPage", () => $2b9a1c186b0ca88b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "LocalLoginPage", () => $4c56dbfbda0fa20c$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "ResourceWithPermissions", () => $0973974d3aa8078b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "UserMenu", () => $9734e84907c0d5dd$export$2e2bcd8739ae039);
@@ -139,7 +137,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                 window.location.href = (0, ($parcel$interopDefault($2O4Ek$urljoin)))(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
             }
         },
-        async handleCallback () {
+        handleCallback: async ()=>{
             const { searchParams: searchParams } = new URL(window.location);
             const token = searchParams.get("token");
             if (!token) throw new Error("auth.message.no_token_returned");
@@ -1373,164 +1371,6 @@ $0af8eee27f6a6e9f$var$SsoLoginPage.defaultProps = {
     userResource: "Person"
 };
 var $0af8eee27f6a6e9f$export$2e2bcd8739ae039 = $0af8eee27f6a6e9f$var$SsoLoginPage;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const $58ba431c466c0ccd$var$useStyles = (0, ($parcel$interopDefault($2O4Ek$muistylesmakeStyles)))((theme)=>({
-        "@global": {
-            body: {
-                backgroundColor: theme.palette.primary.main
-            }
-        },
-        text: {
-            textAlign: "center",
-            padding: "4px 8px 8px"
-        },
-        card: {
-            minWidth: 300,
-            maxWidth: 350,
-            marginTop: "6em",
-            [theme.breakpoints.down("sm")]: {
-                margin: "1em"
-            }
-        },
-        lockIconAvatar: {
-            margin: "1em",
-            display: "flex",
-            justifyContent: "center"
-        },
-        lockIcon: {
-            backgroundColor: theme.palette.grey["500"]
-        },
-        list: {
-            paddingTop: 0,
-            paddingBottom: 0
-        },
-        listItem: {
-            paddingTop: 5,
-            paddingBottom: 5
-        }
-    }));
-const $58ba431c466c0ccd$var$PodLoginPageView = ({ text: text, customPodProviders: customPodProviders, appDomain: appDomain })=>{
-    const classes = $58ba431c466c0ccd$var$useStyles();
-    const notify = (0, $2O4Ek$reactadmin.useNotify)();
-    const [searchParams] = (0, $2O4Ek$reactrouterdom.useSearchParams)();
-    const [locale] = (0, $2O4Ek$reactadmin.useLocaleState)();
-    const translate = (0, $2O4Ek$reactadmin.useTranslate)();
-    const [podProviders, setPodProviders] = (0, $2O4Ek$react.useState)(customPodProviders || []);
-    (0, $2O4Ek$react.useEffect)(()=>{
-        (async ()=>{
-            if (podProviders.length === 0) {
-                const results = await fetch("https://data.activitypods.org/pod-providers", {
-                    headers: {
-                        Accept: "application/ld+json"
-                    }
-                });
-                if (results.ok) {
-                    const json = await results.json();
-                    // Filter POD providers by available locales
-                    const podProviders = json["ldp:contains"].filter((provider)=>Array.isArray(provider["apods:locales"]) ? provider["apods:locales"].includes(locale) : provider["apods:locales"] === locale);
-                    setPodProviders(podProviders);
-                } else notify("auth.message.pod_providers_not_loaded", "error");
-            }
-        })();
-    }, [
-        podProviders,
-        setPodProviders,
-        notify,
-        locale
-    ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.Card), {
-            className: classes.card,
-            children: [
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)("div", {
-                    className: classes.lockIconAvatar,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
-                        className: classes.lockIcon,
-                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialLock))), {})
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-                    pl: 2,
-                    pr: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Typography), {
-                        variant: "body2",
-                        className: classes.text,
-                        children: text || translate("auth.message.choose_pod_provider")
-                    })
-                }),
-                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Box), {
-                    m: 2,
-                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.List), {
-                        className: classes.list,
-                        children: podProviders.map((podProvider, i)=>{
-                            const url = new URL("/auth", (podProvider["apods:domainName"].includes(":") ? "http://" : "https://") + podProvider["apods:domainName"]);
-                            if (searchParams.has("signup")) url.searchParams.set("signup", "true");
-                            url.searchParams.set("redirect", `${new URL(window.location.href).origin}/auth-callback`);
-                            url.searchParams.set("appDomain", appDomain);
-                            return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, ($parcel$interopDefault($2O4Ek$react))).Fragment, {
-                                children: [
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Divider), {}),
-                                    /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItem), {
-                                        className: classes.listItem,
-                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsxs)((0, $2O4Ek$muimaterial.ListItemButton), {
-                                            onClick: ()=>window.location.href = url.toString(),
-                                            children: [
-                                                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemAvatar), {
-                                                    children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.Avatar), {
-                                                        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, ($parcel$interopDefault($2O4Ek$muiiconsmaterialStorage))), {})
-                                                    })
-                                                }),
-                                                /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.ListItemText), {
-                                                    primary: podProvider["apods:domainName"],
-                                                    secondary: podProvider["apods:area"]
-                                                })
-                                            ]
-                                        })
-                                    })
-                                ]
-                            }, i);
-                        })
-                    })
-                })
-            ]
-        })
-    });
-};
-var $58ba431c466c0ccd$export$2e2bcd8739ae039 = $58ba431c466c0ccd$var$PodLoginPageView;
-
-
-const $2b9a1c186b0ca88b$var$PodLoginPage = (props)=>{
-    const muiTheme = (0, $2O4Ek$react.useMemo)(()=>(0, $2O4Ek$muimaterialstyles.createTheme)(props.theme), [
-        props.theme
-    ]);
-    return /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muimaterial.StyledEngineProvider), {
-        injectFirst: true,
-        children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $2O4Ek$muisystem.ThemeProvider), {
-            theme: muiTheme,
-            children: /*#__PURE__*/ (0, $2O4Ek$reactjsxruntime.jsx)((0, $58ba431c466c0ccd$export$2e2bcd8739ae039), {
-                ...props
-            })
-        })
-    });
-};
-var $2b9a1c186b0ca88b$export$2e2bcd8739ae039 = $2b9a1c186b0ca88b$var$PodLoginPage;
 
 
 

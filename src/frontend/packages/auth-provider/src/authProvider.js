@@ -36,7 +36,7 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
         window.location.href = urlJoin(authServerUrl, `auth?redirectUrl=${encodeURIComponent(redirectUrl)}`);
       }
     },
-    async handleCallback() {
+    handleCallback: async () => {
       const { searchParams } = new URL(window.location);
 
       const token = searchParams.get('token');
