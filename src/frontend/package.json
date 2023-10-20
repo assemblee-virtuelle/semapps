@@ -15,9 +15,8 @@
     "test-watch": "nx watch --all -- nx run $NX_PROJECT_NAME:build"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "^2.10.0",
-    "@parcel/transformer-typescript-types": "^2.10.0",
-    "@parcel/validator-typescript": "^2.10.2",
+    "@parcel/packager-ts": "^2.10.1",
+    "@parcel/transformer-typescript-types": "^2.10.1",
     "@types/react": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -34,7 +33,7 @@
     "lerna": "^7.4.1",
     "nodemon": "^3.0.1",
     "nx": "^16.10.0",
-    "parcel": "^2.10.0",
+    "parcel": "^2.10.1",
     "prettier": "^3.0.3",
     "typescript": "^5.1.6",
     "yalc": "1.0.0-pre.53"

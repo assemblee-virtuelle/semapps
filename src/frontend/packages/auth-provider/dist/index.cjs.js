@@ -1283,7 +1283,9 @@ const $0af8eee27f6a6e9f$var$SsoLoginPage = ({ children: children, backgroundImag
                     });
                     else notify("auth.message.bad_request", {
                         type: "error",
-                        error: searchParams.get("error")
+                        messageArgs: {
+                            error: searchParams.get("error")
+                        }
                     });
                 } else if (searchParams.has("token")) {
                     const token = searchParams.get("token");
@@ -1917,7 +1919,9 @@ const $176df6bd8edc5f4d$var$useStyles = (0, ($parcel$interopDefault($4Uj5b$muist
                 window.location.href = `/login${redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`;
                 setLoading(false);
             }, 2000);
-            notify("auth.notification.password_changed", "info");
+            notify("auth.notification.password_changed", {
+                type: "info"
+            });
         }).catch((error)=>{
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
@@ -2038,7 +2042,9 @@ const $a04debd4e4af2a01$var$ResetPasswordForm = ()=>{
             ...values
         }).then((res)=>{
             setLoading(false);
-            notify("auth.notification.reset_password_submitted", "info");
+            notify("auth.notification.reset_password_submitted", {
+                type: "info"
+            });
         }).catch((error)=>{
             setLoading(false);
             notify(typeof error === "string" ? error : typeof error === "undefined" || !error.message ? "auth.notification.reset_password_error" : error.message, {
