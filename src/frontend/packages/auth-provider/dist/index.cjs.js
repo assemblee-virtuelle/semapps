@@ -207,7 +207,7 @@ const $6a92eb32301846ac$var$authProvider = ({ dataProvider: dataProvider, authTy
                             // Delete token but also any other value in local storage
                             localStorage.clear();
                             // Redirect to the POD provider
-                            return `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://activitypods.org/ns/core#FrontAppRegistration")}`;
+                            return `${(0, ($parcel$interopDefault($2O4Ek$urljoin)))(webId, "openApp")}?type=${encodeURIComponent("http://www.w3.org/ns/solid/interop#ApplicationRegistration")}`;
                         }
                         break;
                     }

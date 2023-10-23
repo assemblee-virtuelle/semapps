@@ -119,7 +119,7 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
             localStorage.clear();
             // Redirect to the POD provider
             return `${urlJoin(webId, 'openApp')}?type=${encodeURIComponent(
-              'http://activitypods.org/ns/core#FrontAppRegistration'
+              'http://www.w3.org/ns/solid/interop#ApplicationRegistration'
             )}`;
           }
           break;
