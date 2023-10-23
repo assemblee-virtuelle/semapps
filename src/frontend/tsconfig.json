@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["ESNext"]
+    "lib": ["ESNext", "dom"]
   },
   "exclude": ["node_modules", "*.es.js", "*.cjs", "*.cjs.js"]
 }
