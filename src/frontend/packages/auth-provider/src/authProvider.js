@@ -55,6 +55,9 @@ const authProvider = ({ dataProvider, authType, allowAnonymous = true, checkUser
       if (checkUser && !checkUser(json)) throw new Error('auth.message.user_not_allowed_to_login');
 
       localStorage.setItem('token', token);
+
+      // Reload to ensure the dataServer config is reset
+      window.location.href = '/';
     },
     signup: async params => {
       const authServerUrl = await getAuthServerUrl(dataProvider);

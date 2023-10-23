@@ -114,6 +114,8 @@ const $1d8606895ce3b768$var$authProvider = ({ dataProvider: dataProvider, authTy
             if (!json) throw new Error("auth.message.unable_to_fetch_user_data");
             if (checkUser && !checkUser(json)) throw new Error("auth.message.user_not_allowed_to_login");
             localStorage.setItem("token", token);
+            // Reload to ensure the dataServer config is reset
+            window.location.href = "/";
         },
         signup: async (params)=>{
             const authServerUrl = await (0, $47a3fad69bcb0083$export$274217e117cdbc7b)(dataProvider);
