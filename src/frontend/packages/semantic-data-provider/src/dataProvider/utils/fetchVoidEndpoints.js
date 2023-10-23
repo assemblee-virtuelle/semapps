@@ -2,7 +2,7 @@ const defaultToArray = value => (!value ? undefined : Array.isArray(value) ? val
 
 const fetchVoidEndpoints = async config => {
   const fetchPromises = Object.entries(config.dataServers)
-    .filter(([key, server]) => server.pod !== true)
+    .filter(([key, server]) => server.pod !== true && server.void !== false)
     .map(([key, server]) =>
       config
         .httpClient(new URL('/.well-known/void', server.baseUrl).toString())
