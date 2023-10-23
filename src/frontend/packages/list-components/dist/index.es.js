@@ -1,13 +1,13 @@
-import {jsx as $3uY0S$jsx, jsxs as $3uY0S$jsxs, Fragment as $3uY0S$Fragment} from "react/jsx-runtime";
-import $3uY0S$react, {cloneElement as $3uY0S$cloneElement, Children as $3uY0S$Children, useEffect as $3uY0S$useEffect, useState as $3uY0S$useState} from "react";
-import {useListContext as $3uY0S$useListContext, useCreatePath as $3uY0S$useCreatePath, sanitizeListRestProps as $3uY0S$sanitizeListRestProps, RecordContextProvider as $3uY0S$RecordContextProvider, ChipField as $3uY0S$ChipField, Link as $3uY0S$Link, useResourceContext as $3uY0S$useResourceContext, useGetList as $3uY0S$useGetList, useResourceDefinition as $3uY0S$useResourceDefinition, FilterList as $3uY0S$FilterList, FilterListItem as $3uY0S$FilterListItem, List as $3uY0S$List, TopToolbar as $3uY0S$TopToolbar, CreateButton as $3uY0S$CreateButton, ExportButton as $3uY0S$ExportButton, Button as $3uY0S$Button} from "react-admin";
-import {LinearProgress as $3uY0S$LinearProgress, Grid as $3uY0S$Grid, Card as $3uY0S$Card, CardActionArea as $3uY0S$CardActionArea, CardMedia as $3uY0S$CardMedia, CardContent as $3uY0S$CardContent, CardActions as $3uY0S$CardActions, useMediaQuery as $3uY0S$useMediaQuery} from "@mui/material";
-import $3uY0S$muistylesmakeStyles from "@mui/styles/makeStyles";
-import $3uY0S$muiiconsmaterialAddCircle from "@mui/icons-material/AddCircle";
-import $3uY0S$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
-import {useGetExternalLink as $3uY0S$useGetExternalLink, useDataModel as $3uY0S$useDataModel, useContainers as $3uY0S$useContainers} from "@semapps/semantic-data-provider";
-import $3uY0S$reactmasonrycss from "react-masonry-css";
-import {useLocation as $3uY0S$useLocation} from "react-router";
+import {jsx as $2An97$jsx, jsxs as $2An97$jsxs, Fragment as $2An97$Fragment} from "react/jsx-runtime";
+import $2An97$react, {cloneElement as $2An97$cloneElement, Children as $2An97$Children, useEffect as $2An97$useEffect, createElement as $2An97$createElement, useState as $2An97$useState} from "react";
+import {useListContext as $2An97$useListContext, useCreatePath as $2An97$useCreatePath, sanitizeListRestProps as $2An97$sanitizeListRestProps, RecordContextProvider as $2An97$RecordContextProvider, ChipField as $2An97$ChipField, Link as $2An97$Link, useResourceContext as $2An97$useResourceContext, useGetList as $2An97$useGetList, useResourceDefinition as $2An97$useResourceDefinition, FilterList as $2An97$FilterList, FilterListItem as $2An97$FilterListItem, List as $2An97$List, TopToolbar as $2An97$TopToolbar, CreateButton as $2An97$CreateButton, ExportButton as $2An97$ExportButton, Button as $2An97$Button} from "react-admin";
+import {LinearProgress as $2An97$LinearProgress, Grid as $2An97$Grid, Card as $2An97$Card, CardActionArea as $2An97$CardActionArea, CardMedia as $2An97$CardMedia, CardContent as $2An97$CardContent, CardActions as $2An97$CardActions, useMediaQuery as $2An97$useMediaQuery} from "@mui/material";
+import $2An97$muistylesmakeStyles from "@mui/styles/makeStyles";
+import $2An97$muiiconsmaterialAddCircle from "@mui/icons-material/AddCircle";
+import $2An97$muiiconsmaterialLaunch from "@mui/icons-material/Launch";
+import {useGetExternalLink as $2An97$useGetExternalLink, useContainers as $2An97$useContainers} from "@semapps/semantic-data-provider";
+import $2An97$reactmasonrycss from "react-masonry-css";
+import {useLocation as $2An97$useLocation} from "react-router";
 
 
 
@@ -17,7 +17,7 @@ import {useLocation as $3uY0S$useLocation} from "react-router";
 
 
 
-const $a854ae8777f8f757$var$useStyles = (0, $3uY0S$muistylesmakeStyles)(()=>({
+const $a854ae8777f8f757$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         root: {
             display: "flex",
             flexWrap: "wrap"
@@ -48,32 +48,32 @@ const $a854ae8777f8f757$var$stopPropagation = (e)=>e.stopPropagation();
 const $a854ae8777f8f757$var$handleClick = ()=>{};
 const $a854ae8777f8f757$var$ChipList = (props)=>{
     const { classes: classesOverride, className: className, children: children, linkType: linkType = "edit", component: component = "div", primaryText: primaryText, appendLink: appendLink, externalLinks: externalLinks = false, ...rest } = props;
-    const { data: data, isLoading: isLoading, resource: resource } = (0, $3uY0S$useListContext)(props);
-    const getExternalLink = (0, $3uY0S$useGetExternalLink)(externalLinks);
-    const createPath = (0, $3uY0S$useCreatePath)();
+    const { data: data, isLoading: isLoading, resource: resource } = (0, $2An97$useListContext)(props);
+    const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
+    const createPath = (0, $2An97$useCreatePath)();
     const classes = $a854ae8777f8f757$var$useStyles(props);
     const Component = component;
-    if (isLoading) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$LinearProgress), {});
-    return /*#__PURE__*/ (0, $3uY0S$jsxs)(Component, {
+    if (isLoading) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$LinearProgress), {});
+    return /*#__PURE__*/ (0, $2An97$jsxs)(Component, {
         className: classes.root,
-        ...(0, $3uY0S$sanitizeListRestProps)(rest),
+        ...(0, $2An97$sanitizeListRestProps)(rest),
         children: [
             data.map((record)=>{
                 if (!record || record._error) return null;
                 const externalLink = getExternalLink(record);
-                if (externalLink) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                if (externalLink) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $3uY0S$jsx)("a", {
+                    children: /*#__PURE__*/ (0, $2An97$jsx)("a", {
                         href: externalLink,
                         target: "_blank",
                         rel: "noopener noreferrer",
                         className: classes.link,
                         onClick: $a854ae8777f8f757$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                        children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
                             source: primaryText,
                             className: classes.chipField,
                             color: "secondary",
-                            deleteIcon: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$muiiconsmaterialLaunch), {
+                            deleteIcon: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$muiiconsmaterialLaunch), {
                                 className: classes.launchIcon
                             }),
                             // Workaround to force ChipField to be clickable
@@ -83,9 +83,9 @@ const $a854ae8777f8f757$var$ChipList = (props)=>{
                         })
                     })
                 }, record.id);
-                if (linkType) return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                if (linkType) return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+                    children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
                         className: classes.link,
                         to: createPath({
                             resource: resource,
@@ -93,7 +93,7 @@ const $a854ae8777f8f757$var$ChipList = (props)=>{
                             type: linkType
                         }),
                         onClick: $a854ae8777f8f757$var$stopPropagation,
-                        children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                        children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
                             source: primaryText,
                             className: classes.chipField,
                             color: "secondary",
@@ -102,9 +102,9 @@ const $a854ae8777f8f757$var$ChipList = (props)=>{
                         })
                     })
                 }, record.id);
-                return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                     value: record,
-                    children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ChipField), {
+                    children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ChipField), {
                         source: primaryText,
                         className: classes.chipField,
                         color: "secondary",
@@ -113,7 +113,7 @@ const $a854ae8777f8f757$var$ChipList = (props)=>{
                     })
                 }, record.id);
             }),
-            appendLink && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$muiiconsmaterialAddCircle), {
+            appendLink && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$muiiconsmaterialAddCircle), {
                 color: "primary",
                 className: classes.addIcon,
                 onClick: appendLink
@@ -136,49 +136,49 @@ const $e54e9a9f27806c4d$var$stopPropagation = (e)=>e.stopPropagation();
 // The material-ui Chip requires an onClick handler to behave like a clickable element.
 const $e54e9a9f27806c4d$var$handleClick = ()=>{};
 const $e54e9a9f27806c4d$var$GridList = ({ children: children, linkType: linkType, externalLinks: externalLinks, spacing: spacing, xs: xs, sm: sm, md: md, lg: lg, xl: xl })=>{
-    const { data: data, resource: resource, isLoading: isLoading } = (0, $3uY0S$useListContext)();
-    const getExternalLink = (0, $3uY0S$useGetExternalLink)(externalLinks);
-    const createPath = (0, $3uY0S$useCreatePath)();
+    const { data: data, resource: resource, isLoading: isLoading } = (0, $2An97$useListContext)();
+    const getExternalLink = (0, $2An97$useGetExternalLink)(externalLinks);
+    const createPath = (0, $2An97$useCreatePath)();
     if (isLoading || !data) return null;
-    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Grid), {
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Grid), {
         container: true,
         spacing: spacing,
         children: data.map((record)=>{
             if (!record || record._error) return null;
             const externalLink = getExternalLink(record);
             let child;
-            if (externalLink) child = /*#__PURE__*/ (0, $3uY0S$jsx)("a", {
+            if (externalLink) child = /*#__PURE__*/ (0, $2An97$jsx)("a", {
                 href: externalLink,
                 target: "_blank",
                 rel: "noopener noreferrer",
                 onClick: $e54e9a9f27806c4d$var$stopPropagation,
-                children: /*#__PURE__*/ $3uY0S$cloneElement($3uY0S$Children.only(children), {
+                children: /*#__PURE__*/ $2An97$cloneElement($2An97$Children.only(children), {
                     externalLink: true,
                     // Workaround to force ChipField to be clickable
                     onClick: $e54e9a9f27806c4d$var$handleClick
                 })
             });
-            else if (linkType) child = /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+            else if (linkType) child = /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
                 to: createPath({
                     resource: resource,
                     id: record.id,
                     type: linkType
                 }),
                 onClick: $e54e9a9f27806c4d$var$stopPropagation,
-                children: /*#__PURE__*/ $3uY0S$cloneElement($3uY0S$Children.only(children), {
+                children: /*#__PURE__*/ $2An97$cloneElement($2An97$Children.only(children), {
                     // Workaround to force ChipField to be clickable
                     onClick: $e54e9a9f27806c4d$var$handleClick
                 })
             });
             else child = children;
-            return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Grid), {
+            return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Grid), {
                 item: true,
                 xs: xs,
                 sm: sm,
                 md: md,
                 lg: lg,
                 xl: xl,
-                children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+                children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                     value: record,
                     children: child
                 })
@@ -201,7 +201,7 @@ var $e54e9a9f27806c4d$export$2e2bcd8739ae039 = $e54e9a9f27806c4d$var$GridList;
 
 
 
-const $8cf7b8f98f373d84$var$useStyles = (0, $3uY0S$muistylesmakeStyles)(()=>({
+const $8cf7b8f98f373d84$var$useStyles = (0, $2An97$muistylesmakeStyles)(()=>({
         grid: {
             display: "flex",
             marginLeft: -20,
@@ -236,40 +236,40 @@ const $8cf7b8f98f373d84$var$useStyles = (0, $3uY0S$muistylesmakeStyles)(()=>({
  * </List>
  */ const $8cf7b8f98f373d84$var$MasonryList = ({ image: image, content: content, actions: actions, breakpointCols: breakpointCols, linkType: linkType })=>{
     const classes = $8cf7b8f98f373d84$var$useStyles();
-    const { data: data, resource: resource } = (0, $3uY0S$useListContext)();
-    const createPath = (0, $3uY0S$useCreatePath)();
-    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$reactmasonrycss), {
+    const { data: data, resource: resource } = (0, $2An97$useListContext)();
+    const createPath = (0, $2An97$useCreatePath)();
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$reactmasonrycss), {
         breakpointCols: breakpointCols,
         className: classes.grid,
         columnClassName: classes.column,
         children: data.map((record)=>{
             if (!record || record._error) return null;
             const imageUrl = typeof image === "function" ? image(record) : image;
-            return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$RecordContextProvider), {
+            return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$RecordContextProvider), {
                 value: record,
-                children: /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$Card), {
+                children: /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Card), {
                     className: classes.card,
                     children: [
-                        /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+                        /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
                             to: createPath({
                                 resource: resource,
                                 id: record.id,
                                 type: linkType
                             }),
-                            children: /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$CardActionArea), {
+                            children: /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$CardActionArea), {
                                 children: [
-                                    imageUrl && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardMedia), {
+                                    imageUrl && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardMedia), {
                                         className: classes.media,
                                         image: imageUrl
                                     }),
-                                    content && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardContent), {
+                                    content && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardContent), {
                                         children: content(record)
                                     })
                                 ]
                             })
                         }),
-                        actions && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CardActions), {
-                            children: actions.map((action)=>/*#__PURE__*/ (0, $3uY0S$react).createElement(action))
+                        actions && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CardActions), {
+                            children: actions.map((action)=>/*#__PURE__*/ (0, $2An97$react).createElement(action))
                         })
                     ]
                 }, record.id)
@@ -288,7 +288,7 @@ $8cf7b8f98f373d84$var$MasonryList.defaultProps = {
 var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList;
 
 
-
+/* eslint-disable react/react-in-jsx-scope */ /* eslint-disable react/require-default-props */ 
 
 
 
@@ -303,59 +303,68 @@ var $8cf7b8f98f373d84$export$2e2bcd8739ae039 = $8cf7b8f98f373d84$var$MasonryList
  *     </CardContent>
  *   </Card>
  * );
- */ const $68130c000e57b305$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
-    const resourceContext = (0, $3uY0S$useResourceContext)();
-    const { data: data, isLoading: isLoading } = (0, $3uY0S$useGetList)(resourceContext);
-    return /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$Fragment), {
+ */ // Converts an element to array or returns it if it's already an array
+const $5ced1203870db4f6$var$toArray = (e)=>[].concat(e);
+const $5ced1203870db4f6$var$ReferenceFilterCounter = ({ source: source, id: id })=>{
+    const resourceContext = (0, $2An97$useResourceContext)();
+    const { data: data } = (0, $2An97$useGetList)(resourceContext, {
+        pagination: {
+            page: 1,
+            perPage: Infinity
+        }
+    });
+    return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$Fragment), {
         children: [
             "\xa0",
-            !isLoading && /*#__PURE__*/ (0, $3uY0S$jsx)("span", {
+            data && /*#__PURE__*/ (0, $2An97$jsx)("span", {
                 className: "filter-count",
-                children: `(${Object.values(data).filter((d)=>[].concat(d[source]).includes(id)).length})`
+                children: `(${data.filter((d)=>$5ced1203870db4f6$var$toArray(d[source]).includes(id)).length})`
             })
         ]
     });
 };
-const $68130c000e57b305$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters })=>{
-    const { data: data, isLoading: isLoading } = (0, $3uY0S$useGetList)(reference, {
-        page: 1,
-        perPage: limit
-    }, sort, filter);
-    const currentResource = (0, $3uY0S$useResourceDefinition)({
+const $5ced1203870db4f6$var$ReferenceFilter = ({ reference: reference, source: source, inverseSource: inverseSource, limit: limit = 25, sort: sort, filter: filter, label: label, icon: icon, showCounters: showCounters = true })=>{
+    const { data: data, isLoading: isLoading } = (0, $2An97$useGetList)(reference, {
+        pagination: {
+            page: 1,
+            perPage: limit
+        },
+        sort: sort,
+        filter: filter
+    });
+    const currentResource = (0, $2An97$useResourceDefinition)({
         resource: reference
     });
-    const resourceContext = (0, $3uY0S$useResourceContext)();
-    const resourceContextDataModel = (0, $3uY0S$useDataModel)(resourceContext);
-    const resourceContextContainers = (0, $3uY0S$useContainers)(resourceContext);
-    const { displayedFilters: displayedFilters, filterValues: filterValues, setFilters: setFilters, hideFilter: hideFilter } = (0, $3uY0S$useListContext)();
-    (0, $3uY0S$useEffect)(()=>{
+    const resourceContext = (0, $2An97$useResourceContext)();
+    const resourceContextContainers = (0, $2An97$useContainers)(resourceContext);
+    const { setFilters: setFilters } = (0, $2An97$useListContext)();
+    (0, $2An97$useEffect)(()=>{
         // Needed when filter item is active and its last relation is removed
         const urlSearchParams = new URLSearchParams(window.location.search);
-        const params = Object.fromEntries(urlSearchParams.entries());
-        if (!params.filter && !isLoading) setFilters({});
-    }, []);
+        if (!urlSearchParams.get("filter") && !isLoading) setFilters({}, []);
+    }, [
+        isLoading,
+        setFilters
+    ]);
     const itemIsUsed = (itemData)=>{
         if (!inverseSource) return true;
         if (!resourceContextContainers || !itemData) return false;
-        let itemIsUsed = false;
-        Object.values(resourceContextContainers).forEach((value)=>{
-            value.forEach((containerUrl)=>{
-                [].concat(itemData[inverseSource]).forEach((inverseSourceData)=>{
-                    if (inverseSourceData?.startsWith(containerUrl)) itemIsUsed = true;
-                });
+        return Object.values(resourceContextContainers).flat().some((containerUrl)=>{
+            if (!itemData[inverseSource]) return false;
+            return $5ced1203870db4f6$var$toArray(itemData[inverseSource]).some((inverseSourceData)=>{
+                return inverseSourceData?.startsWith(containerUrl);
             });
         });
-        return itemIsUsed;
     };
-    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$FilterList), {
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterList), {
         label: label || currentResource?.options?.label || "",
-        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $3uY0S$react).createElement(currentResource.icon) : undefined,
-        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$FilterListItem), {
-                label: /*#__PURE__*/ (0, $3uY0S$jsxs)("span", {
+        icon: icon || currentResource?.icon ? /*#__PURE__*/ (0, $2An97$createElement)(currentResource.icon) : undefined,
+        children: data && data.filter((itemData)=>itemIsUsed(itemData)).map((itemData)=>/*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$FilterListItem), {
+                label: /*#__PURE__*/ (0, $2An97$jsxs)("span", {
                     className: "filter-label",
                     children: [
                         itemData["pair:label"],
-                        showCounters && /*#__PURE__*/ (0, $3uY0S$jsx)($68130c000e57b305$var$ReferenceFilterCounter, {
+                        showCounters && /*#__PURE__*/ (0, $2An97$jsx)($5ced1203870db4f6$var$ReferenceFilterCounter, {
                             source: source,
                             id: itemData.id
                         })
@@ -367,11 +376,7 @@ const $68130c000e57b305$var$ReferenceFilter = ({ reference: reference, source: s
             }, itemData.id))
     });
 };
-$68130c000e57b305$var$ReferenceFilter.defaultProps = {
-    limit: 25,
-    showCounters: true
-};
-var $68130c000e57b305$export$2e2bcd8739ae039 = $68130c000e57b305$var$ReferenceFilter;
+var $5ced1203870db4f6$export$2e2bcd8739ae039 = $5ced1203870db4f6$var$ReferenceFilter;
 
 
 
@@ -387,7 +392,7 @@ var $68130c000e57b305$export$2e2bcd8739ae039 = $68130c000e57b305$var$ReferenceFi
 
 
 
-const $4d3421bb798b6c78$var$ListViewContext = /*#__PURE__*/ (0, $3uY0S$react).createContext({
+const $4d3421bb798b6c78$var$ListViewContext = /*#__PURE__*/ (0, $2An97$react).createContext({
     views: null,
     currentView: null,
     setView: ()=>null
@@ -396,8 +401,8 @@ var $4d3421bb798b6c78$export$2e2bcd8739ae039 = $4d3421bb798b6c78$var$ListViewCon
 
 
 const $5a39d2966c9779bd$var$ViewsButtons = ()=>{
-    const query = new URLSearchParams((0, $3uY0S$useLocation)().search);
-    const { views: views, currentView: currentView, setView: setView } = (0, $3uY0S$react).useContext((0, $4d3421bb798b6c78$export$2e2bcd8739ae039));
+    const query = new URLSearchParams((0, $2An97$useLocation)().search);
+    const { views: views, currentView: currentView, setView: setView } = (0, $2An97$react).useContext((0, $4d3421bb798b6c78$export$2e2bcd8739ae039));
     return views ? Object.entries(views).filter(([key])=>key !== currentView).map(([key, view])=>{
         query.set("view", key);
         query.set("page", 1);
@@ -406,12 +411,12 @@ const $5a39d2966c9779bd$var$ViewsButtons = ()=>{
             query.set("sort", view.sort.field);
             query.set("order", view.sort.order);
         }
-        return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Link), {
+        return /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Link), {
             to: `?${query.toString()}`,
-            children: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$Button), {
+            children: /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$Button), {
                 onClick: ()=>setView(key),
                 label: view.label,
-                children: /*#__PURE__*/ (0, $3uY0S$react).createElement(view.icon)
+                children: /*#__PURE__*/ (0, $2An97$react).createElement(view.icon)
             })
         }, key);
     }) : null;
@@ -420,25 +425,25 @@ var $5a39d2966c9779bd$export$2e2bcd8739ae039 = $5a39d2966c9779bd$var$ViewsButton
 
 
 const $032ebd19dd4d05d7$var$ListActionsWithViews = ({ bulkActions: bulkActions, basePath: basePath, sort: sort, displayedFilters: displayedFilters, exporter: exporter, filters: filters, filterValues: filterValues, onUnselectItems: onUnselectItems, selectedIds: selectedIds, showFilter: showFilter, total: total, ...rest })=>{
-    const xs = (0, $3uY0S$useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
-    const resourceDefinition = (0, $3uY0S$useResourceDefinition)(rest);
-    return /*#__PURE__*/ (0, $3uY0S$jsxs)((0, $3uY0S$TopToolbar), {
+    const xs = (0, $2An97$useMediaQuery)((theme)=>theme.breakpoints.down("sm"));
+    const resourceDefinition = (0, $2An97$useResourceDefinition)(rest);
+    return /*#__PURE__*/ (0, $2An97$jsxs)((0, $2An97$TopToolbar), {
         children: [
-            /*#__PURE__*/ (0, $3uY0S$jsx)((0, $5a39d2966c9779bd$export$2e2bcd8739ae039), {}),
-            filters && /*#__PURE__*/ (0, $3uY0S$react).cloneElement(filters, {
+            /*#__PURE__*/ (0, $2An97$jsx)((0, $5a39d2966c9779bd$export$2e2bcd8739ae039), {}),
+            filters && /*#__PURE__*/ (0, $2An97$react).cloneElement(filters, {
                 showFilter: showFilter,
                 displayedFilters: displayedFilters,
                 filterValues: filterValues,
                 context: "button"
             }),
-            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$CreateButton), {}),
-            !xs && exporter !== false && /*#__PURE__*/ (0, $3uY0S$jsx)((0, $3uY0S$ExportButton), {
+            resourceDefinition.hasCreate && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$CreateButton), {}),
+            !xs && exporter !== false && /*#__PURE__*/ (0, $2An97$jsx)((0, $2An97$ExportButton), {
                 disabled: total === 0,
                 sort: sort,
                 filter: filterValues,
                 exporter: exporter
             }),
-            bulkActions && /*#__PURE__*/ (0, $3uY0S$react).cloneElement(bulkActions, {
+            bulkActions && /*#__PURE__*/ (0, $2An97$react).cloneElement(bulkActions, {
                 filterValues: filterValues,
                 selectedIds: selectedIds,
                 onUnselectItems: onUnselectItems
@@ -451,16 +456,16 @@ var $032ebd19dd4d05d7$export$2e2bcd8739ae039 = $032ebd19dd4d05d7$var$ListActions
 
 
 const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: actions, views: views, ListComponent: ListComponent, ...otherProps })=>{
-    const query = new URLSearchParams((0, $3uY0S$useLocation)().search);
+    const query = new URLSearchParams((0, $2An97$useLocation)().search);
     const initialView = query.has("view") ? query.get("view") : Object.keys(views)[0];
-    const [currentView, setView] = (0, $3uY0S$useState)(initialView);
-    return /*#__PURE__*/ (0, $3uY0S$jsx)((0, $4d3421bb798b6c78$export$2e2bcd8739ae039).Provider, {
+    const [currentView, setView] = (0, $2An97$useState)(initialView);
+    return /*#__PURE__*/ (0, $2An97$jsx)((0, $4d3421bb798b6c78$export$2e2bcd8739ae039).Provider, {
         value: {
             views: views,
             currentView: currentView,
             setView: setView
         },
-        children: /*#__PURE__*/ (0, $3uY0S$jsx)(ListComponent, {
+        children: /*#__PURE__*/ (0, $2An97$jsx)(ListComponent, {
             actions: actions,
             pagination: views[currentView].pagination,
             // Set initial values, but use the query string to change these values to avoid a complete refresh
@@ -472,8 +477,8 @@ const $5bd09179d1367bb7$var$MultiViewsList = ({ children: children, actions: act
     });
 };
 $5bd09179d1367bb7$var$MultiViewsList.defaultProps = {
-    actions: /*#__PURE__*/ (0, $3uY0S$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}),
-    ListComponent: (0, $3uY0S$List)
+    actions: /*#__PURE__*/ (0, $2An97$jsx)((0, $032ebd19dd4d05d7$export$2e2bcd8739ae039), {}),
+    ListComponent: (0, $2An97$List)
 };
 var $5bd09179d1367bb7$export$2e2bcd8739ae039 = $5bd09179d1367bb7$var$MultiViewsList;
 
@@ -483,5 +488,5 @@ var $5bd09179d1367bb7$export$2e2bcd8739ae039 = $5bd09179d1367bb7$var$MultiViewsL
 
 
 
-export {$a854ae8777f8f757$export$2e2bcd8739ae039 as ChipList, $e54e9a9f27806c4d$export$2e2bcd8739ae039 as GridList, $8cf7b8f98f373d84$export$2e2bcd8739ae039 as MasonryList, $68130c000e57b305$export$2e2bcd8739ae039 as ReferenceFilter, $5bd09179d1367bb7$export$2e2bcd8739ae039 as MultiViewsList, $032ebd19dd4d05d7$export$2e2bcd8739ae039 as ListActionsWithViews, $4d3421bb798b6c78$export$2e2bcd8739ae039 as ListViewContext, $5a39d2966c9779bd$export$2e2bcd8739ae039 as ViewsButtons};
+export {$a854ae8777f8f757$export$2e2bcd8739ae039 as ChipList, $e54e9a9f27806c4d$export$2e2bcd8739ae039 as GridList, $8cf7b8f98f373d84$export$2e2bcd8739ae039 as MasonryList, $5ced1203870db4f6$export$2e2bcd8739ae039 as ReferenceFilter, $5bd09179d1367bb7$export$2e2bcd8739ae039 as MultiViewsList, $032ebd19dd4d05d7$export$2e2bcd8739ae039 as ListActionsWithViews, $4d3421bb798b6c78$export$2e2bcd8739ae039 as ListViewContext, $5a39d2966c9779bd$export$2e2bcd8739ae039 as ViewsButtons};
 //# sourceMappingURL=index.es.js.map
