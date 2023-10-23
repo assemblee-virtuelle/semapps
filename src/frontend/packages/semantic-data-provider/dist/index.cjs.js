@@ -177,7 +177,7 @@ const $fd693d31e1c2e54f$var$findContainersWithTypes = (types, serverKeys, dataSe
     const containers = {};
     const existingContainers = [];
     serverKeys = (0, $982f4f2fb185d606$export$2e2bcd8739ae039)(serverKeys, dataServers);
-    Object.keys(dataServers).forEach((key1)=>{
+    Object.keys(dataServers).filter((key1)=>dataServers[key1].containers).forEach((key1)=>{
         Object.keys(dataServers[key1].containers).forEach((key2)=>{
             if (!serverKeys || serverKeys.includes(key2)) Object.keys(dataServers[key1].containers[key2]).forEach((type)=>{
                 if (types.includes(type)) dataServers[key1].containers[key2][type].map((path)=>{
@@ -946,7 +946,7 @@ const $915df908e0942746$var$defaultToArray = (value)=>!value ? undefined : Array
         value
     ];
 const $915df908e0942746$var$fetchVoidEndpoints = async (config)=>{
-    const fetchPromises = Object.entries(config.dataServers).filter(([key, server])=>server.pod !== true).map(([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
+    const fetchPromises = Object.entries(config.dataServers).filter(([key, server])=>server.pod !== true && server.void !== false).map(([key, server])=>config.httpClient(new URL("/.well-known/void", server.baseUrl).toString()).then((result)=>({
                 key: key,
                 datasets: result.json["@graph"]
             })).catch((e)=>{
