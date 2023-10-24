@@ -156,6 +156,8 @@ export const MyComponent = () => {
 };
 ```
 
+> You can pass as a second argument the `rel` you want to fetch. By default, it is `http://nodeinfo.diaspora.software/ns/schema/2.1`.
+
 ### useWebfinger
 
 This hook allows you to get an actor URL from its [Webfinger](https://en.wikipedia.org/wiki/WebFinger) account

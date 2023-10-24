@@ -29,7 +29,7 @@ const WebfingerService = {
       const { resource } = ctx.params;
 
       const usernameMatchRegex = new RegExp(`^acct:([\\w-_.]*)@${this.settings.domainName}$`);
-      const matches = resource.match(usernameMatchRegex);
+      const matches = resource?.match(usernameMatchRegex);
 
       if (matches) {
         const username = matches[1];

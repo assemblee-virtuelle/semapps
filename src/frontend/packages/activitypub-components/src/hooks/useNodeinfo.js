@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchUtils } from 'react-admin';
 
-const useNodeinfo = host => {
+const useNodeinfo = (host, rel = 'http://nodeinfo.diaspora.software/ns/schema/2.1') => {
   const [schema, setSchema] = useState();
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const useNodeinfo = host => {
         const { json: links } = await fetchUtils.fetchJson(nodeinfoUrl);
 
         // Accept any version of the nodeinfo protocol
-        const link = links?.links?.find(l => l.rel.startsWith('http://nodeinfo.diaspora.software/ns/schema/'));
+        const link = links?.links?.find(l => l.rel === rel);
 
         const { json } = await fetchUtils.fetchJson(link.href);
 
@@ -22,7 +22,7 @@ const useNodeinfo = host => {
         // Do nothing if nodeinfo can't be fetched
       }
     })();
-  }, [host, setSchema]);
+  }, [host, setSchema, rel]);
 
   return schema;
 };
