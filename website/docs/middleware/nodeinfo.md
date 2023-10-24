@@ -76,7 +76,7 @@ If a nodeinfo schema exists, it will return a JSON like this:
 
 You can then fetch the returned URL to find the nodeinfo schema.
 
-> We provide a `useNodeinfo` hook to easily fetch the nodeinfo schema of any server.
+> We provide a [`useNodeinfo`](../frontend/activitypub-components.md#usenodeinfo) hook to easily fetch the schema of any server.
 
 ## Settings
 
@@ -98,7 +98,7 @@ Return the users count (total, activeHalfYear, activeMonth).
 
 ### `addLink`
 
-Add a link to the `/.well-known/nodeinfo` URL.
+Add a link to the `/.well-known/nodeinfo` URL (in addition to `http://nodeinfo.diaspora.software/ns/schema/2.1`).
 
 ##### Parameters
 
