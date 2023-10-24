@@ -750,6 +750,33 @@ var $542b37cc25b8ccca$export$2e2bcd8739ae039 = $542b37cc25b8ccca$var$useInbox;
 
 
 
+const $641e93142bcf5435$var$useNodeinfo = (host)=>{
+    const [schema, setSchema] = (0, $2hSwr$useState)();
+    (0, $2hSwr$useEffect)(()=>{
+        (async ()=>{
+            const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
+            const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
+            try {
+                const { json: links } = await (0, $2hSwr$fetchUtils).fetchJson(nodeinfoUrl);
+                // Accept any version of the nodeinfo protocol
+                const link = links?.links?.find((l)=>l.rel.startsWith("http://nodeinfo.diaspora.software/ns/schema/"));
+                const { json: json } = await (0, $2hSwr$fetchUtils).fetchJson(link.href);
+                setSchema(json);
+            } catch (e) {
+            // Do nothing if nodeinfo can't be fetched
+            }
+        })();
+    }, [
+        host,
+        setSchema
+    ]);
+    return schema;
+};
+var $641e93142bcf5435$export$2e2bcd8739ae039 = $641e93142bcf5435$var$useNodeinfo;
+
+
+
+
 
 const $2514c63dc8f4867c$var$useWebfinger = ()=>{
     // Post an activity to the logged user's outbox and return its URI
@@ -939,5 +966,5 @@ var $51cccd331ea8b13d$export$2e2bcd8739ae039 = $51cccd331ea8b13d$var$useMentions
 
 
 
-export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $c1e897431d8c5742$export$2e2bcd8739ae039 as useCollection, $542b37cc25b8ccca$export$2e2bcd8739ae039 as useInbox, $712f7f004b5f345e$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
+export {$7ce737d4a1c88e63$export$2e2bcd8739ae039 as CommentsField, $d3be168cd1e7aaae$export$2e2bcd8739ae039 as CollectionList, $ea214512ab1a2e8f$export$2e2bcd8739ae039 as ReferenceCollectionField, $c1e897431d8c5742$export$2e2bcd8739ae039 as useCollection, $542b37cc25b8ccca$export$2e2bcd8739ae039 as useInbox, $641e93142bcf5435$export$2e2bcd8739ae039 as useNodeinfo, $712f7f004b5f345e$export$2e2bcd8739ae039 as useOutbox, $2514c63dc8f4867c$export$2e2bcd8739ae039 as useWebfinger, $51cccd331ea8b13d$export$2e2bcd8739ae039 as useMentions, $338f387df48a40d7$export$1ec8e53e7d982d22 as ACTIVITY_TYPES, $338f387df48a40d7$export$9649665d7ccb0dc2 as ACTOR_TYPES, $338f387df48a40d7$export$c49cfb2681596b20 as OBJECT_TYPES, $338f387df48a40d7$export$4d8d554031975581 as PUBLIC_URI};
 //# sourceMappingURL=index.es.js.map

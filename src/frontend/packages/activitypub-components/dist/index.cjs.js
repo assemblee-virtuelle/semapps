@@ -26,6 +26,7 @@ $parcel$export(module.exports, "CollectionList", () => $505d598a33288aad$export$
 $parcel$export(module.exports, "ReferenceCollectionField", () => $b0c94a9bdea99da5$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useCollection", () => $2b75a2f49c9ef165$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useInbox", () => $97664763db3c0a46$export$2e2bcd8739ae039);
+$parcel$export(module.exports, "useNodeinfo", () => $30fd77858150739b$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useOutbox", () => $decfdd34cc00b80e$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useWebfinger", () => $5b61553556e35016$export$2e2bcd8739ae039);
 $parcel$export(module.exports, "useMentions", () => $968ea07fb81eda0b$export$2e2bcd8739ae039);
@@ -765,6 +766,33 @@ const $97664763db3c0a46$var$useInbox = ()=>{
     };
 };
 var $97664763db3c0a46$export$2e2bcd8739ae039 = $97664763db3c0a46$var$useInbox;
+
+
+
+
+const $30fd77858150739b$var$useNodeinfo = (host)=>{
+    const [schema, setSchema] = (0, $jwOeV$react.useState)();
+    (0, $jwOeV$react.useEffect)(()=>{
+        (async ()=>{
+            const protocol = host.includes(":") ? "http" : "https"; // If the host has a port, we are likely on HTTP
+            const nodeinfoUrl = `${protocol}://${host}/.well-known/nodeinfo`;
+            try {
+                const { json: links } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(nodeinfoUrl);
+                // Accept any version of the nodeinfo protocol
+                const link = links?.links?.find((l)=>l.rel.startsWith("http://nodeinfo.diaspora.software/ns/schema/"));
+                const { json: json } = await (0, $jwOeV$reactadmin.fetchUtils).fetchJson(link.href);
+                setSchema(json);
+            } catch (e) {
+            // Do nothing if nodeinfo can't be fetched
+            }
+        })();
+    }, [
+        host,
+        setSchema
+    ]);
+    return schema;
+};
+var $30fd77858150739b$export$2e2bcd8739ae039 = $30fd77858150739b$var$useNodeinfo;
 
 
 

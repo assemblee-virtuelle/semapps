@@ -6,6 +6,7 @@ export { default as ReferenceCollectionField } from './components/ReferenceColle
 // Hooks
 export { default as useCollection } from './hooks/useCollection';
 export { default as useInbox } from './hooks/useInbox';
+export { default as useNodeinfo } from './hooks/useNodeinfo';
 export { default as useOutbox } from './hooks/useOutbox';
 export { default as useWebfinger } from './hooks/useWebfinger';
 export { default as useMentions } from './hooks/useMentions/useMentions';

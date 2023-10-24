@@ -18,7 +18,7 @@ Load an [ActivityStreams Collection](https://www.w3.org/TR/activitystreams-core/
 import { Show, SimpleList } from 'react-admin';
 import { CollectionList } from '@semapps/activitypub-components';
 
-export const MyPage = (props) => (
+export const MyPage = props => (
   <div>
     <CollectionList collectionUrl="http://localhost:3000/alice/followers" resource="Actor">
       <SimpleList primaryText="name" />
@@ -40,18 +40,15 @@ const DocumentShow = props => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
-        <CommentsField
-          userResource="Person"
-          mentions={mentions}
-        />
+        <CommentsField userResource="Person" mentions={mentions} />
       </SimpleShowLayout>
     </Show>
   );
-}
+};
 ```
 
 | Property       | Type     | Default                                  | Description                                                                                                        |
-|----------------|----------|------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| -------------- | -------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `userResource` | `String` | **required**                             | React-Admin resource ID for users                                                                                  |
 | `label`        | `String` | "Commentaires"                           | The label to use for the field                                                                                     |
 | `placeholder`  | `String` | "Commencez à taper votre commentaire..." | A placeholder to show before the user starts typing text.                                                          |
@@ -67,7 +64,7 @@ This component can be used like React-Admin [ReferenceField](https://marmelab.co
 import { Show, SimpleList } from 'react-admin';
 import { ReferenceCollectionField } from '@semapps/activitypub-components';
 
-export const ActorShow = (props) => (
+export const ActorShow = props => (
   <Show {...props}>
     <SimpleForm>
       <ReferenceCollectionField reference="Actor" source="followers">
@@ -93,8 +90,8 @@ const {
   loading, // boolean that is true on mount, and false once the data was fetched
   error, // error message if there was an error loading the collection
   refetch, // a callback to refresh the data
-  url, // url of the loaded collection (useful if only a predicate was passed)
-} = useCollection("http://localhost:3000/alice/followers");
+  url // url of the loaded collection (useful if only a predicate was passed)
+} = useCollection('http://localhost:3000/alice/followers');
 ```
 
 ### useInbox
@@ -105,10 +102,10 @@ This hook allows you to fetch activities from the logged-in user's inbox.
 import { useEffect } from 'react';
 import { useInbox } from '@semapps/activitypub-components';
 
-export const MyPage = (props) => {
+export const MyPage = props => {
   const inbox = useInbox();
   useEffect(() => {
-    inbox.fetch().then(activities => console.log(activities))
+    inbox.fetch().then(activities => console.log(activities));
   }, [inbox]);
   return null;
 };
@@ -122,50 +119,62 @@ This hook allows you to fetch activities from the logged-in user's outbox, and a
 import { useEffect, useCallback } from 'react';
 import { useOutbox, ACTIVITY_TYPES } from '@semapps/activitypub-components';
 
-export const MyPage = (props) => {
+export const MyPage = props => {
   const outbox = useOutbox();
-  
+
   useEffect(() => {
-    outbox.fetch().then(activities => console.log(activities))
+    outbox.fetch().then(activities => console.log(activities));
   }, [outbox]);
-  
-  const follow = useCallback(actorUrl => {
-    outbox.post({
-      type: ACTIVITY_TYPES.FOLLOW,
-      actor: outbox.owner,
-      object: actorUrl,
-      to: actorUrl,
-    });
-  }, [outbox]);
-  
-  return (
-    <button onClick={() => follow("http://localhost:3000/alice")}>
-      Follow Alice
-    </button>
+
+  const follow = useCallback(
+    actorUrl => {
+      outbox.post({
+        type: ACTIVITY_TYPES.FOLLOW,
+        actor: outbox.owner,
+        object: actorUrl,
+        to: actorUrl
+      });
+    },
+    [outbox]
   );
+
+  return <button onClick={() => follow('http://localhost:3000/alice')}>Follow Alice</button>;
+};
+```
+
+### useNodeinfo
+
+This hook allows you to get the [nodeinfo](https://nodeinfo.diaspora.software) schema of an instance.
+
+```jsx
+import { useNodeinfo } from '@semapps/activitypub-components';
+
+export const MyComponent = () => {
+  const nodeinfo = useNodeinfo('mastodon.social');
+  console.log('Nodeinfo schema: ', nodeinfo);
+  return null;
 };
 ```
 
 ### useWebfinger
 
-This hook allows you to get an actor URL from its Webfinger account
+This hook allows you to get an actor URL from its [Webfinger](https://en.wikipedia.org/wiki/WebFinger) account
 
 ```jsx
 import { useCallback } from 'react';
 import { useWebfinger } from '@semapps/activitypub-components';
 
-export const MyPage = (props) => {
+export const MyPage = props => {
   const webfinger = useWebfinger();
 
-  const showActorUrl = useCallback(actorAccount => {
-    webfinger.fetch(actorAccount).then(actorUrl => alert(actorUrl));
-  }, [webfinger]);
-
-  return (
-    <button onClick={() => showActorUrl("@alice@localhost:3000")}>
-      Show Alice URL
-    </button>
+  const showActorUrl = useCallback(
+    actorAccount => {
+      webfinger.fetch(actorAccount).then(actorUrl => alert(actorUrl));
+    },
+    [webfinger]
   );
+
+  return <button onClick={() => showActorUrl('@alice@localhost:3000')}>Show Alice URL</button>;
 };
 ```
 
